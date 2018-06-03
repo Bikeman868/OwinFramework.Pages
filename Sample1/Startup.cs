@@ -12,11 +12,11 @@ using OwinFramework.Interfaces.Utility;
 using OwinFramework.InterfacesV1.Middleware;
 using Urchin.Client.Sources;
 using OwinFramework.Pages.Core;
-using Sanple1;
+using Sample1;
 
 [assembly: OwinStartup(typeof(Startup))]
 
-namespace Sanple1
+namespace Sample1
 {
     public class Startup
     {
@@ -39,6 +39,7 @@ namespace Sanple1
             var builder = ninject.Get<IBuilder>().EnableTracing();
 
             builder.Register(ninject.Get<PagesMiddleware>());
+            builder.Register(ninject.Get<OwinFramework.NotFound.NotFoundMiddleware>());
 
             app.UseBuilder(builder);
         }

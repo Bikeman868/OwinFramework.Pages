@@ -20,6 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Debug\OwinFramework.Pages.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +30,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Release\OwinFramework.Pages.Core.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ioc.Modules, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -55,10 +59,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ServiceAttribute.cs" />
+    <Compile Include="Attributes\RegionAttribute.cs" />
+    <Compile Include="Attributes\ModuleAttribute.cs" />
+    <Compile Include="Attributes\ComponentAttribute.cs" />
+    <Compile Include="Attributes\PackageAttribute.cs" />
+    <Compile Include="Attributes\LayoutAttribute.cs" />
+    <Compile Include="Attributes\PageAttribute.cs" />
+    <Compile Include="Enums\AssetDeployment.cs" />
+    <Compile Include="Interfaces\Builder\ILayoutBuilder.cs" />
+    <Compile Include="Interfaces\Builder\ILayoutDefinition.cs" />
+    <Compile Include="Interfaces\Builder\IServiceDefinition.cs" />
+    <Compile Include="Interfaces\Builder\IModuleDefinition.cs" />
+    <Compile Include="Interfaces\Builder\IRegionDefinition.cs" />
+    <Compile Include="Interfaces\Builder\IRegionBuilder.cs" />
+    <Compile Include="Interfaces\Builder\IModuleBuilder.cs" />
+    <Compile Include="Interfaces\Builder\IPageBuilder.cs" />
+    <Compile Include="Interfaces\Builder\IPageDefinition.cs" />
+    <Compile Include="Interfaces\Builder\IServiceBuilder.cs" />
+    <Compile Include="Interfaces\IComponent.cs" />
+    <Compile Include="Interfaces\ILayout.cs" />
+    <Compile Include="Interfaces\IModule.cs" />
+    <Compile Include="Interfaces\IPackage.cs" />
+    <Compile Include="Interfaces\IPage.cs" />
+    <Compile Include="Interfaces\IRegion.cs" />
+    <Compile Include="Interfaces\IService.cs" />
+    <Compile Include="Interfaces\Manager\IAssetManager.cs" />
+    <Compile Include="Interfaces\Manager\IElementManager.cs" />
+    <Compile Include="Interfaces\Manager\ITextManager.cs" />
+    <Compile Include="Interfaces\Runtime\IRequestRouter.cs" />
+    <Compile Include="Interfaces\Runtime\IRunable.cs" />
+    <Compile Include="PagesMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\Capability\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

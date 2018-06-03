@@ -1,3 +1,13 @@
-﻿{ 
+﻿{
+    "sample1": {
+        "pages": {
 
+        },
+        "notFound": {
+
+        },
+        "documenter": { 
+
+        }
+    }
 }

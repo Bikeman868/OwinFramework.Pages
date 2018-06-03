@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OwinFramework.Pages.Core.Interfaces
+﻿namespace OwinFramework.Pages.Core.Interfaces
 {
     /// <summary>
     /// Layouts define an arrangement of html containers that can contain components

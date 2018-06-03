@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -9,7 +6,7 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// A service responds to browser requests by executing business logic
     /// and returning data in response. The response data can be any mime type.
     /// </summary>
-    public interface IService
+    public interface IService: IRunable
     {
     }
 }

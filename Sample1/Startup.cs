@@ -7,9 +7,11 @@ using Ninject;
 using Owin;
 using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
-using OwinFramework.Interfaces.Routing;
 using OwinFramework.Interfaces.Utility;
-using OwinFramework.InterfacesV1.Middleware;
+using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.RequestFilters;
+using Sample1.Pages;
 using Urchin.Client.Sources;
 using OwinFramework.Pages.Core;
 using Sample1;
@@ -38,10 +40,14 @@ namespace Sample1
 
             var builder = ninject.Get<IBuilder>().EnableTracing();
 
-            builder.Register(ninject.Get<PagesMiddleware>());
-            builder.Register(ninject.Get<OwinFramework.NotFound.NotFoundMiddleware>());
+            builder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/sample1/pages");
+            builder.Register(ninject.Get<OwinFramework.NotFound.NotFoundMiddleware>()).ConfigureWith(config, "/sample1/notFound");
+            builder.Register(ninject.Get<OwinFramework.Documenter.DocumenterMiddleware>()).ConfigureWith(config, "/sample1/documenter").RunFirst();
 
             app.UseBuilder(builder);
+
+            var router = ninject.Get<IRequestRouter>();
+            router.Register(new FullCustomPage(), new FilterByPath("/pages/*.html"));
         }
     }
 }

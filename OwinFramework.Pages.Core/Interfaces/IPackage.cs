@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OwinFramework.Pages.Core.Interfaces
+﻿namespace OwinFramework.Pages.Core.Interfaces
 {
     /// <summary>
     /// A package is a collection of pages, components, layouts

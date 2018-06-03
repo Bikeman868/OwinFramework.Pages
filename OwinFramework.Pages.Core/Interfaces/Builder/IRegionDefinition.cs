@@ -1,10 +1,4 @@
-﻿using Microsoft.Owin;
-using OwinFramework.Pages.Core.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {

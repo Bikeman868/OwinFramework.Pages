@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OwinFramework.Pages.Core.Interfaces.Builder
+﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// Use the layout builder to construct layouts using a fluent syntax

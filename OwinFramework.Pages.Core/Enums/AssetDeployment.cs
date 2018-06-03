@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OwinFramework.Pages.Core.Enums
+﻿namespace OwinFramework.Pages.Core.Enums
 {
     /// <summary>
     /// When components and regions generate JavaScript and CSS

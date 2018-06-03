@@ -1,8 +1,6 @@
 ﻿using Microsoft.Owin;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using OwinFramework.InterfacesV1.Capability;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
@@ -17,5 +15,27 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// will handle it. Returns null for unrecognized URLs
         /// </summary>
         IRunable Route(IOwinContext context);
+
+        /// <summary>
+        /// Registers a handler for requests that match a filter
+        /// </summary>
+        /// <param name="runable">The handler to run when the filter is matched</param>
+        /// <param name="filter">The filter that matches the request</param>
+        /// <param name="priority">Filters are run in ascending order of priority</param>
+        void Register(IRunable runable, IRequestFilter filter, int priority = 0);
+
+        /// <summary>
+        /// Registers a nested router. Nesting routers makes routing more efficient
+        /// and more scaleable
+        /// </summary>
+        /// <param name="router">The router to run when the filter is matched</param>
+        /// <param name="filter">The filter that matches the request</param>
+        /// <param name="priority">Filters are run in ascending order of priority</param>
+        void Register(IRequestRouter router, IRequestFilter filter, int priority = 0);
+
+        /// <summary>
+        /// Returns documentation about the endpoints that are registered with the router
+        /// </summary>
+        IList<IEndpointDocumentation> GetEndpointDocumentation(); 
     }
 }

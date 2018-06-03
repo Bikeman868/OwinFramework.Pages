@@ -3,16 +3,15 @@
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Attach this attribute to a stand-alone region that
+    /// Attach this attribute to a stand-alone service that
     /// is not part of a package
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public class RegionAttribute: Attribute
+    public class ExampleAttribute: Attribute
     {
         /// <summary>
-        /// Defines an optional name for this region so that is can be referenced 
-        /// by name in other elements
+        /// A fragment of HTML that describes an example of hoe to use this element
         /// </summary>
-        public string Name { get; set; }
+        public string Html { get; set; }
     }
 }

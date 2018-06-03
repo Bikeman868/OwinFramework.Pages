@@ -2,14 +2,13 @@
 using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
 using OwinFramework.Interfaces.Routing;
+using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.InterfacesV1.Upstream;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OwinFramework.Pages.Core
@@ -20,16 +19,17 @@ namespace OwinFramework.Pages.Core
     /// </summary>
     public class PagesMiddleware: 
         IMiddleware<IResponseProducer>,
-        IRoutingProcessor
+        IRoutingProcessor,
+        ISelfDocumenting
     {
         string IMiddleware.Name { get; set; }
 
-        private IList<IDependency> _dependencies = new List<IDependency>();
+        private readonly IList<IDependency> _dependencies = new List<IDependency>();
         IList<IDependency> IMiddleware.Dependencies{ 
             get { return _dependencies; }
         }
 
-        private IRequestRouter _requestRouter;
+        private readonly IRequestRouter _requestRouter;
 
         /// <summary>
         /// Constructor for IoC dependency injection
@@ -84,6 +84,23 @@ namespace OwinFramework.Pages.Core
 
             return runable.Run(context);
         }
-    
-   }
+
+        #region Self-documenting
+
+        string ISelfDocumenting.ShortDescription { get { return "An extremely efficient and flexible engine for rendering html and providing restful services"; } }
+
+        string ISelfDocumenting.LongDescription { get { return null; } }
+
+        Uri ISelfDocumenting.GetDocumentation(DocumentationTypes documentationType)
+        {
+            return null;
+        }
+
+        IList<IEndpointDocumentation> ISelfDocumenting.Endpoints
+        {
+            get { return _requestRouter.GetEndpointDocumentation(); }
+        }
+
+        #endregion
+    }
 }

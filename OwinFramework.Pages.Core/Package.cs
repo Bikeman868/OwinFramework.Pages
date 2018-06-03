@@ -1,9 +1,5 @@
 ﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using IocRegistration = Ioc.Modules.IocRegistration;
 using IPackage = Ioc.Modules.IPackage;
 

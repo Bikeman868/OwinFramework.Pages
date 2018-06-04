@@ -4,6 +4,7 @@ using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
 
@@ -12,21 +13,28 @@ namespace OwinFramework.Pages.Core.Builders
     internal class PageBuilder: IPageBuilder
     {
         private readonly IRequestRouter _requestRouter;
+        private readonly INameManager _nameManager;
 
         public PageBuilder(
-            IRequestRouter requestRouter)
+            IRequestRouter requestRouter,
+            INameManager nameManager)
         {
             _requestRouter = requestRouter;
+            _nameManager = nameManager;
         }
 
         public IPageDefinition Page(Type declaringType)
         {
-            return new PageDefinition(declaringType, _requestRouter);
+            return new PageDefinition(
+                declaringType, 
+                _requestRouter, 
+                _nameManager);
         }
 
         private class PageDefinition: IPageDefinition
         {
             private readonly IRequestRouter _requestRouter;
+            private readonly INameManager _nameManager;
             private readonly Webpage _page = new Webpage();
             private readonly Type _declaringType;
 
@@ -37,29 +45,49 @@ namespace OwinFramework.Pages.Core.Builders
 
             public PageDefinition(
                 Type declaringType,
-                IRequestRouter requestRouter)
+                IRequestRouter requestRouter,
+                INameManager nameManager)
             {
                 _declaringType = declaringType;
                 _requestRouter = requestRouter;
+                _nameManager = nameManager;
             }
 
             IPageDefinition IPageDefinition.Name(string name)
             {
+                _page.Name = name;
+                return this;
+            }
+
+            IPageDefinition IPageDefinition.Package(IPackage package)
+            {
+                _page.Package = package;
+                return this;
+            }
+
+            IPageDefinition IPageDefinition.Package(string packageName)
+            {
+                _nameManager.AddResolutionHandler(
+                    () => _page.Package = _nameManager.ResolvePackage(packageName));
                 return this;
             }
 
             IPageDefinition IPageDefinition.AssetDeployment(AssetDeployment assetDeployment)
             {
+                _page.AssetDeployment = assetDeployment;
                 return this;
             }
 
             IPageDefinition IPageDefinition.Module(IModule module)
             {
+                _page.Module = module;
                 return this;
             }
 
             IPageDefinition IPageDefinition.Module(string moduleName)
             {
+                _nameManager.AddResolutionHandler(
+                    () => _page.Module = _nameManager.ResolveModule(moduleName));
                 return this;
             }
 
@@ -84,31 +112,40 @@ namespace OwinFramework.Pages.Core.Builders
 
             IPageDefinition IPageDefinition.Layout(ILayout layout)
             {
+                _page.Layout = layout;
                 return this;
             }
 
             IPageDefinition IPageDefinition.Layout(string name)
             {
+                _nameManager.AddResolutionHandler(
+                    () => _page.Layout = _nameManager.ResolveLayout(name, _page.Package));
                 return this;
             }
 
             IPageDefinition IPageDefinition.Component(string regionName, IComponent component)
             {
+                _page.PopulateRegion(regionName, component);
                 return this;
             }
 
             IPageDefinition IPageDefinition.Component(string regionName, string componentName)
             {
+                _nameManager.AddResolutionHandler(
+                    () => _page.PopulateRegion(regionName, _nameManager.ResolveComponent(componentName, _page.Package)));
                 return this;
             }
 
             IPageDefinition IPageDefinition.RegionLayout(string regionName, ILayout layout)
             {
+                _page.PopulateRegion(regionName, layout);
                 return this;
             }
 
             IPageDefinition IPageDefinition.RegionLayout(string regionName, string layoutName)
             {
+                _nameManager.AddResolutionHandler(
+                    () => _page.PopulateRegion(regionName, _nameManager.ResolveLayout(layoutName, _page.Package)));
                 return this;
             }
 
@@ -141,11 +178,26 @@ namespace OwinFramework.Pages.Core.Builders
 
         private class Webpage : IPage
         {
+            public string Name { get; set; }
             public string RequiredPermission { get; set; }
             public bool AllowAnonymous { get; set; }
             public Func<IOwinContext, bool> AuthenticationFunc { get; set; }
+            public ILayout Layout { get; set; }
+            public AssetDeployment AssetDeployment { get; set; }
+            public IModule Module { get; set; }
+            public IPackage Package { get; set; }
 
-            Task IRunable.Run(IOwinContext context)
+            public void PopulateRegion(string regionName, IComponent component)
+            {
+
+            }
+
+            public void PopulateRegion(string regionName, ILayout layout)
+            {
+
+            }
+
+            public Task Run(IOwinContext context)
             {
                 context.Response.ContentType = "text/plain";
                 return context.Response.WriteAsync("Not implemented yet");

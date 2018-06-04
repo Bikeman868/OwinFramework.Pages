@@ -15,17 +15,27 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDefinition Name(string name);
 
         /// <summary>
+        /// Specifies the package that this page belongs to
+        /// </summary>
+        IPageDefinition Package(IPackage module);
+
+        /// <summary>
+        /// Specifies the name of the package that this page belongs to
+        /// </summary>
+        IPageDefinition Package(string packageName);
+
+        /// <summary>
         /// Overrides the default asset deployment scheme for this page
         /// </summary>
         IPageDefinition AssetDeployment(AssetDeployment assetDeployment);
 
         /// <summary>
-        /// Specifies the module that this page belongs to
+        /// Specifies the module that this page will be deployed with
         /// </summary>
         IPageDefinition Module(IModule module);
 
         /// <summary>
-        /// Specifies the name of the module that this page belongs to
+        /// Specifies the name of the module that this page will be deployed with
         /// </summary>
         IPageDefinition Module(string moduleName);
 

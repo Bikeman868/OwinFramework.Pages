@@ -78,6 +78,7 @@
     <Compile Include="Attributes\IsLayoutAttribute.cs" />
     <Compile Include="Attributes\IsPageAttribute.cs" />
     <Compile Include="BaseClasses\Package.cs" />
+    <Compile Include="BaseClasses\Page.cs" />
     <Compile Include="Builders\PageBuilder.cs" />
     <Compile Include="ElementRegistrar.cs" />
     <Compile Include="Enums\AssetDeployment.cs" />
@@ -97,12 +98,14 @@
     <Compile Include="Interfaces\Builder\IServiceBuilder.cs" />
     <Compile Include="Interfaces\Capability\IDocumented.cs" />
     <Compile Include="Interfaces\IComponent.cs" />
+    <Compile Include="Interfaces\IElement.cs" />
     <Compile Include="Interfaces\ILayout.cs" />
     <Compile Include="Interfaces\IModule.cs" />
     <Compile Include="Interfaces\IPackage.cs" />
     <Compile Include="Interfaces\IPage.cs" />
     <Compile Include="Interfaces\IRegion.cs" />
     <Compile Include="Interfaces\IService.cs" />
+    <Compile Include="Interfaces\Managers\INameManager.cs" />
     <Compile Include="Interfaces\Managers\IAssetManager.cs" />
     <Compile Include="Interfaces\Managers\IElementManager.cs" />
     <Compile Include="Interfaces\Managers\ITextManager.cs" />

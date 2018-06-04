@@ -5,5 +5,9 @@
     /// </summary>
     public interface IModule
     {
+        /// <summary>
+        /// The unique name of this module
+        /// </summary>
+        string Name { get; set; }
     }
 }

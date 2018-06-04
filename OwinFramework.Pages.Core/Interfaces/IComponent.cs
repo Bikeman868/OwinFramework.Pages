@@ -3,7 +3,7 @@
     /// <summary>
     /// Components render html, css and JavaScript into the output
     /// </summary>
-    public interface IComponent
+    public interface IComponent : IElement
     {
     }
 }

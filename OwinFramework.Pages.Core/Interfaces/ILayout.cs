@@ -5,7 +5,7 @@
     /// or other layouts. The layout emits css and JavaScript to make the layout
     /// perform its desired content layout
     /// </summary>
-    public interface ILayout
+    public interface ILayout : IElement
     {
     }
 }

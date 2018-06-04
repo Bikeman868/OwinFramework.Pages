@@ -10,38 +10,74 @@ using OwinFramework.Pages.Core.Interfaces;
 
 namespace Sample1.Pages
 {
-    [IsModule("Navigation", "site.nav")]
-    [DeployedAs(AssetDeployment.InPage)]
+    /// <summary>
+    /// A package defines a namespace. These are used to import 3rd party libraries
+    /// and avoid naming conflicts. You can change the namespace of an imported
+    /// package within your application to avoid naming conflicts
+    /// </summary>
+    [IsPackage("Application", "sample1")]
+    internal class ApplicationPackage { }
+
+    /// <summary>
+    /// A module is a deployment container. All the JavaScript and css
+    /// for the contents of a module will be deployed in one file
+    /// </summary>
+    [IsModule("Navigation", AssetDeployment.PerModule)]
     internal class NavigationModule { }
 
-    [IsModule("Content", "site.content")]
-    [DeployedAs(AssetDeployment.PerModule)]
+    /// <summary>
+    /// This will generate a different js and css file for assets generated
+    /// by the elements in this module
+    /// </summary>
+    [IsModule("Content", AssetDeployment.PerModule)]
     internal class ContentModule { }
 
+    /// <summary>
+    /// This region is a div with a css claaa name
+    /// </summary>
     [IsRegion("main.header")]
-    [PartOf("Navigation")]
-    [DeployedAs(AssetDeployment.InPage)]
+    [PartOf("Application")]
+    [DeployedAs("Navigation")]
     [Container("<div class='header'>", "</div>")]
     internal class MainHeaderRegion { }
 
+    /// <summary>
+    /// This region is a div with a css claaa name
+    /// </summary>
     [IsRegion("body")]
-    [PartOf("Content")]
+    [PartOf("Application")]
+    [DeployedAs("Content")]
     [Container("<div class='body'>", "</div>")]
     internal class BodyRegion { }
 
+    /// <summary>
+    /// This region is a div with a css claaa name
+    /// </summary>
     [IsRegion("main.footer")]
-    [PartOf("Navigation")]
-    [DeployedAs(AssetDeployment.InPage)]
+    [PartOf("Application")]
+    [DeployedAs("Navigation")]
     [Container("<div class='footer'>", "</div>")]
     internal class MainFooterRegion { }
 
+    /// <summary>
+    /// This defines the layout that is used throughout the website
+    /// </summary>
     [IsLayout("main")]
+    [PartOf("Application")]
+    [DeployedAs("Navigation")]
     [HasRegion("header", "main.header")]
     [HasRegion("body", "body")]
     [HasRegion("footer", "main.footer")]
     internal class MainLayout { }
 
+    /// <summary>
+    /// This layout defined the main body of the home page
+    /// </summary>
     [IsLayout("homePage")]
+    [PartOf("Application")]
+    [DeployedAs("Navigation")]
+    [HasRegion("left", "2col.vertical.fixed.left")]
+    [HasRegion("main", "2col.vertical.fixed.right")]
     internal class HomePageLayout { }
 
     [IsPage]

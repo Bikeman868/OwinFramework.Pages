@@ -12,6 +12,22 @@ namespace OwinFramework.Pages.Core.BaseClasses
     public class Package: IPackage
     {
         /// <summary>
+        /// The unique name of this package
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The unique name of this package
+        /// </summary>
+        public string NamespaceName { get; set; }
+
+        /// <summary>
+        /// Assigns a package to a module defining the default deployment scheme 
+        /// for everything in this package
+        /// </summary>
+        public IModule Module { get; set; }
+
+        /// <summary>
         /// Builds the components in this package
         /// </summary>
         public virtual void BuildComponents(IComponentBuilder componentBuilder)
@@ -45,5 +61,6 @@ namespace OwinFramework.Pages.Core.BaseClasses
         public virtual void BuildPages(IPageBuilder pageBuilder)
         {
         }
+
     }
 }

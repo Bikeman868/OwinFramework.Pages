@@ -11,6 +11,22 @@ namespace OwinFramework.Pages.Core.Interfaces
     public interface IPackage
     {
         /// <summary>
+        /// The unique name of this package
+        /// </summary>
+        string Name { get; set; }
+
+        /// <summary>
+        /// The unique namespace for everything in this package
+        /// </summary>
+        string NamespaceName { get; set; }
+
+        /// <summary>
+        /// Gets and sets the module for this package. Setting the module
+        /// sets the default deployment for all assets in this package
+        /// </summary>
+        IModule Module { get; set; }
+
+        /// <summary>
         /// Packages build their components here
         /// </summary>
         void BuildComponents(IComponentBuilder componentBuilder);

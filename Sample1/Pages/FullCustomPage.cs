@@ -14,6 +14,8 @@ namespace Sample1.Pages
     [Example("<a href='/pages/anything.html'>/pages/anything.html</a>")]
     internal class FullCustomPage : IPage
     {
+        public string Name { get; set; }
+        public IPackage Package { get; set; }
         string IRunable.RequiredPermission { get { return null; } }
         bool IRunable.AllowAnonymous{get { return true; }}
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }

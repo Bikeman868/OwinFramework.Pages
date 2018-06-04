@@ -54,7 +54,15 @@ namespace Sample1
                 new FullCustomPage(),
                 new FilterAllFilters(
                     new FilterByMethod(Methods.Get), 
-                    new FilterByPath("/pages/*.html")));
+                    new FilterByPath("/pages/*.html")),
+                    10);
+
+            router.Register(
+                new FullCustomPage(),
+                new FilterAllFilters(
+                    new FilterByMethod(Methods.Get),
+                    new FilterByPath("/pages/semiCustom.html")),
+                    100);
 
             var registrar = ninject.Get<IElementRegistrar>();
 

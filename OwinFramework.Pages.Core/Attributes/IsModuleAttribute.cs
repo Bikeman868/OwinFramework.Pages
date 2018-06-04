@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.Core.Attributes
 {
@@ -24,12 +25,11 @@ namespace OwinFramework.Pages.Core.Attributes
         /// </summary>
         /// <param name="moduleName">The name of the module. Must be unique accross the 
         /// whole website</param>
-        /// <param name="namespaceName">The namespace. Must ve a valid JavaScript identifier
-        /// and css class name</param>
-        public IsModuleAttribute(string moduleName, string namespaceName)
+        /// <param name="assetDeployment">Defines how this module is deployed</param>
+        public IsModuleAttribute(string moduleName, AssetDeployment assetDeployment)
         {
             Name = moduleName;
-            Namespace = namespaceName;
+            AssetDeployment = assetDeployment;
         }
 
         /// <summary>
@@ -39,9 +39,8 @@ namespace OwinFramework.Pages.Core.Attributes
         public string Name { get; set; }
 
         /// <summary>
-        /// Defines the namespace for all JavaScript functions and css classes.
-        /// Defaults to the name of the module if not specified
+        /// Defines the default deployment method for this module
         /// </summary>
-        public string Namespace { get; set; }
+        public AssetDeployment AssetDeployment { get; set; }
     }
 }

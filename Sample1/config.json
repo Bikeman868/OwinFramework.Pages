@@ -8,6 +8,9 @@
         },
         "documenter": { 
 
+        },
+        "defaultDocument": { 
+            "defaultPage": "/owin/endpoints"
         }
     }
 }

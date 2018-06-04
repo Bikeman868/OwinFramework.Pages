@@ -1,4 +1,6 @@
-﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
+﻿using System;
+
+namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// Use the page builder to construct pages using a fluent syntax
@@ -8,6 +10,6 @@
         /// <summary>
         /// Starts building a new page
         /// </summary>
-        IPageDefinition Page();
+        IPageDefinition Page(Type declaringType = null);
     }
 }

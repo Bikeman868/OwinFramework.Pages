@@ -12,7 +12,7 @@ namespace OwinFramework.Pages.Core
 {
     internal class RequestRouter: IRequestRouter
     {
-        private List<Registration> _registrations = new List<Registration>();
+        private readonly List<Registration> _registrations = new List<Registration>();
 
         IRunable IRequestRouter.Route(IOwinContext context)
         {
@@ -31,7 +31,7 @@ namespace OwinFramework.Pages.Core
                 : registration.Router.Route(context);
         }
 
-        void IRequestRouter.Register(IRunable runable, IRequestFilter filter, int priority)
+        void IRequestRouter.Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType)
         {
             lock (_registrations)
             {
@@ -39,7 +39,8 @@ namespace OwinFramework.Pages.Core
                 {
                     Priority = priority,
                     Filter = filter,
-                    Runable = runable
+                    Runable = runable,
+                    DeclaringType = declaringType ?? runable.GetType()
                 });
                 _registrations.Sort();
             }
@@ -90,8 +91,11 @@ namespace OwinFramework.Pages.Core
                         endpoint.Examples = documented.Examples;
                         endpoint.Attributes = documented.Attributes;
                     }
+                }
 
-                    foreach (var attribute in registration.Runable.GetType().GetCustomAttributes(true))
+                if (registration.DeclaringType != null)
+                {
+                    foreach (var attribute in registration.DeclaringType.GetCustomAttributes(true))
                     {
                         var description = attribute as DescriptionAttribute;
                         if (description != null)
@@ -136,6 +140,7 @@ namespace OwinFramework.Pages.Core
             public int Priority;
             public IRequestFilter Filter;
             public IRunable Runable;
+            public Type DeclaringType;
             public IRequestRouter Router;
 
             int IComparable.CompareTo(object obj)

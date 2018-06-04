@@ -1,5 +1,6 @@
 ﻿using OwinFramework.Pages.Core.Enums;
 using System.Text.RegularExpressions;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
@@ -32,16 +33,20 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Specifies the relative path to this page on the website
         /// </summary>
         /// <param name="path">The URL path to this page</param>
-        /// <param name="includeSubPaths">Pass true here to route all
-        /// sub-paths to this page also</param>
-        IPageDefinition Path(string path, bool includeSubPaths = false);
+        IPageDefinition Path(string path);
 
         /// <summary>
-        /// Specifies a regular expression to match with the path of the
-        /// request. This page will be served for URL paths that match
-        /// this regular expression
+        /// Specifies the relative path to this page on the website
         /// </summary>
-        IPageDefinition Path(Regex pathPattern);
+        /// <param name="methods">The http methods to route to this page</param>
+        IPageDefinition Methods(params Methods[] methods);
+
+        /// <summary>
+        /// Specifies the relative path to this page on the website
+        /// </summary>
+        /// <param name="filter">Serve this page for requests that match this filter</param>
+        /// <param name="priority">Filters are evaluated from highest to lowest priority</param>
+        IPageDefinition RequestFilter(IRequestFilter filter, int priority = 0);
 
         /// <summary>
         /// Defaines the layout of this page. If no layout is specified

@@ -79,6 +79,10 @@
       <HintPath>..\packages\Owin.Framework.Urchin.2.6.7\lib\net40\OwinFramework.Configuration.Urchin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="OwinFramework.DefaultDocument, Version=2.6.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.DefaultDocument.2.6.1\lib\net40\OwinFramework.DefaultDocument.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="OwinFramework.Documenter, Version=2.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Documenter.2.6.4\lib\net40\OwinFramework.Documenter.dll</HintPath>
       <Private>True</Private>
@@ -112,6 +116,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pages\DeclarativePage.cs" />
     <Compile Include="Pages\FullCustomPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

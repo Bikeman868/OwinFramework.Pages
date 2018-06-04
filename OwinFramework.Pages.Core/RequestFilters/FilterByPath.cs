@@ -24,14 +24,14 @@ namespace OwinFramework.Pages.Core.RequestFilters
         /// End with ** to match all sub-paths</param>
         public FilterByPath(string path)
         {
-            path = path.Trim().ToLower();
-
             if (string.IsNullOrEmpty(path))
             {
                 _matchFunc = p => false;
                 _description = "None";
                 return;
             }
+
+            path = path.Trim().ToLower();
 
             while (path.StartsWith("/"))
                 path = path.Substring(1);

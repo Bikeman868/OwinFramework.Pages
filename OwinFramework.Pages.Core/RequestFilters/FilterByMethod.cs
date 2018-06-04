@@ -29,13 +29,13 @@ namespace OwinFramework.Pages.Core.RequestFilters
             {
                 var match = string.Intern(methods[0].ToString().ToUpper());
                 _matchFunc = method => method == match;
-                _description = match + " any URL";
+                _description = match;
             }
             else
             {
                 var matches = methods.Select(m => string.Intern(m.ToString().ToUpper())).ToList();
                 _matchFunc = method => matches.Any(m => m == method);
-                _description = string.Join(", ", matches) + " any URL";
+                _description = string.Join(", ", matches);
             }
         }
 

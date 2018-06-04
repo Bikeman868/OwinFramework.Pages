@@ -6,5 +6,14 @@
     /// </summary>
     public interface IRegion
     {
+        /// <summary>
+        /// Returns the html to output before the contents of the region
+        /// </summary>
+        string ContainerOpen { get; }
+
+        /// <summary>
+        /// Returns the html to output after the contents of the region
+        /// </summary>
+        string ContainerClose { get; }
     }
 }

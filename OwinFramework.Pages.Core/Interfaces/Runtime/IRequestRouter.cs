@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System;
+using Microsoft.Owin;
 using System.Collections.Generic;
 using OwinFramework.InterfacesV1.Capability;
 
@@ -22,7 +23,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="runable">The handler to run when the filter is matched</param>
         /// <param name="filter">The filter that matches the request</param>
         /// <param name="priority">Filters are run in ascending order of priority</param>
-        void Register(IRunable runable, IRequestFilter filter, int priority = 0);
+        /// <param name="declaringType">The type from which this runable was derrived</param>
+        void Register(IRunable runable, IRequestFilter filter, int priority = 0, Type declaringType = null);
 
         /// <summary>
         /// Registers a nested router. Nesting routers makes routing more efficient

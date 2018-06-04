@@ -10,6 +10,22 @@ namespace OwinFramework.Pages.Core.Attributes
     public class OptionAttribute: Attribute
     {
         /// <summary>
+        /// Constructs an attribute that defines an option on this endpoint
+        /// </summary>
+        /// <param name="optionType">The type of option being documented</param>
+        /// <param name="name">The name of the option</param>
+        /// <param name="html">An html fragment describing this option</param>
+        public OptionAttribute(
+            OptionType optionType,
+            string name,
+            string html)
+        {
+            OptionType = optionType;
+            Name = name;
+            Html = html;
+        }
+
+        /// <summary>
         /// A fragment of HTML that describes an example of hoe to use this element
         /// </summary>
         public OptionType OptionType { get; set; }

@@ -27,28 +27,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         IModule Module { get; set; }
 
         /// <summary>
-        /// Packages build their components here
+        /// This method is called to give your package a chance to build
+        /// all of the elements in the package.
         /// </summary>
-        void BuildComponents(IComponentBuilder componentBuilder);
-
-        /// <summary>
-        /// Packages build their regions here
-        /// </summary>
-        void BuildRegions(IRegionBuilder regionBuilder);
-
-        /// <summary>
-        /// Packages build their layouts here
-        /// </summary>
-        void BuildLayouts(ILayoutBuilder layoutBuilder);
-
-        /// <summary>
-        /// Packages build their services here
-        /// </summary>
-        void BuildServices(IServiceBuilder serviceBuilder);
-
-        /// <summary>
-        /// Packages build their pages here
-        /// </summary>
-        void BuildPages(IPageBuilder pageBuilder);
+        void Build(IFluentBuilder builder);
     }
 }

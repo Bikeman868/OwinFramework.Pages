@@ -116,7 +116,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Package.cs" />
     <Compile Include="Pages\DeclarativePage.cs" />
+    <Compile Include="Pages\MenuPackage.cs" />
     <Compile Include="Pages\SemiCustomPage.cs" />
     <Compile Include="Pages\FullCustomPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

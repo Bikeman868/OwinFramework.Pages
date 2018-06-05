@@ -42,7 +42,7 @@ namespace Sample1.Pages
     internal class MainHeaderRegion { }
 
     /// <summary>
-    /// This region is a div with a css claaa name
+    /// This region is a div with a css class name
     /// </summary>
     [IsRegion("body")]
     [PartOf("Application")]
@@ -51,7 +51,7 @@ namespace Sample1.Pages
     internal class BodyRegion { }
 
     /// <summary>
-    /// This region is a div with a css claaa name
+    /// This region is a div with a css class name
     /// </summary>
     [IsRegion("main.footer")]
     [PartOf("Application")]
@@ -60,9 +60,27 @@ namespace Sample1.Pages
     internal class MainFooterRegion { }
 
     /// <summary>
-    /// This defines the layout that is used throughout the website
+    /// This region is a div with a css class name
     /// </summary>
-    [IsLayout("main")]
+    [IsRegion("2col.vertical.fixed.left")]
+    [PartOf("Application")]
+    [DeployedAs("Content")]
+    [Container("<div class='left'>", "</div>")]
+    internal class LeftRegion { }
+
+    /// <summary>
+    /// This region is a div with a css class name
+    /// </summary>
+    [IsRegion("2col.vertical.fixed.right")]
+    [PartOf("Application")]
+    [DeployedAs("Content")]
+    [Container("<div class='right'>", "</div>")]
+    internal class RightRegion { }
+
+    /// <summary>
+    /// This defines the layout that is used for every page of the website
+    /// </summary>
+    [IsLayout("main", "header,body,footer")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
     [HasRegion("header", "main.header")]
@@ -73,9 +91,10 @@ namespace Sample1.Pages
     /// <summary>
     /// This layout defined the main body of the home page
     /// </summary>
-    [IsLayout("homePage")]
+    [IsLayout("homePage", "left.main")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
+    [Container("<div class='2col.vertical.fixed'>", "</div>")]
     [HasRegion("left", "2col.vertical.fixed.left")]
     [HasRegion("main", "2col.vertical.fixed.right")]
     internal class HomePageLayout { }

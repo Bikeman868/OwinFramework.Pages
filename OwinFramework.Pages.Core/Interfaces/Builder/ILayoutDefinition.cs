@@ -14,6 +14,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition Name(string name);
 
         /// <summary>
+        /// Defines how regions are nested. By default they are one after the
+        /// other in the HTML, but this can be changed by this method.
+        /// Excample "r1,r2,r3(r4,r5)" specifies that r4 and r5 are inside r3
+        /// </summary>
+        ILayoutDefinition RegionNesting(string regionNesting);
+
+        /// <summary>
         /// Overrides the default asset deployment scheme for this layout
         /// </summary>
         ILayoutDefinition AssetDeployment(AssetDeployment assetDeployment);

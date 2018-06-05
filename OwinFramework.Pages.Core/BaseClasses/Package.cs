@@ -28,39 +28,10 @@ namespace OwinFramework.Pages.Core.BaseClasses
         public IModule Module { get; set; }
 
         /// <summary>
-        /// Builds the components in this package
+        /// Override this to build package elements
         /// </summary>
-        public virtual void BuildComponents(IComponentBuilder componentBuilder)
+        public virtual void Build(IFluentBuilder builder)
         {
         }
-
-        /// <summary>
-        /// Builds the regions in this package
-        /// </summary>
-        public virtual void BuildRegions(IRegionBuilder regionBuilder)
-        {
-        }
-
-        /// <summary>
-        /// Builds the layouts in this package
-        /// </summary>
-        public virtual void BuildLayouts(ILayoutBuilder layoutBuilder)
-        {
-        }
-
-        /// <summary>
-        /// Builds the services in this package
-        /// </summary>
-        public virtual void BuildServices(IServiceBuilder serviceBuilder)
-        {
-        }
-
-        /// <summary>
-        /// Builds the pages in this package
-        /// </summary>
-        public virtual void BuildPages(IPageBuilder pageBuilder)
-        {
-        }
-
     }
 }

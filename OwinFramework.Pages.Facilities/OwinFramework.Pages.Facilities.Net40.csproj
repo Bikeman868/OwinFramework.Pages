@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\PackageBuilder.cs" />
     <Compile Include="Builders\PageBuilder.cs" />
     <Compile Include="Managers\AssetManager.cs" />
     <Compile Include="Managers\NameManager.cs" />

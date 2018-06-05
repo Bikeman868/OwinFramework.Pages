@@ -5,7 +5,7 @@ using OwinFramework.Pages.Core.BaseClasses;
 
 namespace Sample1.Pages
 {
-    [Description("<p>This is an example of how to add a semi custom page that inherits from the base Page class</p>")]
+    [Description("<p>This is an example of how to add a semi custom page that inherits from the base Page base class</p>")]
     internal class SemiCustomPage : Page
     {
         public override Task Run(IOwinContext context)

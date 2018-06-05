@@ -87,12 +87,20 @@ namespace OwinFramework.Pages.Core
 
         #region Self-documenting
 
-        string ISelfDocumenting.ShortDescription { get { return "An extremely efficient and flexible engine for rendering html and providing restful services"; } }
+        string ISelfDocumenting.ShortDescription { 
+            get { return "An extremely efficient and flexible engine for rendering html and providing restful services"; } }
 
         string ISelfDocumenting.LongDescription { get { return null; } }
 
         Uri ISelfDocumenting.GetDocumentation(DocumentationTypes documentationType)
         {
+            switch (documentationType)
+            {
+                case DocumentationTypes.Overview:
+                    return new Uri("https://github.com/Bikeman868/OwinFramework.Pages/wiki");
+                case DocumentationTypes.SourceCode:
+                    return new Uri("https://github.com/Bikeman868/OwinFramework.Pages");
+            }
             return null;
         }
 

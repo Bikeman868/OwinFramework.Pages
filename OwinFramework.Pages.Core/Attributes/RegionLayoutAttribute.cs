@@ -4,7 +4,6 @@ namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
     /// Attach this attribute to populate a region with a layout
-    /// is not part of a package
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class RegionLayoutAttribute: Attribute

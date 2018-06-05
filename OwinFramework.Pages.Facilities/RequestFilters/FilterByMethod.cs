@@ -4,7 +4,7 @@ using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Core.RequestFilters
+namespace OwinFramework.Pages.Facilities.RequestFilters
 {
     /// <summary>
     /// A request filter that matches all requests for any of the specified methods

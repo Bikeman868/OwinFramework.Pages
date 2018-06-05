@@ -79,10 +79,10 @@
     <Compile Include="Attributes\IsPageAttribute.cs" />
     <Compile Include="BaseClasses\Package.cs" />
     <Compile Include="BaseClasses\Page.cs" />
-    <Compile Include="Builders\PageBuilder.cs" />
-    <Compile Include="ElementRegistrar.cs" />
     <Compile Include="Enums\AssetDeployment.cs" />
     <Compile Include="Enums\Methods.cs" />
+    <Compile Include="Exceptions\PageBuilderException.cs" />
+    <Compile Include="Exceptions\BuilderException.cs" />
     <Compile Include="Interfaces\Builder\IComponentBuilder.cs" />
     <Compile Include="Interfaces\Builder\IElementRegistrar.cs" />
     <Compile Include="Interfaces\Builder\ILayoutBuilder.cs" />
@@ -107,7 +107,6 @@
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Interfaces\Managers\INameManager.cs" />
     <Compile Include="Interfaces\Managers\IAssetManager.cs" />
-    <Compile Include="Interfaces\Managers\IElementManager.cs" />
     <Compile Include="Interfaces\Managers\ITextManager.cs" />
     <Compile Include="Interfaces\Runtime\IRequestFilter.cs" />
     <Compile Include="Interfaces\Runtime\IRequestRouter.cs" />
@@ -115,12 +114,6 @@
     <Compile Include="Package.cs" />
     <Compile Include="PagesMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestFilters\FilterAnyFilters.cs" />
-    <Compile Include="RequestFilters\FilterAllFilters.cs" />
-    <Compile Include="RequestFilters\FilterByPath.cs" />
-    <Compile Include="RequestFilters\FilterByMethod.cs" />
-    <Compile Include="RequestFilters\FilterAll.cs" />
-    <Compile Include="RequestRouter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -10,6 +10,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
     public interface INameManager
     {
         /// <summary>
+        /// Call this method once all of the names have been registered to
+        /// resolve name references between elements
+        /// </summary>
+        void Bind();
+
+        /// <summary>
         /// Registers the name of a component
         /// </summary>
         /// <param name="element">The component to register</param>
@@ -122,11 +128,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         IPackage ResolvePackage(string name);
 
         /// <summary>
-        /// Makes up a random name that is unique and in the same namespace as the element. The
-        /// generated name can be used as a JavaScript identifier or a css class name.
+        /// Makes up a random namespace qualified name that is unique and in the same 
+        /// namespace as the element. The generated name can be used as a JavaScript 
+        /// identifier or a css class name.
         /// </summary>
-        /// <param name="element"></param>
-        /// <returns>A randomly generated short name</returns>
-        string MakeShortName(IElement element);
+        string GenerateAssetName(IElement element);
     }
 }

@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.BaseClasses;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Core.RequestFilters;
+using OwinFramework.Pages.Facilities.RequestFilters;
 
-namespace OwinFramework.Pages.Core.Builders
+namespace OwinFramework.Pages.Facilities.Builders
 {
     internal class PageBuilder: IPageBuilder
     {
@@ -67,8 +69,12 @@ namespace OwinFramework.Pages.Core.Builders
 
             IPageDefinition IPageDefinition.Package(string packageName)
             {
-                _nameManager.AddResolutionHandler(
-                    () => _page.Package = _nameManager.ResolvePackage(packageName));
+                _page.Package = _nameManager.ResolvePackage(packageName);
+
+                if (_page.Package == null)
+                    throw new PageBuilderException(
+                        "Package names must be registered before pages can refer to them. " +
+                        "There is no registered package '" + packageName + "'");
                 return this;
             }
 
@@ -176,16 +182,11 @@ namespace OwinFramework.Pages.Core.Builders
             }
         }
 
-        private class Webpage : IPage
+        private class Webpage : Page
         {
-            public string Name { get; set; }
-            public string RequiredPermission { get; set; }
-            public bool AllowAnonymous { get; set; }
-            public Func<IOwinContext, bool> AuthenticationFunc { get; set; }
             public ILayout Layout { get; set; }
             public AssetDeployment AssetDeployment { get; set; }
             public IModule Module { get; set; }
-            public IPackage Package { get; set; }
 
             public void PopulateRegion(string regionName, IComponent component)
             {
@@ -197,7 +198,7 @@ namespace OwinFramework.Pages.Core.Builders
 
             }
 
-            public Task Run(IOwinContext context)
+            public override Task Run(IOwinContext context)
             {
                 context.Response.ContentType = "text/plain";
                 return context.Response.WriteAsync("Not implemented yet");

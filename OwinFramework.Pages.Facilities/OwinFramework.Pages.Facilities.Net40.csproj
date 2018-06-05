@@ -55,10 +55,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\PageBuilder.cs" />
+    <Compile Include="Managers\AssetManager.cs" />
+    <Compile Include="Managers\NameManager.cs" />
+    <Compile Include="Managers\TextManager.cs" />
+    <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Managers\ElementRegistrar.cs" />
+    <Compile Include="RequestFilters\FilterAll.cs" />
+    <Compile Include="RequestFilters\FilterAllFilters.cs" />
+    <Compile Include="RequestFilters\FilterAnyFilters.cs" />
+    <Compile Include="RequestFilters\FilterByMethod.cs" />
+    <Compile Include="RequestFilters\FilterByPath.cs" />
+    <Compile Include="Runtime\RequestRouter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">
+      <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
+      <Name>OwinFramework.Pages.Core.Net40</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

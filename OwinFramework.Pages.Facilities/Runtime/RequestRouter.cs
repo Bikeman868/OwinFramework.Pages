@@ -1,14 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Owin;
 using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.MiddlewareHelpers.SelfDocumenting;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using System;
-using System.Collections.Generic;
 
-namespace OwinFramework.Pages.Core
+namespace OwinFramework.Pages.Facilities.Runtime
 {
     internal class RequestRouter: IRequestRouter
     {

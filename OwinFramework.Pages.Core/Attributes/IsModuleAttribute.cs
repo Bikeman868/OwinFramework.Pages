@@ -4,14 +4,15 @@ using OwinFramework.Pages.Core.Enums;
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Attach this attribute to a stand-alone module that
-    /// is not part of a package
+    /// Attach this attribute to a class to indicate that it configures a module
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class IsModuleAttribute: Attribute
     {
         /// <summary>
-        /// Constructs an attribute that identifies a class as a module
+        /// Constructs an attribute that identifies a class as a module. Modukles are deployment
+        /// boundaries. All of the css and Javascript for a module would normally reside within 
+        /// one file although other deployment scenarios are supported.
         /// </summary>
         /// <param name="moduleName">The name of the module. Must be unique accross the 
         /// whole website</param>

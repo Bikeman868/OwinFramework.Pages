@@ -26,7 +26,7 @@ namespace OwinFramework.Pages.Core.Attributes
         public string Path { get; set; }
 
         /// <summary>
-        /// Names for this component so that is can be referenced by name in other elements
+        /// Request methods that should be routed to this page or service
         /// </summary>
         public Methods[] Methods { get; set; }
     }

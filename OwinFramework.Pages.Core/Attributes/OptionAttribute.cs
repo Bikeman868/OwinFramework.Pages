@@ -3,8 +3,9 @@
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Attach this attribute to a stand-alone service that
-    /// is not part of a package
+    /// Attach these attributes to a page or service to document the 
+    /// options available to the requester. For example the supported Httl methods,
+    /// query string parameters etc.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class OptionAttribute: Attribute

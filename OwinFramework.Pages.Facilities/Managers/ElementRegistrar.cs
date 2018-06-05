@@ -4,9 +4,8 @@ using System.Reflection;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Core
+namespace OwinFramework.Pages.Facilities.Managers
 {
     /// <summary>
     /// Uses reflection to find pages, layouts, regions, components
@@ -101,7 +100,7 @@ namespace OwinFramework.Pages.Core
                     page.Layout(hasLayout.LayoutName);
 
                 if (partOf != null)
-                    page.Module(partOf.ModuleName);
+                    page.Module(partOf.PackageName);
 
                 if (regionComponent != null)
                     page.Component(regionComponent.Region, regionComponent.Component);

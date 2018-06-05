@@ -1,7 +1,6 @@
-﻿using OwinFramework.Pages.Core.Builders;
-using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
+﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
 using System.Collections.Generic;
+
 using IocRegistration = Ioc.Modules.IocRegistration;
 using IPackage = Ioc.Modules.IPackage;
 
@@ -21,12 +20,9 @@ namespace OwinFramework.Pages.Core
             {
                 return new List<IocRegistration>
                 {
-                    new IocRegistration().Init<IRequestRouter, RequestRouter>(),
-                    new IocRegistration().Init<IElementRegistrar, ElementRegistrar>(),
-                    new IocRegistration().Init<IPageBuilder, PageBuilder>(),
+                    new IocRegistration().Init<IRequestRouter>()
                 };
             }
         }
-
     }
 }

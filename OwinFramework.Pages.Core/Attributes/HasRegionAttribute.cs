@@ -9,11 +9,11 @@ namespace OwinFramework.Pages.Core.Attributes
     public class HasRegionAttribute: Attribute
     {
         /// <summary>
-        /// Constructs and initializes an attribute that defined the component
-        /// to place in a region of a page
+        /// Constructs and initializes an attribute that defines the region instance
+        /// to place in a region of a layout
         /// </summary>
-        /// <param name="regionName">The name of this region within the layout</param>
-        /// <param name="regionElement">The name of the region element that manages this region</param>
+        /// <param name="regionName">The name of the region to populate within the layout</param>
+        /// <param name="regionElement">The name of the region element to put into this region of the layout</param>
         public HasRegionAttribute(string regionName, string regionElement)
         {
             RegionName = regionName;

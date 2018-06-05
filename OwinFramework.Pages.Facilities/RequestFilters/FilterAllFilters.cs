@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Core.RequestFilters
+namespace OwinFramework.Pages.Facilities.RequestFilters
 {
     /// <summary>
     /// A request filter that matches all requests where all supplied

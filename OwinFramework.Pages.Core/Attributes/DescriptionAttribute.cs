@@ -3,7 +3,7 @@
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Provides an html description of the endpoint
+    /// Provides an html description of the page or service
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class DescriptionAttribute: Attribute

@@ -4,7 +4,6 @@ namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
     /// Attach this attribute to regions to define how they enclose their contents
-    /// is not part of a package
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class ContainerAttribute: Attribute

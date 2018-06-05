@@ -9,11 +9,9 @@ namespace OwinFramework.Pages.Core.Attributes
     public class RegionComponentAttribute: Attribute
     {
         /// <summary>
-        /// Constructs and initializes an attribute that defined the component
+        /// Constructs and initializes an attribute that defines the component
         /// to place in a region of a layout
         /// </summary>
-        /// <param name="region"></param>
-        /// <param name="component"></param>
         public RegionComponentAttribute(string region, string component)
         {
             Region = region;

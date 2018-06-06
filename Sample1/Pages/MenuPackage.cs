@@ -7,17 +7,24 @@ namespace Sample1.Pages
     [IsPackage("Menu", "menu")]
     public class MenuPackage : OwinFramework.Pages.Core.BaseClasses.Package
     {
+        public class MenuItem
+        {
+            public string Name { get; set; }
+        }
+
         public override void Build(IFluentBuilder builder)
         {
             var menuBarComponent = new MenuBarComponent();
 
             var menuBarRegion = builder.Region()
-                .Name("menu-bar")
+                .ForEach<MenuItem>()
+                .Tag("li")
+                .Style("display: inline-block;")
                 .Build();
 
             builder.Layout()
-                .Name("menu-bar")
-                .Region(menuBarRegion, "menu")
+                .Region("menu", menuBarRegion)
+                .Tag("ul")
                 .Component("menu", menuBarComponent)
                 .Build();
         }

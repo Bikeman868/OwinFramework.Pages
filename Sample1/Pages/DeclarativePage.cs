@@ -20,72 +20,71 @@ namespace Sample1.Pages
 
     /// <summary>
     /// A module is a deployment container. All the JavaScript and css
-    /// for the contents of a module will be deployed in one file
+    /// for the module will be deployed in one file
     /// </summary>
     [IsModule("Navigation", AssetDeployment.PerModule)]
     internal class NavigationModule { }
 
-    /// <summary>
-    /// This will generate a different js and css file for assets generated
-    /// by the elements in this module
-    /// </summary>
     [IsModule("Content", AssetDeployment.PerModule)]
     internal class ContentModule { }
 
     /// <summary>
-    /// This region is a div with a css claaa name
+    /// Components are the lowest level in the element heirachy. They define
+    /// the html that is rendered when the page is requested. Regions and layouts
+    /// also render html, but this is structural (non-visual)
+    /// </summary>
+    [IsComponent("header.mainMenu")]
+    [RenderText("menu.main", "This is where the main menu html goes")]
+    internal class MainMenuComponent { }
+
+    [IsComponent("footer.standard")]
+    [RenderText("footer.standard", "This is where the html for the page footer goes")]
+    internal class StandardFooterComponent { }
+
+    /// <summary>
+    /// A region is a container for a single component or layout
+    /// The container can use html and css to define its behaviour
     /// </summary>
     [IsRegion("main.header")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
-    [Container("<div class='header'>", "</div>")]
+    [Container("div", "", "header")]
     internal class MainHeaderRegion { }
 
-    /// <summary>
-    /// This region is a div with a css class name
-    /// </summary>
     [IsRegion("body")]
     [PartOf("Application")]
     [DeployedAs("Content")]
-    [Container("<div class='body'>", "</div>")]
+    [Container("div", "", "body")]
     internal class BodyRegion { }
 
-    /// <summary>
-    /// This region is a div with a css class name
-    /// </summary>
     [IsRegion("main.footer")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
-    [Container("<div class='footer'>", "</div>")]
+    [Container("div", "", "footer")]
     internal class MainFooterRegion { }
 
-    /// <summary>
-    /// This region is a div with a css class name
-    /// </summary>
     [IsRegion("2col.vertical.fixed.left")]
     [PartOf("Application")]
     [DeployedAs("Content")]
-    [Container("<div class='left'>", "</div>")]
+    [Container("div", "", "left")]
     internal class LeftRegion { }
 
-    /// <summary>
-    /// This region is a div with a css class name
-    /// </summary>
     [IsRegion("2col.vertical.fixed.right")]
     [PartOf("Application")]
     [DeployedAs("Content")]
-    [Container("<div class='right'>", "</div>")]
+    [Container("div", "", "right")]
     internal class RightRegion { }
 
     /// <summary>
-    /// This defines the layout that is used for every page of the website
+    /// A layout is an arrangement of regions. Regions can be grouped
+    /// inside containers.
     /// </summary>
     [IsLayout("main", "header,body,footer")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
-    [HasRegion("header", "main.header")]
-    [HasRegion("body", "body")]
-    [HasRegion("footer", "main.footer")]
+    [UsesRegion("header", "main.header")]
+    [UsesRegion("body", "body")]
+    [UsesRegion("footer", "main.footer")]
     internal class MainLayout { }
 
     /// <summary>
@@ -94,17 +93,17 @@ namespace Sample1.Pages
     [IsLayout("homePage", "left.main")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
-    [Container("<div class='2col.vertical.fixed'>", "</div>")]
-    [HasRegion("left", "2col.vertical.fixed.left")]
-    [HasRegion("main", "2col.vertical.fixed.right")]
+    [Container("div", "", "2col.vertical.fixed")]
+    [UsesRegion("left", "2col.vertical.fixed.left")]
+    [UsesRegion("main", "2col.vertical.fixed.right")]
     internal class HomePageLayout { }
 
     [IsPage]
-    [HasLayout("main")]
+    [UsesLayout("main")]
     [Route("/home.html", Methods.Get)]
     [Description("<p>This is an example of how to add a page declatively using attributes</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for the home page</p>")]
-    [Option(OptionType.Header, "Accept", "text/html")]
+    [Option(OptionType.Header, "Accept", "Must contain text/html, which is only available response format")]
     [Example("<a href='/home.html'>/home.html</a>")]
     [RegionComponent("header", "header.mainMenu")]
     [RegionLayout("body", "homePage")]

@@ -6,7 +6,7 @@ namespace OwinFramework.Pages.Core.Attributes
     /// Attach this attribute to a layout to define its regions
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public class HasRegionAttribute: Attribute
+    public class UsesRegionAttribute: Attribute
     {
         /// <summary>
         /// Constructs and initializes an attribute that defines the region instance
@@ -14,7 +14,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// </summary>
         /// <param name="regionName">The name of the region to populate within the layout</param>
         /// <param name="regionElement">The name of the region element to put into this region of the layout</param>
-        public HasRegionAttribute(string regionName, string regionElement)
+        public UsesRegionAttribute(string regionName, string regionElement)
         {
             RegionName = regionName;
             RegionElement = regionElement;

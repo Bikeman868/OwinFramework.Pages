@@ -7,12 +7,17 @@ namespace OwinFramework.Pages.Core.Attributes
     /// is not part of a package
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class IsPageAttribute: Attribute
+    public class IsPageAttribute : IsElementAttributeBase
     {
         /// <summary>
-        /// Defines an optional name for this page so that is can be referenced 
-        /// by name in other elements
+        /// Constructs an attribute that defines a class to be a page
         /// </summary>
-        public string Name { get; set; }
+        /// <param name="name">The name of the page. Must be unique within a package or null</param>
+        /// <param name="dataContext">The name of the context handler to run to establish this
+        /// page's data context</param>
+        public IsPageAttribute(string name = null, string dataContext = null)
+            : base(name, dataContext)
+        {
+        }
     }
 }

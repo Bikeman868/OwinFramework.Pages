@@ -87,7 +87,7 @@ namespace OwinFramework.Pages.Facilities.Managers
             foreach (var attribute in attributes)
             {
                 var deployedAs = attribute as DeployedAsAttribute;
-                var hasLayout = attribute as HasLayoutAttribute;
+                var hasLayout = attribute as UsesLayoutAttribute;
                 var partOf = attribute as PartOfAttribute;
                 var regionComponent = attribute as RegionComponentAttribute;
                 var regionLayout = attribute as RegionLayoutAttribute;

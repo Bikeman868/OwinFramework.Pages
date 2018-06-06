@@ -7,12 +7,17 @@ namespace OwinFramework.Pages.Core.Attributes
     /// is not part of a package
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class IsServiceAttribute: Attribute
+    public class IsServiceAttribute : IsElementAttributeBase
     {
         /// <summary>
-        /// Defines an optional name for this service so that is can be referenced 
-        /// by name in other elements
+        /// Constructs an attribute that defines a class to be a service
         /// </summary>
-        public string Name { get; set; }
+        /// <param name="name">The name of the service. Must be unique within a package</param>
+        /// <param name="dataContext">The name of the context handler to run to establish this
+        /// service's data context</param>
+        public IsServiceAttribute(string name, string dataContext = null)
+            : base(name, dataContext)
+        {
+        }
     }
 }

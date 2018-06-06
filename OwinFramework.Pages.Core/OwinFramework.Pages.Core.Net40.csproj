@@ -59,10 +59,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\RenderTextAttribute.cs" />
+    <Compile Include="Attributes\IsElementAttributeBase.cs" />
+    <Compile Include="Attributes\RepeatAttribute.cs" />
     <Compile Include="Attributes\DeployedAsAttribute.cs" />
     <Compile Include="Attributes\PartOfAttribute.cs" />
-    <Compile Include="Attributes\HasLayoutAttribute.cs" />
-    <Compile Include="Attributes\HasRegionAttribute.cs" />
+    <Compile Include="Attributes\UsesLayoutAttribute.cs" />
+    <Compile Include="Attributes\UsesRegionAttribute.cs" />
     <Compile Include="Attributes\ContainerAttribute.cs" />
     <Compile Include="Attributes\RouteAttribute.cs" />
     <Compile Include="Attributes\DescriptionAttribute.cs" />

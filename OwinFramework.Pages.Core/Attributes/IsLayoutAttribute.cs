@@ -7,7 +7,7 @@ namespace OwinFramework.Pages.Core.Attributes
     /// is not part of a package
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class IsLayoutAttribute: Attribute
+    public class IsLayoutAttribute : IsElementAttributeBase
     {
         /// <summary>
         /// Constructs an attribute that defines a class to be a layout
@@ -18,16 +18,13 @@ namespace OwinFramework.Pages.Core.Attributes
         /// separate sibling regions. For example "region1(region2,region3(region4,region5)).region6"
         /// specifies that the layout directly contains region1 and region6 and that region1
         /// contains region2 and region 3, and that region3 further contains region 4 and region5</param>
-        public IsLayoutAttribute(string name, string regionNesting)
+        /// <param name="dataContext">The name of a data context handler</param>
+        public IsLayoutAttribute(string name, string regionNesting, string dataContext = null)
+            : base(name, dataContext)
         {
             Name = name;
             RegionNesting = regionNesting;
         }
-
-        /// <summary>
-        /// Names this layout so that is can be referenced by name in other elements
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// Names this layout so that is can be referenced by name in other elements

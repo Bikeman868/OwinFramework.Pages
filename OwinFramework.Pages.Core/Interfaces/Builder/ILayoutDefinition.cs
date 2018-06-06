@@ -14,9 +14,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition Name(string name);
 
         /// <summary>
-        /// Defines how regions are nested. By default they are one after the
-        /// other in the HTML, but this can be changed by this method.
-        /// Excample "r1,r2,r3(r4,r5)" specifies that r4 and r5 are inside r3
+        /// Defines how regions are nested. By default regions are rendered one
+        /// after the other using whatever html is produced by the region.
+        /// Calling this method introduces additional regions as defined by the
+        /// layout to contain some of the contained regions.
+        /// For example if the layout renders a table then the RegionNesting
+        /// could specify the regions to have in each row like this
+        /// "(r1,r2)(r3)(r4,r5)" which would create 3 rows
         /// </summary>
         ILayoutDefinition RegionNesting(string regionNesting);
 
@@ -26,17 +30,23 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition AssetDeployment(AssetDeployment assetDeployment);
 
         /// <summary>
-        /// Adds a region to a layout
+        /// Defines how to render one of the regions of the layout. If you 
+        /// do not specify how to produce the region it will be rendered
+        /// using the default region.
         /// </summary>
-        ILayoutDefinition Region(IRegion region, string regionName);
+        ILayoutDefinition Region(string regionName, IRegion region);
 
         /// <summary>
-        /// Adds a named region to a layout
+        /// Defines the name of the region element to use to render a region. If you 
+        /// do not specify how to produce the region it will be rendered
+        /// using the default region.
         /// </summary>
-        ILayoutDefinition Region(string name, string regionName);
+        ILayoutDefinition Region(string regionName, string name);
 
         /// <summary>
-        /// Overrides the component to place in a region
+        /// Overrides the component to place in a region. The region can have
+        /// a default component inside it in which case this call will override
+        /// that for this specific instance on this layout.
         /// </summary>
         ILayoutDefinition Component(string regionName, IComponent component);
 
@@ -54,6 +64,43 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Overrides the default region content with a named layout
         /// </summary>
         ILayoutDefinition Layout(string regionName, string layoutName);
+
+        /// <summary>
+        /// Specifies the html tag to render around the regions of
+        /// this layout. The default is 'div', which means that the whole
+        /// layout will be wrapped in a div. You can pass an empty string 
+        /// to remove the element that encloses the regions but this means
+        /// you can not set the class name and style
+        /// </summary>
+        ILayoutDefinition Tag(string tagName);
+
+        /// <summary>
+        /// The css class names to add to this region
+        /// </summary>
+        ILayoutDefinition ClassNames(params string[] classNames);
+
+        /// <summary>
+        /// The css style to appy to this region
+        /// </summary>
+        ILayoutDefinition Style(string style);
+
+        /// <summary>
+        /// Specifies the html tag to render around regions grouped by
+        /// the RegionNesting property. Defaults to 'div'.
+        /// </summary>
+        ILayoutDefinition NestingTag(string tagName);
+
+        /// <summary>
+        /// The css class names to add to any regions created as a result
+        /// of round brackets in the RegionNesting property
+        /// </summary>
+        ILayoutDefinition NestedClassNames(params string[] classNames);
+
+        /// <summary>
+        /// The css style to appy to  any regions created as a result
+        /// of round brackets in the RegionNesting property
+        /// </summary>
+        ILayoutDefinition NestedStyle(string style);
 
         /// <summary>
         /// Builds the layout

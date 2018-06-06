@@ -7,21 +7,17 @@ namespace OwinFramework.Pages.Core.Attributes
     /// is not part of a package
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class IsRegionAttribute: Attribute
+    public class IsRegionAttribute : IsElementAttributeBase
     {
         /// <summary>
-        /// Constructe a new attribute that indicates the class is a region
+        /// Constructs an attribute that defines a class to be a region
         /// </summary>
-        /// <param name="name">The name of this region. Must be unique within a package</param>
-        public IsRegionAttribute(string name)
+        /// <param name="name">The name of the region. Must be unique within a package</param>
+        /// <param name="dataContext">The name of the context handler to run to establish this
+        /// region's data context</param>
+        public IsRegionAttribute(string name, string dataContext = null)
+            : base(name, dataContext)
         {
-            Name = name;
         }
-
-        /// <summary>
-        /// Defines an optional name for this region so that is can be referenced 
-        /// by name in other elements
-        /// </summary>
-        public string Name { get; set; }
     }
 }

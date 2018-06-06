@@ -10,7 +10,6 @@ namespace Sample1.Pages
     [Description("<p>This is an example of how to add a full custom page that directly implements IPage</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for this custom page</p>")]
     [Option(OptionType.Header, "Accept", "text/html")]
-    [Example("<a href='/pages/home.html'>/pages/home.html</a>")]
     [Example("<a href='/pages/anything.html'>/pages/anything.html</a>")]
     internal class FullCustomPage : IPage
     {

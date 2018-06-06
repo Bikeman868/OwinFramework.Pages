@@ -183,51 +183,75 @@ namespace OwinFramework.Pages.Facilities.Managers
 
         #region Resolving names
 
-        public IComponent ResolveComponent(string name, IPackage package = null)
+        private T Resolve<T>(string name, IPackage package, IDictionary<string, T> names)
         {
-            var fqn = package == null ? name : package.NamespaceName + ":" + name;
-
-            lock (_components)
+            if (package == null)
             {
-                IComponent component;
-                if (_components.TryGetValue(fqn, out component))
-                    return component;
-
-                if (_components.TryGetValue(name, out component))
-                    return component;
+                lock (names)
+                {
+                    T result;
+                    if (names.TryGetValue(name, out result))
+                        return result;
+                }
             }
+            else
+            {
+                var fqn = package.NamespaceName + ":" + name;
 
-            return null;
+                lock (names)
+                {
+                    T result;
+                    if (names.TryGetValue(fqn, out result))
+                        return result;
+
+                    if (names.TryGetValue(name, out result))
+                        return result;
+                }
+            }
+            return default(T);
         }
 
-        public IRegion ResolveRegion(string name, IPackage package = null)
+        public IComponent ResolveComponent(string name, IPackage package)
         {
-            throw new NotImplementedException();
+            return Resolve(name, package, _components);
         }
 
-        public ILayout ResolveLayout(string name, IPackage package = null)
+        public IRegion ResolveRegion(string name, IPackage package)
         {
-            throw new NotImplementedException();
+            return Resolve(name, package, _regions);
         }
 
-        public IPage ResolvePage(string name, IPackage package = null)
+        public ILayout ResolveLayout(string name, IPackage package)
         {
-            throw new NotImplementedException();
+            return Resolve(name, package, _layouts);
+        }
+
+        public IPage ResolvePage(string name, IPackage package)
+        {
+            return Resolve(name, package, _pages);
         }
 
         public IService ResolveService(string name, IPackage package = null)
         {
-            throw new NotImplementedException();
+            return Resolve(name, package, _services);
         }
 
         public IModule ResolveModule(string name)
         {
-            throw new NotImplementedException();
+            lock (_modules)
+            {
+                IModule module;
+                return _modules.TryGetValue(name, out module) ? module : null;
+            }
         }
 
         public IPackage ResolvePackage(string name)
         {
-            throw new NotImplementedException();
+            lock (_packages)
+            {
+                IPackage module;
+                return _packages.TryGetValue(name, out module) ? module : null;
+            }
         }
 
         #endregion

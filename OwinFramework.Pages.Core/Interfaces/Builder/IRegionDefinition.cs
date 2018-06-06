@@ -3,7 +3,16 @@
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
-    /// Defines the fluent syntax for building regions
+    /// Defines the fluent syntax for building regions. The region:
+    /// * Can have a name so that is can be referenced
+    /// * Can override the asset deployment scheme foe its children
+    /// * Can contain a single component or layout
+    /// * Can enclose the contents of the region in an html element
+    /// * Can have its behaviour controlled by an external style sheet
+    /// * Can have a custom style with randomly generated name
+    /// * Can produce assets in the namespace of the package
+    /// * Can define the data binding context handler to invoke to provide data to the component inside
+    /// * Can bind to a list of data objects in context and repeat the region for each object
     /// </summary>
     public interface IRegionDefinition
     {
@@ -12,6 +21,22 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// be referenced by name when building layouts
         /// </summary>
         IRegionDefinition Name(string name);
+
+        /// <summary>
+        /// Specifies that this region is part of a package and should
+        /// generate and reference assets from that packages namespace
+        /// </summary>
+        /// <param name="package">The package that this layout is
+        /// part of</param>
+        IRegionDefinition PartOf(IPackage package);
+
+        /// <summary>
+        /// Specifies that this region is part of a package and should
+        /// generate and reference assets from that packages namespace
+        /// </summary>
+        /// <param name="packageName">The name of the package that this 
+        /// region is part of</param>
+        IRegionDefinition PartOf(string packageName);
 
         /// <summary>
         /// Overrides the default asset deployment scheme for this region
@@ -65,7 +90,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <typeparam name="T">Looks for a list or enumeration of objects 
         /// of this type in the rendering context and repeats the region
         /// once for each item</typeparam>
-        /// <returns></returns>
         IRegionDefinition ForEach<T>();
 
         /// <summary>

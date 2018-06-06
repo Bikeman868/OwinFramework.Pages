@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Core.Attributes
         }
 
         /// <summary>
-        /// The name of the layout
+        /// The name of the package
         /// </summary>
         public string PackageName { get; set; }
     }

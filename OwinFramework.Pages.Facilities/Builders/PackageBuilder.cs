@@ -45,6 +45,5 @@ namespace OwinFramework.Pages.Core.BaseClasses
         protected IPageBuilder PageBuilder;
 
         public abstract void Build();
-
     }
 }

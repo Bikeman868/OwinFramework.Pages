@@ -14,22 +14,22 @@ namespace Sample1.Pages
 
         public override void Build(IFluentBuilder builder)
         {
-            var menuBarComponent = new MenuBarComponent();
+            var menuItemComponent = new MenuItemComponent();
 
             var menuBarRegion = builder.Region()
                 .ForEach<MenuItem>()
                 .Tag("li")
                 .Style("display: inline-block;")
+                .Component(menuItemComponent)
                 .Build();
 
             builder.Layout()
                 .Region("menu", menuBarRegion)
                 .Tag("ul")
-                .Component("menu", menuBarComponent)
                 .Build();
         }
 
-        private class MenuBarComponent: Component
+        private class MenuItemComponent: Component
         {
 
         }

@@ -5,7 +5,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// This class is responsible for finding components, regions, layouts etc
-    /// and registering them with the routing engine so that they receive requests
+    /// and registering them so that they can take part in response producing
     /// </summary>
     public interface IElementRegistrar
     {

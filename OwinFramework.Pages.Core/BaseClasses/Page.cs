@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.BaseClasses
 {
@@ -9,18 +12,8 @@ namespace OwinFramework.Pages.Core.BaseClasses
     /// Base implementation of IPage. Inheriting from this olass will insulate you
     /// from any additions to the IPage interface
     /// </summary>
-    public abstract class Page: IPage
+    public abstract class Page: Element, IPage
     {
-        /// <summary>
-        /// A uniqie name for this page within the package
-        /// </summary>
-        public virtual string Name { get; set; }
-
-        /// <summary>
-        /// Optional package that this page belongs to
-        /// </summary>
-        public virtual IPackage Package { get; set; }
-
         /// <summary>
         /// Returns the name of the permission that the user must have to view this page
         /// </summary>
@@ -37,10 +30,36 @@ namespace OwinFramework.Pages.Core.BaseClasses
         public virtual Func<IOwinContext, bool> AuthenticationFunc { get { return null; } }
 
         /// <summary>
-        /// You must override this in derrived classes to define how the page produced the
-        /// response.
+        /// Override this method to completely takeover how the page is produced
         /// </summary>
-        public abstract Task Run(IOwinContext context);
+        public virtual Task Run(IOwinContext context)
+        {
+            context.Response.ContentType = "text/html";
+            IRenderContext renderContext = null;
+            IDataContext dataContext = null;
 
+            var html = new StringBuilder();
+            using (var writer = new StringWriter(html))
+            {
+                writer.Write("<html>");
+                writer.Write("<head>");
+
+                writer.Write("<title>");
+                WriteTitle(renderContext, dataContext, writer);
+                writer.Write("</title>");
+
+                WriteHead(renderContext, dataContext, writer);
+                writer.Write("</head>");
+
+                writer.Write("<body>");
+                WriteHtml(renderContext, dataContext, writer);
+                writer.Write("</body>");
+
+                WriteInitializationScript(renderContext, dataContext, writer);
+                writer.Write("</html>");
+            }
+
+            return context.Response.WriteAsync(html.ToString());
+        }
     }
 }

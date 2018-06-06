@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\RequiresPermissionAttribute.cs" />
     <Compile Include="Attributes\RenderTextAttribute.cs" />
     <Compile Include="Attributes\IsElementAttributeBase.cs" />
     <Compile Include="Attributes\RepeatAttribute.cs" />
@@ -83,8 +84,10 @@
     <Compile Include="BaseClasses\Component.cs" />
     <Compile Include="BaseClasses\Package.cs" />
     <Compile Include="BaseClasses\Layout.cs" />
+    <Compile Include="BaseClasses\Element.cs" />
     <Compile Include="BaseClasses\Page.cs" />
     <Compile Include="Enums\AssetDeployment.cs" />
+    <Compile Include="Enums\AssetType.cs" />
     <Compile Include="Enums\Methods.cs" />
     <Compile Include="Exceptions\PageBuilderException.cs" />
     <Compile Include="Exceptions\BuilderException.cs" />
@@ -114,9 +117,12 @@
     <Compile Include="Interfaces\Managers\INameManager.cs" />
     <Compile Include="Interfaces\Managers\IAssetManager.cs" />
     <Compile Include="Interfaces\Managers\ITextManager.cs" />
+    <Compile Include="Interfaces\Runtime\IDataContext.cs" />
+    <Compile Include="Interfaces\Runtime\IRenderContext.cs" />
     <Compile Include="Interfaces\Runtime\IRequestFilter.cs" />
     <Compile Include="Interfaces\Runtime\IRequestRouter.cs" />
     <Compile Include="Interfaces\Runtime\IRunable.cs" />
+    <Compile Include="Interfaces\Runtime\IWriteResult.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="PagesMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

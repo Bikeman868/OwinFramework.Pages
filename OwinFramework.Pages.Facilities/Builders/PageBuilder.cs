@@ -61,13 +61,13 @@ namespace OwinFramework.Pages.Facilities.Builders
                 return this;
             }
 
-            IPageDefinition IPageDefinition.Package(IPackage package)
+            IPageDefinition IPageDefinition.PartOf(IPackage package)
             {
                 _page.Package = package;
                 return this;
             }
 
-            IPageDefinition IPageDefinition.Package(string packageName)
+            IPageDefinition IPageDefinition.PartOf(string packageName)
             {
                 _page.Package = _nameManager.ResolvePackage(packageName);
 

@@ -3,7 +3,12 @@
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
-    /// Fluent interface for defining layouts
+    /// Fluent interface for defining layouts. Layouts have:
+    /// * An optional name so that they can be referenced
+    /// * One or more regions. Regions can be grouped into containers
+    /// * Default region content can be overriden with a component or layout
+    /// * Asset deployment mechanism can be overriden for children
+    /// * The entire layout can be enclosed in an html element 
     /// </summary>
     public interface ILayoutDefinition
     {
@@ -12,6 +17,22 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// by name when configuring pages
         /// </summary>
         ILayoutDefinition Name(string name);
+
+        /// <summary>
+        /// Specifies that this layout is part of a package and should
+        /// generate and reference assets from that packages namespace
+        /// </summary>
+        /// <param name="package">The package that this layout is
+        /// part of</param>
+        ILayoutDefinition PartOf(IPackage package);
+
+        /// <summary>
+        /// Specifies that this layout is part of a package and should
+        /// generate and reference assets from that packages namespace
+        /// </summary>
+        /// <param name="packageName">The name of the package that this 
+        /// layout is part of</param>
+        ILayoutDefinition PartOf(string packageName);
 
         /// <summary>
         /// Defines how regions are nested. By default regions are rendered one

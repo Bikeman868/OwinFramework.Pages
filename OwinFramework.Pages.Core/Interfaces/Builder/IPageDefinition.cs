@@ -1,5 +1,4 @@
 ﻿using OwinFramework.Pages.Core.Enums;
-using System.Text.RegularExpressions;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
@@ -15,14 +14,21 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDefinition Name(string name);
 
         /// <summary>
-        /// Specifies the package that this page belongs to
+        /// Specifies that this page is part of a package and should
+        /// generate and reference assets from that packages namespace
         /// </summary>
-        IPageDefinition Package(IPackage module);
+        /// <param name="package">The package that this page is
+        /// part of</param>
+        IPageDefinition PartOf(IPackage package);
 
         /// <summary>
-        /// Specifies the name of the package that this page belongs to
+        /// Specifies that this page is part of a package and should
+        /// generate and reference assets from that packages namespace
         /// </summary>
-        IPageDefinition Package(string packageName);
+        /// <param name="packageName">The name of the package that this 
+        /// page is part of</param>
+        IPageDefinition PartOf(string packageName);
+
 
         /// <summary>
         /// Overrides the default asset deployment scheme for this page

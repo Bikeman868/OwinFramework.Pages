@@ -81,11 +81,8 @@
     <Compile Include="Attributes\IsPackageAttribute.cs" />
     <Compile Include="Attributes\IsLayoutAttribute.cs" />
     <Compile Include="Attributes\IsPageAttribute.cs" />
-    <Compile Include="BaseClasses\Component.cs" />
-    <Compile Include="BaseClasses\Package.cs" />
-    <Compile Include="BaseClasses\Layout.cs" />
-    <Compile Include="BaseClasses\Element.cs" />
-    <Compile Include="BaseClasses\Page.cs" />
+    <Compile Include="Runtime\HtmlWriter.cs" />
+    <Compile Include="Runtime\Package.cs" />
     <Compile Include="Enums\AssetDeployment.cs" />
     <Compile Include="Enums\AssetType.cs" />
     <Compile Include="Enums\Methods.cs" />

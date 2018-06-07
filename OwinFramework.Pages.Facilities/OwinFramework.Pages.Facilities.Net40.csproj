@@ -68,6 +68,10 @@
     <Compile Include="RequestFilters\FilterAnyFilters.cs" />
     <Compile Include="RequestFilters\FilterByMethod.cs" />
     <Compile Include="RequestFilters\FilterByPath.cs" />
+    <Compile Include="Runtime\Component.cs" />
+    <Compile Include="Runtime\Element.cs" />
+    <Compile Include="Runtime\Layout.cs" />
+    <Compile Include="Runtime\Page.cs" />
     <Compile Include="Runtime\RequestRouter.cs" />
   </ItemGroup>
   <ItemGroup>

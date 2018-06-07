@@ -1,6 +1,7 @@
 ﻿using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.BaseClasses;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Facilities.Runtime;
 
 namespace Sample1.Pages
 {

@@ -5,8 +5,8 @@ namespace OwinFramework.Pages.Facilities.Runtime
     public interface IPageDependenciesFactory
     {
         /// <summary>
-        /// Constructs but does not initialize the page dependencies
+        /// Constructs and initializes a page dependencies instance
         /// </summary>
-        IPageDependencies Create();
+        IPageDependencies Create(IOwinContext context);
     }
 }

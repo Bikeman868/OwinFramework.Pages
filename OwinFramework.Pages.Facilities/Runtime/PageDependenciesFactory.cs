@@ -1,9 +1,11 @@
-﻿namespace OwinFramework.Pages.Facilities.Runtime
+﻿using Microsoft.Owin;
+
+namespace OwinFramework.Pages.Facilities.Runtime
 {
     internal class PageDependenciesFactory: IPageDependenciesFactory
     {
         private readonly IRenderContextFactory _renderContextFactory;
-        public readonly IDataContextFactory _dataContextFactory;
+        private readonly IDataContextFactory _dataContextFactory;
 
         public PageDependenciesFactory(
             IRenderContextFactory renderContextFactory,
@@ -13,11 +15,12 @@
             _dataContextFactory = dataContextFactory;
         }
 
-        public IPageDependencies Create()
+        public IPageDependencies Create(IOwinContext context)
         {
             return new PageDependencies(
                 _renderContextFactory.Create(),
-                _dataContextFactory.Create());
+                _dataContextFactory.Create())
+                .Initialize(context);
         }
     }
 }

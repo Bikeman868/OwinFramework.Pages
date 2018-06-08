@@ -38,23 +38,24 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// </summary>
         public string BodyClassNames { get; set; }
 
-        private readonly IPageDependencies _dependencies;
+        private readonly IPageDependenciesFactory _dependenciesFactory;
 
-        protected Page(IPageDependencies dependencies)
+        protected Page(IPageDependenciesFactory dependenciesFactory)
         {
-            _dependencies = dependencies;
+            _dependenciesFactory = dependenciesFactory;
         }
 
         /// <summary>
         /// Override this method to completely takeover how the page is produced
         /// </summary>
-        public virtual Task Run(IOwinContext context)
+        public virtual Task Run(IOwinContext owinContext)
         {
-            _dependencies.Initialize(context);
+            var dependencies = _dependenciesFactory.Create(owinContext);
+            var html = dependencies.RenderContext.Html;
+            var data = dependencies.DataContext;
+            var context = dependencies.RenderContext;
 
-            context.Response.ContentType = "text/html";
-
-            var html = _dependencies.RenderContext.Html;
+            owinContext.Response.ContentType = "text/html";
 
             try
             {
@@ -62,33 +63,33 @@ namespace OwinFramework.Pages.Facilities.Runtime
                 html.WriteOpenTag("head");
 
                 html.WriteOpenTag("title");
-                WriteTitle(_dependencies.RenderContext, _dependencies.DataContext);
+                WriteTitle(context, data);
                 html.WriteCloseTag("title");
 
-                WriteHead(_dependencies.RenderContext, _dependencies.DataContext);
+                WriteHead(context, data);
                 html.WriteCloseTag("head");
 
                 if (string.IsNullOrEmpty(BodyClassNames))
                     html.WriteOpenTag("body");
                 else
                     html.WriteOpenTag("body", "class", BodyClassNames);
-                WriteHtml(_dependencies.RenderContext, _dependencies.DataContext);
+                WriteHtml(context, data);
                 html.WriteCloseTag("body");
 
-                WriteInitializationScript(_dependencies.RenderContext, _dependencies.DataContext);
+                WriteInitializationScript(context, data);
 
                 html.WriteCloseTag("html");
             }
             catch
             {
-                _dependencies.Dispose();
+                dependencies.Dispose();
                 throw;
             }
 
             return Task.Factory.StartNew(() =>
                 {
-                    html.ToResponse(context);
-                    _dependencies.Dispose();
+                    html.ToResponse(owinContext);
+                    dependencies.Dispose();
                 });
         }
 

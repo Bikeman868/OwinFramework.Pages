@@ -8,8 +8,8 @@ namespace Sample1.Pages
     [Example("<a href='/pages/semiCustom.html'>/pages/semiCustom.html</a>")]
     internal class SemiCustomPage : Page
     {
-        public SemiCustomPage(IPageDependencies dependencies)
-            : base(dependencies)
+        public SemiCustomPage(IPageDependenciesFactory dependenciesFactory)
+            : base(dependenciesFactory)
         {}
 
         public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)

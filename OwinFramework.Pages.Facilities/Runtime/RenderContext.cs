@@ -7,8 +7,8 @@ namespace OwinFramework.Pages.Facilities.Runtime
 {
     internal class RenderContext: IRenderContext, IDisposable
     {
-        public IOwinContext OwinContext { get; set; }
-        public IHtmlWriter Html { get; set; }
+        public IOwinContext OwinContext { get; private set; }
+        public IHtmlWriter Html { get; private set; }
 
         public RenderContext(
             IHtmlWriter htmlWriter)

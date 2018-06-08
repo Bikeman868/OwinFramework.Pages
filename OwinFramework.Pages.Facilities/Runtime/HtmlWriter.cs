@@ -99,6 +99,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
                 _bufferListHead.Dispose();
 
             _bufferListHead = null;
+            _bufferListTail = null;
         }
 
         /// <summary>
@@ -293,6 +294,12 @@ namespace OwinFramework.Pages.Facilities.Runtime
             public void Dispose()
             {
                 _buffer.Dispose();
+
+                var next = Next;
+                Next = null;
+
+                if (next != null)
+                    next.Dispose();
             }
 
             public BufferListElement InsertAfter()

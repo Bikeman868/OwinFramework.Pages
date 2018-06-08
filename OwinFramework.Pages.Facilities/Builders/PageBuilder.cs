@@ -58,7 +58,7 @@ namespace OwinFramework.Pages.Facilities.Builders
                 _declaringType = declaringType;
                 _requestRouter = requestRouter;
                 _nameManager = nameManager;
-                _page = new Webpage(pageDependenciesFactory.Create());
+                _page = new Webpage(pageDependenciesFactory);
             }
 
             IPageDefinition IPageDefinition.Name(string name)
@@ -193,8 +193,8 @@ namespace OwinFramework.Pages.Facilities.Builders
             public AssetDeployment AssetDeployment { get; set; }
             public IModule Module { get; set; }
 
-            public Webpage(IPageDependencies dependencies)
-                : base(dependencies)
+            public Webpage(IPageDependenciesFactory dependenciesFactory)
+                : base(dependenciesFactory)
             {
             }
 
@@ -204,12 +204,6 @@ namespace OwinFramework.Pages.Facilities.Builders
 
             public void PopulateRegion(string regionName, ILayout layout)
             {
-            }
-
-            public override Task Run(IOwinContext context)
-            {
-                context.Response.ContentType = "text/plain";
-                return context.Response.WriteAsync("Not implemented yet");
             }
         }
 

@@ -207,6 +207,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
             Write(tag);
             Write('>');
             WriteLine();
+
             return this;
         }
 
@@ -226,6 +227,16 @@ namespace OwinFramework.Pages.Facilities.Runtime
             Write(content);
             Write("</");
             Write(tag);
+            Write('>');
+
+            return this;
+        }
+
+        public IHtmlWriter WriteUnclosedElement(string tag, params string[] attributePairs)
+        {
+            Write('<');
+            Write(tag);
+            WriteAttributes(attributePairs);
             Write('>');
 
             return this;
@@ -327,6 +338,5 @@ namespace OwinFramework.Pages.Facilities.Runtime
         }
 
         #endregion
-
     }
 }

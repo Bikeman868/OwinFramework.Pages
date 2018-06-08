@@ -9,17 +9,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     public interface IWriteResult
     {
         /// <summary>
-        /// When this is not null the rendering process will start a new text
-        /// output buffer for the next rendering operation and will wait for
-        /// this task to complete before flushing all of the buffers to the 
-        /// response stream.
-        /// When this is null it indicates that the result was written synchronously
-        /// and the same text writer can be reused for the next part of the
-        /// rendering process.
-        /// </summary>
-        Task[] TasksToWaitFor { get; }
-
-        /// <summary>
         /// Writers can set this flag to indicate that they completely wrote
         /// this section of the page and there is no need to process the
         /// request through the remaining elements. The place where this
@@ -30,10 +19,14 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         bool IsComplete { get; }
 
         /// <summary>
-        /// Adds two write results together to create the combined result
+        /// Adds the result of writing operations together creating an aggregate
         /// </summary>
-        /// <param name="priorResult">A prior write result to add to this one</param>
-        /// <returns>A new write result that is a combination of the two</returns>
-        IWriteResult Add(IWriteResult priorResult);
+        IWriteResult Add(IWriteResult priorWriteResult);
+
+        /// <summary>
+        /// Blocks the current task until all pending write tasks have finished writing
+        /// </summary>
+        /// <param name="cancel">Pass true to cancel any tasks that can be cancelled</param>
+        void Wait(bool cancel = false);
     }
 }

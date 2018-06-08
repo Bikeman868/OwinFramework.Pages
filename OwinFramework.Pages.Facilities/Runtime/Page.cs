@@ -69,6 +69,8 @@ namespace OwinFramework.Pages.Facilities.Runtime
                 html.WriteCloseTag("title");
 
                 writeResult.Add(WriteHead(context, data));
+                writeResult.Add(WriteDynamicAssets(context, data, AssetType.Style));
+                writeResult.Add(WriteDynamicAssets(context, data, AssetType.Script));
                 html.WriteCloseTag("head");
 
                 if (string.IsNullOrEmpty(BodyClassNames))
@@ -84,9 +86,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
             }
             catch
             {
-                if (writeResult.TasksToWaitFor != null && writeResult.TasksToWaitFor.Length > 0)
-                    Task.WaitAll(writeResult.TasksToWaitFor);
-
+                writeResult.Wait(true);
                 dependencies.Dispose();
 
                 throw;
@@ -94,11 +94,8 @@ namespace OwinFramework.Pages.Facilities.Runtime
 
             return Task.Factory.StartNew(() =>
                 {
-                    if (writeResult.TasksToWaitFor != null && writeResult.TasksToWaitFor.Length > 0)
-                        Task.WaitAll(writeResult.TasksToWaitFor);
-
+                    writeResult.Wait();
                     html.ToResponse(owinContext);
-
                     dependencies.Dispose();
                 });
         }

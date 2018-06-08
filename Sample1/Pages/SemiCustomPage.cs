@@ -3,6 +3,7 @@ using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Facilities.Runtime;
 using System.Threading.Tasks;
+using OwinFramework.Pages.Core.Enums;
 
 namespace Sample1.Pages
 {
@@ -20,6 +21,27 @@ namespace Sample1.Pages
             return WriteResult.ResponseComplete();
         }
 
+        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext)
+        {
+            renderContext.Html.WriteUnclosedElement(
+                "link", "rel", 
+                "stylesheet", "href", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+            renderContext.Html.WriteLine();
+            return WriteResult.Continue();
+        }
+
+        public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType)
+        {
+            if (assetType == AssetType.Style)
+            {
+                renderContext.Html.WriteOpenTag("style");
+                renderContext.Html.WriteLine(".normal { background-color: linen; font-size: 12px; }");
+                renderContext.Html.WriteLine(".page-heading { font-size: 16px; }");
+                renderContext.Html.WriteCloseTag("style");
+            }
+            return WriteResult.Continue();
+        }
+
         public override IWriteResult WriteHtml(
             IRenderContext renderContext,
             IDataContext dataContext)
@@ -28,16 +50,23 @@ namespace Sample1.Pages
             var begining = renderContext.Html.CreateInsertionPoint();
 
             // Write a paragraph of text
-            renderContext.Html.WriteElement("p", "This is a semi custom page", "class", "body");
+            renderContext.Html.WriteElement("p", "This is a semi custom page", "class", "normal");
+            renderContext.Html.WriteLine();
 
             // Use the saved buffer location to write the heading before the paragraph
-            // And do this in a separate thread
+            // and do this in a separate thread
             var task = Task.Factory.StartNew(() =>
                 {
+                    // Simulate a call to a service or database here
                     Thread.Sleep(10);
+
                     begining.WriteElement("h1", "Semi Custom", "class", "page-heading");
                     begining.WriteLine();
                 });
+
+            // Write a second paragraph of text
+            renderContext.Html.WriteElement("p", "My second paragraph of text", "class", "normal");
+            renderContext.Html.WriteLine();
 
             return WriteResult.WaitFor(task);
         }

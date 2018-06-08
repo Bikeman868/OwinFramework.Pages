@@ -16,7 +16,7 @@ namespace Sample1.Pages
         public string Name { get; set; }
         public IPackage Package { get; set; }
         string IRunable.RequiredPermission { get { return null; } }
-        bool IRunable.AllowAnonymous{get { return true; }}
+        bool IRunable.AllowAnonymous { get { return true; } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
 
         Task IRunable.Run(IOwinContext context)

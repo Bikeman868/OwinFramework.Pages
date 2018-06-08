@@ -50,6 +50,8 @@ namespace Sample1
 
             var router = ninject.Get<IRequestRouter>();
 
+            // This is an example of registering an implementation of IPage with a 
+            // wildcard request filter and low priority
             router.Register(
                 new FullCustomPage(),
                 new FilterAllFilters(
@@ -57,16 +59,23 @@ namespace Sample1
                     new FilterByPath("/pages/*.html")),
                     10);
 
+            // This is an example of routing to a class that inherits from the base Page
+            // class with an exact match request filter and high priority
             router.Register(
                 ninject.Get<SemiCustomPage>(), 
                 new FilterAllFilters(
-                    new FilterByMethod(Methods.Get),
+                    new FilterByMethod(Methods.Get, Methods.Post),
                     new FilterByPath("/pages/semiCustom.html")),
                     100);
 
             var registrar = ninject.Get<IElementRegistrar>();
 
+            // This is an example of registering a page that is defined using custom attributes
             registrar.Register(typeof(HomePage));
+
+            // This is an example of registering a package containing components, layouts etc
+            // that can be referenced by name from other elements
+            registrar.Register(typeof(MenuPackage));
         }
     }
 }

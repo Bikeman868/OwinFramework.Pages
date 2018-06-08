@@ -112,5 +112,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="attributePairs">Attributes to apply to the opening tag</param>
         IHtmlWriter WriteElement(string tag, string content, params string[] attributePairs);
 
+        /// <summary>
+        /// Writes an element that only has the opening tag and has no closing tag
+        /// </summary>
+        /// <param name="tag">The html tag to write</param>
+        /// <param name="attributePairs">Name value pairs of the element attributes</param>
+        IHtmlWriter WriteUnclosedElement(string tag, params string[] attributePairs);
     }
 }

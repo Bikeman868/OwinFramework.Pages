@@ -55,6 +55,8 @@ namespace OwinFramework.Pages.Facilities.Runtime
             var data = dependencies.DataContext;
             var context = dependencies.RenderContext;
 
+            var writeResult = WriteResult.Create();
+
             owinContext.Response.ContentType = "text/html";
 
             try
@@ -63,17 +65,17 @@ namespace OwinFramework.Pages.Facilities.Runtime
                 html.WriteOpenTag("head");
 
                 html.WriteOpenTag("title");
-                WriteTitle(context, data);
+                writeResult.Add(WriteTitle(context, data));
                 html.WriteCloseTag("title");
 
-                WriteHead(context, data);
+                writeResult.Add(WriteHead(context, data));
                 html.WriteCloseTag("head");
 
                 if (string.IsNullOrEmpty(BodyClassNames))
                     html.WriteOpenTag("body");
                 else
                     html.WriteOpenTag("body", "class", BodyClassNames);
-                WriteHtml(context, data);
+                writeResult.Add(WriteHtml(context, data));
                 html.WriteCloseTag("body");
 
                 WriteInitializationScript(context, data);
@@ -82,13 +84,21 @@ namespace OwinFramework.Pages.Facilities.Runtime
             }
             catch
             {
+                if (writeResult.TasksToWaitFor != null && writeResult.TasksToWaitFor.Length > 0)
+                    Task.WaitAll(writeResult.TasksToWaitFor);
+
                 dependencies.Dispose();
+
                 throw;
             }
 
             return Task.Factory.StartNew(() =>
                 {
+                    if (writeResult.TasksToWaitFor != null && writeResult.TasksToWaitFor.Length > 0)
+                        Task.WaitAll(writeResult.TasksToWaitFor);
+
                     html.ToResponse(owinContext);
+
                     dependencies.Dispose();
                 });
         }

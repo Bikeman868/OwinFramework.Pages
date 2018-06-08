@@ -1,6 +1,8 @@
-﻿using OwinFramework.Pages.Core.Attributes;
+﻿using System.Threading;
+using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Facilities.Runtime;
+using System.Threading.Tasks;
 
 namespace Sample1.Pages
 {
@@ -26,13 +28,18 @@ namespace Sample1.Pages
             var begining = renderContext.Html.CreateInsertionPoint();
 
             // Write a paragraph of text
-            renderContext.Html.WriteLine("<p>This is a semi custom page</p>");
+            renderContext.Html.WriteElement("p", "This is a semi custom page", "class", "body");
 
-            // Use the saved buffer location to write the heading before
-            begining.WriteElement("h1", "Semi Custom", "class", "page-heading");
-            begining.WriteLine();
+            // Use the saved buffer location to write the heading before the paragraph
+            // And do this in a separate thread
+            var task = Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(10);
+                    begining.WriteElement("h1", "Semi Custom", "class", "page-heading");
+                    begining.WriteLine();
+                });
 
-            return WriteResult.Continue();
+            return WriteResult.WaitFor(task);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// and the same text writer can be reused for the next part of the
         /// rendering process.
         /// </summary>
-        Task TaskToWaitFor { get; }
+        Task[] TasksToWaitFor { get; }
 
         /// <summary>
         /// Writers can set this flag to indicate that they completely wrote
@@ -28,5 +28,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// is done the rest of the pipeline can be skipped for efficiency.
         /// </summary>
         bool IsComplete { get; }
+
+        /// <summary>
+        /// Adds two write results together to create the combined result
+        /// </summary>
+        /// <param name="priorResult">A prior write result to add to this one</param>
+        /// <returns>A new write result that is a combination of the two</returns>
+        IWriteResult Add(IWriteResult priorResult);
     }
 }

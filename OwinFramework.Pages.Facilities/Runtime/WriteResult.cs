@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -13,8 +14,13 @@ namespace OwinFramework.Pages.Facilities.Runtime
     /// </summary>
     public class WriteResult: ReusableObject, IWriteResult
     {
-        public Task TaskToWaitFor { get; set; }
+        public Task[] TasksToWaitFor { get; set; }
         public bool IsComplete{ get; set; }
+
+        public static IWriteResult Create()
+        {
+            return _factory.Create();
+        }
 
         public static IWriteResult ResponseComplete()
         {
@@ -26,15 +32,15 @@ namespace OwinFramework.Pages.Facilities.Runtime
         public static IWriteResult WaitFor(Task task)
         {
             var writeResult = _factory.Create();
-            writeResult.TaskToWaitFor = task;
+            writeResult.TasksToWaitFor = new []{ task};
             return writeResult;
         }
 
         public static IWriteResult ContinueAsync(Action action)
         {
             var writeResult = _factory.Create();
-            writeResult.TaskToWaitFor = new Task(action);
-            writeResult.TaskToWaitFor.Start();
+            writeResult.TasksToWaitFor = new[]{ new Task(action)};
+            writeResult.TasksToWaitFor[0].Start();
             return writeResult;
         }
 
@@ -47,9 +53,32 @@ namespace OwinFramework.Pages.Facilities.Runtime
         {
         }
 
+        public IWriteResult Add(IWriteResult prior)
+        {
+            if (prior == null)
+                return this;
+
+            if (prior.IsComplete) 
+                IsComplete = true;
+
+            if (prior.TasksToWaitFor != null)
+            {
+                if (TasksToWaitFor == null)
+                {
+                    TasksToWaitFor = prior.TasksToWaitFor;
+                }
+                else
+                {
+                    TasksToWaitFor = TasksToWaitFor.Concat(prior.TasksToWaitFor).ToArray();
+                }
+            }
+
+            return this;
+        }
+
         private new WriteResult Initialize(Action<IReusable> disposeAction)
         {
-            TaskToWaitFor = null;
+            TasksToWaitFor = null;
             IsComplete = false;
 
             base.Initialize(disposeAction);

@@ -4,7 +4,8 @@ using OwinFramework.Pages.Core.Enums;
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Attach this attribute to a class to indicate that it configures a module
+    /// Attach this attribute to a module that you want to have discovered and 
+    /// registered automitically at startup.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class IsModuleAttribute: Attribute

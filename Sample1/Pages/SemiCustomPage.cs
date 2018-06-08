@@ -1,9 +1,5 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Owin;
-using OwinFramework.Pages.Core.Attributes;
-using OwinFramework.Pages.Core.BaseClasses;
+﻿using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Core.Runtime;
 using OwinFramework.Pages.Facilities.Runtime;
 
 namespace Sample1.Pages
@@ -12,22 +8,23 @@ namespace Sample1.Pages
     [Example("<a href='/pages/semiCustom.html'>/pages/semiCustom.html</a>")]
     internal class SemiCustomPage : Page
     {
-        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer)
+        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
         {
-            writer.Write("Semi custom");
+            writer.WriteLine("Page title");
             return null;
         }
 
         public override IWriteResult WriteHtml(
             IRenderContext renderContext,
             IDataContext dataContext,
-            HtmlWriter writer)
+            IHtmlWriter writer)
         {
             var begining = writer.CreateInsertionPoint();
 
             writer.WriteLine("This is a semi custom page");
 
-            begining.WriteElement("h1", "Semi-custom");
+            begining.WriteElement("h1", "Semi Custom", "class", "page-heading");
+            begining.WriteLine();
 
             return null;
         }

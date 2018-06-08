@@ -2,18 +2,17 @@
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Core.Runtime
+namespace OwinFramework.Pages.Facilities.Runtime
 {
     /// <summary>
     /// A TextWriter that writes HTML to the response. Has special features for
     /// writing HTML elements and also for allowing multiple threads to simultaneously
-    /// write into different parts of the output buffer
+    /// write into different parts of the output buffer.
     /// </summary>
-    public class HtmlWriter: TextWriter
+    public class HtmlWriter: TextWriter, IHtmlWriter
     {
-        // TODO: string builder factory with reusable buffers
-
         private class BufferListElement
         {
             private StringBuilder _buffer = new StringBuilder();
@@ -49,21 +48,49 @@ namespace OwinFramework.Pages.Core.Runtime
         /// </summary>
         public override Encoding Encoding { get { return Encoding.UTF8; } }
 
+        /// <summary>
+        /// The current indentation level
+        /// </summary>
+        public int IndentLevel { get; set; }
+
         private readonly BufferListElement _bufferListHead;
         private BufferListElement _bufferListTail;
+        private bool _startOfLine;
 
         /// <summary>
         /// Constructs a new HTML Writer
         /// </summary>
         public HtmlWriter()
-            : this(new BufferListElement())
         {
+            _startOfLine = true;
+            IndentLevel = 0;
+
+            _bufferListHead = new BufferListElement();
+            _bufferListTail = _bufferListHead;
         }
 
-        private HtmlWriter(BufferListElement head)
+        private HtmlWriter(HtmlWriter parent)
         {
-            _bufferListHead = head;
+            _startOfLine = parent._startOfLine;
+            IndentLevel = parent.IndentLevel;
+
+            _bufferListHead = parent._bufferListTail;
             _bufferListTail = _bufferListHead;
+        }
+
+        /// <summary>
+        /// Constructs and returns an HtmlWriter that will insert into the
+        /// output buffer at the current spot. You can use this to start
+        /// an async process that will insert text into the output when it
+        /// completes.
+        /// </summary>
+        public IHtmlWriter CreateInsertionPoint()
+        {
+            var result = new HtmlWriter(this);
+
+            _bufferListTail = _bufferListTail.InsertAfter();
+
+            return result;
         }
 
         /// <summary>
@@ -91,25 +118,30 @@ namespace OwinFramework.Pages.Core.Runtime
         }
 
         /// <summary>
-        /// Constructs and returns an HtmlWriter that will insert into the
-        /// output buffer at the current spot. You can use this to start
-        /// an async process that will insert text into the output when it
-        /// completes.
-        /// </summary>
-        public HtmlWriter CreateInsertionPoint()
-        {
-            var branchPoint = _bufferListTail;
-            _bufferListTail = _bufferListTail.InsertAfter();
-            return new HtmlWriter(branchPoint);
-        }
-
-        /// <summary>
         /// Writes a single character to the response buffer
         /// </summary>
-        /// <param name="c"></param>
         public override void Write(char c)
         {
+            if (_startOfLine)
+            {
+                if (IndentLevel > 0)
+                {
+                    for (var i = 0; i < IndentLevel; i++)
+                    {
+                        _bufferListTail.Write(' ');
+                        _bufferListTail.Write(' ');
+                        _bufferListTail.Write(' ');
+                    }
+                }
+                _startOfLine = false;
+            }
             _bufferListTail.Write(c);
+        }
+
+        public override void WriteLine()
+        {
+            base.WriteLine();
+            _startOfLine = true;
         }
 
         /// <summary>
@@ -118,10 +150,28 @@ namespace OwinFramework.Pages.Core.Runtime
         /// <param name="tag">The html tag to write</param>
         /// <param name="selfClosing">Pass true to self close the element</param>
         /// <param name="attributePairs">Name value pairs of the element attributes</param>
-        public void WriteOpenTag(string tag, bool selfClosing, params string[] attributePairs)
+        public IHtmlWriter WriteOpenTag(string tag, bool selfClosing, params string[] attributePairs)
         {
             Write('<');
             Write(tag);
+
+            WriteAttributes(attributePairs);
+
+            if (selfClosing)
+            {
+                Write(" />");
+            }
+            else
+            {
+                WriteLine('>');
+                IndentLevel++;
+            }
+
+            return this;
+        }
+
+        private void WriteAttributes(string[] attributePairs)
+        {
             if (attributePairs != null)
             {
                 for (var i = 0; i < attributePairs.Length; i += 2)
@@ -133,7 +183,6 @@ namespace OwinFramework.Pages.Core.Runtime
                     Write('\'');
                 }
             }
-            Write('>');
         }
 
         /// <summary>
@@ -142,20 +191,23 @@ namespace OwinFramework.Pages.Core.Runtime
         /// </summary>
         /// <param name="tag">The html tag to write</param>
         /// <param name="attributePairs">Name value pairs of the element attributes</param>
-        public void WriteOpenTag(string tag, params string[] attributePairs)
+        public IHtmlWriter WriteOpenTag(string tag, params string[] attributePairs)
         {
-            WriteOpenTag(tag, false, attributePairs);
+            return WriteOpenTag(tag, false, attributePairs);
         }
 
         /// <summary>
         /// Writes the closing tag of an element
         /// </summary>
         /// <param name="tag">The element tag to close</param>
-        public void WriteCloseTag(string tag)
+        public IHtmlWriter WriteCloseTag(string tag)
         {
+            IndentLevel--;
             Write("</");
             Write(tag);
             Write('>');
+            WriteLine();
+            return this;
         }
 
         /// <summary>
@@ -165,13 +217,64 @@ namespace OwinFramework.Pages.Core.Runtime
         /// <param name="tag">The tag to write</param>
         /// <param name="content">The content inside the element</param>
         /// <param name="attributePairs">Attributes to apply to the opening tag</param>
-        public void WriteElement(string tag, string content, params string [] attributePairs)
+        public IHtmlWriter WriteElement(string tag, string content, params string[] attributePairs)
         {
-            WriteOpenTag(tag, attributePairs);
+            Write('<');
+            Write(tag);
+            WriteAttributes(attributePairs);
+            Write('>');
             Write(content);
-            WriteCloseTag(tag);
-            WriteLine();
+            Write("</");
+            Write(tag);
+            Write('>');
+
+            return this;
         }
+
+        #region IHtmlWriter
+
+        IHtmlWriter IHtmlWriter.Write(char c)
+        {
+            Write(c);
+            return this;
+        }
+
+        public TextWriter GetTextWriter()
+        {
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.Write(string s)
+        {
+            Write(s);
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.Write<T>(T s)
+        {
+            Write(s);
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteLine()
+        {
+            WriteLine();
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteLine(string s)
+        {
+            WriteLine(s);
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteLine<T>(T s)
+        {
+            WriteLine(s);
+            return this;
+        }
+
+        #endregion
 
     }
 }

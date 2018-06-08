@@ -1,6 +1,6 @@
-﻿using Microsoft.Owin;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Owin;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {

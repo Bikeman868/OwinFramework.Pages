@@ -1,4 +1,8 @@
-﻿using Microsoft.Owin;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.Owin;
 using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
 using OwinFramework.Interfaces.Routing;
@@ -6,10 +10,6 @@ using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.InterfacesV1.Upstream;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace OwinFramework.Pages.Core
 {
@@ -25,9 +25,7 @@ namespace OwinFramework.Pages.Core
         string IMiddleware.Name { get; set; }
 
         private readonly IList<IDependency> _dependencies = new List<IDependency>();
-        IList<IDependency> IMiddleware.Dependencies{ 
-            get { return _dependencies; }
-        }
+        IList<IDependency> IMiddleware.Dependencies { get { return _dependencies; } }
 
         private readonly IRequestRouter _requestRouter;
 

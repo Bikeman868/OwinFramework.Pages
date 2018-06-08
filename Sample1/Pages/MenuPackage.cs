@@ -6,7 +6,7 @@ using OwinFramework.Pages.Facilities.Runtime;
 namespace Sample1.Pages
 {
     [IsPackage("Menu", "menu")]
-    public class MenuPackage : OwinFramework.Pages.Core.BaseClasses.Package
+    public class MenuPackage : OwinFramework.Pages.Facilities.Runtime.Package
     {
         public class MenuItem
         {

@@ -4,7 +4,6 @@ using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Core.Runtime;
 
 namespace OwinFramework.Pages.Facilities.Runtime
 {
@@ -52,17 +51,14 @@ namespace OwinFramework.Pages.Facilities.Runtime
             try
             {
                 writer.WriteOpenTag("html");
-                writer.WriteLine();
-
                 writer.WriteOpenTag("head");
-                writer.WriteLine();
+
                 writer.WriteOpenTag("title");
                 WriteTitle(renderContext, dataContext, writer);
                 writer.WriteCloseTag("title");
-                writer.WriteLine();
+
                 WriteHead(renderContext, dataContext, writer);
                 writer.WriteCloseTag("head");
-                writer.WriteLine();
 
                 if (string.IsNullOrEmpty(BodyClassNames))
                 {
@@ -72,20 +68,20 @@ namespace OwinFramework.Pages.Facilities.Runtime
                 {
                     writer.WriteOpenTag("body", "class", BodyClassNames);
                 }
-                writer.WriteLine();
                 WriteHtml(renderContext, dataContext, writer);
                 writer.WriteCloseTag("body");
-                writer.WriteLine();
 
                 WriteInitializationScript(renderContext, dataContext, writer);
 
                 writer.WriteCloseTag("html");
 
-                return Task.Factory.StartNew(() =>
+                var task = new Task(() =>
                     {
                         writer.ToResponse(context);
                         writer.Dispose();
                     });
+                task.Start();
+                return task;
             }
             catch
             {
@@ -94,32 +90,32 @@ namespace OwinFramework.Pages.Facilities.Runtime
             }
         }
 
-        public override IWriteResult WriteStaticAssets(AssetType assetType, HtmlWriter writer)
+        public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
         {
             return Layout != null ? Layout.WriteStaticAssets(assetType, writer) : null;
         }
 
-        public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType, HtmlWriter writer)
+        public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType, IHtmlWriter writer)
         {
             return Layout != null ? Layout.WriteDynamicAssets(renderContext, dataContext, assetType, writer) : null;
         }
 
-        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer)
+        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
         {
             return Layout != null ? Layout.WriteInitializationScript(renderContext, dataContext, writer) : null;
         }
 
-        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer)
+        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
         {
             return Layout != null ? Layout.WriteTitle(renderContext, dataContext, writer) : null;
         }
 
-        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer)
+        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
         {
             return Layout != null ? Layout.WriteHead(renderContext, dataContext, writer) : null;
         }
 
-        public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer)
+        public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
         {
             return Layout != null ? Layout.WriteHtml(renderContext, dataContext, writer) : null;
         }

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Facilities.Builders;
+using OwinFramework.Pages.Facilities.Collections;
 using OwinFramework.Pages.Facilities.Managers;
 using OwinFramework.Pages.Facilities.Runtime;
 using IocRegistration = Ioc.Modules.IocRegistration;
@@ -24,12 +26,19 @@ namespace OwinFramework.Pages.Facilities
             {
                 return new List<IocRegistration>
                 {
-                    new IocRegistration().Init<IRequestRouter, RequestRouter>(),
+                    new IocRegistration().Init<IArrayFactory, ArrayFactory>(),
+                    new IocRegistration().Init<IDictionaryFactory, DictionaryFactory>(),
+                    new IocRegistration().Init<IMemoryStreamFactory, MemoryStreamFactory>(),
+                    new IocRegistration().Init<IQueueFactory, QueueFactory>(),
+                    new IocRegistration().Init<IStringBuilderFactory, StringBuilderFactory>(),
+
                     new IocRegistration().Init<IElementRegistrar, ElementRegistrar>(),
                     new IocRegistration().Init<IPageBuilder, PageBuilder>(),
                     new IocRegistration().Init<IAssetManager, AssetManager>(),
                     new IocRegistration().Init<ITextManager, TextManager>(),
                     new IocRegistration().Init<INameManager, NameManager>(),
+
+                    new IocRegistration().Init<IRequestRouter, RequestRouter>(),
                 };
             }
         }

@@ -1,6 +1,6 @@
 ﻿using System;
-using Microsoft.Owin;
 using System.Collections.Generic;
+using Microsoft.Owin;
 using OwinFramework.InterfacesV1.Capability;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime

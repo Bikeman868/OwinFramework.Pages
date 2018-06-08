@@ -1,15 +1,13 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
-using System.Collections.Generic;
-
-using IocRegistration = Ioc.Modules.IocRegistration;
-using IPackage = Ioc.Modules.IPackage;
+﻿using System.Collections.Generic;
+using Ioc.Modules;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core
 {
     /// <summary>
     /// Defines the IoC needs of this assembly
     /// </summary>
-    [Ioc.Modules.Package]
+    [Package]
     public class Package: IPackage
     {
         string IPackage.Name { get { return "Owin Framework Pages core"; } }

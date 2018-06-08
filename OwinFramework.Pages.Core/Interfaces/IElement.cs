@@ -1,7 +1,5 @@
-﻿using System.IO;
-using OwinFramework.Pages.Core.Enums;
+﻿using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Core.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -34,7 +32,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="writer">The text writer to srite them to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteStaticAssets(AssetType assetType, HtmlWriter writer);
+        IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer);
 
         /// <summary>
         /// This is where the element is responsible for outputting its dynamic assets.
@@ -51,7 +49,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="writer">The text writer to write to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType, HtmlWriter writer);
+        IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType, IHtmlWriter writer);
 
         /// <summary>
         /// This is where the element gets an opportunity to write JavaScript into the page
@@ -63,7 +61,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="writer">The text writer to write to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer);
+        IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
@@ -74,7 +72,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="writer">The text writer to write to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer);
+        IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
@@ -86,7 +84,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="writer">The text writer to write to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer);
+        IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
@@ -97,6 +95,6 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="writer">The text writer to write to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer);
+        IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer);
     }
 }

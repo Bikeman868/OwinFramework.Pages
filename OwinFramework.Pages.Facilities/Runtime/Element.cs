@@ -2,7 +2,6 @@
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Core.Runtime;
 
 namespace OwinFramework.Pages.Facilities.Runtime
 {
@@ -25,7 +24,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// <summary>
         /// Override to output static assets
         /// </summary>
-        public virtual IWriteResult WriteStaticAssets(AssetType assetType, HtmlWriter writer)
+        public virtual IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
         {
             return null;
         }
@@ -33,7 +32,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// <summary>
         /// Override to output dynamic assets
         /// </summary>
-        public virtual IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType, HtmlWriter writer)
+        public virtual IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType, IHtmlWriter writer)
         {
             return null;
         }
@@ -41,7 +40,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// <summary>
         /// Override to output initialization script
         /// </summary>
-        public virtual IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer)
+        public virtual IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
         {
             return null;
         }
@@ -49,7 +48,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// <summary>
         /// Override to output the page title
         /// </summary>
-        public virtual IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer)
+        public virtual IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
         {
             return null;
         }
@@ -57,7 +56,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// <summary>
         /// Override to output into the page head
         /// </summary>
-        public virtual IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer)
+        public virtual IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
         {
             return null;
         }
@@ -65,7 +64,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// <summary>
         /// Override to output html
         /// </summary>
-        public virtual IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, HtmlWriter writer)
+        public virtual IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
         {
             return null;
         }

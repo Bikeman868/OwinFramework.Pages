@@ -19,7 +19,7 @@ namespace OwinFramework.Pages.Facilities.Collections
         }
     }
 
-    public class ThreadSafeDictionary<TKey, TValue> : IThreadSafeDictionary<TKey, TValue>
+    internal class ThreadSafeDictionary<TKey, TValue> : IThreadSafeDictionary<TKey, TValue>
     {
         private readonly Dictionary<TKey, TValue> _dictionary;
         private readonly ReaderWriterLockSlim _lock;

@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Facilities.Runtime
@@ -13,36 +15,6 @@ namespace OwinFramework.Pages.Facilities.Runtime
     /// </summary>
     public class HtmlWriter: TextWriter, IHtmlWriter
     {
-        private class BufferListElement
-        {
-            private StringBuilder _buffer = new StringBuilder();
-            public BufferListElement Next;
-
-            public BufferListElement InsertAfter()
-            {
-                lock (this)
-                {
-                    var result = new BufferListElement
-                    {
-                        _buffer = new StringBuilder(),
-                        Next = Next,
-                    };
-                    Next = result;
-                    return result;
-                }
-            }
-
-            public void Write(char c)
-            {
-                _buffer.Append(c);
-            }
-
-            public override string ToString()
-            {
-                return _buffer.ToString();
-            }
-        }
-
         /// <summary>
         /// Returns the encoding to use for this TextWriter
         /// </summary>
@@ -53,25 +25,41 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// </summary>
         public int IndentLevel { get; set; }
 
-        private readonly BufferListElement _bufferListHead;
+        /// <summary>
+        /// Turns indentation on/off. The html is more readable with
+        /// indentation turned on but the output is bigger because of 
+        /// all the extra spaces
+        /// </summary>
+        public bool Indented { get; set; }
+
+        private readonly IStringBuilderFactory _stringBuilderFactory;
+        private readonly bool _isBufferOwner;
+        private BufferListElement _bufferListHead;
         private BufferListElement _bufferListTail;
         private bool _startOfLine;
 
         /// <summary>
         /// Constructs a new HTML Writer
         /// </summary>
-        public HtmlWriter()
+        public HtmlWriter(
+            IStringBuilderFactory stringBuilderFactory)
         {
+            _stringBuilderFactory = stringBuilderFactory;
+            _isBufferOwner = true;
             _startOfLine = true;
+            Indented = true;
             IndentLevel = 0;
 
-            _bufferListHead = new BufferListElement();
+            _bufferListHead = new BufferListElement(stringBuilderFactory);
             _bufferListTail = _bufferListHead;
         }
 
         private HtmlWriter(HtmlWriter parent)
         {
+            _stringBuilderFactory = parent._stringBuilderFactory;
+            _isBufferOwner = false;
             _startOfLine = parent._startOfLine;
+            Indented = parent.Indented;
             IndentLevel = parent.IndentLevel;
 
             _bufferListHead = parent._bufferListTail;
@@ -106,6 +94,11 @@ namespace OwinFramework.Pages.Facilities.Runtime
                 context.Response.Write(buffer.ToString());
                 buffer = buffer.Next;
             }
+
+            if (_isBufferOwner && _bufferListHead != null)
+                _bufferListHead.Dispose();
+
+            _bufferListHead = null;
         }
 
         /// <summary>
@@ -124,7 +117,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
         {
             if (_startOfLine)
             {
-                if (IndentLevel > 0)
+                if (Indented && IndentLevel > 0)
                 {
                     for (var i = 0; i < IndentLevel; i++)
                     {
@@ -141,6 +134,12 @@ namespace OwinFramework.Pages.Facilities.Runtime
         public override void WriteLine()
         {
             base.WriteLine();
+            _startOfLine = true;
+        }
+
+        public override void WriteLine(string s)
+        {
+            base.WriteLine(s);
             _startOfLine = true;
         }
 
@@ -250,9 +249,9 @@ namespace OwinFramework.Pages.Facilities.Runtime
             return this;
         }
 
-        IHtmlWriter IHtmlWriter.Write<T>(T s)
+        IHtmlWriter IHtmlWriter.Write<T>(T o)
         {
-            Write(s);
+            Write(o.ToString());
             return this;
         }
 
@@ -268,10 +267,56 @@ namespace OwinFramework.Pages.Facilities.Runtime
             return this;
         }
 
-        IHtmlWriter IHtmlWriter.WriteLine<T>(T s)
+        IHtmlWriter IHtmlWriter.WriteLine<T>(T o)
         {
-            WriteLine(s);
+            WriteLine(o.ToString());
             return this;
+        }
+
+        #endregion
+
+        #region Buffer list
+
+        private class BufferListElement: IDisposable
+        {
+            private readonly IStringBuilderFactory _stringBuilderFactory;
+            private readonly IStringBuilder _buffer;
+            public BufferListElement Next;
+
+            public BufferListElement(
+                IStringBuilderFactory stringBuilderFactory)
+            {
+                _stringBuilderFactory = stringBuilderFactory;
+                _buffer = stringBuilderFactory.Create();
+            }
+
+            public void Dispose()
+            {
+                _buffer.Dispose();
+            }
+
+            public BufferListElement InsertAfter()
+            {
+                lock (this)
+                {
+                    var result = new BufferListElement(_stringBuilderFactory)
+                    {
+                        Next = Next,
+                    };
+                    Next = result;
+                    return result;
+                }
+            }
+
+            public void Write(char c)
+            {
+                _buffer.Append(c);
+            }
+
+            public override string ToString()
+            {
+                return _buffer.ToString();
+            }
         }
 
         #endregion

@@ -6,7 +6,7 @@ namespace OwinFramework.Pages.Facilities.Collections
     /// <summary>
     /// Implementation of IMemoryStreamFactory that pools and reuses memory streams
     /// </summary>
-    public class MemoryStreamFactory : ReusableObjectFactory, IMemoryStreamFactory
+    internal class MemoryStreamFactory : ReusableObjectFactory, IMemoryStreamFactory
     {
         public MemoryStreamFactory(IQueueFactory queueFactory)
             : base(queueFactory)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Owin;
-using OwinFramework.Pages.Core.BaseClasses;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -17,13 +16,16 @@ namespace OwinFramework.Pages.Facilities.Builders
     {
         private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
+        private readonly IPageDependenciesFactory _pageDependenciesFactory;
 
         public PageBuilder(
             IRequestRouter requestRouter,
-            INameManager nameManager)
+            INameManager nameManager,
+            IPageDependenciesFactory pageDependenciesFactory)
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
+            _pageDependenciesFactory = pageDependenciesFactory;
         }
 
         public IPageDefinition Page(Type declaringType)
@@ -31,14 +33,15 @@ namespace OwinFramework.Pages.Facilities.Builders
             return new PageDefinition(
                 declaringType, 
                 _requestRouter, 
-                _nameManager);
+                _nameManager,
+                _pageDependenciesFactory);
         }
 
         private class PageDefinition: IPageDefinition
         {
             private readonly IRequestRouter _requestRouter;
             private readonly INameManager _nameManager;
-            private readonly Webpage _page = new Webpage();
+            private readonly Webpage _page;
             private readonly Type _declaringType;
 
             private IRequestFilter _filter;
@@ -49,11 +52,13 @@ namespace OwinFramework.Pages.Facilities.Builders
             public PageDefinition(
                 Type declaringType,
                 IRequestRouter requestRouter,
-                INameManager nameManager)
+                INameManager nameManager,
+                IPageDependenciesFactory pageDependenciesFactory)
             {
                 _declaringType = declaringType;
                 _requestRouter = requestRouter;
                 _nameManager = nameManager;
+                _page = new Webpage(pageDependenciesFactory.Create());
             }
 
             IPageDefinition IPageDefinition.Name(string name)
@@ -185,18 +190,20 @@ namespace OwinFramework.Pages.Facilities.Builders
 
         private class Webpage : Page
         {
-            public ILayout Layout { get; set; }
             public AssetDeployment AssetDeployment { get; set; }
             public IModule Module { get; set; }
 
+            public Webpage(IPageDependencies dependencies)
+                : base(dependencies)
+            {
+            }
+
             public void PopulateRegion(string regionName, IComponent component)
             {
-
             }
 
             public void PopulateRegion(string regionName, ILayout layout)
             {
-
             }
 
             public override Task Run(IOwinContext context)

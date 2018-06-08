@@ -62,7 +62,8 @@
     <Compile Include="Collections\Disposable.cs" />
     <Compile Include="Collections\EnumerableLocked.cs" />
     <Compile Include="Collections\MemoryStreamFactory.cs" />
-    <Compile Include="Collections\ObjectExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Collections\QueueFactory.cs" />
     <Compile Include="Collections\ReusableArray.cs" />
     <Compile Include="Collections\ReusableCollection.cs" />
@@ -85,12 +86,24 @@
     <Compile Include="RequestFilters\FilterByMethod.cs" />
     <Compile Include="RequestFilters\FilterByPath.cs" />
     <Compile Include="Runtime\Component.cs" />
+    <Compile Include="Runtime\DataContext.cs" />
     <Compile Include="Runtime\Element.cs" />
     <Compile Include="Runtime\HtmlWriter.cs" />
+    <Compile Include="Runtime\HtmlWriterFactory.cs" />
+    <Compile Include="Runtime\IPageDependenciesFactory.cs" />
+    <Compile Include="Runtime\IPageDependencies.cs" />
+    <Compile Include="Runtime\IDataContextFactory.cs" />
+    <Compile Include="Runtime\IRenderContextFactory.cs" />
     <Compile Include="Runtime\Layout.cs" />
     <Compile Include="Runtime\Package.cs" />
     <Compile Include="Runtime\Page.cs" />
+    <Compile Include="Runtime\DataContextFactory.cs" />
+    <Compile Include="Runtime\RenderContextFactory.cs" />
+    <Compile Include="Runtime\PageDependenciesFactory.cs" />
+    <Compile Include="Runtime\PageDependencies.cs" />
+    <Compile Include="Runtime\RenderContext.cs" />
     <Compile Include="Runtime\RequestRouter.cs" />
+    <Compile Include="Runtime\WriteResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

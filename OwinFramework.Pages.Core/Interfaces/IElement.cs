@@ -46,10 +46,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="renderContext">The page rendering context for reference</param>
         /// <param name="dataContext">The data binding context or null if none has been established</param>
         /// <param name="assetType">The type of asset to write</param>
-        /// <param name="writer">The text writer to write to</param>
-        /// <rereturns>An object indicating how/when the write was completed.
-        /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType, IHtmlWriter writer);
+        IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType);
 
         /// <summary>
         /// This is where the element gets an opportunity to write JavaScript into the page
@@ -58,10 +55,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// </summary>
         /// <param name="renderContext">The page rendering context for reference</param>
         /// <param name="dataContext">The data binding context or null if none has been established</param>
-        /// <param name="writer">The text writer to write to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer);
+        IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
@@ -69,10 +65,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// </summary>
         /// <param name="renderContext"></param>
         /// <param name="dataContext">The data binding context or null if none has been established</param>
-        /// <param name="writer">The text writer to write to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer);
+        IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
@@ -81,10 +76,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// </summary>
         /// <param name="renderContext"></param>
         /// <param name="dataContext">The data binding context or null if none has been established</param>
-        /// <param name="writer">The text writer to write to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer);
+        IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
@@ -92,9 +86,8 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// </summary>
         /// <param name="renderContext"></param>
         /// <param name="dataContext">The data binding context or null if none has been established</param>
-        /// <param name="writer">The text writer to write to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer);
+        IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext);
     }
 }

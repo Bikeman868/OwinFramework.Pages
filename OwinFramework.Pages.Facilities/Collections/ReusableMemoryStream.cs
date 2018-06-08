@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.Facilities.Collections
     /// <summary>
     /// An implementation of IMemoryStream that is re-usable
     /// </summary>
-    public class ReusableMemoryStream : ReusableObject, IMemoryStream
+    internal class ReusableMemoryStream : ReusableObject, IMemoryStream
     {
         private readonly MemoryStream _memoryStream;
 

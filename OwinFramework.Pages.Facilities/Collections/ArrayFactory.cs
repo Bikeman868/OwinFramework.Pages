@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Facilities.Extensions;
 
 namespace OwinFramework.Pages.Facilities.Collections
 {
     /// <summary>
     /// Implementation of IArrayFactory that pools and reuses arrays
     /// </summary>
-    public class ArrayFactory: Disposable, IArrayFactory
+    internal class ArrayFactory: Disposable, IArrayFactory
     {
         private readonly IQueueFactory _queueFactory;
         private readonly long[] _arraySizes;

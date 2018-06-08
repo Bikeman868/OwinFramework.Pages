@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using OwinFramework.Pages.Core.Interfaces.Collections;
+﻿using OwinFramework.Pages.Core.Interfaces.Collections;
 
 namespace OwinFramework.Pages.Facilities.Collections
 {

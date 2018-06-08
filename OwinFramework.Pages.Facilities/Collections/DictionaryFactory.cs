@@ -3,7 +3,7 @@ using OwinFramework.Pages.Core.Interfaces.Collections;
 
 namespace OwinFramework.Pages.Facilities.Collections
 {
-    public class DictionaryFactory : IDictionaryFactory
+    internal class DictionaryFactory : IDictionaryFactory
     {
         public IThreadSafeDictionary<TKey, TValue> Create<TKey, TValue>(IEqualityComparer<TKey> equalityComparer)
         {

@@ -8,25 +8,31 @@ namespace Sample1.Pages
     [Example("<a href='/pages/semiCustom.html'>/pages/semiCustom.html</a>")]
     internal class SemiCustomPage : Page
     {
-        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
+        public SemiCustomPage(IPageDependencies dependencies)
+            : base(dependencies)
+        {}
+
+        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)
         {
-            writer.WriteLine("Page title");
-            return null;
+            renderContext.Html.WriteLine("Page title");
+            return WriteResult.ResponseComplete();
         }
 
         public override IWriteResult WriteHtml(
             IRenderContext renderContext,
-            IDataContext dataContext,
-            IHtmlWriter writer)
+            IDataContext dataContext)
         {
-            var begining = writer.CreateInsertionPoint();
+            // Save this location in the output buffer
+            var begining = renderContext.Html.CreateInsertionPoint();
 
-            writer.WriteLine("This is a semi custom page");
+            // Write a paragraph of text
+            renderContext.Html.WriteLine("<p>This is a semi custom page</p>");
 
+            // Use the saved buffer location to write the heading before
             begining.WriteElement("h1", "Semi Custom", "class", "page-heading");
             begining.WriteLine();
 
-            return null;
+            return WriteResult.Continue();
         }
     }
 }

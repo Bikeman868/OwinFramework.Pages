@@ -14,5 +14,17 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// write to the response stream.
         /// </summary>
         IOwinContext OwinContext { get; }
+
+        /// <summary>
+        /// Returns an instance of IHtmlWriter that can be used to write
+        /// html to the response stream
+        /// </summary>
+        IHtmlWriter Html { get; }
+
+        /// <summary>
+        /// Initializes the render context for a specific request
+        /// </summary>
+        /// <param name="context"></param>
+        IRenderContext Initialize(IOwinContext context);
     }
 }

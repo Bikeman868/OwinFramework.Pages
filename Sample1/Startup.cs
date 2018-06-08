@@ -58,7 +58,7 @@ namespace Sample1
                     10);
 
             router.Register(
-                new SemiCustomPage(), 
+                ninject.Get<SemiCustomPage>(), 
                 new FilterAllFilters(
                     new FilterByMethod(Methods.Get),
                     new FilterByPath("/pages/semiCustom.html")),

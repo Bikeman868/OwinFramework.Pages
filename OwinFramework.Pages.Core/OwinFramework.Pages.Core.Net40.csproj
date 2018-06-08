@@ -91,6 +91,7 @@
     <Compile Include="Interfaces\Collections\IQueueFactory.cs" />
     <Compile Include="Interfaces\Collections\IThreadSafeDictionary.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriter.cs" />
+    <Compile Include="Interfaces\Runtime\IHtmlWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IReusable.cs" />
     <Compile Include="Interfaces\Collections\IStringBuilder.cs" />
     <Compile Include="Interfaces\Collections\IStringBuilderFactory.cs" />

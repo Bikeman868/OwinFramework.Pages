@@ -40,6 +40,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         IHtmlWriter CreateInsertionPoint();
 
         /// <summary>
+        /// Turn indentation off to reduce the size of the html
+        /// </summary>
+        bool Indented { get; set; }
+
+        /// <summary>
         /// Specifies how much to indent new lines. In pretty mode
         /// writes a number of spaces for each level of indent at the
         /// start of every line.

@@ -38,86 +38,88 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// </summary>
         public string BodyClassNames { get; set; }
 
+        private readonly IPageDependencies _dependencies;
+
+        protected Page(IPageDependencies dependencies)
+        {
+            _dependencies = dependencies;
+        }
+
         /// <summary>
         /// Override this method to completely takeover how the page is produced
         /// </summary>
         public virtual Task Run(IOwinContext context)
         {
-            context.Response.ContentType = "text/html";
-            IRenderContext renderContext = null;
-            IDataContext dataContext = null;
+            _dependencies.Initialize(context);
 
-            var writer = new HtmlWriter();
+            context.Response.ContentType = "text/html";
+
+            var html = _dependencies.RenderContext.Html;
+
             try
             {
-                writer.WriteOpenTag("html");
-                writer.WriteOpenTag("head");
+                html.WriteOpenTag("html");
+                html.WriteOpenTag("head");
 
-                writer.WriteOpenTag("title");
-                WriteTitle(renderContext, dataContext, writer);
-                writer.WriteCloseTag("title");
+                html.WriteOpenTag("title");
+                WriteTitle(_dependencies.RenderContext, _dependencies.DataContext);
+                html.WriteCloseTag("title");
 
-                WriteHead(renderContext, dataContext, writer);
-                writer.WriteCloseTag("head");
+                WriteHead(_dependencies.RenderContext, _dependencies.DataContext);
+                html.WriteCloseTag("head");
 
                 if (string.IsNullOrEmpty(BodyClassNames))
-                {
-                    writer.WriteOpenTag("body");
-                }
+                    html.WriteOpenTag("body");
                 else
-                {
-                    writer.WriteOpenTag("body", "class", BodyClassNames);
-                }
-                WriteHtml(renderContext, dataContext, writer);
-                writer.WriteCloseTag("body");
+                    html.WriteOpenTag("body", "class", BodyClassNames);
+                WriteHtml(_dependencies.RenderContext, _dependencies.DataContext);
+                html.WriteCloseTag("body");
 
-                WriteInitializationScript(renderContext, dataContext, writer);
+                WriteInitializationScript(_dependencies.RenderContext, _dependencies.DataContext);
 
-                writer.WriteCloseTag("html");
-
-                var task = new Task(() =>
-                    {
-                        writer.ToResponse(context);
-                        writer.Dispose();
-                    });
-                task.Start();
-                return task;
+                html.WriteCloseTag("html");
             }
             catch
             {
-                writer.Dispose();
+                _dependencies.Dispose();
                 throw;
             }
+
+            return Task.Factory.StartNew(() =>
+                {
+                    html.ToResponse(context);
+                    _dependencies.Dispose();
+                });
         }
 
         public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
         {
-            return Layout != null ? Layout.WriteStaticAssets(assetType, writer) : null;
+            return Layout != null ? Layout.WriteStaticAssets(assetType, writer) : WriteResult.Continue();
         }
 
-        public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType, IHtmlWriter writer)
+        public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType)
         {
-            return Layout != null ? Layout.WriteDynamicAssets(renderContext, dataContext, assetType, writer) : null;
+            return Layout != null ? Layout.WriteDynamicAssets(renderContext, dataContext, assetType) : WriteResult.Continue();
         }
 
-        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
+        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext)
         {
-            return Layout != null ? Layout.WriteInitializationScript(renderContext, dataContext, writer) : null;
+            return Layout != null ? Layout.WriteInitializationScript(renderContext, dataContext) : WriteResult.Continue();
         }
 
-        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
+        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)
         {
-            return Layout != null ? Layout.WriteTitle(renderContext, dataContext, writer) : null;
+            return Layout != null ? Layout.WriteTitle(renderContext, dataContext) : WriteResult.Continue();
         }
 
-        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
+        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext)
         {
-            return Layout != null ? Layout.WriteHead(renderContext, dataContext, writer) : null;
+            return Layout != null ? Layout.WriteHead(renderContext, dataContext) : WriteResult.Continue();
         }
 
-        public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, IHtmlWriter writer)
+        public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
         {
-            return Layout != null ? Layout.WriteHtml(renderContext, dataContext, writer) : null;
+            return Layout != null ? Layout.WriteHtml(renderContext, dataContext) : WriteResult.Continue();
         }
     }
 }

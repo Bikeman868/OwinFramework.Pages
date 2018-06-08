@@ -7,7 +7,7 @@ namespace OwinFramework.Pages.Facilities.Collections
     /// <summary>
     /// An implementation of IStringBuilder that is re-usable
     /// </summary>
-    public class ReusableStringBuilder : ReusableCollection<char>, IStringBuilder
+    internal class ReusableStringBuilder : ReusableCollection<char>, IStringBuilder
     {
         public ReusableStringBuilder(IArrayFactory arrayFactory)
             : base(arrayFactory)

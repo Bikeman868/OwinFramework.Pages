@@ -9,9 +9,9 @@ namespace OwinFramework.Pages.Facilities.Collections
     /// <summary>
     /// An implementation of IArray<T> that is re-usable
     /// </summary>
-    public class ReusableArray<T>: ReusableObject, IArray<T>
+    internal class ReusableArray<T> : ReusableObject, IArray<T>
     {
-        private T[] _arrayData;
+        private readonly T[] _arrayData;
 
         public ReusableArray(long size)
         {

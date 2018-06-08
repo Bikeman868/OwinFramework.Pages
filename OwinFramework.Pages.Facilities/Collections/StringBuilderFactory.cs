@@ -6,7 +6,7 @@ namespace OwinFramework.Pages.Facilities.Collections
     /// <summary>
     /// Implementation of IStringBuilderFactory that pools and reuses string builders
     /// </summary>
-    public class StringBuilderFactory : ReusableObjectFactory, IStringBuilderFactory
+    internal class StringBuilderFactory : ReusableObjectFactory, IStringBuilderFactory
     {
         private readonly IArrayFactory _arrayFactory;
         private const Int64 _defaultCapacity = 8000;

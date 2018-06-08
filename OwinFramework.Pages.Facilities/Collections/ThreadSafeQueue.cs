@@ -5,7 +5,7 @@ using OwinFramework.Pages.Core.Interfaces.Collections;
 
 namespace OwinFramework.Pages.Facilities.Collections
 {
-    public class ThreadSafeQueue<T>: Disposable, IQueue<T>
+    internal class ThreadSafeQueue<T> : Disposable, IQueue<T>
     {
         private Queue<T> _queue;
         private readonly AutoResetEvent _notEmptyEvent;

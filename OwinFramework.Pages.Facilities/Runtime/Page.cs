@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
@@ -39,10 +40,24 @@ namespace OwinFramework.Pages.Facilities.Runtime
         public string BodyClassNames { get; set; }
 
         private readonly IPageDependenciesFactory _dependenciesFactory;
+        private IList<IComponent> _components;
 
         protected Page(IPageDependenciesFactory dependenciesFactory)
         {
             _dependenciesFactory = dependenciesFactory;
+        }
+
+        /// <summary>
+        /// Adds a non-visual component to the page. These components can write to the
+        /// page header, include javscript libraries, write canonical links etc
+        /// </summary>
+        /// <param name="component">The component to add</param>
+        public void AddComponent(IComponent component)
+        {
+            if (_components == null)
+                _components = new List<IComponent>();
+
+            _components.Add(component);
         }
 
         /// <summary>
@@ -102,6 +117,14 @@ namespace OwinFramework.Pages.Facilities.Runtime
 
         public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
         {
+            var writeResult = WriteResult.Continue();
+            if (_components != null)
+            {
+                foreach (var component in _components)
+                {
+                    var componentResult = component.
+                }
+            }
             return Layout != null ? Layout.WriteStaticAssets(assetType, writer) : WriteResult.Continue();
         }
 

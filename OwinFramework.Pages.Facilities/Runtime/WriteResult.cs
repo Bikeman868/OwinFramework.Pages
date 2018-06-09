@@ -21,11 +21,6 @@ namespace OwinFramework.Pages.Facilities.Runtime
         private Task[] _tasksToWaitFor;
         private List<CancellationTokenSource> _cancellationSources;
 
-        public static IWriteResult Create()
-        {
-            return _factory.Create();
-        }
-
         public static IWriteResult ResponseComplete()
         {
             var writeResult = _factory.Create();
@@ -87,7 +82,7 @@ namespace OwinFramework.Pages.Facilities.Runtime
 
         public static IWriteResult Continue()
         {
-            return null;
+            return _factory.Create();
         }
 
         private WriteResult()

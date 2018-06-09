@@ -16,7 +16,7 @@ using OwinFramework.Pages.Core.Enums;
  * places where they are used.
  */
 
-namespace Sample1.Pages
+namespace Sample1.SamplePages
 {
     /*
      * A package defines a namespace. These are used to import 3rd party libraries

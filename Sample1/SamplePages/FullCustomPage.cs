@@ -5,7 +5,7 @@ using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace Sample1.Pages
+namespace Sample1.SamplePages
 {
     [Description("<p>This is an example of how to add a full custom page that directly implements IPage</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for this custom page</p>")]

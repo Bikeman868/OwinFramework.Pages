@@ -1,12 +1,12 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Facilities.Runtime;
-using System.Threading.Tasks;
-using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Html.Runtime;
 
-namespace Sample1.Pages
+namespace Sample1.SamplePages
 {
     [Description("<p>This is an example of how to add a semi custom page that inherits from the base Page base class</p>")]
     [Example("<a href='/pages/semiCustom.html'>/pages/semiCustom.html</a>")]

@@ -69,8 +69,9 @@
     <Compile Include="Runtime\HtmlWriterFactory.cs" />
     <Compile Include="Runtime\IPageDependencies.cs" />
     <Compile Include="Runtime\IPageDependenciesFactory.cs" />
+    <Compile Include="Runtime\Region.cs" />
+    <Compile Include="Runtime\Module.cs" />
     <Compile Include="Runtime\Layout.cs" />
-    <Compile Include="Runtime\Package.cs" />
     <Compile Include="Runtime\Page.cs" />
     <Compile Include="Runtime\PageDependencies.cs" />
     <Compile Include="Runtime\PageDependenciesFactory.cs" />

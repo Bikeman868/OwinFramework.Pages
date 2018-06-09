@@ -87,6 +87,7 @@
     <Compile Include="Runtime\IDataContextFactory.cs" />
     <Compile Include="Runtime\IRenderContextFactory.cs" />
     <Compile Include="Runtime\DataContextFactory.cs" />
+    <Compile Include="Runtime\Package.cs" />
     <Compile Include="Runtime\RequestRouter.cs" />
     <Compile Include="Runtime\WriteResult.cs" />
   </ItemGroup>

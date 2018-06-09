@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -8,9 +6,9 @@ using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Facilities.RequestFilters;
-using OwinFramework.Pages.Facilities.Runtime;
+using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Facilities.Builders
+namespace OwinFramework.Pages.Html.Builders
 {
     internal class PageBuilder: IPageBuilder
     {

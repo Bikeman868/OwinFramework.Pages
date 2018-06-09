@@ -1,7 +1,7 @@
 ﻿using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 
-namespace OwinFramework.Pages.Facilities.Runtime
+namespace OwinFramework.Pages.Html.Runtime
 {
     /// <summary>
     /// You can choose to inherit from this base class if you are implementing

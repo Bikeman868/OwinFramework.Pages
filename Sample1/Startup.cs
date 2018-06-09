@@ -27,55 +27,74 @@ namespace Sample1
 
         public void Configuration(IAppBuilder app)
         {
+            // The package locator finds assemblies that advertise their IoC requirements
             var packageLocator = new PackageLocator()
                 .ProbeBinFolderAssemblies()
                 .Add(Assembly.GetExecutingAssembly());
 
+            // For this example we will use Ninject as the IoC container
             var ninject = new StandardKernel(new Ioc.Modules.Ninject.Module(packageLocator));
 
+            // Next we load up the configuration file and watch for changes
             var hostingEnvironment = ninject.Get<IHostingEnvironment>();
             var configFile = new FileInfo(hostingEnvironment.MapPath("config.json"));
             _configurationFileSource = ninject.Get<FileSource>().Initialize(configFile, TimeSpan.FromSeconds(5));
 
+            // Get a reference to the loaded configuration
             var config = ninject.Get<IConfiguration>();
 
-            var builder = ninject.Get<IBuilder>().EnableTracing();
+            // Get the Owin Framework pipeline builder
+            var pipelineBuilder = ninject.Get<IBuilder>().EnableTracing();
 
-            builder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/sample1/pages");
-            builder.Register(ninject.Get<OwinFramework.NotFound.NotFoundMiddleware>()).ConfigureWith(config, "/sample1/notFound");
-            builder.Register(ninject.Get<OwinFramework.Documenter.DocumenterMiddleware>()).ConfigureWith(config, "/sample1/documenter").RunFirst();
-            builder.Register(ninject.Get<OwinFramework.DefaultDocument.DefaultDocumentMiddleware>()).ConfigureWith(config, "/sample1/defaultDocument");
+            // Define the middleware to add to the Owin Pipeline
+            pipelineBuilder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/sample1/pages");
+            pipelineBuilder.Register(ninject.Get<OwinFramework.NotFound.NotFoundMiddleware>()).ConfigureWith(config, "/sample1/notFound");
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Documenter.DocumenterMiddleware>()).ConfigureWith(config, "/sample1/documenter").RunFirst();
+            pipelineBuilder.Register(ninject.Get<OwinFramework.DefaultDocument.DefaultDocumentMiddleware>()).ConfigureWith(config, "/sample1/defaultDocument");
 
-            app.UseBuilder(builder);
+            // Build the owin pipeline
+            app.UseBuilder(pipelineBuilder);
 
-            var router = ninject.Get<IRequestRouter>();
+            // The IRequestRouter is the entry point to the Pages middleware
+            var pageRequestRouter = ninject.Get<IRequestRouter>();
 
             // This is an example of registering an implementation of IPage with a 
             // wildcard request filter and low priority
-            router.Register(
+            pageRequestRouter.Register(
                 new FullCustomPage(),
                 new FilterAllFilters(
-                    new FilterByMethod(Methods.Get), 
+                    new FilterByMethod(Methods.Head, Methods.Get), 
                     new FilterByPath("/pages/*.html")),
                     10);
 
-            // This is an example of routing to a class that inherits from the base Page
-            // class with an exact match request filter and high priority
-            router.Register(
+            // This is an example of routing requests to a class that inherits from the
+            // base Page class with an exact match request filter and high priority
+            pageRequestRouter.Register(
                 ninject.Get<SemiCustomPage>(), 
                 new FilterAllFilters(
-                    new FilterByMethod(Methods.Get, Methods.Post),
+                    new FilterByMethod(Methods.Get, Methods.Post, Methods.Put),
                     new FilterByPath("/pages/semiCustom.html")),
                     100);
 
-            var registrar = ninject.Get<IElementRegistrar>();
+            // The IFluentBuilder provides a mechanism for building elements without
+            // writing code that implements the various interfaces like IPage, IComponent etc
+            var elementBuilder = ninject.Get<IFluentBuilder>();
+
+            // You must install build engines before trying to build elements using the
+            // fluent builder. You can use the built-in engines, install NuGet packages
+            // that provide build engines, or write your own.
+            ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(elementBuilder);
+            ninject.Get<OwinFramework.Pages.Restful.BuildEngine>().Install(elementBuilder);
 
             // This is an example of registering a page that is defined using custom attributes
-            registrar.Register(typeof(HomePage));
+            elementBuilder.Register(typeof(HomePage));
 
             // This is an example of registering a package containing components, layouts etc
-            // that can be referenced by name from other elements
-            registrar.Register(typeof(MenuPackage));
+            // that can be referenced by name from other elements. When you register a package
+            // like this all of the element in the package are contained in a namespace
+            // to avoid naming conflicts. This allows you to install packages from third
+            // parties.
+            elementBuilder.Register(ninject.Get<MenuPackage>());
         }
     }
 }

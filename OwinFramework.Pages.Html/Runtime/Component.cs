@@ -1,6 +1,7 @@
 ﻿using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Facilities.Runtime;
 
-namespace OwinFramework.Pages.Facilities.Runtime
+namespace OwinFramework.Pages.Html.Runtime
 {
     /// <summary>
     /// Base implementation of IComponent. Inheriting from this olass will insulate you

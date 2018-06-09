@@ -4,6 +4,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Facilities.Runtime;
 using System.Threading.Tasks;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace Sample1.Pages
 {

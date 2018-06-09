@@ -26,7 +26,7 @@ namespace Sample1
                     new IocRegistration().Init<IConfiguration>(),
                     new IocRegistration().Init<IBuilder>(),
                     new IocRegistration().Init<IRequestRouter>(),
-                    new IocRegistration().Init<IElementRegistrar>(),
+                    new IocRegistration().Init<IFluentBuilder>(),
                 };
             }
         }

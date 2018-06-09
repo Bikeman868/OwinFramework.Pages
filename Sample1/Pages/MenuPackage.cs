@@ -1,12 +1,12 @@
 ﻿using OwinFramework.Pages.Core.Attributes;
-using OwinFramework.Pages.Core.BaseClasses;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Facilities.Runtime;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace Sample1.Pages
 {
     [IsPackage("Menu", "menu")]
-    public class MenuPackage : OwinFramework.Pages.Facilities.Runtime.Package
+    public class MenuPackage : OwinFramework.Pages.Html.Runtime.Package
     {
         public class MenuItem
         {

@@ -34,23 +34,12 @@ namespace OwinFramework.Pages.Facilities
                     new IocRegistration().Init<IQueueFactory, QueueFactory>(),
                     new IocRegistration().Init<IStringBuilderFactory, StringBuilderFactory>(),
 
-                    // The Html writer has dependencies so it needs to be constructed by IoC
-                    new IocRegistration().Init<IHtmlWriterFactory, HtmlWriterFactory>(),
-                    new IocRegistration().Init<IHtmlWriter, HtmlWriter>(IocLifetime.MultiInstance),
-
-                    // Pages have depedencies that are wrapped in an interface to avoid
-                    // breaking application page constructors if new dependencies are added
-                    // later
-                    new IocRegistration().Init<IPageDependenciesFactory, PageDependenciesFactory>(),
-                    new IocRegistration().Init<IRenderContextFactory, RenderContextFactory>(),
+                    // Data context is a shared concept, it applies to REST APIs and Html pages
                     new IocRegistration().Init<IDataContextFactory, DataContextFactory>(),
-                    new IocRegistration().Init<IPageDependencies, PageDependencies>(IocLifetime.MultiInstance),
-                    new IocRegistration().Init<IRenderContext, RenderContext>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IDataContext, DataContext>(IocLifetime.MultiInstance),
 
-                    // These classes implement the rendering framework. They are thread-safe singletons
-                    new IocRegistration().Init<IElementRegistrar, ElementRegistrar>(),
-                    new IocRegistration().Init<IPageBuilder, PageBuilder>(),
+                    // These classes implement core facilities. They are thread-safe singletons
+                    new IocRegistration().Init<IFluentBuilder, FluentBuilder>(),
                     new IocRegistration().Init<IAssetManager, AssetManager>(),
                     new IocRegistration().Init<ITextManager, TextManager>(),
                     new IocRegistration().Init<INameManager, NameManager>(),

@@ -3,7 +3,7 @@ using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Facilities.Extensions;
 
-namespace OwinFramework.Pages.Facilities.Runtime
+namespace OwinFramework.Pages.Html.Runtime
 {
     internal class RenderContext: IRenderContext, IDisposable
     {

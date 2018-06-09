@@ -1,6 +1,6 @@
 ﻿using OwinFramework.Pages.Core.Interfaces;
 
-namespace OwinFramework.Pages.Facilities.Runtime
+namespace OwinFramework.Pages.Html.Runtime
 {
     /// <summary>
     /// Base implementation of ILayout. Inheriting from this olass will insulate you

@@ -5,8 +5,9 @@ using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Facilities.Runtime;
 
-namespace OwinFramework.Pages.Facilities.Runtime
+namespace OwinFramework.Pages.Html.Runtime
 {
     /// <summary>
     /// Base implementation of IPage. Inheriting from this olass will insulate you
@@ -70,10 +71,10 @@ namespace OwinFramework.Pages.Facilities.Runtime
             var data = dependencies.DataContext;
             var context = dependencies.RenderContext;
 
-            var writeResult = WriteResult.Create();
 
             owinContext.Response.ContentType = "text/html";
 
+            var writeResult = WriteResult.Continue();
             try
             {
                 html.WriteOpenTag("html");
@@ -118,39 +119,111 @@ namespace OwinFramework.Pages.Facilities.Runtime
         public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
         {
             var writeResult = WriteResult.Continue();
+
             if (_components != null)
             {
                 foreach (var component in _components)
                 {
-                    var componentResult = component.
+                    writeResult.Add(component.WriteStaticAssets(assetType, writer));
+
+                    if (writeResult.IsComplete)
+                        return writeResult;
                 }
             }
-            return Layout != null ? Layout.WriteStaticAssets(assetType, writer) : WriteResult.Continue();
+
+            if (Layout != null)
+                writeResult.Add(Layout.WriteStaticAssets(assetType, writer));
+
+            return writeResult;
         }
 
         public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType)
         {
-            return Layout != null ? Layout.WriteDynamicAssets(renderContext, dataContext, assetType) : WriteResult.Continue();
+            var writeResult = WriteResult.Continue();
+
+            if (_components != null)
+            {
+                foreach (var component in _components)
+                {
+                    writeResult.Add(component.WriteDynamicAssets(renderContext, dataContext, assetType));
+
+                    if (writeResult.IsComplete)
+                        return writeResult;
+                }
+            }
+
+            if (Layout != null)
+                writeResult.Add(Layout.WriteDynamicAssets(renderContext, dataContext, assetType));
+
+            return writeResult;
         }
 
         public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext)
         {
-            return Layout != null ? Layout.WriteInitializationScript(renderContext, dataContext) : WriteResult.Continue();
+            var writeResult = WriteResult.Continue();
+
+            if (_components != null)
+            {
+                foreach (var component in _components)
+                {
+                    writeResult.Add(component.WriteInitializationScript(renderContext, dataContext));
+
+                    if (writeResult.IsComplete)
+                        return writeResult;
+                }
+            }
+
+            if (Layout != null)
+                writeResult.Add(Layout.WriteInitializationScript(renderContext, dataContext));
+
+            return writeResult;
         }
 
         public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)
         {
-            return Layout != null ? Layout.WriteTitle(renderContext, dataContext) : WriteResult.Continue();
+            var writeResult = WriteResult.Continue();
+
+            if (_components != null)
+            {
+                foreach (var component in _components)
+                {
+                    writeResult.Add(component.WriteTitle(renderContext, dataContext));
+
+                    if (writeResult.IsComplete)
+                        return writeResult;
+                }
+            }
+
+            if (Layout != null)
+                writeResult.Add(Layout.WriteTitle(renderContext, dataContext));
+
+            return writeResult;
         }
 
         public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext)
         {
-            return Layout != null ? Layout.WriteHead(renderContext, dataContext) : WriteResult.Continue();
+            var writeResult = WriteResult.Continue();
+
+            if (_components != null)
+            {
+                foreach (var component in _components)
+                {
+                    writeResult.Add(component.WriteHead(renderContext, dataContext));
+
+                    if (writeResult.IsComplete)
+                        return writeResult;
+                }
+            }
+
+            if (Layout != null)
+                writeResult.Add(Layout.WriteHead(renderContext, dataContext));
+
+            return writeResult;
         }
 
         public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
         {
-            return Layout != null ? Layout.WriteHtml(renderContext, dataContext) : WriteResult.Continue();
+            return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(renderContext, dataContext);
         }
     }
 }

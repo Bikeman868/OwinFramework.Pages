@@ -6,7 +6,7 @@ using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Facilities.Runtime
+namespace OwinFramework.Pages.Html.Runtime
 {
     /// <summary>
     /// A TextWriter that writes HTML to the response. Has special features for

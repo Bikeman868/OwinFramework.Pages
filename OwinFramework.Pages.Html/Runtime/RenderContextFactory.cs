@@ -1,6 +1,7 @@
 ﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Facilities.Runtime;
 
-namespace OwinFramework.Pages.Facilities.Runtime
+namespace OwinFramework.Pages.Html.Runtime
 {
     internal class RenderContextFactory : IRenderContextFactory
     {

@@ -55,10 +55,40 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildEngine.cs" />
+    <Compile Include="Builders\ComponentBuilder.cs" />
+    <Compile Include="Builders\LayoutBuilder.cs" />
+    <Compile Include="Builders\ModuleBuilder.cs" />
+    <Compile Include="Builders\PageBuilder.cs" />
+    <Compile Include="Builders\RegionBuilder.cs" />
+    <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\Component.cs" />
+    <Compile Include="Runtime\Element.cs" />
+    <Compile Include="Runtime\HtmlWriter.cs" />
+    <Compile Include="Runtime\HtmlWriterFactory.cs" />
+    <Compile Include="Runtime\IPageDependencies.cs" />
+    <Compile Include="Runtime\IPageDependenciesFactory.cs" />
+    <Compile Include="Runtime\Layout.cs" />
+    <Compile Include="Runtime\Package.cs" />
+    <Compile Include="Runtime\Page.cs" />
+    <Compile Include="Runtime\PageDependencies.cs" />
+    <Compile Include="Runtime\PageDependenciesFactory.cs" />
+    <Compile Include="Runtime\RenderContext.cs" />
+    <Compile Include="Runtime\RenderContextFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">
+      <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
+      <Name>OwinFramework.Pages.Core.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Facilities\OwinFramework.Pages.Facilities.Net40.csproj">
+      <Project>{83e44b37-d3aa-4622-a03b-3c976ea58c83}</Project>
+      <Name>OwinFramework.Pages.Facilities.Net40</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

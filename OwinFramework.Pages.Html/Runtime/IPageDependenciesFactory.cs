@@ -1,6 +1,6 @@
 ﻿using Microsoft.Owin;
 
-namespace OwinFramework.Pages.Facilities.Runtime
+namespace OwinFramework.Pages.Html.Runtime
 {
     public interface IPageDependenciesFactory
     {

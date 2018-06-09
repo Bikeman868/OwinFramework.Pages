@@ -1,9 +1,9 @@
-﻿using System.IO;
-using OwinFramework.Pages.Core.Enums;
+﻿using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Facilities.Runtime;
 
-namespace OwinFramework.Pages.Facilities.Runtime
+namespace OwinFramework.Pages.Html.Runtime
 {
     /// <summary>
     /// Base implementation of IPage. Inheriting from this olass will insulate you

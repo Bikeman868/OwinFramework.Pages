@@ -1,6 +1,7 @@
 ﻿using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Facilities.Extensions;
+using OwinFramework.Pages.Facilities.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
@@ -19,7 +20,6 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IPageDependencies Initialize(IOwinContext context)
         {
-            DataContext.Initialize(context);
             RenderContext.Initialize(context);
             return this;
         }

@@ -310,6 +310,13 @@ namespace OwinFramework.Pages.Facilities.Managers
             return string.Intern(elementName);
         }
 
+
+        public void EnsureAssetName(IElement element, ref string assetName)
+        {
+            if (string.IsNullOrEmpty(assetName))
+                assetName = GenerateAssetName(element);
+        }
+
         #endregion
     }
 }

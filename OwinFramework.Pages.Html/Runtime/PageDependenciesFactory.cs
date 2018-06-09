@@ -32,5 +32,15 @@ namespace OwinFramework.Pages.Html.Runtime
                 _nameManager)
                 .Initialize(context);
         }
+
+        public INameManager NameManager
+        {
+            get { return _nameManager; }
+        }
+
+        public IAssetManager AssetManager
+        {
+            get { return _assetManager; }
+        }
     }
 }

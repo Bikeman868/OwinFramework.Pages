@@ -88,6 +88,8 @@ namespace OwinFramework.Pages.Facilities.Builders
 
             Exception exception = null;
 
+            // Must register packages first because they define the 
+            // namespace for the other elements
             foreach (var type in packageTypes)
             {
                 try
@@ -100,6 +102,7 @@ namespace OwinFramework.Pages.Facilities.Builders
                 }
             }
 
+            // Register everything else
             foreach (var type in otherTypes)
             {
                 try
@@ -189,7 +192,7 @@ namespace OwinFramework.Pages.Facilities.Builders
         {
             if (PageBuilder == null)
                 throw new BuilderException("There is no build engine installed that knows how to build pages");
-            return PageBuilder.Page();
+            return PageBuilder.Page(declaringType);
         }
 
         public IServiceDefinition Service(Type declaringType)

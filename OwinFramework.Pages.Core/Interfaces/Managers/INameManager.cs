@@ -133,5 +133,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// identifier or a css class name.
         /// </summary>
         string GenerateAssetName(IElement element);
+
+        /// <summary>
+        /// Allocates an asset name if the asset has no name already
+        /// </summary>
+        void EnsureAssetName(IElement element, ref string assetName);
     }
 }

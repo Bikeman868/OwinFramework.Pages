@@ -74,7 +74,6 @@
     <Compile Include="Collections\ThreadSafeQueue.cs" />
     <Compile Include="Managers\AssetManager.cs" />
     <Compile Include="Managers\NameManager.cs" />
-    <Compile Include="Managers\TextManager.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Builders\FluentBuilder.cs" />

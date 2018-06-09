@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\PageTitleAttribute.cs" />
     <Compile Include="Attributes\RequiresPermissionAttribute.cs" />
     <Compile Include="Attributes\RenderTextAttribute.cs" />
     <Compile Include="Attributes\IsElementAttributeBase.cs" />
@@ -126,7 +127,6 @@
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Interfaces\Managers\INameManager.cs" />
     <Compile Include="Interfaces\Managers\IAssetManager.cs" />
-    <Compile Include="Interfaces\Managers\ITextManager.cs" />
     <Compile Include="Interfaces\Runtime\IDataContext.cs" />
     <Compile Include="Interfaces\Runtime\IRenderContext.cs" />
     <Compile Include="Interfaces\Runtime\IRequestFilter.cs" />

@@ -31,6 +31,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public virtual Func<IOwinContext, bool> AuthenticationFunc { get { return null; } }
 
         /// <summary>
+        /// Calculates the page page title
+        /// </summary>
+        public Func<IRenderContext, IDataContext, string> TitleFunc { get; set; }
+
+        /// <summary>
         /// Defines the layout of this page
         /// </summary>
         public ILayout Layout { get; set; }
@@ -77,7 +82,8 @@ namespace OwinFramework.Pages.Html.Runtime
             var writeResult = WriteResult.Continue();
             try
             {
-                html.WriteOpenTag("html");
+                html.WriteLine("<!doctype html>");
+                html.WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", context.Language);
                 html.WriteOpenTag("head");
 
                 html.WriteOpenTag("title");
@@ -182,6 +188,12 @@ namespace OwinFramework.Pages.Html.Runtime
         public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)
         {
             var writeResult = WriteResult.Continue();
+
+            if (TitleFunc != null)
+            {
+                renderContext.Html.WriteLine(TitleFunc(renderContext, dataContext));
+                return writeResult;
+            }
 
             if (_components != null)
             {

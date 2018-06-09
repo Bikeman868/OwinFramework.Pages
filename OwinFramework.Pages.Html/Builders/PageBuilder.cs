@@ -159,6 +159,21 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
+            IPageDefinition IPageDefinition.Title(string title)
+            {
+                if (string.IsNullOrEmpty(title))
+                    _page.TitleFunc = null;
+                else
+                    _page.TitleFunc = (r, d) => title;
+                return this;
+            }
+
+            IPageDefinition IPageDefinition.Title(Func<IRenderContext, IDataContext, string> titleFunc)
+            {
+                _page.TitleFunc = titleFunc;
+                return this;
+            }
+
             IPage IPageDefinition.Build()
             {
                 if (_filter == null)

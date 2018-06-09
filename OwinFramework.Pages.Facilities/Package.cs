@@ -38,7 +38,6 @@ namespace OwinFramework.Pages.Facilities
                     // These classes implement core facilities. They are thread-safe singletons
                     new IocRegistration().Init<IFluentBuilder, FluentBuilder>(),
                     new IocRegistration().Init<IAssetManager, AssetManager>(),
-                    new IocRegistration().Init<ITextManager, TextManager>(),
                     new IocRegistration().Init<INameManager, NameManager>(),
 
                     // The request router is the top level entry point and the only

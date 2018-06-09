@@ -134,6 +134,7 @@ namespace OwinFramework.Pages.Facilities.Builders
                 var regionComponent = attribute as RegionComponentAttribute;
                 var regionLayout = attribute as RegionLayoutAttribute;
                 var route = attribute as RouteAttribute;
+                var title = attribute as PageTitleAttribute;
 
                 if (deployedAs != null)
                     page.AssetDeployment(deployedAs.Deployment);
@@ -155,6 +156,9 @@ namespace OwinFramework.Pages.Facilities.Builders
                     page.Path(route.Path);
                     page.Methods(route.Methods);
                 }
+
+                if (title != null)
+                    page.Title(title.Title);
             }
 
             page.Build();

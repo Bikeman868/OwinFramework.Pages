@@ -178,9 +178,9 @@ namespace OwinFramework.Pages.Html.Runtime
                 {
                     Write(' ');
                     Write(attributePairs[i]);
-                    Write("='");
+                    Write("=\"");
                     Write(attributePairs[i + 1]);
-                    Write('\'');
+                    Write('"');
                 }
             }
         }

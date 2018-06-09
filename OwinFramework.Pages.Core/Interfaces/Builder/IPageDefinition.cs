@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Enums;
+﻿using System;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
@@ -12,6 +13,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Gives a name to the page
         /// </summary>
         IPageDefinition Name(string name);
+
+        /// <summary>
+        /// Sets the title for this page
+        /// </summary>
+        /// <param name="title"></param>
+        IPageDefinition Title(string title);
+
+        /// <summary>
+        /// Sets the title for this page
+        /// </summary>
+        /// <param name="titleFunc">A delegate that will calculate the 
+        /// title for this page</param>
+        IPageDefinition Title(Func<IRenderContext, IDataContext, string> titleFunc);
 
         /// <summary>
         /// Specifies that this page is part of a package and should
@@ -28,7 +42,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="packageName">The name of the package that this 
         /// page is part of</param>
         IPageDefinition PartOf(string packageName);
-
 
         /// <summary>
         /// Overrides the default asset deployment scheme for this page

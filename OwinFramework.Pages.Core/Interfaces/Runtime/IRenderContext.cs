@@ -22,9 +22,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         IHtmlWriter Html { get; }
 
         /// <summary>
+        /// Returns the language that this page should be rendered in
+        /// </summary>
+        string Language { get; }
+
+        /// <summary>
         /// Initializes the render context for a specific request
         /// </summary>
-        /// <param name="context"></param>
         IRenderContext Initialize(IOwinContext context);
     }
 }

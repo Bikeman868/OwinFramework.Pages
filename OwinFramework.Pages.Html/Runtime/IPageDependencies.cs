@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -8,6 +9,8 @@ namespace OwinFramework.Pages.Html.Runtime
     {
         IRenderContext RenderContext { get; }
         IDataContext DataContext { get; }
+        IAssetManager AssetManager { get; }
+        INameManager NameManager { get; }
 
         IPageDependencies Initialize(IOwinContext context);
     }

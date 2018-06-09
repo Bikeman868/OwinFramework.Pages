@@ -29,8 +29,9 @@ namespace OwinFramework.Pages.Facilities.Runtime
         /// <summary>
         /// Override this to build package elements
         /// </summary>
-        public virtual void Build(IFluentBuilder builder)
+        public virtual IPackage Build(IFluentBuilder builder)
         {
+            return this;
         }
     }
 }

@@ -177,13 +177,17 @@ namespace Sample1.Pages
     /// Uses the 'main' layout but changes the contents of each region.
     /// </summary>
     [IsPage]
-    [UsesLayout("main")]
-    [Route("/home.html", Methods.Get)]
-    [PageTitle("Sample website")]
+
     [Description("<p>This is an example of how to add a page declatively using attributes</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for the home page</p>")]
     [Option(OptionType.Header, "Accept", "Must contain text/html, which is only available response format")]
     [Example("<a href='/home.html'>/home.html</a>")]
+
+    [PartOf("Application")]
+    [UsesLayout("main")]
+    [Route("/home.html", Methods.Get)]
+    [PageTitle("Sample website")]
+    [Style("font-size: 18px;")]
     [RegionComponent("header", "header.mainMenu")]
     [RegionLayout("body", "homePage")]
     [RegionComponent("footer", "footer.standard")]

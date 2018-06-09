@@ -30,6 +30,6 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// This method is called to give your package a chance to build
         /// all of the elements in the package.
         /// </summary>
-        void Build(IFluentBuilder builder);
+        IPackage Build(IFluentBuilder builder);
     }
 }

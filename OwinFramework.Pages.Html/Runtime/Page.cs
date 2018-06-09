@@ -45,8 +45,14 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public string BodyClassNames { get; set; }
 
+        /// <summary>
+        /// The names of the css class to attach to the body element
+        /// </summary>
+        public string BodyStyle { get; set; }
+
         private readonly IPageDependenciesFactory _dependenciesFactory;
         private IList<IComponent> _components;
+        private string _bodyStyleName;
 
         protected Page(IPageDependenciesFactory dependenciesFactory)
         {
@@ -95,10 +101,22 @@ namespace OwinFramework.Pages.Html.Runtime
                 writeResult.Add(WriteDynamicAssets(context, data, AssetType.Script));
                 html.WriteCloseTag("head");
 
-                if (string.IsNullOrEmpty(BodyClassNames))
+                var bodyClassNames = BodyClassNames;
+                if (!string.IsNullOrEmpty(BodyStyle))
+                {
+                    if (_bodyStyleName == null)
+                        _bodyStyleName = dependencies.NameManager.GenerateAssetName(this);
+                    if (string.IsNullOrEmpty(bodyClassNames))
+                        bodyClassNames = _bodyStyleName;
+                    else
+                        bodyClassNames += " " + _bodyStyleName;
+                }
+
+                if (string.IsNullOrEmpty(bodyClassNames))
                     html.WriteOpenTag("body");
                 else
-                    html.WriteOpenTag("body", "class", BodyClassNames);
+                    html.WriteOpenTag("body", "class", bodyClassNames);
+
                 writeResult.Add(WriteHtml(context, data));
                 html.WriteCloseTag("body");
 

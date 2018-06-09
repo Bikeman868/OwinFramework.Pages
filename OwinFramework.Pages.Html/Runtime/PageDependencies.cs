@@ -1,7 +1,7 @@
 ﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Facilities.Extensions;
-using OwinFramework.Pages.Facilities.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
@@ -9,13 +9,19 @@ namespace OwinFramework.Pages.Html.Runtime
     {
         public IRenderContext RenderContext { get; private set; }
         public IDataContext DataContext { get; private set; }
+        public IAssetManager AssetManager { get; private set; }
+        public INameManager NameManager { get; private set; }
 
         public PageDependencies(
             IRenderContext renderContext,
-            IDataContext dataContext)
+            IDataContext dataContext,
+            IAssetManager assetManager,
+            INameManager nameManager)
         {
             RenderContext = renderContext;
             DataContext = dataContext;
+            AssetManager = assetManager;
+            NameManager = nameManager;
         }
 
         public IPageDependencies Initialize(IOwinContext context)

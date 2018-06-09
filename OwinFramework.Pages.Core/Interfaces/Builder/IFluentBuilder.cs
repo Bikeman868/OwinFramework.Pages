@@ -11,12 +11,14 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionBuilder,
         ILayoutBuilder,
         IPageBuilder,
-        IServiceBuilder
+        IServiceBuilder,
+        IModuleBuilder
     {
         /// <summary>
-        /// Registers all components, layouts, regions etc defined in the package
+        /// Registers all components, layouts, regions etc defined in the package. Optionally
+        /// allows you to modify the namespace of the package from the default one
         /// </summary>
-        void Register(IPackage package);
+        void Register(IPackage package, string namespaceName = null);
 
         /// <summary>
         /// Searches within the given assembly for all eleemnts and

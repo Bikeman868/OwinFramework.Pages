@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\PageTitleAttribute.cs" />
+    <Compile Include="Attributes\StyleAttribute.cs" />
     <Compile Include="Attributes\RequiresPermissionAttribute.cs" />
     <Compile Include="Attributes\RenderTextAttribute.cs" />
     <Compile Include="Attributes\IsElementAttributeBase.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Attributes\IsPageAttribute.cs" />
     <Compile Include="Exceptions\ServiceBuilderException.cs" />
     <Compile Include="Interfaces\Builder\IBuildEngine.cs" />
+    <Compile Include="Interfaces\Builder\IPackageDefinition.cs" />
     <Compile Include="Interfaces\Collections\IArray.cs" />
     <Compile Include="Interfaces\Collections\IArrayFactory.cs" />
     <Compile Include="Interfaces\Collections\IDictionaryFactory.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -7,7 +8,79 @@ namespace OwinFramework.Pages.Html.Builders
     {
         IRegionDefinition IRegionBuilder.Region()
         {
-            throw new NotImplementedException();
+            return new RegionDefinition();
+        }
+
+        private class RegionDefinition: IRegionDefinition
+        {
+            public IRegionDefinition Name(string name)
+            {
+                return this;
+            }
+
+            public IRegionDefinition PartOf(Core.Interfaces.IPackage package)
+            {
+                return this;
+            }
+
+            public IRegionDefinition PartOf(string packageName)
+            {
+                return this;
+            }
+
+            public IRegionDefinition AssetDeployment(Core.Enums.AssetDeployment assetDeployment)
+            {
+                return this;
+            }
+
+            public IRegionDefinition Layout(Core.Interfaces.ILayout layout)
+            {
+                return this;
+            }
+
+            public IRegionDefinition Layout(string name)
+            {
+                return this;
+            }
+
+            public IRegionDefinition Component(Core.Interfaces.IComponent component)
+            {
+                return this;
+            }
+
+            public IRegionDefinition Component(string componentName)
+            {
+                return this;
+            }
+
+            public IRegionDefinition Tag(string tagName)
+            {
+                return this;
+            }
+
+            public IRegionDefinition ClassNames(params string[] classNames)
+            {
+                return this;
+            }
+
+            public IRegionDefinition Style(string style)
+            {
+                return this;
+            }
+
+            public IRegionDefinition ForEach<T>()
+            {
+                return this;
+            }
+
+            public Core.Interfaces.IRegion Build()
+            {
+                return new BuiltRegion();
+            }
+        }
+
+        private class BuiltRegion: Region
+        {
         }
     }
 }

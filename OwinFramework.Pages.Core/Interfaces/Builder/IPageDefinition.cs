@@ -44,6 +44,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDefinition PartOf(string packageName);
 
         /// <summary>
+        /// Sets the css style of the body tag
+        /// </summary>
+        /// <param name="cssStyle">A valid css style definition, for example "margin: 10;"</param>
+        /// <returns></returns>
+        IPageDefinition BodyStyle(string cssStyle);
+
+        /// <summary>
         /// Overrides the default asset deployment scheme for this page
         /// </summary>
         IPageDefinition AssetDeployment(AssetDeployment assetDeployment);

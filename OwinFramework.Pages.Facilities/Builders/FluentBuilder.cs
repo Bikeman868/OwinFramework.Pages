@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 
 namespace OwinFramework.Pages.Facilities.Builders
 {
@@ -22,12 +24,36 @@ namespace OwinFramework.Pages.Facilities.Builders
         public IComponentBuilder ComponentBuilder { get; set; }
         public IServiceBuilder ServiceBuilder { get; set; }
 
-        private readonly HashSet<string> _assemblies = new HashSet<string>();
-        private readonly HashSet<string> _types = new HashSet<string>();
+        private readonly INameManager _nameManager;
+        private readonly HashSet<string> _assemblies;
+        private readonly HashSet<string> _types;
+        private readonly IPackage _packageContext;
 
-        void IFluentBuilder.Register(IPackage package)
+        public FluentBuilder(
+            INameManager nameManager)
         {
+            _nameManager = nameManager;
+            _assemblies = new HashSet<string>();
+            _types = new HashSet<string>();
+        }
+
+        private FluentBuilder(
+            FluentBuilder parent,
+            IPackage packageContext)
+        {
+            _nameManager = parent._nameManager;
+            _assemblies = parent._assemblies;
+            _types = parent._types;
+            _packageContext = packageContext;
+        }
+
+        void IFluentBuilder.Register(IPackage package, string namespaceName)
+        {
+            if (!_types.Add(package.GetType().FullName))
+                return;
+
             var attributes = package.GetType().GetCustomAttributes(true);
+
             foreach (var attribute in attributes)
             {
                 var isPackage = attribute as IsPackageAttribute;
@@ -42,7 +68,12 @@ namespace OwinFramework.Pages.Facilities.Builders
                 }
             }
 
-            //package.Build(this);
+            if (!string.IsNullOrEmpty(namespaceName))
+                package.NamespaceName = namespaceName;
+
+            _nameManager.Register(package);
+
+            package.Build(new FluentBuilder(this, package));
         }
 
         void IFluentBuilder.Register(Assembly assembly)
@@ -52,9 +83,24 @@ namespace OwinFramework.Pages.Facilities.Builders
 
             var types = assembly.GetTypes();
 
+            var packageTypes = types.Where(t => t.GetCustomAttributes(true).Any(a => a is IsPackageAttribute)).ToList();
+            var otherTypes = types.Where(t => !t.GetCustomAttributes(true).Any(a => a is IsPackageAttribute)).ToList();
+
             Exception exception = null;
 
-            foreach (var type in types)
+            foreach (var type in packageTypes)
+            {
+                try
+                {
+                    ((IFluentBuilder)this).Register(type);
+                }
+                catch (Exception ex)
+                {
+                    exception = ex;
+                }
+            }
+
+            foreach (var type in otherTypes)
             {
                 try
                 {
@@ -77,6 +123,7 @@ namespace OwinFramework.Pages.Facilities.Builders
 
             var attributes = type.GetCustomAttributes(true);
 
+            IsPackageAttribute isPackage = null;
             IsModuleAttribute isModule = null;
             IsPageAttribute isPage = null;
             IsLayoutAttribute isLayout = null;
@@ -86,6 +133,9 @@ namespace OwinFramework.Pages.Facilities.Builders
 
             foreach (var attribute in attributes)
             {
+                if (attribute is IsPackageAttribute)
+                    isPackage = attribute as IsPackageAttribute;
+
                 if (attribute is IsModuleAttribute)
                     isModule = attribute as IsModuleAttribute;
 
@@ -105,6 +155,7 @@ namespace OwinFramework.Pages.Facilities.Builders
                     isService = attribute as IsServiceAttribute;
             }
 
+            if (isPackage != null) BuildPackage(type, isPackage, attributes);
             if (isModule != null) BuildModule(type, isModule, attributes);
             if (isPage != null) BuildPage(type, isPage, attributes);
             if (isLayout != null) BuildLayout(type, isLayout, attributes);
@@ -113,18 +164,81 @@ namespace OwinFramework.Pages.Facilities.Builders
             if (isService != null) BuildService(type, isService, attributes);
         }
 
-        private void BuildModule(Type type, IsModuleAttribute isModule, object[] attributes)
+        public IComponentDefinition Component()
+        {
+            if (ComponentBuilder == null)
+                throw new BuilderException("There is no build engine installed that knows how to build components");
+            return ComponentBuilder.Component();
+        }
+
+        public IRegionDefinition Region()
+        {
+            if (RegionBuilder == null)
+                throw new BuilderException("There is no build engine installed that knows how to build regions");
+            return RegionBuilder.Region();
+        }
+
+        public ILayoutDefinition Layout()
+        {
+            if (LayoutBuilder == null)
+                throw new BuilderException("There is no build engine installed that knows how to build layouts");
+            return LayoutBuilder.Layout();
+        }
+
+        public IPageDefinition Page(Type declaringType)
+        {
+            if (PageBuilder == null)
+                throw new BuilderException("There is no build engine installed that knows how to build pages");
+            return PageBuilder.Page();
+        }
+
+        public IServiceDefinition Service(Type declaringType)
+        {
+            if (ServiceBuilder == null)
+                throw new BuilderException("There is no build engine installed that knows how to build services");
+            return ServiceBuilder.Service();
+        }
+
+        public IModuleDefinition Module()
         {
             if (ModuleBuilder == null)
                 throw new BuilderException("There is no build engine installed that knows how to build modules");
+            return ModuleBuilder.Module();
+        }
+
+        private void BuildPackage(Type type, IsPackageAttribute isPackage, object[] attributes)
+        {
+            IPackageDefinition package = new PackageDefinition(type, this, _nameManager);
+            
+            package.Name(isPackage.Name);
+            package.NamespaceName(isPackage.NamespaceName);
+
+            foreach (var attribute in attributes)
+            {
+                var deployedAs = attribute as DeployedAsAttribute;
+
+                if (deployedAs != null)
+                    package.Module(deployedAs.ModuleName);
+            }
+
+            package.Build();
+        }
+
+        private void BuildModule(Type type, IsModuleAttribute isModule, object[] attributes)
+        {
+            var module = Module()
+                .Name(isModule.Name)
+                .AssetDeployment(isModule.AssetDeployment);
+
+            module.Build();
         }
 
         private void BuildPage(Type type, IsPageAttribute isPage, object[] attributes)
         {
-            if (PageBuilder == null)
-                throw new BuilderException("There is no build engine installed that knows how to build pages");
+            var page = Page(type).Name(isPage.Name);
 
-            var page = PageBuilder.Page(type).Name(isPage.Name);
+            if (_packageContext != null)
+                page.PartOf(_packageContext);
 
             foreach (var attribute in attributes)
             {
@@ -135,6 +249,7 @@ namespace OwinFramework.Pages.Facilities.Builders
                 var regionLayout = attribute as RegionLayoutAttribute;
                 var route = attribute as RouteAttribute;
                 var title = attribute as PageTitleAttribute;
+                var style = attribute as StyleAttribute;
 
                 if (deployedAs != null)
                     page.AssetDeployment(deployedAs.Deployment);
@@ -143,7 +258,7 @@ namespace OwinFramework.Pages.Facilities.Builders
                     page.Layout(hasLayout.LayoutName);
 
                 if (partOf != null)
-                    page.Module(partOf.PackageName);
+                    page.PartOf(partOf.PackageName);
 
                 if (regionComponent != null)
                     page.Component(regionComponent.Region, regionComponent.Component);
@@ -159,6 +274,9 @@ namespace OwinFramework.Pages.Facilities.Builders
 
                 if (title != null)
                     page.Title(title.Title);
+
+                if (style != null)
+                    page.BodyStyle(style.CssStyle);
             }
 
             page.Build();
@@ -166,50 +284,92 @@ namespace OwinFramework.Pages.Facilities.Builders
 
         private void BuildLayout(Type type, IsLayoutAttribute isLayout, object[] attributes)
         {
-            if (LayoutBuilder == null)
-                throw new BuilderException("There is no build engine installed that knows how to build layouts");
+            var layout = Layout().Name(isLayout.Name);
+
+            layout.Build();
         }
 
         private void BuildRegion(Type type, IsRegionAttribute isRegion, object[] attributes)
         {
-            if (RegionBuilder == null)
-                throw new BuilderException("There is no build engine installed that knows how to build regions");
+            var region = Region().Name(isRegion.Name);
+
+            region.Build();
         }
 
         private void BuildComponent(Type type, IsComponentAttribute isComponent, object[] attributes)
         {
-            if (ComponentBuilder == null)
-                throw new BuilderException("There is no build engine installed that knows how to build components");
+            var component = Component().Name(isComponent.Name);
+
+            component.Build();
         }
 
-        private void BuildService(Type type, IsServiceAttribute isPage, object[] attributes)
+        private void BuildService(Type type, IsServiceAttribute isService, object[] attributes)
         {
-            if (ServiceBuilder == null)
-                throw new BuilderException("There is no build engine installed that knows how to build pages");
+            var service = Service(type).Name(isService.Name);
+
+            service.Build();
         }
 
-        IComponentDefinition IComponentBuilder.Component()
+        private class PackageDefinition: IPackageDefinition
         {
-            if (ComponentBuilder == null)
-                throw new BuilderException("There is no build engine installed that knows how to build components");
-            return ComponentBuilder.Component();
+            private readonly IFluentBuilder _builder;
+            private readonly INameManager _nameManager;
+            private readonly BuiltPackage _package;
+            private readonly Type _declaringType;
+
+            public PackageDefinition(
+                Type declaringType,
+                IFluentBuilder builder,
+                INameManager nameManager)
+            {
+                _declaringType = declaringType;
+                _builder = builder;
+                _nameManager = nameManager;
+                _package = new BuiltPackage();
+            }
+
+            IPackageDefinition IPackageDefinition.Name(string name)
+            {
+                _package.Name = name;
+                return this;
+            }
+
+            IPackageDefinition IPackageDefinition.NamespaceName(string namespaceName)
+            {
+                _package.NamespaceName = namespaceName;
+                return this;
+            }
+
+            IPackageDefinition IPackageDefinition.Module(string moduleName)
+            {
+                _nameManager.AddResolutionHandler(nm => _package.Module = nm.ResolveModule("moduleName"));
+                return this;
+            }
+
+            IPackageDefinition IPackageDefinition.Module(IModule module)
+            {
+                _package.Module = module;
+                return this;
+            }
+
+            IPackage IPackageDefinition.Build()
+            {
+                _builder.Register(_package);
+                return _package;
+            }
         }
 
-        IRegionDefinition IRegionBuilder.Region()
+        private class BuiltPackage : IPackage
         {
-            if (RegionBuilder == null)
-                throw new BuilderException("There is no build engine installed that knows how to build regions");
-            return RegionBuilder.Region();
+            public string Name { get; set; }
+            public string NamespaceName { get; set; }
+            public IModule Module { get; set; }
+
+            public IPackage Build(IFluentBuilder builder)
+            {
+                return this;
+            }
         }
 
-        ILayoutDefinition ILayoutBuilder.Layout()
-        {
-            throw new NotImplementedException();
-        }
-
-        IPageDefinition IPageBuilder.Page(Type declaringType)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

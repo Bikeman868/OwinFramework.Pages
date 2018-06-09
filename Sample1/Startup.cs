@@ -87,8 +87,8 @@ namespace Sample1
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(elementBuilder);
             ninject.Get<OwinFramework.Pages.Restful.BuildEngine>().Install(elementBuilder);
 
-            // This is an example of registering a page that is defined using custom attributes
-            elementBuilder.Register(typeof(HomePage));
+            // This is an example of registering all of the elements defined in an assembly
+            elementBuilder.Register(Assembly.GetExecutingAssembly());
 
             // This is an example of registering a package containing components, layouts etc
             // that can be referenced by name from other elements. When you register a package

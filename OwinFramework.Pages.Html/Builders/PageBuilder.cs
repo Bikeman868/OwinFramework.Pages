@@ -39,7 +39,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             private readonly IRequestRouter _requestRouter;
             private readonly INameManager _nameManager;
-            private readonly Webpage _page;
+            private readonly BuiltPage _page;
             private readonly Type _declaringType;
 
             private IRequestFilter _filter;
@@ -56,7 +56,7 @@ namespace OwinFramework.Pages.Html.Builders
                 _declaringType = declaringType;
                 _requestRouter = requestRouter;
                 _nameManager = nameManager;
-                _page = new Webpage(pageDependenciesFactory);
+                _page = new BuiltPage(pageDependenciesFactory);
             }
 
             IPageDefinition IPageDefinition.Name(string name)
@@ -174,6 +174,12 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
+            IPageDefinition IPageDefinition.BodyStyle(string cssStyle)
+            {
+                _page.BodyStyle = cssStyle;
+                return this;
+            }
+
             IPage IPageDefinition.Build()
             {
                 if (_filter == null)
@@ -201,12 +207,12 @@ namespace OwinFramework.Pages.Html.Builders
             }
         }
 
-        private class Webpage : Page
+        private class BuiltPage : Page
         {
             public AssetDeployment AssetDeployment { get; set; }
             public IModule Module { get; set; }
 
-            public Webpage(IPageDependenciesFactory dependenciesFactory)
+            public BuiltPage(IPageDependenciesFactory dependenciesFactory)
                 : base(dependenciesFactory)
             {
             }

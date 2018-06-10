@@ -3,14 +3,14 @@
 This NuGet package is designed to work with the Owin Framework and adds the
 ability to design web pages and serve them in an extremely scaleable way. It
 also serves the Ajax requests providing both the front-end JavaScript and the
-back-end Retful endpoints.
+back-end Restful endpoints.
 
 Key features:
-* Very flexible. powerfi=ul, decoupled and extensible architecture
+* Very flexible, powerful, decoupled and extensible architecture
 * Scales to tens of thousands of pages per second per server
 * Designed from the ground up for maximum efficiency and minimal CPI cycles
 * Pools and reuses objects to avoid thrashing the garbage collector
-* Supports four entirely different ways of defining elements to support all use cases. These methods can be used in any combination
+* Supports multiple ways of defining elements to support all use cases. These methods can be used in any combination
 * Supports packages of elements that can be installed from third parties with namespaces to avoid naming conflicts
 * Works with all existing we development technologies and libraries: Angular, React, Boosstrap etc
 * Integrated support for writing web services and calling them from the UI
@@ -88,16 +88,16 @@ an arrangement of Regions, where each Region can contain another Layout. Regions
 can also contain Components.
 
 Components are the low level elements that produce fragments of Html. Layouts and
-regions also produce Html but this should be structural.
+Regions also produce Html but this should be structural.
 
 Modules and Packages are different ways of grouping elements together and do
 not produce any Html at all.
 
 The reason for having both Regions and Components is as follows:
 
-1. Lets say you somtimes want a piece of content within a resizable regions
-of the page and other times you want the same content in a pop-up box. The Component 
-should not have to be aware of the two use cases. To implement this you write the 
+1. Lets say you somtimes want a piece of content within a resizable area
+of the page and other times you want the same content in a pop-up box. The 
+Component should not have to be aware of the two use cases. To implement this you write the 
 Component once, then create two Region definitions for the two use cases. In this
 way the two Regions know how to do the pop-up vs inline use cases but know
 nothing about when the Compoennt does, and the Component knows nothing about
@@ -111,10 +111,10 @@ job well.
 
 ## Extensibility
 
-The `OwinFramework.Pages.Framework` assembly contains an Element builder that
+The `OwinFramework.Pages.Framework` assembly contains an fluent builder that
 provides a plug-in architecture for the actual builders. This element builder
-supports a fluent syntax and a delaritive syntax for defining the Elements then
-uses the installed build engines to do the actual building.
+supports a fluent syntax and also a delaritive syntax for defining the Elements.
+It calls the installed build engines to do the actual building.
 
 The only things that the fluent builder in the `OwinFramework.Pages.Framework` 
 assembly knows how to build are Packages and Modules. All other elements are 
@@ -150,10 +150,10 @@ can be supplemented by third party libraries that provide blocks of
 functionallity needed by many applications - for example a website navigation
 menu with breadcrumbs.
 
-The key to integrating third party solutions into your application is
+The key to integrating third party libraries into your application is
 the Package mechanism. The Package mechanism allows you do deploy and
-install a collection of Pages, Layouts, Regions and Components that
-share a namespace. When these are integrated into an application the
+install a collection of Pages, Layouts, Regions, Components and Services
+that share a namespace. When these are integrated into an application the
 application developer can choose the namesace for each package to
 avoid naming conflicts.
 
@@ -171,11 +171,11 @@ not need it.
 ## Element
 
 This is the generic term for Page, Layout, Region, Component and Service. In this 
-documentation where it refers to am Element then it means one of these things.
+documentation where it refers to an Element then it means one of these things.
 
 ## Asset
 
-Refers to css styles and JavaScript functions. These assets can be deployed by
+Refers to css styles and JavaScript functions. These Assets can be deployed by
 writing them directly into the page, or they can be gathered together into one
 document and served all in one go to the browser.
 
@@ -185,15 +185,16 @@ when you integrate many third party components.
 
 Dynamic Assets refers to Assets that were not given names at design time. These
 Assets will be given short random unique names at run-time. Assuming that your
-website runs on multiple servers, these Dynamic Assets must be written into the
-html. We are assuming that you want to avoid sticky sessions on the load balancer.
+website runs on multiple servers and you dont want to enable sticky sessions
+on your load balancer, then these Dynamic Assets must be written into the
+html.
 
 ## Module
 
 This is a grouping of elements. The Static Assets for these Elements will be
 collected together into one file and delivered to the browser on any page
 that includes any of these elements. The Module can be deployed in-page or as
-a link.You can also choose to collect up all Assets into a single file
+a link. You can also choose to collect up all Assets into a single file
 disregarding module boundaries.
 
 ## Package
@@ -223,7 +224,7 @@ Layouts define an arrangement of Regions.
 A Region is an area of the browser window that contains content. Each region
 can contain either a Component or a Layout.
 
-Regions can be bound to a single data object or a list of obejcts. When the
+Regions can be bound to a single data object or a list of objects. When the
 Region is bound to a list the Region repeats its content for each object on
 the list.
 
@@ -232,6 +233,10 @@ the list.
 Components output Html to the response stream that render as visible content.
 Components can also output structural Html elements as well as outputting to 
 various parts of the output, including the head section.
+
+Copmonents also produce Assets to support their feature set. These assets
+are dealt with according to the module settings for the Module that contains
+this Component.
 
 ## Service
 
@@ -247,12 +252,15 @@ a Dynamic Asset.
 
 ## Library
 
-Libraries are just Components that are used in a specific way. Any Component
-can declare a dependency on another Component. When this happens the dependant
-components are rendered onto the Page. Lets say for example you wrote a
-Component that writes a link to the Bootstrap css into the head section of the
-page, then any other component can specify that it depends on it so ensure
-that Bootstrap is included on any pages than need it.
+Libraries are just Components that have other Components that depend on them.
+
+Any Component can declare a dependency on another Component. When this happens 
+the dependant components are automatically rendered onto the Page as needed.
+
+Lets say for example you wrote a Component that writes a link to the Bootstrap 
+css into the head section of the page. Any other component that needs Bootstrap 
+can specify that it depends on the Bootstrap Component to ensure that Bootstrap 
+is included on any pages that need it.
 
 ## Route
 
@@ -260,7 +268,7 @@ Routes are a prioritized list of filters that apply to incomming requests and
 determine which Element will be responsible for producing the response.
 
 Routes can be added to other routes to create a routing tree which is much 
-more efficient then a linear list.
+more efficient than a linear list.
 
 ## Data Context
 

@@ -300,7 +300,7 @@ for example you can define Layouts using this technique but define Pages using s
 other method.
 
 [TemlatedComponent.html](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/TemlatedComponent.cs)
-is an example of creating a component by directly wring htnl into a file that contains
+is an example of creating a component by directly writing html into a file that contains
 extentions to html making it a templating language instead of plain html. Note that these
 templates can be written as complete html page so that you can preview then in a browser
 directly, but only the part inside the `<body>` element is interpreted by the template
@@ -318,7 +318,7 @@ bypassing the built-in functionallity for a fully custom implementation. You can
 technique for specific Pages, Layouts, Regions or Components and seamlessly mix these with Elements
 defined using any of the other techniques.
 
-To start a new website from scratch follow these steps:
+## To start a new website from scratch follow these steps
 
 1. In Visual Studio start a new project or type "ASP.NET Empty Web Application". This will create a project that contains very little.
 2. Go to the NuGet package manager and install these packages `Owin.Framework`, `Ioc.Modules.Ninject`, `Owin.Framework.Urchin`, `Owin.Framework.Pages.Framework`, `Owin.Framework.Pages.Html`, `Microsoft.Owin.Host.SystemWeb` - note that you might have to pick a specific version of `Microsoft.Owin.Host.SystemWeb` because each version targets only specific versions of .Net, for example "`install-package Microsoft.Owin.Host.SystemWeb -version 2.1.0`".
@@ -350,18 +350,19 @@ or css Assets, in which case you will probably want to convert them to use the s
 approach.
 
 For Components that produce html by binding to data models then use the templating approach.
-For Components that usea lot of JavaScript or write into the different parts of the page, for 
+For Components that use a lot of JavaScript or write into the different parts of the page, for 
 example the `<head>` section use the semi-custom approach instead.
 
 Divide your website up into areas of functionallity that share the same Assets and define
 Modules for each area. You probably want a "Navigation" module that is used by every page
-on the site. You can then create other modules that avoid delivering all of the JavaScript
+on the site. You can then create other modules to avoid delivering all of the JavaScript
 and css into every page, for example you might have a "Cart" module that is only used
 by the pages relating to the shopping cart.
 
 Model the data that is used by your website and create Context Handlers for each type of
 data as well as collections of those data where applicable. Try not to have too many Context
-Handlers or this defeats the purpose, which is runtime efficiency.
+Handlers or this defeats the purpose, which is runtime efficiency by identifying components
+that need the same data.
 
 Context Handler exist so that multiple components on the page that need the same data do
 not each retrieve the data they need. Instead, each component defines its data needs

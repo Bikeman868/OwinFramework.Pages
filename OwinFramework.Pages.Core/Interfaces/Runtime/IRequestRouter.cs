@@ -23,7 +23,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="runable">The handler to run when the filter is matched</param>
         /// <param name="filter">The filter that matches the request</param>
         /// <param name="priority">Filters are run in ascending order of priority</param>
-        /// <param name="declaringType">The type from which this runable was derrived</param>
+        /// <param name="declaringType">The type from which this runable was derrived. 
+        /// This is used to find attributes that contain documentation</param>
         void Register(IRunable runable, IRequestFilter filter, int priority = 0, Type declaringType = null);
 
         /// <summary>

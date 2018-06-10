@@ -4,7 +4,6 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Facilities.Runtime;
 using OwinFramework.Pages.Html.Builders;
 using OwinFramework.Pages.Html.Runtime;
 using IPackage = Ioc.Modules.IPackage;
@@ -31,8 +30,8 @@ namespace OwinFramework.Pages.Html
 
                     // These are internal implementations that need to be wired up
                     new IocRegistration().Init<IPageDependenciesFactory, PageDependenciesFactory>(),
-                    new IocRegistration().Init<IRenderContextFactory, RenderContextFactory>(),
                     new IocRegistration().Init<IPageDependencies, PageDependencies>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IRenderContextFactory, RenderContextFactory>(),
                     new IocRegistration().Init<IRenderContext, RenderContext>(IocLifetime.MultiInstance),
 
                     // Elements have depedencies that are wrapped in an interface to avoid

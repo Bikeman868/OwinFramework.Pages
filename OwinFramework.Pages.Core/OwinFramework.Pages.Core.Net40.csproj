@@ -83,7 +83,23 @@
     <Compile Include="Attributes\IsPackageAttribute.cs" />
     <Compile Include="Attributes\IsLayoutAttribute.cs" />
     <Compile Include="Attributes\IsPageAttribute.cs" />
+    <Compile Include="Collections\ArrayFactory.cs" />
+    <Compile Include="Collections\DictionaryFactory.cs" />
+    <Compile Include="Collections\Disposable.cs" />
+    <Compile Include="Collections\EnumerableLocked.cs" />
+    <Compile Include="Collections\MemoryStreamFactory.cs" />
+    <Compile Include="Collections\QueueFactory.cs" />
+    <Compile Include="Collections\ReusableArray.cs" />
+    <Compile Include="Collections\ReusableCollection.cs" />
+    <Compile Include="Collections\ReusableMemoryStream.cs" />
+    <Compile Include="Collections\ReusableObject.cs" />
+    <Compile Include="Collections\ReusableObjectFactory.cs" />
+    <Compile Include="Collections\ReusableStringBuilder.cs" />
+    <Compile Include="Collections\StringBuilderFactory.cs" />
+    <Compile Include="Collections\ThreadSafeDictionary.cs" />
+    <Compile Include="Collections\ThreadSafeQueue.cs" />
     <Compile Include="Exceptions\ServiceBuilderException.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Interfaces\Builder\IBuildEngine.cs" />
     <Compile Include="Interfaces\Builder\IPackageDefinition.cs" />
     <Compile Include="Interfaces\Collections\IArray.cs" />
@@ -95,6 +111,7 @@
     <Compile Include="Interfaces\Collections\IQueue.cs" />
     <Compile Include="Interfaces\Collections\IQueueFactory.cs" />
     <Compile Include="Interfaces\Collections\IThreadSafeDictionary.cs" />
+    <Compile Include="Interfaces\Runtime\IDataContextFactory.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriter.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IReusable.cs" />
@@ -138,6 +155,11 @@
     <Compile Include="Package.cs" />
     <Compile Include="PagesMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestFilters\FilterAll.cs" />
+    <Compile Include="RequestFilters\FilterAllFilters.cs" />
+    <Compile Include="RequestFilters\FilterAnyFilters.cs" />
+    <Compile Include="RequestFilters\FilterByMethod.cs" />
+    <Compile Include="RequestFilters\FilterByPath.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

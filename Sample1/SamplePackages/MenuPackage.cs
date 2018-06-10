@@ -2,7 +2,7 @@
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Facilities.Runtime;
+using OwinFramework.Pages.Framework.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 
 namespace Sample1.SamplePackages
@@ -22,7 +22,7 @@ namespace Sample1.SamplePackages
     /// registering the assembly that contains it.
     /// </summary>
     [IsPackage("Menu", "menu")]
-    public class MenuPackage : OwinFramework.Pages.Facilities.Runtime.Package
+    public class MenuPackage : OwinFramework.Pages.Framework.Runtime.Package
     {
         public class MenuItem
         {

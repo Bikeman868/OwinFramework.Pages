@@ -1,7 +1,7 @@
 ﻿using System;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 
-namespace OwinFramework.Pages.Restful
+namespace OwinFramework.Pages.Restful.Builders
 {
     internal class ServiceBuilder: IServiceBuilder
     {

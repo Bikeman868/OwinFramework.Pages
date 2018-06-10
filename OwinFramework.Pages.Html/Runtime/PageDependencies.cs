@@ -1,7 +1,7 @@
 ﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Facilities.Extensions;
 
 namespace OwinFramework.Pages.Html.Runtime
 {

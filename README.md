@@ -1,5 +1,171 @@
 # OwinFramework.Pages
 
+This NuGet package is designed to work with the Owin Framework and adds the
+ability to design web pages and serve them in an extremely scaleable way. It
+also serves the Ajax requests providing both the front-end JavaScript and the
+back-end Retful endpoints.
+
+Key features:
+* Very flexible. powerfi=ul, decoupled and extensible architecture
+* Scales to tens of thousands of pages per second per server
+* Designed from the ground up for maximum efficiency and minimal CPI cycles
+* Pools and reuses objects to avoid thrashing the garbage collector
+* Supports four entirely different ways of defining elements to support all use cases. These methods can be used in any combination
+* Supports packages of elements that can be installed from third parties with namespaces to avoid naming conflicts
+* Works with all existing we development technologies and libraries: Angular, React, Boosstrap etc
+* Integrated support for writing web services and calling them from the UI
+* Good separation of concerns and modular architecture allows mix and match of components from different authors
+
+# Key concepts
+
+## Assemblies
+
+Note that each project in this solution contains a `Package.cs` file that
+defines the IoC needs of that assembly. We use the Ioc.Modules NuGet package
+to automatically wire up IoC and satisfy these needs.
+
+### `OwinFramework.Pages.Core`
+
+Contains the `PagesMiddleware` class and the interfaces used by this framework. 
+Any third party libraries or add ons should reference this assembly only so that 
+they work against any implementation of these interfaces.
+
+This assembly  also contains classes that fill gaps the .Net Framework and are 
+used throughout this solution.
+
+The `PagesMiddleware` only depends on `IRequestRouter`, so in theory you
+could write an implementation of `IRequestRouter` then start using the `PagesMiddleware`
+in your Owin pipeline, however the rest of the framework provides a very rich
+set of features that you probably want.
+
+### `OwinFramework.Pages.Framework`
+
+This assembly contains an implementation of `IRequestRouter` that is needed by
+`PagesMiddleware` and contains a framework for building components that can have
+requests routed to them.
+
+This assembly also contains managers for name resolution in namespaces, localization
+of assets and other cross cutting concerns.
+
+This assembly depends on the interfaces in `OwinFramework.Pages.Core` but very
+importantly none of the other assemblies in this solution depend on it, so you
+can exclude it from your application if you want and still make use of the other
+parts of this solution.
+
+### `OwinFramework.Pages.Html`
+
+Contains all the builders and runtime support for desiging and rendering html
+pages.
+
+Note that this assembly only depends on `OwinFramework.Pages.Core`, and does not
+depend directly on `OwinFramework.Pages.Framework`. However it does need certain
+interfaces to be implemented and `OwinFramework.Pages.Framework` provides 
+implementations of those interfaces, so if you use these assemblies together then
+your application does not have to provide anything to make it all work.
+
+### `OwinFramework.Pages.Restful`
+
+Contains all the builders and runtime support for responding to ajax calls from
+the pages in your website.
+
+Note that this assembly only depends on `OwinFramework.Pages.Core`, and does not
+depend directly on `OwinFramework.Pages.Framework`. However it does need certain
+interfaces to be implemented and `OwinFramework.Pages.Framework` provides 
+implementations of those interfaces, so if you use these assemblies together then
+your application does not have to provide anything to make it all work.
+
+## Element organization
+
+When rendering html pages this framework defines a nesting structure like this:
+
+Pages and Services directly respond to web requests and produce responses. These
+are the only elements in this solution that do this. If you want to handle other
+types of request (for example serving static files) then there is lots of other
+middleware packages available for the Owin Framework that provide these things.
+
+Pages have a Layout that defines the structure of the Html. The Layout contains
+an arrangement of Regions, where each Region can contain another Layout. Regions
+can also contain Components.
+
+Components are the low level elements that produce fragments of Html. Layouts and
+regions also produce Html but this should be structural.
+
+Modules and Packages are different ways of grouping elements together and do
+not produce any Html at all.
+
+The reason for having both Regions and Components is as follows:
+
+1. Lets say you somtimes want a piece of content within a resizable regions
+of the page and other times you want the same content in a pop-up box. The Component 
+should not have to be aware of the two use cases. To implement this you write the 
+Component once, then create two Region definitions for the two use cases. In this
+way the two Regions know how to do the pop-up vs inline use cases but know
+nothing about when the Compoennt does, and the Component knows nothing about
+whether it is displayed inline or in a popup. This is good separation of
+concerns that leads to better reuse and easier maintenance.
+
+2. The Region can be bound to a list from the data layer and will repeat the
+Component or Layout that it contains. It is a more modular design to have this
+repeating functionallity outside of the Component which can focus on doing one
+job well.
+
+## Extensibility
+
+The `OwinFramework.Pages.Framework` assembly contains an Element builder that
+provides a plug-in architecture for the actual builders. This element builder
+supports a fluent syntax and a delaritive syntax for defining the Elements then
+uses the installed build engines to do the actual building.
+
+The only things that the fluent builder in the `OwinFramework.Pages.Framework` 
+assembly knows how to build are Packages and Modules. All other elements are 
+built by plug in builders.
+
+The `OwinFramework.Pages.Html` assembly contains builders for Pages, Layouts,
+Regions and Components. When you install its build engine it istalls itself 
+into the fluent builder so that you can use it to build Html pages.
+
+The `OwinFramework.Pages.Restful` assembly contains a builder for Servies.
+When you install its build engine it istalls itself into the fluent builder 
+so that you can use it to build restful services.
+
+After installing a build engine you can overwrite any of the builders it
+installed, providing your own implementation. For example you can install
+the build engine from `OwinFramework.Pages.Html` then replace the Layout
+builder with your own implementation to customize the way that layouts
+get built whilst keeping all of the other builders.
+
+Bear in mind that the whole Owin Framework uses dependency injection and
+IoC to wire things up, so you can replace the standard implementation of
+any interface with your own version and this will be used throught.
+
+## Third party libraries
+
+This solution was designed from the outset to be a platform that supports
+application development by composition of libraries from many sources.
+
+This solution provides a rich set of features for defining and rendering
+pages and services, but it does not provide any application layer 
+functionallity. This can be provided by your application, and
+can be supplemented by third party libraries that provide blocks of
+functionallity needed by many applications - for example a website navigation
+menu with breadcrumbs.
+
+The key to integrating third party solutions into your application is
+the Package mechanism. The Package mechanism allows you do deploy and
+install a collection of Pages, Layouts, Regions and Components that
+share a namespace. When these are integrated into an application the
+application developer can choose the namesace for each package to
+avoid naming conflicts.
+
+Components can also have dependencies on other Components. For example
+you can write a Component that adds a reference to the Bootstrap css
+into the head part of the page. Now any other component can specify
+that it has a dependency on this Bootstrap Component. When you do this
+the Bootstrap Compoennt will be included on any page that contains
+dependant Components the the link in the header will only be written
+once. Also, the bootstrap link will not be output on any pages that do 
+not need it.
+
 # Glossary
 
 ## Element

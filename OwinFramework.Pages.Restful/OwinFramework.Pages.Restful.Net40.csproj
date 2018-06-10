@@ -68,10 +68,6 @@
       <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
       <Name>OwinFramework.Pages.Core.Net40</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OwinFramework.Pages.Facilities\OwinFramework.Pages.Facilities.Net40.csproj">
-      <Project>{83e44b37-d3aa-4622-a03b-3c976ea58c83}</Project>
-      <Name>OwinFramework.Pages.Facilities.Net40</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Runtime\" />

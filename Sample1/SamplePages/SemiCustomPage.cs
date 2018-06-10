@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Facilities.Runtime;
+using OwinFramework.Pages.Framework.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 
 namespace Sample1.SamplePages

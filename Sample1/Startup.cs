@@ -79,23 +79,23 @@ namespace Sample1
 
             // The IFluentBuilder provides a mechanism for building elements without
             // writing code that implements the various interfaces like IPage, IComponent etc
-            var elementBuilder = ninject.Get<IFluentBuilder>();
+            var fluentBuilder = ninject.Get<IFluentBuilder>();
 
             // You must install build engines before trying to build elements using the
             // fluent builder. You can use the built-in engines, install NuGet packages
             // that provide build engines, or write your own.
-            ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(elementBuilder);
-            ninject.Get<OwinFramework.Pages.Restful.BuildEngine>().Install(elementBuilder);
+            ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
+            ninject.Get<OwinFramework.Pages.Restful.BuildEngine>().Install(fluentBuilder);
 
             // This is an example of registering all of the elements defined in an assembly
-            elementBuilder.Register(Assembly.GetExecutingAssembly());
+            fluentBuilder.Register(Assembly.GetExecutingAssembly());
 
             // This is an example of registering a package containing components, layouts etc
             // that can be referenced by name from other elements. When you register a package
             // like this all of the element in the package are contained in a namespace
             // to avoid naming conflicts. This allows you to install packages from third
             // parties.
-            elementBuilder.Register(ninject.Get<MenuPackage>());
+            fluentBuilder.Register(ninject.Get<MenuPackage>());
         }
     }
 }

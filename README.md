@@ -277,4 +277,91 @@ present in order to do their work. To avoid retrieving the same data multiple
 times for one Page request, this framework has Context Handlers that run
 once before any of the Elements are used to handle the request.
 
+# Getting started
 
+I strongly urge you to look at the source code for the sample websites and
+read the entitely of this document before getting started. In particular you
+should review these source files:
+
+[Package.cs](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/Package.cs)
+defines the IoC needs of the application. This is where your application defines the 
+parts of the Owin Framework that are used by your application. The IoC wireup will fail
+if the interfaces your application depends on are not implemented by any of the installed
+NuGet packages.
+
+[Startup.cs](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/Startup.cs)
+is the entry point for the application. This is where the application builds the Owin
+pipeline, registers packages and build engines and specifies any custom implementations.
+
+[DeclarativePage.cs](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/DeclarativePage.cs)
+is an example of how to write Pages, Layouts, Regions and Components using only
+attributes. You can mix this style of declaration with any of the other options, so
+for example you can define Layouts using this technique but define Pages using some
+other method.
+
+[TemlatedComponent.html](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/TemlatedComponent.cs)
+is an example of creating a component by directly wring htnl into a file that contains
+extentions to html making it a templating language instead of plain html. Note that these
+templates can be written as complete html page so that you can preview then in a browser
+directly, but only the part inside the `<body>` element is interpreted by the template
+compiler.
+
+[SemiCustomPage.cs](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/SemiCustomPage.cs)
+is an example of how to create a web page that inherits from the `Page` class in the framework
+but overrides some of the methods to customize the way that the page behaves. This is
+an appropriate technique for pages that have some special needs not directly provided
+by the framework.
+
+[FullCustomPage.cs](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/FullCustomPage.cs)
+is an example of to write a class that directly implements the `IPage` interface completely
+bypassing the built-in functionallity for a fully custom implementation. You can use this
+technique for specific Pages, Layouts, Regions or Components and seamlessly mix these with Elements
+defined using any of the other techniques.
+
+To start a new website from scratch follow these steps:
+
+1. In Visual Studio start a new project or type "ASP.NET Empty Web Application". This will create a project that contains very little.
+2. Go to the NuGet package manager and install these packages `Owin.Framework`, `Ioc.Modules.Ninject`, `Owin.Framework.Urchin`, `Owin.Framework.Pages.Framework`, `Owin.Framework.Pages.Html`, 'Microsoft.Owin.Host.SystemWeb' - note that you might have to pick a specific version of `Microsoft.Owin.Host.SystemWeb` because each version targets only specific versions of .Net, for example `install-package Microsoft.Owin.Host.SystemWeb -version 2.1.0`.
+3. Modify the web.config file to use the ExtensionlessUrlHandler. Use (this file)[https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/Web.config] as an example.
+4. In root of your project add a new `Startup.cs` file and add `[assembly: OwinStartup(typeof(Startup))]` under the `using` statements and above the `namespace` statement. Resolve references and make sure it compiles.
+5. In the Startup class add a method with this signature `public void Configuration(IAppBuilder app)`. Add the necessary using statements so that the code compiles.
+6. Set up the Owin Framework middleware pipeline. The Owin Framework has documentation describing how to do this. You can also look at [Startup.cs](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample2/Startup.cs) for a working example to copy from.
+7. At the end of the `Configuration` method in your `Startup` class, resolve `IFluentBuilder` from your IoC container, for example `var fluentBuilder = ninject.Get<IFluentBuilder>();`.
+8. Install the Html element builders with this line of code `ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);`.
+9. Have the fluent builder scan your application for Elements defined with the declarative syntax like this: `fluentBuilder.Register(Assembly.GetExecutingAssembly());`.
+10. Add Components, Regions, Layouts and Pages to your application using the declarative syntax illustrated in (this example)[https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/DeclarativePage.cs].
+11. At this point your solution should be similar to (this one)[https://github.com/Bikeman868/OwinFramework.Pages/tree/master/Sample2]. Press F5 and test your pages.
+12. Study the other sample applications to see what else you can do.
+13. Read the documentation!!
+
+# Recommended best practice
+
+This framework is designed to be as flexible as possible because there are so many different
+ways in which developers will choose to use it. If you are feeling overwhelmed by the choices
+available then I recommend following these guildelines to begin with and adapt your coding
+as you become more familiar.
+
+For Modules, Pages and Layouts use the declarative syntax as illustrated by 
+(this example)(https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/DeclarativePage.cs)
+
+For Regions, use the delcatative syntax for the most part unless they need a lot of JavaScript 
+or css Assets, in which case you will probably want to convert them to use the semi-custom
+approach.
+
+For Components that produce html by binding to data models then use the templating approach.
+For Components that usea lot of JavaScript or write into the different parts of the page, for 
+example the `<head>` section use the semi-custom approach instead.
+
+Divide your website up into areas of functionallity that share the same Assets and define
+Modules for each area. You probably want a "Navigation" module that is used by every page
+on the site. You can then create other modules that avoid delivering all of the JavaScript
+and css into every page, for example you might have a "Cart" module that is only used
+by the pages relating to the shopping cart.
+
+Model the data that is used by your website and create Context Handlers for each type of
+data as well as collections of those data where applicable. Try not to have too many Context
+Handlers or this defeats the purpose, which is runtime efficiency.
+
+Context Handler exist so that multiple components on the page that need the same data do
+not each retrieve the data they need. Instead, each component defines its data needs
+and the framework makes sure that data is available by loading it only once.

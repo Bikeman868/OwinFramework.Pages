@@ -62,7 +62,7 @@
     <Compile Include="Attributes\PageTitleAttribute.cs" />
     <Compile Include="Attributes\StyleAttribute.cs" />
     <Compile Include="Attributes\RequiresPermissionAttribute.cs" />
-    <Compile Include="Attributes\RenderTextAttribute.cs" />
+    <Compile Include="Attributes\RenderHtml.cs" />
     <Compile Include="Attributes\IsElementAttributeBase.cs" />
     <Compile Include="Attributes\RepeatAttribute.cs" />
     <Compile Include="Attributes\DeployedAsAttribute.cs" />

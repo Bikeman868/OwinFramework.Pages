@@ -61,12 +61,12 @@ namespace Sample1.SamplePages
 
     [IsComponent("header.mainMenu")]
     [PartOf("Application")]
-    [RenderText("menu.main", "This is where the main menu html goes")]
+    [RenderHtml("menu.main", "<p>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
     [IsComponent("footer.standard")]
     [PartOf("Application")]
-    [RenderText("footer.standard", "This is where the html for the page footer goes")]
+    [RenderHtml("footer.standard", "<p>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
 
     /*

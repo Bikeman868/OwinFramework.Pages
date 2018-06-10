@@ -6,7 +6,7 @@ namespace OwinFramework.Pages.Core.Attributes
     /// Specifies the content of a component as localized text
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public class RenderTextAttribute: Attribute
+    public class RenderHtml: Attribute
     {
         /// <summary>
         /// Constructs an attribute that provides a description of this element
@@ -14,7 +14,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <param name="textName">The name of this localized string</param>
         /// <param name="html">The default language version of this string in html 
         /// format - can be translated in the text manager</param>
-        public RenderTextAttribute(string textName, string html = null)
+        public RenderHtml(string textName, string html = null)
         {
             TextName = textName;
             Html = html;

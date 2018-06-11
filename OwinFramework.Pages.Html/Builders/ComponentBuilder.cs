@@ -14,27 +14,37 @@ namespace OwinFramework.Pages.Html.Builders
 
         private class ComponentDefinition: IComponentDefinition
         {
-            public IComponentDefinition Name(string name)
+            IComponentDefinition IComponentDefinition.Name(string name)
             {
                 return this;
             }
 
-            public IComponentDefinition PartOf(Core.Interfaces.IPackage package)
+            IComponentDefinition IComponentDefinition.PartOf(IPackage package)
             {
                 return this;
             }
 
-            public IComponentDefinition PartOf(string packageName)
+            IComponentDefinition IComponentDefinition.PartOf(string packageName)
             {
                 return this;
             }
 
-            public IComponentDefinition AssetDeployment(Core.Enums.AssetDeployment assetDeployment)
+            IComponentDefinition IComponentDefinition.AssetDeployment(Core.Enums.AssetDeployment assetDeployment)
             {
                 return this;
             }
 
-            public IComponentDefinition BindTo<T>() where T : class
+            IComponentDefinition IComponentDefinition.BindTo<T>()
+            {
+                return this;
+            }
+
+            IComponentDefinition IComponentDefinition.BindTo(Type dataType)
+            {
+                return this;
+            }
+
+            IComponentDefinition IComponentDefinition.DataContext(string dataContextName)
             {
                 return this;
             }

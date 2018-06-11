@@ -1,4 +1,5 @@
 ﻿using OwinFramework.Pages.Core.Enums;
+using System;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
@@ -84,6 +85,30 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition Style(string style);
 
         /// <summary>
+        /// Adds metadata to the component that can be queried to establish
+        /// its data needs. You can call this more than once to add more than
+        /// one type of required data.
+        /// </summary>
+        /// <typeparam name="T">The type of data that this component binds to.
+        /// Provides context for data binding expressions within the component</typeparam>
+        IRegionDefinition BindTo<T>() where T : class;
+
+        /// <summary>
+        /// Adds metadata to the component that can be queried to establish
+        /// its data needs. You can call this more than once to add more than
+        /// one type of required data.
+        /// </summary>
+        IRegionDefinition BindTo(Type dataType);
+
+        /// <summary>
+        /// Specifies that this component has a dependency on a specifc data context.
+        /// You can call this multiple times to add more dependencies
+        /// </summary>
+        /// <param name="dataContextName">The name of the context handler that
+        /// must be executed before rendering this component</param>
+        IRegionDefinition DataContext(string dataContextName);
+
+        /// <summary>
         /// Causes the region to be rendered multiple times, once
         /// for each object in the data context
         /// </summary>
@@ -91,6 +116,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// of this type in the rendering context and repeats the region
         /// once for each item</typeparam>
         IRegionDefinition ForEach<T>();
+
+        /// <summary>
+        /// Causes the region to be rendered multiple times, once
+        /// for each object in the data context of the specified type
+        /// </summary>
+        IRegionDefinition ForEach(Type dataType, string tag = "", string style = "", params string[] classes);
 
         /// <summary>
         /// Builds the region

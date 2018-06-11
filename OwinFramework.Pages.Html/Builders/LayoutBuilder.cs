@@ -99,6 +99,21 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
+            ILayoutDefinition ILayoutDefinition.BindTo<T>()
+            {
+                return this;
+            }
+
+            ILayoutDefinition ILayoutDefinition.BindTo(Type dataType)
+            {
+                return this;
+            }
+
+            ILayoutDefinition ILayoutDefinition.DataContext(string dataContextName)
+            {
+                return this;
+            }
+
             public ILayout Build()
             {
                 return new BuiltLayout();

@@ -26,7 +26,7 @@ namespace OwinFramework.Pages.Core.Attributes
         public string RegionName { get; set; }
 
         /// <summary>
-        /// The name of the component to place in this region
+        /// The name of the region element to place in this named region
         /// </summary>
         public string RegionElement { get; set; }
     }

@@ -180,6 +180,21 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
+            IPageDefinition IPageDefinition.BindTo<T>()
+            {
+                return this;
+            }
+
+            IPageDefinition IPageDefinition.BindTo(Type dataType)
+            {
+                return this;
+            }
+
+            IPageDefinition IPageDefinition.DataContext(string dataContextName)
+            {
+                return this;
+            }
+
             IPage IPageDefinition.Build()
             {
                 if (_filter == null)

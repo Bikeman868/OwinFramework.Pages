@@ -246,22 +246,32 @@ namespace OwinFramework.Pages.Framework.Builders
             foreach (var attribute in attributes)
             {
                 var deployedAs = attribute as DeployedAsAttribute;
-                var hasLayout = attribute as UsesLayoutAttribute;
+                var usesLayout = attribute as UsesLayoutAttribute;
                 var partOf = attribute as PartOfAttribute;
                 var regionComponent = attribute as RegionComponentAttribute;
                 var regionLayout = attribute as RegionLayoutAttribute;
                 var route = attribute as RouteAttribute;
                 var title = attribute as PageTitleAttribute;
                 var style = attribute as StyleAttribute;
+                var needsData = attribute as NeedsDataAttribute;
 
                 if (deployedAs != null)
                     page.AssetDeployment(deployedAs.Deployment);
 
-                if (hasLayout != null)
-                    page.Layout(hasLayout.LayoutName);
+                if (usesLayout != null)
+                    page.Layout(usesLayout.LayoutName);
 
                 if (partOf != null)
                     page.PartOf(partOf.PackageName);
+
+                if (needsData != null)
+                {
+                    if (!string.IsNullOrEmpty(needsData.DataContextName))
+                        page.DataContext(needsData.DataContextName);
+
+                    if (needsData.DataType != null)
+                        page.BindTo(needsData.DataType);
+                }
 
                 if (regionComponent != null)
                     page.Component(regionComponent.Region, regionComponent.Component);
@@ -287,21 +297,178 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private void BuildLayout(Type type, IsLayoutAttribute isLayout, object[] attributes)
         {
-            var layout = Layout().Name(isLayout.Name);
+            var layout = Layout()
+                .Name(isLayout.Name)
+                .RegionNesting(isLayout.RegionNesting);
+
+            if (_packageContext != null)
+                layout.PartOf(_packageContext);
+
+            foreach (var attribute in attributes)
+            {
+                var deployedAs = attribute as DeployedAsAttribute;
+                var partOf = attribute as PartOfAttribute;
+                var regionComponent = attribute as RegionComponentAttribute;
+                var regionLayout = attribute as RegionLayoutAttribute;
+                var style = attribute as StyleAttribute;
+                var container = attribute as ContainerAttribute;
+                var childContainer = attribute as ChildContainerAttribute;
+                var usesRegion = attribute as UsesRegionAttribute;
+                var needsData = attribute as NeedsDataAttribute;
+
+                if (deployedAs != null)
+                    layout.AssetDeployment(deployedAs.Deployment);
+
+                if (partOf != null)
+                    layout.PartOf(partOf.PackageName);
+
+                if (needsData != null)
+                {
+                    if (!string.IsNullOrEmpty(needsData.DataContextName))
+                        layout.DataContext(needsData.DataContextName);
+
+                    if (needsData.DataType != null)
+                        layout.BindTo(needsData.DataType);
+                }
+
+                if (regionComponent != null)
+                    layout.Component(regionComponent.Region, regionComponent.Component);
+
+                if (regionLayout != null)
+                    layout.Layout(regionLayout.Region, regionLayout.Layout);
+
+                if (style != null)
+                {
+                    if (!string.IsNullOrEmpty(style.CssStyle))
+                        layout.Style(style.CssStyle);
+                }
+
+                if (container != null)
+                {
+                    if (!string.IsNullOrEmpty(container.Tag))
+                        layout.Tag(container.Tag);
+
+                    if (container.ClassNames != null && container.ClassNames.Length > 0)
+                        layout.ClassNames(container.ClassNames);
+
+                    if (!string.IsNullOrEmpty(container.Style))
+                        layout.Style(container.Style);
+                }
+
+                if (childContainer != null)
+                {
+                    if (!string.IsNullOrEmpty(childContainer.Tag))
+                        layout.NestingTag(childContainer.Tag);
+
+                    if (childContainer.ClassNames != null && childContainer.ClassNames.Length > 0)
+                        layout.NestedClassNames(childContainer.ClassNames);
+
+                    if (!string.IsNullOrEmpty(childContainer.Style))
+                        layout.NestedStyle(childContainer.Style);
+                }
+
+                if (usesRegion != null)
+                    layout.Region(usesRegion.RegionName, usesRegion.RegionElement);
+            }
 
             layout.Build();
         }
 
         private void BuildRegion(Type type, IsRegionAttribute isRegion, object[] attributes)
         {
-            var region = Region().Name(isRegion.Name);
+            var region = Region()
+                .Name(isRegion.Name);
+
+            if (_packageContext != null)
+                region.PartOf(_packageContext);
+
+            foreach (var attribute in attributes)
+            {
+                var deployedAs = attribute as DeployedAsAttribute;
+                var partOf = attribute as PartOfAttribute;
+                var style = attribute as StyleAttribute;
+                var container = attribute as ContainerAttribute;
+                var usesLayout = attribute as UsesLayoutAttribute;
+                var usesComponent = attribute as UsesComponentAttribute;
+                var needsData = attribute as NeedsDataAttribute;
+                var repeat = attribute as RepeatAttribute;
+
+                if (deployedAs != null)
+                    region.AssetDeployment(deployedAs.Deployment);
+
+                if (needsData != null)
+                {
+                    if (!string.IsNullOrEmpty(needsData.DataContextName))
+                        region.DataContext(needsData.DataContextName);
+
+                    if (needsData.DataType != null)
+                        region.BindTo(needsData.DataType);
+                }
+                
+                if (partOf != null)
+                    region.PartOf(partOf.PackageName);
+
+                if (style != null)
+                {
+                    if (!string.IsNullOrEmpty(style.CssStyle))
+                        region.Style(style.CssStyle);
+                }
+
+                if (repeat != null)
+                    region.ForEach(repeat.ItemType, repeat.Tag, repeat.Style, repeat.ClassNames);
+
+                if (container != null)
+                {
+                    if (!string.IsNullOrEmpty(container.Tag))
+                        region.Tag(container.Tag);
+
+                    if (container.ClassNames != null && container.ClassNames.Length > 0)
+                        region.ClassNames(container.ClassNames);
+
+                    if (!string.IsNullOrEmpty(container.Style))
+                        region.Style(container.Style);
+                }
+
+                if (usesLayout != null)
+                    region.Layout(usesLayout.LayoutName);
+
+                if (usesComponent != null)
+                    region.Component(usesComponent.ComponentName);
+            }
 
             region.Build();
         }
 
         private void BuildComponent(Type type, IsComponentAttribute isComponent, object[] attributes)
         {
-            var component = Component().Name(isComponent.Name);
+            var component = Component()
+                .Name(isComponent.Name);
+
+            if (_packageContext != null)
+                component.PartOf(_packageContext);
+
+            foreach (var attribute in attributes)
+            {
+                var deployedAs = attribute as DeployedAsAttribute;
+                var partOf = attribute as PartOfAttribute;
+                var needsData = attribute as NeedsDataAttribute;
+
+                if (deployedAs != null)
+                    component.AssetDeployment(deployedAs.Deployment);
+
+                if (partOf != null)
+                    component.PartOf(partOf.PackageName);
+
+                if (needsData != null)
+                {
+                    if (!string.IsNullOrEmpty(needsData.DataContextName))
+                        component.DataContext(needsData.DataContextName);
+
+                    if (needsData.DataType != null)
+                        component.BindTo(needsData.DataType);
+                }
+
+            }
 
             component.Build();
         }
@@ -370,6 +537,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             public IPackage Build(IFluentBuilder builder)
             {
+                // Packages defined declaratively do not build anything within them
                 return this;
             }
         }

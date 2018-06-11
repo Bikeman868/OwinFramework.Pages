@@ -19,7 +19,7 @@ namespace OwinFramework.Pages.Core.Attributes
         }
 
         /// <summary>
-        /// The name of the package
+        /// The css style definition
         /// </summary>
         public string CssStyle { get; set; }
     }

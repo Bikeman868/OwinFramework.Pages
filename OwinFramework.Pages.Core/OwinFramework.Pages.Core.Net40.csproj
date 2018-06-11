@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ChildContainerAttribute.cs" />
     <Compile Include="Attributes\PageTitleAttribute.cs" />
     <Compile Include="Attributes\StyleAttribute.cs" />
     <Compile Include="Attributes\RequiresPermissionAttribute.cs" />
@@ -67,6 +68,8 @@
     <Compile Include="Attributes\RepeatAttribute.cs" />
     <Compile Include="Attributes\DeployedAsAttribute.cs" />
     <Compile Include="Attributes\PartOfAttribute.cs" />
+    <Compile Include="Attributes\UsesComponentAttribute.cs" />
+    <Compile Include="Attributes\NeedsDataAttribute.cs" />
     <Compile Include="Attributes\UsesLayoutAttribute.cs" />
     <Compile Include="Attributes\UsesRegionAttribute.cs" />
     <Compile Include="Attributes\ContainerAttribute.cs" />

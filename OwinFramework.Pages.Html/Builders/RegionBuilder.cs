@@ -73,6 +73,26 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
+            public IRegionDefinition BindTo<T>() where T : class
+            {
+                return this;
+            }
+
+            public IRegionDefinition BindTo(Type dataType)
+            {
+                return this;
+            }
+
+            public IRegionDefinition DataContext(string dataContextName)
+            {
+                return this;
+            }
+
+            public IRegionDefinition ForEach(Type dataType, string tag = "", string style = "", params string[] classes)
+            {
+                return this;
+            }
+
             public Core.Interfaces.IRegion Build()
             {
                 return new BuiltRegion();

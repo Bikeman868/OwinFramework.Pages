@@ -1,20 +1,40 @@
 ﻿using System;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
     internal class RegionBuilder: IRegionBuilder
     {
+        private readonly INameManager _nameManager;
+
+        public RegionBuilder(
+                INameManager nameManager)
+        {
+            _nameManager = nameManager;
+        }
+
         IRegionDefinition IRegionBuilder.Region()
         {
-            return new RegionDefinition();
+            return new RegionDefinition(_nameManager);
         }
 
         private class RegionDefinition: IRegionDefinition
         {
+            private readonly INameManager _nameManager;
+            private readonly BuiltRegion _region;
+
+            public RegionDefinition(
+                INameManager nameManager)
+            {
+                _nameManager = nameManager;
+                _region = new BuiltRegion();
+            }
+
             public IRegionDefinition Name(string name)
             {
+                _region.Name = name;
                 return this;
             }
 
@@ -95,7 +115,8 @@ namespace OwinFramework.Pages.Html.Builders
 
             public Core.Interfaces.IRegion Build()
             {
-                return new BuiltRegion();
+                _nameManager.Register(_region);
+                return _region;
             }
         }
 

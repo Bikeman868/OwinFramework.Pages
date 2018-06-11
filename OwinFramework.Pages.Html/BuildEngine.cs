@@ -24,18 +24,22 @@ namespace OwinFramework.Pages.Html
 
         public void Install(IFluentBuilder builder)
         {
-            builder.ModuleBuilder = new ModuleBuilder();
+            builder.ModuleBuilder = new ModuleBuilder(
+                _nameManager);
 
             builder.PageBuilder = new PageBuilder(
                 _requestRouter,
                 _nameManager,
                 _pageDependenciesFactory);
 
-            builder.LayoutBuilder = new LayoutBuilder();
+            builder.LayoutBuilder = new LayoutBuilder(
+                _nameManager);
 
-            builder.RegionBuilder = new RegionBuilder();
+            builder.RegionBuilder = new RegionBuilder(
+                _nameManager);
 
-            builder.ComponentBuilder = new ComponentBuilder();
+            builder.ComponentBuilder = new ComponentBuilder(
+                _nameManager);
         }
     }
 }

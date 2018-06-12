@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OwinFramework.Pages.Core.Collections;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -111,6 +112,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
+            priorWriteResult.Dispose();
             return this;
         }
 

@@ -32,9 +32,9 @@ namespace OwinFramework.Pages.Html.Builders
             private readonly BuiltLayout _layout;
 
             private RegionSet _regionSet;
-            private Dictionary<string, object> _regionElements;
-            private Dictionary<string, object> _regionLayouts;
-            private Dictionary<string, object> _regionComponents;
+            private readonly Dictionary<string, object> _regionElements;
+            private readonly Dictionary<string, object> _regionLayouts;
+            private readonly Dictionary<string, object> _regionComponents;
 
             private string _tag;
             private string[] _classNames;
@@ -229,7 +229,8 @@ namespace OwinFramework.Pages.Html.Builders
                 _nameManager.Register(_layout);
                 _nameManager.AddResolutionHandler(() =>
                     {
-                        _layout.Elements = new List<IElement>();
+                        _layout.VisualElements = new List<IElement>();
+                        _layout.Regions = new List<IRegion>();
 
                         foreach (var regionName in _regionComponents.Keys)
                         {
@@ -254,11 +255,11 @@ namespace OwinFramework.Pages.Html.Builders
                 return _layout;
             }
 
-            private void AddRegionSet(RegionSet rs)
+            private void AddRegionSet(RegionSet regionSet)
             {
-                if (rs != null && rs.Elements != null)
+                if (regionSet != null && regionSet.Elements != null)
                 {
-                    foreach (var element in rs.Elements)
+                    foreach (var element in regionSet.Elements)
                     {
                         var regionName = element as string;
                         var childRegionSet = element as RegionSet;
@@ -267,7 +268,7 @@ namespace OwinFramework.Pages.Html.Builders
                         {
                             if (!_regionElements.ContainsKey(regionName))
                             {
-                                _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p", "Layout does not have a '" + regionName + "' region") });
+                                _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p", "Layout does not have a '" + regionName + "' region") });
                                 continue;
                             }
 
@@ -279,21 +280,22 @@ namespace OwinFramework.Pages.Html.Builders
                             {
                                 region = _nameManager.ResolveRegion(regionElementName, _layout.Package);
                                 if (region == null)
-                                    _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'") });
+                                    _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'") });
                             }
 
                             if (region != null)
                             {
+                                _layout.Regions.Add(region);
                                 if (_regionComponents.ContainsKey(regionName))
                                 {
-                                    _layout.Elements.Add(region.Wrap((IComponent)_regionComponents[regionName]));
+                                    _layout.VisualElements.Add(region.Wrap((IComponent)_regionComponents[regionName]));
                                 }
                                 else if (_regionLayouts.ContainsKey(regionName))
                                 {
-                                    _layout.Elements.Add(region.Wrap((ILayout)_regionLayouts[regionName]));
+                                    _layout.VisualElements.Add(region.Wrap((ILayout)_regionLayouts[regionName]));
                                 }
                                 else
-                                    _layout.Elements.Add(region);
+                                    _layout.VisualElements.Add(region);
                             }
                         }
                         else if (childRegionSet != null)
@@ -318,17 +320,24 @@ namespace OwinFramework.Pages.Html.Builders
                     }
                     if (_classNames != null && _classNames.Length > 0)
                     {
-                        tagAttributes.Add("class");
-                        tagAttributes.Add(string.Join(" ", _classNames));
+                        var classes = string.Join(" ", _classNames
+                            .Select(c => c.Trim().Replace(' ', '-'))
+                            .Where(c => !string.IsNullOrEmpty(c)));
+                        if (classes.Length > 0)
+                        {
+                            tagAttributes.Add("class");
+                            tagAttributes.Add(classes);
+                        }
                     }
-                    _layout.Elements.Add(new StaticHtmlElement {WriteAction = w => w.WriteOpenTag(_tag, tagAttributes.ToArray())});
+                    var attributes = tagAttributes.ToArray();
+                    _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteOpenTag(_tag, attributes) });
                 }
             }
 
             private void WriteClosingTag()
             {
                 if (!string.IsNullOrEmpty(_tag))
-                    _layout.Elements.Add(new StaticHtmlElement {WriteAction = w => w.WriteCloseTag(_tag)});
+                    _layout.VisualElements.Add(new StaticHtmlElement {WriteAction = w => w.WriteCloseTag(_tag)});
             }
 
             private void WriteNestingOpeningTag()
@@ -343,17 +352,24 @@ namespace OwinFramework.Pages.Html.Builders
                     }
                     if (_nestedClassNames != null && _nestedClassNames.Length > 0)
                     {
-                        tagAttributes.Add("class");
-                        tagAttributes.Add(string.Join(" ", _nestedClassNames));
+                        var classes = string.Join(" ", _nestedClassNames
+                            .Select(c => c.Trim().Replace(' ', '-'))
+                            .Where(c => !string.IsNullOrEmpty(c)));
+                        if (classes.Length > 0)
+                        {
+                            tagAttributes.Add("class");
+                            tagAttributes.Add(classes);
+                        }
                     }
-                    _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteOpenTag(_nestingTag, tagAttributes.ToArray()) });
+                    var attributes = tagAttributes.ToArray();
+                    _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteOpenTag(_nestingTag, attributes) });
                 }
             }
 
             private void WriteNestingClosingTag()
             {
                 if (!string.IsNullOrEmpty(_nestingTag))
-                    _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteCloseTag(_nestingTag) });
+                    _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteCloseTag(_nestingTag) });
             }
         }
 
@@ -370,15 +386,93 @@ namespace OwinFramework.Pages.Html.Builders
 
         private class BuiltLayout : Layout
         {
-            public List<IElement> Elements;
+            public List<IElement> VisualElements;
+            public List<IRegion> Regions;
             public AssetDeployment AssetDeployment;
+
+            public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
+            {
+                var result = WriteResult.Continue();
+
+                foreach (var region in Regions)
+                {
+                    var regionResult = region.WriteStaticAssets(assetType, writer);
+                    result.Add(regionResult);
+
+                    if (regionResult.IsComplete) break;
+                }
+
+                return result;
+            }
+
+            public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext)
+            {
+                var result = WriteResult.Continue();
+
+                foreach (var region in Regions)
+                {
+                    var regionResult = region.WriteHead(renderContext, dataContext);
+                    result.Add(regionResult);
+
+                    if (regionResult.IsComplete) break;
+                }
+
+                return result;
+            }
+
+            public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType)
+            {
+                var result = WriteResult.Continue();
+
+                foreach (var region in Regions)
+                {
+                    var regionResult = region.WriteDynamicAssets(renderContext, dataContext, assetType);
+                    result.Add(regionResult);
+
+                    if (regionResult.IsComplete) break;
+                }
+
+                return result;
+            }
+
+            public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext)
+            {
+                var result = WriteResult.Continue();
+
+                foreach (var region in Regions)
+                {
+                    var regionResult = region.WriteInitializationScript(renderContext, dataContext);
+                    result.Add(regionResult);
+
+                    if (regionResult.IsComplete) break;
+                }
+
+                return result;
+            }
+
+            public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)
+            {
+                var result = WriteResult.Continue();
+
+                foreach (var region in Regions)
+                {
+                    var regionResult = region.WriteTitle(renderContext, dataContext);
+                    result.Add(regionResult);
+
+                    if (regionResult.IsComplete) break;
+                }
+
+                return result;
+            }
 
             public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
             {
-                foreach (var element in Elements)
-                    element.WriteHtml(renderContext, dataContext);
+                var result = WriteResult.Continue();
 
-                return WriteResult.Continue();
+                foreach (var element in VisualElements)
+                    result.Add(element.WriteHtml(renderContext, dataContext));
+
+                return result;
             }
         }
     }

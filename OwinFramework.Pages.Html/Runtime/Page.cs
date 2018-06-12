@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -99,6 +100,7 @@ namespace OwinFramework.Pages.Html.Runtime
             catch
             {
                 writeResult.Wait(true);
+                writeResult.Dispose();
                 dependencies.Dispose();
 
                 throw;
@@ -107,6 +109,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return Task.Factory.StartNew(() =>
                 {
                     writeResult.Wait();
+                    writeResult.Dispose();
                     html.ToResponse(owinContext);
                     dependencies.Dispose();
                 });

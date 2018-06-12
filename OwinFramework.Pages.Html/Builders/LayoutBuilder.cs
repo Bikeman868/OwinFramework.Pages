@@ -6,6 +6,7 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
@@ -30,7 +31,7 @@ namespace OwinFramework.Pages.Html.Builders
             private readonly INameManager _nameManager;
             private readonly BuiltLayout _layout;
 
-            private RegionSet _regionNames;
+            private RegionSet _regionSet;
             private Dictionary<string, object> _regions;
             private Dictionary<string, object> _regionLayouts;
             private Dictionary<string, object> _regionComponents;
@@ -52,18 +53,21 @@ namespace OwinFramework.Pages.Html.Builders
                         switch (regions[position])
                         {
                             case '(':
+                                result.Elements.AddRange(BuildList(regions, start, position));
                                 position++;
-                                Parse(regions, ref position);
+                                result.Elements.Add(Parse(regions, ref position));
+                                position++;
+                                start = position;
                                 break;
                             case ')':
-                                result.Elements = BuildList(regions, start, position);
+                                result.Elements.AddRange(BuildList(regions, start, position));
                                 return result;
                             default:
                                 position++;
                                 break;
                         }
                     }
-                    result.Elements = BuildList(regions, start, position);
+                    result.Elements.AddRange(BuildList(regions, start, position));
                     return result;
                 }
 
@@ -115,7 +119,7 @@ namespace OwinFramework.Pages.Html.Builders
             public ILayoutDefinition RegionNesting(string regionNesting)
             {
                 var position = 0;
-                _regionNames = RegionSet.Parse(regionNesting, ref position);
+                _regionSet = RegionSet.Parse(regionNesting, ref position);
                 return this;
             }
 
@@ -212,21 +216,77 @@ namespace OwinFramework.Pages.Html.Builders
                 _nameManager.AddResolutionHandler(() =>
                     {
                         _layout.Elements = new List<IElement>();
+
+                        Action<RegionSet> addRegionSet = null;
+
+                        addRegionSet = rs =>
+                            {
+                                if (rs == null || rs.Elements == null) return;
+                                foreach (var e in rs.Elements)
+                                {
+                                    if (e is string)
+                                    {
+                                        var regionName = (string)e;
+                                        if (!_regions.ContainsKey(regionName))
+                                        {
+                                            _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p",  "Layout does not have a '" + e + "' region") });
+                                            continue;
+                                        }
+
+                                        var regionElement = _regions[regionName];
+                                        var region = regionElement as IRegion;
+                                        if (region != null)
+                                        {
+                                            _layout.Elements.Add(region);
+                                        }
+                                        else
+                                        {
+                                            var regionElementName = (string)regionElement;
+                                            region = _nameManager.ResolveRegion(regionElementName, _layout.Package);
+                                            if (region == null)
+                                                _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p",  "Unknown region element '" + regionElementName + "'</b></p>") });
+                                            else
+                                                _layout.Elements.Add(region);
+                                        }
+                                    }
+                                    else if (e is RegionSet)
+                                    {
+                                        _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteOpenTag("div", "class", "region-set") });
+                                        addRegionSet((RegionSet)e);
+                                        _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteCloseTag("div") });
+                                    }
+                                }
+                            };
+
+                        addRegionSet(_regionSet);
                     });
                 return _layout;
             }
         }
 
-        private class RegionContainer: Element
+        private class StaticHtmlElement: Element
         {
+            public Action<IHtmlWriter> WriteAction;
 
+            public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
+            {
+                WriteAction(renderContext.Html);
+                return WriteResult.Continue();
+            }
         }
 
-        private class BuiltLayout: Layout
+        private class BuiltLayout : Layout
         {
-            public AssetDeployment AssetDeployment { get; set; }
-
             public List<IElement> Elements;
+            public AssetDeployment AssetDeployment;
+
+            public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
+            {
+                foreach (var element in Elements)
+                    element.WriteHtml(renderContext, dataContext);
+
+                return WriteResult.Continue();
+            }
         }
     }
 }

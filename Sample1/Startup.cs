@@ -17,6 +17,7 @@ using Urchin.Client.Sources;
 using OwinFramework.Pages.Core;
 using Sample1;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 
 [assembly: OwinStartup(typeof(Startup))]
 
@@ -96,6 +97,11 @@ namespace Sample1
             // to avoid naming conflicts. This allows you to install packages from third
             // parties.
             fluentBuilder.Register(ninject.Get<MenuPackage>());
+
+            // Now that all of the elements are loaded an registered we can resolve name
+            // references between elements
+            var nameManager = ninject.Get<INameManager>();
+            nameManager.Bind();
         }
     }
 }

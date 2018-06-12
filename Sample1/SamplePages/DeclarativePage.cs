@@ -143,7 +143,7 @@ namespace Sample1.SamplePages
     /// contains the 'body' region and the 'footer' region contains 'main.footer'.
     /// The contents of each region can be overriden for each instance of this layout
     /// </summary>
-    [IsLayout("main", "header,body,footer")]
+    [IsLayout("main", "header(body,footer)")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
     [UsesRegion("header", "main.header")]

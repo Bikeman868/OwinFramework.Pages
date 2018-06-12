@@ -8,14 +8,10 @@ namespace OwinFramework.Pages.Html.Runtime
     /// </summary>
     public class Region : Element, IRegion
     {
-        public string ContainerOpen
+        public IElement Wrap(IElement content)
         {
-            get { throw new System.NotImplementedException(); }
-        }
-
-        public string ContainerClose
-        {
-            get { throw new System.NotImplementedException(); }
+            // TODO: Create a new region that is a clone of this one but with different content inside
+            return this;
         }
     }
 }

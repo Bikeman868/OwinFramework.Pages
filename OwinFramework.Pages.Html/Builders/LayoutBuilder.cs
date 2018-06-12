@@ -32,9 +32,17 @@ namespace OwinFramework.Pages.Html.Builders
             private readonly BuiltLayout _layout;
 
             private RegionSet _regionSet;
-            private Dictionary<string, object> _regions;
+            private Dictionary<string, object> _regionElements;
             private Dictionary<string, object> _regionLayouts;
             private Dictionary<string, object> _regionComponents;
+
+            private string _tag;
+            private string[] _classNames;
+            private string _style;
+
+            private string _nestingTag = "div";
+            private string[] _nestedClassNames;
+            private string _nestedStyle;
 
             private class RegionSet
             {
@@ -88,7 +96,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 _nameManager = nameManager;
                 _layout = new BuiltLayout();
-                _regions = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+                _regionElements = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
                 _regionLayouts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
                 _regionComponents = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             }
@@ -131,13 +139,13 @@ namespace OwinFramework.Pages.Html.Builders
 
             public ILayoutDefinition Region(string regionName, IRegion region)
             {
-                _regions[regionName] = region;
+                _regionElements[regionName] = region;
                 return this;
             }
 
             public ILayoutDefinition Region(string regionName, string name)
             {
-                _regions[regionName] = name;
+                _regionElements[regionName] = name;
                 return this;
             }
 
@@ -167,31 +175,37 @@ namespace OwinFramework.Pages.Html.Builders
 
             public ILayoutDefinition Tag(string tagName)
             {
+                _tag = tagName;
                 return this;
             }
 
             public ILayoutDefinition ClassNames(params string[] classNames)
             {
+                _classNames = classNames;
                 return this;
             }
 
             public ILayoutDefinition Style(string style)
             {
+                _style = style;
                 return this;
             }
 
             public ILayoutDefinition NestingTag(string tagName)
             {
+                _nestingTag = tagName;
                 return this;
             }
 
             public ILayoutDefinition NestedClassNames(params string[] classNames)
             {
+                _nestedClassNames = classNames;
                 return this;
             }
 
             public ILayoutDefinition NestedStyle(string style)
             {
+                _nestedStyle = style;
                 return this;
             }
 
@@ -217,50 +231,129 @@ namespace OwinFramework.Pages.Html.Builders
                     {
                         _layout.Elements = new List<IElement>();
 
-                        Action<RegionSet> addRegionSet = null;
+                        foreach (var regionName in _regionComponents.Keys)
+                        {
+                            var componentRef = _regionComponents[regionName];
+                            var componentName = componentRef as string;
+                            if (componentName != null)
+                                _regionComponents[regionName] = _nameManager.ResolveComponent(componentName);
+                        }
 
-                        addRegionSet = rs =>
-                            {
-                                if (rs == null || rs.Elements == null) return;
-                                foreach (var e in rs.Elements)
-                                {
-                                    if (e is string)
-                                    {
-                                        var regionName = (string)e;
-                                        if (!_regions.ContainsKey(regionName))
-                                        {
-                                            _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p",  "Layout does not have a '" + e + "' region") });
-                                            continue;
-                                        }
+                        foreach (var regionName in _regionLayouts.Keys)
+                        {
+                            var layoutRef = _regionLayouts[regionName];
+                            var layoutName = layoutRef as string;
+                            if (layoutName != null)
+                                _regionLayouts[regionName] = _nameManager.ResolveLayout(layoutName);
+                        }
 
-                                        var regionElement = _regions[regionName];
-                                        var region = regionElement as IRegion;
-                                        if (region != null)
-                                        {
-                                            _layout.Elements.Add(region);
-                                        }
-                                        else
-                                        {
-                                            var regionElementName = (string)regionElement;
-                                            region = _nameManager.ResolveRegion(regionElementName, _layout.Package);
-                                            if (region == null)
-                                                _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p",  "Unknown region element '" + regionElementName + "'</b></p>") });
-                                            else
-                                                _layout.Elements.Add(region);
-                                        }
-                                    }
-                                    else if (e is RegionSet)
-                                    {
-                                        _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteOpenTag("div", "class", "region-set") });
-                                        addRegionSet((RegionSet)e);
-                                        _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteCloseTag("div") });
-                                    }
-                                }
-                            };
-
-                        addRegionSet(_regionSet);
+                        WriteOpeningTag();
+                        AddRegionSet(_regionSet);
+                        WriteClosingTag();
                     });
                 return _layout;
+            }
+
+            private void AddRegionSet(RegionSet rs)
+            {
+                if (rs != null && rs.Elements != null)
+                {
+                    foreach (var element in rs.Elements)
+                    {
+                        var regionName = element as string;
+                        var childRegionSet = element as RegionSet;
+
+                        if (regionName != null)
+                        {
+                            if (!_regionElements.ContainsKey(regionName))
+                            {
+                                _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p", "Layout does not have a '" + regionName + "' region") });
+                                continue;
+                            }
+
+                            var regionElement = _regionElements[regionName];
+                            var region = regionElement as IRegion;
+                            var regionElementName = (string)regionElement;
+
+                            if (region == null && regionElementName != null)
+                            {
+                                region = _nameManager.ResolveRegion(regionElementName, _layout.Package);
+                                if (region == null)
+                                    _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'") });
+                            }
+
+                            if (region != null)
+                            {
+                                if (_regionComponents.ContainsKey(regionName))
+                                {
+                                    _layout.Elements.Add(region.Wrap((IComponent)_regionComponents[regionName]));
+                                }
+                                else if (_regionLayouts.ContainsKey(regionName))
+                                {
+                                    _layout.Elements.Add(region.Wrap((ILayout)_regionLayouts[regionName]));
+                                }
+                                else
+                                    _layout.Elements.Add(region);
+                            }
+                        }
+                        else if (childRegionSet != null)
+                        {
+                            WriteNestingOpeningTag();
+                            AddRegionSet(childRegionSet);
+                            WriteNestingClosingTag();
+                        }
+                    }
+                }
+            }
+
+            private void WriteOpeningTag()
+            {
+                if (!string.IsNullOrEmpty(_tag))
+                {
+                    var tagAttributes = new List<string>();
+                    if (!string.IsNullOrEmpty(_style))
+                    {
+                        tagAttributes.Add("style");
+                        tagAttributes.Add(_style);
+                    }
+                    if (_classNames != null && _classNames.Length > 0)
+                    {
+                        tagAttributes.Add("class");
+                        tagAttributes.Add(string.Join(" ", _classNames));
+                    }
+                    _layout.Elements.Add(new StaticHtmlElement {WriteAction = w => w.WriteOpenTag(_tag, tagAttributes.ToArray())});
+                }
+            }
+
+            private void WriteClosingTag()
+            {
+                if (!string.IsNullOrEmpty(_tag))
+                    _layout.Elements.Add(new StaticHtmlElement {WriteAction = w => w.WriteCloseTag(_tag)});
+            }
+
+            private void WriteNestingOpeningTag()
+            {
+                if (!string.IsNullOrEmpty(_nestingTag))
+                {
+                    var tagAttributes = new List<string>();
+                    if (!string.IsNullOrEmpty(_nestedStyle))
+                    {
+                        tagAttributes.Add("style");
+                        tagAttributes.Add(_nestedStyle);
+                    }
+                    if (_nestedClassNames != null && _nestedClassNames.Length > 0)
+                    {
+                        tagAttributes.Add("class");
+                        tagAttributes.Add(string.Join(" ", _nestedClassNames));
+                    }
+                    _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteOpenTag(_nestingTag, tagAttributes.ToArray()) });
+                }
+            }
+
+            private void WriteNestingClosingTag()
+            {
+                if (!string.IsNullOrEmpty(_nestingTag))
+                    _layout.Elements.Add(new StaticHtmlElement { WriteAction = w => w.WriteCloseTag(_nestingTag) });
             }
         }
 

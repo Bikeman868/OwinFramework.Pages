@@ -7,13 +7,9 @@
     public interface IRegion : IElement
     {
         /// <summary>
-        /// Returns the html to output before the contents of the region
+        /// Returns an IElement implementation that is this element
+        /// with specific content inside
         /// </summary>
-        string ContainerOpen { get; }
-
-        /// <summary>
-        /// Returns the html to output after the contents of the region
-        /// </summary>
-        string ContainerClose { get; }
+        IElement Wrap(IElement content);
     }
 }

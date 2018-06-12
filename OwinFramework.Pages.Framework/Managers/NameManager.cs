@@ -100,7 +100,14 @@ namespace OwinFramework.Pages.Framework.Managers
             lock (_pendingActions)
             {
                 foreach (var action in _pendingActions)
-                    action.Invoke();
+                    try
+                    {
+                        action.Invoke();
+                    }
+                    catch
+                    { 
+                        // TODO: Log exceptions
+                    }
                 _pendingActions.Clear();
             }
         }

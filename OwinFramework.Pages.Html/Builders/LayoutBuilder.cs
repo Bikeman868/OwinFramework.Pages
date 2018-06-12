@@ -237,7 +237,8 @@ namespace OwinFramework.Pages.Html.Builders
                         _layout.VisualElements = new List<IElement>();
                         _layout.Regions = new List<IRegion>();
 
-                        foreach (var regionName in _regionComponents.Keys)
+                        var regionComponentKeys = _regionComponents.Keys.ToList();
+                        foreach (var regionName in regionComponentKeys)
                         {
                             var componentRef = _regionComponents[regionName];
                             var componentName = componentRef as string;
@@ -245,7 +246,8 @@ namespace OwinFramework.Pages.Html.Builders
                                 _regionComponents[regionName] = _nameManager.ResolveComponent(componentName);
                         }
 
-                        foreach (var regionName in _regionLayouts.Keys)
+                        var regionLayoutKeys = _regionLayouts.Keys.ToList();
+                        foreach (var regionName in regionLayoutKeys)
                         {
                             var layoutRef = _regionLayouts[regionName];
                             var layoutName = layoutRef as string;

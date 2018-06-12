@@ -323,17 +323,19 @@ defined using any of the other techniques.
 1. In Visual Studio start a new project or type "ASP.NET Empty Web Application". This will create a project that contains very little.
 2. Go to the NuGet package manager and install these packages `Owin.Framework`, `Ioc.Modules.Ninject`, `Owin.Framework.Urchin`, `Owin.Framework.Pages.Framework`, `Owin.Framework.Pages.Html`, `Microsoft.Owin.Host.SystemWeb` - note that you might have to pick a specific version of `Microsoft.Owin.Host.SystemWeb` because each version targets only specific versions of .Net, for example "`install-package Microsoft.Owin.Host.SystemWeb -version 2.1.0`".
 3. Modify the `web.config` file to use the `ExtensionlessUrlHandler`. Use [this file](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/Web.config) as an example.
-4. In root of your project add a new `Startup.cs` file and add `[assembly: OwinStartup(typeof(Startup))]` under the `using` statements and above the `namespace` statement. Resolve references and make sure it compiles.
-5. In the Startup class add a method with ths signature `public void Configuration(IAppBuilder app)`. Add the necessary `using` statements so that the code compiles.
+4. In the root of your project add a new `Startup.cs` file and add `[assembly: OwinStartup(typeof(Startup))]` under the `using` statements and above the `namespace` statement. Resolve references and make sure it compiles.
+5. In the `Startup` class add a method with ths signature `public void Configuration(IAppBuilder app)`. Add the necessary `using` statements so that the code compiles.
 6. Set up the Owin Framework middleware pipeline. The Owin Framework has documentation describing how to do this. You can also look at [Startup.cs](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample2/Startup.cs) for a working example to copy from.
 7. At the end of the `Configuration` method in your `Startup` class, resolve `IFluentBuilder` from your IoC container, for example `var fluentBuilder = ninject.Get<IFluentBuilder>();`.
-8. Install the Html element builders with this line of code `ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);`.
+8. Install the Html element builders with code similar to this: `ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);`.
 9. Have the fluent builder scan your application by adding `fluentBuilder.Register(Assembly.GetExecutingAssembly());`.
-10. Add Components, Regions, Layouts and Pages to your application using the declarative syntax illustrated in [this example](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/DeclarativePage.cs).
-11. At this point your solution should be similar to [this one](https://github.com/Bikeman868/OwinFramework.Pages/tree/master/Sample2). Press F5 and test your pages.
-12. Study the other sample applications to see what else you can do.
-13. Add a `Package.cs` file so that `Ioc.Modules` knows what your application needs and can fail early with helpful error messages.
-14. Read the documentation!!
+10. Resolve `INameManager` from your IoC container, for example `var nameManager = ninject.Get<INameManager>();`.
+11 Get the name manager to resolve all name references and bind everything together `nameManager.Bind();`.
+12. Add Components, Regions, Layouts and Pages to your application using the declarative syntax illustrated in [this example](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/DeclarativePage.cs).
+13. At this point your solution should be similar to [this one](https://github.com/Bikeman868/OwinFramework.Pages/tree/master/Sample2). Press F5 and test your pages.
+14. Study the other sample applications to see what else you can do.
+15. Add a `Package.cs` file so that `Ioc.Modules` knows what your application needs and can fail early with helpful error messages.
+16. Read the documentation!!
 
 # Recommended best practice
 

@@ -11,6 +11,11 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
+    // TODO: Data binding
+    // TODO: Repeating content on binding to a list
+    // TODO: Render styles to dynamic assets
+    // TODO: Implement AssetDeployment
+
     internal class RegionBuilder: IRegionBuilder
     {
         private readonly INameManager _nameManager;
@@ -47,7 +52,7 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
-            public IRegionDefinition PartOf(Core.Interfaces.IPackage package)
+            public IRegionDefinition PartOf(IPackage package)
             {
                 _region.Package = package;
                 return this;

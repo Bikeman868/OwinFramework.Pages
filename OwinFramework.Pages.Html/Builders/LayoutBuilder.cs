@@ -11,6 +11,11 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
+    // TODO: Data binding
+    // TODO: Render styles to dynamic assets
+    // TODO: Implement AssetDeployment
+    // TODO: Pages can override the contents of regions in the layout
+
     internal class LayoutBuilder : ILayoutBuilder
     {
         private readonly INameManager _nameManager;

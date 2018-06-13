@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
@@ -60,8 +61,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dependenciesFactory = dependenciesFactory;
         }
 
-        public virtual void Initialize()
+        public override IEnumerator<IElement> GetChildren()
         {
+            return Layout.AsEnumerable<IElement>().GetEnumerator();
         }
 
         /// <summary>

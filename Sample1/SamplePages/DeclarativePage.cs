@@ -81,7 +81,7 @@ namespace Sample1.SamplePages
     [IsRegion("main.header")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
-    [Container("div", "", "header")]
+    [Container("div", "header")]
     internal class MainHeaderRegion { }
 
     /// <summary>
@@ -90,7 +90,7 @@ namespace Sample1.SamplePages
     [IsRegion("body")]
     [PartOf("Application")]
     [DeployedAs("Content")]
-    [Container("div", "", "body")]
+    [Container("div", "body")]
     internal class BodyRegion { }
 
     /// <summary>
@@ -99,7 +99,7 @@ namespace Sample1.SamplePages
     [IsRegion("main.footer")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
-    [Container("div", "", "footer")]
+    [Container("div", "footer")]
     internal class MainFooterRegion { }
 
     /// <summary>
@@ -108,7 +108,7 @@ namespace Sample1.SamplePages
     [IsRegion("2col.vertical.fixed.left")]
     [PartOf("Application")]
     [DeployedAs("Content")]
-    [Container("div", "", "left")]
+    [Container("div", "left")]
     internal class LeftRegion { }
 
     /// <summary>
@@ -117,7 +117,7 @@ namespace Sample1.SamplePages
     [IsRegion("2col.vertical.fixed.right")]
     [PartOf("Application")]
     [DeployedAs("Content")]
-    [Container("div", "", "right")]
+    [Container("div", "right")]
     internal class RightRegion { }
 
     /* <summary>
@@ -154,11 +154,10 @@ namespace Sample1.SamplePages
     /// <summary>
     /// Defines the layout of the 'body' region for the home page
     /// </summary>
-    [IsLayout("homePage", "left.main")]
+    [IsLayout("home.body", "left,main")]
     [PartOf("Application")]
     [DeployedAs("Navigation")]
-    [Container("div", "", "2col.vertical.fixed")]
-    [ChildContainer(null)]
+    [Container("div", "2col.vertical.fixed")]
     [UsesRegion("left", "2col.vertical.fixed.left")]
     [UsesRegion("main", "2col.vertical.fixed.right")]
     internal class HomePageLayout { }
@@ -188,7 +187,7 @@ namespace Sample1.SamplePages
     [PageTitle("Sample website")]
     [Style("font-size: 18px;")]
     [RegionComponent("header", "header.mainMenu")]
-    [RegionLayout("body", "homePage")]
+    [RegionLayout("body", "home.body")]
     [RegionComponent("footer", "footer.standard")]
     internal class HomePage { }
 }

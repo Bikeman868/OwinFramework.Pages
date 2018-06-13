@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Builders\ComponentBuilder.cs" />
+    <Compile Include="Builders\HtmlHelper.cs" />
+    <Compile Include="Builders\IHtmlHelper.cs" />
     <Compile Include="Builders\LayoutBuilder.cs" />
     <Compile Include="Builders\ModuleBuilder.cs" />
     <Compile Include="Builders\PageBuilder.cs" />

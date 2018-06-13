@@ -19,30 +19,36 @@ namespace OwinFramework.Pages.Html.Builders
     internal class RegionBuilder: IRegionBuilder
     {
         private readonly INameManager _nameManager;
+        private readonly IHtmlHelper _htmlHelper;
 
         public RegionBuilder(
-                INameManager nameManager)
+            INameManager nameManager,
+            IHtmlHelper htmlHelper)
         {
             _nameManager = nameManager;
+            _htmlHelper = htmlHelper;
         }
 
         IRegionDefinition IRegionBuilder.Region()
         {
-            return new RegionDefinition(_nameManager);
+            return new RegionDefinition(_nameManager, _htmlHelper);
         }
 
         private class RegionDefinition: IRegionDefinition
         {
             private readonly INameManager _nameManager;
+            private readonly IHtmlHelper _htmlHelper;
             private readonly BuiltRegion _region;
             private string _tagName;
             private string _style;
             private string[] _classNames;
 
             public RegionDefinition(
-                INameManager nameManager)
+                INameManager nameManager,
+                IHtmlHelper htmlHelper)
             {
                 _nameManager = nameManager;
+                _htmlHelper = htmlHelper;
                 _region = new BuiltRegion();
             }
 
@@ -151,27 +157,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 if (!string.IsNullOrEmpty( _tagName))
                 {
-                    var tagAttributes = new List<string>();
-
-                    if (!string.IsNullOrEmpty(_style))
-                    {
-                        tagAttributes.Add("style");
-                        tagAttributes.Add(_style);
-                    }
-
-                    if (_classNames != null && _classNames.Length > 0)
-                    {
-                        var classes = string.Join(" ", _classNames
-                            .Select(c => c.Trim().Replace(' ', '-'))
-                            .Where(c => !string.IsNullOrEmpty(c)));
-                        if (classes.Length > 0)
-                        {
-                            tagAttributes.Add("class");
-                            tagAttributes.Add(classes);
-                        }
-                    }
-
-                    var attributes = tagAttributes.ToArray();
+                    var attributes = _htmlHelper.StyleAttributes(_style, _classNames);
                     _region.WriteOpen = w => w.WriteOpenTag(_tagName, attributes);
                     _region.WriteClose = w => w.WriteCloseTag(_tagName);
                 }

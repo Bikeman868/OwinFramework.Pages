@@ -233,7 +233,7 @@ namespace OwinFramework.Pages.Html.Builders
                 }
 
                 _requestRouter.Register(_page, _filter, _filterPriority, _declaringType);
-
+                _nameManager.Register(_page);
                 return _page;
             }
         }

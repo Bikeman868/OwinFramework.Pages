@@ -19,22 +19,26 @@ namespace OwinFramework.Pages.Html.Builders
     internal class LayoutBuilder : ILayoutBuilder
     {
         private readonly INameManager _nameManager;
+        private readonly IHtmlHelper _htmlHelper;
 
         public LayoutBuilder(
-                INameManager nameManager)
+            INameManager nameManager,
+            IHtmlHelper htmlHelper)
         {
             _nameManager = nameManager;
+            _htmlHelper = htmlHelper;
         }
 
         ILayoutDefinition ILayoutBuilder.Layout()
         {
-            return new LayoutDefinition(_nameManager);
+            return new LayoutDefinition(_nameManager, _htmlHelper);
         }
 
         private class LayoutDefinition: ILayoutDefinition
         {
             private readonly INameManager _nameManager;
             private readonly BuiltLayout _layout;
+            private readonly IHtmlHelper _htmlHelper;
 
             private RegionSet _regionSet;
             private readonly Dictionary<string, object> _regionElements;
@@ -97,9 +101,12 @@ namespace OwinFramework.Pages.Html.Builders
             }
 
             public LayoutDefinition(
-                INameManager nameManager)
+                INameManager nameManager,
+                IHtmlHelper htmlHelper)
             {
                 _nameManager = nameManager;
+                _htmlHelper = htmlHelper;
+
                 _layout = new BuiltLayout();
                 _regionElements = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
                 _regionLayouts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
@@ -290,9 +297,6 @@ namespace OwinFramework.Pages.Html.Builders
                             if (region != null)
                             {
                                 if (_regionComponents.ContainsKey(regionName))
-                                    _layout.AddRegion(regionName, region, (IComponent)_regionComponents[regionName]);
-
-                                if (_regionComponents.ContainsKey(regionName))
                                 {
                                     _layout.AddRegion(regionName, region, (IComponent)_regionComponents[regionName]);
                                 }
@@ -318,24 +322,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 if (!string.IsNullOrEmpty(_tag))
                 {
-                    var tagAttributes = new List<string>();
-                    if (!string.IsNullOrEmpty(_style))
-                    {
-                        tagAttributes.Add("style");
-                        tagAttributes.Add(_style);
-                    }
-                    if (_classNames != null && _classNames.Length > 0)
-                    {
-                        var classes = string.Join(" ", _classNames
-                            .Select(c => c.Trim().Replace(' ', '-'))
-                            .Where(c => !string.IsNullOrEmpty(c)));
-                        if (classes.Length > 0)
-                        {
-                            tagAttributes.Add("class");
-                            tagAttributes.Add(classes);
-                        }
-                    }
-                    var attributes = tagAttributes.ToArray();
+                    var attributes = _htmlHelper.StyleAttributes(_style, _classNames);
                     _layout.AddVisualElement(w => w.WriteOpenTag(_tag, attributes));
                 }
             }
@@ -350,24 +337,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 if (!string.IsNullOrEmpty(_nestingTag))
                 {
-                    var tagAttributes = new List<string>();
-                    if (!string.IsNullOrEmpty(_nestedStyle))
-                    {
-                        tagAttributes.Add("style");
-                        tagAttributes.Add(_nestedStyle);
-                    }
-                    if (_nestedClassNames != null && _nestedClassNames.Length > 0)
-                    {
-                        var classes = string.Join(" ", _nestedClassNames
-                            .Select(c => c.Trim().Replace(' ', '-'))
-                            .Where(c => !string.IsNullOrEmpty(c)));
-                        if (classes.Length > 0)
-                        {
-                            tagAttributes.Add("class");
-                            tagAttributes.Add(classes);
-                        }
-                    }
-                    var attributes = tagAttributes.ToArray();
+                    var attributes = _htmlHelper.StyleAttributes(_nestingTag, _nestedClassNames);
                     _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes));
                 }
             }
@@ -425,7 +395,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             public override void PopulateRegion(string regionName, IElement element)
             {
-                for (var i = 0; i < regionName.Length; i++)
+                for (var i = 0; i < _regionNames.Count; i++)
                 {
                     if (string.Equals(_regionNames[i], regionName, StringComparison.OrdinalIgnoreCase))
                     {

@@ -87,5 +87,26 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             return null;
         }
+
+        /// <summary>
+        /// Override this method to perform initialization steps after name resolution
+        /// </summary>
+        public virtual void Initialize()
+        {
+            var children = GetChildren();
+            if (children == null) return;
+
+            try
+            {
+                while (children.MoveNext())
+                {
+                    children.Current.Initialize();
+                }
+            }
+            finally
+            {
+                children.Dispose();
+            }
+        }
     }
 }

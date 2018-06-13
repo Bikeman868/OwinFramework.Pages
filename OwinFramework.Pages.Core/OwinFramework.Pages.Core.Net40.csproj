@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Attributes\ChildContainerAttribute.cs" />
     <Compile Include="Attributes\PageTitleAttribute.cs" />
+    <Compile Include="Attributes\ChildStyleAttribute.cs" />
     <Compile Include="Attributes\StyleAttribute.cs" />
     <Compile Include="Attributes\RequiresPermissionAttribute.cs" />
     <Compile Include="Attributes\RenderHtml.cs" />

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using System;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -24,6 +23,11 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Defines how the assets are deployed for this element
         /// </summary>
         AssetDeployment AssetDeployment { get; set; }
+
+        /// <summary>
+        /// This is called once only after name resolution
+        /// </summary>
+        void Initialize();
 
         /// <summary>
         /// Returns a disposable enumerator for the children of this element. By calling

@@ -311,6 +311,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 var regionComponent = attribute as RegionComponentAttribute;
                 var regionLayout = attribute as RegionLayoutAttribute;
                 var style = attribute as StyleAttribute;
+                var childStyle = attribute as ChildStyleAttribute;
                 var container = attribute as ContainerAttribute;
                 var childContainer = attribute as ChildContainerAttribute;
                 var usesRegion = attribute as UsesRegionAttribute;
@@ -343,6 +344,12 @@ namespace OwinFramework.Pages.Framework.Builders
                         layout.Style(style.CssStyle);
                 }
 
+                if (childStyle != null)
+                {
+                    if (!string.IsNullOrEmpty(childStyle.CssStyle))
+                        layout.NestedStyle(childStyle.CssStyle);
+                }
+
                 if (container != null)
                 {
                     if (!string.IsNullOrEmpty(container.Tag))
@@ -350,9 +357,6 @@ namespace OwinFramework.Pages.Framework.Builders
 
                     if (container.ClassNames != null && container.ClassNames.Length > 0)
                         layout.ClassNames(container.ClassNames);
-
-                    if (!string.IsNullOrEmpty(container.Style))
-                        layout.Style(container.Style);
                 }
 
                 if (childContainer != null)
@@ -362,9 +366,6 @@ namespace OwinFramework.Pages.Framework.Builders
 
                     if (childContainer.ClassNames != null && childContainer.ClassNames.Length > 0)
                         layout.NestedClassNames(childContainer.ClassNames);
-
-                    if (!string.IsNullOrEmpty(childContainer.Style))
-                        layout.NestedStyle(childContainer.Style);
                 }
 
                 if (usesRegion != null)
@@ -424,9 +425,6 @@ namespace OwinFramework.Pages.Framework.Builders
 
                     if (container.ClassNames != null && container.ClassNames.Length > 0)
                         region.ClassNames(container.ClassNames);
-
-                    if (!string.IsNullOrEmpty(container.Style))
-                        region.Style(container.Style);
                 }
 
                 if (usesLayout != null)

@@ -33,6 +33,7 @@ namespace OwinFramework.Pages.Html
                     new IocRegistration().Init<IPageDependencies, PageDependencies>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IRenderContextFactory, RenderContextFactory>(),
                     new IocRegistration().Init<IRenderContext, RenderContext>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IHtmlHelper, HtmlHelper>(),
 
                     // Elements have depedencies that are wrapped in an interface to avoid
                     // breaking application page constructors if new dependencies are added

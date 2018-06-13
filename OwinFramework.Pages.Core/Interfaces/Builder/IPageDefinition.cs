@@ -44,6 +44,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDefinition PartOf(string packageName);
 
         /// <summary>
+        /// Specifies that this page is deployed as part of a module
+        /// </summary>
+        /// <param name="module">The module that this page is deployed in</param>
+        IPageDefinition DeployIn(IModule module);
+
+        /// <summary>
+        /// Specifies that this page is deployed as part of a module
+        /// </summary>
+        /// <param name="moduleName">The name of the module that this 
+        /// layout is deployed in</param>
+        IPageDefinition DeployIn(string moduleName);
+
+        /// <summary>
         /// Sets the css style of the body tag
         /// </summary>
         /// <param name="cssStyle">A valid css style definition, for example "margin: 10;"</param>

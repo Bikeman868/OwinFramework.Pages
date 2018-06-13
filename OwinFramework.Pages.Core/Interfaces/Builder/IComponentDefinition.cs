@@ -39,6 +39,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IComponentDefinition PartOf(string packageName);
 
         /// <summary>
+        /// Specifies that this component is deployed as part of a module
+        /// </summary>
+        /// <param name="module">The module that this component is deployed in</param>
+        IComponentDefinition DeployIn(IModule module);
+
+        /// <summary>
+        /// Specifies that this layout is deployed as part of a module
+        /// </summary>
+        /// <param name="moduleName">The name of the module that this 
+        /// layout is deployed in</param>
+        IComponentDefinition DeployIn(string moduleName);
+
+        /// <summary>
         /// Overrides the default asset deployment scheme for this component
         /// </summary>
         IComponentDefinition AssetDeployment(AssetDeployment assetDeployment);

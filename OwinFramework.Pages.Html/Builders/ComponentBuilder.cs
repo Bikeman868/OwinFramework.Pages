@@ -87,6 +87,21 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
+            IComponentDefinition IComponentDefinition.DeployIn(IModule module)
+            {
+                _component.Module = module;
+                return this;
+            }
+
+            IComponentDefinition IComponentDefinition.DeployIn(string moduleName)
+            {
+                _nameManager.AddResolutionHandler(() =>
+                    {
+                        _component.Module = _nameManager.ResolveModule(moduleName);
+                    });
+                return this;
+            }
+
             public IComponent Build()
             {
                 _nameManager.Register(_component);
@@ -116,8 +131,8 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 if (renderContext.IncludeComments)
                     renderContext.Html.WriteComment(
-                        (string.IsNullOrEmpty(Name) ? "(unnamed)" : Name) + 
-                        (Package == null ? " component" : " component from " + Package.Name + " package"));
+                        (string.IsNullOrEmpty(Name) ? "Unnamed" : Name) + 
+                        (Package == null ? " component" : " component from the " + Package.Name + " package"));
 
                 if (Writers != null)
                 {

@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces;
+﻿using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
@@ -9,5 +10,16 @@ namespace OwinFramework.Pages.Html.Runtime
     public class Module : IModule
     {
         public string Name { get; set; }
+
+        private AssetDeployment _assetDeployment = AssetDeployment.PerModule;
+
+        /// <summary>
+        /// Gets or sets the asset deployment scheme for this element
+        /// </summary>
+        public virtual AssetDeployment AssetDeployment
+        {
+            get { return _assetDeployment; }
+            set { _assetDeployment = value; }
+        }
     }
 }

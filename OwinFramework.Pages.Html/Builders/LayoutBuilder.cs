@@ -236,6 +236,21 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
+            ILayoutDefinition ILayoutDefinition.DeployIn(IModule module)
+            {
+                _layout.Module = module;
+                return this;
+            }
+
+            ILayoutDefinition ILayoutDefinition.DeployIn(string moduleName)
+            {
+                _nameManager.AddResolutionHandler(() =>
+                {
+                    _layout.Module = _nameManager.ResolveModule(moduleName);
+                });
+                return this;
+            }
+            
             public ILayout Build()
             {
                 _nameManager.Register(_layout);
@@ -371,6 +386,15 @@ namespace OwinFramework.Pages.Html.Builders
             private List<string> _regionNames;
             private List<IRegion> _regions;
 
+            public override IEnumerator<IElement> GetChildren()
+            {
+                var children = new List<IElement>();
+                for (var i = 0; i < _regions.Count; i++)
+                    children.Add(_visualElements[_visualElementMapping[i]]);
+
+                return children.GetEnumerator();
+            }
+
             public void AddVisualElement(Action<IHtmlWriter> writeAction, string comment)
             {
                 if (_visualElements == null)
@@ -488,13 +512,33 @@ namespace OwinFramework.Pages.Html.Builders
                 var result = WriteResult.Continue();
 
                 if (renderContext.IncludeComments)
+                {
                     renderContext.Html.WriteComment(
-                        (string.IsNullOrEmpty(Name) ? "(unnamed)" : Name) +
+                        (string.IsNullOrEmpty(Name) ? "Unnamed" : Name) +
                         (Package == null ? " layout" : " layout from " + Package.Name + " package"));
 
-                foreach (var element in _visualElements)
-                    result.Add(element.WriteHtml(renderContext, dataContext));
+                    var reverseMapping = new Dictionary<int, int>();
+                    for (var i = 0; i < _regions.Count; i++)
+                    {
+                        var visualElementIndex = _visualElementMapping[i];
+                        reverseMapping[visualElementIndex] = i;
+                    }
 
+                    for (var i = 0; i < _visualElements.Count; i++)
+                    {
+                        if (reverseMapping.ContainsKey(i))
+                        {
+                            var regionIndex = reverseMapping[i];
+                            renderContext.Html.WriteComment("Layout '" + _regionNames[regionIndex] + "' region");
+                        }
+                        result.Add(_visualElements[i].WriteHtml(renderContext, dataContext));
+                    }
+                }
+                else
+                {
+                    foreach (var element in _visualElements)
+                        result.Add(element.WriteHtml(renderContext, dataContext));
+                }
                 return result;
             }
         }

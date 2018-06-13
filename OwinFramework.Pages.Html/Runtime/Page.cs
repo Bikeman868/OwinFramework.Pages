@@ -61,6 +61,115 @@ namespace OwinFramework.Pages.Html.Runtime
             _dependenciesFactory = dependenciesFactory;
         }
 
+        public virtual void Initialize()
+        {
+            var data = new Initializationdata
+            { 
+                AssetDeployment = AssetDeployment
+            };
+
+            if (AssetDeployment == AssetDeployment.Inherit)
+            {
+                if (Module == null)
+                    data.AssetDeployment = AssetDeployment.PerWebsite;
+                else
+                    data.AssetDeployment = Module.AssetDeployment;
+            }
+
+            if (Layout != null) Layout.Initialize(data);
+
+            // TODO: Group elements by module and deployment method
+            // TODO: Create in-page static asset html
+
+            System.Diagnostics.Trace.WriteLine("Page " + Name);
+            foreach (var element in data.Elements)
+            {
+                var name = string.IsNullOrEmpty(element.Element.Name)
+                    ? element.Element.GetType().Name
+                    : element.Element.Name;
+
+                string deployment;
+                switch (element.AssetDeployment)
+                {
+                    case AssetDeployment.PerWebsite:
+                        deployment = "website assets";
+                        break;
+                    case AssetDeployment.PerModule:
+                        deployment = element.Module.Name + " module";
+                        break;
+                    case AssetDeployment.PerPage:
+                        deployment = "page assets";
+                        break;
+                    case AssetDeployment.InPage:
+                        deployment = "page head";
+                        break;
+                    default:
+                        deployment = element.AssetDeployment.ToString();
+                        break;
+                }
+
+                System.Diagnostics.Trace.WriteLine("   " + name + " deployed to " + deployment);
+            }
+        }
+
+        private class Initializationdata: IInitializationData
+        {
+            private class State
+            {
+                public AssetDeployment AssetDeployment;
+
+                public State Clone()
+                {
+                    return new State
+                    {
+                        AssetDeployment = AssetDeployment
+                    };
+                }
+            }
+
+            public class ElementRegistration
+            {
+                public IElement Element;
+                public AssetDeployment AssetDeployment;
+                public IModule Module;
+            }
+
+            public readonly List<ElementRegistration> Elements = new List<ElementRegistration>();
+
+            private readonly Stack<State> _stateStack = new Stack<State>();
+            private State _currentState = new State();
+
+            public void Push()
+            {
+                _stateStack.Push(_currentState);
+                _currentState = _currentState.Clone();
+            }
+
+            public void Pop()
+            {
+                _currentState = _stateStack.Pop();
+            }
+
+            public AssetDeployment AssetDeployment
+            {
+                get { return _currentState.AssetDeployment; }
+                set { _currentState.AssetDeployment = value; }
+            }
+
+            public void HasElement(
+                IElement element, 
+                AssetDeployment assetDeployment, 
+                IModule module)
+            {
+                Elements.Add(new ElementRegistration
+                    {
+                        Element = element,
+                        AssetDeployment = assetDeployment,
+                        Module = module
+                    });
+            }
+        }
+
         public override IEnumerator<IElement> GetChildren()
         {
             return Layout.AsEnumerable<IElement>().GetEnumerator();

@@ -33,6 +33,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public virtual IPackage Package { get; set; }
 
         /// <summary>
+        /// Optional module that this elements assets get deployed in
+        /// </summary>
+        public virtual IModule Module { get; set; }
+
+        /// <summary>
         /// Override to output static assets
         /// </summary>
         public virtual IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
@@ -91,20 +96,35 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override this method to perform initialization steps after name resolution
         /// </summary>
-        public virtual void Initialize()
+        public virtual void Initialize(IInitializationData initializationData)
         {
+            var assetDeployment = AssetDeployment == AssetDeployment.Inherit
+                ? initializationData.AssetDeployment
+                : AssetDeployment;
+
+            initializationData.HasElement(this, assetDeployment, Module);
+
             var children = GetChildren();
             if (children == null) return;
-
+            
+            if (AssetDeployment != AssetDeployment.Inherit)
+            {
+                initializationData.Push();
+                initializationData.AssetDeployment = AssetDeployment;
+            }
             try
             {
                 while (children.MoveNext())
                 {
-                    children.Current.Initialize();
+                    children.Current.Initialize(initializationData);
                 }
             }
             finally
             {
+                if (AssetDeployment != AssetDeployment.Inherit)
+                {
+                    initializationData.Pop();
+                }
                 children.Dispose();
             }
         }

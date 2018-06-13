@@ -256,7 +256,10 @@ namespace OwinFramework.Pages.Framework.Builders
                 var needsData = attribute as NeedsDataAttribute;
 
                 if (deployedAs != null)
-                    page.AssetDeployment(deployedAs.Deployment);
+                {
+                    page.AssetDeployment(deployedAs.Deployment)
+                        .Module(deployedAs.ModuleName);
+                }
 
                 if (usesLayout != null)
                     page.Layout(usesLayout.LayoutName);
@@ -318,7 +321,8 @@ namespace OwinFramework.Pages.Framework.Builders
                 var needsData = attribute as NeedsDataAttribute;
 
                 if (deployedAs != null)
-                    layout.AssetDeployment(deployedAs.Deployment);
+                    layout.AssetDeployment(deployedAs.Deployment)
+                        .DeployIn(deployedAs.ModuleName);
 
                 if (partOf != null)
                     layout.PartOf(partOf.PackageName);
@@ -395,7 +399,8 @@ namespace OwinFramework.Pages.Framework.Builders
                 var repeat = attribute as RepeatAttribute;
 
                 if (deployedAs != null)
-                    region.AssetDeployment(deployedAs.Deployment);
+                    region.AssetDeployment(deployedAs.Deployment)
+                        .DeployIn(deployedAs.ModuleName);
 
                 if (needsData != null)
                 {
@@ -453,7 +458,8 @@ namespace OwinFramework.Pages.Framework.Builders
                 var renderHtml = attribute as RenderHtml;
 
                 if (deployedAs != null)
-                    component.AssetDeployment(deployedAs.Deployment);
+                    component.AssetDeployment(deployedAs.Deployment)
+                        .DeployIn(deployedAs.ModuleName);
 
                 if (partOf != null)
                     component.PartOf(partOf.PackageName);

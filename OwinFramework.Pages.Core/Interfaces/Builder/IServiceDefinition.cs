@@ -15,6 +15,35 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IServiceDefinition Name(string name);
 
         /// <summary>
+        /// Specifies that this service is part of a package and should
+        /// generate and reference assets from that packages namespace
+        /// </summary>
+        /// <param name="package">The package that this service is
+        /// part of</param>
+        IServiceDefinition PartOf(IPackage package);
+
+        /// <summary>
+        /// Specifies that this service is part of a package and should
+        /// generate and reference assets from that packages namespace
+        /// </summary>
+        /// <param name="packageName">The name of the package that this 
+        /// service is part of</param>
+        IServiceDefinition PartOf(string packageName);
+
+        /// <summary>
+        /// Specifies that this service is deployed as part of a module
+        /// </summary>
+        /// <param name="module">The module that this service is deployed in</param>
+        IServiceDefinition DeployIn(IModule module);
+
+        /// <summary>
+        /// Specifies that this service is deployed as part of a module
+        /// </summary>
+        /// <param name="moduleName">The name of the module that this 
+        /// service is deployed in</param>
+        IServiceDefinition DeployIn(string moduleName);
+
+        /// <summary>
         /// Overrides the default asset deployment scheme for this service
         /// </summary>
         IServiceDefinition AssetDeployment(AssetDeployment assetDeployment);

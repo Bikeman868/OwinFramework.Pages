@@ -121,6 +121,7 @@
     <Compile Include="Interfaces\Runtime\IDataContextFactory.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriter.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriterFactory.cs" />
+    <Compile Include="Interfaces\Runtime\IInitializationData.cs" />
     <Compile Include="Interfaces\Runtime\IReusable.cs" />
     <Compile Include="Interfaces\Collections\IStringBuilder.cs" />
     <Compile Include="Interfaces\Collections\IStringBuilderFactory.cs" />

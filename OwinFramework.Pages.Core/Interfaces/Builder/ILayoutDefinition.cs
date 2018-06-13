@@ -36,6 +36,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition PartOf(string packageName);
 
         /// <summary>
+        /// Specifies that this layout is deployed as part of a module
+        /// </summary>
+        /// <param name="module">The module that this layout is deployed in</param>
+        ILayoutDefinition DeployIn(IModule module);
+
+        /// <summary>
+        /// Specifies that this layout is deployed as part of a module
+        /// </summary>
+        /// <param name="moduleName">The name of the module that this 
+        /// layout is deployed in</param>
+        ILayoutDefinition DeployIn(string moduleName);
+
+        /// <summary>
         /// Defines how regions are nested. By default regions are rendered one
         /// after the other using whatever html is produced by the region.
         /// Calling this method introduces additional regions as defined by the

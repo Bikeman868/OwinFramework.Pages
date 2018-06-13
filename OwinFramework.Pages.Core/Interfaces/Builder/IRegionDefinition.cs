@@ -40,6 +40,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition PartOf(string packageName);
 
         /// <summary>
+        /// Specifies that this region is deployed as part of a module
+        /// </summary>
+        /// <param name="module">The module that this region is deployed in</param>
+        IRegionDefinition DeployIn(IModule module);
+
+        /// <summary>
+        /// Specifies that this region is deployed as part of a module
+        /// </summary>
+        /// <param name="moduleName">The name of the module that this 
+        /// region is deployed in</param>
+        IRegionDefinition DeployIn(string moduleName);
+
+        /// <summary>
         /// Overrides the default asset deployment scheme for this region
         /// </summary>
         IRegionDefinition AssetDeployment(AssetDeployment assetDeployment);

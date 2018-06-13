@@ -211,6 +211,21 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
+            IPageDefinition IPageDefinition.DeployIn(IModule module)
+            {
+                _page.Module = module;
+                return this;
+            }
+
+            IPageDefinition IPageDefinition.DeployIn(string moduleName)
+            {
+                _nameManager.AddResolutionHandler(() =>
+                {
+                    _page.Module = _nameManager.ResolveModule(moduleName);
+                });
+                return this;
+            }
+
             IPage IPageDefinition.Build()
             {
                 if (_filter == null)
@@ -251,10 +266,13 @@ namespace OwinFramework.Pages.Html.Builders
 
             public override void Initialize()
             {
-                base.Initialize();
+                if (_regions != null)
+                {
+                    foreach (var region in _regions)
+                        Layout.PopulateRegion(region.Key, region.Value);
+                }
 
-                foreach (var region in _regions)
-                    Layout.PopulateRegion(region.Key, region.Value);
+                base.Initialize();
             }
 
             public void PopulateRegion(string regionName, IElement element)

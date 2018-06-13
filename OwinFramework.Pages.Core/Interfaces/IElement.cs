@@ -20,14 +20,20 @@ namespace OwinFramework.Pages.Core.Interfaces
         IPackage Package { get; set; }
 
         /// <summary>
+        /// Optional module that this elements assets are deployed to
+        /// </summary>
+        IModule Module { get; set; }
+        
+        /// <summary>
         /// Defines how the assets are deployed for this element
         /// </summary>
         AssetDeployment AssetDeployment { get; set; }
 
         /// <summary>
-        /// This is called once only after name resolution
+        /// This is called after name resolution. It is called once for each page where the
+        /// element appears
         /// </summary>
-        void Initialize();
+        void Initialize(IInitializationData initializationData);
 
         /// <summary>
         /// Returns a disposable enumerator for the children of this element. By calling

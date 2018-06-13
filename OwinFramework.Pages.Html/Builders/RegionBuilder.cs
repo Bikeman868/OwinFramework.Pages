@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -75,7 +76,7 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
-            public IRegionDefinition AssetDeployment(Core.Enums.AssetDeployment assetDeployment)
+            public IRegionDefinition AssetDeployment(AssetDeployment assetDeployment)
             {
                 _region.AssetDeployment = assetDeployment;
                 return this;
@@ -89,8 +90,10 @@ namespace OwinFramework.Pages.Html.Builders
 
             public IRegionDefinition Layout(string layoutName)
             {
-                _nameManager.AddResolutionHandler(
-                    () => _region.Contents = _nameManager.ResolveLayout(layoutName, _region.Package));
+                _nameManager.AddResolutionHandler(() => 
+                    {
+                        _region.Contents = _nameManager.ResolveLayout(layoutName, _region.Package);
+                    });
                 return this;
             }
 
@@ -153,6 +156,21 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
+            IRegionDefinition IRegionDefinition.DeployIn(IModule module)
+            {
+                _region.Module = module;
+                return this;
+            }
+
+            IRegionDefinition IRegionDefinition.DeployIn(string moduleName)
+            {
+                _nameManager.AddResolutionHandler(() =>
+                {
+                    _region.Module = _nameManager.ResolveModule(moduleName);
+                });
+                return this;
+            }
+
             public IRegion Build()
             {
                 if (!string.IsNullOrEmpty( _tagName))
@@ -172,13 +190,22 @@ namespace OwinFramework.Pages.Html.Builders
             public Action<IHtmlWriter> WriteClose;
             public IElement Contents;
 
+            private BuiltRegion _parent;
+
+            public override IEnumerator<IElement> GetChildren()
+            {
+                return Contents == null ? null : Contents.AsEnumerable().GetEnumerator();
+            }
+
             public override IRegion Wrap(IElement content)
             {
                 return new BuiltRegion
                     {
-                        WriteOpen = WriteOpen,
-                        WriteClose = WriteClose,
-                        Contents = content
+                        _parent = this,
+                        Contents = content,
+                        Name = Name,
+                        Module = Module,
+                        Package = Package
                     };
             }
 
@@ -198,12 +225,16 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 if (renderContext.IncludeComments)
                     renderContext.Html.WriteComment(
-                        (string.IsNullOrEmpty(Name) ? "(unnamed)" : Name) +
-                        (Package == null ? " region" : " region from " + Package.Name + " package"));
+                        (string.IsNullOrEmpty(Name) ? "Unnamed" : Name) +
+                        (Package == null ? " region element" : " region element from the " + Package.Name + " package"));
 
-                if (WriteOpen != null) WriteOpen(renderContext.Html);
+                var writeOpen = _parent == null ? WriteOpen : _parent.WriteOpen;
+                var writeClose = _parent == null ? WriteClose : _parent.WriteClose;
+
+                if (writeOpen != null) writeOpen(renderContext.Html);
                 var result = Contents == null ? WriteResult.Continue() : Contents.WriteHtml(renderContext, dataContext);
-                if (WriteClose != null) WriteClose(renderContext.Html);
+                if (writeClose != null) writeClose(renderContext.Html);
+
                 return result;
             }
 

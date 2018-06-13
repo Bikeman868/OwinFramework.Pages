@@ -28,7 +28,7 @@ namespace Sample1.SamplePages
     /// Defines a package called 'Application' in which all the JavaScript methods
     /// and css classes will be in the 'sample1' namespace
     /// </summary>
-    [IsPackage("Application", "sample1")]
+    [IsPackage("application", "sample1")]
     internal class ApplicationPackage { }
 
     /*
@@ -43,14 +43,16 @@ namespace Sample1.SamplePages
     /// Defines a module that contains all of the scripts and styles for 
     /// elements that are related to the site navigation
     /// </summary>
-    [IsModule("Navigation", AssetDeployment.PerModule)]
+    [IsModule("navigation", AssetDeployment.PerModule)]
+    [DeployedAs(AssetDeployment.InPage)]
     internal class NavigationModule { }
 
     /// <summary>
     /// Defines a module that contains all of the scripts and styles for 
     /// elements that are related to the site content
     /// </summary>
-    [IsModule("Content", AssetDeployment.PerModule)]
+    [IsModule("content", AssetDeployment.PerModule)]
+    [DeployedAs(AssetDeployment.PerModule)]
     internal class ContentModule { }
 
     /*
@@ -60,12 +62,12 @@ namespace Sample1.SamplePages
      */
 
     [IsComponent("header.mainMenu")]
-    [PartOf("Application")]
+    [PartOf("application")]
     [RenderHtml("menu.main", "<p>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
     [IsComponent("footer.standard")]
-    [PartOf("Application")]
+    [PartOf("application")]
     [RenderHtml("footer.standard", "<p>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
 
@@ -79,8 +81,8 @@ namespace Sample1.SamplePages
     /// Defines a region called 'main.header'
     /// </summary>
     [IsRegion("main.header")]
-    [PartOf("Application")]
-    [DeployedAs("Navigation")]
+    [PartOf("application")]
+    [DeployedAs("navigation")]
     [Container("div", "header")]
     internal class MainHeaderRegion { }
 
@@ -88,8 +90,8 @@ namespace Sample1.SamplePages
     /// Defines a region called 'body'
     /// </summary>
     [IsRegion("body")]
-    [PartOf("Application")]
-    [DeployedAs("Content")]
+    [PartOf("application")]
+    [DeployedAs("content")]
     [Container("div", "body")]
     internal class BodyRegion { }
 
@@ -97,8 +99,8 @@ namespace Sample1.SamplePages
     /// Defines a region called 'main.footer'
     /// </summary>
     [IsRegion("main.footer")]
-    [PartOf("Application")]
-    [DeployedAs("Navigation")]
+    [PartOf("application")]
+    [DeployedAs("navigation")]
     [Container("div", "footer")]
     internal class MainFooterRegion { }
 
@@ -106,8 +108,8 @@ namespace Sample1.SamplePages
     /// Defines a region called '2col.vertical.fixed.left'
     /// </summary>
     [IsRegion("2col.vertical.fixed.left")]
-    [PartOf("Application")]
-    [DeployedAs("Content")]
+    [PartOf("application")]
+    [DeployedAs("content")]
     [Container("div", "left")]
     internal class LeftRegion { }
 
@@ -115,8 +117,8 @@ namespace Sample1.SamplePages
     /// Defines a region called '2col.vertical.fixed.right'
     /// </summary>
     [IsRegion("2col.vertical.fixed.right")]
-    [PartOf("Application")]
-    [DeployedAs("Content")]
+    [PartOf("application")]
+    [DeployedAs("content")]
     [Container("div", "right")]
     internal class RightRegion { }
 
@@ -144,8 +146,8 @@ namespace Sample1.SamplePages
     /// The contents of each region can be overriden for each instance of this layout
     /// </summary>
     [IsLayout("main", "header(body,footer)")]
-    [PartOf("Application")]
-    [DeployedAs("Navigation")]
+    [PartOf("application")]
+    [DeployedAs("navigation")]
     [UsesRegion("header", "main.header")]
     [UsesRegion("body", "body")]
     [UsesRegion("footer", "main.footer")]
@@ -155,8 +157,8 @@ namespace Sample1.SamplePages
     /// Defines the layout of the 'body' region for the home page
     /// </summary>
     [IsLayout("home.body", "left,main")]
-    [PartOf("Application")]
-    [DeployedAs("Navigation")]
+    [PartOf("application")]
+    [DeployedAs("navigation")]
     [Container("div", "2col.vertical.fixed")]
     [UsesRegion("left", "2col.vertical.fixed.left")]
     [UsesRegion("main", "2col.vertical.fixed.right")]
@@ -181,7 +183,7 @@ namespace Sample1.SamplePages
     [Option(OptionType.Method, "GET", "<p>Returns the html for the home page</p>")]
     [Option(OptionType.Header, "Accept", "Must contain text/html, which is only available response format")]
     [Example("<a href='/home.html'>/home.html</a>")]
-    [PartOf("Application")]
+    [PartOf("application")]
     [UsesLayout("main")]
     [Route("/home.html", Methods.Get)]
     [PageTitle("Sample website")]

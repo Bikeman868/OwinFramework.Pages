@@ -81,10 +81,10 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
-            public IRegionDefinition Layout(string layerName)
+            public IRegionDefinition Layout(string layoutName)
             {
                 _nameManager.AddResolutionHandler(
-                    () => _region.Contents = _nameManager.ResolveLayout(layerName, _region.Package));
+                    () => _region.Contents = _nameManager.ResolveLayout(layoutName, _region.Package));
                 return this;
             }
 
@@ -97,7 +97,10 @@ namespace OwinFramework.Pages.Html.Builders
             public IRegionDefinition Component(string componentName)
             {
                 _nameManager.AddResolutionHandler(
-                    () => _region.Contents = _nameManager.ResolveComponent(componentName, _region.Package));
+                    () => 
+                        {
+                            _region.Contents = _nameManager.ResolveComponent(componentName, _region.Package);
+                        });
                 return this;
             }
 
@@ -179,15 +182,24 @@ namespace OwinFramework.Pages.Html.Builders
 
         private class BuiltRegion: Region
         {
-            public AssetDeployment AssetDeployment;
             public Action<IHtmlWriter> WriteOpen;
             public Action<IHtmlWriter> WriteClose;
             public IElement Contents;
 
-            public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType)
+            public override IRegion Wrap(IElement content)
+            {
+                return new BuiltRegion
+                    {
+                        WriteOpen = WriteOpen,
+                        WriteClose = WriteClose,
+                        Contents = content
+                    };
+            }
+
+            public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
             {
                 if (Contents == null) return WriteResult.Continue();
-                return Contents.WriteDynamicAssets(renderContext, dataContext, assetType);
+                return Contents.WriteDynamicAssets(assetType, writer);
             }
 
             public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext)

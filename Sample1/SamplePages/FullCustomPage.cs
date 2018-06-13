@@ -19,6 +19,10 @@ namespace Sample1.SamplePages
         bool IRunable.AllowAnonymous { get { return true; } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
 
+        public void Initialize()
+        {
+        }
+
         Task IRunable.Run(IOwinContext context)
         {
             context.Response.ContentType = "text/html";

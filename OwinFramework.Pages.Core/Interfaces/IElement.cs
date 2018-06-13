@@ -1,5 +1,7 @@
-﻿using OwinFramework.Pages.Core.Enums;
+﻿using System.Collections.Generic;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using System;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -17,6 +19,18 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Optional package - not all elements have to be packaged
         /// </summary>
         IPackage Package { get; set; }
+
+        /// <summary>
+        /// Defines how the assets are deployed for this element
+        /// </summary>
+        AssetDeployment AssetDeployment { get; set; }
+
+        /// <summary>
+        /// Returns a disposable enumerator for the children of this element. By calling
+        /// this for each of the returned elements recusrively it is possible to traverse
+        /// the entire element tree.
+        /// </summary>
+        IEnumerator<IElement> GetChildren();
 
         /// <summary>
         /// This is where the element is responsible for outputting its static assets.
@@ -42,11 +56,13 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// The recommended approach is to generate these names using the INameManager
         /// in the constructor of your element and keep using the same names
         /// for the lifetime of the instance.
+        /// This method might be called in the context of rendering a page, or it might
+        /// be called once for the page and the output cached for reuse on all subsequent
+        /// pages.
         /// </summary>
-        /// <param name="renderContext">The page rendering context for reference</param>
-        /// <param name="dataContext">The data binding context or null if none has been established</param>
         /// <param name="assetType">The type of asset to write</param>
-        IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType);
+        /// <param name="writer">The text writer to srite them to</param>
+        IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer);
 
         /// <summary>
         /// This is where the element gets an opportunity to write JavaScript into the page

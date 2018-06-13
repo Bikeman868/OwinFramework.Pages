@@ -234,9 +234,6 @@ namespace OwinFramework.Pages.Html.Builders
                 _nameManager.Register(_layout);
                 _nameManager.AddResolutionHandler(() =>
                     {
-                        _layout.VisualElements = new List<IElement>();
-                        _layout.Regions = new List<IRegion>();
-
                         var regionComponentKeys = _regionComponents.Keys.ToList();
                         foreach (var regionName in regionComponentKeys)
                         {
@@ -275,7 +272,7 @@ namespace OwinFramework.Pages.Html.Builders
                         {
                             if (!_regionElements.ContainsKey(regionName))
                             {
-                                _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p", "Layout does not have a '" + regionName + "' region") });
+                                _layout.AddVisualElement(w => w.WriteElement("p", "Layout does not have a '" + regionName + "' region"));
                                 continue;
                             }
 
@@ -287,22 +284,24 @@ namespace OwinFramework.Pages.Html.Builders
                             {
                                 region = _nameManager.ResolveRegion(regionElementName, _layout.Package);
                                 if (region == null)
-                                    _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'") });
+                                    _layout.AddVisualElement(w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'"));
                             }
 
                             if (region != null)
                             {
-                                _layout.Regions.Add(region);
+                                if (_regionComponents.ContainsKey(regionName))
+                                    _layout.AddRegion(regionName, region, (IComponent)_regionComponents[regionName]);
+
                                 if (_regionComponents.ContainsKey(regionName))
                                 {
-                                    _layout.VisualElements.Add(region.Wrap((IComponent)_regionComponents[regionName]));
+                                    _layout.AddRegion(regionName, region, (IComponent)_regionComponents[regionName]);
                                 }
                                 else if (_regionLayouts.ContainsKey(regionName))
                                 {
-                                    _layout.VisualElements.Add(region.Wrap((ILayout)_regionLayouts[regionName]));
+                                    _layout.AddRegion(regionName, region, (ILayout)_regionLayouts[regionName]);
                                 }
                                 else
-                                    _layout.VisualElements.Add(region);
+                                    _layout.AddRegion(regionName, region);
                             }
                         }
                         else if (childRegionSet != null)
@@ -337,14 +336,14 @@ namespace OwinFramework.Pages.Html.Builders
                         }
                     }
                     var attributes = tagAttributes.ToArray();
-                    _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteOpenTag(_tag, attributes) });
+                    _layout.AddVisualElement(w => w.WriteOpenTag(_tag, attributes));
                 }
             }
 
             private void WriteClosingTag()
             {
                 if (!string.IsNullOrEmpty(_tag))
-                    _layout.VisualElements.Add(new StaticHtmlElement {WriteAction = w => w.WriteCloseTag(_tag)});
+                    _layout.AddVisualElement(w => w.WriteCloseTag(_tag));
             }
 
             private void WriteNestingOpeningTag()
@@ -369,14 +368,14 @@ namespace OwinFramework.Pages.Html.Builders
                         }
                     }
                     var attributes = tagAttributes.ToArray();
-                    _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteOpenTag(_nestingTag, attributes) });
+                    _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes));
                 }
             }
 
             private void WriteNestingClosingTag()
             {
                 if (!string.IsNullOrEmpty(_nestingTag))
-                    _layout.VisualElements.Add(new StaticHtmlElement { WriteAction = w => w.WriteCloseTag(_nestingTag) });
+                    _layout.AddVisualElement(w => w.WriteCloseTag(_nestingTag));
             }
         }
 
@@ -393,15 +392,53 @@ namespace OwinFramework.Pages.Html.Builders
 
         private class BuiltLayout : Layout
         {
-            public List<IElement> VisualElements;
-            public List<IRegion> Regions;
-            public AssetDeployment AssetDeployment;
+            private List<IElement> _visualElements;
+            private Dictionary<int, int> _visualElementMapping;
+            private List<string> _regionNames;
+            private List<IRegion> _regions;
+
+            public void AddVisualElement(Action<IHtmlWriter> writeAction)
+            {
+                if (_visualElements == null)
+                    _visualElements = new List<IElement>();
+                _visualElements.Add(new StaticHtmlElement {  WriteAction = writeAction });
+            }
+
+            public void AddRegion(string regionName, IRegion region, IElement element = null)
+            {
+                if (_regions == null)
+                    _regions = new List<IRegion>();
+                _regions.Add(region);
+
+                if (_regionNames == null)
+                    _regionNames = new List<string>();
+                _regionNames.Add(regionName);
+
+                if (_visualElements == null)
+                    _visualElements = new List<IElement>();
+                _visualElements.Add(element == null ? region : region.Wrap(element));
+
+                if (_visualElementMapping == null)
+                    _visualElementMapping = new Dictionary<int, int>();
+                _visualElementMapping[_regions.Count - 1] = _visualElements.Count - 1;
+            }
+
+            public override void PopulateRegion(string regionName, IElement element)
+            {
+                for (var i = 0; i < regionName.Length; i++)
+                {
+                    if (string.Equals(_regionNames[i], regionName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _visualElements[_visualElementMapping[i]] = _regions[i].Wrap(element);
+                    }
+                }
+            }
 
             public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
             {
                 var result = WriteResult.Continue();
 
-                foreach (var region in Regions)
+                foreach (var region in _regions)
                 {
                     var regionResult = region.WriteStaticAssets(assetType, writer);
                     result.Add(regionResult);
@@ -416,7 +453,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 var result = WriteResult.Continue();
 
-                foreach (var region in Regions)
+                foreach (var region in _regions)
                 {
                     var regionResult = region.WriteHead(renderContext, dataContext);
                     result.Add(regionResult);
@@ -427,13 +464,13 @@ namespace OwinFramework.Pages.Html.Builders
                 return result;
             }
 
-            public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType)
+            public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
             {
                 var result = WriteResult.Continue();
 
-                foreach (var region in Regions)
+                foreach (var region in _regions)
                 {
-                    var regionResult = region.WriteDynamicAssets(renderContext, dataContext, assetType);
+                    var regionResult = region.WriteDynamicAssets(assetType, writer);
                     result.Add(regionResult);
 
                     if (regionResult.IsComplete) break;
@@ -446,7 +483,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 var result = WriteResult.Continue();
 
-                foreach (var region in Regions)
+                foreach (var region in _regions)
                 {
                     var regionResult = region.WriteInitializationScript(renderContext, dataContext);
                     result.Add(regionResult);
@@ -461,7 +498,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 var result = WriteResult.Continue();
 
-                foreach (var region in Regions)
+                foreach (var region in _regions)
                 {
                     var regionResult = region.WriteTitle(renderContext, dataContext);
                     result.Add(regionResult);
@@ -476,7 +513,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 var result = WriteResult.Continue();
 
-                foreach (var element in VisualElements)
+                foreach (var element in _visualElements)
                     result.Add(element.WriteHtml(renderContext, dataContext));
 
                 return result;

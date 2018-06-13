@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Enums;
+﻿using System.Collections.Generic;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -10,6 +11,17 @@ namespace OwinFramework.Pages.Html.Runtime
     /// </summary>
     public class Element: IElement
     {
+        private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
+
+        /// <summary>
+        /// Gets or sets the asset deployment scheme for this element
+        /// </summary>
+        public virtual AssetDeployment AssetDeployment
+        {
+            get { return _assetDeployment; }
+            set { _assetDeployment = value; }
+        }
+
         /// <summary>
         /// A uniqie name for this page within the package
         /// </summary>
@@ -31,7 +43,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output dynamic assets
         /// </summary>
-        public virtual IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType)
+        public virtual IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
         {
             return WriteResult.Continue();
         }
@@ -66,6 +78,14 @@ namespace OwinFramework.Pages.Html.Runtime
         public virtual IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
         {
             return WriteResult.Continue();
+        }
+
+        /// <summary>
+        /// Provides a way to traverse the whole element tree
+        /// </summary>
+        public virtual IEnumerator<IElement> GetChildren()
+        {
+            return null;
         }
     }
 }

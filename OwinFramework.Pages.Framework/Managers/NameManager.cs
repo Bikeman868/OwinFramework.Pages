@@ -110,6 +110,9 @@ namespace OwinFramework.Pages.Framework.Managers
                     }
                 _pendingActions.Clear();
             }
+
+            foreach (var page in _pages.Values)
+                page.Initialize();
         }
 
         public void AddResolutionHandler(Action resolutionAction)

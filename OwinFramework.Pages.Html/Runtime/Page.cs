@@ -60,6 +60,10 @@ namespace OwinFramework.Pages.Html.Runtime
             _dependenciesFactory = dependenciesFactory;
         }
 
+        public virtual void Initialize()
+        {
+        }
+
         /// <summary>
         /// Adds a non-visual component to the page. These components can write to the
         /// page header, include javscript libraries, write canonical links etc
@@ -145,8 +149,8 @@ namespace OwinFramework.Pages.Html.Runtime
             html.WriteCloseTag("title");
 
             writeResult.Add(WriteHead(context, data));
-            writeResult.Add(WriteDynamicAssets(context, data, AssetType.Style));
-            writeResult.Add(WriteDynamicAssets(context, data, AssetType.Script));
+            writeResult.Add(WriteDynamicAssets(AssetType.Style, context.Html));
+            writeResult.Add(WriteDynamicAssets(AssetType.Script, context.Html));
             html.WriteCloseTag("head");
         }
 
@@ -171,22 +175,22 @@ namespace OwinFramework.Pages.Html.Runtime
             return writeResult;
         }
 
-        public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType)
+        public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
         {
             var writeResult = WriteResult.Continue();
 
             if (assetType == AssetType.Style && !string.IsNullOrEmpty(BodyStyle))
             {
                 _dependenciesFactory.NameManager.EnsureAssetName(this, ref _bodyStyleName);
-                renderContext.Html.WriteElement("style", "." + _bodyStyleName + " { " + BodyStyle + " }");
-                renderContext.Html.WriteLine();
+                writer.WriteElement("style", "." + _bodyStyleName + " { " + BodyStyle + " }");
+                writer.WriteLine();
             }
 
             if (_components != null)
             {
                 foreach (var component in _components)
                 {
-                    writeResult.Add(component.WriteDynamicAssets(renderContext, dataContext, assetType));
+                    writeResult.Add(component.WriteDynamicAssets(assetType, writer));
 
                     if (writeResult.IsComplete)
                         return writeResult;
@@ -194,7 +198,7 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             if (Layout != null)
-                writeResult.Add(Layout.WriteDynamicAssets(renderContext, dataContext, assetType));
+                writeResult.Add(Layout.WriteDynamicAssets(assetType, writer));
 
             return writeResult;
         }

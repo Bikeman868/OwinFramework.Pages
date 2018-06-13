@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -103,8 +104,10 @@ namespace OwinFramework.Pages.Html.Builders
 
             IPageDefinition IPageDefinition.Module(string moduleName)
             {
-                _nameManager.AddResolutionHandler(
-                    () => _page.Module = _nameManager.ResolveModule(moduleName));
+                _nameManager.AddResolutionHandler(() =>
+                    {
+                        _page.Module = _nameManager.ResolveModule(moduleName);
+                    });
                 return this;
             }
 
@@ -135,8 +138,10 @@ namespace OwinFramework.Pages.Html.Builders
 
             IPageDefinition IPageDefinition.Layout(string name)
             {
-                _nameManager.AddResolutionHandler(
-                    () => _page.Layout = _nameManager.ResolveLayout(name, _page.Package));
+                _nameManager.AddResolutionHandler(() =>
+                    {
+                        _page.Layout = _nameManager.ResolveLayout(name, _page.Package);
+                    });
                 return this;
             }
 
@@ -148,8 +153,10 @@ namespace OwinFramework.Pages.Html.Builders
 
             IPageDefinition IPageDefinition.Component(string regionName, string componentName)
             {
-                _nameManager.AddResolutionHandler(
-                    () => _page.PopulateRegion(regionName, _nameManager.ResolveComponent(componentName, _page.Package)));
+                _nameManager.AddResolutionHandler(() =>
+                    {
+                        _page.PopulateRegion(regionName, _nameManager.ResolveComponent(componentName, _page.Package));
+                    });
                 return this;
             }
 
@@ -161,8 +168,10 @@ namespace OwinFramework.Pages.Html.Builders
 
             IPageDefinition IPageDefinition.RegionLayout(string regionName, string layoutName)
             {
-                _nameManager.AddResolutionHandler(
-                    () => _page.PopulateRegion(regionName, _nameManager.ResolveLayout(layoutName, _page.Package)));
+                _nameManager.AddResolutionHandler(() =>
+                    {
+                        _page.PopulateRegion(regionName, _nameManager.ResolveLayout(layoutName, _page.Package));
+                    });
                 return this;
             }
 
@@ -231,22 +240,29 @@ namespace OwinFramework.Pages.Html.Builders
 
         private class BuiltPage : Page
         {
-            public AssetDeployment AssetDeployment { get; set; }
             public IModule Module { get; set; }
+
+            private Dictionary<string, IElement> _regions;
 
             public BuiltPage(IPageDependenciesFactory dependenciesFactory)
                 : base(dependenciesFactory)
             {
             }
 
-            public void PopulateRegion(string regionName, IComponent component)
+            public override void Initialize()
             {
+                base.Initialize();
+
+                foreach (var region in _regions)
+                    Layout.PopulateRegion(region.Key, region.Value);
             }
 
-            public void PopulateRegion(string regionName, ILayout layout)
+            public void PopulateRegion(string regionName, IElement element)
             {
+                if (_regions == null)
+                    _regions = new Dictionary<string, IElement>();
+                    _regions[regionName] = element;
             }
         }
-
     }
 }

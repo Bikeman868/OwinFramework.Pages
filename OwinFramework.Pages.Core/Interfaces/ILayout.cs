@@ -7,5 +7,11 @@
     /// </summary>
     public interface ILayout : IElement
     {
+        /// <summary>
+        /// Changes the component that is displayed in a region of the layout
+        /// </summary>
+        /// <param name="regionName">The name of a region on this layout</param>
+        /// <param name="element">The element to render in this region</param>
+        void PopulateRegion(string regionName, IElement element);
     }
 }

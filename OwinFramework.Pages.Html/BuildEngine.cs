@@ -11,15 +11,18 @@ namespace OwinFramework.Pages.Html
         private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
         private readonly IPageDependenciesFactory _pageDependenciesFactory;
+        private readonly IAssetManager _assetManager;
 
         public BuildEngine(
             IRequestRouter requestRouter,
             INameManager nameManager,
-            IPageDependenciesFactory pageDependenciesFactory)
+            IPageDependenciesFactory pageDependenciesFactory,
+            IAssetManager assetManager)
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
             _pageDependenciesFactory = pageDependenciesFactory;
+            _assetManager = assetManager;
         }
 
         public void Install(IFluentBuilder builder)
@@ -39,7 +42,8 @@ namespace OwinFramework.Pages.Html
                 _nameManager);
 
             builder.ComponentBuilder = new ComponentBuilder(
-                _nameManager);
+                _nameManager,
+                _assetManager);
         }
     }
 }

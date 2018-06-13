@@ -8,9 +8,8 @@ namespace OwinFramework.Pages.Html.Runtime
     /// </summary>
     public class Region : Element, IRegion
     {
-        public IElement Wrap(IElement content)
+        public virtual IRegion Wrap(IElement content)
         {
-            // TODO: Create a new region that is a clone of this one but with different content inside
             return this;
         }
     }

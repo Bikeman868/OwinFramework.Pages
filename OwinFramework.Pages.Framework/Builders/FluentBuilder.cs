@@ -452,6 +452,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 var deployedAs = attribute as DeployedAsAttribute;
                 var partOf = attribute as PartOfAttribute;
                 var needsData = attribute as NeedsDataAttribute;
+                var renderHtml = attribute as RenderHtml;
 
                 if (deployedAs != null)
                     component.AssetDeployment(deployedAs.Deployment);
@@ -468,6 +469,8 @@ namespace OwinFramework.Pages.Framework.Builders
                         component.BindTo(needsData.DataType);
                 }
 
+                if (renderHtml != null)
+                    component.Render(renderHtml.TextName, renderHtml.Html);
             }
 
             component.Build();

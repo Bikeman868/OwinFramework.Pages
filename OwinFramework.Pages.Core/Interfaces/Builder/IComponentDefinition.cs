@@ -10,6 +10,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
     /// * Can bind to one or more data objects
     /// * Outputs content into various parts of the page (head, body etc)
     /// * Generates unique asset names within the namespace of its package
+    /// * Can have dependencies on other components
     /// </summary>
     public interface IComponentDefinition
     {
@@ -65,6 +66,14 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="dataContextName">The name of the context handler that
         /// must be executed before rendering this component</param>
         IComponentDefinition DataContext(string dataContextName);
+
+        /// <summary>
+        /// Tells the component to render some html
+        /// </summary>
+        /// <param name="assetName">The name of the asset must uniquely identify a 
+        /// text asset. The asset manager can be used to provdide localized verions</param>
+        /// <param name="html">The html to render in the default locale</param>
+        IComponentDefinition Render(string assetName, string html);
 
         /// <summary>
         /// Builds the module

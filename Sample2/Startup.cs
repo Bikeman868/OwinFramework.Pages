@@ -56,6 +56,6 @@ namespace Sample2
     internal class DefaultRegion { }
 
     [IsComponent("hello-world")]                               // A components called 'hello-world'
-    [RenderHtml("hello-world", "<p>Hello, world</p>")]         // Writes out a paragraph of text
+    [RenderHtml("hello-world", "Hello, world")]                // Writes out a paragraph of text
     internal class HelloWorldComponent { }
 }

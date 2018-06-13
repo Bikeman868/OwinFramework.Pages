@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.Managers
 {
@@ -33,6 +34,12 @@ namespace OwinFramework.Pages.Framework.Managers
         private bool IsSupportedLanguage(string language)
         {
             return language.Length > 0;
+        }
+
+        public string GetLocalizedText(IRenderContext renderContext, string assetName, string defaultText)
+        {
+            // TODO: Localize the text
+            return defaultText + " (<i>" + renderContext.Language + "</i>)";
         }
     }
 }

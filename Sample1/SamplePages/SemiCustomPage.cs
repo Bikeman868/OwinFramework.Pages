@@ -31,14 +31,14 @@ namespace Sample1.SamplePages
             return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteDynamicAssets(IRenderContext renderContext, IDataContext dataContext, AssetType assetType)
+        public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
         {
             if (assetType == AssetType.Style)
             {
-                renderContext.Html.WriteOpenTag("style");
-                renderContext.Html.WriteLine(".normal { background-color: linen; font-size: 12px; }");
-                renderContext.Html.WriteLine(".page-heading { font-size: 16px; }");
-                renderContext.Html.WriteCloseTag("style");
+                writer.WriteOpenTag("style");
+                writer.WriteLine(".normal { background-color: linen; font-size: 12px; }");
+                writer.WriteLine(".page-heading { font-size: 16px; }");
+                writer.WriteCloseTag("style");
             }
             return WriteResult.Continue();
         }

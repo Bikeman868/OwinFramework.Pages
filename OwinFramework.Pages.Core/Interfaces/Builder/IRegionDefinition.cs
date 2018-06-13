@@ -54,7 +54,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Specifies the default layout name for this region. This can
         /// be overriden for each instance of the region on a layout
         /// </summary>
-        IRegionDefinition Layout(string layerName);
+        IRegionDefinition Layout(string layoutName);
 
         /// <summary>
         /// Specifies the default component for this region. This can

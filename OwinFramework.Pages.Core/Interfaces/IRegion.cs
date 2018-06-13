@@ -10,6 +10,6 @@
         /// Returns an IElement implementation that is this element
         /// with specific content inside
         /// </summary>
-        IElement Wrap(IElement content);
+        IRegion Wrap(IElement content);
     }
 }

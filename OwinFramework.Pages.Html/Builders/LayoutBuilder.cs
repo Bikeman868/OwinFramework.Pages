@@ -279,7 +279,7 @@ namespace OwinFramework.Pages.Html.Builders
                         {
                             if (!_regionElements.ContainsKey(regionName))
                             {
-                                _layout.AddVisualElement(w => w.WriteElement("p", "Layout does not have a '" + regionName + "' region"));
+                                _layout.AddVisualElement(w => w.WriteElement("p", "Layout does not have a '" + regionName + "' region"), null);
                                 continue;
                             }
 
@@ -291,7 +291,7 @@ namespace OwinFramework.Pages.Html.Builders
                             {
                                 region = _nameManager.ResolveRegion(regionElementName, _layout.Package);
                                 if (region == null)
-                                    _layout.AddVisualElement(w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'"));
+                                    _layout.AddVisualElement(w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'"), null);
                             }
 
                             if (region != null)
@@ -323,38 +323,42 @@ namespace OwinFramework.Pages.Html.Builders
                 if (!string.IsNullOrEmpty(_tag))
                 {
                     var attributes = _htmlHelper.StyleAttributes(_style, _classNames);
-                    _layout.AddVisualElement(w => w.WriteOpenTag(_tag, attributes));
+                    _layout.AddVisualElement(w => w.WriteOpenTag(_tag, attributes), "Layout container element");
                 }
             }
 
             private void WriteClosingTag()
             {
                 if (!string.IsNullOrEmpty(_tag))
-                    _layout.AddVisualElement(w => w.WriteCloseTag(_tag));
+                    _layout.AddVisualElement(w => w.WriteCloseTag(_tag), null);
             }
 
             private void WriteNestingOpeningTag()
             {
                 if (!string.IsNullOrEmpty(_nestingTag))
                 {
-                    var attributes = _htmlHelper.StyleAttributes(_nestingTag, _nestedClassNames);
-                    _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes));
+                    var attributes = _htmlHelper.StyleAttributes(_nestedStyle, _nestedClassNames);
+                    _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes), "Element grouping regions in layout");
                 }
             }
 
             private void WriteNestingClosingTag()
             {
                 if (!string.IsNullOrEmpty(_nestingTag))
-                    _layout.AddVisualElement(w => w.WriteCloseTag(_nestingTag));
+                    _layout.AddVisualElement(w => w.WriteCloseTag(_nestingTag), null);
             }
         }
 
         private class StaticHtmlElement: Element
         {
             public Action<IHtmlWriter> WriteAction;
+            public string Comment;
 
             public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
             {
+                if (renderContext.IncludeComments && !string.IsNullOrEmpty(Comment))
+                    renderContext.Html.WriteComment(Comment);
+
                 WriteAction(renderContext.Html);
                 return WriteResult.Continue();
             }
@@ -367,11 +371,11 @@ namespace OwinFramework.Pages.Html.Builders
             private List<string> _regionNames;
             private List<IRegion> _regions;
 
-            public void AddVisualElement(Action<IHtmlWriter> writeAction)
+            public void AddVisualElement(Action<IHtmlWriter> writeAction, string comment)
             {
                 if (_visualElements == null)
                     _visualElements = new List<IElement>();
-                _visualElements.Add(new StaticHtmlElement {  WriteAction = writeAction });
+                _visualElements.Add(new StaticHtmlElement {  WriteAction = writeAction, Comment = comment });
             }
 
             public void AddRegion(string regionName, IRegion region, IElement element = null)
@@ -482,6 +486,11 @@ namespace OwinFramework.Pages.Html.Builders
             public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
             {
                 var result = WriteResult.Continue();
+
+                if (renderContext.IncludeComments)
+                    renderContext.Html.WriteComment(
+                        (string.IsNullOrEmpty(Name) ? "(unnamed)" : Name) +
+                        (Package == null ? " layout" : " layout from " + Package.Name + " package"));
 
                 foreach (var element in _visualElements)
                     result.Add(element.WriteHtml(renderContext, dataContext));

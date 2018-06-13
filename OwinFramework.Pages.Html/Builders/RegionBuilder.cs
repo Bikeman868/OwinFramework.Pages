@@ -196,6 +196,11 @@ namespace OwinFramework.Pages.Html.Builders
 
             public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
             {
+                if (renderContext.IncludeComments)
+                    renderContext.Html.WriteComment(
+                        (string.IsNullOrEmpty(Name) ? "(unnamed)" : Name) +
+                        (Package == null ? " region" : " region from " + Package.Name + " package"));
+
                 if (WriteOpen != null) WriteOpen(renderContext.Html);
                 var result = Contents == null ? WriteResult.Continue() : Contents.WriteHtml(renderContext, dataContext);
                 if (WriteClose != null) WriteClose(renderContext.Html);

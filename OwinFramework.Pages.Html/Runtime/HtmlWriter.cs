@@ -242,6 +242,15 @@ namespace OwinFramework.Pages.Html.Runtime
             return this;
         }
 
+        public IHtmlWriter WriteComment(string comment)
+        {
+            Write("<!-- ");
+            Write(comment);
+            WriteLine(" -->");
+
+            return this;
+        }
+
         #region IHtmlWriter
 
         IHtmlWriter IHtmlWriter.Write(char c)

@@ -9,6 +9,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     public interface IRenderContext
     {
         /// <summary>
+        /// Initializes the render context for a specific request
+        /// </summary>
+        IRenderContext Initialize(IOwinContext context);
+
+        /// <summary>
         /// Returns the Owin Context. This provides access to the request.
         /// You can set response headers etc, but you must not use this to
         /// write to the response stream.
@@ -27,8 +32,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         string Language { get; }
 
         /// <summary>
-        /// Initializes the render context for a specific request
+        /// Returns a flag indicating if the html should inclide comments
         /// </summary>
-        IRenderContext Initialize(IOwinContext context);
+        bool IncludeComments { get; }
     }
 }

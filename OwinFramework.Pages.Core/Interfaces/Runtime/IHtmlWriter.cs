@@ -118,5 +118,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="tag">The html tag to write</param>
         /// <param name="attributePairs">Name value pairs of the element attributes</param>
         IHtmlWriter WriteUnclosedElement(string tag, params string[] attributePairs);
+
+        /// <summary>
+        /// Writes a comment into the html
+        /// </summary>
+        IHtmlWriter WriteComment(string comment);
     }
 }

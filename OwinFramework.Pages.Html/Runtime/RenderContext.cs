@@ -11,6 +11,7 @@ namespace OwinFramework.Pages.Html.Runtime
         public IOwinContext OwinContext { get; private set; }
         public IHtmlWriter Html { get; private set; }
         public string Language { get; private set; }
+        public bool IncludeComments { get; private set; }
 
         private readonly IAssetManager _assetManager;
 
@@ -28,6 +29,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
             var acceptLanguage = context.Request.Headers["Accept-Language"];
             Language = _assetManager.GetSupportedLanguage(acceptLanguage);
+
+            IncludeComments = true;
+            Html.Indented = true;
 
             context.Response.Headers["Content-Language"] = Language;
 

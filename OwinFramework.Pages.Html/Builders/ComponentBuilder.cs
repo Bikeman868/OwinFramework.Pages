@@ -114,11 +114,17 @@ namespace OwinFramework.Pages.Html.Builders
 
             public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
             {
+                if (renderContext.IncludeComments)
+                    renderContext.Html.WriteComment(
+                        (string.IsNullOrEmpty(Name) ? "(unnamed)" : Name) + 
+                        (Package == null ? " component" : " component from " + Package.Name + " package"));
+
                 if (Writers != null)
                 {
                     foreach (var writer in Writers)
                         writer(renderContext);
                 }
+
                 return WriteResult.Continue();
             }
         }

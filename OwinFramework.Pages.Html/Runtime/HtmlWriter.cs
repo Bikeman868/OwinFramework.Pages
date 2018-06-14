@@ -112,6 +112,27 @@ namespace OwinFramework.Pages.Html.Runtime
         }
 
         /// <summary>
+        /// Writes the buffered text to the response. Make sure all threads
+        /// have finished writing before calling this method
+        /// </summary>
+        /// <param name="stringBuilder">The string builder to write the html to</param>
+        public void ToStringBuilder(IStringBuilder stringBuilder)
+        {
+            var buffer = _bufferListHead;
+            while (buffer != null)
+            {
+                stringBuilder.Append(buffer.ToString());
+                buffer = buffer.Next;
+            }
+
+            if (_isBufferOwner && _bufferListHead != null)
+                _bufferListHead.Dispose();
+
+            _bufferListHead = null;
+            _bufferListTail = null;
+        }
+
+        /// <summary>
         /// Writes a single character to the response buffer
         /// </summary>
         public override void Write(char c)

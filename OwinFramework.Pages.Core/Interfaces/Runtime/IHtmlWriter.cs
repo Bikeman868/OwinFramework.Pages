@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.Collections;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
@@ -30,6 +31,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// </summary>
         /// <param name="context">The owin context of the response to write</param>
         Task ToResponseAsync(IOwinContext context);
+
+        /// <summary>
+        /// Writes the captured html to a string builder
+        /// </summary>
+        void ToStringBuilder(IStringBuilder stringBuilder);
 
         /// <summary>
         /// Constructs and returns an HtmlWriter that will insert into the

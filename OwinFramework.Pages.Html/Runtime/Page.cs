@@ -93,12 +93,15 @@ namespace OwinFramework.Pages.Html.Runtime
                 {
                     case AssetDeployment.PerWebsite:
                         deployment = "website assets";
+                        _dependenciesFactory.AssetManager.AddWebsiteAssets(element.Element);
                         break;
                     case AssetDeployment.PerModule:
                         deployment = element.Module.Name + " module";
+                        _dependenciesFactory.AssetManager.AddModuleAssets(element.Element, element.Module);
                         break;
                     case AssetDeployment.PerPage:
                         deployment = "page assets";
+                        _dependenciesFactory.AssetManager.AddPageAssets(element.Element, this);
                         break;
                     case AssetDeployment.InPage:
                         deployment = "page head";

@@ -514,7 +514,7 @@ namespace OwinFramework.Pages.Html.Builders
                 if (renderContext.IncludeComments)
                 {
                     renderContext.Html.WriteComment(
-                        (string.IsNullOrEmpty(Name) ? "Unnamed" : Name) +
+                        (string.IsNullOrEmpty(Name) ? "nnnamed" : Name) +
                         (Package == null ? " layout" : " layout from " + Package.Name + " package"));
 
                     var reverseMapping = new Dictionary<int, int>();
@@ -529,7 +529,7 @@ namespace OwinFramework.Pages.Html.Builders
                         if (reverseMapping.ContainsKey(i))
                         {
                             var regionIndex = reverseMapping[i];
-                            renderContext.Html.WriteComment("Layout '" + _regionNames[regionIndex] + "' region");
+                            renderContext.Html.WriteComment("layout '" + _regionNames[regionIndex] + "' region");
                         }
                         result.Add(_visualElements[i].WriteHtml(renderContext, dataContext));
                     }

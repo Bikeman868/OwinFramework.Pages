@@ -338,7 +338,7 @@ namespace OwinFramework.Pages.Html.Builders
                 if (!string.IsNullOrEmpty(_tag))
                 {
                     var attributes = _htmlHelper.StyleAttributes(_style, _classNames);
-                    _layout.AddVisualElement(w => w.WriteOpenTag(_tag, attributes), "Layout container element");
+                    _layout.AddVisualElement(w => w.WriteOpenTag(_tag, attributes), "layout container element");
                 }
             }
 
@@ -353,7 +353,7 @@ namespace OwinFramework.Pages.Html.Builders
                 if (!string.IsNullOrEmpty(_nestingTag))
                 {
                     var attributes = _htmlHelper.StyleAttributes(_nestedStyle, _nestedClassNames);
-                    _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes), "Element grouping regions in layout");
+                    _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes), "element grouping region in layout");
                 }
             }
 
@@ -414,7 +414,7 @@ namespace OwinFramework.Pages.Html.Builders
 
                 if (_visualElements == null)
                     _visualElements = new List<IElement>();
-                _visualElements.Add(element == null ? region : region.Wrap(element));
+                _visualElements.Add(element == null ? region : region.Populate(element));
 
                 if (_visualElementMapping == null)
                     _visualElementMapping = new Dictionary<int, int>();
@@ -427,7 +427,7 @@ namespace OwinFramework.Pages.Html.Builders
                 {
                     if (string.Equals(_regionNames[i], regionName, StringComparison.OrdinalIgnoreCase))
                     {
-                        _visualElements[_visualElementMapping[i]] = _regions[i].Wrap(element);
+                        _visualElements[_visualElementMapping[i]] = _regions[i].Populate(element);
                     }
                 }
             }

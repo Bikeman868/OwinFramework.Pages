@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// </summary>
     public class Region : Element, IRegion
     {
-        public virtual IRegion Wrap(IElement content)
+        public virtual IElement Populate(IElement content)
         {
             return this;
         }

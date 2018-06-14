@@ -84,7 +84,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             public IRegionDefinition Layout(ILayout layout)
             {
-                _region.Contents = layout;
+                _region.DefaultContent = layout;
                 return this;
             }
 
@@ -92,24 +92,23 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 _nameManager.AddResolutionHandler(() => 
                     {
-                        _region.Contents = _nameManager.ResolveLayout(layoutName, _region.Package);
+                        _region.DefaultContent = _nameManager.ResolveLayout(layoutName, _region.Package);
                     });
                 return this;
             }
 
             public IRegionDefinition Component(IComponent component)
             {
-                _region.Contents = component;
+                _region.DefaultContent = component;
                 return this;
             }
 
             public IRegionDefinition Component(string componentName)
             {
-                _nameManager.AddResolutionHandler(
-                    () => 
-                        {
-                            _region.Contents = _nameManager.ResolveComponent(componentName, _region.Package);
-                        });
+                _nameManager.AddResolutionHandler(() => 
+                    {
+                        _region.DefaultContent = _nameManager.ResolveComponent(componentName, _region.Package);
+                    });
                 return this;
             }
 
@@ -184,76 +183,149 @@ namespace OwinFramework.Pages.Html.Builders
             }
         }
 
-        private class BuiltRegion: Region
+        private class PopulatedRegion: IElement
         {
-            public Action<IHtmlWriter> WriteOpen;
-            public Action<IHtmlWriter> WriteClose;
-            public IElement Contents;
+            public BuiltRegion Region;
+            public IElement Content;
 
-            private BuiltRegion _parent;
-
-            public override IEnumerator<IElement> GetChildren()
+            string IElement.Name
             {
-                return Contents == null ? null : Contents.AsEnumerable().GetEnumerator();
+                get { return Region.Name; }
+                set { throw new InvalidOperationException("You can not name a region instance"); }
             }
 
-            public override IRegion Wrap(IElement content)
+            IPackage IElement.Package
             {
-                return new BuiltRegion
+                get { return Region.Package; }
+                set { throw new InvalidOperationException("You can not set the package for a region instance"); }
+            }
+
+            IModule IElement.Module
+            {
+                get { return Region.Module; }
+                set { throw new InvalidOperationException("You can not set the module for a region instance"); }
+            }
+
+            private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
+
+            public AssetDeployment AssetDeployment
+            {
+                get { return _assetDeployment == AssetDeployment.Inherit ? Region.AssetDeployment : _assetDeployment; }
+                set { _assetDeployment = value; }
+            }
+
+            void IElement.Initialize(IInitializationData initializationData)
+            {
+                var inheritAssetDeployment = AssetDeployment == AssetDeployment.Inherit;
+                var assetDeployment = inheritAssetDeployment ? initializationData.AssetDeployment : AssetDeployment;
+
+                initializationData.HasElement(this, assetDeployment, Region.Module);
+
+                if (!inheritAssetDeployment)
+                {
+                    initializationData.Push();
+                    initializationData.AssetDeployment = AssetDeployment;
+                }
+                try
+                {
+                    Content.Initialize(initializationData);
+                }
+                finally
+                {
+                    if (!inheritAssetDeployment)
                     {
-                        _parent = this,
-                        Contents = content,
-                        Name = Name,
-                        Module = Module,
-                        Package = Package
-                    };
+                        initializationData.Pop();
+                    }
+                }
             }
 
-            public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
+            IEnumerator<IElement> IElement.GetChildren()
             {
-                if (Contents == null) return WriteResult.Continue();
-                return Contents.WriteDynamicAssets(assetType, writer);
+                return null;
             }
 
-            public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext)
+            IWriteResult IElement.WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
             {
-                if (Contents == null) return WriteResult.Continue();
-                return Contents.WriteHead(renderContext, dataContext);
+                return 
+                    Region.WriteStaticAssets(assetType, writer)
+                    .Add(Content.WriteStaticAssets(assetType, writer));
             }
 
-            public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
+            IWriteResult IElement.WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
+            {
+                return
+                    Region.WriteDynamicAssets(assetType, writer)
+                    .Add(Content.WriteDynamicAssets(assetType, writer));
+            }
+
+            IWriteResult IElement.WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext)
+            {
+                return
+                    Region.WriteInitializationScript(renderContext, dataContext)
+                    .Add(Content.WriteInitializationScript(renderContext, dataContext));
+            }
+
+            IWriteResult IElement.WriteTitle(IRenderContext renderContext, IDataContext dataContext)
+            {
+                return
+                    Region.WriteTitle(renderContext, dataContext)
+                    .Add(Content.WriteTitle(renderContext, dataContext));
+            }
+
+            IWriteResult IElement.WriteHead(IRenderContext renderContext, IDataContext dataContext)
+            {
+                return
+                    Region.WriteHead(renderContext, dataContext)
+                    .Add(Content.WriteHead(renderContext, dataContext));
+            }
+
+            IWriteResult IElement.WriteHtml(IRenderContext renderContext, IDataContext dataContext)
             {
                 if (renderContext.IncludeComments)
                     renderContext.Html.WriteComment(
-                        (string.IsNullOrEmpty(Name) ? "Unnamed" : Name) +
-                        (Package == null ? " region element" : " region element from the " + Package.Name + " package"));
+                        (string.IsNullOrEmpty(Region.Name) ? "unnamed" : Region.Name) +
+                        (Region.Package == null ? " region element" : " region element from the " + Region.Package.Name + " package"));
 
-                var writeOpen = _parent == null ? WriteOpen : _parent.WriteOpen;
-                var writeClose = _parent == null ? WriteClose : _parent.WriteClose;
+                var writeOpen = Region.WriteOpen;
+                var writeClose = Region.WriteClose;
 
                 if (writeOpen != null) writeOpen(renderContext.Html);
-                var result = Contents == null ? WriteResult.Continue() : Contents.WriteHtml(renderContext, dataContext);
+
+                // TODO: If this is a repeater then repeat content
+                var result = Content == null ? WriteResult.Continue() : Content.WriteHtml(renderContext, dataContext);
+
                 if (writeClose != null) writeClose(renderContext.Html);
 
                 return result;
             }
+        }
 
-            public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext)
+        private class BuiltRegion: Region
+        {
+            public Action<IHtmlWriter> WriteOpen;
+            public Action<IHtmlWriter> WriteClose;
+
+            private PopulatedRegion _defaultContent;
+            public IElement DefaultContent 
             {
-                if (Contents == null) return WriteResult.Continue();
-                return Contents.WriteInitializationScript(renderContext, dataContext);
+                get { return _defaultContent; }
+                set { _defaultContent = (PopulatedRegion)Populate(value); } 
             }
 
-            public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
+            public override IEnumerator<IElement> GetChildren()
             {
-                if (Contents == null) return WriteResult.Continue();
-                return Contents.WriteStaticAssets(assetType, writer);
+                return DefaultContent == null ? null : DefaultContent.GetChildren();
             }
 
-            public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)
+            public override IElement Populate(IElement content)
             {
-                if (Contents == null) return WriteResult.Continue();
-                return Contents.WriteTitle(renderContext, dataContext);
+                if (content == null) return DefaultContent;
+
+                return new PopulatedRegion
+                {
+                    Region = this,
+                    Content = content
+                };
             }
         }
     }

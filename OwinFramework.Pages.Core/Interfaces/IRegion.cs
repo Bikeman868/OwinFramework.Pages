@@ -7,9 +7,10 @@
     public interface IRegion : IElement
     {
         /// <summary>
-        /// Returns an IElement implementation that is this element
-        /// with specific content inside
+        /// Constructs an element that is the result of puttting the
+        /// supplied element inside this region. The supplied element 
+        /// should be either a component or a Layout
         /// </summary>
-        IRegion Wrap(IElement content);
+        IElement Populate(IElement content);
     }
 }

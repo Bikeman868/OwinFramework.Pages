@@ -436,14 +436,6 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 var result = WriteResult.Continue();
 
-                foreach (var region in _regions)
-                {
-                    var regionResult = region.WriteStaticAssets(assetType, writer);
-                    result.Add(regionResult);
-
-                    if (regionResult.IsComplete) break;
-                }
-
                 return result;
             }
 

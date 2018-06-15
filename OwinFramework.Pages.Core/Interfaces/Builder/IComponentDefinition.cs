@@ -52,6 +52,22 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IComponentDefinition DeployIn(string moduleName);
 
         /// <summary>
+        /// Adds a static asset to this component
+        /// </summary>
+        /// <param name="cssSelector">The selector for this style</param>
+        /// <param name="cssStyle">Style to apply when this selector matches elements</param>
+        IComponentDefinition DeployCss(string cssSelector, string cssStyle);
+
+        /// <summary>
+        /// Specifies that this layout is deployed as part of a module
+        /// </summary>
+        /// <param name="returnType">Optional return type of this function. For example "void"</param>
+        /// <param name="functionName">The name of this function. For example "getData"</param>
+        /// <param name="parameters">TOptional parameters to this function. For example "id, name"</param>
+        /// <param name="functionBody">The body of this function. For example "alert('Hello, world');"</param>
+        IComponentDefinition DeployFunction(string returnType, string functionName, string parameters, string functionBody);
+
+        /// <summary>
         /// Overrides the default asset deployment scheme for this component
         /// </summary>
         IComponentDefinition AssetDeployment(AssetDeployment assetDeployment);

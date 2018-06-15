@@ -191,6 +191,13 @@ namespace OwinFramework.Pages.Html.Runtime
             _components.Add(component);
         }
 
+        public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
+        {
+            var writeResult = WriteResult.Continue();
+
+            return writeResult;
+        }
+
         /// <summary>
         /// Override this method to completely takeover how the page is produced
         /// </summary>
@@ -231,62 +238,6 @@ namespace OwinFramework.Pages.Html.Runtime
                     html.ToResponse(owinContext);
                     dependencies.Dispose();
                 });
-        }
-
-        private void WritePageBody(IRenderContext context, IDataContext data, IHtmlWriter html, IWriteResult writeResult)
-        {
-            var bodyClassNames = BodyClassNames;
-            if (!string.IsNullOrEmpty(BodyStyle))
-            {
-                _dependenciesFactory.NameManager.EnsureAssetName(this, ref _bodyStyleName);
-                if (string.IsNullOrEmpty(bodyClassNames))
-                    bodyClassNames = _bodyStyleName;
-                else
-                    bodyClassNames += " " + _bodyStyleName;
-            }
-
-            if (string.IsNullOrEmpty(bodyClassNames))
-                html.WriteOpenTag("body");
-            else
-                html.WriteOpenTag("body", "class", bodyClassNames);
-
-            writeResult.Add(WriteHtml(context, data));
-            html.WriteCloseTag("body");
-        }
-
-        private void WritePageHead(IRenderContext context, IDataContext data, IHtmlWriter html, IWriteResult writeResult)
-        {
-            html.WriteOpenTag("head");
-
-            html.WriteOpenTag("title");
-            writeResult.Add(WriteTitle(context, data));
-            html.WriteCloseTag("title");
-
-            writeResult.Add(WriteHead(context, data));
-            writeResult.Add(WriteDynamicAssets(AssetType.Style, context.Html));
-            writeResult.Add(WriteDynamicAssets(AssetType.Script, context.Html));
-            html.WriteCloseTag("head");
-        }
-
-        public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
-        {
-            var writeResult = WriteResult.Continue();
-
-            if (_components != null)
-            {
-                foreach (var component in _components)
-                {
-                    writeResult.Add(component.WriteStaticAssets(assetType, writer));
-
-                    if (writeResult.IsComplete)
-                        return writeResult;
-                }
-            }
-
-            if (Layout != null)
-                writeResult.Add(Layout.WriteStaticAssets(assetType, writer));
-
-            return writeResult;
         }
 
         public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
@@ -369,6 +320,27 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             var writeResult = WriteResult.Continue();
 
+            var websiteStylesUrl = _dependenciesFactory.AssetManager.GetWebsiteAssetUrl(AssetType.Style);
+            if (websiteStylesUrl != null)
+                renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "href", websiteStylesUrl.ToString());
+
+            // TODO: For each referenced module include the module stylesheets
+
+            var pageStylesUrl = _dependenciesFactory.AssetManager.GetPageAssetUrl(this, AssetType.Style);
+            if (pageStylesUrl != null)
+                renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "href", pageStylesUrl.ToString());
+
+
+            var websiteScriptUrl = _dependenciesFactory.AssetManager.GetWebsiteAssetUrl(AssetType.Script);
+            if (websiteScriptUrl != null)
+                renderContext.Html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
+
+            // TODO: For each referenced module include the module javascript
+
+            var pageScriptUrl = _dependenciesFactory.AssetManager.GetPageAssetUrl(this, AssetType.Script);
+            if (pageScriptUrl != null)
+                renderContext.Html.WriteElement("script", "type", "text/javascript", "src", pageScriptUrl.ToString());
+
             if (_components != null)
             {
                 foreach (var component in _components)
@@ -390,5 +362,44 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(renderContext, dataContext);
         }
+
+        #region Private methods
+
+        private void WritePageHead(IRenderContext context, IDataContext data, IHtmlWriter html, IWriteResult writeResult)
+        {
+            html.WriteOpenTag("head");
+
+            html.WriteOpenTag("title");
+            writeResult.Add(WriteTitle(context, data));
+            html.WriteCloseTag("title");
+
+            writeResult.Add(WriteHead(context, data));
+            writeResult.Add(WriteDynamicAssets(AssetType.Style, context.Html));
+            writeResult.Add(WriteDynamicAssets(AssetType.Script, context.Html));
+            html.WriteCloseTag("head");
+        }
+
+        private void WritePageBody(IRenderContext context, IDataContext data, IHtmlWriter html, IWriteResult writeResult)
+        {
+            var bodyClassNames = BodyClassNames;
+            if (!string.IsNullOrEmpty(BodyStyle))
+            {
+                _dependenciesFactory.NameManager.EnsureAssetName(this, ref _bodyStyleName);
+                if (string.IsNullOrEmpty(bodyClassNames))
+                    bodyClassNames = _bodyStyleName;
+                else
+                    bodyClassNames += " " + _bodyStyleName;
+            }
+
+            if (string.IsNullOrEmpty(bodyClassNames))
+                html.WriteOpenTag("body");
+            else
+                html.WriteOpenTag("body", "class", bodyClassNames);
+
+            writeResult.Add(WriteHtml(context, data));
+            html.WriteCloseTag("body");
+        }
+
+        #endregion
     }
 }

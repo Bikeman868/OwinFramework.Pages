@@ -456,6 +456,8 @@ namespace OwinFramework.Pages.Framework.Builders
                 var partOf = attribute as PartOfAttribute;
                 var needsData = attribute as NeedsDataAttribute;
                 var renderHtml = attribute as RenderHtml;
+                var deployCss = attribute as DeployCssAttribute;
+                var deployFunction = attribute as DeployFunctionAttribute;
 
                 if (deployedAs != null)
                     component.AssetDeployment(deployedAs.Deployment)
@@ -475,6 +477,16 @@ namespace OwinFramework.Pages.Framework.Builders
 
                 if (renderHtml != null)
                     component.Render(renderHtml.TextName, renderHtml.Html);
+
+                if (deployCss != null)
+                    component.DeployCss(deployCss.CssSelector, deployCss.CssStyle);
+
+                if (deployFunction != null)
+                    component.DeployFunction(
+                        deployFunction.ReturnType, 
+                        deployFunction.FunctionName,
+                        deployFunction.Parameters,
+                        deployFunction.Body);
             }
 
             component.Build();

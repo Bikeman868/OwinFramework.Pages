@@ -169,17 +169,17 @@ namespace OwinFramework.Pages.Framework.Managers
 
         System.Uri IAssetManager.GetWebsiteAssetUrl(AssetType type)
         {
-            throw new System.NotImplementedException();
+            return null;
         }
 
         System.Uri IAssetManager.GetModuleAssetUrl(IModule module, AssetType type)
         {
-            throw new System.NotImplementedException();
+            return null;
         }
 
         System.Uri IAssetManager.GetPageAssetUrl(IPage page, AssetType type)
         {
-            throw new System.NotImplementedException();
+            return null;
         }
     }
 }

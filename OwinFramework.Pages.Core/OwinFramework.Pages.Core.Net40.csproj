@@ -60,6 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ChildContainerAttribute.cs" />
+    <Compile Include="Attributes\DeployCss.cs" />
+    <Compile Include="Attributes\DeployFunction.cs" />
     <Compile Include="Attributes\PageTitleAttribute.cs" />
     <Compile Include="Attributes\ChildStyleAttribute.cs" />
     <Compile Include="Attributes\StyleAttribute.cs" />

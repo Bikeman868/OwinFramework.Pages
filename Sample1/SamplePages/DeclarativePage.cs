@@ -63,7 +63,8 @@ namespace Sample1.SamplePages
 
     [IsComponent("header.mainMenu")]
     [PartOf("application")]
-    [RenderHtml("menu.main", "<p>This is where the main menu html goes</p>")]
+    [DeployCss("p.menu-item", "font-weight:bold;")]
+    [RenderHtml("menu.main", "<p class='menu-item'>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
     [IsComponent("footer.standard")]

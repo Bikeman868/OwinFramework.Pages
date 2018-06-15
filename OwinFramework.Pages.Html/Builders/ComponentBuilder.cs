@@ -212,7 +212,8 @@ namespace OwinFramework.Pages.Html.Builders
                     writer.WriteComment(
                             assetType + " assets for " +
                             (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
-                            (Package == null ? " component" : " component from the " + Package.Name + " package"));
+                            (Package == null ? " component" : " component from the " + Package.Name + " package"),
+                            CommentStyle.SingleLineC);
 
                     foreach (var asset in assets)
                         asset(writer);

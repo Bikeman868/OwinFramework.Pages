@@ -368,6 +368,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             public Action<IHtmlWriter> WriteAction;
             public string Comment;
+            public override ElementType ElementType{get { return ElementType.Unnamed; }}
 
             public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
             {

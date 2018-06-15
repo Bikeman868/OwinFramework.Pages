@@ -31,33 +31,41 @@ namespace OwinFramework.Pages.Framework.Runtime
                 : registration.Router.Route(context);
         }
 
-        void IRequestRouter.Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType)
+        IDisposable IRequestRouter.Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType)
         {
-            lock (_registrations)
-            {
-                _registrations.Add(new Registration 
+            var registration = new Registration
                 {
                     Priority = priority,
                     Filter = filter,
                     Runable = runable,
                     DeclaringType = declaringType ?? runable.GetType()
-                });
-                _registrations.Sort();
-            }
-        }
+                };
 
-        void IRequestRouter.Register(IRequestRouter router, IRequestFilter filter, int priority)
-        {
             lock (_registrations)
             {
-                _registrations.Add(new Registration
+                _registrations.Add(registration);
+                _registrations.Sort();
+            }
+
+            return registration;
+        }
+
+        IDisposable IRequestRouter.Register(IRequestRouter router, IRequestFilter filter, int priority)
+        {
+            var registration = new Registration
                 {
                     Priority = priority,
                     Filter = filter,
                     Router = router
-                });
+                };
+
+            lock (_registrations)
+            {
+                _registrations.Add(registration);
                 _registrations.Sort();
             }
+
+            return registration;
         }
 
         IList<IEndpointDocumentation> IRequestRouter.GetEndpointDocumentation()
@@ -135,7 +143,7 @@ namespace OwinFramework.Pages.Framework.Runtime
             return endpoints;
         }
 
-        private class Registration: IComparable
+        private class Registration: IComparable, IDisposable
         {
             public int Priority;
             public IRequestFilter Filter;
@@ -151,6 +159,11 @@ namespace OwinFramework.Pages.Framework.Runtime
                 if (Priority == other.Priority) return 0;
 
                 return Priority > other.Priority ? -1 : 1;
+            }
+
+            public void Dispose()
+            {
+                //TODO: De-register on dispose
             }
         }
     }

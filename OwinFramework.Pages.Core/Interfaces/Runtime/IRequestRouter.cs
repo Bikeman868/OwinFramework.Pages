@@ -25,7 +25,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="priority">Filters are run in ascending order of priority</param>
         /// <param name="declaringType">The type from which this runable was derrived. 
         /// This is used to find attributes that contain documentation</param>
-        void Register(IRunable runable, IRequestFilter filter, int priority = 0, Type declaringType = null);
+        /// <returns>A disposable instance. Disposing of this instance will de-register
+        /// this route. The router keeps a reference to this instance so you don't need to</returns>
+        IDisposable Register(IRunable runable, IRequestFilter filter, int priority = 0, Type declaringType = null);
 
         /// <summary>
         /// Registers a nested router. Nesting routers makes routing more efficient
@@ -34,7 +36,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="router">The router to run when the filter is matched</param>
         /// <param name="filter">The filter that matches the request</param>
         /// <param name="priority">Filters are run in ascending order of priority</param>
-        void Register(IRequestRouter router, IRequestFilter filter, int priority = 0);
+        /// <returns>A disposable instance. Disposing of this instance will de-register
+        /// this route. The router keeps a reference to this instance so you don't need to</returns>
+        IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority = 0);
 
         /// <summary>
         /// Returns documentation about the endpoints that are registered with the router

@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces;
+﻿using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
@@ -8,5 +9,6 @@ namespace OwinFramework.Pages.Html.Runtime
     /// </summary>
     public class Component : Element, IComponent
     {
+        public override ElementType ElementType { get { return ElementType.Component; } }
     }
 }

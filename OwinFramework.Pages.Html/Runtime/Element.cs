@@ -9,7 +9,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// Base implementation of IPage. Inheriting from this olass will insulate you
     /// from any additions to the IPage interface
     /// </summary>
-    public class Element: IElement
+    public abstract class Element: IElement
     {
         private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
 
@@ -21,6 +21,11 @@ namespace OwinFramework.Pages.Html.Runtime
             get { return _assetDeployment; }
             set { _assetDeployment = value; }
         }
+
+        /// <summary>
+        /// Must be overriden in derrived classes to specify the element type
+        /// </summary>
+        public abstract ElementType ElementType { get; }
 
         /// <summary>
         /// A uniqie name for this page within the package

@@ -23,6 +23,12 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Optional module that this elements assets are deployed to
         /// </summary>
         IModule Module { get; set; }
+
+        /// <summary>
+        /// Returns the type of element. This is used to make the fully qualified
+        /// element name unique
+        /// </summary>
+        ElementType ElementType { get; }
         
         /// <summary>
         /// Defines how the assets are deployed for this element

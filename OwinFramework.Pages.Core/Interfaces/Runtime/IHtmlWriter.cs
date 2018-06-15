@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
@@ -49,6 +50,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Turn indentation off to reduce the size of the html
         /// </summary>
         bool Indented { get; set; }
+
+        /// <summary>
+        /// Turn comments off to reduce the size of the html
+        /// </summary>
+        bool IncludeComments { get; set; }
 
         /// <summary>
         /// Specifies how much to indent new lines. In pretty mode
@@ -128,6 +134,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <summary>
         /// Writes a comment into the html
         /// </summary>
-        IHtmlWriter WriteComment(string comment);
+        IHtmlWriter WriteComment(string comment, CommentStyle commentStyle = CommentStyle.Xml);
     }
 }

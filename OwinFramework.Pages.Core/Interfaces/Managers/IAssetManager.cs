@@ -14,7 +14,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// Specifies the default language to use when the asset manager
         /// does not support any of the languages accepted by the browser
         /// </summary>
-        string DefaultLanguage { get; set; }
+        string DefaultLanguage { get; }
 
         /// <summary>
         /// Examines the browser accepted languages and selects the

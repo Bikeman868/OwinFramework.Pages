@@ -24,6 +24,10 @@ namespace OwinFramework.Pages.Framework
             {
                 return new List<IocRegistration>
                 {
+                    // These interface mappings are internal to this assembly and
+                    // just need to be wired up by IoC
+                    new IocRegistration().Init<IFrameworkConfiguration, FrameworkConfiguration>(),
+
                     // Data context is a shared concept, it applies to all response producing mechanisms
                     new IocRegistration().Init<IDataContextFactory, DataContextFactory>(),
 

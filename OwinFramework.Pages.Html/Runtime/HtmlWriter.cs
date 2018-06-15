@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -32,6 +33,12 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public bool Indented { get; set; }
 
+        /// <summary>
+        /// Turns comments on/off. The comments are good for debugging 
+        /// issues but the html can be a lot larger
+        /// </summary>
+        public bool IncludeComments { get; set; }
+
         private readonly IStringBuilderFactory _stringBuilderFactory;
         private readonly bool _isBufferOwner;
         private BufferListElement _bufferListHead;
@@ -49,6 +56,7 @@ namespace OwinFramework.Pages.Html.Runtime
             _startOfLine = true;
             Indented = true;
             IndentLevel = 0;
+            IncludeComments = true;
 
             _bufferListHead = new BufferListElement(stringBuilderFactory);
             _bufferListTail = _bufferListHead;
@@ -263,11 +271,28 @@ namespace OwinFramework.Pages.Html.Runtime
             return this;
         }
 
-        public IHtmlWriter WriteComment(string comment)
+        public IHtmlWriter WriteComment(string comment, CommentStyle commentStyle)
         {
-            Write("<!-- ");
-            Write(comment);
-            WriteLine(" -->");
+            if (IncludeComments)
+            {
+                if (commentStyle == CommentStyle.Xml)
+                {
+                    Write("<!-- ");
+                    Write(comment);
+                    WriteLine(" -->");
+                }
+                else if (commentStyle == CommentStyle.SingleLineC)
+                {
+                    Write("// ");
+                    WriteLine(comment);
+                }
+                else if (commentStyle == CommentStyle.MultiLineC)
+                {
+                    Write("/* ");
+                    Write(comment);
+                    WriteLine(" */");
+                }
+            }
 
             return this;
         }

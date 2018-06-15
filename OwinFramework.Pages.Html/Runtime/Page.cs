@@ -52,6 +52,11 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public string BodyStyle { get; set; }
 
+        /// <summary>
+        /// Sets the element type to Page
+        /// </summary>
+        public override ElementType ElementType { get { return ElementType.Page; } }
+
         private readonly IPageDependenciesFactory _dependenciesFactory;
         private IList<IComponent> _components;
         private string _bodyStyleName;
@@ -322,13 +327,19 @@ namespace OwinFramework.Pages.Html.Runtime
 
             var websiteStylesUrl = _dependenciesFactory.AssetManager.GetWebsiteAssetUrl(AssetType.Style);
             if (websiteStylesUrl != null)
+            {
                 renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "href", websiteStylesUrl.ToString());
+                renderContext.Html.WriteLine();
+            }
 
             // TODO: For each referenced module include the module stylesheets
 
             var pageStylesUrl = _dependenciesFactory.AssetManager.GetPageAssetUrl(this, AssetType.Style);
             if (pageStylesUrl != null)
+            {
                 renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "href", pageStylesUrl.ToString());
+                renderContext.Html.WriteLine();
+            }
 
 
             var websiteScriptUrl = _dependenciesFactory.AssetManager.GetWebsiteAssetUrl(AssetType.Script);

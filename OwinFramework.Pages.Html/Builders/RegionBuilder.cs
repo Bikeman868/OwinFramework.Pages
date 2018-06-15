@@ -188,6 +188,8 @@ namespace OwinFramework.Pages.Html.Builders
             public BuiltRegion Region;
             public IElement Content;
 
+            public ElementType ElementType { get { return ElementType.Region; } }
+
             string IElement.Name
             {
                 get { return Region.Name; }

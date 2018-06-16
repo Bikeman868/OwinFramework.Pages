@@ -41,18 +41,18 @@ namespace Sample1.SamplePages
 
     /// <summary>
     /// Defines a module that contains all of the scripts and styles for 
-    /// elements that are related to the site navigation
+    /// elements that are related to the site navigation. These should be
+    /// deployed to the module asset files by default
     /// </summary>
     [IsModule("navigation", AssetDeployment.PerModule)]
-    [DeployedAs(AssetDeployment.InPage)]
     internal class NavigationModule { }
 
     /// <summary>
     /// Defines a module that contains all of the scripts and styles for 
-    /// elements that are related to the site content
+    /// elements that are related to the site content. These should be
+    /// written into the head section of each page
     /// </summary>
-    [IsModule("content", AssetDeployment.PerModule)]
-    [DeployedAs(AssetDeployment.PerModule)]
+    [IsModule("content", AssetDeployment.InPage)]
     internal class ContentModule { }
 
     /*
@@ -61,15 +61,27 @@ namespace Sample1.SamplePages
      * also render html, but this is structural (non-visual)
      */
 
+    [IsComponent("styles.default")]
+    [PartOf("application")]
+    [DeployedAs("content")]
+    [DeployCss("p", "font-size:11pt;")]
+    [DeployCss("h1", "font-size:16pt;")]
+    [DeployCss("h2", "font-size:14pt;")]
+    [DeployCss("h3", "font-size:12pt;")]
+    internal class DefaultStylesComponent { }
+
     [IsComponent("header.mainMenu")]
     [PartOf("application")]
+    [DeployedAs("navigation")]
     [DeployCss("p.menu-item", "font-weight:bold;")]
     [RenderHtml("menu.main", "<p class='menu-item'>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
     [IsComponent("footer.standard")]
     [PartOf("application")]
-    [RenderHtml("footer.standard", "<p>This is where the html for the page footer goes</p>")]
+    [DeployedAs("navigation")]
+    [DeployCss("p.footer", "font-weight:bold; font-size:9pt;")]
+    [RenderHtml("footer.standard", "<p class='footer'>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
 
     /*
@@ -189,6 +201,7 @@ namespace Sample1.SamplePages
     [Route("/home.html", Methods.Get)]
     [PageTitle("Sample website")]
     [Style("font-size: 18px;")]
+    [NeedsComponent("styles.default")]
     [RegionComponent("header", "header.mainMenu")]
     [RegionLayout("body", "home.body")]
     [RegionComponent("footer", "footer.standard")]

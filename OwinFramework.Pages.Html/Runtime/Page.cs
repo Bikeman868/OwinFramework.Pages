@@ -101,8 +101,16 @@ namespace OwinFramework.Pages.Html.Runtime
                         _dependenciesFactory.AssetManager.AddWebsiteAssets(element.Element);
                         break;
                     case AssetDeployment.PerModule:
-                        deployment = element.Module.Name + " module";
-                        _dependenciesFactory.AssetManager.AddModuleAssets(element.Element, element.Module);
+                        if (element.Module == null)
+                        {
+                            deployment = "website assets";
+                            _dependenciesFactory.AssetManager.AddWebsiteAssets(element.Element);
+                        }
+                        else
+                        {
+                            deployment = element.Module.Name + " module";
+                            _dependenciesFactory.AssetManager.AddModuleAssets(element.Element, element.Module);
+                        }
                         break;
                     case AssetDeployment.PerPage:
                         deployment = "page assets";
@@ -328,7 +336,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var websiteStylesUrl = _dependenciesFactory.AssetManager.GetWebsiteAssetUrl(AssetType.Style);
             if (websiteStylesUrl != null)
             {
-                renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "href", websiteStylesUrl.ToString());
+                renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", websiteStylesUrl.ToString());
                 renderContext.Html.WriteLine();
             }
 
@@ -337,7 +345,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var pageStylesUrl = _dependenciesFactory.AssetManager.GetPageAssetUrl(this, AssetType.Style);
             if (pageStylesUrl != null)
             {
-                renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "href", pageStylesUrl.ToString());
+                renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", pageStylesUrl.ToString());
                 renderContext.Html.WriteLine();
             }
 

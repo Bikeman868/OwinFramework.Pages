@@ -201,11 +201,17 @@ namespace OwinFramework.Pages.Html.Builders
             public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
             {
                 List<Action<IHtmlWriter>> assets = null;
+                var commentStyle = CommentStyle.SingleLineC;
 
                 if (assetType == AssetType.Style)
+                {
                     assets = StyleAssets;
+                    commentStyle = CommentStyle.MultiLineC;
+                }
                 else if (assetType == AssetType.Script)
+                {
                     assets = FunctionAssets;
+                }
 
                 if (assets != null && assets.Count > 0)
                 {
@@ -213,7 +219,7 @@ namespace OwinFramework.Pages.Html.Builders
                             assetType + " assets for " +
                             (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
                             (Package == null ? " component" : " component from the " + Package.Name + " package"),
-                            CommentStyle.SingleLineC);
+                            commentStyle);
 
                     foreach (var asset in assets)
                         asset(writer);

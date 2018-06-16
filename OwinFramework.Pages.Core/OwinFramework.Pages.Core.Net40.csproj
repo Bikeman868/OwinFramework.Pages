@@ -107,6 +107,8 @@
     <Compile Include="Collections\ThreadSafeQueue.cs" />
     <Compile Include="Enums\ElementType.cs" />
     <Compile Include="Enums\CommentStyle.cs" />
+    <Compile Include="Exceptions\NameResolutionFailureException.cs" />
+    <Compile Include="Exceptions\NameManagerException.cs" />
     <Compile Include="Exceptions\ComponentBuilderException.cs" />
     <Compile Include="Exceptions\RegionBuilderException.cs" />
     <Compile Include="Exceptions\LayoutBuilderException.cs" />

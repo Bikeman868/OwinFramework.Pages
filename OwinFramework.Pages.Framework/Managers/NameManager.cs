@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 
@@ -97,6 +98,8 @@ namespace OwinFramework.Pages.Framework.Managers
 
         public void Bind()
         {
+            Exception exception = null;
+
             lock (_pendingActions)
             {
                 foreach (var action in _pendingActions)
@@ -104,15 +107,30 @@ namespace OwinFramework.Pages.Framework.Managers
                     {
                         action.Invoke();
                     }
-                    catch
-                    { 
-                        // TODO: Log exceptions
+                    catch (Exception ex)
+                    {
+                        if (exception == null) exception = ex;
+                        System.Diagnostics.Trace.WriteLine("Exception during name resolution. " + ex.Message);
                     }
                 _pendingActions.Clear();
             }
 
+            if (exception != null) throw exception;
+
             foreach (var page in _pages.Values)
-                page.Initialize();
+            {
+                try
+                {
+                    page.Initialize();
+                }
+                catch (Exception ex)
+                {
+                    if (exception == null) exception = ex;
+                    System.Diagnostics.Trace.WriteLine("Exception initializing page '" + page.Name + "'. "+ ex.Message);
+                }
+            }
+
+            if (exception != null) throw exception;
         }
 
         public void AddResolutionHandler(Action resolutionAction)
@@ -218,7 +236,7 @@ namespace OwinFramework.Pages.Framework.Managers
                         return result;
                 }
             }
-            return default(T);
+            throw new NameResolutionFailureException(typeof(T), package, name);
         }
 
         public IComponent ResolveComponent(string name, IPackage package)
@@ -251,17 +269,21 @@ namespace OwinFramework.Pages.Framework.Managers
             lock (_modules)
             {
                 IModule module;
-                return _modules.TryGetValue(name, out module) ? module : null;
+                if (_modules.TryGetValue(name, out module))
+                    return module;
             }
+            throw new NameResolutionFailureException(typeof(IModule), null, name);
         }
 
         public IPackage ResolvePackage(string name)
         {
             lock (_packages)
             {
-                IPackage module;
-                return _packages.TryGetValue(name, out module) ? module : null;
+                IPackage package;
+                if (_packages.TryGetValue(name, out package))
+                    return package;
             }
+            throw new NameResolutionFailureException(typeof(IPackage), null, name);
         }
 
         #endregion

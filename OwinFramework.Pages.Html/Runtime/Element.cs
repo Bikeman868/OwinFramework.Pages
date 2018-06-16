@@ -103,7 +103,11 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public virtual void Initialize(IInitializationData initializationData)
         {
-            var assetDeployment = AssetDeployment == AssetDeployment.Inherit
+            var assetDeployment = AssetDeployment == AssetDeployment.Inherit && Module != null
+                ? Module.AssetDeployment
+                : AssetDeployment;
+
+            assetDeployment = AssetDeployment == AssetDeployment.Inherit
                 ? initializationData.AssetDeployment
                 : AssetDeployment;
 

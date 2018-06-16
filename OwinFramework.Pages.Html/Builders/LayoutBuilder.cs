@@ -261,8 +261,12 @@ namespace OwinFramework.Pages.Html.Builders
                         {
                             var componentRef = _regionComponents[regionName];
                             var componentName = componentRef as string;
+                            var component = componentRef as IComponent;
+
                             if (componentName != null)
-                                _regionComponents[regionName] = _nameManager.ResolveComponent(componentName);
+                                component = _nameManager.ResolveComponent(componentName, _layout.Package);
+
+                            _regionComponents[regionName] = component;
                         }
 
                         var regionLayoutKeys = _regionLayouts.Keys.ToList();
@@ -270,8 +274,12 @@ namespace OwinFramework.Pages.Html.Builders
                         {
                             var layoutRef = _regionLayouts[regionName];
                             var layoutName = layoutRef as string;
+                            var layout = layoutRef as ILayout;
+
                             if (layoutName != null)
-                                _regionLayouts[regionName] = _nameManager.ResolveLayout(layoutName);
+                                layout = _nameManager.ResolveLayout(layoutName, _layout.Package);
+
+                            _regionLayouts[regionName] = layout;
                         }
 
                         WriteOpeningTag();

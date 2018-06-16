@@ -70,19 +70,33 @@ namespace Sample1.SamplePages
     [DeployCss("h3", "font-size:12pt;")]
     internal class DefaultStylesComponent { }
 
-    [IsComponent("header.mainMenu")]
+    [IsComponent("navigation.mainMenu")]
     [PartOf("application")]
     [DeployedAs("navigation")]
     [DeployCss("p.{ns}_menu-item", "font-weight:bold;")]
     [RenderHtml("menu.main", "<p class='{ns}_menu-item'>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
-    [IsComponent("footer.standard")]
+    [IsComponent("navigation.footer")]
     [PartOf("application")]
     [DeployedAs("navigation")]
     [DeployCss("p.{ns}_footer", "font-weight:bold; font-size:9pt;")]
     [RenderHtml("footer.standard", "<p class='{ns}_footer'>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
+
+    [IsComponent("navigation.sidebar")]
+    [PartOf("application")]
+    [DeployedAs("content")]
+    [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
+    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav</p>")]
+    internal class SideBarComponent { }
+
+    [IsComponent("content.body")]
+    [PartOf("application")]
+    [DeployedAs("content")]
+    [DeployCss("p.{ns}_body", "font-family: arial; font-size:9pt;")]
+    [RenderHtml("content.body", "<p class='{ns}_body'>Hello, world</p>")]
+    internal class PageBodyComponent { }
 
     /*
      * A region is a container for a single component or layout. The container can 
@@ -164,6 +178,7 @@ namespace Sample1.SamplePages
     [UsesRegion("header", "main.header")]
     [UsesRegion("body", "body")]
     [UsesRegion("footer", "main.footer")]
+    [RegionLayout("body", "home.body")]
     internal class MainLayout { }
 
     /// <summary>
@@ -171,10 +186,12 @@ namespace Sample1.SamplePages
     /// </summary>
     [IsLayout("home.body", "left,main")]
     [PartOf("application")]
-    [DeployedAs("navigation")]
+    [DeployedAs("content")]
     [Container("div", "2col.vertical.fixed")]
     [UsesRegion("left", "2col.vertical.fixed.left")]
     [UsesRegion("main", "2col.vertical.fixed.right")]
+    [RegionComponent("left", "navigation.sidebar")]
+    [RegionComponent("main", "content.body")]
     internal class HomePageLayout { }
 
     /*
@@ -202,8 +219,7 @@ namespace Sample1.SamplePages
     [PageTitle("Sample website")]
     [Style("font-size: 18px;")]
     [NeedsComponent("styles.default")]
-    [RegionComponent("header", "header.mainMenu")]
-    [RegionLayout("body", "home.body")]
-    [RegionComponent("footer", "footer.standard")]
+    [RegionComponent("header", "navigation.mainMenu")]
+    [RegionComponent("footer", "navigation.footer")]
     internal class HomePage { }
 }

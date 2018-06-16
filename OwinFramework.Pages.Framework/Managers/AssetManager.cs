@@ -312,15 +312,15 @@ namespace OwinFramework.Pages.Framework.Managers
 
                 if (string.Equals(secondLastPathElement, "module", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!_moduleFunctions.TryGetValue(secondLastPathElement, out content))
+                    if (!_moduleFunctions.TryGetValue(name, out content))
                     throw new HttpException((int)HttpStatusCode.NotFound,
-                        "Unknown module " + secondLastPathElement);
+                        "Unknown module " + name);
                 }
                 else if (string.Equals(secondLastPathElement, "page", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!_pageFunctions.TryGetValue(secondLastPathElement, out content))
+                    if (!_pageFunctions.TryGetValue(name, out content))
                     throw new HttpException((int)HttpStatusCode.NotFound,
-                        "Unknown page " + secondLastPathElement);
+                        "Unknown page " + name);
                 }
                 else
                 {
@@ -333,15 +333,15 @@ namespace OwinFramework.Pages.Framework.Managers
 
                 if (string.Equals(secondLastPathElement, "module", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!_moduleStyles.TryGetValue(secondLastPathElement, out content))
+                    if (!_moduleStyles.TryGetValue(name, out content))
                         throw new HttpException((int)HttpStatusCode.NotFound,
-                            "Unknown module " + secondLastPathElement);
+                            "Unknown module " + name);
                 }
                 else if (string.Equals(secondLastPathElement, "page", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!_pageStyles.TryGetValue(secondLastPathElement, out content))
+                    if (!_pageStyles.TryGetValue(name, out content))
                         throw new HttpException((int)HttpStatusCode.NotFound,
-                            "Unknown page " + secondLastPathElement);
+                            "Unknown page " + name);
                 }
                 else
                 {

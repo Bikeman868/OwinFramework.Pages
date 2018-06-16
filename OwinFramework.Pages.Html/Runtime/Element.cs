@@ -107,6 +107,9 @@ namespace OwinFramework.Pages.Html.Runtime
                 ? initializationData.AssetDeployment
                 : AssetDeployment;
 
+            if (assetDeployment == AssetDeployment.PerModule && Module == null)
+                assetDeployment = AssetDeployment.PerWebsite;
+
             initializationData.HasElement(this, assetDeployment, Module);
 
             var children = GetChildren();

@@ -73,15 +73,15 @@ namespace Sample1.SamplePages
     [IsComponent("header.mainMenu")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [DeployCss("p.menu-item", "font-weight:bold;")]
-    [RenderHtml("menu.main", "<p class='menu-item'>This is where the main menu html goes</p>")]
+    [DeployCss("p.{ns}_menu-item", "font-weight:bold;")]
+    [RenderHtml("menu.main", "<p class='{ns}_menu-item'>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
     [IsComponent("footer.standard")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [DeployCss("p.footer", "font-weight:bold; font-size:9pt;")]
-    [RenderHtml("footer.standard", "<p class='footer'>This is where the html for the page footer goes</p>")]
+    [DeployCss("p.{ns}_footer", "font-weight:bold; font-size:9pt;")]
+    [RenderHtml("footer.standard", "<p class='{ns}_footer'>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
 
     /*

@@ -101,16 +101,8 @@ namespace OwinFramework.Pages.Html.Runtime
                         _dependenciesFactory.AssetManager.AddWebsiteAssets(element.Element);
                         break;
                     case AssetDeployment.PerModule:
-                        if (element.Module == null)
-                        {
-                            deployment = "website assets";
-                            _dependenciesFactory.AssetManager.AddWebsiteAssets(element.Element);
-                        }
-                        else
-                        {
-                            deployment = element.Module.Name + " module";
-                            _dependenciesFactory.AssetManager.AddModuleAssets(element.Element, element.Module);
-                        }
+                        deployment = element.Module.Name + " module";
+                        _dependenciesFactory.AssetManager.AddModuleAssets(element.Element, element.Module);
                         break;
                     case AssetDeployment.PerPage:
                         deployment = "page assets";

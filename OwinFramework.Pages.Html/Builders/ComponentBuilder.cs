@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -33,6 +34,20 @@ namespace OwinFramework.Pages.Html.Builders
             private readonly INameManager _nameManager;
             private readonly IAssetManager _assetManager;
             private readonly BuiltComponent _component;
+            private readonly List<CssDefinition> _cssDefinitions;
+            private readonly List<HtmlDefinition> _htmlToRender;
+
+            private class CssDefinition
+            {
+                public string Selector;
+                public string Style;
+            }
+
+            private class HtmlDefinition
+            {
+                public string AssetName;
+                public string DefaultHtml;
+            }
 
             public ComponentDefinition(
                 INameManager nameManager,
@@ -41,6 +56,8 @@ namespace OwinFramework.Pages.Html.Builders
                 _nameManager = nameManager;
                 _assetManager = assetManager;
                 _component = new BuiltComponent();
+                _cssDefinitions = new List<CssDefinition>();
+                _htmlToRender = new List<HtmlDefinition>();
             }
 
             IComponentDefinition IComponentDefinition.Name(string name)
@@ -66,7 +83,7 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
-            IComponentDefinition IComponentDefinition.AssetDeployment(Core.Enums.AssetDeployment assetDeployment)
+            IComponentDefinition IComponentDefinition.AssetDeployment(AssetDeployment assetDeployment)
             {
                 _component.AssetDeployment = assetDeployment;
                 return this;
@@ -104,15 +121,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             IComponentDefinition IComponentDefinition.Render(string assetName, string defaultHtml)
             {
-                if (_component.HtmlWriters == null)
-                    _component.HtmlWriters = new List<Action<IRenderContext>>();
-
-                _component.HtmlWriters.Add(rc => 
-                    {
-                        var localizedText = _assetManager.GetLocalizedText(rc, assetName, defaultHtml);
-                        rc.Html.WriteLine(localizedText);
-                    });
-
+                _htmlToRender.Add(new HtmlDefinition { AssetName = assetName, DefaultHtml= defaultHtml });
                 return this;
             }
 
@@ -124,15 +133,16 @@ namespace OwinFramework.Pages.Html.Builders
                 if (string.IsNullOrEmpty(cssStyle))
                     throw new ComponentBuilderException("No CSS style is specified for component CSS asset");
 
-                if (_component.StyleAssets == null)
-                    _component.StyleAssets = new List<Action<IHtmlWriter>>();
+                var cssDefinition = new CssDefinition 
+                { 
+                    Selector = cssSelector.Trim(),
+                    Style = cssStyle.Trim()
+                };
 
-                if (!cssStyle.EndsWith(";"))
-                    cssStyle += ";";
+                if (!cssDefinition.Style.EndsWith(";"))
+                    cssDefinition.Style += ";";
 
-                var style = cssSelector + " { " + cssStyle + " }";
-
-                _component.StyleAssets.Add(w => w.WriteLine(style));
+                _cssDefinitions.Add(cssDefinition);
 
                 return this;
             }
@@ -171,7 +181,51 @@ namespace OwinFramework.Pages.Html.Builders
 
             public IComponent Build()
             {
+                _component.StyleAssets = _cssDefinitions
+                    .Select(d =>
+                        {
+                            var selector = d.Selector;
+                            if (_component.Package == null)
+                                selector = selector.Replace(".{ns}_", ".");
+                            else
+                                selector = selector.Replace(".{ns}_", "." + _component.Package.NamespaceName + "_");
+                            return selector + " { " + d.Style + " }";
+                        })
+                    .Select(style => 
+                        {
+                            Action<IHtmlWriter> writeAction = w => w.WriteLine(style);
+                            return writeAction;
+                        })
+                    .ToList();
+
+                _component.HtmlWriters = _htmlToRender.Select(d =>
+                    {
+                        Action<IRenderContext> action;
+
+                        if (_component.Package == null)
+                        {
+                            action = rc =>
+                            {
+                                var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
+                                localizedText = localizedText.Replace("{ns}_", "");
+                                rc.Html.WriteLine(localizedText);
+                            };
+                        }
+                        else
+                        {
+                            action = rc =>
+                            {
+                                var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
+                                localizedText = localizedText.Replace("{ns}", _component.Package.NamespaceName);
+                                rc.Html.WriteLine(localizedText);
+                            };
+                        }
+                        return action;
+                    })
+                    .ToList();
+
                 _nameManager.Register(_component);
+
                 return _component;
             }
         }
@@ -186,7 +240,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 if (renderContext.IncludeComments)
                     renderContext.Html.WriteComment(
-                        (string.IsNullOrEmpty(Name) ? "Unnamed" : Name) + 
+                        (string.IsNullOrEmpty(Name) ? "unnamed" : Name) + 
                         (Package == null ? " component" : " component from the " + Package.Name + " package"));
 
                 if (HtmlWriters != null)

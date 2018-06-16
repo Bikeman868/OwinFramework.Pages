@@ -109,7 +109,7 @@ namespace OwinFramework.Pages.Framework.Managers
         string IAssetManager.GetLocalizedText(IRenderContext renderContext, string assetName, string defaultText)
         {
             // TODO: Localize the text
-            return defaultText + " (<i>" + renderContext.Language + "</i>)";
+            return defaultText;
         }
 
         private string ModuleName(IModule module)

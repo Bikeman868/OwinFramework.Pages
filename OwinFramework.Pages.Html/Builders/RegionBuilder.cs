@@ -248,9 +248,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             IWriteResult IElement.WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
             {
-                return 
-                    Region.WriteStaticAssets(assetType, writer)
-                    .Add(Content.WriteStaticAssets(assetType, writer));
+                return Region.WriteStaticAssets(assetType, writer);
             }
 
             IWriteResult IElement.WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)

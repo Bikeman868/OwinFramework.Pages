@@ -38,10 +38,10 @@ namespace OwinFramework.Pages.Framework.Managers
 
         private readonly IStringBuilder _websiteStylesBuilder;
         private readonly IStringBuilder _websiteFunctionsBuilder;
-        private readonly IThreadSafeDictionary<string, IStringBuilder> _moduleStylesBuilder;
-        private readonly IThreadSafeDictionary<string, IStringBuilder> _moduleFunctionsBuilder;
-        private readonly IThreadSafeDictionary<string, IStringBuilder> _pageStylesBuilder;
-        private readonly IThreadSafeDictionary<string, IStringBuilder> _pageFunctionsBuilder;
+        private readonly IThreadSafeDictionary<string, IStringBuilder> _moduleStyleBuilders;
+        private readonly IThreadSafeDictionary<string, IStringBuilder> _moduleFunctionBuilders;
+        private readonly IThreadSafeDictionary<string, IStringBuilder> _pageStyleBuilders;
+        private readonly IThreadSafeDictionary<string, IStringBuilder> _pageFunctionBuilders;
 
         private readonly PathString _rootPath;
 
@@ -68,10 +68,10 @@ namespace OwinFramework.Pages.Framework.Managers
             _websiteStylesBuilder = stringBuilderFactory.Create();
             _websiteFunctionsBuilder = stringBuilderFactory.Create();
 
-            _moduleStylesBuilder = dictionaryFactory.Create<string, IStringBuilder>();
-            _moduleFunctionsBuilder = dictionaryFactory.Create<string, IStringBuilder>();
-            _pageStylesBuilder = dictionaryFactory.Create<string, IStringBuilder>();
-            _pageFunctionsBuilder = dictionaryFactory.Create<string, IStringBuilder>();
+            _moduleStyleBuilders = dictionaryFactory.Create<string, IStringBuilder>();
+            _moduleFunctionBuilders = dictionaryFactory.Create<string, IStringBuilder>();
+            _pageStyleBuilders = dictionaryFactory.Create<string, IStringBuilder>();
+            _pageFunctionBuilders = dictionaryFactory.Create<string, IStringBuilder>();
 
             var rootPath = frameworkConfiguration.AssetRootPath;
             if (rootPath.EndsWith("/") && rootPath.Length > 1) rootPath = rootPath.Substring(0, rootPath.Length - 1);
@@ -181,14 +181,14 @@ namespace OwinFramework.Pages.Framework.Managers
             var hashSet = _elementsAddedToModule.GetOrAdd(moduleName, m => new HashSet<string>(), null);
             lock (hashSet) if (!hashSet.Add(elementName)) return;
 
-            var styleBuilder = _moduleStylesBuilder.GetOrAdd(moduleName, m => _stringBuilderFactory.Create(), null);
+            var styleBuilder = _moduleStyleBuilders.GetOrAdd(moduleName, m => _stringBuilderFactory.Create(), null);
             lock (styleBuilder) GetStaticAssets(element, AssetType.Style, styleBuilder);
 
-            var functionBuilder = _moduleFunctionsBuilder.GetOrAdd(moduleName, m => _stringBuilderFactory.Create(), null);
+            var functionBuilder = _moduleFunctionBuilders.GetOrAdd(moduleName, m => _stringBuilderFactory.Create(), null);
             lock (functionBuilder) GetStaticAssets(element, AssetType.Script, functionBuilder);
 
-            _moduleStyles[moduleName] = _websiteStylesBuilder.ToString();
-            _moduleFunctions[moduleName] = _websiteFunctionsBuilder.ToString();
+            _moduleStyles[moduleName] = styleBuilder.ToString();
+            _moduleFunctions[moduleName] = functionBuilder.ToString();
         }
 
         void IAssetManager.AddPageAssets(IElement element, IPage page)
@@ -202,14 +202,14 @@ namespace OwinFramework.Pages.Framework.Managers
             var hashSet = _elementsAddedToPage.GetOrAdd(pageName, p => new HashSet<string>(), null);
             lock (hashSet) if (!hashSet.Add(elementName)) return;
 
-            var styleBuilder = _pageStylesBuilder.GetOrAdd(pageName, m => _stringBuilderFactory.Create(), null);
+            var styleBuilder = _pageStyleBuilders.GetOrAdd(pageName, m => _stringBuilderFactory.Create(), null);
             lock (styleBuilder) GetStaticAssets(element, AssetType.Style, styleBuilder);
 
-            var functionBuilder = _pageFunctionsBuilder.GetOrAdd(pageName, m => _stringBuilderFactory.Create(), null);
+            var functionBuilder = _pageFunctionBuilders.GetOrAdd(pageName, m => _stringBuilderFactory.Create(), null);
             lock (functionBuilder) GetStaticAssets(element, AssetType.Script, functionBuilder);
 
-            _pageStyles[pageName] = _websiteStylesBuilder.ToString();
-            _pageFunctions[pageName] = _websiteFunctionsBuilder.ToString();
+            _pageStyles[pageName] = styleBuilder.ToString();
+            _pageFunctions[pageName] = functionBuilder.ToString();
         }
 
         Uri IAssetManager.GetWebsiteAssetUrl(AssetType type)

@@ -74,48 +74,48 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("navigation")]
     [DeployCss("p.{ns}_menu-item", "font-weight:bold;")]
-    [RenderHtml("menu.main", "<p class='{ns}_menu-item'>This is where the main menu html goes</p>")]
+    [RenderHtmlAttribute("menu.main", "<p class='{ns}_menu-item'>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
     [IsComponent("navigation.heading")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [RenderHtml("heading.main", "<h1>An example of fully declatative pages</h1>")]
+    [RenderHtmlAttribute("heading.main", "<h1>An example of fully declatative pages</h1>")]
     internal class HeadingComponent { }
 
     [IsComponent("navigation.footer")]
     [PartOf("application")]
     [DeployedAs("navigation")]
     [DeployCss("p.{ns}_footer", "font-weight:bold; font-size:9pt;")]
-    [RenderHtml("footer.standard", "<p class='{ns}_footer'>This is where the html for the page footer goes</p>")]
+    [RenderHtmlAttribute("footer.standard", "<p class='{ns}_footer'>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
 
     [IsComponent("navigation.sidebar.1")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
-    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 1</p>")]
+    [RenderHtmlAttribute("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 1</p>")]
     internal class SideBar1Component { }
 
     [IsComponent("content.body.1")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_body", "font-family: arial; font-size:9pt;")]
-    [RenderHtml("content.body", "<p class='{ns}_body'>Hello, page 1</p>")]
+    [RenderHtmlAttribute("content.body", "<p class='{ns}_body'>Hello, page 1</p>")]
     internal class PageBody1Component { }
 
     [IsComponent("navigation.sidebar.2")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
-    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 2</p>")]
+    [RenderHtmlAttribute("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 2</p>")]
     internal class SideBar2Component { }
 
     [IsComponent("content.body.2")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_body", "font-family: arial; font-size:9pt;")]
-    [RenderHtml("content.body", "<p class='{ns}_body'>Hello, page 2</p>")]
+    [RenderHtmlAttribute("content.body", "<p class='{ns}_body'>Hello, page 2</p>")]
     internal class PageBody2Component { }
 
     /*

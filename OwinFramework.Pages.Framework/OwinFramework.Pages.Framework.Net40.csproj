@@ -64,8 +64,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FrameworkConfiguration.cs" />
-    <Compile Include="IFrameworkConfiguration.cs" />
+    <Compile Include="Builders\AttributeSet.cs" />
+    <Compile Include="Builders\BuiltPackage.cs" />
+    <Compile Include="Builders\PackageDefinition.cs" />
+    <Compile Include="Configuration\FrameworkConfiguration.cs" />
+    <Compile Include="Interfaces\IFrameworkConfiguration.cs" />
     <Compile Include="Managers\AssetManager.cs" />
     <Compile Include="Managers\NameManager.cs" />
     <Compile Include="Package.cs" />

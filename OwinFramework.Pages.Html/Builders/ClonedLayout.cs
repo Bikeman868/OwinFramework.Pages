@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Builders;
 
 namespace OwinFramework.Pages.Html.Runtime.Internal
 {
-    public class ClonedLayout: ClonedElement<ILayout>, ILayout
+    internal class ClonedLayout: ClonedElement<ILayout>, ILayout
     {
         public ElementType ElementType { get { return ElementType.Region; } }
         public bool IsClone { get { return true; } }

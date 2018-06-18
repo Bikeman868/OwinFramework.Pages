@@ -88,15 +88,15 @@ namespace Sample1
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
             ninject.Get<OwinFramework.Pages.Restful.BuildEngine>().Install(fluentBuilder);
 
-            // This is an example of registering all of the elements defined in an assembly
-            fluentBuilder.Register(Assembly.GetExecutingAssembly());
-
             // This is an example of registering a package containing components, layouts etc
             // that can be referenced by name from other elements. When you register a package
             // like this all of the element in the package are contained in a namespace
             // to avoid naming conflicts. This allows you to install packages from third
             // parties.
-            fluentBuilder.Register(ninject.Get<MenuPackage>());
+            fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus");
+
+            // This is an example of registering all of the elements defined in an assembly
+            fluentBuilder.Register(Assembly.GetExecutingAssembly());
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements

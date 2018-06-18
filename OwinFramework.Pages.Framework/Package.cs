@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Ioc.Modules;
 using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Framework.Builders;
@@ -16,7 +15,7 @@ namespace OwinFramework.Pages.Framework
     [Ioc.Modules.Package]
     public class Package: Ioc.Modules.IPackage
     {
-        string Ioc.Modules.IPackage.Name { get { return "Owin Framework Pages facilities"; } }
+        string Ioc.Modules.IPackage.Name { get { return "Owin Framework Pages framework"; } }
 
         IList<IocRegistration> Ioc.Modules.IPackage.IocRegistrations
         {

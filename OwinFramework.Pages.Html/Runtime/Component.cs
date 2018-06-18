@@ -10,5 +10,8 @@ namespace OwinFramework.Pages.Html.Runtime
     public class Component : Element, IComponent
     {
         public override ElementType ElementType { get { return ElementType.Component; } }
+
+        public Component(IComponentDependenciesFactory componentDependenciesFactory)
+        { }
     }
 }

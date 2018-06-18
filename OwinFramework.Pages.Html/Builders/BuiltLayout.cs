@@ -5,7 +5,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime.Internal
 {
-    public class BuiltLayout: Layout
+    internal class BuiltLayout: Layout
     {
         private List<Func<Func<string, IElement>, IElement>> _visualElements;
         private Dictionary<int, int> _visualElementMapping;

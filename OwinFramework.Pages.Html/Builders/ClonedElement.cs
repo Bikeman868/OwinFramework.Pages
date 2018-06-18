@@ -4,9 +4,9 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime.Internal
+namespace OwinFramework.Pages.Html.Builders
 {
-    public class ClonedElement<T> where T: IElement
+    internal class ClonedElement<T> where T: IElement
     {
         public bool IsClone { get { return true; } }
 

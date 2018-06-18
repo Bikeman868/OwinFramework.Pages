@@ -1,10 +1,11 @@
 ﻿using System;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime.Internal
+namespace OwinFramework.Pages.Html.Builders
 {
-    public class BuiltRegion : Region
+    internal class BuiltRegion : Region
     {
         public Action<IHtmlWriter> WriteOpen;
         public Action<IHtmlWriter> WriteClose;

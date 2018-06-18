@@ -64,7 +64,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildEngine.cs" />
+    <Compile Include="Builders\BuiltComponent.cs" />
+    <Compile Include="Builders\BuiltModule.cs" />
     <Compile Include="Builders\ComponentBuilder.cs" />
+    <Compile Include="Builders\ComponentDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
     <Compile Include="Builders\IHtmlHelper.cs" />
     <Compile Include="Builders\LayoutBuilder.cs" />
@@ -79,17 +82,17 @@
     <Compile Include="Runtime\HtmlWriterFactory.cs" />
     <Compile Include="Runtime\IComponentDependencies.cs" />
     <Compile Include="Runtime\IComponentDependenciesFactory.cs" />
-    <Compile Include="Runtime\Internal\BuiltLayout.cs" />
-    <Compile Include="Runtime\Internal\ClonedElement.cs" />
-    <Compile Include="Runtime\Internal\ClonedLayout.cs" />
-    <Compile Include="Runtime\Internal\LayoutDefinition.cs" />
-    <Compile Include="Runtime\Internal\StaticHtmlElement.cs" />
+    <Compile Include="Builders\BuiltLayout.cs" />
+    <Compile Include="Builders\ClonedElement.cs" />
+    <Compile Include="Builders\ClonedLayout.cs" />
+    <Compile Include="Builders\LayoutDefinition.cs" />
+    <Compile Include="Runtime\StaticHtmlElement.cs" />
     <Compile Include="Runtime\IRegionDependenciesFactory.cs" />
     <Compile Include="Runtime\ILayoutDependenciesFactory.cs" />
     <Compile Include="Runtime\IRegionDependencies.cs" />
-    <Compile Include="Runtime\Internal\BuiltRegion.cs" />
-    <Compile Include="Runtime\Internal\ClonedRegion.cs" />
-    <Compile Include="Runtime\Internal\RegionDefinition.cs" />
+    <Compile Include="Builders\BuiltRegion.cs" />
+    <Compile Include="Builders\ClonedRegion.cs" />
+    <Compile Include="Builders\RegionDefinition.cs" />
     <Compile Include="Runtime\ILayoutDependencies.cs" />
     <Compile Include="Runtime\IPageDependencies.cs" />
     <Compile Include="Runtime\IPageDependenciesFactory.cs" />

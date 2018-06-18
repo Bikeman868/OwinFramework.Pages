@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime.Internal
+namespace OwinFramework.Pages.Html.Builders
 {
-    public class ClonedRegion : ClonedElement<IRegion>, IRegion
+    internal class ClonedRegion : ClonedElement<IRegion>, IRegion
     {
         public ElementType ElementType { get { return ElementType.Region; } }
 

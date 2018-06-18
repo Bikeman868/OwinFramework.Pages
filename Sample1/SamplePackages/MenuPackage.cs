@@ -21,9 +21,16 @@ namespace Sample1.SamplePackages
     /// [IsPackage] attibute make sure that you register it manually before
     /// registering the assembly that contains it.
     /// </summary>
-    [IsPackage("Menu", "menu")]
     public class MenuPackage : OwinFramework.Pages.Framework.Runtime.Package
     {
+        private readonly IComponentDependenciesFactory _componentDependencies;
+
+        public MenuPackage(
+            IComponentDependenciesFactory componentDependencies)
+        {
+            _componentDependencies = componentDependencies;
+        }
+
         public class MenuItem
         {
             public string Name { get; set; }
@@ -31,6 +38,9 @@ namespace Sample1.SamplePackages
 
         private class MenuItemComponent: Component
         {
+            public MenuItemComponent(IComponentDependenciesFactory dependencies) 
+                : base(dependencies) { }
+
             public override IWriteResult WriteHtml(
                 IRenderContext renderContext, 
                 IDataContext dataContext, 
@@ -43,9 +53,10 @@ namespace Sample1.SamplePackages
             }
         }
 
-        public override IPackage Build(IFluentBuilder builder)
+        public override IPackage Build(
+            IFluentBuilder builder)
         {
-            var menuItemComponent = new MenuItemComponent();
+            var menuItemComponent = new MenuItemComponent(_componentDependencies);
 
             var menuBarRegion = builder.Region()
                 .ForEach<MenuItem>()

@@ -1,5 +1,4 @@
-﻿using System;
-using OwinFramework.Pages.Core.Enums;
+﻿using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -50,10 +49,6 @@ namespace OwinFramework.Pages.Html.Builders
                 _nameManager.Register(_module);
                 return _module;
             }
-        }
-
-        private class BuiltModule: Module
-        {
         }
     }
 }

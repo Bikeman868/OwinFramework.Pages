@@ -12,7 +12,6 @@ namespace OwinFramework.Pages.Html.Builders
     internal class ClonedLayout: ClonedElement<ILayout>, ILayout
     {
         public ElementType ElementType { get { return ElementType.Region; } }
-        public bool IsClone { get { return true; } }
 
         private readonly ILayoutDependenciesFactory _layoutDependencies;
         private readonly IThreadSafeDictionary<string, IRegion> _content;
@@ -46,8 +45,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             if (region == null)
             {
-                region = Parent.GetRegion(regionName).Clone(element);
-                _content[regionName] = region;
+                _content[regionName] = Parent.GetRegion(regionName).Clone(element);
             }
             else if (region.IsClone)
             {
@@ -55,8 +53,7 @@ namespace OwinFramework.Pages.Html.Builders
             }
             else
             {
-                region = region.Clone(element);
-                _content[regionName] = region;
+                _content[regionName] = region.Clone(element);
             }
         }
 

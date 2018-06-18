@@ -39,7 +39,16 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
             if (_visualElements == null)
                 _visualElements = new List<Func<Func<string, IElement>, IElement>>();
 
-            _visualElements.Add(f => f(regionName));
+            _visualElements.Add(f => 
+                {
+                    var e = f(regionName);
+                    if (e != null) return e;
+
+                    IRegion r;
+                    if (!Content.TryGetValue(regionName, out r))
+                        throw new Exception("Region '" + regionName + "' does not contain an instance for layout '" + Name + "'");
+                    return r;
+                });
 
             if (_visualElementMapping == null)
                 _visualElementMapping = new Dictionary<int, int>();

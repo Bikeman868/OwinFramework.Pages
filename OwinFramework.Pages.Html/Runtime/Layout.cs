@@ -67,17 +67,17 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual IWriteResult WriteHtml(
             IRenderContext renderContext, 
-            IDataContext dataContext, 
-            Func<string, IRegion> contentFunc)
+            IDataContext dataContext,
+            Func<string, IRegion> regionLookup)
         {
             var result = WriteResult.Continue();
-            if (contentFunc == null || Content.Count == 0) return result;
+            if (regionLookup == null || Content.Count == 0) return result;
 
             using (var regionNames = Content.KeysLocked)
             {
                 foreach(var regionName in regionNames)
                 {
-                    var region = contentFunc(regionName) ?? Content[regionName];
+                    var region = regionLookup(regionName) ?? Content[regionName];
                     if (region != null)
                         result.Add(region.WriteHtml(renderContext, dataContext));
                 }

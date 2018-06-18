@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime.Internal
+namespace OwinFramework.Pages.Html.Builders
 {
     internal class BuiltLayout: Layout
     {
-        private List<Func<Func<string, IElement>, IElement>> _visualElements;
+        private List<Func<Func<string, IRegion>, IElement>> _visualElements;
         private Dictionary<int, int> _visualElementMapping;
         private List<string> _regionNameOrder;
 
@@ -18,7 +19,7 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
         public void AddVisualElement(Action<IHtmlWriter> writeAction, string comment)
         {
             if (_visualElements == null)
-                _visualElements = new List<Func<Func<string, IElement>, IElement>>();
+                _visualElements = new List<Func<Func<string, IRegion>, IElement>>();
 
             var staticElement = new StaticHtmlElement { WriteAction = writeAction, Comment = comment };
             _visualElements.Add(f => staticElement);
@@ -37,18 +38,9 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
             _regionNameOrder.Add(regionName);
 
             if (_visualElements == null)
-                _visualElements = new List<Func<Func<string, IElement>, IElement>>();
+                _visualElements = new List<Func<Func<string, IRegion>, IElement>>();
 
-            _visualElements.Add(f => 
-                {
-                    var e = f(regionName);
-                    if (e != null) return e;
-
-                    IRegion r;
-                    if (!Content.TryGetValue(regionName, out r))
-                        throw new Exception("Region '" + regionName + "' does not contain an instance for layout '" + Name + "'");
-                    return r;
-                });
+            _visualElements.Add(f => f(regionName));
 
             if (_visualElementMapping == null)
                 _visualElementMapping = new Dictionary<int, int>();
@@ -64,17 +56,23 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
                 includeChildren 
                 ? (Func<string, IRegion>)(regionName => Content[regionName])
                 : regionName => (IRegion)null);
-            /*
+        }
+
+        public override IWriteResult WriteHtml(
+            IRenderContext renderContext, 
+            IDataContext dataContext, 
+            Func<string, IRegion> regionLookup)
+        {
             var result = WriteResult.Continue();
 
             if (renderContext.IncludeComments)
             {
                 renderContext.Html.WriteComment(
-                    (string.IsNullOrEmpty(Name) ? "nnnamed" : Name) +
+                    (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
                     (Package == null ? " layout" : " layout from " + Package.Name + " package"));
 
                 var reverseMapping = new Dictionary<int, int>();
-                for (var i = 0; i < _regions.Count; i++)
+                for (var i = 0; i < _regionNameOrder.Count; i++)
                 {
                     var visualElementIndex = _visualElementMapping[i];
                     reverseMapping[visualElementIndex] = i;
@@ -87,29 +85,19 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
                         var regionIndex = reverseMapping[i];
                         renderContext.Html.WriteComment("layout '" + _regionNameOrder[regionIndex] + "' region");
                     }
-                    result.Add(_visualElements[i].WriteHtml(renderContext, dataContext));
+                    var element = _visualElements[i](regionLookup);
+                    if (element != null)
+                        result.Add(element.WriteHtml(renderContext, dataContext));
                 }
             }
             else
             {
-                foreach (var element in _visualElements)
-                    result.Add(element.WriteHtml(renderContext, dataContext));
-            }
-            return result;
-            */
-        }
-
-        public override IWriteResult WriteHtml(
-            IRenderContext renderContext, 
-            IDataContext dataContext, 
-            Func<string, IRegion> contentFunc)
-        {
-            var result = WriteResult.Continue();
-
-            foreach (var elementFunction in _visualElements)
-            {
-                var element = elementFunction(contentFunc);
-                result.Add(element.WriteHtml(renderContext, dataContext));
+                foreach (var elementFunction in _visualElements)
+                {
+                    var element = elementFunction(regionLookup);
+                    if (element != null)
+                        result.Add(element.WriteHtml(renderContext, dataContext));
+                }
             }
 
             return result;

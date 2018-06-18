@@ -6,8 +6,6 @@ namespace OwinFramework.Pages.Html.Builders
 {
     internal class BuiltPage : Page
     {
-        public IModule Module { get; set; }
-
         private Dictionary<string, IElement> _regions;
 
         public BuiltPage(IPageDependenciesFactory dependenciesFactory)

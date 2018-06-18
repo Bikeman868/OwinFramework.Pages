@@ -28,6 +28,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         private class HtmlDefinition
         {
+            public int Order;
             public string AssetName;
             public string DefaultHtml;
         }
@@ -106,7 +107,11 @@ namespace OwinFramework.Pages.Html.Builders
 
         IComponentDefinition IComponentDefinition.Render(string assetName, string defaultHtml)
         {
-            _htmlToRender.Add(new HtmlDefinition { AssetName = assetName, DefaultHtml = defaultHtml });
+            _htmlToRender.Add(new HtmlDefinition 
+            { 
+                AssetName = assetName, 
+                DefaultHtml = defaultHtml 
+            });
             return this;
         }
 
@@ -183,30 +188,31 @@ namespace OwinFramework.Pages.Html.Builders
                 })
                 .ToList();
 
-            _component.HtmlWriters = _htmlToRender.Select(d =>
-            {
-                Action<IRenderContext> action;
+            _component.HtmlWriters = _htmlToRender
+                .Select(d =>
+                    {
+                        Action<IRenderContext> action;
 
-                if (_component.Package == null)
-                {
-                    action = rc =>
-                    {
-                        var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
-                        localizedText = localizedText.Replace("{ns}_", "");
-                        rc.Html.WriteLine(localizedText);
-                    };
-                }
-                else
-                {
-                    action = rc =>
-                    {
-                        var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
-                        localizedText = localizedText.Replace("{ns}", _component.Package.NamespaceName);
-                        rc.Html.WriteLine(localizedText);
-                    };
-                }
-                return action;
-            })
+                        if (_component.Package == null)
+                        {
+                            action = rc =>
+                            {
+                                var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
+                                localizedText = localizedText.Replace("{ns}_", "");
+                                rc.Html.WriteLine(localizedText);
+                            };
+                        }
+                        else
+                        {
+                            action = rc =>
+                            {
+                                var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
+                                localizedText = localizedText.Replace("{ns}", _component.Package.NamespaceName);
+                                rc.Html.WriteLine(localizedText);
+                            };
+                        }
+                        return action;
+                    })
                 .ToList();
 
             _nameManager.Register(_component);

@@ -32,9 +32,9 @@ namespace OwinFramework.Pages.Html.Builders
         public IRegion GetRegion(string regionName)
         {
             IRegion region;
-            return _content.TryGetValue(regionName, out region) 
-                ? region 
-                : Parent.GetRegion(regionName);
+            if (!_content.TryGetValue(regionName, out region) || region == null)
+                region = Parent.GetRegion(regionName);
+            return region;
         }
 
         public void Populate(string regionName, IElement element)
@@ -74,26 +74,21 @@ namespace OwinFramework.Pages.Html.Builders
                 renderContext,
                 dataContext,
                 includeChildren 
-                    ? r => 
-                    {
-                        IRegion element;
-                        _content.TryGetValue(r, out element);
-                        return element;
-                    }
+                    ? GetRegion
                     : (Func<string, IRegion>)null);
         }
 
-        public IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, Func<string, IRegion> contentFunc)
+        public IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, Func<string, IRegion> regionLookup)
         {
             return Parent.WriteHtml(
                 renderContext,
                 dataContext,
-                r =>
+                regionName =>
                 {
-                    var element = contentFunc(r);
-                    if (element == null)
-                        _content.TryGetValue(r, out element);
-                    return element;
+                    if (regionLookup == null) return null;
+                    var region = regionLookup(regionName);
+                    if (region != null) return region;
+                    return GetRegion(regionName);
                 });
         }
     }

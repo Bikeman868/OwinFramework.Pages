@@ -432,7 +432,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (attributes.RenderHtmls != null)
             {
-                foreach(var renderHtml in attributes.RenderHtmls)
+                foreach(var renderHtml in attributes.RenderHtmls.OrderBy(r => r.Order))
                 {
                     component.Render(renderHtml.TextName, renderHtml.Html);
                 }

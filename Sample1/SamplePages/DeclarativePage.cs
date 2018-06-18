@@ -74,48 +74,50 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("navigation")]
     [DeployCss("p.{ns}_menu-item", "font-weight:bold;")]
-    [RenderHtmlAttribute("menu.main", "<p class='{ns}_menu-item'>This is where the main menu html goes</p>")]
+    [RenderHtml("menu.main", "<p class='{ns}_menu-item'>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
     [IsComponent("navigation.heading")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [RenderHtmlAttribute("heading.main", "<h1>An example of fully declatative pages</h1>")]
+    [RenderHtml("heading.main", "<h1>An example of fully declatative pages</h1>")]
     internal class HeadingComponent { }
 
     [IsComponent("navigation.footer")]
     [PartOf("application")]
     [DeployedAs("navigation")]
     [DeployCss("p.{ns}_footer", "font-weight:bold; font-size:9pt;")]
-    [RenderHtmlAttribute("footer.standard", "<p class='{ns}_footer'>This is where the html for the page footer goes</p>")]
+    [RenderHtml("footer.standard", "<p class='{ns}_footer'>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
 
     [IsComponent("navigation.sidebar.1")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
-    [RenderHtmlAttribute("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 1</p>")]
+    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 1</p>")]
     internal class SideBar1Component { }
 
     [IsComponent("content.body.1")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_body", "font-family: arial; font-size:9pt;")]
-    [RenderHtmlAttribute("content.body", "<p class='{ns}_body'>Hello, page 1</p>")]
+    [RenderHtml("content.body.1.1", 1, "<p class='{ns}_body'>Hello, page 1</p>")]
+    [RenderHtml("content.body.1.2", 2, "<p class='{ns}_body'>This is the second parapgraph</p>")]
+    [RenderHtml("content.body.1.2", 3, "<p class='{ns}_body'>This is the third parapgraph</p>")]
     internal class PageBody1Component { }
 
     [IsComponent("navigation.sidebar.2")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
-    [RenderHtmlAttribute("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 2</p>")]
+    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 2</p>")]
     internal class SideBar2Component { }
 
     [IsComponent("content.body.2")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_body", "font-family: arial; font-size:9pt;")]
-    [RenderHtmlAttribute("content.body", "<p class='{ns}_body'>Hello, page 2</p>")]
+    [RenderHtml("content.body.2.1", "<p class='{ns}_body'>Hello, page 2</p>")]
     internal class PageBody2Component { }
 
     /*
@@ -158,7 +160,7 @@ namespace Sample1.SamplePages
     [IsRegion("2col.vertical.fixed.left")]
     [PartOf("application")]
     [DeployedAs("content")]
-    [Style("width:175px; background: alliceblue; display: inline-block; verticel-align: top; white-space: normal;")]
+    [Style("width:175px; background: alliceblue; display: inline-block; vertical-align: top; white-space: normal;")]
     internal class LeftRegion { }
 
     /// <summary>
@@ -168,7 +170,7 @@ namespace Sample1.SamplePages
     [IsRegion("2col.vertical.fixed.right")]
     [PartOf("application")]
     [DeployedAs("content")]
-    [Style("display: inline-block; overflow: visible; white-space: normal; verticel-align: top;")]
+    [Style("display: inline-block; overflow: visible; white-space: normal; vertical-align: top;")]
     internal class RightRegion { }
 
     /* <summary>

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -22,11 +19,12 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
 
         public RegionDefinition(
             INameManager nameManager,
-            IHtmlHelper htmlHelper)
+            IHtmlHelper htmlHelper,
+            IRegionDependenciesFactory regionDependenciesFactory)
         {
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
-            _region = new BuiltRegion();
+            _region = new BuiltRegion(regionDependenciesFactory);
         }
 
         public IRegionDefinition Name(string name)

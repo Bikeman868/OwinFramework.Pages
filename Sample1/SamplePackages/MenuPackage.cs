@@ -31,7 +31,10 @@ namespace Sample1.SamplePackages
 
         private class MenuItemComponent: Component
         {
-            public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
+            public override IWriteResult WriteHtml(
+                IRenderContext renderContext, 
+                IDataContext dataContext, 
+                bool includeChildren)
             {
                 var menuItem = dataContext.Get<MenuItem>();
                 if (menuItem != null)

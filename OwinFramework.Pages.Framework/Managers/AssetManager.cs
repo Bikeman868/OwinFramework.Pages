@@ -356,7 +356,7 @@ namespace OwinFramework.Pages.Framework.Managers
                 "Cache-Control",
                 "public, max-age=" + (int)_frameworkConfiguration.AssetCacheTime.TotalSeconds);
 
-            return context.Response.WriteAsync(content);
+            return context.Response.WriteAsync(content ?? string.Empty);
         }
 
         #endregion

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -11,17 +9,14 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
         public Action<IHtmlWriter> WriteOpen;
         public Action<IHtmlWriter> WriteClose;
 
-        public override IEnumerator<IElement> GetChildren()
-        {
-            return Content == null ? null : Content.AsEnumerable().GetEnumerator();
-        }
+        public BuiltRegion(IRegionDependenciesFactory regionDependenciesFactory)
+            : base(regionDependenciesFactory)
+        { }
 
-        public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
-        {
-            return WriteHtml(renderContext, dataContext, includeChildren ? Content : null);
-        }
-
-        public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, IElement content)
+        public override IWriteResult WriteHtml(
+            IRenderContext renderContext,
+            IDataContext dataContext, 
+            IElement content)
         {
             WriteOpen(renderContext.Html);
 

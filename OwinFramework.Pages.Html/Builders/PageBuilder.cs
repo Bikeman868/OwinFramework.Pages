@@ -255,7 +255,7 @@ namespace OwinFramework.Pages.Html.Builders
                 if (_regions != null)
                 {
                     foreach (var region in _regions)
-                        Layout.PopulateRegion(region.Key, region.Value);
+                        Layout.Populate(region.Key, region.Value);
                 }
 
                 base.Initialize();

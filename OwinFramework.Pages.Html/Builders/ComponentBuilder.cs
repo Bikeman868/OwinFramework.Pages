@@ -236,7 +236,7 @@ namespace OwinFramework.Pages.Html.Builders
             public List<Action<IHtmlWriter>> StyleAssets;
             public List<Action<IHtmlWriter>> FunctionAssets;
 
-            public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
+            public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
             {
                 if (renderContext.IncludeComments)
                     renderContext.Html.WriteComment(

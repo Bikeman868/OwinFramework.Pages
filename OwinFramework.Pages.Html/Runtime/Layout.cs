@@ -4,6 +4,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Runtime.Internal;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
@@ -15,10 +16,11 @@ namespace OwinFramework.Pages.Html.Runtime
     /// </summary>
     public class Layout : Element, ILayout
     {
+        private readonly ILayoutDependenciesFactory _layoutDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Layout; } }
         public bool IsClone { get { return false; } }
 
-        protected IThreadSafeDictionary<string, IElement> Content;
+        protected IThreadSafeDictionary<string, IRegion> Content;
 
         /// <summary>
         /// Do not change this constructor signature, it will break application
@@ -27,17 +29,29 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public Layout(ILayoutDependenciesFactory layoutDependenciesFactory)
         {
-            Content = layoutDependenciesFactory.DictionaryFactory.Create<string, IElement>(StringComparer.InvariantCultureIgnoreCase);
+            _layoutDependenciesFactory = layoutDependenciesFactory;
+            Content = layoutDependenciesFactory.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         public void Populate(string regionName, IElement element)
         {
-            Content[regionName] = element;
+            IRegion region;
+            if (!Content.TryGetValue(regionName, out region))
+                throw new Exception("Layout doe not have a '" + regionName + "' region");
+
+            if (region.IsClone)
+                region.Populate(element);
+            else
+            {
+                region = region.Clone(element);
+                Content[regionName] = region;
+            }
         }
 
         public ILayout Clone()
         {
-            return new ClonedLayout(this);
+            using (var regionNames = Content.KeysLocked)
+                return new ClonedLayout(_layoutDependenciesFactory, this, regionNames);
         }
 
         public override IEnumerator<IElement> GetChildren()
@@ -48,18 +62,18 @@ namespace OwinFramework.Pages.Html.Runtime
         public virtual IWriteResult WriteHtml(
             IRenderContext renderContext, 
             IDataContext dataContext, 
-            Func<string, IElement> contentFunc)
+            Func<string, IRegion> contentFunc)
         {
             var result = WriteResult.Continue();
-            if (Content.Count == 0) return result;
+            if (contentFunc == null || Content.Count == 0) return result;
 
             using (var regionNames = Content.KeysLocked)
             {
                 foreach(var regionName in regionNames)
                 {
-                    var element = contentFunc(regionName) ?? Content[regionName];
-                    if (element != null)
-                        result.Add(element.WriteHtml(renderContext, dataContext));
+                    var region = contentFunc(regionName) ?? Content[regionName];
+                    if (region != null)
+                        result.Add(region.WriteHtml(renderContext, dataContext));
                 }
             }
             return result;

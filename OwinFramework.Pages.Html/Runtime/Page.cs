@@ -221,8 +221,8 @@ namespace OwinFramework.Pages.Html.Runtime
                 html.WriteLine("<!doctype html>");
                 html.WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", context.Language);
 
-                WritePageHead(context, data, html, writeResult, true);
-                WritePageBody(context, data, html, writeResult, true);
+                WritePageHead(context, data, html, writeResult);
+                WritePageBody(context, data, html, writeResult);
                 WriteInitializationScript(context, data, true);
 
                 html.WriteCloseTag("html");
@@ -381,10 +381,10 @@ namespace OwinFramework.Pages.Html.Runtime
             html.WriteOpenTag("head");
 
             html.WriteOpenTag("title");
-            writeResult.Add(WriteTitle(context, data));
+            writeResult.Add(WriteTitle(context, data, true));
             html.WriteCloseTag("title");
 
-            writeResult.Add(WriteHead(context, data));
+            writeResult.Add(WriteHead(context, data, true));
             writeResult.Add(WriteDynamicAssets(AssetType.Style, context.Html, true));
             writeResult.Add(WriteDynamicAssets(AssetType.Script, context.Html, true));
             html.WriteCloseTag("head");

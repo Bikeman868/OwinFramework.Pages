@@ -15,6 +15,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// </summary>
     public class Region : Element, IRegion
     {
+        private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Region; } }
         public bool IsClone { get { return false; } }
 
@@ -26,7 +27,9 @@ namespace OwinFramework.Pages.Html.Runtime
         /// IRegionDependenciesFactory and IRegionDependencies
         /// </summary>
         public Region(IRegionDependenciesFactory regionDependenciesFactory)
-        { }
+        {
+            _regionDependenciesFactory = regionDependenciesFactory;
+        }
 
         public virtual void Populate(IElement content)
         {
@@ -35,7 +38,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IRegion Clone(IElement content)
         {
-            return new ClonedRegion(this, content);
+            return new ClonedRegion(_regionDependenciesFactory, this, content);
         }
 
         public override IEnumerator<IElement> GetChildren()

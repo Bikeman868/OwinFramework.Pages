@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using OwinFramework.Pages.Core.Enums;
-using OwinFramework.Pages.Core.Exceptions;
-using OwinFramework.Pages.Core.Extensions;
-using OwinFramework.Pages.Core.Interfaces;
-using OwinFramework.Pages.Core.Interfaces.Builder;
+﻿using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 using OwinFramework.Pages.Html.Runtime.Internal;
 
@@ -22,18 +14,21 @@ namespace OwinFramework.Pages.Html.Builders
     {
         private readonly INameManager _nameManager;
         private readonly IHtmlHelper _htmlHelper;
+        private readonly IRegionDependenciesFactory _regionDependenciesFactory;
 
         public RegionBuilder(
             INameManager nameManager,
-            IHtmlHelper htmlHelper)
+            IHtmlHelper htmlHelper,
+            IRegionDependenciesFactory regionDependenciesFactory)
         {
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
+            _regionDependenciesFactory = regionDependenciesFactory;
         }
 
         IRegionDefinition IRegionBuilder.Region()
         {
-            return new RegionDefinition(_nameManager, _htmlHelper);
+            return new RegionDefinition(_nameManager, _htmlHelper, _regionDependenciesFactory);
         }
     }
 }

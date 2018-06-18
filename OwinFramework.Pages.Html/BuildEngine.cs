@@ -11,6 +11,9 @@ namespace OwinFramework.Pages.Html
         private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
         private readonly IPageDependenciesFactory _pageDependenciesFactory;
+        private readonly ILayoutDependenciesFactory _layoutDependenciesFactory;
+        private readonly IRegionDependenciesFactory _regionDependenciesFactory;
+        private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly IAssetManager _assetManager;
         private readonly IHtmlHelper _htmlHelper;
 
@@ -18,12 +21,18 @@ namespace OwinFramework.Pages.Html
             IRequestRouter requestRouter,
             INameManager nameManager,
             IPageDependenciesFactory pageDependenciesFactory,
+            ILayoutDependenciesFactory layoutDependenciesFactory,
+            IRegionDependenciesFactory regionDependenciesFactory,
+            IComponentDependenciesFactory componentDependenciesFactory,
             IAssetManager assetManager,
             IHtmlHelper htmlHelper)
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
             _pageDependenciesFactory = pageDependenciesFactory;
+            _layoutDependenciesFactory = layoutDependenciesFactory;
+            _regionDependenciesFactory = regionDependenciesFactory;
+            _componentDependenciesFactory = componentDependenciesFactory;
             _assetManager = assetManager;
             _htmlHelper = htmlHelper;
         }
@@ -40,11 +49,13 @@ namespace OwinFramework.Pages.Html
 
             builder.LayoutBuilder = new LayoutBuilder(
                 _nameManager,
-                _htmlHelper);
+                _htmlHelper,
+                _layoutDependenciesFactory);
 
             builder.RegionBuilder = new RegionBuilder(
                 _nameManager,
-                _htmlHelper);
+                _htmlHelper,
+                _regionDependenciesFactory);
 
             builder.ComponentBuilder = new ComponentBuilder(
                 _nameManager,

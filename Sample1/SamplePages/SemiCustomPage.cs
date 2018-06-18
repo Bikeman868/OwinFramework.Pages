@@ -16,13 +16,13 @@ namespace Sample1.SamplePages
             : base(dependenciesFactory)
         {}
 
-        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)
+        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
             renderContext.Html.WriteLine("Page title");
             return WriteResult.ResponseComplete();
         }
 
-        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext)
+        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
             renderContext.Html.WriteUnclosedElement(
                 "link", "rel", 
@@ -31,7 +31,7 @@ namespace Sample1.SamplePages
             return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
+        public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer, bool includeChildren)
         {
             if (assetType == AssetType.Style)
             {
@@ -45,7 +45,8 @@ namespace Sample1.SamplePages
 
         public override IWriteResult WriteHtml(
             IRenderContext renderContext,
-            IDataContext dataContext)
+            IDataContext dataContext, 
+            bool includeChildren)
         {
             // Save this location in the output buffer
             var begining = renderContext.Html.CreateInsertionPoint();

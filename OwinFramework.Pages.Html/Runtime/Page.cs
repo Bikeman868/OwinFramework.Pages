@@ -75,10 +75,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
             if (AssetDeployment == AssetDeployment.Inherit)
             {
-                if (Module == null)
-                    data.AssetDeployment = AssetDeployment.PerWebsite;
-                else
-                    data.AssetDeployment = Module.AssetDeployment;
+                data.AssetDeployment = Module == null 
+                    ? AssetDeployment.PerWebsite 
+                    : Module.AssetDeployment;
             }
 
             if (Layout != null) Layout.Initialize(data);

@@ -4,6 +4,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Builders;
 using OwinFramework.Pages.Html.Runtime.Internal;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -33,12 +34,17 @@ namespace OwinFramework.Pages.Html.Runtime
             Content = layoutDependenciesFactory.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
         }
 
-        public void Populate(string regionName, IElement element)
+        public IRegion GetRegion(string regionName)
         {
             IRegion region;
             if (!Content.TryGetValue(regionName, out region))
                 throw new Exception("Layout doe not have a '" + regionName + "' region");
+            return region;
+        }
 
+        public void Populate(string regionName, IElement element)
+        {
+            var region = GetRegion(regionName);
             if (region.IsClone)
                 region.Populate(element);
             else

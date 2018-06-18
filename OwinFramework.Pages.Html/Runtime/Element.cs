@@ -199,7 +199,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             assetDeployment = assetDeployment == AssetDeployment.Inherit
                 ? initializationData.AssetDeployment
-                : AssetDeployment;
+                : assetDeployment;
 
             if (assetDeployment == AssetDeployment.PerModule && Module == null)
                 assetDeployment = AssetDeployment.PerWebsite;

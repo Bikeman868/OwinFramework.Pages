@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Builders;
+using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime.Internal
+namespace OwinFramework.Pages.Html.Builders
 {
     internal class ClonedLayout: ClonedElement<ILayout>, ILayout
     {
@@ -29,14 +30,29 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
                 _content.Add(regionName, null);
         }
 
+        public IRegion GetRegion(string regionName)
+        {
+            IRegion region;
+            return _content.TryGetValue(regionName, out region) 
+                ? region 
+                : Parent.GetRegion(regionName);
+        }
+
         public void Populate(string regionName, IElement element)
         {
             IRegion region;
             if (!_content.TryGetValue(regionName, out region))
                 throw new Exception("Layout does not have a '" + regionName + "' region");
 
-            if (region.IsClone)
+            if (region == null)
+            {
+                region = Parent.GetRegion(regionName).Clone(element);
+                _content[regionName] = region;
+            }
+            else if (region.IsClone)
+            {
                 region.Populate(element);
+            }
             else
             {
                 region = region.Clone(element);
@@ -52,7 +68,7 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
 
         public override IEnumerator<IElement> GetChildren()
         {
-            return _content.Values.GetEnumerator();
+            return _content.Select(e => e.Value ?? Parent.GetRegion(e.Key)).GetEnumerator();
         }
 
         public IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)

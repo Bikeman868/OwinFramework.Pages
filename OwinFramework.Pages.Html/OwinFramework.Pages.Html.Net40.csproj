@@ -66,13 +66,16 @@
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Builders\BuiltComponent.cs" />
     <Compile Include="Builders\BuiltModule.cs" />
+    <Compile Include="Builders\BuiltPage.cs" />
     <Compile Include="Builders\ComponentBuilder.cs" />
     <Compile Include="Builders\ComponentDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
     <Compile Include="Builders\IHtmlHelper.cs" />
     <Compile Include="Builders\LayoutBuilder.cs" />
     <Compile Include="Builders\ModuleBuilder.cs" />
+    <Compile Include="Builders\ModuleDefinition.cs" />
     <Compile Include="Builders\PageBuilder.cs" />
+    <Compile Include="Builders\PageDefinition.cs" />
     <Compile Include="Builders\RegionBuilder.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

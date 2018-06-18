@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
@@ -17,6 +16,11 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="regionName">The name of a region on this layout</param>
         /// <param name="element">The element to render in this region</param>
         void Populate(string regionName, IElement element);
+
+        /// <summary>
+        /// Gets a region from the layout
+        /// </summary>
+        IRegion GetRegion(string regionName);
 
         /// <summary>
         /// Constructs a new laqyout instance that has a reference to

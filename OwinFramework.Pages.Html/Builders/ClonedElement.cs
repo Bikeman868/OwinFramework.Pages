@@ -29,15 +29,15 @@ namespace OwinFramework.Pages.Html.Builders
 
         public void Initialize(IInitializationData initializationData)
         {
-            var assetDeployment = AssetDeployment == AssetDeployment.Inherit && Parent.Module != null
-                ? Parent.Module.AssetDeployment
+            var assetDeployment = AssetDeployment == AssetDeployment.Inherit && Module != null
+                ? Module.AssetDeployment
                 : AssetDeployment;
 
             assetDeployment = assetDeployment == AssetDeployment.Inherit
                 ? initializationData.AssetDeployment
-                : AssetDeployment;
+                : assetDeployment;
 
-            if (assetDeployment == AssetDeployment.PerModule && Parent.Module == null)
+            if (assetDeployment == AssetDeployment.PerModule && Module == null)
                 assetDeployment = AssetDeployment.PerWebsite;
 
             initializationData.HasElement(Parent, assetDeployment, Parent.Module);

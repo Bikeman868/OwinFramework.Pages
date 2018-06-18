@@ -21,34 +21,5 @@ namespace OwinFramework.Pages.Html.Builders
             return new ModuleDefinition(_nameManager);
         }
 
-        private class ModuleDefinition: IModuleDefinition
-        {
-            private readonly INameManager _nameManager;
-            private readonly BuiltModule _module;
-
-            public ModuleDefinition(
-                INameManager nameManager)
-            {
-                _nameManager = nameManager;
-                _module = new BuiltModule();
-            }
-
-            public IModuleDefinition Name(string name)
-            {
-                _module.Name = name;
-                return this;
-            }
-
-            public IModuleDefinition AssetDeployment(AssetDeployment assetDeployment)
-            {
-                return this;
-            }
-
-            public IModule Build()
-            {
-                _nameManager.Register(_module);
-                return _module;
-            }
-        }
     }
 }

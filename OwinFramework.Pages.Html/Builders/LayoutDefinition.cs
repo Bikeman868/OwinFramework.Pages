@@ -338,7 +338,7 @@ namespace OwinFramework.Pages.Html.Runtime.Internal
             if (!string.IsNullOrEmpty(_nestingTag))
             {
                 var attributes = _htmlHelper.StyleAttributes(_nestedStyle, _nestedClassNames);
-                _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes), "element grouping region in layout");
+                _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes), "element grouping regions in layout");
             }
         }
 

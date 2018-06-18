@@ -221,9 +221,9 @@ namespace OwinFramework.Pages.Html.Runtime
                 html.WriteLine("<!doctype html>");
                 html.WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", context.Language);
 
-                WritePageHead(context, data, html, writeResult);
-                WritePageBody(context, data, html, writeResult);
-                WriteInitializationScript(context, data);
+                WritePageHead(context, data, html, writeResult, true);
+                WritePageBody(context, data, html, writeResult, true);
+                WriteInitializationScript(context, data, true);
 
                 html.WriteCloseTag("html");
             }
@@ -245,7 +245,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 });
         }
 
-        public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
+        public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
@@ -273,7 +273,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return writeResult;
         }
 
-        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext)
+        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
@@ -294,7 +294,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return writeResult;
         }
 
-        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)
+        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
@@ -321,7 +321,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return writeResult;
         }
 
-        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext)
+        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
@@ -369,7 +369,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return writeResult;
         }
 
-        public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
+        public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
             return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(renderContext, dataContext);
         }
@@ -385,8 +385,8 @@ namespace OwinFramework.Pages.Html.Runtime
             html.WriteCloseTag("title");
 
             writeResult.Add(WriteHead(context, data));
-            writeResult.Add(WriteDynamicAssets(AssetType.Style, context.Html));
-            writeResult.Add(WriteDynamicAssets(AssetType.Script, context.Html));
+            writeResult.Add(WriteDynamicAssets(AssetType.Style, context.Html, true));
+            writeResult.Add(WriteDynamicAssets(AssetType.Script, context.Html, true));
             html.WriteCloseTag("head");
         }
 
@@ -396,6 +396,7 @@ namespace OwinFramework.Pages.Html.Runtime
             if (!string.IsNullOrEmpty(BodyStyle))
             {
                 _dependenciesFactory.NameManager.EnsureAssetName(this, ref _bodyStyleName);
+
                 if (string.IsNullOrEmpty(bodyClassNames))
                     bodyClassNames = _bodyStyleName;
                 else
@@ -407,7 +408,7 @@ namespace OwinFramework.Pages.Html.Runtime
             else
                 html.WriteOpenTag("body", "class", bodyClassNames);
 
-            writeResult.Add(WriteHtml(context, data));
+            writeResult.Add(WriteHtml(context, data, true));
             html.WriteCloseTag("body");
         }
 

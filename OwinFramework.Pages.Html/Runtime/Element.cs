@@ -53,41 +53,131 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output dynamic assets
         /// </summary>
-        public virtual IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer)
+        public virtual IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer, bool includeChildren)
         {
-            return WriteResult.Continue();
+            var result = WriteResult.Continue();
+            if (!includeChildren) return result;
+
+            var children = GetChildren();
+            if (children == null) return result;
+
+            try
+            {
+                while (!result.IsComplete && children.MoveNext())
+                {
+                    result.Add(children.Current.WriteDynamicAssets(assetType, writer));
+                }
+            }
+            finally
+            {
+                children.Dispose();
+            }
+
+            return result;
         }
 
         /// <summary>
         /// Override to output initialization script
         /// </summary>
-        public virtual IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext)
+        public virtual IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
-            return WriteResult.Continue();
+            var result = WriteResult.Continue();
+            if (!includeChildren) return result;
+
+            var children = GetChildren();
+            if (children == null) return result;
+
+            try
+            {
+                while (!result.IsComplete && children.MoveNext())
+                {
+                    result.Add(children.Current.WriteInitializationScript(renderContext, dataContext));
+                }
+            }
+            finally
+            {
+                children.Dispose();
+            }
+
+            return result;
         }
 
         /// <summary>
         /// Override to output the page title
         /// </summary>
-        public virtual IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext)
+        public virtual IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
-            return WriteResult.Continue();
+            var result = WriteResult.Continue();
+            if (!includeChildren) return result;
+
+            var children = GetChildren();
+            if (children == null) return result;
+
+            try
+            {
+                while (!result.IsComplete && children.MoveNext())
+                {
+                    result.Add(children.Current.WriteTitle(renderContext, dataContext));
+                }
+            }
+            finally
+            {
+                children.Dispose();
+            }
+
+            return result;
         }
 
         /// <summary>
         /// Override to output into the page head
         /// </summary>
-        public virtual IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext)
+        public virtual IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
-            return WriteResult.Continue();
+            var result = WriteResult.Continue();
+            if (!includeChildren) return result;
+
+            var children = GetChildren();
+            if (children == null) return result;
+
+            try
+            {
+                while (!result.IsComplete && children.MoveNext())
+                {
+                    result.Add(children.Current.WriteHead(renderContext, dataContext));
+                }
+            }
+            finally
+            {
+                children.Dispose();
+            }
+
+            return result;
         }
 
         /// <summary>
         /// Override to output html
         /// </summary>
-        public virtual IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext)
+        public virtual IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
         {
-            return WriteResult.Continue();
+            var result = WriteResult.Continue();
+            if (!includeChildren) return result;
+
+            var children = GetChildren();
+            if (children == null) return result;
+
+            try
+            {
+                while (!result.IsComplete && children.MoveNext())
+                {
+                    result.Add(children.Current.WriteHtml(renderContext, dataContext));
+                }
+            }
+            finally
+            {
+                children.Dispose();
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -107,7 +197,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 ? Module.AssetDeployment
                 : AssetDeployment;
 
-            assetDeployment = AssetDeployment == AssetDeployment.Inherit
+            assetDeployment = assetDeployment == AssetDeployment.Inherit
                 ? initializationData.AssetDeployment
                 : AssetDeployment;
 

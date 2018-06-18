@@ -1,19 +1,58 @@
-﻿using OwinFramework.Pages.Core.Enums;
+﻿using System.Collections.Generic;
+using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Runtime.Internal;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
     /// <summary>
-    /// Base implementation of IRegion. Inheriting from this olass will insulate you
-    /// from any future additions to the IRegion interface
+    /// Base implementation of IRegion. Inheriting from this class will insulate you
+    /// from any future additions to the IRegion interface.
+    /// You can also use this class directly but it provides only minimal region 
+    /// functionallity
     /// </summary>
     public class Region : Element, IRegion
     {
         public override ElementType ElementType { get { return ElementType.Region; } }
+        public bool IsClone { get { return false; } }
 
-        public virtual IElement Populate(IElement content)
+        protected IElement Content;
+
+        /// <summary>
+        /// Do not change this constructor signature, it will break application
+        /// classes that inherit from this class. Add dependencies to
+        /// IRegionDependenciesFactory and IRegionDependencies
+        /// </summary>
+        public Region(IRegionDependenciesFactory regionDependenciesFactory)
+        { }
+
+        public virtual void Populate(IElement content)
         {
-            return this;
+            Content = content;
+        }
+
+        public IRegion Clone(IElement content)
+        {
+            return new ClonedRegion(this, content);
+        }
+
+        public override IEnumerator<IElement> GetChildren()
+        {
+            return Content == null 
+                ? null 
+                : Content.AsEnumerable().GetEnumerator();
+        }
+
+        public virtual IWriteResult WriteHtml(
+            IRenderContext renderContext,
+            IDataContext dataContext, 
+            IElement content)
+        {
+            return content == null 
+                ? WriteResult.Continue() 
+                : content.WriteHtml(renderContext, dataContext);
         }
     }
 }

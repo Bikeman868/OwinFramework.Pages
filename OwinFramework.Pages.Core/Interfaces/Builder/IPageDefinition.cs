@@ -82,20 +82,17 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Specifies the relative path to this page on the website
         /// </summary>
         /// <param name="path">The URL path to this page</param>
-        IPageDefinition Path(string path);
-
-        /// <summary>
-        /// Specifies the relative path to this page on the website
-        /// </summary>
+        /// <param name="priority">The priority is used to sort request filters.
+        /// Higher priority filters execute before lower priority ones</param>
         /// <param name="methods">The http methods to route to this page</param>
-        IPageDefinition Methods(params Methods[] methods);
+        IPageDefinition Route(string path, int priority, params Methods[] methods);
 
         /// <summary>
-        /// Specifies the relative path to this page on the website
+        /// Specifies how to filter out requests to this page on the website
         /// </summary>
         /// <param name="filter">Serve this page for requests that match this filter</param>
         /// <param name="priority">Filters are evaluated from highest to lowest priority</param>
-        IPageDefinition RequestFilter(IRequestFilter filter, int priority = 0);
+        IPageDefinition Route(IRequestFilter filter, int priority = 0);
 
         /// <summary>
         /// Defaines the layout of this page. If no layout is specified

@@ -28,9 +28,20 @@ namespace OwinFramework.Pages.Html
                     new IocRegistration().Init<IHtmlWriterFactory, HtmlWriterFactory>(),
                     new IocRegistration().Init<IHtmlWriter, HtmlWriter>(IocLifetime.MultiInstance),
 
-                    // These are internal implementations that need to be wired up
+                    // These wrap the injected dependencies of classes that are designed to
+                    // be base classes that applications can inherit from. The IoC dependencies
+                    // are wrapped so that we can add new dependencies in the future without
+                    // changing the method signature of the constructor
                     new IocRegistration().Init<IPageDependenciesFactory, PageDependenciesFactory>(),
                     new IocRegistration().Init<IPageDependencies, PageDependencies>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<ILayoutDependenciesFactory, LayoutDependenciesFactory>(),
+                    new IocRegistration().Init<ILayoutDependencies, LayoutDependencies>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IRegionDependenciesFactory, RegionDependenciesFactory>(),
+                    new IocRegistration().Init<IRegionDependencies, RegionDependencies>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IComponentDependenciesFactory, ComponentDependenciesFactory>(),
+                    new IocRegistration().Init<IComponentDependencies, ComponentDependencies>(IocLifetime.MultiInstance),
+
+                    // These are internal implementations that need to be wired up
                     new IocRegistration().Init<IRenderContextFactory, RenderContextFactory>(),
                     new IocRegistration().Init<IRenderContext, RenderContext>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IHtmlHelper, HtmlHelper>(),

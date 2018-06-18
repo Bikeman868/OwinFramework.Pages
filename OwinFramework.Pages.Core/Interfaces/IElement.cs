@@ -78,7 +78,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// </summary>
         /// <param name="assetType">The type of asset to write</param>
         /// <param name="writer">The text writer to srite them to</param>
-        IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer);
+        /// <param name="includeChildren">When true recursively traverses the element
+        /// tree below this one writing the dynamic assets for all the descendants</param>
+        IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer, bool includeChildren = true);
 
         /// <summary>
         /// This is where the element gets an opportunity to write JavaScript into the page
@@ -89,7 +91,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="dataContext">The data binding context or null if none has been established</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext);
+        /// <param name="includeChildren">When true recursively traverses the element
+        /// tree below this one writing the initialization script for all the descendants</param>
+        IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, bool includeChildren = true);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
@@ -99,7 +103,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="dataContext">The data binding context or null if none has been established</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext);
+        /// <param name="includeChildren">When true recursively traverses the element
+        /// tree below this one writing the page title for all the descendants</param>
+        IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, bool includeChildren = true);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
@@ -110,7 +116,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="dataContext">The data binding context or null if none has been established</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext);
+        /// <param name="includeChildren">When true recursively traverses the element
+        /// tree below this one writing the page head for all the descendants</param>
+        IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, bool includeChildren = true);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
@@ -120,6 +128,8 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="dataContext">The data binding context or null if none has been established</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext);
+        /// <param name="includeChildren">When true recursively traverses the element
+        /// tree below this one writing the html for all the descendants</param>
+        IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, bool includeChildren = true);
     }
 }

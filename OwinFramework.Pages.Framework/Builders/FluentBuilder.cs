@@ -284,8 +284,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
                 if (route != null)
                 {
-                    page.Path(route.Path);
-                    page.Methods(route.Methods);
+                    page.Route(route.Path, route.Priority, route.Methods);
                 }
 
                 if (title != null)

@@ -50,11 +50,6 @@ namespace OwinFramework.Pages.Html.Builders
             private readonly BuiltPage _page;
             private readonly Type _declaringType;
 
-            private IRequestFilter _filter;
-            private int _filterPriority;
-            private string _path;
-            private Methods[] _methods;
-
             public PageDefinition(
                 Type declaringType,
                 IRequestRouter requestRouter,
@@ -111,22 +106,33 @@ namespace OwinFramework.Pages.Html.Builders
                 return this;
             }
 
-            IPageDefinition IPageDefinition.Path(string path)
+            IPageDefinition IPageDefinition.Route(string path, int priority, params Methods[] methods)
             {
-                _path = path;
+                if (methods == null || methods.Length == 0)
+                {
+                    if (string.IsNullOrEmpty(path))
+                        return this;
+                    _requestRouter.Register(_page, new FilterByPath(path), priority, _declaringType);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(path))
+                        _requestRouter.Register(_page, new FilterByMethod(methods), priority, _declaringType);
+                    else
+                        _requestRouter.Register(
+                            _page, 
+                            new FilterAllFilters(
+                                new FilterByMethod(methods), 
+                                new FilterByPath(path)), 
+                            priority, 
+                            _declaringType);
+                }
                 return this;
             }
 
-            IPageDefinition IPageDefinition.Methods(params Methods[] methods)
+            IPageDefinition IPageDefinition.Route(IRequestFilter filter, int priority)
             {
-                _methods = methods;
-                return this;
-            }
-
-            IPageDefinition IPageDefinition.RequestFilter(IRequestFilter filter, int priority)
-            {
-                _filter = filter;
-                _filterPriority = priority;
+                _requestRouter.Register(_page, filter, priority, _declaringType);
                 return this;
             }
 
@@ -228,26 +234,6 @@ namespace OwinFramework.Pages.Html.Builders
 
             IPage IPageDefinition.Build()
             {
-                if (_filter == null)
-                {
-                    if (_methods == null)
-                    {
-                        _filter = new FilterByPath(_path);
-                    }
-                    else
-                    {
-                        if (_path == null)
-                        {
-                            _filter = new FilterByMethod(_methods);
-                        }
-                        else
-                        {
-                            _filter = new FilterAllFilters(new FilterByMethod(_methods), new FilterByPath(_path));
-                        }
-                    }
-                }
-
-                _requestRouter.Register(_page, _filter, _filterPriority, _declaringType);
                 _nameManager.Register(_page);
                 return _page;
             }

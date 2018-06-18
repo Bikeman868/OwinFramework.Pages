@@ -77,6 +77,12 @@ namespace Sample1.SamplePages
     [RenderHtml("menu.main", "<p class='{ns}_menu-item'>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
+    [IsComponent("navigation.heading")]
+    [PartOf("application")]
+    [DeployedAs("navigation")]
+    [RenderHtml("heading.main", "<h1>An example of fully declatative pages</h1>")]
+    internal class HeadingComponent { }
+
     [IsComponent("navigation.footer")]
     [PartOf("application")]
     [DeployedAs("navigation")]
@@ -84,19 +90,33 @@ namespace Sample1.SamplePages
     [RenderHtml("footer.standard", "<p class='{ns}_footer'>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
 
-    [IsComponent("navigation.sidebar")]
+    [IsComponent("navigation.sidebar.1")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
-    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav</p>")]
-    internal class SideBarComponent { }
+    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 1</p>")]
+    internal class SideBar1Component { }
 
-    [IsComponent("content.body")]
+    [IsComponent("content.body.1")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_body", "font-family: arial; font-size:9pt;")]
-    [RenderHtml("content.body", "<p class='{ns}_body'>Hello, world</p>")]
-    internal class PageBodyComponent { }
+    [RenderHtml("content.body", "<p class='{ns}_body'>Hello, page 1</p>")]
+    internal class PageBody1Component { }
+
+    [IsComponent("navigation.sidebar.2")]
+    [PartOf("application")]
+    [DeployedAs("content")]
+    [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
+    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 2</p>")]
+    internal class SideBar2Component { }
+
+    [IsComponent("content.body.2")]
+    [PartOf("application")]
+    [DeployedAs("content")]
+    [DeployCss("p.{ns}_body", "font-family: arial; font-size:9pt;")]
+    [RenderHtml("content.body", "<p class='{ns}_body'>Hello, page 2</p>")]
+    internal class PageBody2Component { }
 
     /*
      * A region is a container for a single component or layout. The container can 
@@ -105,48 +125,50 @@ namespace Sample1.SamplePages
      */
 
     /// <summary>
-    /// Defines a region called 'main.header'
+    /// Defines a region called 'main.header' that is at the top of every page
     /// </summary>
     [IsRegion("main.header")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [Container("div", "header")]
+    [Style("height: 90px; width:100%; padding:10px; background: gray; color: whitesmoke; clear: both;")]
     internal class MainHeaderRegion { }
 
     /// <summary>
-    /// Defines a region called 'body'
+    /// Defines a region called 'body' that holds the main content area of each page
     /// </summary>
     [IsRegion("body")]
     [PartOf("application")]
     [DeployedAs("content")]
-    [Container("div", "body")]
+    [Style("background: whitesmoke; clear: both; overflow: hidden; white-space: nowrap;")]
     internal class BodyRegion { }
 
     /// <summary>
-    /// Defines a region called 'main.footer'
+    /// Defines a region called 'main.footer' which appears at the bottom of each page
     /// </summary>
     [IsRegion("main.footer")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [Container("div", "footer")]
+    [Style("height: 50px; width:100%; padding:5px; background: gray; color: whitesmoke;")]
     internal class MainFooterRegion { }
 
     /// <summary>
-    /// Defines a region called '2col.vertical.fixed.left'
+    /// Defines a region called '2col.vertical.fixed.left' that provides the left
+    /// hand column of a 2 vertical column layout
     /// </summary>
     [IsRegion("2col.vertical.fixed.left")]
     [PartOf("application")]
     [DeployedAs("content")]
-    [Container("div", "left")]
+    [Style("width:175px; background: alliceblue; display: inline-block; verticel-align: top; white-space: normal;")]
     internal class LeftRegion { }
 
     /// <summary>
-    /// Defines a region called '2col.vertical.fixed.right'
+    /// Defines a region called '2col.vertical.fixed.right' that provides the right
+    /// hand column of a 2 vertical column layout
     /// </summary>
     [IsRegion("2col.vertical.fixed.right")]
     [PartOf("application")]
     [DeployedAs("content")]
-    [Container("div", "right")]
+    [Style("display: inline-block; overflow: visible; white-space: normal; verticel-align: top;")]
     internal class RightRegion { }
 
     /* <summary>
@@ -178,21 +200,35 @@ namespace Sample1.SamplePages
     [UsesRegion("header", "main.header")]
     [UsesRegion("body", "body")]
     [UsesRegion("footer", "main.footer")]
-    [RegionLayout("body", "home.body")]
+    [RegionComponent("header", "navigation.heading")]
+    [RegionComponent("footer", "navigation.footer")]
     internal class MainLayout { }
 
     /// <summary>
-    /// Defines the layout of the 'body' region for the home page
+    /// Defines the layout of the 'body' region that has sidebar 1
     /// </summary>
-    [IsLayout("home.body", "left,main")]
+    [IsLayout("body.sidebar.1", "left,main")]
     [PartOf("application")]
     [DeployedAs("content")]
     [Container("div", "2col.vertical.fixed")]
     [UsesRegion("left", "2col.vertical.fixed.left")]
     [UsesRegion("main", "2col.vertical.fixed.right")]
-    [RegionComponent("left", "navigation.sidebar")]
-    [RegionComponent("main", "content.body")]
-    internal class HomePageLayout { }
+    [RegionComponent("left", "navigation.sidebar.1")]
+    [RegionComponent("main", "content.body.1")]
+    internal class Page1Layout { }
+
+    /// <summary>
+    /// Defines the layout of the 'body' region that has sidebar 2
+    /// </summary>
+    [IsLayout("body.sidebar.2", "left,main")]
+    [PartOf("application")]
+    [DeployedAs("content")]
+    [Container("div", "2col.vertical.fixed")]
+    [UsesRegion("left", "2col.vertical.fixed.left")]
+    [UsesRegion("main", "2col.vertical.fixed.right")]
+    [RegionComponent("left", "navigation.sidebar.2")]
+    [RegionComponent("main", "content.body.2")]
+    internal class Page2Layout { }
 
     /*
      * Pages are rendered in response to requests. In order to see your pages
@@ -208,18 +244,35 @@ namespace Sample1.SamplePages
     /// Defines a page that is rendered in response to requets for '/home.html'
     /// Uses the 'main' layout but changes the contents of each region.
     /// </summary>
-    [IsPage]
+    [IsPage("page.1")]
     [Description("<p>This is an example of how to add a page declatively using attributes</p>")]
-    [Option(OptionType.Method, "GET", "<p>Returns the html for the home page</p>")]
+    [Option(OptionType.Method, "GET", "<p>Returns the html for the page 1</p>")]
     [Option(OptionType.Header, "Accept", "Must contain text/html, which is only available response format")]
     [Example("<a href='/home.html'>/home.html</a>")]
     [PartOf("application")]
-    [UsesLayout("main")]
     [Route("/home.html", Methods.Get)]
-    [PageTitle("Sample website")]
-    [Style("font-size: 18px;")]
+    [Route("/page1", Methods.Get)]
+    [PageTitle("Page 1")]
+    [Style("color: darkred;")]
     [NeedsComponent("styles.default")]
-    [RegionComponent("header", "navigation.mainMenu")]
-    [RegionComponent("footer", "navigation.footer")]
-    internal class HomePage { }
+    [UsesLayout("main")]
+    [RegionLayout("body", "body.sidebar.1")]
+    internal class Page1 { }
+
+    /// <summary>
+    /// Defines a page that is rendered in response to requets for '/home.html'
+    /// Uses the 'main' layout but changes the contents of each region.
+    /// </summary>
+    [IsPage("page.2")]
+    [Description("<p>This is an example of how to add a page declatively using attributes</p>")]
+    [Option(OptionType.Method, "GET", "<p>Returns the html for page 2</p>")]
+    [Example("<a href='/home.html'>/home.html</a>")]
+    [PartOf("application")]
+    [Route("/page2", Methods.Get)]
+    [PageTitle("Page 2")]
+    [Style("color: darkblue;")]
+    [NeedsComponent("styles.default")]
+    [UsesLayout("main")]
+    [RegionLayout("body", "body.sidebar.2")]
+    internal class Page2 { }
 }

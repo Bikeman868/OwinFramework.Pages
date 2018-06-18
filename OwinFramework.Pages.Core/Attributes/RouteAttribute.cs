@@ -29,5 +29,10 @@ namespace OwinFramework.Pages.Core.Attributes
         /// Request methods that should be routed to this page or service
         /// </summary>
         public Methods[] Methods { get; set; }
+
+        /// <summary>
+        /// Request methods that should be routed to this page or service
+        /// </summary>
+        public int Priority { get; set; }
     }
 }

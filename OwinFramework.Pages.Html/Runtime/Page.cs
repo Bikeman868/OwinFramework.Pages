@@ -61,6 +61,9 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly IPageDependenciesFactory _dependenciesFactory;
         private IList<IComponent> _components;
         private string _bodyStyleName;
+        private string _inPageCsss;
+        private string _inPageScript;
+        private List<IModule> _referencedModules;
 
         protected Page(IPageDependenciesFactory dependenciesFactory)
         {
@@ -76,15 +79,20 @@ namespace OwinFramework.Pages.Html.Runtime
 
             if (AssetDeployment == AssetDeployment.Inherit)
             {
-                data.AssetDeployment = Module == null 
+                data.AssetDeployment = Module == null || Module.AssetDeployment == AssetDeployment.Inherit
                     ? AssetDeployment.PerWebsite 
                     : Module.AssetDeployment;
             }
 
-            if (Layout != null) Layout.Initialize(data);
+            if (Layout != null) 
+                Layout.Initialize(data);
 
             // TODO: Group elements by module and deployment method
             // TODO: Create in-page static asset html
+
+            _inPageCsss = "p { font-weight: normal; }";
+            _inPageScript = "var i = 0;";
+            _referencedModules = new List<IModule>();
 
             System.Diagnostics.Trace.WriteLine("Page " + Name);
             foreach (var element in data.Elements)
@@ -103,6 +111,8 @@ namespace OwinFramework.Pages.Html.Runtime
                     case AssetDeployment.PerModule:
                         deployment = element.Module.Name + " module";
                         _dependenciesFactory.AssetManager.AddModuleAssets(element.Element, element.Module);
+                        if (_referencedModules.All(m => m.Name != element.Module.Name))
+                            _referencedModules.Add(element.Module);
                         break;
                     case AssetDeployment.PerPage:
                         deployment = "page assets";
@@ -332,7 +342,15 @@ namespace OwinFramework.Pages.Html.Runtime
                 renderContext.Html.WriteLine();
             }
 
-            // TODO: For each referenced module include the module stylesheets
+            foreach(var module in _referencedModules)
+            {
+                var moduleStylesUrl = _dependenciesFactory.AssetManager.GetModuleAssetUrl(module, AssetType.Style);
+                if (moduleStylesUrl != null)
+                {
+                    renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
+                    renderContext.Html.WriteLine();
+                }
+            }
 
             var pageStylesUrl = _dependenciesFactory.AssetManager.GetPageAssetUrl(this, AssetType.Style);
             if (pageStylesUrl != null)
@@ -341,12 +359,16 @@ namespace OwinFramework.Pages.Html.Runtime
                 renderContext.Html.WriteLine();
             }
 
-
             var websiteScriptUrl = _dependenciesFactory.AssetManager.GetWebsiteAssetUrl(AssetType.Script);
             if (websiteScriptUrl != null)
                 renderContext.Html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
 
-            // TODO: For each referenced module include the module javascript
+            foreach (var module in _referencedModules)
+            {
+                var moduleScriptUrl = _dependenciesFactory.AssetManager.GetModuleAssetUrl(module, AssetType.Script);
+                if (moduleScriptUrl != null)
+                    renderContext.Html.WriteElement("script", "type", "text/javascript", "src", moduleScriptUrl.ToString());
+            }
 
             var pageScriptUrl = _dependenciesFactory.AssetManager.GetPageAssetUrl(this, AssetType.Script);
             if (pageScriptUrl != null)
@@ -385,8 +407,28 @@ namespace OwinFramework.Pages.Html.Runtime
             html.WriteCloseTag("title");
 
             writeResult.Add(WriteHead(context, data, true));
+
+            if (!string.IsNullOrEmpty(_inPageCsss))
+            {
+                html.WriteOpenTag("style");
+                html.WriteLine(_inPageCsss);
+                html.WriteCloseTag("style");
+            }
+
+            if (!string.IsNullOrEmpty(_inPageScript))
+            {
+                html.WriteOpenTag("script", "type", "text/javascript");
+                html.WriteLine("//<![CDATA[");
+                html.IndentLevel++;
+                html.WriteLine(_inPageScript);
+                html.IndentLevel--;
+                html.WriteLine("//]]>");
+                html.WriteCloseTag("script");
+            }
+
             writeResult.Add(WriteDynamicAssets(AssetType.Style, context.Html, true));
             writeResult.Add(WriteDynamicAssets(AssetType.Script, context.Html, true));
+            
             html.WriteCloseTag("head");
         }
 

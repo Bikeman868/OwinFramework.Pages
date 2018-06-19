@@ -41,6 +41,30 @@ namespace OwinFramework.Pages.Html.Builders
                 assetDeployment = AssetDeployment.PerWebsite;
 
             initializationData.HasElement(Parent, assetDeployment, Parent.Module);
+
+            var children = GetChildren();
+            if (children == null) return;
+
+            if (AssetDeployment != AssetDeployment.Inherit)
+            {
+                initializationData.Push();
+                initializationData.AssetDeployment = AssetDeployment;
+            }
+            try
+            {
+                while (children.MoveNext())
+                {
+                    children.Current.Initialize(initializationData);
+                }
+            }
+            finally
+            {
+                if (AssetDeployment != AssetDeployment.Inherit)
+                {
+                    initializationData.Pop();
+                }
+                children.Dispose();
+            }
         }
 
         public string Name

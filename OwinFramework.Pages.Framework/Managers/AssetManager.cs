@@ -218,12 +218,12 @@ namespace OwinFramework.Pages.Framework.Managers
             if (type == AssetType.Style)
             {
                 if (!string.IsNullOrEmpty(_websiteStyles))
-                    return new Uri(_rootPath + "/static.css", UriKind.Relative);
+                    return new Uri(_rootPath + "/static.css?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
             }
             else if (type == AssetType.Script)
             {
                 if (!string.IsNullOrEmpty(_websiteFunctions))
-                    return new Uri(_rootPath + "/static.js", UriKind.Relative);
+                    return new Uri(_rootPath + "/static.js?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
             }
             return null;
         }
@@ -235,12 +235,12 @@ namespace OwinFramework.Pages.Framework.Managers
             if (type == AssetType.Style)
             {
                 if (_moduleStyles.ContainsKey(moduleName))
-                    return new Uri(_rootPath + "/module/" + moduleName + ".css", UriKind.Relative);
+                    return new Uri(_rootPath + "/module/" + moduleName + ".css?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
             }
             else if (type == AssetType.Script)
             {
                 if (!string.IsNullOrEmpty(_websiteFunctions))
-                    return new Uri(_rootPath + "/module/" + moduleName + ".js", UriKind.Relative);
+                    return new Uri(_rootPath + "/module/" + moduleName + ".js?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
             }
             return null;
         }
@@ -252,12 +252,12 @@ namespace OwinFramework.Pages.Framework.Managers
             if (type == AssetType.Style)
             {
                 if (_moduleStyles.ContainsKey(pageName))
-                    return new Uri(_rootPath + "/page/" + pageName + ".css", UriKind.Relative);
+                    return new Uri(_rootPath + "/page/" + pageName + ".css?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
             }
             else if (type == AssetType.Script)
             {
                 if (!string.IsNullOrEmpty(_websiteFunctions))
-                    return new Uri(_rootPath + "/page/" + pageName + ".js", UriKind.Relative);
+                    return new Uri(_rootPath + "/page/" + pageName + ".js?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
             }
             return null;
         }
@@ -277,6 +277,7 @@ namespace OwinFramework.Pages.Framework.Managers
             // Path can be /assets/static.{css|js}
             // Path can be /assets/module/{modulename}.{css|js}
             // Path can be /assets/page/{packagename}-{pagename}.{css|js}
+            // Path can be /assets/page/{pagename}.{css|js}
 
             PathString subPath;
             if (!context.Request.Path.StartsWithSegments(_rootPath, out subPath))

@@ -3,11 +3,11 @@ using OwinFramework.Pages.Core.Interfaces.Collections;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
-    internal class ComponentDependenciesFactory: IComponentDependenciesFactory
+    internal class ModuleDependenciesFactory: IModuleDependenciesFactory
     {
-        public IComponentDependencies Create()
+        public IModuleDependencies Create()
         {
-            return new ComponentDependencies();
+            return new ModuleDependencies();
         }
     }
 }

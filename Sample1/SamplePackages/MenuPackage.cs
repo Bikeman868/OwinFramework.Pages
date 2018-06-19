@@ -21,14 +21,15 @@ namespace Sample1.SamplePackages
     /// [IsPackage] attibute make sure that you register it manually before
     /// registering the assembly that contains it.
     /// </summary>
+    [IsPackage("menu")]
     public class MenuPackage : OwinFramework.Pages.Framework.Runtime.Package
     {
-        private readonly IComponentDependenciesFactory _componentDependencies;
+        private readonly IPackageDependenciesFactory _dependencies;
 
-        public MenuPackage(
-            IComponentDependenciesFactory componentDependencies)
+        public MenuPackage(IPackageDependenciesFactory dependencies)
+            : base(dependencies)
         {
-            _componentDependencies = componentDependencies;
+            _dependencies = dependencies;
         }
 
         public class MenuItem
@@ -53,20 +54,20 @@ namespace Sample1.SamplePackages
             }
         }
 
-        public override IPackage Build(
-            IFluentBuilder builder)
+        public IPackage Build(IFluentBuilder builder)
         {
-            var menuItemComponent = new MenuItemComponent(_componentDependencies);
+            var menuItemComponent = new MenuItemComponent(_dependencies.ComponentDependenciesFactory);
 
             var menuBarRegion = builder.Region()
                 .ForEach<MenuItem>()
                 .Tag("li")
-                .Style("display: inline-block;")
+                .Style("display: inline-block; vertical-align: middle; white-space: normal;")
                 .Component(menuItemComponent)
                 .Build();
 
             builder.Layout()
                 .Region("menu", menuBarRegion)
+                .Style("display: block; vertical-align: middle; white-space: nowrap;")
                 .Tag("ul")
                 .Build();
 

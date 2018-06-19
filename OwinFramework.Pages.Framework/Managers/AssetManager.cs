@@ -13,6 +13,7 @@ using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
 using System.Web;
+using OwinFramework.Pages.Framework.Interfaces;
 
 namespace OwinFramework.Pages.Framework.Managers
 {

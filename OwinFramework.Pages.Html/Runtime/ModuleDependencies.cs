@@ -2,7 +2,7 @@
 
 namespace OwinFramework.Pages.Html.Runtime
 {
-    internal class RegionDependencies: IRegionDependencies
+    internal class ModuleDependencies: IModuleDependencies
     {
         public void Dispose()
         {

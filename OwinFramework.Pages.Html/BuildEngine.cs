@@ -10,6 +10,7 @@ namespace OwinFramework.Pages.Html
     {
         private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
+        private readonly IModuleDependenciesFactory _moduleDependenciesFactory;
         private readonly IPageDependenciesFactory _pageDependenciesFactory;
         private readonly ILayoutDependenciesFactory _layoutDependenciesFactory;
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
@@ -20,6 +21,7 @@ namespace OwinFramework.Pages.Html
         public BuildEngine(
             IRequestRouter requestRouter,
             INameManager nameManager,
+            IModuleDependenciesFactory moduleDependenciesFactory,
             IPageDependenciesFactory pageDependenciesFactory,
             ILayoutDependenciesFactory layoutDependenciesFactory,
             IRegionDependenciesFactory regionDependenciesFactory,
@@ -29,6 +31,7 @@ namespace OwinFramework.Pages.Html
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
+            _moduleDependenciesFactory = moduleDependenciesFactory;
             _pageDependenciesFactory = pageDependenciesFactory;
             _layoutDependenciesFactory = layoutDependenciesFactory;
             _regionDependenciesFactory = regionDependenciesFactory;
@@ -40,6 +43,7 @@ namespace OwinFramework.Pages.Html
         public void Install(IFluentBuilder builder)
         {
             builder.ModuleBuilder = new ModuleBuilder(
+                _moduleDependenciesFactory,
                 _nameManager);
 
             builder.PageBuilder = new PageBuilder(

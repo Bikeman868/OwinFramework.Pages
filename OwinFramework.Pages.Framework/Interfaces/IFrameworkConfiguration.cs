@@ -1,5 +1,6 @@
 ﻿using System;
-namespace OwinFramework.Pages.Framework
+
+namespace OwinFramework.Pages.Framework.Interfaces
 {
     interface IFrameworkConfiguration
     {

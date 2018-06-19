@@ -4,6 +4,8 @@ using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Framework.Builders;
+using OwinFramework.Pages.Framework.Configuration;
+using OwinFramework.Pages.Framework.Interfaces;
 using OwinFramework.Pages.Framework.Managers;
 using OwinFramework.Pages.Framework.Runtime;
 

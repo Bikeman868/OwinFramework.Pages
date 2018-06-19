@@ -9,7 +9,12 @@ namespace OwinFramework.Pages.Framework.Builders
         public string NamespaceName { get; set; }
         public IModule Module { get; set; }
 
-        public IPackage Build(IFluentBuilder builder)
+        /// <summary>
+        /// Builds a package
+        /// </summary>
+        /// <param name="fluentBuilder">A fluent builder that has a package context and
+        /// builds everything within this package</param>
+        public IPackage Build(IFluentBuilder fluentBuilder)
         {
             // Packages defined declaratively do not build anything within them
             return this;

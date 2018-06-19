@@ -26,10 +26,15 @@ namespace OwinFramework.Pages.Framework.Runtime
         /// </summary>
         public IModule Module { get; set; }
 
+        public Package(IPackageDependenciesFactory dependencies)
+        { }
+
         /// <summary>
         /// Override this to build package elements
         /// </summary>
-        public virtual IPackage Build(IFluentBuilder builder)
+        /// <param name="fluentBuilder">A fluent builder that has a package context and
+        /// builds everything within this package</param>
+        public virtual IPackage Build(IFluentBuilder fluentBuilder)
         {
             return this;
         }

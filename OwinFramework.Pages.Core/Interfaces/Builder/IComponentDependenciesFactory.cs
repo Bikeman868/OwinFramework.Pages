@@ -1,4 +1,4 @@
-﻿namespace OwinFramework.Pages.Html.Runtime
+﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// The IoC dependencies are wrapped in this factory so that when
@@ -7,6 +7,10 @@
     /// </summary>
     public interface IComponentDependenciesFactory
     {
+        /// <summary>
+        /// Constructs and initializes a package dependencies instance
+        /// specific to the request
+        /// </summary>
         IComponentDependencies Create();
     }
 }

@@ -6,9 +6,8 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
-using OwinFramework.Pages.Html.Builders;
 
-namespace OwinFramework.Pages.Html.Runtime.Internal
+namespace OwinFramework.Pages.Html.Builders
 {
     public class LayoutDefinition : ILayoutDefinition
     {

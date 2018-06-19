@@ -2,9 +2,9 @@
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Builders;
-using OwinFramework.Pages.Html.Runtime.Internal;
 
 namespace OwinFramework.Pages.Html.Runtime
 {

@@ -1,7 +1,8 @@
 ﻿using System;
+using OwinFramework.Pages.Framework.Interfaces;
 using Urchin.Client.Interfaces;
 
-namespace OwinFramework.Pages.Framework
+namespace OwinFramework.Pages.Framework.Configuration
 {
     /// <summary>
     /// Defines the cnfiguration options for the Framework assembly

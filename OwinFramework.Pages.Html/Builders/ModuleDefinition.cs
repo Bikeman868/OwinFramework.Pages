@@ -11,10 +11,11 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly BuiltModule _module;
 
         public ModuleDefinition(
+            IModuleDependenciesFactory moduleDependencies,
             INameManager nameManager)
         {
             _nameManager = nameManager;
-            _module = new BuiltModule();
+            _module = new BuiltModule(moduleDependencies);
         }
 
         public IModuleDefinition Name(string name)

@@ -94,6 +94,16 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         IHtmlWriter WriteLine<T>(T s);
 
         /// <summary>
+        /// Writes the opening lines of the Html document
+        /// </summary>
+        IHtmlWriter WriteDocumentStart(string language);
+
+        /// <summary>
+        /// Writes the closing lines of the Html document
+        /// </summary>
+        IHtmlWriter WriteDocumentEnd();
+
+        /// <summary>
         /// Writes the opening tag of an html element
         /// </summary>
         /// <param name="tag">The html tag to write</param>
@@ -135,5 +145,16 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Writes a comment into the html
         /// </summary>
         IHtmlWriter WriteComment(string comment, CommentStyle commentStyle = CommentStyle.Xml);
+
+        /// <summary>
+        /// Writes the opening tag of a block of script within an Html file
+        /// </summary>
+        IHtmlWriter WriteScriptOpen(string type = "text/javascript");
+
+        /// <summary>
+        /// Writes the closing tag of a block of script within an Html document
+        /// </summary>
+        /// <returns></returns>
+        IHtmlWriter WriteScriptClose();
     }
 }

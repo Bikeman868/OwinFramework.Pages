@@ -30,8 +30,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var acceptLanguage = context.Request.Headers["Accept-Language"];
             Language = _assetManager.GetSupportedLanguage(acceptLanguage);
 
-            IncludeComments = true;
-            Html.Indented = true;
+            IncludeComments = Html.IncludeComments;
 
             context.Response.Headers["Content-Language"] = Language;
 

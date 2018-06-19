@@ -77,6 +77,8 @@
     <Compile Include="Builders\PageBuilder.cs" />
     <Compile Include="Builders\PageDefinition.cs" />
     <Compile Include="Builders\RegionBuilder.cs" />
+    <Compile Include="Configuration\HtmlConfiguration.cs" />
+    <Compile Include="Interfaces\IHtmlConfiguration.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Component.cs" />
@@ -95,7 +97,7 @@
     <Compile Include="Builders\BuiltRegion.cs" />
     <Compile Include="Builders\ClonedRegion.cs" />
     <Compile Include="Builders\RegionDefinition.cs" />
-    <Compile Include="Runtime\IRenderContextFactory.cs" />
+    <Compile Include="Interfaces\IRenderContextFactory.cs" />
     <Compile Include="Runtime\ComponentDependencies.cs" />
     <Compile Include="Runtime\ComponentDependenciesFactory.cs" />
     <Compile Include="Runtime\RegionDependenciesFactory.cs" />
@@ -121,6 +123,7 @@
       <Name>OwinFramework.Pages.Core.Net40</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

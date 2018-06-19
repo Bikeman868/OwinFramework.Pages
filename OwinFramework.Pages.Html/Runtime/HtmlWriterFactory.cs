@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Collections;
+﻿using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -13,9 +14,14 @@ namespace OwinFramework.Pages.Html.Runtime
             _stringBuilderFactory = stringBuilderFactory;
         }
 
-        IHtmlWriter IHtmlWriterFactory.Create(bool indented)
+        IHtmlWriter IHtmlWriterFactory.Create(HtmlFormat format, bool indented, bool includeComments)
         {
-            return new HtmlWriter(_stringBuilderFactory) { Indented = indented };
+            return new HtmlWriter(_stringBuilderFactory) 
+            { 
+                Format = format,
+                Indented = indented,
+                IncludeComments = includeComments
+            };
         }
     }
 }

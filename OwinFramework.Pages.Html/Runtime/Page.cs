@@ -58,16 +58,16 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public override ElementType ElementType { get { return ElementType.Page; } }
 
-        private readonly IPageDependenciesFactory _dependenciesFactory;
+        private readonly IPageDependenciesFactory _dependencies;
         private IList<IComponent> _components;
         private string _bodyStyleName;
-        private string _inPageCsss;
-        private string _inPageScript;
+        private List<string> _inPageCssLines;
+        private List<string> _inPageScriptLines;
         private List<IModule> _referencedModules;
 
-        protected Page(IPageDependenciesFactory dependenciesFactory)
+        protected Page(IPageDependenciesFactory dependencies)
         {
-            _dependenciesFactory = dependenciesFactory;
+            _dependencies = dependencies;
         }
 
         public virtual void Initialize()
@@ -90,9 +90,9 @@ namespace OwinFramework.Pages.Html.Runtime
             // TODO: Group elements by module and deployment method
             // TODO: Create in-page static asset html
 
-            _inPageCsss = "p { font-weight: normal; }";
-            _inPageScript = "var i = 0;";
             _referencedModules = new List<IModule>();
+            var styles = new AssetWriter();
+            var functions = new Dictionary<string, AssetWriter>(StringComparer.InvariantCultureIgnoreCase);
 
             System.Diagnostics.Trace.WriteLine("Page " + Name);
             foreach (var element in data.Elements)
@@ -106,20 +106,35 @@ namespace OwinFramework.Pages.Html.Runtime
                 {
                     case AssetDeployment.PerWebsite:
                         deployment = "website assets";
-                        _dependenciesFactory.AssetManager.AddWebsiteAssets(element.Element);
+                        _dependencies.AssetManager.AddWebsiteAssets(element.Element);
                         break;
                     case AssetDeployment.PerModule:
                         deployment = element.Module.Name + " module";
-                        _dependenciesFactory.AssetManager.AddModuleAssets(element.Element, element.Module);
+                        _dependencies.AssetManager.AddModuleAssets(element.Element, element.Module);
                         if (_referencedModules.All(m => m.Name != element.Module.Name))
                             _referencedModules.Add(element.Module);
                         break;
                     case AssetDeployment.PerPage:
                         deployment = "page assets";
-                        _dependenciesFactory.AssetManager.AddPageAssets(element.Element, this);
+                        _dependencies.AssetManager.AddPageAssets(element.Element, this);
                         break;
                     case AssetDeployment.InPage:
                         deployment = "page head";
+
+                        element.Element.WriteStaticAssets(AssetType.Style, styles);
+
+                        var ns = string.Empty;
+                        if (element.Element.Package != null) ns = element.Element.Package.NamespaceName;
+
+                        AssetWriter functionWriter;
+                        if (!functions.TryGetValue(ns, out functionWriter))
+                        {
+                            functionWriter = new AssetWriter();
+                            functions[ns] = functionWriter;
+                        }
+
+                        element.Element.WriteStaticAssets(AssetType.Script, functionWriter);
+
                         break;
                     default:
                         deployment = element.AssetDeployment.ToString();
@@ -127,6 +142,157 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
 
                 System.Diagnostics.Trace.WriteLine("   " + name + " deployed to " + deployment);
+            }
+
+            _inPageCssLines = styles.GetLines();
+
+            _inPageScriptLines = new List<string>();
+            foreach(var namespaceName in functions.Keys)
+            {
+                var lines = functions[namespaceName].GetLines();
+                if (lines == null || lines.Count <= 0) continue;
+
+                _inPageScriptLines.Add("var owinFramework = (window.owinFramework = window.owinFramework || {});");
+                _inPageScriptLines.Add("owinFramework." + namespaceName + " = function () {");
+
+                foreach (var line in lines)
+                    _inPageScriptLines.Add("   " + line);
+
+                _inPageScriptLines.Add("}();");
+            }
+        }
+
+        private class AssetWriter: IHtmlWriter
+        {
+            public bool Indented { get; set; }
+            public bool IncludeComments { get; set; }
+            public int IndentLevel { get; set; }
+
+            private List<string> _lines = new List<string>();
+
+            public List<string> GetLines()
+            {
+                return _lines;
+            }
+
+            public System.IO.TextWriter GetTextWriter()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void ToResponse(IOwinContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task ToResponseAsync(IOwinContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void ToStringBuilder(Core.Interfaces.Collections.IStringBuilder stringBuilder)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter CreateInsertionPoint()
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter Write(char c)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter Write(string s)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter Write<T>(T s)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter WriteLine()
+            {
+                _lines.Add(string.Empty);
+                return this;
+            }
+
+            public IHtmlWriter WriteLine(string s)
+            {
+                _lines.Add(s);
+                return this;
+            }
+
+            public IHtmlWriter WriteLine<T>(T s)
+            {
+                _lines.Add(s.ToString());
+                return this;
+            }
+
+            public IHtmlWriter WriteDocumentStart(string language)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter WriteDocumentEnd()
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter WriteOpenTag(string tag, bool selfClosing, params string[] attributePairs)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter WriteOpenTag(string tag, params string[] attributePairs)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter WriteCloseTag(string tag)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter WriteElement(string tag, string content, params string[] attributePairs)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter WriteUnclosedElement(string tag, params string[] attributePairs)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter WriteComment(string comment, CommentStyle commentStyle = CommentStyle.Xml)
+            {
+                switch (commentStyle)
+                {
+                    case CommentStyle.Xml:
+                        _lines.Add("<!-- " + comment + " -->");
+                        break;
+                    case CommentStyle.MultiLineC:
+                        _lines.Add("/* " + comment + " */");
+                        break;
+                    default:
+                        _lines.Add("// " + comment);
+                        break;
+                }
+                return this;
+            }
+
+            public IHtmlWriter WriteScriptOpen(string type = "text/javascript")
+            {
+                throw new NotImplementedException();
+            }
+
+            public IHtmlWriter WriteScriptClose()
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -218,7 +384,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public virtual Task Run(IOwinContext owinContext)
         {
-            var dependencies = _dependenciesFactory.Create(owinContext);
+            var dependencies = _dependencies.Create(owinContext);
             var context = dependencies.RenderContext;
             var html = context.Html;
             var data = dependencies.DataContext;
@@ -228,14 +394,13 @@ namespace OwinFramework.Pages.Html.Runtime
             var writeResult = WriteResult.Continue();
             try
             {
-                html.WriteLine("<!doctype html>");
-                html.WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", context.Language);
+                html.WriteDocumentStart(context.Language);
 
                 WritePageHead(context, data, html, writeResult);
                 WritePageBody(context, data, html, writeResult);
                 WriteInitializationScript(context, data, true);
 
-                html.WriteCloseTag("html");
+                html.WriteDocumentEnd();
             }
             catch
             {
@@ -261,7 +426,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             if (assetType == AssetType.Style && !string.IsNullOrEmpty(BodyStyle))
             {
-                _dependenciesFactory.NameManager.EnsureAssetName(this, ref _bodyStyleName);
+                _dependencies.NameManager.EnsureAssetName(this, ref _bodyStyleName);
                 writer.WriteElement("style", "." + _bodyStyleName + " { " + BodyStyle + " }");
                 writer.WriteLine();
             }
@@ -335,7 +500,7 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             var writeResult = WriteResult.Continue();
 
-            var websiteStylesUrl = _dependenciesFactory.AssetManager.GetWebsiteAssetUrl(AssetType.Style);
+            var websiteStylesUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Style);
             if (websiteStylesUrl != null)
             {
                 renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", websiteStylesUrl.ToString());
@@ -344,7 +509,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             foreach(var module in _referencedModules)
             {
-                var moduleStylesUrl = _dependenciesFactory.AssetManager.GetModuleAssetUrl(module, AssetType.Style);
+                var moduleStylesUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Style);
                 if (moduleStylesUrl != null)
                 {
                     renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
@@ -352,25 +517,25 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
-            var pageStylesUrl = _dependenciesFactory.AssetManager.GetPageAssetUrl(this, AssetType.Style);
+            var pageStylesUrl = _dependencies.AssetManager.GetPageAssetUrl(this, AssetType.Style);
             if (pageStylesUrl != null)
             {
                 renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", pageStylesUrl.ToString());
                 renderContext.Html.WriteLine();
             }
 
-            var websiteScriptUrl = _dependenciesFactory.AssetManager.GetWebsiteAssetUrl(AssetType.Script);
+            var websiteScriptUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Script);
             if (websiteScriptUrl != null)
                 renderContext.Html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
 
             foreach (var module in _referencedModules)
             {
-                var moduleScriptUrl = _dependenciesFactory.AssetManager.GetModuleAssetUrl(module, AssetType.Script);
+                var moduleScriptUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Script);
                 if (moduleScriptUrl != null)
                     renderContext.Html.WriteElement("script", "type", "text/javascript", "src", moduleScriptUrl.ToString());
             }
 
-            var pageScriptUrl = _dependenciesFactory.AssetManager.GetPageAssetUrl(this, AssetType.Script);
+            var pageScriptUrl = _dependencies.AssetManager.GetPageAssetUrl(this, AssetType.Script);
             if (pageScriptUrl != null)
                 renderContext.Html.WriteElement("script", "type", "text/javascript", "src", pageScriptUrl.ToString());
 
@@ -408,22 +573,20 @@ namespace OwinFramework.Pages.Html.Runtime
 
             writeResult.Add(WriteHead(context, data, true));
 
-            if (!string.IsNullOrEmpty(_inPageCsss))
+            if (_inPageCssLines.Count > 0)
             {
                 html.WriteOpenTag("style");
-                html.WriteLine(_inPageCsss);
+                foreach(var line in _inPageCssLines)
+                    html.WriteLine(line);
                 html.WriteCloseTag("style");
             }
 
-            if (!string.IsNullOrEmpty(_inPageScript))
+            if (_inPageScriptLines.Count > 0)
             {
-                html.WriteOpenTag("script", "type", "text/javascript");
-                html.WriteLine("//<![CDATA[");
-                html.IndentLevel++;
-                html.WriteLine(_inPageScript);
-                html.IndentLevel--;
-                html.WriteLine("//]]>");
-                html.WriteCloseTag("script");
+                html.WriteScriptOpen();
+                foreach (var line in _inPageScriptLines)
+                    html.WriteLine(line);
+                html.WriteScriptClose();
             }
 
             writeResult.Add(WriteDynamicAssets(AssetType.Style, context.Html, true));
@@ -437,7 +600,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var bodyClassNames = BodyClassNames;
             if (!string.IsNullOrEmpty(BodyStyle))
             {
-                _dependenciesFactory.NameManager.EnsureAssetName(this, ref _bodyStyleName);
+                _dependencies.NameManager.EnsureAssetName(this, ref _bodyStyleName);
 
                 if (string.IsNullOrEmpty(bodyClassNames))
                     bodyClassNames = _bodyStyleName;

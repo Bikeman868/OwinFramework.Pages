@@ -27,6 +27,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public int IndentLevel { get; set; }
 
         /// <summary>
+        /// Defines the Html standards to apply to the Html produced
+        /// </summary>
+        public HtmlFormat Format { get; set; }
+
+        /// <summary>
         /// Turns indentation on/off. The html is more readable with
         /// indentation turned on but the output is bigger because of 
         /// all the extra spaces
@@ -252,10 +257,18 @@ namespace OwinFramework.Pages.Html.Runtime
             Write('<');
             Write(tag);
             WriteAttributes(attributePairs);
-            Write('>');
-            Write(content);
-            Write("</");
-            Write(tag);
+            if (string.IsNullOrEmpty(content))
+            {
+                Write(' ');
+                Write('/');
+            }
+            else
+            {
+                Write('>');
+                Write(content);
+                Write("</");
+                Write(tag);
+            }
             Write('>');
 
             return this;
@@ -263,6 +276,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IHtmlWriter WriteUnclosedElement(string tag, params string[] attributePairs)
         {
+            if (Format == HtmlFormat.XHtml) 
+                return WriteElement(tag, null, attributePairs);
+
             Write('<');
             Write(tag);
             WriteAttributes(attributePairs);
@@ -296,6 +312,55 @@ namespace OwinFramework.Pages.Html.Runtime
 
             return this;
         }
+
+        public IHtmlWriter WriteDocumentStart(string language)
+        {
+            if (Format == HtmlFormat.XHtml)
+            {
+                WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
+                WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", language, "xmlns", "http://www.w3.org/1999/xhtml");
+            }
+            else
+            {
+                WriteLine("<!DOCTYPE html>");
+                WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", language);
+            }
+
+            return this;
+        }
+
+        public IHtmlWriter WriteDocumentEnd()
+        {
+            WriteCloseTag("html");
+            return this;
+        }
+
+        public IHtmlWriter WriteScriptOpen(string type)
+        {
+            WriteOpenTag("script", "type", type);
+
+            if (Format == HtmlFormat.XHtml)
+            {
+                WriteLine("//<![CDATA[");
+                IndentLevel++;
+            }
+
+            return this;
+        }
+
+        public IHtmlWriter WriteScriptClose()
+        {
+            if (Format == HtmlFormat.XHtml)
+            {
+                IndentLevel--;
+                WriteLine("//]]>");
+            }
+
+            WriteCloseTag("script");
+
+            return this;
+        }
+
 
         #region IHtmlWriter
 

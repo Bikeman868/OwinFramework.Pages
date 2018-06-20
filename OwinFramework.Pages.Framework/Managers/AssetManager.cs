@@ -255,7 +255,7 @@ namespace OwinFramework.Pages.Framework.Managers
             }
             else if (type == AssetType.Script)
             {
-                if (!string.IsNullOrEmpty(_websiteFunctions))
+                if (_moduleFunctions.ContainsKey(moduleName))
                     return new Uri(_rootPath + "/module/" + moduleName + ".js?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
             }
             return null;
@@ -272,7 +272,7 @@ namespace OwinFramework.Pages.Framework.Managers
             }
             else if (type == AssetType.Script)
             {
-                if (!string.IsNullOrEmpty(_websiteFunctions))
+                if (_pageFunctions.ContainsKey(pageName))
                     return new Uri(_rootPath + "/page/" + pageName + ".js?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
             }
             return null;

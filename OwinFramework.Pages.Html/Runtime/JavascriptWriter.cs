@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
@@ -12,8 +13,9 @@ namespace OwinFramework.Pages.Html.Runtime
         public bool Indented { get; set; }
         public bool IncludeComments { get; set; }
         public int IndentLevel { get; set; }
+        public bool HasContent { get { return _namespaces.Values.Any(ns => ns.HasContent); } }
 
-        private Dictionary<string, JavascriptNamespace> _namespaces;
+        private readonly Dictionary<string, JavascriptNamespace> _namespaces;
 
         public JavascriptWriter()
         {
@@ -117,8 +119,8 @@ namespace OwinFramework.Pages.Html.Runtime
             public bool IsPublic;
 
             public abstract void Write(IHtmlWriter writer);
-            public abstract void Write(IStringBuilder stringBuilder);
-            public abstract void Write(IList<string> lines);
+            public abstract void Write(IStringBuilder stringBuilder, string indent);
+            public abstract void Write(IList<string> lines, string indent);
         }
 
         private class CommentElement: JavascriptElement
@@ -131,15 +133,42 @@ namespace OwinFramework.Pages.Html.Runtime
                 writer.WriteComment(Comment, CommentStyle);
             }
 
-            public override void Write(IStringBuilder stringBuilder)
+            public override void Write(IStringBuilder stringBuilder, string indent)
             {
-                stringBuilder.Append("  // ");
-                stringBuilder.AppendLine(Comment);
+                stringBuilder.Append(indent);
+                switch (CommentStyle)
+                {
+                    case CommentStyle.SingleLineC:
+                        stringBuilder.Append("// ");
+                        stringBuilder.AppendLine(Comment);
+                        break;
+                    case CommentStyle.MultiLineC:
+                        stringBuilder.Append("/* ");
+                        stringBuilder.Append(Comment);
+                        stringBuilder.AppendLine(" */");
+                        break;
+                    case CommentStyle.Xml:
+                        stringBuilder.Append("<!-- ");
+                        stringBuilder.Append(Comment);
+                        stringBuilder.AppendLine(" -->");
+                        break;
+                }
             }
 
-            public override void Write(IList<string> lines)
+            public override void Write(IList<string> lines, string indent)
             {
-                lines.Add("  // " + Comment);
+                switch (CommentStyle)
+                {
+                    case CommentStyle.SingleLineC:
+                        lines.Add(indent + "// " + Comment);
+                        break;
+                    case CommentStyle.MultiLineC:
+                        lines.Add(indent + "/* " + Comment + " */");
+                        break;
+                    case CommentStyle.Xml:
+                        lines.Add(indent + "<!-- " + Comment + " -->");
+                        break;
+                }
             }
         }
 
@@ -168,9 +197,9 @@ namespace OwinFramework.Pages.Html.Runtime
                 writer.WriteLine(";");
             }
 
-            public override void Write(IStringBuilder stringBuilder)
+            public override void Write(IStringBuilder stringBuilder, string indent)
             {
-                stringBuilder.Append("  ");
+                stringBuilder.Append(indent);
 
                 if (string.IsNullOrEmpty(Name))
                 {
@@ -192,9 +221,9 @@ namespace OwinFramework.Pages.Html.Runtime
                 stringBuilder.AppendLine(";");
             }
 
-            public override void Write(IList<string> lines)
+            public override void Write(IList<string> lines, string indent)
             {
-                var line = "  ";
+                var line = indent;
 
                 if (string.IsNullOrEmpty(Name))
                 {
@@ -249,15 +278,17 @@ namespace OwinFramework.Pages.Html.Runtime
                 writer.WriteLine(string.IsNullOrEmpty(Name) ? "}();" : "}");
             }
 
-            public override void Write(IStringBuilder stringBuilder)
+            public override void Write(IStringBuilder stringBuilder, string indent)
             {
+                stringBuilder.Append(indent);
+
                 if (string.IsNullOrEmpty(Name))
                 {
-                    stringBuilder.Append("  function (");
+                    stringBuilder.Append("function (");
                 }
                 else if (IsPublic)
                 {
-                    stringBuilder.Append("  var ");
+                    stringBuilder.Append("var ");
                     stringBuilder.Append(Name);
                     stringBuilder.Append(" = function (");
                 }
@@ -275,21 +306,45 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 foreach (var line in Body.Replace("\r", "").Split('\n'))
                 {
-                    stringBuilder.Append("    ");
+                    stringBuilder.Append(indent);
+                    stringBuilder.Append("  ");
                     stringBuilder.AppendLine(line);
                 }
 
+                stringBuilder.Append(indent);
                 stringBuilder.AppendLine(string.IsNullOrEmpty(Name) ? "}();" : "}");
             }
 
-            public override void Write(IList<string> lines)
+            public override void Write(IList<string> lines, string indent)
             {
+                string header;
+
+                if (string.IsNullOrEmpty(Name))
+                    header = indent + "function (";
+                else if (IsPublic)
+                    header = indent + "var " + Name + " = function (";
+                else
+                    header = indent + "function " + Name + " (";
+
+                if (!string.IsNullOrEmpty(Parameters))
+                    header += Parameters;
+
+                header += ") {";
+
+                lines.Add(header);
+
+                foreach (var line in Body.Replace("\r", "").Split('\n'))
+                    lines.Add(indent + "  " + line);
+
+                lines.Add(indent + (string.IsNullOrEmpty(Name) ? "}();" : "}"));
             }
         }
 
         private class JavascriptNamespace
         {
             public string NamespaceName;
+            public bool HasContent { get { return _elements != null; } }
+
             private List<JavascriptElement> _elements;
 
             public void Add(JavascriptElement element)
@@ -303,105 +358,135 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 if (_elements == null) return;
 
-                writer.Write("var owinFramework = (window.owinFramework = window.owinFramework || {});");
-                writer.Write("owinFramework." + NamespaceName + " = function () {");
-                writer.IndentLevel++;
+                var hasNamespace = !string.IsNullOrEmpty(NamespaceName);
+
+                if (hasNamespace)
+                {
+                    writer.Write("var ns = (window.ns = window.ns || {});");
+                    writer.Write("ns." + NamespaceName + " = function () {");
+                    writer.IndentLevel++;
+                }
 
                 foreach (var element in _elements)
                 {
+                    writer.WriteLine();
                     element.Write(writer);
-                    writer.WriteLine();
                 }
 
-                writer.WriteLine("return {");
-                writer.IndentLevel++;
-
-                var firstElement = true;
-                foreach(var element in _elements)
+                if (hasNamespace)
                 {
-                    if (!firstElement)
-                        writer.WriteLine(",");
-
-                    if (element.IsPublic && !string.IsNullOrEmpty(element.Name))
-                    {
-                        writer.Write(element.Name);
-                        firstElement = false;
-                    }
-                }
-                if (!firstElement)
                     writer.WriteLine();
+                    writer.WriteLine("return {");
+                    writer.IndentLevel++;
 
-                writer.IndentLevel--;
-                writer.WriteLine("}");
+                    var firstElement = true;
+                    foreach (var element in _elements)
+                    {
+                        if (!firstElement)
+                            writer.WriteLine(",");
 
-                writer.IndentLevel--;
-                writer.WriteLine("}();");
+                        if (element.IsPublic && !string.IsNullOrEmpty(element.Name))
+                        {
+                            writer.Write(element.Name);
+                            firstElement = false;
+                        }
+                    }
+                    if (!firstElement)
+                        writer.WriteLine();
+
+                    writer.IndentLevel--;
+                    writer.WriteLine("}");
+
+                    writer.IndentLevel--;
+                    writer.WriteLine("}();");
+                    writer.WriteLine();
+                }
             }
 
             public void Write(IStringBuilder stringBuilder)
             {
                 if (_elements == null) return;
 
-                stringBuilder.AppendLine("var owinFramework = (window.owinFramework = window.owinFramework || {});");
-                stringBuilder.AppendLine("owinFramework." + NamespaceName + " = function () {");
+                var hasNamespace = !string.IsNullOrEmpty(NamespaceName);
 
-                foreach (var element in _elements)
+                if (hasNamespace)
                 {
-                    element.Write(stringBuilder);
-                    stringBuilder.AppendLine(string.Empty);
+                    stringBuilder.AppendLine("var ns = (window.ns = window.ns || {});");
+                    stringBuilder.AppendLine("ns." + NamespaceName + " = function () {");
                 }
 
-                stringBuilder.AppendLine("  return {");
-
-                var firstElement = true;
                 foreach (var element in _elements)
                 {
-                    if (!firstElement)
-                        stringBuilder.AppendLine(",");
+                    stringBuilder.AppendLine(string.Empty);
+                    element.Write(stringBuilder, hasNamespace ? "  " : string.Empty);
+                }
 
-                    if (element.IsPublic && !string.IsNullOrEmpty(element.Name))
+                if (hasNamespace)
+                {
+                    stringBuilder.AppendLine(string.Empty);
+                    stringBuilder.AppendLine("  return {");
+
+                    var firstElement = true;
+                    foreach (var element in _elements)
                     {
-                        stringBuilder.Append("    " + element.Name);
-                        firstElement = false;
-                    }
-                }
-                if (!firstElement)
-                    stringBuilder.AppendLine(string.Empty);
+                        if (!firstElement)
+                            stringBuilder.AppendLine(",");
 
-                stringBuilder.AppendLine("  }");
-                stringBuilder.AppendLine("}();");
+                        if (element.IsPublic && !string.IsNullOrEmpty(element.Name))
+                        {
+                            stringBuilder.Append("    " + element.Name);
+                            firstElement = false;
+                        }
+                    }
+                    if (!firstElement)
+                        stringBuilder.AppendLine(string.Empty);
+
+                    stringBuilder.AppendLine("  }");
+                    stringBuilder.AppendLine("}();");
+                    stringBuilder.AppendLine(string.Empty);
+                }
             }
 
             public void Write(IList<string> lines)
             {
                 if (_elements == null) return;
 
-                lines.Add("var owinFramework = (window.owinFramework = window.owinFramework || {});");
-                lines.Add("owinFramework." + NamespaceName + " = function () {");
+                var hasNamespace = !string.IsNullOrEmpty(NamespaceName);
+
+                if (hasNamespace)
+                {
+                    lines.Add("var ns = (window.ns = window.ns || {});");
+                    lines.Add("ns." + NamespaceName + " = function () {");
+                }
 
                 foreach (var element in _elements)
                 {
-                    element.Write(lines);
                     lines.Add(String.Empty);
+                    element.Write(lines, hasNamespace ? "  " : string.Empty);
                 }
 
-                lines.Add("  return {");
-
-                var firstElement = true;
-                foreach (var element in _elements)
+                if (hasNamespace)
                 {
-                    if (!firstElement)
-                        lines[lines.Count - 1] = lines[lines.Count - 1] + ",";
+                    lines.Add(string.Empty);
+                    lines.Add("  return {");
 
-                    if (element.IsPublic && !string.IsNullOrEmpty(element.Name))
+                    var firstElement = true;
+                    foreach (var element in _elements)
                     {
-                        lines.Add("    " + element.Name);
-                        firstElement = false;
-                    }
-                }
+                        if (!firstElement)
+                            lines[lines.Count - 1] = lines[lines.Count - 1] + ",";
 
-                lines.Add("  }");
-                lines.Add("}();");
+                        if (element.IsPublic && !string.IsNullOrEmpty(element.Name))
+                        {
+                            lines.Add("    " + element.Name);
+                            firstElement = false;
+                        }
+                    }
+
+                    lines.Add("  }");
+                    lines.Add("}();");
+                    lines.Add(string.Empty);
+                }
             }
         }
     }

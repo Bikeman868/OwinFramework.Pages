@@ -38,9 +38,9 @@ namespace OwinFramework.Pages.Html.Builders
             if (CssRules != null && CssRules.Count > 0)
             {
                 writer.WriteComment(
-                        "css rules for " +
-                        (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
-                        (Package == null ? " component" : " component from the " + Package.Name + " package"));
+                    "css rules for " +
+                    (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
+                    (Package == null ? " component" : " component from the " + Package.Name + " package"));
 
                 foreach (var rule in CssRules)
                     rule(writer);
@@ -54,10 +54,11 @@ namespace OwinFramework.Pages.Html.Builders
             if (JavascriptFunctions != null && JavascriptFunctions.Count > 0)
             {
                 writer.WriteComment(
-                        "javascript functions for " +
-                        (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
-                        (Package == null ? " component" : " component from the " + Package.Name + " package"),
-                        CommentStyle.SingleLineC);
+                    "javascript functions for " +
+                    (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
+                    (Package == null ? " component" : " component from the " + Package.Name + " package"),
+                    CommentStyle.SingleLineC,
+                    Package);
 
                 foreach (var javascriptFunction in JavascriptFunctions)
                     javascriptFunction(writer);

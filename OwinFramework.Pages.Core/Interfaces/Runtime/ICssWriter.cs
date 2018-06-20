@@ -12,21 +12,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     public interface ICssWriter: IDisposable
     {
         /// <summary>
-        /// Writes the buffered CSS into an Html document
-        /// </summary>
-        void ToHtml(IHtmlWriter html);
-
-        /// <summary>
-        /// Writes the buffered CSS to a string builder
-        /// </summary>
-        void ToStringBuilder(IStringBuilder stringBuilder);
-
-        /// <summary>
-        /// Writes the buffered CSS to a list of lines
-        /// </summary>
-        IList<string> ToLines();
-
-        /// <summary>
         /// Turn indentation off to reduce the size of the html
         /// </summary>
         bool Indented { get; set; }
@@ -47,6 +32,26 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <summary>
         /// Writes a comment into the buffered CSS
         /// </summary>
-        IHtmlWriter WriteComment(string comment);
+        ICssWriter WriteComment(string comment);
+
+        /// <summary>
+        /// Allows you to check if any css styles were written
+        /// </summary>
+        bool HasContent { get; }
+
+        /// <summary>
+        /// Writes the buffered CSS into an Html document
+        /// </summary>
+        void ToHtml(IHtmlWriter html);
+
+        /// <summary>
+        /// Writes the buffered CSS to a string builder
+        /// </summary>
+        void ToStringBuilder(IStringBuilder stringBuilder);
+
+        /// <summary>
+        /// Writes the buffered CSS to a list of lines
+        /// </summary>
+        IList<string> ToLines();
     }
 }

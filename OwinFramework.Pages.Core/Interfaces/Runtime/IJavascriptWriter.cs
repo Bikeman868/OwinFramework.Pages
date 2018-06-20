@@ -13,21 +13,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     public interface IJavascriptWriter: IDisposable
     {
         /// <summary>
-        /// Writes the buffered CSS into an Html document
-        /// </summary>
-        void ToHtml(IHtmlWriter html);
-
-        /// <summary>
-        /// Writes the buffered CSS to a string builder
-        /// </summary>
-        void ToStringBuilder(IStringBuilder stringBuilder);
-
-        /// <summary>
-        /// Writes the buffered CSS to a list of lines
-        /// </summary>
-        IList<string> ToLines();
-
-        /// <summary>
         /// Turn indentation off to reduce the size of the html
         /// </summary>
         bool Indented { get; set; }
@@ -43,6 +28,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// start of every line.
         /// </summary>
         int IndentLevel { get; set; }
+
+        /// <summary>
+        /// Returns true is some Javascript was written
+        /// </summary>
+        bool HasContent { get; }
 
         /// <summary>
         /// Writes a variable declaration and initialization
@@ -69,5 +59,20 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Writes a comment into the Javascript
         /// </summary>
         IJavascriptWriter WriteComment(string comment, CommentStyle commentStyle = CommentStyle.SingleLineC, IPackage package = null);
+
+        /// <summary>
+        /// Writes the buffered CSS into an Html document
+        /// </summary>
+        void ToHtml(IHtmlWriter html);
+
+        /// <summary>
+        /// Writes the buffered CSS to a string builder
+        /// </summary>
+        void ToStringBuilder(IStringBuilder stringBuilder);
+
+        /// <summary>
+        /// Writes the buffered CSS to a list of lines
+        /// </summary>
+        IList<string> ToLines();
     }
 }

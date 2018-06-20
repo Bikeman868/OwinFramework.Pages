@@ -393,12 +393,12 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 var moduleScriptUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Script);
                 if (moduleScriptUrl != null)
-                    renderContext.Html.WriteElement("script", "type", "text/javascript", "src", moduleScriptUrl.ToString());
+                    renderContext.Html.WriteElement("script", null, "type", "text/javascript", "src", moduleScriptUrl.ToString());
             }
 
             var pageScriptUrl = _dependencies.AssetManager.GetPageAssetUrl(this, AssetType.Script);
             if (pageScriptUrl != null)
-                renderContext.Html.WriteElement("script", "type", "text/javascript", "src", pageScriptUrl.ToString());
+                renderContext.Html.WriteElement("script", null, "type", "text/javascript", "src", pageScriptUrl.ToString());
 
             if (_components != null)
             {
@@ -436,14 +436,22 @@ namespace OwinFramework.Pages.Html.Runtime
 
             if (_inPageCssLines.Count > 0)
             {
+                if (context.IncludeComments)
+                    html.WriteComment("static in-page styles");
+
                 html.WriteOpenTag("style");
+
                 foreach(var line in _inPageCssLines)
                     html.WriteLine(line);
+                
                 html.WriteCloseTag("style");
             }
 
             if (_inPageScriptLines.Count > 0)
             {
+                if (context.IncludeComments)
+                    html.WriteComment("static in-page javascript");
+
                 html.WriteScriptOpen();
                 foreach (var line in _inPageScriptLines)
                     html.WriteLine(line);
@@ -454,14 +462,30 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 var result = WriteDynamicCss(cssWriter, true);
                 result.Wait();
-                cssWriter.ToHtml(context.Html);
+                if (cssWriter.HasContent)
+                {
+                    if (context.IncludeComments)
+                        html.WriteComment("dynamic styles");
+
+                    html.WriteOpenTag("style");
+                    cssWriter.ToHtml(context.Html);
+                    html.WriteCloseTag("style");
+                }
             }
 
             using (var javascriptWriter = _dependencies.JavascriptWriterFactory.Create())
             {
                 var result = WriteDynamicJavascript(javascriptWriter, true);
                 result.Wait();
-                javascriptWriter.ToHtml(context.Html);
+                if (javascriptWriter.HasContent)
+                {
+                    if (context.IncludeComments)
+                        html.WriteComment("dynamic javascript");
+
+                    html.WriteScriptOpen();
+                    javascriptWriter.ToHtml(context.Html);
+                    html.WriteScriptClose();
+                }
             }
             
             html.WriteCloseTag("head");

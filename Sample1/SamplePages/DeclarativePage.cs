@@ -87,6 +87,7 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("navigation")]
     [DeployCss("p.{ns}_footer", "font-weight:bold; font-size:9pt;")]
+    [DeployFunction("int", "footerFunction", "string action", "alert(action);")]
     [RenderHtml("footer.standard", "<p class='{ns}_footer'>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
 
@@ -94,6 +95,7 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
+    [DeployFunction(null, "toggleSideBar", null, "alert('Hello');")]
     [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 1</p>")]
     internal class SideBar1Component { }
 

@@ -254,7 +254,15 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
                 else if (IsPublic)
                 {
-                    writer.Write("var ");
+                    if (string.IsNullOrEmpty(Type))
+                    {
+                        writer.Write("var ");
+                    }
+                    else
+                    {
+                        writer.Write(Type);
+                        writer.Write(' ');
+                    }
                     writer.Write(Name);
                     writer.Write(" = function (");
                 }
@@ -288,7 +296,15 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
                 else if (IsPublic)
                 {
-                    stringBuilder.Append("var ");
+                    if (string.IsNullOrEmpty(Type))
+                    {
+                        stringBuilder.Append("var ");
+                    }
+                    else
+                    {
+                        stringBuilder.Append(Type);
+                        stringBuilder.Append(' ');
+                    }
                     stringBuilder.Append(Name);
                     stringBuilder.Append(" = function (");
                 }
@@ -322,7 +338,12 @@ namespace OwinFramework.Pages.Html.Runtime
                 if (string.IsNullOrEmpty(Name))
                     header = indent + "function (";
                 else if (IsPublic)
-                    header = indent + "var " + Name + " = function (";
+                {
+                    if (string.IsNullOrEmpty(Type))
+                        header = indent + "var " + Name + " = function (";
+                    else
+                        header = indent + Type + " " + Name + " = function (";
+                }
                 else
                     header = indent + "function " + Name + " (";
 

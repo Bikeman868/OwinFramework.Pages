@@ -26,5 +26,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// The asset manager is a singleton and therefore alwaya available
         /// </summary>
         IAssetManager AssetManager { get; }
+
+        /// <summary>
+        /// Factory for constructing CSS writers
+        /// </summary>
+        ICssWriterFactory CssWriterFactory { get; }
+
+        /// <summary>
+        /// Factory for constructing Javascript writers
+        /// </summary>
+        IJavascriptWriterFactory JavascriptWriterFactory { get; }
     }
 }

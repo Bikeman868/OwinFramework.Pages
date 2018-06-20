@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
     /// <summary>
     /// Specifies the outcome of the writing operation
     /// </summary>
-    public interface IWriteResult
+    public interface IWriteResult: IDisposable
     {
         /// <summary>
         /// Writers can set this flag to indicate that they completely wrote

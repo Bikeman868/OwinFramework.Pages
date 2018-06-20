@@ -70,7 +70,7 @@
     <Compile Include="Builders\ComponentBuilder.cs" />
     <Compile Include="Builders\ComponentDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
-    <Compile Include="Builders\IHtmlHelper.cs" />
+    <Compile Include="Interfaces\IHtmlHelper.cs" />
     <Compile Include="Builders\LayoutBuilder.cs" />
     <Compile Include="Builders\ModuleBuilder.cs" />
     <Compile Include="Builders\ModuleDefinition.cs" />
@@ -82,6 +82,10 @@
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Component.cs" />
+    <Compile Include="Runtime\CssWriter.cs" />
+    <Compile Include="Runtime\CssWriterFactory.cs" />
+    <Compile Include="Runtime\JavascriptWriter.cs" />
+    <Compile Include="Runtime\JavascriptWriterFactory.cs" />
     <Compile Include="Runtime\ModuleDependencies.cs" />
     <Compile Include="Runtime\ModuleDependenciesFactory.cs" />
     <Compile Include="Runtime\Element.cs" />

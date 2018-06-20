@@ -25,6 +25,7 @@ namespace OwinFramework.Pages.Core.Attributes
             FunctionName = functionName;
             Parameters = parameters;
             Body = body;
+            IsPublic = true;
         }
 
         /// <summary>
@@ -46,5 +47,10 @@ namespace OwinFramework.Pages.Core.Attributes
         /// The body of the function
         /// </summary>
         public string Body { get; set; }
+
+        /// <summary>
+        /// True to export this function from the package namespace
+        /// </summary>
+        public bool IsPublic { get; set; }
     }
 }

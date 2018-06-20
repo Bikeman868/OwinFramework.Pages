@@ -31,15 +31,10 @@ namespace Sample1.SamplePages
             return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer, bool includeChildren)
+        public override IWriteResult WriteDynamicCss(ICssWriter writer, bool includeChildren)
         {
-            if (assetType == AssetType.Style)
-            {
-                writer.WriteOpenTag("style");
-                writer.WriteLine(".normal { background-color: linen; font-size: 12px; }");
-                writer.WriteLine(".page-heading { font-size: 16px; }");
-                writer.WriteCloseTag("style");
-            }
+            writer.WriteRule(".normal", "background-color: linen; font-size: 12px;");
+            writer.WriteRule(".page-heading", "font-size: 16px;");
             return WriteResult.Continue();
         }
 

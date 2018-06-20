@@ -90,14 +90,19 @@ namespace OwinFramework.Pages.Html.Builders
             return null;
         }
 
-        public IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
+        public IWriteResult WriteStaticCss(ICssWriter writer)
         {
-            return Parent.WriteStaticAssets(assetType, writer);
+            return Parent.WriteStaticCss(writer);
         }
 
-        public IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer, bool includeChildren)
+        public IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
         {
-            var result = Parent.WriteDynamicAssets(assetType, writer, false);
+            return Parent.WriteStaticJavascript(writer);
+        }
+
+        public IWriteResult WriteDynamicCss(ICssWriter writer, bool includeChildren = true)
+        {
+            var result = Parent.WriteDynamicCss(writer, false);
             if (!includeChildren) return result;
 
             var children = GetChildren();
@@ -107,7 +112,30 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteDynamicAssets(assetType, writer));
+                    result.Add(children.Current.WriteDynamicCss(writer));
+                }
+            }
+            finally
+            {
+                children.Dispose();
+            }
+
+            return result;
+        }
+
+        public IWriteResult WriteDynamicJavascript(IJavascriptWriter writer, bool includeChildren = true)
+        {
+            var result = Parent.WriteDynamicJavascript(writer, false);
+            if (!includeChildren) return result;
+
+            var children = GetChildren();
+            if (children == null) return result;
+
+            try
+            {
+                while (!result.IsComplete && children.MoveNext())
+                {
+                    result.Add(children.Current.WriteDynamicJavascript(writer));
                 }
             }
             finally
@@ -189,5 +217,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             return result;
         }
+
+
     }
 }

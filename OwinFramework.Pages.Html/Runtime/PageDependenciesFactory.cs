@@ -12,17 +12,23 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly IDataContextFactory _dataContextFactory;
         private readonly IAssetManager _assetManager;
         private readonly INameManager _nameManager;
+        private readonly ICssWriterFactory _cssWriterFactory;
+        private readonly IJavascriptWriterFactory _javascriptWriterFactory;
 
         public PageDependenciesFactory(
             IRenderContextFactory renderContextFactory,
             IDataContextFactory dataContextFactory,
             IAssetManager assetManager,
-            INameManager nameManager)
+            INameManager nameManager,
+            ICssWriterFactory cssWriterFactory,
+            IJavascriptWriterFactory javascriptWriterFactory)
         {
             _renderContextFactory = renderContextFactory;
             _dataContextFactory = dataContextFactory;
             _assetManager = assetManager;
             _nameManager = nameManager;
+            _cssWriterFactory = cssWriterFactory;
+            _javascriptWriterFactory = javascriptWriterFactory;
         }
 
         public IPageDependencies Create(IOwinContext context)
@@ -43,6 +49,16 @@ namespace OwinFramework.Pages.Html.Runtime
         public IAssetManager AssetManager
         {
             get { return _assetManager; }
+        }
+
+        public ICssWriterFactory CssWriterFactory
+        {
+            get { return _cssWriterFactory; }
+        }
+
+        public IJavascriptWriterFactory JavascriptWriterFactory
+        {
+            get { return _javascriptWriterFactory; }
         }
     }
 }

@@ -17,6 +17,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IAssetManager _assetManager;
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly BuiltComponent _component;
+        private readonly List<FunctionDefinition> _functionDefinitions;
         private readonly List<CssDefinition> _cssDefinitions;
         private readonly List<HtmlDefinition> _htmlToRender;
 
@@ -24,6 +25,15 @@ namespace OwinFramework.Pages.Html.Builders
         {
             public string Selector;
             public string Style;
+        }
+
+        private class FunctionDefinition
+        {
+            public string ReturnType;
+            public string FunctionName;
+            public string Parameters;
+            public string Body;
+            public bool IsPublic;
         }
 
         private class HtmlDefinition
@@ -43,6 +53,7 @@ namespace OwinFramework.Pages.Html.Builders
             _componentDependenciesFactory = componentDependenciesFactory;
             _component = new BuiltComponent(componentDependenciesFactory);
             _cssDefinitions = new List<CssDefinition>();
+            _functionDefinitions = new List<FunctionDefinition>();
             _htmlToRender = new List<HtmlDefinition>();
         }
 
@@ -137,53 +148,45 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IComponentDefinition IComponentDefinition.DeployFunction(string returnType, string functionName, string parameters, string functionBody)
+        IComponentDefinition IComponentDefinition.DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic)
         {
-            if (string.IsNullOrEmpty(functionName))
-                throw new ComponentBuilderException("No function name is specified for component function asset");
-
-            if (_component.FunctionAssets == null)
-                _component.FunctionAssets = new List<Action<IHtmlWriter>>();
-
-            var declaration = (string.IsNullOrEmpty(returnType) ? "function " : returnType + " function ") + functionName + "(" + parameters + ") {";
-            _component.FunctionAssets.Add(w =>
+            var functionDefinition = new FunctionDefinition 
             {
-                w.WriteLine(declaration);
-                w.IndentLevel++;
-            });
+                ReturnType = returnType,
+                FunctionName = functionName,
+                Parameters = parameters,
+                Body = functionBody,
+                IsPublic = isPublic
+            };
 
-            foreach (var line in functionBody.Replace("\r", "").Split('\n'))
-            {
-                if (!string.IsNullOrEmpty(line))
-                {
-                    var l = line;
-                    _component.FunctionAssets.Add(w => w.WriteLine(l));
-                }
-            }
-            _component.FunctionAssets.Add(w =>
-            {
-                w.IndentLevel--;
-                w.WriteLine("}");
-            });
+            _functionDefinitions.Add(functionDefinition);
 
             return this;
         }
 
         public IComponent Build()
         {
-            _component.StyleAssets = _cssDefinitions
+            _component.CssRules = _cssDefinitions
                 .Select(d =>
                 {
-                    var selector = d.Selector;
                     if (_component.Package == null)
-                        selector = selector.Replace(".{ns}_", ".");
+                        d.Selector = d.Selector.Replace(".{ns}_", ".");
                     else
-                        selector = selector.Replace(".{ns}_", "." + _component.Package.NamespaceName + "_");
-                    return selector + " { " + d.Style + " }";
+                        d.Selector = d.Selector.Replace(".{ns}_", "." + _component.Package.NamespaceName + "_");
+                    return d;
                 })
-                .Select(style =>
+                .Select(d =>
                 {
-                    Action<IHtmlWriter> writeAction = w => w.WriteLine(style);
+                    Action<ICssWriter> writeAction = w => w.WriteRule(d.Selector, d.Style);
+                    return writeAction;
+                })
+                .ToList();
+
+            _component.JavascriptFunctions = _functionDefinitions
+                .Select(d =>
+                {
+                    Action<IJavascriptWriter> writeAction = w => w.WriteFunction(
+                        d.FunctionName, d.Parameters, d.Body, d.ReturnType, _component.Package, d.IsPublic);
                     return writeAction;
                 })
                 .ToList();

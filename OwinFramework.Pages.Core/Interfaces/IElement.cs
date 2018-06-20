@@ -49,8 +49,8 @@ namespace OwinFramework.Pages.Core.Interfaces
         IEnumerator<IElement> GetChildren();
 
         /// <summary>
-        /// This is where the element is responsible for outputting its static assets.
-        /// Static assets are defined as assets whose names are fixed at design time
+        /// This is where the element is responsible for outputting its static CSS classes.
+        /// Static classes are defined as styles whose names are fixed at design time
         /// and can therefore be written to a file and served statically. The
         /// name will be prefixed with a namespace from the package it belomgs to.
         /// This method can be called during page rendering to write the assets
@@ -58,14 +58,28 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// file, or it could be called during deployment to produce an asset
         /// file that is deployed and served statically
         /// </summary>
-        /// <param name="assetType">The type of asset to write</param>
         /// <param name="writer">The text writer to srite them to</param>
         /// <rereturns>An object indicating how/when the write was completed.
         /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer);
+        IWriteResult WriteStaticCss(ICssWriter writer);
 
         /// <summary>
-        /// This is where the element is responsible for outputting its dynamic assets.
+        /// This is where the element is responsible for outputting its static Javascript functions.
+        /// Static functions are defined as functions whose names are fixed at design time
+        /// and can therefore be written to a file and served statically. The
+        /// name will be prefixed with a namespace from the package it belomgs to.
+        /// This method can be called during page rendering to write the assets
+        /// into the page, it could be called once at startup to create an asset
+        /// file, or it could be called during deployment to produce an asset
+        /// file that is deployed and served statically
+        /// </summary>
+        /// <param name="writer">The text writer to srite them to</param>
+        /// <rereturns>An object indicating how/when the write was completed.
+        /// You can return null if the write completed normally and synchronously</rereturns>
+        IWriteResult WriteStaticJavascript(IJavascriptWriter writer);
+
+        /// <summary>
+        /// This is where the element is responsible for outputting its dynamic css rules.
         /// Dynamic assets are defined as assets whose names are randomly
         /// generated at runtime and are therefore different on each web server.
         /// These types of asset are always rendered into the page.
@@ -76,11 +90,27 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// be called once for the page and the output cached for reuse on all subsequent
         /// pages.
         /// </summary>
-        /// <param name="assetType">The type of asset to write</param>
+        /// <param name="writer">The text writer to srite them to</param>
+        /// <param name="includeChildren">When true recursively traverses the element
+        /// tree below this one writing the dynamic CSS for all the descendants</param>
+        IWriteResult WriteDynamicCss(ICssWriter writer, bool includeChildren = true);
+
+        /// <summary>
+        /// This is where the element is responsible for outputting its dynamic Javascript.
+        /// Dynamic assets are defined as assets whose names are randomly
+        /// generated at runtime and are therefore different on each web server.
+        /// These types of asset are always rendered into the page.
+        /// The recommended approach is to generate these names using the INameManager
+        /// in the constructor of your element and keep using the same names
+        /// for the lifetime of the instance.
+        /// This method might be called in the context of rendering a page, or it might
+        /// be called once for the page and the output cached for reuse on all subsequent
+        /// pages.
+        /// </summary>
         /// <param name="writer">The text writer to srite them to</param>
         /// <param name="includeChildren">When true recursively traverses the element
         /// tree below this one writing the dynamic assets for all the descendants</param>
-        IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer, bool includeChildren = true);
+        IWriteResult WriteDynamicJavascript(IJavascriptWriter writer, bool includeChildren = true);
 
         /// <summary>
         /// This is where the element gets an opportunity to write JavaScript into the page

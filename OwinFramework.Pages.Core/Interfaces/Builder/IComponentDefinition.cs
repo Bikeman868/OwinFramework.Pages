@@ -65,7 +65,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="functionName">The name of this function. For example "getData"</param>
         /// <param name="parameters">TOptional parameters to this function. For example "id, name"</param>
         /// <param name="functionBody">The body of this function. For example "alert('Hello, world');"</param>
-        IComponentDefinition DeployFunction(string returnType, string functionName, string parameters, string functionBody);
+        /// <param name="isPublic">Pass true to export this function from the package namespace</param>
+        IComponentDefinition DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic);
 
         /// <summary>
         /// Overrides the default asset deployment scheme for this component

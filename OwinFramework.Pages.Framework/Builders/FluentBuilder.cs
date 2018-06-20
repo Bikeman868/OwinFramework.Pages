@@ -447,7 +447,8 @@ namespace OwinFramework.Pages.Framework.Builders
                     attributes.DeployFunction.ReturnType,
                     attributes.DeployFunction.FunctionName,
                     attributes.DeployFunction.Parameters,
-                    attributes.DeployFunction.Body);
+                    attributes.DeployFunction.Body,
+                    attributes.DeployFunction.IsPublic);
 
             component.Build();
         }

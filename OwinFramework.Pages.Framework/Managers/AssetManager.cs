@@ -22,6 +22,8 @@ namespace OwinFramework.Pages.Framework.Managers
     {
         private readonly IFrameworkConfiguration _frameworkConfiguration;
         private readonly IHtmlWriterFactory _htmlWriterFactory;
+        private readonly ICssWriterFactory _cssWriterFactory;
+        private readonly IJavascriptWriterFactory _javascriptWriterFactory;
         private readonly IStringBuilderFactory _stringBuilderFactory;
 
         public string DefaultLanguage { get { return _frameworkConfiguration.DefaultLanguage; } }
@@ -50,11 +52,15 @@ namespace OwinFramework.Pages.Framework.Managers
             IRequestRouter requestRouter,
             IFrameworkConfiguration frameworkConfiguration,
             IHtmlWriterFactory htmlWriterFactory,
+            ICssWriterFactory cssWriterFactory,
+            IJavascriptWriterFactory javascriptWriterFactory,
             IStringBuilderFactory stringBuilderFactory,
             IDictionaryFactory dictionaryFactory)
         {
             _frameworkConfiguration = frameworkConfiguration;
             _htmlWriterFactory = htmlWriterFactory;
+            _cssWriterFactory = cssWriterFactory;
+            _javascriptWriterFactory = javascriptWriterFactory;
             _stringBuilderFactory = stringBuilderFactory;
 
             _elementsAddedToWebsite = new HashSet<string>();
@@ -142,17 +148,27 @@ namespace OwinFramework.Pages.Framework.Managers
 
         private void GetStaticAssets(IElement element, AssetType assetType, IStringBuilder stringBuilder)
         {
-            var writer = _htmlWriterFactory.Create();
-            try
+            if (assetType == AssetType.Script)
             {
-                var writeResult = element.WriteStaticAssets(assetType, writer);
-                writeResult.Wait();
-                writeResult.Dispose();
-                writer.ToStringBuilder(stringBuilder);
+                using (var writer = _javascriptWriterFactory.Create())
+                {
+                    using (var writeResult = element.WriteStaticJavascript(writer))
+                    {
+                        writeResult.Wait();
+                        writer.ToStringBuilder(stringBuilder);
+                    }
+                }
             }
-            finally
+            else if (assetType == AssetType.Style)
             {
-                writer.Dispose();
+                using (var writer = _cssWriterFactory.Create())
+                {
+                    using (var writeResult = element.WriteStaticCss(writer))
+                    {
+                        writeResult.Wait();
+                        writer.ToStringBuilder(stringBuilder);
+                    }
+                }
             }
         }
 

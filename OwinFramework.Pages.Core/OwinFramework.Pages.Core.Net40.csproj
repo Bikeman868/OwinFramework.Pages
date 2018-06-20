@@ -140,7 +140,11 @@
     <Compile Include="Interfaces\Collections\IQueueFactory.cs" />
     <Compile Include="Interfaces\Collections\IThreadSafeDictionary.cs" />
     <Compile Include="Interfaces\Runtime\IDataContextFactory.cs" />
+    <Compile Include="Interfaces\Runtime\ICssWriter.cs" />
+    <Compile Include="Interfaces\Runtime\IJavascriptWriterFactory.cs" />
+    <Compile Include="Interfaces\Runtime\IJavascriptWriter.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriter.cs" />
+    <Compile Include="Interfaces\Runtime\ICssWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IInitializationData.cs" />
     <Compile Include="Interfaces\Runtime\IReusable.cs" />

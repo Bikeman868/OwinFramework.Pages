@@ -43,17 +43,25 @@ namespace OwinFramework.Pages.Html.Runtime
         public virtual IModule Module { get; set; }
 
         /// <summary>
-        /// Override to output static assets
+        /// Override to output static CSS
         /// </summary>
-        public virtual IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
+        public virtual IWriteResult WriteStaticCss(ICssWriter writer)
         {
             return WriteResult.Continue();
         }
 
         /// <summary>
-        /// Override to output dynamic assets
+        /// Override to output static CSS
         /// </summary>
-        public virtual IWriteResult WriteDynamicAssets(AssetType assetType, IHtmlWriter writer, bool includeChildren)
+        public virtual IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
+        {
+            return WriteResult.Continue();
+        }
+
+        /// <summary>
+        /// Override to output dynamic CSS
+        /// </summary>
+        public virtual IWriteResult WriteDynamicCss(ICssWriter writer, bool includeChildren)
         {
             var result = WriteResult.Continue();
             if (!includeChildren) return result;
@@ -65,7 +73,33 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteDynamicAssets(assetType, writer));
+                    result.Add(children.Current.WriteDynamicCss(writer));
+                }
+            }
+            finally
+            {
+                children.Dispose();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Override to output dynamic Javascript
+        /// </summary>
+        public virtual IWriteResult WriteDynamicJavascript(IJavascriptWriter writer, bool includeChildren)
+        {
+            var result = WriteResult.Continue();
+            if (!includeChildren) return result;
+
+            var children = GetChildren();
+            if (children == null) return result;
+
+            try
+            {
+                while (!result.IsComplete && children.MoveNext())
+                {
+                    result.Add(children.Current.WriteDynamicJavascript(writer));
                 }
             }
             finally

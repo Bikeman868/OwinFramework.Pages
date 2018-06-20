@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
@@ -11,7 +12,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     /// writing HTML elements and also for allowing multiple threads to simultaneously
     /// write into different parts of the output buffer.
     /// </summary>
-    public interface IHtmlWriter
+    public interface IHtmlWriter: IDisposable
     {
         /// <summary>
         /// Returns a TextWriter implementation that allows you to write html

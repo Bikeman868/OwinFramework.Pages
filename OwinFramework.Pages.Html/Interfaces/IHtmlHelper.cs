@@ -1,4 +1,4 @@
-﻿namespace OwinFramework.Pages.Html.Builders
+﻿namespace OwinFramework.Pages.Html.Interfaces
 {
     public interface IHtmlHelper
     {

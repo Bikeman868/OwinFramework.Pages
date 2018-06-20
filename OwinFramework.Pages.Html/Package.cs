@@ -26,9 +26,13 @@ namespace OwinFramework.Pages.Html
             {
                 return new List<IocRegistration>
                 {
-                    // The Html writer has dependencies so it needs to be constructed by IoC
+                    // The writers have dependencies so it needs to be constructed by IoC
                     new IocRegistration().Init<IHtmlWriterFactory, HtmlWriterFactory>(),
                     new IocRegistration().Init<IHtmlWriter, HtmlWriter>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<ICssWriterFactory, CssWriterFactory>(),
+                    new IocRegistration().Init<ICssWriter, CssWriter>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IJavascriptWriterFactory, JavascriptWriterFactory>(),
+                    new IocRegistration().Init<IJavascriptWriter, JavascriptWriter>(IocLifetime.MultiInstance),
 
                     // These wrap the injected dependencies of classes that are designed to
                     // be base classes that applications can inherit from. The IoC dependencies

@@ -10,8 +10,8 @@ namespace OwinFramework.Pages.Html.Builders
     internal class BuiltComponent : Component
     {
         public List<Action<IRenderContext>> HtmlWriters;
-        public List<Action<IHtmlWriter>> StyleAssets;
-        public List<Action<IHtmlWriter>> FunctionAssets;
+        public List<Action<ICssWriter>> CssRules;
+        public List<Action<IJavascriptWriter>> JavascriptFunctions;
 
         public BuiltComponent(IComponentDependenciesFactory dependencies)
             : base(dependencies)
@@ -33,31 +33,34 @@ namespace OwinFramework.Pages.Html.Builders
             return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteStaticAssets(AssetType assetType, IHtmlWriter writer)
+        public override IWriteResult WriteStaticCss(ICssWriter writer)
         {
-            List<Action<IHtmlWriter>> assets = null;
-            var commentStyle = CommentStyle.SingleLineC;
-
-            if (assetType == AssetType.Style)
-            {
-                assets = StyleAssets;
-                commentStyle = CommentStyle.MultiLineC;
-            }
-            else if (assetType == AssetType.Script)
-            {
-                assets = FunctionAssets;
-            }
-
-            if (assets != null && assets.Count > 0)
+            if (CssRules != null && CssRules.Count > 0)
             {
                 writer.WriteComment(
-                        assetType + " assets for " +
+                        "css rules for " +
+                        (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
+                        (Package == null ? " component" : " component from the " + Package.Name + " package"));
+
+                foreach (var rule in CssRules)
+                    rule(writer);
+            }
+
+            return WriteResult.Continue();
+        }
+
+        public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
+        {
+            if (JavascriptFunctions != null && JavascriptFunctions.Count > 0)
+            {
+                writer.WriteComment(
+                        "javascript functions for " +
                         (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
                         (Package == null ? " component" : " component from the " + Package.Name + " package"),
-                        commentStyle);
+                        CommentStyle.SingleLineC);
 
-                foreach (var asset in assets)
-                    asset(writer);
+                foreach (var javascriptFunction in JavascriptFunctions)
+                    javascriptFunction(writer);
             }
 
             return WriteResult.Continue();

@@ -20,26 +20,28 @@ namespace OwinFramework.Pages.Html.Builders
         public RegionDefinition(
             INameManager nameManager,
             IHtmlHelper htmlHelper,
-            IRegionDependenciesFactory regionDependenciesFactory)
+            IRegionDependenciesFactory regionDependenciesFactory,
+            IPackage package)
         {
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _region = new BuiltRegion(regionDependenciesFactory);
+            _region.Package = package;
         }
 
-        public IRegionDefinition Name(string name)
+        IRegionDefinition IRegionDefinition.Name(string name)
         {
             _region.Name = name;
             return this;
         }
 
-        public IRegionDefinition PartOf(IPackage package)
+        IRegionDefinition IRegionDefinition.PartOf(IPackage package)
         {
             _region.Package = package;
             return this;
         }
 
-        public IRegionDefinition PartOf(string packageName)
+        IRegionDefinition IRegionDefinition.PartOf(string packageName)
         {
             _region.Package = _nameManager.ResolvePackage(packageName);
 
@@ -50,19 +52,19 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IRegionDefinition AssetDeployment(AssetDeployment assetDeployment)
+        IRegionDefinition IRegionDefinition.AssetDeployment(AssetDeployment assetDeployment)
         {
             _region.AssetDeployment = assetDeployment;
             return this;
         }
 
-        public IRegionDefinition Layout(ILayout layout)
+        IRegionDefinition IRegionDefinition.Layout(ILayout layout)
         {
             _region.Populate(layout);
             return this;
         }
 
-        public IRegionDefinition Layout(string layoutName)
+        IRegionDefinition IRegionDefinition.Layout(string layoutName)
         {
             _nameManager.AddResolutionHandler(() =>
             {
@@ -71,13 +73,13 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IRegionDefinition Component(IComponent component)
+        IRegionDefinition IRegionDefinition.Component(IComponent component)
         {
             _region.Populate(component);
             return this;
         }
 
-        public IRegionDefinition Component(string componentName)
+        IRegionDefinition IRegionDefinition.Component(string componentName)
         {
             _nameManager.AddResolutionHandler(() =>
             {
@@ -86,49 +88,49 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IRegionDefinition Tag(string tagName)
+        IRegionDefinition IRegionDefinition.Tag(string tagName)
         {
             _tagName = tagName;
             return this;
         }
 
-        public IRegionDefinition ClassNames(params string[] classNames)
+        IRegionDefinition IRegionDefinition.ClassNames(params string[] classNames)
         {
             _classNames = classNames;
             return this;
         }
 
-        public IRegionDefinition Style(string style)
+        IRegionDefinition IRegionDefinition.Style(string style)
         {
             _style = style;
             return this;
         }
 
-        public IRegionDefinition ForEach<T>(string tag, string style, params string[] classes)
+        IRegionDefinition IRegionDefinition.ForEach<T>(string tag, string style, params string[] classes)
         {
             // TODO: Data binding
             return this;
         }
 
-        public IRegionDefinition BindTo<T>() where T : class
+        IRegionDefinition IRegionDefinition.BindTo<T>() 
         {
             // TODO: Data binding
             return this;
         }
 
-        public IRegionDefinition BindTo(Type dataType)
+        IRegionDefinition IRegionDefinition.BindTo(Type dataType)
         {
             // TODO: Data binding
             return this;
         }
 
-        public IRegionDefinition DataContext(string dataContextName)
+        IRegionDefinition IRegionDefinition.DataProvider(string dataProviderName)
         {
             // TODO: Data binding
             return this;
         }
 
-        public IRegionDefinition ForEach(Type dataType, string tag, string style, params string[] classes)
+        IRegionDefinition IRegionDefinition.ForEach(Type dataType, string tag, string style, params string[] classes)
         {
             // TODO: Data binding
             return this;
@@ -137,6 +139,21 @@ namespace OwinFramework.Pages.Html.Builders
         IRegionDefinition IRegionDefinition.DeployIn(IModule module)
         {
             _region.Module = module;
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.DataScope(string scopeName)
+        {
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.NeedsComponent(string componentName)
+        {
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.NeedsComponent(IComponent component)
+        {
             return this;
         }
 
@@ -149,7 +166,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IRegion Build()
+        IRegion IRegionDefinition.Build()
         {
             if (!string.IsNullOrEmpty(_tagName))
             {

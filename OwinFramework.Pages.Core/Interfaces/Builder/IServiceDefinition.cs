@@ -65,12 +65,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IServiceDefinition BindTo(Type dataType);
 
         /// <summary>
-        /// Specifies that this component has a dependency on a specifc data context.
-        /// You can call this multiple times to add more dependencies
+        /// Specifies the data scope. This will be used to identify the appropriate
+        /// data providers
         /// </summary>
-        /// <param name="dataContextName">The name of the context handler that
-        /// must be executed before rendering this component</param>
-        IServiceDefinition DataContext(string dataContextName);
+        /// <param name="scopeName">The name of the data scope to use when resolving data providers</param>
+        IServiceDefinition DataScope(string scopeName);
+
+        /// <summary>
+        /// Specifies the name of a data provider. This is used as the first step in
+        /// resolving data provision. If these providers do not provide all of the required
+        /// data then there is a second step of finding data providers using the scope.
+        /// </summary>
+        /// <param name="providerName">The name of a specific data provider</param>
+        IServiceDefinition DataProvider(string providerName);
 
         /// <summary>
         /// Builds the service

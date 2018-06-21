@@ -10,6 +10,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Starts building a new page
         /// </summary>
-        IPageDefinition Page(Type declaringType = null);
+        IPageDefinition Page(Type declaringType = null, IPackage package = null);
     }
 }

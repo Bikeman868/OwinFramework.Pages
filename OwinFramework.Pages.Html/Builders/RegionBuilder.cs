@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Builder;
+﻿using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Html.Interfaces;
 using OwinFramework.Pages.Html.Runtime;
@@ -26,9 +27,9 @@ namespace OwinFramework.Pages.Html.Builders
             _regionDependenciesFactory = regionDependenciesFactory;
         }
 
-        IRegionDefinition IRegionBuilder.Region()
+        IRegionDefinition IRegionBuilder.Region(IPackage package)
         {
-            return new RegionDefinition(_nameManager, _htmlHelper, _regionDependenciesFactory);
+            return new RegionDefinition(_nameManager, _htmlHelper, _regionDependenciesFactory, package);
         }
     }
 }

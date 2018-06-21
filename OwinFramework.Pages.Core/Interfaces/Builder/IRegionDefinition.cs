@@ -114,12 +114,37 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition BindTo(Type dataType);
 
         /// <summary>
-        /// Specifies that this component has a dependency on a specifc data context.
-        /// You can call this multiple times to add more dependencies
+        /// Specifies the data scope. This will be used to identify the appropriate
+        /// data providers
         /// </summary>
-        /// <param name="dataContextName">The name of the context handler that
-        /// must be executed before rendering this component</param>
-        IRegionDefinition DataContext(string dataContextName);
+        /// <param name="scopeName">The name of the data scope to use when resolving data providers</param>
+        IRegionDefinition DataScope(string scopeName);
+
+        /// <summary>
+        /// Specifies the name of a data provider. This is used as the first step in
+        /// resolving data provision. If these providers do not provide all of the required
+        /// data then there is a second step of finding data providers using the scope.
+        /// </summary>
+        /// <param name="providerName">The name of a specific data provider</param>
+        IRegionDefinition DataProvider(string providerName);
+
+        /// <summary>
+        /// Specifies a component that renders output to the page that this element
+        /// depends on. For example if you have a component that renders a link to the
+        /// Boostrap library, any other components that use Bootstrap can ensure it is
+        /// included on the page.
+        /// </summary>
+        /// <param name="componentName">The name of the component that this element depends on</param>
+        IRegionDefinition NeedsComponent(string componentName);
+
+        /// <summary>
+        /// Specifies a component that renders output to the page that this element
+        /// depends on. For example if you have a component that renders a link to the
+        /// Boostrap library, any other components that use Bootstrap can ensure it is
+        /// included on the page.
+        /// </summary>
+        /// <param name="component">The component that this element depends on</param>
+        IRegionDefinition NeedsComponent(IComponent component);
 
         /// <summary>
         /// Causes the region to be rendered multiple times, once

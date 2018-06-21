@@ -142,39 +142,39 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.IsService != null) BuildService(attributes);
         }
 
-        public IComponentDefinition Component()
+        public IComponentDefinition Component(IPackage package)
         {
             if (ComponentBuilder == null)
                 throw new BuilderException("There is no build engine installed that knows how to build components");
-            return ComponentBuilder.Component();
+            return ComponentBuilder.Component(package ?? _packageContext);
         }
 
-        public IRegionDefinition Region()
+        public IRegionDefinition Region(IPackage package)
         {
             if (RegionBuilder == null)
                 throw new BuilderException("There is no build engine installed that knows how to build regions");
-            return RegionBuilder.Region();
+            return RegionBuilder.Region(package ?? _packageContext);
         }
 
-        public ILayoutDefinition Layout()
+        public ILayoutDefinition Layout(IPackage package)
         {
             if (LayoutBuilder == null)
                 throw new BuilderException("There is no build engine installed that knows how to build layouts");
-            return LayoutBuilder.Layout();
+            return LayoutBuilder.Layout(package ?? _packageContext);
         }
 
-        public IPageDefinition Page(Type declaringType)
+        public IPageDefinition Page(Type declaringType, IPackage package)
         {
             if (PageBuilder == null)
                 throw new BuilderException("There is no build engine installed that knows how to build pages");
-            return PageBuilder.Page(declaringType);
+            return PageBuilder.Page(declaringType, package ?? _packageContext);
         }
 
-        public IServiceDefinition Service(Type declaringType)
+        public IServiceDefinition Service(Type declaringType, IPackage package)
         {
             if (ServiceBuilder == null)
                 throw new BuilderException("There is no build engine installed that knows how to build services");
-            return ServiceBuilder.Service();
+            return ServiceBuilder.Service(declaringType, package ?? _packageContext);
         }
 
         public IModuleDefinition Module()
@@ -208,11 +208,8 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private void BuildPage(AttributeSet attributes)
         {
-            var page = Page(attributes.Type)
+            var page = Page(attributes.Type, _packageContext)
                 .Name(attributes.IsPage.Name);
-
-            if (_packageContext != null)
-                page.PartOf(_packageContext);
 
             if (attributes.DeployedAs != null)
                 page.AssetDeployment(attributes.DeployedAs.Deployment)
@@ -236,7 +233,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 foreach (var needsData in attributes.NeedsDatas)
                 {
                     if (!string.IsNullOrEmpty(needsData.DataProviderName))
-                        page.DataContext(needsData.DataProviderName);
+                        page.DataProvider(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
                         page.BindTo(needsData.DataType);
@@ -247,7 +244,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionComponent in attributes.RegionComponents)
                 {
-                    page.Component(regionComponent.Region, regionComponent.Component);
+                    page.RegionComponent(regionComponent.Region, regionComponent.Component);
                 }
             }
 
@@ -272,12 +269,9 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private void BuildLayout(AttributeSet attributes)
         {
-            var layout = Layout()
+            var layout = Layout(_packageContext)
                 .Name(attributes.IsLayout.Name)
                 .RegionNesting(attributes.IsLayout.RegionNesting);
-
-            if (_packageContext != null)
-                layout.PartOf(_packageContext);
 
             if (attributes.DeployedAs != null)
                 layout.AssetDeployment(attributes.DeployedAs.Deployment)
@@ -291,7 +285,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 foreach (var needsData in attributes.NeedsDatas)
                 {
                     if (!string.IsNullOrEmpty(needsData.DataProviderName))
-                        layout.DataContext(needsData.DataProviderName);
+                        layout.DataProvider(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
                         layout.BindTo(needsData.DataType);
@@ -345,11 +339,8 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private void BuildRegion(AttributeSet attributes)
         {
-            var region = Region()
+            var region = Region(_packageContext)
                 .Name(attributes.IsRegion.Name);
-
-            if (_packageContext != null)
-                region.PartOf(_packageContext);
 
             if (attributes.DeployedAs != null)
                 region.AssetDeployment(attributes.DeployedAs.Deployment)
@@ -360,7 +351,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 foreach (var needsData in attributes.NeedsDatas)
                 {
                     if (!string.IsNullOrEmpty(needsData.DataProviderName))
-                        region.DataContext(needsData.DataProviderName);
+                        region.DataProvider(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
                         region.BindTo(needsData.DataType);
@@ -405,11 +396,8 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private void BuildComponent(AttributeSet attributes)
         {
-            var component = Component()
+            var component = Component(_packageContext)
                 .Name(attributes.IsComponent.Name);
-
-            if (_packageContext != null)
-                component.PartOf(_packageContext);
 
             if (attributes.DeployedAs != null)
                 component.AssetDeployment(attributes.DeployedAs.Deployment)
@@ -423,7 +411,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 foreach (var needsData in attributes.NeedsDatas)
                 {
                     if (!string.IsNullOrEmpty(needsData.DataProviderName))
-                        component.DataContext(needsData.DataProviderName);
+                        component.DataProvider(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
                         component.BindTo(needsData.DataType);
@@ -455,7 +443,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private void BuildService(AttributeSet attributes)
         {
-            var service = Service(attributes.Type)
+            var service = Service(attributes.Type, _packageContext)
                 .Name(attributes.IsService.Name);
 
             service.Build();

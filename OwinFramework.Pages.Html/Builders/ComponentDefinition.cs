@@ -46,7 +46,8 @@ namespace OwinFramework.Pages.Html.Builders
         public ComponentDefinition(
             INameManager nameManager,
             IAssetManager assetManager,
-            IComponentDependenciesFactory componentDependenciesFactory)
+            IComponentDependenciesFactory componentDependenciesFactory,
+            IPackage package)
         {
             _nameManager = nameManager;
             _assetManager = assetManager;
@@ -55,6 +56,8 @@ namespace OwinFramework.Pages.Html.Builders
             _cssDefinitions = new List<CssDefinition>();
             _functionDefinitions = new List<FunctionDefinition>();
             _htmlToRender = new List<HtmlDefinition>();
+
+            _component.Package = package;
         }
 
         IComponentDefinition IComponentDefinition.Name(string name)
@@ -96,7 +99,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IComponentDefinition IComponentDefinition.DataContext(string dataContextName)
+        IComponentDefinition IComponentDefinition.DataProvider(string providerName)
+        {
+            return this;
+        }
+
+        IComponentDefinition IComponentDefinition.DataScope(string scopeName)
         {
             return this;
         }
@@ -161,6 +169,16 @@ namespace OwinFramework.Pages.Html.Builders
 
             _functionDefinitions.Add(functionDefinition);
 
+            return this;
+        }
+
+        IComponentDefinition IComponentDefinition.NeedsComponent(string componentName)
+        {
+            return this;
+        }
+
+        IComponentDefinition IComponentDefinition.NeedsComponent(IComponent component)
+        {
             return this;
         }
 

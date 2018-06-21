@@ -12,10 +12,10 @@ namespace Sample1.SamplePackages
     /// This demonstrates how to write a code only package. This package defines
     /// a layout called 'menu' that will display a list of 'MenuItem' objects
     /// from the data context.
-    /// To use this package put the 'Menu' layout into a region and write a
-    /// context handler to add a list of MenuPackage.MenuItem objects to the
+    /// To use this package put the 'Menu' region into a layout and write a
+    /// context handler to add a list of MenuItem objects to the
     /// data context.
-    /// Note that adding the [IsPackahe] attribute will make this package
+    /// Note that adding the [IsPackage] attribute will make this package
     /// register automatically if you register the assembly that contains it, 
     /// which means that you can not override the namespace.
     /// If you want to override the namespace on a package that has the
@@ -25,7 +25,9 @@ namespace Sample1.SamplePackages
     [IsPackage("menu")]
     public class MenuPackage : OwinFramework.Pages.Framework.Runtime.Package
     {
+        // I created and tested the CSS/Html for this package here:
         // https://www.w3schools.com/code/tryit.asp?filename=FSITSDF3RKHE
+
         private readonly IPackageDependenciesFactory _dependencies;
 
         public MenuPackage(IPackageDependenciesFactory dependencies)
@@ -37,6 +39,7 @@ namespace Sample1.SamplePackages
         public class MenuItem
         {
             public string Name { get; set; }
+            public string Url { get; set; }
             public List<MenuItem> SubMenu { get; set; }
         }
 
@@ -50,12 +53,13 @@ namespace Sample1.SamplePackages
                 var communityMenu = new MenuItem
                 {
                     Name = "Community",
+                    Url = "javascript:void(0);",
                     SubMenu = new List<MenuItem>
                     {
-                        new MenuItem { Name = "Following" },
-                        new MenuItem { Name = "Recent posts" },
-                        new MenuItem { Name = "Most popular" },
-                        new MenuItem { Name = "Trending" }
+                        new MenuItem { Name = "Following", Url = "#" },
+                        new MenuItem { Name = "Recent posts", Url = "#" },
+                        new MenuItem { Name = "Most popular", Url = "#" },
+                        new MenuItem { Name = "Trending", Url = "#" }
                     }
                 };
                 menuRoot.SubMenu.Add(communityMenu);
@@ -63,11 +67,12 @@ namespace Sample1.SamplePackages
                 var newsMenu = new MenuItem
                 {
                     Name = "News",
+                    Url = "javascript:void(0);",
                     SubMenu = new List<MenuItem>
                     {
-                        new MenuItem { Name = "Today" },
-                        new MenuItem { Name = "Popular" },
-                        new MenuItem { Name = "Trending" }
+                        new MenuItem { Name = "Today", Url = "#" },
+                        new MenuItem { Name = "Popular", Url = "#" },
+                        new MenuItem { Name = "Trending", Url = "#" }
                     }
                 };
                 menuRoot.SubMenu.Add(newsMenu);
@@ -98,20 +103,39 @@ namespace Sample1.SamplePackages
                 bool includeChildren)
             {
                 var menuItem = dataContext.Get<MenuItem>();
-                renderContext.Html.Write(menuItem.Name);
+                if (menuItem != null)
+                    renderContext.Html.WriteElement("a", menuItem.Name, "href", menuItem.Url);
                 return WriteResult.Continue();
             }
         }
 
-        public IPackage Build(IFluentBuilder builder)
+        [IsComponent("menuStyles")]
+        [DeployCss("ul.{ns}_menu", "list-style-type: none; overflow: hidden; white-space: nowrap;")]
+        [DeployCss("li.{ns}_option", "display: inline-block;")]
+        [DeployCss("li.{ns}_option a, a.{ns}_option", "display: inline-block; text-decoration: none;")]
+        [DeployCss("div.{ns}_dropdown", "display: none; position: absolute; overflow: hidden; z-index: 1;")]
+        [DeployCss("div.{ns}_dropdown a", "text-decoration: none; display: block; text-align: left")]
+        [DeployCss("li.{ns}_option:hover div.{ns}_dropdown", "display: block;")]
+        public class MenuStyles
+        { }
+
+        [IsComponent("menuStyle1")]
+        [DeployCss("ul.{ns}_menu", "margin: 0; padding: 0; background-color: #333")]
+        [DeployCss("li.{ns}_option a", "color: white; text-align: center; padding: 14px 16px;")]
+        [DeployCss("li.{ns}_option a:hover, li.{ns}_menu-option:hover a.{ns}_menu-option", "color: white; text-align: center; padding: 14px 16px")]
+        [DeployCss("div.{ns}_dropdown a:hover", "background-color: #f1f1f1;")]
+        [DeployCss("div.{ns}_dropdown", "background-color: #f9f9f9; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);")]
+        [DeployCss("div.{ns}_dropdown a", "color: black; padding: 12px 16px;")]
+        public class MenuStyle1
+        { }
+
+        public override IPackage Build(IFluentBuilder builder)
         {
             // This component is used to display menu items
             var menuItemComponent = new MenuItemComponent(_dependencies.ComponentDependenciesFactory);
 
             // This region is a container for the options on the main menu
             var mainMenuItemRegion = builder.Region()
-                .Tag("div")
-                .Style("display: block; vertical-align: top;")
                 .BindTo<MenuItem>()
                 .Component(menuItemComponent)
                 .Build();
@@ -119,9 +143,10 @@ namespace Sample1.SamplePackages
             // This region is a container for the drop down menu items. It
             // renders one menu item component for each menu item in the sub-menu
             var dropDownMenuRegion = builder.Region()
-                .Tag("ul")
-                .Style("display: none; position: relative;")
-                .ForEach<MenuItem>("li")
+                .Tag("div")
+                .ClassNames("{ns}_dropdown")
+                .DataScope("submenu")
+                .ForEach<MenuItem>()
                 .Component(menuItemComponent)
                 .Build();
 
@@ -129,7 +154,7 @@ namespace Sample1.SamplePackages
             // drops down wen the main menu option is tapped
             var menuOptionLayout = builder.Layout()
                 .Tag("li")
-                .Style("display: inline-block; position: relative; vertical-align: top;")
+                .ClassNames("{ns}_option")
                 .RegionNesting("head,submenu")
                 .Region("head", mainMenuItemRegion)
                 .Region("submenu", dropDownMenuRegion)
@@ -140,7 +165,9 @@ namespace Sample1.SamplePackages
             builder.Region()
                 .Name("menu")
                 .Tag("ul")
-                .Style("display: block; vertical-align: top; white-space: nowrap;")
+                .NeedsComponent("menuStyles")
+                .NeedsComponent("menuStyle1")
+                .ClassNames("{ns}_menu")
                 .ForEach<MenuItem>()
                 .Layout(menuOptionLayout)
                 .Build();

@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using OwinFramework.Pages.Core.Enums;
-using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Core.RequestFilters;
-using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -34,13 +29,14 @@ namespace OwinFramework.Pages.Html.Builders
             _pageDependenciesFactory = pageDependenciesFactory;
         }
 
-        public IPageDefinition Page(Type declaringType)
+        public IPageDefinition Page(Type declaringType, IPackage package)
         {
             return new PageDefinition(
                 declaringType, 
                 _requestRouter, 
                 _nameManager,
-                _pageDependenciesFactory);
+                _pageDependenciesFactory,
+                package);
         }
     }
 }

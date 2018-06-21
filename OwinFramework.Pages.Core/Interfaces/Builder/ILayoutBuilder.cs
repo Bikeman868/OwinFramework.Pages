@@ -8,6 +8,6 @@
         /// <summary>
         /// Starts building a new layout
         /// </summary>
-        ILayoutDefinition Layout();
+        ILayoutDefinition Layout(IPackage package = null);
     }
 }

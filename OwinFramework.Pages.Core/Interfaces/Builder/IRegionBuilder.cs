@@ -8,6 +8,6 @@
         /// <summary>
         /// Starts building a new region
         /// </summary>
-        IRegionDefinition Region();
+        IRegionDefinition Region(IPackage package = null);
     }
 }

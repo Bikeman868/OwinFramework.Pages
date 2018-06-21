@@ -10,6 +10,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Starts building a new service
         /// </summary>
-        IServiceDefinition Service(Type declaringType = null);
+        IServiceDefinition Service(Type declaringType = null, IPackage package = null);
     }
 }

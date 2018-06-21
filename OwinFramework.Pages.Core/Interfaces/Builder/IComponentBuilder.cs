@@ -8,6 +8,6 @@
         /// <summary>
         /// Starts building a new component
         /// </summary>
-        IComponentDefinition Component();
+        IComponentDefinition Component(IPackage package = null);
     }
 }

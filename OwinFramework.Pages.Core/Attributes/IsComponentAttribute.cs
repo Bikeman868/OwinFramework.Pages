@@ -14,10 +14,9 @@ namespace OwinFramework.Pages.Core.Attributes
         /// Constructs an attribute that defines a class to be a component
         /// </summary>
         /// <param name="name">The name of the component. Must be unique within a package</param>
-        /// <param name="dataContext">The name of the context handler to run to establish this
-        /// components data context</param>
-        public IsComponentAttribute(string name, string dataContext = null)
-            : base(name, dataContext)
+        /// <param name="dataScope">The scope name used in resolving data providers</param>
+        public IsComponentAttribute(string name, string dataScope = null)
+            : base(name, dataScope)
         {
         }
     }

@@ -213,6 +213,18 @@ namespace OwinFramework.Pages.Framework.Managers
 
         private T Resolve<T>(string name, IPackage package, IDictionary<string, T> names)
         {
+            if (string.IsNullOrEmpty(name))
+                throw new NameResolutionFailureException(typeof(T), package, "[blank]");
+
+            var colonIndex = name.IndexOf(':');
+            if (colonIndex >= 0)
+            {
+                T result;
+                if (names.TryGetValue(name, out result))
+                    return result;
+                throw new NameResolutionFailureException(typeof(T), package, name);
+            }
+
             if (package == null)
             {
                 lock (names)

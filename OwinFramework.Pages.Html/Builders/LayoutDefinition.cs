@@ -79,7 +79,8 @@ namespace OwinFramework.Pages.Html.Builders
         public LayoutDefinition(
             INameManager nameManager,
             IHtmlHelper htmlHelper,
-            ILayoutDependenciesFactory layoutDependenciesFactory)
+            ILayoutDependenciesFactory layoutDependenciesFactory,
+            IPackage package)
         {
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
@@ -88,6 +89,8 @@ namespace OwinFramework.Pages.Html.Builders
             _regionElements = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             _regionLayouts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             _regionComponents = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
+            _layout.Package = package;
         }
 
         public ILayoutDefinition Name(string name)
@@ -208,7 +211,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.DataContext(string dataContextName)
+        ILayoutDefinition ILayoutDefinition.DataProvider(string providerName)
+        {
+            return this;
+        }
+
+        ILayoutDefinition ILayoutDefinition.DataScope(string scopeName)
         {
             return this;
         }
@@ -225,6 +233,16 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 _layout.Module = _nameManager.ResolveModule(moduleName);
             });
+            return this;
+        }
+
+        ILayoutDefinition ILayoutDefinition.NeedsComponent(string componentName)
+        {
+            return this;
+        }
+
+        ILayoutDefinition ILayoutDefinition.NeedsComponent(IComponent component)
+        {
             return this;
         }
 
@@ -285,7 +303,7 @@ namespace OwinFramework.Pages.Html.Builders
 
                         var regionElement = _regionElements[regionName];
                         var region = regionElement as IRegion;
-                        var regionElementName = (string)regionElement;
+                        var regionElementName = regionElement as string;
 
                         if (region == null && regionElementName != null)
                         {

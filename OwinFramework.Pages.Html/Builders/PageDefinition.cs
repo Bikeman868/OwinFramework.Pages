@@ -21,12 +21,14 @@ namespace OwinFramework.Pages.Html.Builders
             Type declaringType,
             IRequestRouter requestRouter,
             INameManager nameManager,
-            IPageDependenciesFactory pageDependenciesFactory)
+            IPageDependenciesFactory pageDependenciesFactory,
+            IPackage package)
         {
             _declaringType = declaringType;
             _requestRouter = requestRouter;
             _nameManager = nameManager;
             _page = new BuiltPage(pageDependenciesFactory);
+            _page.Package = package;
         }
 
         IPageDefinition IPageDefinition.Name(string name)
@@ -118,13 +120,13 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPageDefinition IPageDefinition.Component(string regionName, IComponent component)
+        IPageDefinition IPageDefinition.RegionComponent(string regionName, IComponent component)
         {
             _page.PopulateRegion(regionName, component);
             return this;
         }
 
-        IPageDefinition IPageDefinition.Component(string regionName, string componentName)
+        IPageDefinition IPageDefinition.RegionComponent(string regionName, string componentName)
         {
             _nameManager.AddResolutionHandler(() =>
             {
@@ -179,7 +181,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPageDefinition IPageDefinition.DataContext(string dataContextName)
+        IPageDefinition IPageDefinition.DataProvider(string providerName)
+        {
+            return this;
+        }
+
+        IPageDefinition IPageDefinition.DataScope(string scopeName)
         {
             return this;
         }
@@ -196,6 +203,16 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 _page.Module = _nameManager.ResolveModule(moduleName);
             });
+            return this;
+        }
+
+        IPageDefinition IPageDefinition.NeedsComponent(string componentName)
+        {
+            return this;
+        }
+
+        IPageDefinition IPageDefinition.NeedsComponent(IComponent component)
+        {
             return this;
         }
 

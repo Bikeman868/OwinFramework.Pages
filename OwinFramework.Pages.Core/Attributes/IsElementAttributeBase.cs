@@ -12,12 +12,11 @@ namespace OwinFramework.Pages.Core.Attributes
         /// </summary>
         /// <param name="name">The name of the element. Must be unique within a package and 
         /// element type</param>
-        /// <param name="dataContext">The name of the context handler to run to establish this
-        /// elements data context</param>
-        public IsElementAttributeBase(string name, string dataContext = null)
+        /// <param name="dataScope">The scope name used to resolve data providers</param>
+        public IsElementAttributeBase(string name, string dataScope = null)
         {
             Name = name;
-            DataContext = dataContext;
+            DataScope = dataScope;
         }
 
         /// <summary>
@@ -30,6 +29,6 @@ namespace OwinFramework.Pages.Core.Attributes
         /// context for this element. If you do not set this property then the context is
         /// inherited from the parent container.
         /// </summary>
-        public string DataContext { get; set; }
+        public string DataScope { get; set; }
     }
 }

@@ -135,6 +135,7 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("navigation")]
     [Style("height: 90px; width:100%; padding:10px; background: gray; color: whitesmoke; clear: both;")]
+    [UsesLayout("header")]
     internal class MainHeaderRegion { }
 
     /// <summary>
@@ -207,6 +208,15 @@ namespace Sample1.SamplePages
     [RegionComponent("header", "navigation.heading")]
     [RegionComponent("footer", "navigation.footer")]
     internal class MainLayout { }
+
+    /// <summary>
+    /// Defines the layout of the 'body' region that has sidebar 1
+    /// </summary>
+    [IsLayout("header", "title,menu")]
+    [PartOf("application")]
+    [DeployedAs("navigation")]
+    [UsesRegion("menu", "menus:menu")]
+    internal class HeaderLayout { }
 
     /// <summary>
     /// Defines the layout of the 'body' region that has sidebar 1

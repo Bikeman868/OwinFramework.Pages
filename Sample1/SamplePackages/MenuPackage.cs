@@ -40,7 +40,7 @@ namespace Sample1.SamplePackages
         }
 
         [IsDataProvider(typeof(IList<MenuItem>))]
-        public class MenuContext
+        public class MenuDataProvider
         {
             public void EstablishContext(IDataContext dataContext)
             {
@@ -75,8 +75,9 @@ namespace Sample1.SamplePackages
             }
         }
 
-        [IsDataProvider("submenu")]
-        public class SubMenuContext
+        [IsDataProvider(typeof(IList<MenuItem>), "submenu")]
+        [NeedsData(typeof(MenuItem))]
+        public class SubMenuDataProvider
         {
             public void EstablishContext(IDataContext dataContext)
             {
@@ -103,19 +104,44 @@ namespace Sample1.SamplePackages
 
         public IPackage Build(IFluentBuilder builder)
         {
+            // This component is used to display menu items
             var menuItemComponent = new MenuItemComponent(_dependencies.ComponentDependenciesFactory);
 
-            var menuBarRegion = builder.Region()
-                .ForEach<MenuItem>()
-                .Tag("li")
-                .Style("display: inline-block; vertical-align: middle; white-space: normal;")
+            // This region is a container for the options on the main menu
+            var mainMenuItemRegion = builder.Region()
+                .Tag("div")
+                .Style("display: block; vertical-align: top;")
+                .BindTo<MenuItem>()
                 .Component(menuItemComponent)
                 .Build();
 
-            builder.Layout()
-                .Region("menu", menuBarRegion)
-                .Style("display: block; vertical-align: middle; white-space: nowrap;")
+            // This region is a container for the drop down menu items. It
+            // renders one menu item component for each menu item in the sub-menu
+            var dropDownMenuRegion = builder.Region()
                 .Tag("ul")
+                .Style("display: none; position: relative;")
+                .ForEach<MenuItem>("li")
+                .Component(menuItemComponent)
+                .Build();
+
+            // This layout defines the main menu option and the sub-menu that
+            // drops down wen the main menu option is tapped
+            var menuOptionLayout = builder.Layout()
+                .Tag("li")
+                .Style("display: inline-block; position: relative; vertical-align: top;")
+                .RegionNesting("head,submenu")
+                .Region("head", mainMenuItemRegion)
+                .Region("submenu", dropDownMenuRegion)
+                .Build();
+
+            // This region is the whole menu structure with top level menu 
+            // options and sub-menus beneath each option
+            builder.Region()
+                .Name("menu")
+                .Tag("ul")
+                .Style("display: block; vertical-align: top; white-space: nowrap;")
+                .ForEach<MenuItem>()
+                .Layout(menuOptionLayout)
                 .Build();
 
             return this;

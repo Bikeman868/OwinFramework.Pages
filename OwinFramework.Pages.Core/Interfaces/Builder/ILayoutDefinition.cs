@@ -169,6 +169,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition DataProvider(string providerName);
 
         /// <summary>
+        /// Specifies a data provider that is required to establish the data context for
+        /// this layout
+        /// </summary>
+        /// <param name="dataProvider">The data provider that is required for this layout</param>
+        ILayoutDefinition DataProvider(IDataProvider dataProvider);
+
+        /// <summary>
         /// Specifies a component that renders output to the page that this element
         /// depends on. For example if you have a component that renders a link to the
         /// Boostrap library, any other components that use Bootstrap can ensure it is

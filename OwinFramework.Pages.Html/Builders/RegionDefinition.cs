@@ -130,6 +130,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        IRegionDefinition IRegionDefinition.DataProvider(IDataProvider dataProvider)
+        {
+            // TODO: Data binding
+            return this;
+        }
+
         IRegionDefinition IRegionDefinition.ForEach(Type dataType, string tag, string style, params string[] classes)
         {
             // TODO: Data binding

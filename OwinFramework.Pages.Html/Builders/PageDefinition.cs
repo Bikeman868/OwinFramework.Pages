@@ -186,6 +186,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        IPageDefinition IPageDefinition.DataProvider(IDataProvider dataProvider)
+        {
+            // TODO: Data binding
+            return this;
+        }
+
         IPageDefinition IPageDefinition.DataScope(string scopeName)
         {
             return this;

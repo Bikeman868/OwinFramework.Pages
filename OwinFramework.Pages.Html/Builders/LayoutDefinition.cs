@@ -216,6 +216,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        ILayoutDefinition ILayoutDefinition.DataProvider(IDataProvider dataProvider)
+        {
+            // TODO: Data binding
+            return this;
+        }
+
         ILayoutDefinition ILayoutDefinition.DataScope(string scopeName)
         {
             return this;

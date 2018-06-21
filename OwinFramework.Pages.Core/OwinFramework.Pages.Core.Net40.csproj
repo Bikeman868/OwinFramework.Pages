@@ -140,6 +140,7 @@
     <Compile Include="Interfaces\Collections\IQueue.cs" />
     <Compile Include="Interfaces\Collections\IQueueFactory.cs" />
     <Compile Include="Interfaces\Collections\IThreadSafeDictionary.cs" />
+    <Compile Include="Interfaces\IDataProvider.cs" />
     <Compile Include="Interfaces\Runtime\IDataContextFactory.cs" />
     <Compile Include="Interfaces\Runtime\ICssWriter.cs" />
     <Compile Include="Interfaces\Runtime\IJavascriptWriterFactory.cs" />

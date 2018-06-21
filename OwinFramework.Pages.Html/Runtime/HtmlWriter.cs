@@ -257,18 +257,13 @@ namespace OwinFramework.Pages.Html.Runtime
             Write('<');
             Write(tag);
             WriteAttributes(attributePairs);
-            if (string.IsNullOrEmpty(content))
-            {
-                Write(' ');
-                Write('/');
-            }
-            else
-            {
-                Write('>');
+            Write('>');
+
+            if (!string.IsNullOrEmpty(content))
                 Write(content);
-                Write("</");
-                Write(tag);
-            }
+
+            Write("</");
+            Write(tag);
             Write('>');
 
             return this;

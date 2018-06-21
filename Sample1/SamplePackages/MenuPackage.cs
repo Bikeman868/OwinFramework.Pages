@@ -40,50 +40,12 @@ namespace Sample1.SamplePackages
         {
             public string Name { get; set; }
             public string Url { get; set; }
-            public List<MenuItem> SubMenu { get; set; }
-        }
-
-        [IsDataProvider(typeof(IList<MenuItem>))]
-        public class MenuDataProvider
-        {
-            public void EstablishContext(IDataContext dataContext)
-            {
-                var menuRoot = new MenuItem { SubMenu = new List<MenuItem>() };
-
-                var communityMenu = new MenuItem
-                {
-                    Name = "Community",
-                    Url = "javascript:void(0);",
-                    SubMenu = new List<MenuItem>
-                    {
-                        new MenuItem { Name = "Following", Url = "#" },
-                        new MenuItem { Name = "Recent posts", Url = "#" },
-                        new MenuItem { Name = "Most popular", Url = "#" },
-                        new MenuItem { Name = "Trending", Url = "#" }
-                    }
-                };
-                menuRoot.SubMenu.Add(communityMenu);
-
-                var newsMenu = new MenuItem
-                {
-                    Name = "News",
-                    Url = "javascript:void(0);",
-                    SubMenu = new List<MenuItem>
-                    {
-                        new MenuItem { Name = "Today", Url = "#" },
-                        new MenuItem { Name = "Popular", Url = "#" },
-                        new MenuItem { Name = "Trending", Url = "#" }
-                    }
-                };
-                menuRoot.SubMenu.Add(newsMenu);
-
-                dataContext.Set(menuRoot.SubMenu);
-            }
+            public IList<MenuItem> SubMenu { get; set; }
         }
 
         [IsDataProvider(typeof(IList<MenuItem>), "submenu")]
         [NeedsData(typeof(MenuItem))]
-        public class SubMenuDataProvider
+        public class SubMenuDataProvider: IDataProvider
         {
             public void EstablishContext(IDataContext dataContext)
             {
@@ -104,7 +66,10 @@ namespace Sample1.SamplePackages
             {
                 var menuItem = dataContext.Get<MenuItem>();
                 if (menuItem != null)
-                    renderContext.Html.WriteElement("a", menuItem.Name, "href", menuItem.Url);
+                {
+                    var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
+                    renderContext.Html.WriteElement("a", menuItem.Name, "href", url);
+                }
                 return WriteResult.Continue();
             }
         }
@@ -134,6 +99,9 @@ namespace Sample1.SamplePackages
             // This component is used to display menu items
             var menuItemComponent = new MenuItemComponent(_dependencies.ComponentDependenciesFactory);
 
+            // This data provider extracts sub-menu items from the current menu item
+            var subMenuDataProvider = new SubMenuDataProvider();
+
             // This region is a container for the options on the main menu
             var mainMenuItemRegion = builder.Region()
                 .BindTo<MenuItem>()
@@ -145,7 +113,7 @@ namespace Sample1.SamplePackages
             var dropDownMenuRegion = builder.Region()
                 .Tag("div")
                 .ClassNames("{ns}_dropdown")
-                .DataScope("submenu")
+                .DataProvider(subMenuDataProvider)
                 .ForEach<MenuItem>()
                 .Component(menuItemComponent)
                 .Build();

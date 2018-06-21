@@ -387,18 +387,27 @@ namespace OwinFramework.Pages.Html.Runtime
 
             var websiteScriptUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Script);
             if (websiteScriptUrl != null)
+            {
                 renderContext.Html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
+                renderContext.Html.WriteLine();
+            }
 
             foreach (var module in _referencedModules)
             {
                 var moduleScriptUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Script);
                 if (moduleScriptUrl != null)
+                {
                     renderContext.Html.WriteElement("script", null, "type", "text/javascript", "src", moduleScriptUrl.ToString());
+                    renderContext.Html.WriteLine();
+                }
             }
 
             var pageScriptUrl = _dependencies.AssetManager.GetPageAssetUrl(this, AssetType.Script);
             if (pageScriptUrl != null)
+            {
                 renderContext.Html.WriteElement("script", null, "type", "text/javascript", "src", pageScriptUrl.ToString());
+                renderContext.Html.WriteLine();
+            }
 
             if (_components != null)
             {

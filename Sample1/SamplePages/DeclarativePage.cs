@@ -94,9 +94,9 @@ namespace Sample1.SamplePages
     [IsComponent("sidebar1")]
     [PartOf("application")]
     [DeployedAs("content")]
-    [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
+    [DeployCss("p.{ns}_sidebar", "font-family: arial; font-size:11pt;")]
     [DeployFunction(null, "toggleSideBar", null, "alert('Hello');")]
-    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 1</p>")]
+    [RenderHtml("menu.left", "<p class='{ns}_sidebar'>Side bar nav for page 1</p>")]
     internal class SideBar1Component { }
 
     [IsComponent("page1Body")]
@@ -111,8 +111,8 @@ namespace Sample1.SamplePages
     [IsComponent("sidebar2")]
     [PartOf("application")]
     [DeployedAs("content")]
-    [DeployCss("p.{ns}_side-bar", "font-family: arial; font-size:11pt;")]
-    [RenderHtml("menu.left", "<p class='{ns}_side-bar'>Side-bar nav for page 2</p>")]
+    [DeployCss("p.{ns}_sidebar", "font-family: arial; font-size:11pt;")]
+    [RenderHtml("menu.left", "<p class='{ns}_sidebar'>Side bar nav for page 2</p>")]
     internal class SideBar2Component { }
 
     [IsComponent("page2Body")]

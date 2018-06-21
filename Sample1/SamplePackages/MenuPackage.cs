@@ -25,6 +25,7 @@ namespace Sample1.SamplePackages
     [IsPackage("menu")]
     public class MenuPackage : OwinFramework.Pages.Framework.Runtime.Package
     {
+        // https://www.w3schools.com/code/tryit.asp?filename=FSITSDF3RKHE
         private readonly IPackageDependenciesFactory _dependencies;
 
         public MenuPackage(IPackageDependenciesFactory dependencies)

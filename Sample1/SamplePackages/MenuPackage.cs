@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Attributes;
+﻿using System.Collections.Generic;
+using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -35,6 +36,53 @@ namespace Sample1.SamplePackages
         public class MenuItem
         {
             public string Name { get; set; }
+            public List<MenuItem> SubMenu { get; set; }
+        }
+
+        [IsDataProvider(typeof(IList<MenuItem>))]
+        public class MenuContext
+        {
+            public void EstablishContext(IDataContext dataContext)
+            {
+                var menuRoot = new MenuItem { SubMenu = new List<MenuItem>() };
+
+                var communityMenu = new MenuItem
+                {
+                    Name = "Community",
+                    SubMenu = new List<MenuItem>
+                    {
+                        new MenuItem { Name = "Following" },
+                        new MenuItem { Name = "Recent posts" },
+                        new MenuItem { Name = "Most popular" },
+                        new MenuItem { Name = "Trending" }
+                    }
+                };
+                menuRoot.SubMenu.Add(communityMenu);
+
+                var newsMenu = new MenuItem
+                {
+                    Name = "News",
+                    SubMenu = new List<MenuItem>
+                    {
+                        new MenuItem { Name = "Today" },
+                        new MenuItem { Name = "Popular" },
+                        new MenuItem { Name = "Trending" }
+                    }
+                };
+                menuRoot.SubMenu.Add(newsMenu);
+
+                dataContext.Set(menuRoot.SubMenu);
+            }
+        }
+
+        [IsDataProvider("submenu")]
+        public class SubMenuContext
+        {
+            public void EstablishContext(IDataContext dataContext)
+            {
+                var parent = dataContext.Get<MenuItem>();
+                dataContext.Set(parent.SubMenu);
+            }
         }
 
         private class MenuItemComponent: Component
@@ -48,8 +96,7 @@ namespace Sample1.SamplePackages
                 bool includeChildren)
             {
                 var menuItem = dataContext.Get<MenuItem>();
-                if (menuItem != null)
-                    renderContext.Html.Write(menuItem.Name);
+                renderContext.Html.Write(menuItem.Name);
                 return WriteResult.Continue();
             }
         }

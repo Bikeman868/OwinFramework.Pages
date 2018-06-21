@@ -47,7 +47,7 @@ namespace OwinFramework.Pages.Framework.Runtime
             }
         }
 
-        public T Get<T>(string name = null)
+        public T Get<T>(string name, bool isRequired)
         {
             if (name == null)
                 name = typeof(T).FullName;
@@ -55,12 +55,12 @@ namespace OwinFramework.Pages.Framework.Runtime
             object result;
             if (_properties.TryGetValue(name, out result)) return (T)result;
 
-            return _parent != null ? _parent.Get<T>(name) : default(T);
+            return _parent != null ? _parent.Get<T>(name, isRequired) : default(T);
         }
     
         public string this[string name]
         {
-            get { return Get<string>(name); }
+            get { return Get<string>(name, false); }
             set { Set(value, name, 0); }
         }
     }

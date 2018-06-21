@@ -235,8 +235,8 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var needsData in attributes.NeedsDatas)
                 {
-                    if (!string.IsNullOrEmpty(needsData.DataContextName))
-                        page.DataContext(needsData.DataContextName);
+                    if (!string.IsNullOrEmpty(needsData.DataProviderName))
+                        page.DataContext(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
                         page.BindTo(needsData.DataType);
@@ -290,8 +290,8 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var needsData in attributes.NeedsDatas)
                 {
-                    if (!string.IsNullOrEmpty(needsData.DataContextName))
-                        layout.DataContext(needsData.DataContextName);
+                    if (!string.IsNullOrEmpty(needsData.DataProviderName))
+                        layout.DataContext(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
                         layout.BindTo(needsData.DataType);
@@ -359,8 +359,8 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var needsData in attributes.NeedsDatas)
                 {
-                    if (!string.IsNullOrEmpty(needsData.DataContextName))
-                        region.DataContext(needsData.DataContextName);
+                    if (!string.IsNullOrEmpty(needsData.DataProviderName))
+                        region.DataContext(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
                         region.BindTo(needsData.DataType);
@@ -422,8 +422,8 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var needsData in attributes.NeedsDatas)
                 {
-                    if (!string.IsNullOrEmpty(needsData.DataContextName))
-                        component.DataContext(needsData.DataContextName);
+                    if (!string.IsNullOrEmpty(needsData.DataProviderName))
+                        component.DataContext(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
                         component.BindTo(needsData.DataType);

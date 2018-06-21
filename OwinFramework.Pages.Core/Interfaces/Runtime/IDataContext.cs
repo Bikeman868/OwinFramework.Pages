@@ -28,8 +28,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <typeparam name="T">The type of data to get</typeparam>
         /// <param name="name">The name can be used where there are multiple
         /// data items with the same type. Not required otherwise</param>
-        /// <returns></returns>
-        T Get<T>(string name = null);
+        /// <param name="required">Pass true if this data is essential to be
+        /// able to continue. If the data context does not already have this
+        /// data then it will try to find a contxt handler that can provide
+        /// it, and run this context handler first. If no suitable context
+        /// handlers are available then an exception is thrown.</param>
+        T Get<T>(string name = null, bool required = true);
 
         /// <summary>
         /// Stores and retrieves name/value pairs with no strong typing.

@@ -128,7 +128,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <typeparam name="T">Looks for a list or enumeration of objects 
         /// of this type in the rendering context and repeats the region
         /// once for each item</typeparam>
-        IRegionDefinition ForEach<T>();
+        IRegionDefinition ForEach<T>(string tag = "", string style = "", params string[] classes);
 
         /// <summary>
         /// Causes the region to be rendered multiple times, once

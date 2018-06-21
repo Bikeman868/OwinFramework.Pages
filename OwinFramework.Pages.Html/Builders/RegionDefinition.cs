@@ -104,7 +104,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IRegionDefinition ForEach<T>()
+        public IRegionDefinition ForEach<T>(string tag, string style, params string[] classes)
         {
             // TODO: Data binding
             return this;
@@ -128,7 +128,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IRegionDefinition ForEach(Type dataType, string tag = "", string style = "", params string[] classes)
+        public IRegionDefinition ForEach(Type dataType, string tag, string style, params string[] classes)
         {
             // TODO: Data binding
             return this;

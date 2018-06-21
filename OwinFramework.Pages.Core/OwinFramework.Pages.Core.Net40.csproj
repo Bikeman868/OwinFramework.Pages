@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ChildContainerAttribute.cs" />
+    <Compile Include="Attributes\IsDataProviderAttribute.cs" />
     <Compile Include="Attributes\DeployCss.cs" />
     <Compile Include="Attributes\DeployFunction.cs" />
     <Compile Include="Attributes\NeedsComponentAttribute.cs" />

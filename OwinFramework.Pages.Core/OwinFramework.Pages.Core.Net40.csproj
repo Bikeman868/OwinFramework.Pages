@@ -110,6 +110,7 @@
     <Compile Include="Enums\CommentStyle.cs" />
     <Compile Include="Enums\HtmlFormat.cs" />
     <Compile Include="Exceptions\FluentBuilderException.cs" />
+    <Compile Include="Exceptions\InvalidNameException.cs" />
     <Compile Include="Exceptions\NameResolutionFailureException.cs" />
     <Compile Include="Exceptions\NameManagerException.cs" />
     <Compile Include="Exceptions\ComponentBuilderException.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="Interfaces\Collections\IQueueFactory.cs" />
     <Compile Include="Interfaces\Collections\IThreadSafeDictionary.cs" />
     <Compile Include="Interfaces\IDataProvider.cs" />
+    <Compile Include="Interfaces\Managers\IDataCatalog.cs" />
     <Compile Include="Interfaces\Runtime\IDataContextFactory.cs" />
     <Compile Include="Interfaces\Runtime\ICssWriter.cs" />
     <Compile Include="Interfaces\Runtime\IJavascriptWriterFactory.cs" />

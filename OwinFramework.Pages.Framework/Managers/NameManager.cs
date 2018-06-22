@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -15,6 +16,7 @@ namespace OwinFramework.Pages.Framework.Managers
         private readonly IDictionary<string, IService> _services;
         private readonly IDictionary<string, IModule> _modules;
         private readonly IDictionary<string, IPackage> _packages;
+        private readonly IDictionary<string, IDataProvider> _dataProviders;
 
         private readonly IList<PendingActionBase> _pendingActions;
 
@@ -32,18 +34,20 @@ namespace OwinFramework.Pages.Framework.Managers
             _services = new Dictionary<string, IService>(StringComparer.InvariantCultureIgnoreCase);
             _modules = new Dictionary<string, IModule>(StringComparer.InvariantCultureIgnoreCase);
             _packages = new Dictionary<string, IPackage>(StringComparer.InvariantCultureIgnoreCase);
+            _dataProviders = new Dictionary<string, IDataProvider>(StringComparer.InvariantCultureIgnoreCase);
 
             _assetNames = new Dictionary<string, HashSet<string>>(StringComparer.InvariantCultureIgnoreCase);
             _random = new Random();
         }
 
-        #region Component registration
+        #region Name registration
 
         public void Register(IElement element)
         {
-            element.Name = string.IsNullOrEmpty(element.Name)
-                ? GenerateElementName(element.Package)
-                : string.Intern(element.Name.Replace(':', '.'));
+            if (string.IsNullOrEmpty(element.Name))
+                element.Name = GenerateElementName(element.Package);
+            else
+                ValidateName(element.Name, element.Package);
 
             var name = element.Package == null 
                 ? element.Name 
@@ -76,20 +80,38 @@ namespace OwinFramework.Pages.Framework.Managers
         public void Register(IPackage package)
         {
             if (string.IsNullOrEmpty(package.NamespaceName))
-            {
                 package.NamespaceName = GenerateNamespaceName(String.Empty);
-            }
             else
-            {
-                package.NamespaceName = package.NamespaceName
-                    .Replace(":", "")
-                    .Replace(" ", "");
-            }
+                ValidateName(package.NamespaceName, null);
 
             if (string.IsNullOrEmpty(package.Name))
                 package.Name = package.NamespaceName;
 
             lock(_packages) _packages[package.Name] = package;
+        }
+
+        public void Register(IDataProvider dataProvider)
+        {
+            if (string.IsNullOrEmpty(dataProvider.Name))
+                dataProvider.Name = GenerateElementName(dataProvider.Package);
+            else
+                ValidateName(dataProvider.Name, dataProvider.Package);
+
+            var name = dataProvider.Package == null
+                ? dataProvider.Name
+                : dataProvider.Package.NamespaceName + ":" + dataProvider.Name;
+
+            lock (_dataProviders) _dataProviders[dataProvider.Name] = dataProvider;
+        }
+
+        private void ValidateName(string name, IPackage package)
+        {
+            if (string.IsNullOrEmpty(name))
+                return;
+
+            if (char.IsDigit(name[0]) ||
+                !name.All(c => char.IsDigit(c) || char.IsLetter(c) || c == '_'))
+                throw new InvalidNameException(name, package);
         }
 
         #endregion
@@ -274,6 +296,11 @@ namespace OwinFramework.Pages.Framework.Managers
         public IService ResolveService(string name, IPackage package = null)
         {
             return Resolve(name, package, _services);
+        }
+
+        public IDataProvider ResolveDataProvider(string name, IPackage package = null)
+        {
+            return Resolve(name, package, _dataProviders);
         }
 
         public IModule ResolveModule(string name)

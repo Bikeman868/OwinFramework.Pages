@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Collections;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -11,6 +12,7 @@ namespace OwinFramework.Pages.Framework.Runtime
         private readonly IThreadSafeDictionary<string, object> _properties;
 
         private DataContext _parent;
+        private string _scope;
 
         public DataContext(
             IDictionaryFactory dictionaryFactory,
@@ -62,6 +64,19 @@ namespace OwinFramework.Pages.Framework.Runtime
         {
             get { return Get<string>(name, false); }
             set { Set(value, name, 0); }
+        }
+
+        public string Scope
+        {
+            get { return _scope ?? (_parent == null ? string.Empty : _parent.Scope); }
+            set { _scope = value; }
+        }
+
+        public string FindScope(ICollection<string> scopeNames)
+        {
+            if (scopeNames.Contains(_scope))
+                return _scope;
+            return _parent == null ? null : _parent.FindScope(scopeNames);
         }
     }
 }

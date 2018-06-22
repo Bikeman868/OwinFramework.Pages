@@ -70,6 +70,7 @@
     <Compile Include="Configuration\FrameworkConfiguration.cs" />
     <Compile Include="Interfaces\IFrameworkConfiguration.cs" />
     <Compile Include="Managers\AssetManager.cs" />
+    <Compile Include="Managers\DataCatalog.cs" />
     <Compile Include="Managers\NameManager.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

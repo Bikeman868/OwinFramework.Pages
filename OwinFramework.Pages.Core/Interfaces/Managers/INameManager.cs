@@ -34,6 +34,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         void Register(IPackage package);
 
         /// <summary>
+        /// Registers the name of a data provider
+        /// </summary>
+        /// <param name="dataProvider">The package to register</param>
+        void Register(IDataProvider dataProvider);
+
+        /// <summary>
         /// Adds a callback function to execute after all components have been
         /// registered. This can be used to resolve name references between elements
         /// </summary>
@@ -77,7 +83,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// then the specified package will be searched first followed by the global namespace</param>
         /// <param name="package">Optional package, makes name resolution use this namespace
         /// first if no namespace is in the name</param>
-        /// <returns>A region or null if not found</returns>
         IRegion ResolveRegion(string name, IPackage package = null);
 
         /// <summary>
@@ -88,7 +93,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// then the specified package will be searched first followed by the global namespace</param>
         /// <param name="package">Optional package, makes name resolution use this namespace
         /// first if no namespace is in the name</param>
-        /// <returns>A layout or null if not found</returns>
         ILayout ResolveLayout(string name, IPackage package = null);
 
         /// <summary>
@@ -99,7 +103,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// then the specified package will be searched first followed by the global namespace</param>
         /// <param name="package">Optional package, makes name resolution use this namespace
         /// first if no namespace is in the name</param>
-        /// <returns>A layout or null if not found</returns>
         IPage ResolvePage(string name, IPackage package = null);
 
         /// <summary>
@@ -110,21 +113,28 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// then the specified package will be searched first followed by the global namespace</param>
         /// <param name="package">Optional package, makes name resolution use this namespace
         /// first if no namespace is in the name</param>
-        /// <returns>A layout or null if not found</returns>
         IService ResolveService(string name, IPackage package = null);
+
+        /// <summary>
+        /// Finds the data provider with the specified name
+        /// </summary>
+        /// <param name="name">The name of the data provider to find. The name can be qualified with a 
+        /// namespace and a colon in front to specify the package. If no namespace is specified
+        /// then the specified package will be searched first followed by the global namespace</param>
+        /// <param name="package">Optional package, makes name resolution use this namespace
+        /// first if no namespace is in the name</param>
+        IDataProvider ResolveDataProvider(string name, IPackage package = null);
 
         /// <summary>
         /// Finds the module with the specified name
         /// </summary>
         /// <param name="name">The name of the module to find</param>
-        /// <returns>A module or null if not found</returns>
         IModule ResolveModule(string name);
 
         /// <summary>
         /// Finds the package with the specified name
         /// </summary>
         /// <param name="name">The name of the package to find</param>
-        /// <returns>A package or null if not found</returns>
         IPackage ResolvePackage(string name);
 
         /// <summary>

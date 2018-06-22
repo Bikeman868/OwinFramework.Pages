@@ -22,6 +22,7 @@ namespace OwinFramework.Pages.Restful
                     // These are the external dependencies
                     new IocRegistration().Init<IRequestRouter>(),
                     new IocRegistration().Init<INameManager>(),
+                    new IocRegistration().Init<IDataCatalog>(),
                 };
             }
         }

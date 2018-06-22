@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System.Collections.Generic;
+using Microsoft.Owin;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
@@ -10,6 +11,28 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     /// </summary>
     public interface IDataContext
     {
+        /// <summary>
+        /// Gets and sets the current scope. The scope can be used to
+        /// determine which data provider will be used to supply missing 
+        /// data for the rendering operation. If the Scope is not set then
+        /// the parent scope will be returned. Setting a value of null cancels
+        /// any override returning the scope to inheriting from the parent 
+        /// </summary>
+        string Scope { get; set; }
+
+        /// <summary>
+        /// Searches back through the ancestors for the first one whos scope
+        /// is on the list of scopes we are searching for. This is used to 
+        /// find a suitable data provider when there are multiple data providers
+        /// that can provide the required type of data.
+        /// </summary>
+        /// <param name="scopeNames">The list of scope names to find. These
+        /// will be compared to the current data context first and then its
+        /// parent etc until a match is found.</param>
+        /// <returns>Returns null if none of these scopes are in any of
+        /// the ascendants</returns>
+        string FindScope(ICollection<string> scopeNames);
+
         /// <summary>
         /// Stores strongly typed data into the data context
         /// </summary>

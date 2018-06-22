@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -9,7 +10,18 @@ namespace Sample1.DataProviders
     [IsDataProvider(typeof(IList<MenuPackage.MenuItem>))]
     public class MenuDataProvider: IDataProvider
     {
-        public void EstablishContext(IDataContext dataContext)
+        public string Name { get; set; }
+        public IPackage Package { get; set; }
+        public ICollection<string> Scopes { get { return _scopes; } }
+
+        private readonly IList<string> _scopes = new List<string>();
+
+        public void AddScope(string scopeName)
+        {
+            _scopes.Add(scopeName);
+        }
+
+        public void EstablishContext(IDataContext dataContext, Type dataType)
         {
             IList<MenuPackage.MenuItem> mainMenu = new List<MenuPackage.MenuItem>();
 

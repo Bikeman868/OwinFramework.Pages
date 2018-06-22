@@ -89,10 +89,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
             public override void ToLines(IList<string> writer)
             {
-                //if (!string.IsNullOrEmpty(Comment))
-                //{
-                //    writer.Add("/* " + Comment + " */");
-                //}
+                if (!string.IsNullOrEmpty(Comment))
+                {
+                    writer.Add("/* " + Comment + " */");
+                }
             }
         }
 

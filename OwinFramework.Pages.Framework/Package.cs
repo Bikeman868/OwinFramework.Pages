@@ -36,6 +36,7 @@ namespace OwinFramework.Pages.Framework
                     new IocRegistration().Init<IFluentBuilder, FluentBuilder>(),
                     new IocRegistration().Init<IAssetManager, AssetManager>(),
                     new IocRegistration().Init<INameManager, NameManager>(),
+                    new IocRegistration().Init<IDataCatalog, DataCatalog>(),
 
                     // The request router is the top level entry point and the only
                     // interface that the middleware depends on

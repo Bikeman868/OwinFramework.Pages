@@ -258,13 +258,14 @@ namespace Sample1.SamplePages
 
     /// <summary>
     /// Defines a page that is rendered in response to requets for '/home.html'
-    /// Uses the 'main' layout but changes the contents of each region.
+    /// Uses the 'main' layout but changes the contents of the 'body' region.
     /// </summary>
     [IsPage("page1")]
     [Description("<p>This is an example of how to add a page declatively using attributes</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for the page 1</p>")]
     [Option(OptionType.Header, "Accept", "Must contain text/html, which is only available response format")]
     [Example("<a href='/home.html'>/home.html</a>")]
+    [Example("<a href='/page1'>/page1</a>")]
     [PartOf("application")]
     [Route("/home.html", Methods.Get)]
     [Route("/page1", Methods.Get)]
@@ -276,13 +277,13 @@ namespace Sample1.SamplePages
     internal class Page1 { }
 
     /// <summary>
-    /// Defines a page that is rendered in response to requets for '/home.html'
-    /// Uses the 'main' layout but changes the contents of each region.
+    /// Defines a page that is rendered in response to requets for '/page2'
+    /// Uses the 'main' layout but changes the contents of the 'body' region.
     /// </summary>
     [IsPage("page2")]
     [Description("<p>This is an example of how to add a page declatively using attributes</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for page 2</p>")]
-    [Example("<a href='/home.html'>/home.html</a>")]
+    [Example("<a href='/page2'>/page2</a>")]
     [PartOf("application")]
     [Route("/page2", Methods.Get)]
     [PageTitle("Page 2")]

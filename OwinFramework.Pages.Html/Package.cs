@@ -50,6 +50,8 @@ namespace OwinFramework.Pages.Html
                     new IocRegistration().Init<IRegionDependencies, RegionDependencies>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IComponentDependenciesFactory, ComponentDependenciesFactory>(),
                     new IocRegistration().Init<IComponentDependencies, ComponentDependencies>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IDataProviderDependenciesFactory, DataProviderDependenciesFactory>(),
+                    new IocRegistration().Init<IDataProviderDependencies, DataProviderDependencies>(IocLifetime.MultiInstance),
 
                     // These are internal implementations that need to be wired up
                     new IocRegistration().Init<IHtmlConfiguration, HtmlConfiguration>(),

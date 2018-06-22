@@ -7,7 +7,7 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Runtime;
+using OwinFramework.Pages.Html.Interfaces;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -15,6 +15,7 @@ namespace OwinFramework.Pages.Html.Builders
     {
         private readonly INameManager _nameManager;
         private readonly IAssetManager _assetManager;
+        private readonly IHtmlHelper _htmlHelper;
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly BuiltComponent _component;
         private readonly List<FunctionDefinition> _functionDefinitions;
@@ -46,11 +47,13 @@ namespace OwinFramework.Pages.Html.Builders
         public ComponentDefinition(
             INameManager nameManager,
             IAssetManager assetManager,
+            IHtmlHelper htmlHelper,
             IComponentDependenciesFactory componentDependenciesFactory,
             IPackage package)
         {
             _nameManager = nameManager;
             _assetManager = assetManager;
+            _htmlHelper = htmlHelper;
             _componentDependenciesFactory = componentDependenciesFactory;
             _component = new BuiltComponent(componentDependenciesFactory);
             _cssDefinitions = new List<CssDefinition>();
@@ -193,10 +196,7 @@ namespace OwinFramework.Pages.Html.Builders
             _component.CssRules = _cssDefinitions
                 .Select(d =>
                 {
-                    if (_component.Package == null)
-                        d.Selector = d.Selector.Replace(".{ns}_", ".");
-                    else
-                        d.Selector = d.Selector.Replace(".{ns}_", "." + _component.Package.NamespaceName + "_");
+                    d.Selector = _htmlHelper.NamespaceCssSelector(d.Selector, _component.Package);
                     return d;
                 })
                 .Select(d =>

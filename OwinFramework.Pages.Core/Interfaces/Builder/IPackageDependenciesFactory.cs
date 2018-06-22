@@ -50,5 +50,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Factory for constructing component dependencies
         /// </summary>
         IComponentDependenciesFactory ComponentDependenciesFactory { get; }
+
+        /// <summary>
+        /// Factory for constructing data provider dependencies
+        /// </summary>
+        IDataProviderDependenciesFactory DataProviderDependenciesFactory { get; }
     }
 }

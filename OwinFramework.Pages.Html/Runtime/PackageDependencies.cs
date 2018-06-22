@@ -19,6 +19,7 @@ namespace OwinFramework.Pages.Html.Runtime
         public ILayoutDependenciesFactory LayoutDependenciesFactory { get; private set; }
         public IRegionDependenciesFactory RegionDependenciesFactory { get; private set; }
         public IComponentDependenciesFactory ComponentDependenciesFactory { get; private set; }
+        public IDataProviderDependenciesFactory DataProviderDependenciesFactory { get; private set; }
 
         public PackageDependencies(
             IRenderContext renderContext,
@@ -29,7 +30,8 @@ namespace OwinFramework.Pages.Html.Runtime
             IPageDependenciesFactory pageDependenciesFactory,
             ILayoutDependenciesFactory layoutDependenciesFactory,
             IRegionDependenciesFactory regionDependenciesFactory,
-            IComponentDependenciesFactory componentDependenciesFactory)
+            IComponentDependenciesFactory componentDependenciesFactory,
+            IDataProviderDependenciesFactory dataProviderDependenciesFactory)
         {
             RenderContext = renderContext;
             DataContext = dataContext;
@@ -40,6 +42,7 @@ namespace OwinFramework.Pages.Html.Runtime
             LayoutDependenciesFactory = layoutDependenciesFactory;
             RegionDependenciesFactory = regionDependenciesFactory;
             ComponentDependenciesFactory = componentDependenciesFactory;
+            DataProviderDependenciesFactory = dataProviderDependenciesFactory;
         }
 
         public IPackageDependencies Initialize(IOwinContext context)

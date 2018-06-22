@@ -61,7 +61,7 @@ namespace Sample1.SamplePages
      * also render html, but this is structural (non-visual)
      */
 
-    [IsComponent("styles.default")]
+    [IsComponent("defaultStyles")]
     [PartOf("application")]
     [DeployedAs("content")]
     [DeployCss("p", "font-size:11pt;")]
@@ -271,7 +271,7 @@ namespace Sample1.SamplePages
     [Route("/page1", Methods.Get)]
     [PageTitle("Page 1")]
     [Style("color: darkred;")]
-    [NeedsComponent("styles.default")]
+    [NeedsComponent("defaultStyles")]
     [UsesLayout("main")]
     [RegionLayout("body", "page1Body")]
     internal class Page1 { }
@@ -288,7 +288,7 @@ namespace Sample1.SamplePages
     [Route("/page2", Methods.Get)]
     [PageTitle("Page 2")]
     [Style("color: darkblue;")]
-    [NeedsComponent("styles.default")]
+    [NeedsComponent("defaultStyles")]
     [UsesLayout("main")]
     [RegionLayout("body", "page2Body")]
     internal class Page2 { }

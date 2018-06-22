@@ -16,6 +16,7 @@ namespace OwinFramework.Pages.Html.Runtime
         public ILayoutDependenciesFactory LayoutDependenciesFactory { get { return _layoutDependenciesFactory; } }
         public IRegionDependenciesFactory RegionDependenciesFactory { get { return _regionDependenciesFactory; } }
         public IComponentDependenciesFactory ComponentDependenciesFactory { get { return _componentDependenciesFactory; } }
+        public IDataProviderDependenciesFactory DataProviderDependenciesFactory { get { return _dataProviderDependenciesFactory; } }
 
         private readonly IRenderContextFactory _renderContextFactory;
         private readonly IDataContextFactory _dataContextFactory;
@@ -27,6 +28,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly ILayoutDependenciesFactory _layoutDependenciesFactory;
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
+        private readonly IDataProviderDependenciesFactory _dataProviderDependenciesFactory;
 
         public PackageDependenciesFactory(
             IRenderContextFactory renderContextFactory,
@@ -37,7 +39,8 @@ namespace OwinFramework.Pages.Html.Runtime
             IPageDependenciesFactory pageDependenciesFactory,
             ILayoutDependenciesFactory layoutDependenciesFactory,
             IRegionDependenciesFactory regionDependenciesFactory,
-            IComponentDependenciesFactory componentDependenciesFactory)
+            IComponentDependenciesFactory componentDependenciesFactory,
+            IDataProviderDependenciesFactory dataProviderDependenciesFactory)
         {
             _renderContextFactory = renderContextFactory;
             _dataContextFactory = dataContextFactory;
@@ -48,6 +51,7 @@ namespace OwinFramework.Pages.Html.Runtime
             _layoutDependenciesFactory = layoutDependenciesFactory;
             _regionDependenciesFactory = regionDependenciesFactory;
             _componentDependenciesFactory = componentDependenciesFactory;
+            _dataProviderDependenciesFactory = dataProviderDependenciesFactory;
         }
 
         public IPackageDependencies Create(IOwinContext context)
@@ -61,7 +65,8 @@ namespace OwinFramework.Pages.Html.Runtime
                 _pageDependenciesFactory,
                 _layoutDependenciesFactory,
                 _regionDependenciesFactory,
-                _componentDependenciesFactory)
+                _componentDependenciesFactory,
+                _dataProviderDependenciesFactory)
                 .Initialize(context);
         }
     }

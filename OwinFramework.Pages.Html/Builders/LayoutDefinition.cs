@@ -346,7 +346,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             if (!string.IsNullOrEmpty(_tag))
             {
-                var attributes = _htmlHelper.StyleAttributes(_style, _classNames);
+                var attributes = _htmlHelper.StyleAttributes(_style, _classNames, _layout.Package);
                 _layout.AddVisualElement(w => w.WriteOpenTag(_tag, attributes), "layout container element");
             }
         }
@@ -361,7 +361,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             if (!string.IsNullOrEmpty(_nestingTag))
             {
-                var attributes = _htmlHelper.StyleAttributes(_nestedStyle, _nestedClassNames);
+                var attributes = _htmlHelper.StyleAttributes(_nestedStyle, _nestedClassNames, _layout.Package);
                 _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes), "grouping regions in layout");
             }
         }

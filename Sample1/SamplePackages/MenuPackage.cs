@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
@@ -45,9 +46,13 @@ namespace Sample1.SamplePackages
 
         [IsDataProvider(typeof(IList<MenuItem>), "submenu")]
         [NeedsData(typeof(MenuItem))]
-        public class SubMenuDataProvider: IDataProvider
+        public class SubMenuDataProvider: DataProvider
         {
-            public void EstablishContext(IDataContext dataContext)
+            public SubMenuDataProvider(IDataProviderDependenciesFactory dependencies) 
+                : base(dependencies) 
+            { }
+
+            public override void EstablishContext(IRenderContext renderContext, IDataContext dataContext)
             {
                 var parent = dataContext.Get<MenuItem>();
                 dataContext.Set(parent.SubMenu);
@@ -100,7 +105,7 @@ namespace Sample1.SamplePackages
             var menuItemComponent = new MenuItemComponent(_dependencies.ComponentDependenciesFactory);
 
             // This data provider extracts sub-menu items from the current menu item
-            var subMenuDataProvider = new SubMenuDataProvider();
+            var subMenuDataProvider = new SubMenuDataProvider(_dependencies.DataProviderDependenciesFactory);
 
             // This region is a container for the options on the main menu
             var mainMenuItemRegion = builder.Region()

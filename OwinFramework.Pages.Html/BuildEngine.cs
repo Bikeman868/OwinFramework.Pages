@@ -65,6 +65,7 @@ namespace OwinFramework.Pages.Html
             builder.ComponentBuilder = new ComponentBuilder(
                 _nameManager,
                 _assetManager,
+                _htmlHelper,
                 _componentDependenciesFactory);
         }
     }

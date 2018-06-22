@@ -2,26 +2,21 @@
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Framework.Runtime;
 using Sample1.SamplePackages;
 
 namespace Sample1.DataProviders
 {
     [IsDataProvider(typeof(IList<MenuPackage.MenuItem>))]
-    public class MenuDataProvider: IDataProvider
+    public class MenuDataProvider: DataProvider
     {
-        public string Name { get; set; }
-        public IPackage Package { get; set; }
-        public ICollection<string> Scopes { get { return _scopes; } }
+        public MenuDataProvider(IDataProviderDependenciesFactory dependencies) 
+            : base(dependencies) 
+        { }
 
-        private readonly IList<string> _scopes = new List<string>();
-
-        public void AddScope(string scopeName)
-        {
-            _scopes.Add(scopeName);
-        }
-
-        public void EstablishContext(IDataContext dataContext, Type dataType)
+        public override void EstablishContext(IRenderContext renderContext, IDataContext dataContext)
         {
             IList<MenuPackage.MenuItem> mainMenu = new List<MenuPackage.MenuItem>();
 

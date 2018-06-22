@@ -77,6 +77,7 @@
     <Compile Include="Builders\FluentBuilder.cs" />
     <Compile Include="Runtime\DataContext.cs" />
     <Compile Include="Runtime\DataContextFactory.cs" />
+    <Compile Include="Runtime\DataProvider.cs" />
     <Compile Include="Runtime\Package.cs" />
     <Compile Include="Runtime\RequestRouter.cs" />
   </ItemGroup>

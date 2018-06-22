@@ -176,7 +176,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             if (!string.IsNullOrEmpty(_tagName))
             {
-                var attributes = _htmlHelper.StyleAttributes(_style, _classNames);
+                var attributes = _htmlHelper.StyleAttributes(_style, _classNames, _region.Package);
                 _region.WriteOpen = w => w.WriteOpenTag(_tagName, attributes);
                 _region.WriteClose = w => w.WriteCloseTag(_tagName);
             }

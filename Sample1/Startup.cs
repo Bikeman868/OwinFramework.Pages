@@ -15,6 +15,7 @@ using Sample1.SamplePackages;
 using Sample1.SamplePages;
 using Urchin.Client.Sources;
 using OwinFramework.Pages.Core;
+using OwinFramework.Pages.Core.Interfaces;
 using Sample1;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -97,6 +98,10 @@ namespace Sample1
 
             // This is an example of registering all of the elements defined in an assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly());
+
+            // This is an example of registering all of the data providers defined in an assembly
+            var dataCatalog = ninject.Get<IDataCatalog>();
+            dataCatalog.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t) as IDataProvider);
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements

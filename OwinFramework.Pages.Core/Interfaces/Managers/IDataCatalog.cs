@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -16,6 +17,23 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// </summary>
         /// <param name="dataProvider">The data provider to register</param>
         IDataCatalog Register(IDataProvider dataProvider);
+
+        /// <summary>
+        /// Adds a data provider to the data catalog
+        /// </summary>
+        /// <param name="dataProviderType">The type of data provider to register</param>
+        /// <param name="factoryFunc">A function that knows how to construct 
+        /// the data providers in your application</param>
+        IDataCatalog Register(Type dataProviderType, Func<Type, IDataProvider> factoryFunc);
+
+        /// <summary>
+        /// Scans an assembly, finds all of the data providers and registers them
+        /// with the data catalog
+        /// </summary>
+        /// <param name="assembly">The type of data provider to register</param>
+        /// <param name="factoryFunc">A function that knows how to construct 
+        /// the data providers in your application</param>
+        IDataCatalog Register(Assembly assembly, Func<Type, IDataProvider> factoryFunc);
 
         /// <summary>
         /// Checks to see if the data context contains data of the specified

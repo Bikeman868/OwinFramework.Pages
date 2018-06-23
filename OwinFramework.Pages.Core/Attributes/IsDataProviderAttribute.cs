@@ -28,9 +28,13 @@ namespace OwinFramework.Pages.Core.Attributes
         /// </summary>
         /// <param name="name">Identifies this as a named data provider. Other controls can request
         /// this specific data provider by name rather than resolving the data type and scope</param>
-        public IsDataProviderAttribute(string name)
+        /// <param name="type">The type of data that this provider adds to the data context</param>
+        /// <param name="scope">The name of the scope in which this data provider applies</param>
+        public IsDataProviderAttribute(string name, Type type = null, string scope = null)
         {
             Name = name;
+            Type = type;
+            Scope = scope;
         }
 
         /// <summary>

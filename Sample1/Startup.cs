@@ -101,7 +101,7 @@ namespace Sample1
 
             // This is an example of registering all of the data providers defined in an assembly
             var dataCatalog = ninject.Get<IDataCatalog>();
-            dataCatalog.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t) as IDataProvider);
+            dataCatalog.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements

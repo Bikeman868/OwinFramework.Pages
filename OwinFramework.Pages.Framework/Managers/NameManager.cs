@@ -90,18 +90,23 @@ namespace OwinFramework.Pages.Framework.Managers
             lock(_packages) _packages[package.Name] = package;
         }
 
-        public void Register(IDataProvider dataProvider)
+        public void Register(IDataProvider dataProvider, string providerName)
         {
             if (string.IsNullOrEmpty(dataProvider.Name))
                 dataProvider.Name = GenerateElementName(dataProvider.Package);
             else
                 ValidateName(dataProvider.Name, dataProvider.Package);
 
+            if (string.IsNullOrEmpty(providerName))
+                providerName = dataProvider.Name;
+            else
+                ValidateName(providerName, dataProvider.Package);
+
             var name = dataProvider.Package == null
-                ? dataProvider.Name
+                ? providerName
                 : dataProvider.Package.NamespaceName + ":" + dataProvider.Name;
 
-            lock (_dataProviders) _dataProviders[dataProvider.Name] = dataProvider;
+            lock (_dataProviders) _dataProviders[name] = dataProvider;
         }
 
         private void ValidateName(string name, IPackage package)

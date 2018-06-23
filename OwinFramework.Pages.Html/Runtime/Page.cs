@@ -473,7 +473,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             writeResult.Add(WriteHead(context, data, true));
 
-            if (_inPageCssLines.Count > 0)
+            if (_inPageCssLines != null && _inPageCssLines.Count > 0)
             {
                 if (context.IncludeComments)
                     html.WriteComment("static in-page styles");
@@ -486,7 +486,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 html.WriteCloseTag("style");
             }
 
-            if (_inPageScriptLines.Count > 0)
+            if (_inPageScriptLines != null && _inPageScriptLines.Count > 0)
             {
                 if (context.IncludeComments)
                     html.WriteComment("static in-page javascript");

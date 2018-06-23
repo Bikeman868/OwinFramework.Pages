@@ -120,6 +120,7 @@
     <Compile Include="Package.cs" />
     <Compile Include="SamplePages\DeclarativePage.cs" />
     <Compile Include="SamplePackages\MenuPackage.cs" />
+    <Compile Include="SamplePages\SelfRegisteringPage.cs" />
     <Compile Include="SamplePages\SemiCustomPage.cs" />
     <Compile Include="SamplePages\FullCustomPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

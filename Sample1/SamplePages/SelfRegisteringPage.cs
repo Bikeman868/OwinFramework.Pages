@@ -2,16 +2,19 @@
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace Sample1.SamplePages
 {
-    [Description("<p>This is an example of how to add a full custom page that directly implements IPage</p>")]
-    [Option(OptionType.Method, "GET", "<p>Returns the html for this custom page</p>")]
-    [Option(OptionType.Header, "Accept", "text/html")]
-    [Example("<a href='/pages/anything.html'>/pages/anything.html</a>")]
-    internal class FullCustomPage : IPage
+    [IsPage]
+    [RequiresPermission("administrator")]
+    [Route("/page3", Methods.Get)]
+    [Description("<p>This is an example of how to add a full custom page that is discovered and registered automatically by the fluent builder</p>")]
+    [Option(OptionType.Method, "GET", "<p>Returns the html for this self registering page</p>")]
+    [Example("<a href='/page3'>/page3</a>")]
+    internal class SelfRegisteringPage : IPage
     {
         public string Name { get; set; }
         public IPackage Package { get; set; }
@@ -26,7 +29,7 @@ namespace Sample1.SamplePages
         Task IRunable.Run(IOwinContext context)
         {
             context.Response.ContentType = "text/html";
-            return context.Response.WriteAsync("<html><head><title>Full custom</title></head><body>This is a fully custom page</body></html>");
+            return context.Response.WriteAsync("<html><head><title>Self registered</title></head><body>This is a self registered page with routing defined by attributes</body></html>");
         }
     }
 }

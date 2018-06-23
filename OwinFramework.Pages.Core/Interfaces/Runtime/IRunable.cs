@@ -13,13 +13,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Returns the name of a permission that the caller must have, or null 
         /// to skip this check.
         /// </summary>
-        string RequiredPermission { get; }
+        string RequiredPermission { get; set; }
 
         /// <summary>
         /// Returns a flag indicating if anonymous users are allowed to request this
         /// resource
         /// </summary>
-        bool AllowAnonymous { get; }
+        bool AllowAnonymous { get; set; }
 
         /// <summary>
         /// Optional authentication function. If this is not null then it will be called

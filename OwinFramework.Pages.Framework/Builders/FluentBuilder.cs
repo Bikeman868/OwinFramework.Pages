@@ -7,6 +7,8 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.RequestFilters;
 
 namespace OwinFramework.Pages.Framework.Builders
 {
@@ -25,14 +27,17 @@ namespace OwinFramework.Pages.Framework.Builders
         public IServiceBuilder ServiceBuilder { get; set; }
 
         private readonly INameManager _nameManager;
+        private readonly IRequestRouter _requestRouter;
         private readonly HashSet<string> _assemblies;
         private readonly HashSet<string> _types;
         private readonly IPackage _packageContext;
 
         public FluentBuilder(
-            INameManager nameManager)
+            INameManager nameManager,
+            IRequestRouter requestRouter)
         {
             _nameManager = nameManager;
+            _requestRouter = requestRouter;
             _assemblies = new HashSet<string>();
             _types = new HashSet<string>();
         }
@@ -83,7 +88,7 @@ namespace OwinFramework.Pages.Framework.Builders
             package.Build(new FluentBuilder(this, package));
         }
 
-        void IFluentBuilder.Register(Assembly assembly)
+        void IFluentBuilder.Register(Assembly assembly, Func<Type, object> factory)
         {
             if (!_assemblies.Add(assembly.FullName))
                 return;
@@ -93,7 +98,7 @@ namespace OwinFramework.Pages.Framework.Builders
             var packageTypes = types.Where(t => t.GetCustomAttributes(true).Any(a => a is IsPackageAttribute)).ToList();
             var otherTypes = types.Where(t => !t.GetCustomAttributes(true).Any(a => a is IsPackageAttribute)).ToList();
 
-            Exception exception = null;
+            var  exceptions = new List<Exception>();
 
             // Must register packages first because they define the 
             // namespace for the other elements
@@ -101,11 +106,11 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 try
                 {
-                    ((IFluentBuilder)this).Register(type);
+                    ((IFluentBuilder)this).Register(type, factory);
                 }
                 catch (Exception ex)
                 {
-                    exception = ex;
+                    exceptions.Add(ex);
                 }
             }
 
@@ -114,33 +119,36 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 try
                 {
-                    ((IFluentBuilder)this).Register(type);
+                    ((IFluentBuilder)this).Register(type, factory);
                 }
                 catch (Exception ex)
                 {
-                    exception = ex;
+                    exceptions.Add(ex);
                 }
             }
 
-            if (exception != null)
-                throw exception;
+            if (exceptions.Count == 1)
+                throw exceptions[0];
+
+            if (exceptions.Count > 1)
+                throw new AggregateException(exceptions);
         }
 
-        void IFluentBuilder.Register(Type type)
+        void IFluentBuilder.Register(Type type, Func<Type, object> factory)
         {
             if (!_types.Add(type.FullName))
                 return;
 
             var attributes = new AttributeSet(type);
 
-            if (attributes.IsPackage != null) BuildPackage(attributes);
-            if (attributes.IsModule != null) BuildModule(attributes);
-            if (attributes.IsPage != null) BuildPage(attributes);
-            if (attributes.IsLayout != null) BuildLayout(attributes);
-            if (attributes.IsRegion != null) BuildRegion(attributes);
-            if (attributes.IsComponent != null) BuildComponent(attributes);
-            if (attributes.IsService != null) BuildService(attributes);
-            if (attributes.IsDataProvider != null) BuildDataProvider(attributes);
+            if (attributes.IsPackage != null) BuildPackage(attributes, factory);
+            if (attributes.IsModule != null) BuildModule(attributes, factory);
+            if (attributes.IsPage != null) BuildPage(attributes, factory);
+            if (attributes.IsLayout != null) BuildLayout(attributes, factory);
+            if (attributes.IsRegion != null) BuildRegion(attributes, factory);
+            if (attributes.IsComponent != null) BuildComponent(attributes, factory);
+            if (attributes.IsService != null) BuildService(attributes, factory);
+            if (attributes.IsDataProvider != null) BuildDataProvider(attributes, factory);
         }
 
         public IComponentDefinition Component(IPackage package)
@@ -185,59 +193,95 @@ namespace OwinFramework.Pages.Framework.Builders
             return ModuleBuilder.Module();
         }
 
-        private void BuildPackage(AttributeSet attributes)
+        private void BuildPackage(AttributeSet attributes, Func<Type, object> factory)
         {
-            IPackageDefinition package = new PackageDefinition(attributes.Type, this, _nameManager);
+            if (factory != null && typeof(IPackage).IsAssignableFrom(attributes.Type))
+            {
+                var package = factory(attributes.Type) as IPackage;
+                if (package != null)
+                {
+                    ((IFluentBuilder)this).Register(package);
+                    return;
+                }
+            }
+
+            IPackageDefinition packageDefinition = new PackageDefinition(attributes.Type, this, _nameManager);
             
-            package.Name(attributes.IsPackage.Name);
-            package.NamespaceName(attributes.IsPackage.NamespaceName);
+            packageDefinition.Name(attributes.IsPackage.Name);
+            packageDefinition.NamespaceName(attributes.IsPackage.NamespaceName);
 
             if (attributes.DeployedAs != null)
-                package.Module(attributes.DeployedAs.ModuleName);
+                packageDefinition.Module(attributes.DeployedAs.ModuleName);
 
-            package.Build();
+            packageDefinition.Build();
         }
 
-        private void BuildModule(AttributeSet attributes)
+        private void BuildModule(AttributeSet attributes, Func<Type, object> factory)
         {
-            var module = Module()
+            if (factory != null && typeof(IModule).IsAssignableFrom(attributes.Type))
+            {
+                var module = factory(attributes.Type) as IModule;
+                if (module != null)
+                {
+                    if (attributes.IsModule != null)
+                    {
+                        if (!string.IsNullOrEmpty(attributes.IsModule.Name))
+                            module.Name = attributes.IsModule.Name;
+                        module.AssetDeployment = attributes.IsModule.AssetDeployment;
+                    }
+                    _nameManager.Register(module);
+                    return;
+                }
+            }
+
+            var moduleDefinition = Module()
                 .Name(attributes.IsModule.Name)
                 .AssetDeployment(attributes.IsModule.AssetDeployment);
 
-            module.Build();
+            moduleDefinition.Build();
         }
 
-        private void BuildPage(AttributeSet attributes)
+        private void BuildPage(AttributeSet attributes, Func<Type, object> factory)
         {
-            var page = Page(attributes.Type, _packageContext)
+            if (factory != null && typeof(IPage).IsAssignableFrom(attributes.Type))
+            {
+                var page = factory(attributes.Type) as IPage;
+                if (page != null)
+                {
+                    Configure(attributes, page);
+                    return;
+                }
+            }
+
+            var pageDefinition = Page(attributes.Type, _packageContext)
                 .Name(attributes.IsPage.Name);
 
             if (attributes.DeployedAs != null)
-                page.AssetDeployment(attributes.DeployedAs.Deployment)
+                pageDefinition.AssetDeployment(attributes.DeployedAs.Deployment)
                     .Module(attributes.DeployedAs.ModuleName);
 
             if (attributes.UsesLayouts != null)
                 foreach(var usesLayout in attributes.UsesLayouts)
-                    page.Layout(usesLayout.LayoutName);
+                    pageDefinition.Layout(usesLayout.LayoutName);
 
             if (attributes.PartOf != null)
-                page.PartOf(attributes.PartOf.PackageName);
+                pageDefinition.PartOf(attributes.PartOf.PackageName);
 
             if (attributes.PageTitle != null)
-                page.Title(attributes.PageTitle.Title);
+                pageDefinition.Title(attributes.PageTitle.Title);
 
             if (attributes.Style != null)
-                page.BodyStyle(attributes.Style.CssStyle);
+                pageDefinition.BodyStyle(attributes.Style.CssStyle);
 
             if (attributes.NeedsDatas != null)
             {
                 foreach (var needsData in attributes.NeedsDatas)
                 {
                     if (!string.IsNullOrEmpty(needsData.DataProviderName))
-                        page.DataProvider(needsData.DataProviderName);
+                        pageDefinition.DataProvider(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
-                        page.BindTo(needsData.DataType);
+                        pageDefinition.BindTo(needsData.DataType);
                 }
             }
 
@@ -245,7 +289,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionComponent in attributes.RegionComponents)
                 {
-                    page.RegionComponent(regionComponent.Region, regionComponent.Component);
+                    pageDefinition.RegionComponent(regionComponent.Region, regionComponent.Component);
                 }
             }
 
@@ -253,7 +297,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionLayout in attributes.RegionLayouts)
                 {
-                    page.RegionLayout(regionLayout.Region, regionLayout.Layout);
+                    pageDefinition.RegionLayout(regionLayout.Region, regionLayout.Layout);
                 }
             }
 
@@ -261,7 +305,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach(var route in attributes.Routes)
                 {
-                    page.Route(route.Path, route.Priority, route.Methods);
+                    pageDefinition.Route(route.Path, route.Priority, route.Methods);
                 }
             }
 
@@ -269,98 +313,120 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var component in attributes.NeedsComponents)
                 {
-                    page.NeedsComponent(component.ComponentName);
+                    pageDefinition.NeedsComponent(component.ComponentName);
                 }
             }
 
-            page.Build();
+            pageDefinition.Build();
         }
 
-        private void BuildLayout(AttributeSet attributes)
+        private void BuildLayout(AttributeSet attributes, Func<Type, object> factory)
         {
-            var layout = Layout(_packageContext)
+            if (factory != null && typeof(ILayout).IsAssignableFrom(attributes.Type))
+            {
+                var layout = factory(attributes.Type) as ILayout;
+                if (layout != null)
+                {
+                    Configure(attributes, layout);
+                    _nameManager.Register(layout);
+                    return;
+                }
+            }
+
+            var layoutDefinition = Layout(_packageContext)
                 .Name(attributes.IsLayout.Name)
                 .RegionNesting(attributes.IsLayout.RegionNesting);
 
             if (attributes.DeployedAs != null)
-                layout.AssetDeployment(attributes.DeployedAs.Deployment)
+                layoutDefinition.AssetDeployment(attributes.DeployedAs.Deployment)
                     .DeployIn(attributes.DeployedAs.ModuleName);
 
             if (attributes.PartOf != null)
-                layout.PartOf(attributes.PartOf.PackageName);
+                layoutDefinition.PartOf(attributes.PartOf.PackageName);
 
             if (attributes.NeedsDatas != null)
             {
                 foreach (var needsData in attributes.NeedsDatas)
                 {
                     if (!string.IsNullOrEmpty(needsData.DataProviderName))
-                        layout.DataProvider(needsData.DataProviderName);
+                        layoutDefinition.DataProvider(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
-                        layout.BindTo(needsData.DataType);
+                        layoutDefinition.BindTo(needsData.DataType);
                 }
             }
 
             if (attributes.RegionComponents != null)
                 foreach(var regionComponent in attributes.RegionComponents)
-                    layout.Component(regionComponent.Region, regionComponent.Component);
+                    layoutDefinition.Component(regionComponent.Region, regionComponent.Component);
 
             if (attributes.RegionLayouts != null)
                 foreach (var regionLayout in attributes.RegionLayouts)
-                    layout.Layout(regionLayout.Region, regionLayout.Layout);
+                    layoutDefinition.Layout(regionLayout.Region, regionLayout.Layout);
 
             if (attributes.Style != null)
             {
                 if (!string.IsNullOrEmpty(attributes.Style.CssStyle))
-                    layout.Style(attributes.Style.CssStyle);
+                    layoutDefinition.Style(attributes.Style.CssStyle);
             }
 
             if (attributes.ChildStyle != null)
             {
                 if (!string.IsNullOrEmpty(attributes.ChildStyle.CssStyle))
-                    layout.NestedStyle(attributes.ChildStyle.CssStyle);
+                    layoutDefinition.NestedStyle(attributes.ChildStyle.CssStyle);
             }
 
             if (attributes.Container != null)
             {
                 if (!string.IsNullOrEmpty(attributes.Container.Tag))
-                    layout.Tag(attributes.Container.Tag);
+                    layoutDefinition.Tag(attributes.Container.Tag);
 
                 if (attributes.Container.ClassNames != null && attributes.Container.ClassNames.Length > 0)
-                    layout.ClassNames(attributes.Container.ClassNames);
+                    layoutDefinition.ClassNames(attributes.Container.ClassNames);
             }
 
             if (attributes.NeedsComponents != null)
             {
                 foreach (var component in attributes.NeedsComponents)
                 {
-                    layout.NeedsComponent(component.ComponentName);
+                    layoutDefinition.NeedsComponent(component.ComponentName);
                 }
             }
 
             if (attributes.ChildContainer != null)
             {
                 if (!string.IsNullOrEmpty(attributes.ChildContainer.Tag))
-                    layout.NestingTag(attributes.ChildContainer.Tag);
+                    layoutDefinition.NestingTag(attributes.ChildContainer.Tag);
 
                 if (attributes.ChildContainer.ClassNames != null && attributes.ChildContainer.ClassNames.Length > 0)
-                    layout.NestedClassNames(attributes.ChildContainer.ClassNames);
+                    layoutDefinition.NestedClassNames(attributes.ChildContainer.ClassNames);
             }
 
             if (attributes.UsesRegions != null)
                 foreach (var usesRegion in attributes.UsesRegions)
-                    layout.Region(usesRegion.RegionName, usesRegion.RegionElement);
+                    layoutDefinition.Region(usesRegion.RegionName, usesRegion.RegionElement);
     
-            layout.Build();
+            layoutDefinition.Build();
         }
 
-        private void BuildRegion(AttributeSet attributes)
+        private void BuildRegion(AttributeSet attributes, Func<Type, object> factory)
         {
-            var region = Region(_packageContext)
+            if (factory != null && typeof(IRegion).IsAssignableFrom(attributes.Type))
+            {
+                var region = factory(attributes.Type) as IRegion;
+                if (region != null)
+                {
+                    Configure(attributes, region);
+                    _nameManager.Register(region);
+                    return;
+                }
+            }
+
+            var regionDefinition = Region(_packageContext)
                 .Name(attributes.IsRegion.Name);
 
             if (attributes.DeployedAs != null)
-                region.AssetDeployment(attributes.DeployedAs.Deployment)
+                regionDefinition.AssetDeployment(attributes.DeployedAs.Deployment)
                     .DeployIn(attributes.DeployedAs.ModuleName);
 
             if (attributes.NeedsDatas != null)
@@ -368,24 +434,24 @@ namespace OwinFramework.Pages.Framework.Builders
                 foreach (var needsData in attributes.NeedsDatas)
                 {
                     if (!string.IsNullOrEmpty(needsData.DataProviderName))
-                        region.DataProvider(needsData.DataProviderName);
+                        regionDefinition.DataProvider(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
-                        region.BindTo(needsData.DataType);
+                        regionDefinition.BindTo(needsData.DataType);
                 }
             }
 
             if (attributes.PartOf != null)
-                region.PartOf(attributes.PartOf.PackageName);
+                regionDefinition.PartOf(attributes.PartOf.PackageName);
 
             if (attributes.Style != null)
             {
                 if (!string.IsNullOrEmpty(attributes.Style.CssStyle))
-                    region.Style(attributes.Style.CssStyle);
+                    regionDefinition.Style(attributes.Style.CssStyle);
             }
 
             if (attributes.Repeat != null)
-                region.ForEach(
+                regionDefinition.ForEach(
                     attributes.Repeat.ItemType, 
                     attributes.Repeat.Tag, 
                     attributes.Repeat.Style, 
@@ -394,52 +460,63 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.Container != null)
             {
                 if (!string.IsNullOrEmpty(attributes.Container.Tag))
-                    region.Tag(attributes.Container.Tag);
+                    regionDefinition.Tag(attributes.Container.Tag);
 
                 if (attributes.Container.ClassNames != null && attributes.Container.ClassNames.Length > 0)
-                    region.ClassNames(attributes.Container.ClassNames);
+                    regionDefinition.ClassNames(attributes.Container.ClassNames);
             }
 
             if (attributes.NeedsComponents != null)
             {
                 foreach (var component in attributes.NeedsComponents)
                 {
-                    region.NeedsComponent(component.ComponentName);
+                    regionDefinition.NeedsComponent(component.ComponentName);
                 }
             }
 
             if (attributes.UsesLayouts != null)
                 foreach(var usesLayout in attributes.UsesLayouts)
-                    region.Layout(usesLayout.LayoutName);
+                    regionDefinition.Layout(usesLayout.LayoutName);
 
             if (attributes.UsesComponents != null)
                 foreach(var usesComponent in attributes.UsesComponents)
-                    region.Component(usesComponent.ComponentName);
+                    regionDefinition.Component(usesComponent.ComponentName);
 
-            region.Build();
+            regionDefinition.Build();
         }
 
-        private void BuildComponent(AttributeSet attributes)
+        private void BuildComponent(AttributeSet attributes, Func<Type, object> factory)
         {
-            var component = Component(_packageContext)
-                .Name(attributes.IsComponent.Name);
+            if (factory != null && typeof(IComponent).IsAssignableFrom(attributes.Type))
+            {
+                var component = factory(attributes.Type) as IComponent;
+                if (component != null)
+                {
+                    Configure(attributes, component);
+                    _nameManager.Register(component);
+                    return;
+                }
+            }
+
+            var componentDefinition = Component(_packageContext)
+            .Name(attributes.IsComponent.Name);
 
             if (attributes.DeployedAs != null)
-                component.AssetDeployment(attributes.DeployedAs.Deployment)
+                componentDefinition.AssetDeployment(attributes.DeployedAs.Deployment)
                     .DeployIn(attributes.DeployedAs.ModuleName);
 
             if (attributes.PartOf != null)
-                component.PartOf(attributes.PartOf.PackageName);
+                componentDefinition.PartOf(attributes.PartOf.PackageName);
 
             if (attributes.NeedsDatas != null)
             {
                 foreach (var needsData in attributes.NeedsDatas)
                 {
                     if (!string.IsNullOrEmpty(needsData.DataProviderName))
-                        component.DataProvider(needsData.DataProviderName);
+                        componentDefinition.DataProvider(needsData.DataProviderName);
 
                     if (needsData.DataType != null)
-                        component.BindTo(needsData.DataType);
+                        componentDefinition.BindTo(needsData.DataType);
                 }
             }
 
@@ -447,7 +524,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach(var renderHtml in attributes.RenderHtmls.OrderBy(r => r.Order))
                 {
-                    component.Render(renderHtml.TextName, renderHtml.Html);
+                    componentDefinition.Render(renderHtml.TextName, renderHtml.Html);
                 }
             }
 
@@ -455,36 +532,211 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var neededComponent in attributes.NeedsComponents)
                 {
-                    component.NeedsComponent(neededComponent.ComponentName);
+                    componentDefinition.NeedsComponent(neededComponent.ComponentName);
                 }
             }
 
             if (attributes.DeployCsss != null)
                 foreach(var deployCss in attributes.DeployCsss)
-                    component.DeployCss(deployCss.CssSelector, deployCss.CssStyle);
+                    componentDefinition.DeployCss(deployCss.CssSelector, deployCss.CssStyle);
 
             if (attributes.DeployFunction != null)
-                component.DeployFunction(
+                componentDefinition.DeployFunction(
                     attributes.DeployFunction.ReturnType,
                     attributes.DeployFunction.FunctionName,
                     attributes.DeployFunction.Parameters,
                     attributes.DeployFunction.Body,
                     attributes.DeployFunction.IsPublic);
 
-            component.Build();
+            componentDefinition.Build();
         }
 
-        private void BuildService(AttributeSet attributes)
+        private void BuildService(AttributeSet attributes, Func<Type, object> factory)
         {
-            var service = Service(attributes.Type, _packageContext)
+            if (factory != null && typeof(IService).IsAssignableFrom(attributes.Type))
+            {
+                var service = factory(attributes.Type) as IService;
+                if (service != null)
+                {
+                    Configure(attributes, service);
+                    _nameManager.Register(service);
+                    return;
+                }
+            }
+
+            var serviceDefinition = Service(attributes.Type, _packageContext)
                 .Name(attributes.IsService.Name);
 
-            service.Build();
+            serviceDefinition.Build();
         }
 
-        private void BuildDataProvider(AttributeSet attributes)
+        private void BuildDataProvider(AttributeSet attributes, Func<Type, object> factory)
         {
         }
 
+        private void Configure(AttributeSet attributes, IPage page)
+        {
+            if (attributes.IsPage != null)
+            {
+                if (!string.IsNullOrEmpty(attributes.IsPage.Name))
+                    page.Name = attributes.IsPage.Name;
+            }
+
+            if (attributes.PartOf != null && !string.IsNullOrEmpty(attributes.PartOf.PackageName))
+            {
+                page.Package = _nameManager.ResolvePackage(attributes.PartOf.PackageName);
+            }
+
+            ConfigureRunable(attributes, page);
+        }
+
+        private void Configure(AttributeSet attributes, ILayout layout)
+        {
+            if (attributes.IsLayout != null)
+            {
+                if (!string.IsNullOrEmpty(attributes.IsLayout.Name))
+                    layout.Name = attributes.IsLayout.Name;
+            }
+
+            if (attributes.RegionComponents != null)
+            {
+                foreach (var regionComponent in attributes.RegionComponents)
+                {
+                    var rc = regionComponent;
+                    _nameManager.AddResolutionHandler(() =>
+                    {
+                        layout.Populate(rc.Region, _nameManager.ResolveComponent(rc.Component, layout.Package));
+                    });
+                }
+            }
+
+            if (attributes.RegionLayouts != null)
+            {
+                foreach (var regionLayout in attributes.RegionLayouts)
+                {
+                    var rl = regionLayout;
+                    _nameManager.AddResolutionHandler(() =>
+                    {
+                        layout.Populate(rl.Region, _nameManager.ResolveLayout(rl.Layout, layout.Package));
+                    });
+                }
+            }
+
+            ConfigureElement(attributes, layout);
+        }
+
+        private void Configure(AttributeSet attributes, IRegion region)
+        {
+            if (attributes.IsRegion != null)
+            {
+                if (!string.IsNullOrEmpty(attributes.IsRegion.Name))
+                    region.Name = attributes.IsRegion.Name;
+            }
+
+            if (attributes.UsesComponents != null)
+            {
+                if (attributes.UsesComponents.Count > 1)
+                    throw new RegionBuilderException("Regions can only host one component but you " +
+                        "have more than one [UsesComponent] attribute on " + attributes.Type.FullName);
+                if (attributes.UsesComponents.Count == 1)
+                {
+                    _nameManager.AddResolutionHandler(() =>
+                    {
+                        region.Populate(_nameManager.ResolveComponent(attributes.UsesComponents[0].ComponentName, region.Package));
+                    });
+                }
+            }
+
+            if (attributes.UsesLayouts != null)
+            {
+                if (attributes.UsesLayouts.Count > 1)
+                    throw new RegionBuilderException("Regions can only host one layout but you " +
+                        "have more than one [UsesLayout] attribute on " + attributes.Type.FullName);
+                if (attributes.UsesLayouts.Count == 1)
+                {
+                    _nameManager.AddResolutionHandler(() =>
+                    {
+                        region.Populate(_nameManager.ResolveLayout(attributes.UsesLayouts[0].LayoutName, region.Package));
+                    });
+                }
+            }
+
+            ConfigureElement(attributes, region);
+        }
+
+        private void Configure(AttributeSet attributes, IComponent component)
+        {
+            if (attributes.IsComponent != null)
+            {
+                if (!string.IsNullOrEmpty(attributes.IsComponent.Name))
+                    component.Name = attributes.IsComponent.Name;
+            }
+            ConfigureElement(attributes, component);
+        }
+
+        private void Configure(AttributeSet attributes, IService service)
+        {
+            if (attributes.IsService != null)
+            {
+                if (!string.IsNullOrEmpty(attributes.IsService.Name))
+                    service.Name = attributes.IsService.Name;
+            }
+
+            ConfigureElement(attributes, service);
+            ConfigureRunable(attributes, service);
+        }
+
+        private void ConfigureRunable(AttributeSet attributes, IRunable runable)
+        {
+            if (attributes.RequiresPermission != null)
+            {
+                runable.RequiredPermission = attributes.RequiresPermission.PermissionName;
+            }
+
+            if (attributes.Routes != null)
+            {
+                foreach (var route in attributes.Routes)
+                {
+                    if (route.Methods == null || route.Methods.Length == 0)
+                    {
+                        if (string.IsNullOrEmpty(route.Path))
+                            continue;
+                        _requestRouter.Register(runable, new FilterByPath(route.Path), route.Priority);
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(route.Path))
+                            _requestRouter.Register(runable, new FilterByMethod(route.Methods), route.Priority);
+                        else
+                            _requestRouter.Register(
+                                runable,
+                                new FilterAllFilters(
+                                    new FilterByMethod(route.Methods),
+                                    new FilterByPath(route.Path)),
+                                route.Priority);
+                    }
+                }
+            }
+        }
+
+        private void ConfigureElement(AttributeSet attributes, IElement element)
+        {
+            if (attributes.PartOf != null && !string.IsNullOrEmpty(attributes.PartOf.PackageName))
+            {
+                element.Package = _nameManager.ResolvePackage(attributes.PartOf.PackageName);
+            }
+
+            if (attributes.DeployedAs != null)
+            {
+                element.AssetDeployment = attributes.DeployedAs.Deployment;
+                if (!string.IsNullOrEmpty(attributes.DeployedAs.ModuleName))
+                {
+                    _nameManager.AddResolutionHandler(() =>
+                    {
+                        element.Module = _nameManager.ResolveModule(attributes.DeployedAs.ModuleName);
+                    });
+                }
+            }
+        }
     }
 }

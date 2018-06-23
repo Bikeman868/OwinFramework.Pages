@@ -280,8 +280,8 @@ namespace OwinFramework.Pages.Framework.Managers
 
         #region IRunable - serves assets
 
-        string IRunable.RequiredPermission { get { return null; } }
-        bool IRunable.AllowAnonymous { get { return true; } }
+        string IRunable.RequiredPermission { get { return null; } set { } }
+        bool IRunable.AllowAnonymous { get { return true; } set { } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
 
         Task IRunable.Run(IOwinContext context)

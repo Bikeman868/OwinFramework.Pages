@@ -97,7 +97,7 @@ namespace Sample1
             fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus");
 
             // This is an example of registering all of the elements defined in an assembly
-            fluentBuilder.Register(Assembly.GetExecutingAssembly());
+            fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
 
             // This is an example of registering all of the data providers defined in an assembly
             var dataCatalog = ninject.Get<IDataCatalog>();

@@ -25,14 +25,18 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// registers them.
         /// </summary>
         /// <param name="assembly">The assembly to search for eleemnts</param>
-        void Register(Assembly assembly);
+        /// <param name="factory">Optional factory. If supplied then it will be used
+        /// to construct classes that implement interfaces like ILayout, IRegion etc.</param>
+        void Register(Assembly assembly, Func<Type, object> factory = null);
 
         /// <summary>
         /// Registeres a class as an element if it is one, does nothing
         /// if this is not an element
         /// </summary>
         /// <param name="type">The element type to register</param>
-        void Register(Type type);
+        /// <param name="factory">Optional factory. If supplied then it will be used
+        /// to construct classes that implement interfaces like ILayout, IRegion etc.</param>
+        void Register(Type type, Func<Type, object> factory = null);
 
         /// <summary>
         /// Defines how modules are built

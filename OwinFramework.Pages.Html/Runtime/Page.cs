@@ -20,12 +20,12 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Returns the name of the permission that the user must have to view this page
         /// </summary>
-        public virtual string RequiredPermission { get { return null; } }
+        public virtual string RequiredPermission { get { return null; } set { } }
 
         /// <summary>
         /// Return false if anonymouse users are not permitted to view this page
         /// </summary>
-        public virtual bool AllowAnonymous { get{return true; } }
+        public virtual bool AllowAnonymous { get { return true; } set { } }
 
         /// <summary>
         /// Return a custom authentication check
@@ -328,7 +328,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 foreach (var component in _components)
                 {
-                    if (writeResult.Add(component.WriteDynamicJavascript(writer)).IsComplete);
+                    if (writeResult.Add(component.WriteDynamicJavascript(writer)).IsComplete)
                         return writeResult;
                 }
             }

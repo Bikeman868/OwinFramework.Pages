@@ -12,6 +12,7 @@ namespace OwinFramework.Pages.Html.Runtime
     public abstract class Element: IElement
     {
         private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
+        private List<IComponent> _dependentComponents;
 
         /// <summary>
         /// Gets or sets the asset deployment scheme for this element
@@ -240,6 +241,12 @@ namespace OwinFramework.Pages.Html.Runtime
 
             initializationData.HasElement(this, assetDeployment, Module);
 
+            if (_dependentComponents != null)
+            {
+                foreach (var component in _dependentComponents)
+                    initializationData.NeedsComponent(component);
+            }
+
             var children = GetChildren();
             if (children == null) return;
             
@@ -263,6 +270,14 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
                 children.Dispose();
             }
+        }
+
+        public virtual void NeedsComponent(IComponent component)
+        {
+            if (_dependentComponents == null)
+                _dependentComponents = new List<IComponent>();
+
+            _dependentComponents.Add(component);
         }
     }
 }

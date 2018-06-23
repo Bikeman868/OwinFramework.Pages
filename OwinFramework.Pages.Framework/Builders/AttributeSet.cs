@@ -17,6 +17,7 @@ namespace OwinFramework.Pages.Framework.Builders
         public IsRegionAttribute IsRegion;
         public IsComponentAttribute IsComponent;
         public IsServiceAttribute IsService;
+        public IsDataProviderAttribute IsDataProvider;
 
         // Attributes that can only be applied once
         public ChildContainerAttribute ChildContainer;
@@ -56,6 +57,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 IsRegion = Set(IsRegion, attribute);
                 IsComponent = Set(IsComponent, attribute);
                 IsService = Set(IsService, attribute);
+                IsDataProvider = Set(IsDataProvider, attribute);
 
                 ChildContainer = Set(ChildContainer, attribute);
                 ChildStyle = Set(ChildStyle, attribute);
@@ -110,6 +112,7 @@ namespace OwinFramework.Pages.Framework.Builders
             else if (IsRegion != null) ValidateRegion();
             else if (IsComponent != null) ValidateComponent();
             else if (IsService != null) ValidateService();
+            else if (IsDataProvider != null) ValidateDataProvider();
         }
 
         private void ValidatePackage()
@@ -120,6 +123,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (IsRegion != null) throw new FluentBuilderException("A class can not be a package and a region. " + Type.FullName);
             if (IsComponent != null) throw new FluentBuilderException("A class can not be a package and a component. " + Type.FullName);
             if (IsService != null) throw new FluentBuilderException("A class can not be a package and a service. " + Type.FullName);
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a package and a data provider. " + Type.FullName);
         }
 
         private void ValidateModule()
@@ -140,6 +144,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (IsRegion != null) throw new FluentBuilderException("A class can not be a page and a region. " + Type.FullName);
             if (IsComponent != null) throw new FluentBuilderException("A class can not be a page and a component. " + Type.FullName);
             if (IsService != null) throw new FluentBuilderException("A class can not be a page and a service. " + Type.FullName);
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a page and a data provider. " + Type.FullName);
         }
 
         private void ValidateLayout()
@@ -150,6 +155,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (IsRegion != null) throw new FluentBuilderException("A class can not be a layout and a region. " + Type.FullName);
             if (IsComponent != null) throw new FluentBuilderException("A class can not be a layout and a component. " + Type.FullName);
             if (IsService != null) throw new FluentBuilderException("A class can not be a layout and a service. " + Type.FullName);
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a layout and a data provider. " + Type.FullName);
         }
 
         private void ValidateRegion()
@@ -160,6 +166,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (IsLayout != null) throw new FluentBuilderException("A class can not be a region and a layout. " + Type.FullName);
             if (IsComponent != null) throw new FluentBuilderException("A class can not be a region and a component. " + Type.FullName);
             if (IsService != null) throw new FluentBuilderException("A class can not be a region and a service. " + Type.FullName);
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a region and a data provider. " + Type.FullName);
         }
 
         private void ValidateComponent()
@@ -170,6 +177,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (IsLayout != null) throw new FluentBuilderException("A class can not be a component and a layout. " + Type.FullName);
             if (IsRegion != null) throw new FluentBuilderException("A class can not be a component and a region. " + Type.FullName);
             if (IsService != null) throw new FluentBuilderException("A class can not be a component and a service. " + Type.FullName);
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a component and a data provider. " + Type.FullName);
         }
 
         private void ValidateService()
@@ -180,6 +188,18 @@ namespace OwinFramework.Pages.Framework.Builders
             if (IsLayout != null) throw new FluentBuilderException("A class can not be a service and a layout. " + Type.FullName);
             if (IsRegion != null) throw new FluentBuilderException("A class can not be a service and a region. " + Type.FullName);
             if (IsComponent != null) throw new FluentBuilderException("A class can not be a service and a component. " + Type.FullName);
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a service and a data provider. " + Type.FullName);
+        }
+
+        private void ValidateDataProvider()
+        {
+            if (IsPackage != null) throw new FluentBuilderException("A class can not be a data provider and a package. " + Type.FullName);
+            if (IsModule != null) throw new FluentBuilderException("A class can not be a data provider and a module. " + Type.FullName);
+            if (IsPage != null) throw new FluentBuilderException("A class can not be a data provider and a page. " + Type.FullName);
+            if (IsLayout != null) throw new FluentBuilderException("A class can not be a data provider and a layout. " + Type.FullName);
+            if (IsRegion != null) throw new FluentBuilderException("A class can not be a data provider and a region. " + Type.FullName);
+            if (IsComponent != null) throw new FluentBuilderException("A class can not be a data provider and a component. " + Type.FullName);
+            if (IsService != null) throw new FluentBuilderException("A class can not be a data provider and a service. " + Type.FullName);
         }
     }
 }

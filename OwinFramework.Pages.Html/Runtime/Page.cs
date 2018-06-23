@@ -71,10 +71,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual void Initialize()
         {
-            var data = new Initializationdata
-            { 
-                AssetDeployment = AssetDeployment
-            };
+            var data = new Initializationdata(AssetDeployment, this);
 
             if (AssetDeployment == AssetDeployment.Inherit)
             {
@@ -83,11 +80,20 @@ namespace OwinFramework.Pages.Html.Runtime
                     : Module.AssetDeployment;
             }
 
-            if (Layout != null) 
+            if (Layout != null)
                 Layout.Initialize(data);
 
-            // TODO: Group elements by module and deployment method
-            // TODO: Create in-page static asset html
+            if (_components != null)
+            {
+                var skip = 0;
+                do
+                {
+                    var newComponents = _components.Skip(skip).ToList();
+                    foreach (var component in newComponents)
+                        component.Initialize(data);
+                    skip += newComponents.Count;
+                } while (_components.Count > skip);
+            }
 
             _referencedModules = new List<IModule>();
             var styles = _dependencies.CssWriterFactory.Create();
@@ -159,7 +165,14 @@ namespace OwinFramework.Pages.Html.Runtime
             public readonly List<ElementRegistration> Elements = new List<ElementRegistration>();
 
             private readonly Stack<State> _stateStack = new Stack<State>();
+            private readonly Page _page;
             private State _currentState = new State();
+
+            public Initializationdata(AssetDeployment assetDeployment, Page page)
+            {
+                AssetDeployment = assetDeployment;
+                _page = page;
+            }
 
             public void Push()
             {
@@ -178,6 +191,12 @@ namespace OwinFramework.Pages.Html.Runtime
                 set { _currentState.AssetDeployment = value; }
             }
 
+            public IInitializationData NeedsComponent(IComponent component)
+            {
+                _page.AddComponent(component);
+                return this;
+            }
+
             public void HasElement(
                 IElement element, 
                 AssetDeployment assetDeployment, 
@@ -194,7 +213,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public override IEnumerator<IElement> GetChildren()
         {
-            return Layout.AsEnumerable<IElement>().GetEnumerator();
+            if (_components == null)
+                return Layout.AsEnumerable<IElement>().GetEnumerator();
+
+            return _components.Concat(Layout.AsEnumerable<IElement>()).GetEnumerator();
         }
 
         /// <summary>
@@ -207,7 +229,15 @@ namespace OwinFramework.Pages.Html.Runtime
             if (_components == null)
                 _components = new List<IComponent>();
 
+            if (_components.Any(c => string.Equals(c.Name, component.Name, StringComparison.OrdinalIgnoreCase)))
+                return;
+
             _components.Add(component);
+        }
+
+        public override void NeedsComponent(IComponent component)
+        {
+            AddComponent(component);
         }
 
         public override IWriteResult WriteStaticCss(ICssWriter writer)

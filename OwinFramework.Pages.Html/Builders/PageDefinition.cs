@@ -214,11 +214,16 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.NeedsComponent(string componentName)
         {
+            _nameManager.AddResolutionHandler(() =>
+            {
+                _page.NeedsComponent(_nameManager.ResolveComponent(componentName, _page.Package));
+            });
             return this;
         }
 
         IPageDefinition IPageDefinition.NeedsComponent(IComponent component)
         {
+            _page.NeedsComponent(component);
             return this;
         }
 

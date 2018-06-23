@@ -244,11 +244,16 @@ namespace OwinFramework.Pages.Html.Builders
 
         ILayoutDefinition ILayoutDefinition.NeedsComponent(string componentName)
         {
+            _nameManager.AddResolutionHandler(() =>
+            {
+                _layout.NeedsComponent(_nameManager.ResolveComponent(componentName, _layout.Package));
+            });
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.NeedsComponent(IComponent component)
         {
+            _layout.NeedsComponent(component);
             return this;
         }
 

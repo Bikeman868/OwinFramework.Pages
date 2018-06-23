@@ -49,7 +49,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// type of data provided by this instance.
         /// </summary>
         /// <param name="renderContext">The request that is being handled</param>
-        /// <param name="dataContext">Output from dependant data providers can be read
+        /// <param name="dataContext">Output from dependent data providers can be read
         /// from here. This data provider should output it's data into this context</param>
         /// <param name="dataType">The type of data to add to the data context</param>
         void EstablishContext(IRenderContext renderContext, IDataContext dataContext, Type dataType);

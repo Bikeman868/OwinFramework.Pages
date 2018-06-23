@@ -383,8 +383,8 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 if (hasNamespace)
                 {
-                    writer.Write("var ns = (window.ns = window.ns || {});");
-                    writer.Write("ns." + NamespaceName + " = function () {");
+                    writer.Write(Line1());
+                    writer.Write(Line2());
                     writer.IndentLevel++;
                 }
 
@@ -397,29 +397,13 @@ namespace OwinFramework.Pages.Html.Runtime
                 if (hasNamespace)
                 {
                     writer.WriteLine();
-                    writer.WriteLine("return {");
-                    writer.IndentLevel++;
 
-                    var firstElement = true;
-                    foreach (var element in _elements)
-                    {
-                        if (!firstElement)
-                            writer.WriteLine(",");
-
-                        if (element.IsPublic && !string.IsNullOrEmpty(element.Name))
-                        {
-                            writer.Write(element.Name);
-                            firstElement = false;
-                        }
-                    }
-                    if (!firstElement)
-                        writer.WriteLine();
+                    foreach (var element in _elements.Where(e => e.IsPublic && !string.IsNullOrEmpty(e.Name)))
+                        writer.WriteLine("exported." + element.Name + " = " + element.Name + ";");
 
                     writer.IndentLevel--;
-                    writer.WriteLine("}");
-
-                    writer.IndentLevel--;
-                    writer.WriteLine("}();");
+                    writer.WriteLine(LineN2());
+                    writer.WriteLine(LineN1());
                     writer.WriteLine();
                 }
             }
@@ -432,8 +416,8 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 if (hasNamespace)
                 {
-                    stringBuilder.AppendLine("var ns = (window.ns = window.ns || {});");
-                    stringBuilder.AppendLine("ns." + NamespaceName + " = function () {");
+                    stringBuilder.AppendLine(Line1());
+                    stringBuilder.AppendLine(Line2());
                 }
 
                 foreach (var element in _elements)
@@ -445,25 +429,12 @@ namespace OwinFramework.Pages.Html.Runtime
                 if (hasNamespace)
                 {
                     stringBuilder.AppendLine(string.Empty);
-                    stringBuilder.AppendLine("  return {");
 
-                    var firstElement = true;
-                    foreach (var element in _elements)
-                    {
-                        if (!firstElement)
-                            stringBuilder.AppendLine(",");
+                    foreach (var element in _elements.Where(e => e.IsPublic && !string.IsNullOrEmpty(e.Name)))
+                            stringBuilder.Append("  exported." + element.Name + " = " + element.Name + ";");
 
-                        if (element.IsPublic && !string.IsNullOrEmpty(element.Name))
-                        {
-                            stringBuilder.Append("    " + element.Name);
-                            firstElement = false;
-                        }
-                    }
-                    if (!firstElement)
-                        stringBuilder.AppendLine(string.Empty);
-
-                    stringBuilder.AppendLine("  }");
-                    stringBuilder.AppendLine("}();");
+                    stringBuilder.AppendLine(LineN2());
+                    stringBuilder.AppendLine(LineN1());
                     stringBuilder.AppendLine(string.Empty);
                 }
             }
@@ -476,8 +447,8 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 if (hasNamespace)
                 {
-                    lines.Add("var ns = (window.ns = window.ns || {});");
-                    lines.Add("ns." + NamespaceName + " = function () {");
+                    lines.Add(Line1());
+                    lines.Add(Line2());
                 }
 
                 foreach (var element in _elements)
@@ -489,25 +460,34 @@ namespace OwinFramework.Pages.Html.Runtime
                 if (hasNamespace)
                 {
                     lines.Add(string.Empty);
-                    lines.Add("  return {");
 
-                    var firstElement = true;
-                    foreach (var element in _elements)
-                    {
-                        if (!firstElement)
-                            lines[lines.Count - 1] = lines[lines.Count - 1] + ",";
+                    foreach (var element in _elements.Where(e => e.IsPublic && !string.IsNullOrEmpty(e.Name)))
+                        lines.Add("  exported." + element.Name + " = " + element.Name + ";");
 
-                        if (element.IsPublic && !string.IsNullOrEmpty(element.Name))
-                        {
-                            lines.Add("    " + element.Name);
-                            firstElement = false;
-                        }
-                    }
-
-                    lines.Add("  }");
-                    lines.Add("}();");
+                    lines.Add(LineN2());
+                    lines.Add(LineN1());
                     lines.Add(string.Empty);
                 }
+            }
+
+            private string Line1()
+            {
+                return "var ns = (window.ns = window.ns || {});";
+            }
+
+            private string Line2()
+            {
+                return "ns." + NamespaceName + " = function (exported) {";
+            }
+
+            private string LineN2()
+            {
+                return "  return exported;";
+            }
+
+            private string LineN1()
+            {
+                return "}(ns." + NamespaceName + " || {});";
             }
         }
     }

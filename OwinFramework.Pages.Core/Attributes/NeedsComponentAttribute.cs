@@ -13,7 +13,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// Constructs and initializes an attribute that defines a
         /// dependency on a componenr being on the page
         /// </summary>
-        /// <param name="componentName">The name of the dependant component</param>
+        /// <param name="componentName">The name of the dependent component</param>
         public NeedsComponentAttribute(string componentName)
         {
             ComponentName = componentName;

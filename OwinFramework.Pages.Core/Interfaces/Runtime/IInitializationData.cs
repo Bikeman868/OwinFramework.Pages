@@ -31,6 +31,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         AssetDeployment AssetDeployment { get; set; }
 
         /// <summary>
+        /// Call this method to indicate that this element has a dependancy on
+        /// another component that must be rendered onto the page
+        /// </summary>
+        IInitializationData NeedsComponent(IComponent component);
+
+        /// <summary>
         /// Tells the page about an element instance on this page.
         /// The page uses this information to construct static assets
         /// for the page.

@@ -80,6 +80,7 @@ namespace Sample1.SamplePackages
         }
 
         [IsComponent("menuStyles")]
+        [PartOf("menu")]
         [DeployCss("ul.{ns}_menu", "list-style-type: none; overflow: hidden; white-space: nowrap;")]
         [DeployCss("li.{ns}_option", "display: inline-block;")]
         [DeployCss("li.{ns}_option a, a.{ns}_option", "display: inline-block; text-decoration: none;")]
@@ -90,6 +91,8 @@ namespace Sample1.SamplePackages
         { }
 
         [IsComponent("menuStyle1")]
+        [PartOf("menu")]
+        [NeedsComponent("menuStyles")]
         [DeployCss("ul.{ns}_menu", "margin: 0; padding: 0; background-color: #333")]
         [DeployCss("li.{ns}_option a", "color: white; text-align: center; padding: 14px 16px;")]
         [DeployCss("li.{ns}_option a:hover, li.{ns}_menu-option:hover a.{ns}_menu-option", "color: white; text-align: center; padding: 14px 16px")]
@@ -102,10 +105,16 @@ namespace Sample1.SamplePackages
         public override IPackage Build(IFluentBuilder builder)
         {
             // This component is used to display menu items
-            var menuItemComponent = new MenuItemComponent(_dependencies.ComponentDependenciesFactory);
+            var menuItemComponent = new MenuItemComponent(_dependencies.ComponentDependenciesFactory) 
+            {
+                Package = this
+            };
 
             // This data provider extracts sub-menu items from the current menu item
-            var subMenuDataProvider = new SubMenuDataProvider(_dependencies.DataProviderDependenciesFactory);
+            var subMenuDataProvider = new SubMenuDataProvider(_dependencies.DataProviderDependenciesFactory)
+            {
+                Package = this
+            };
 
             // This region is a container for the options on the main menu
             var mainMenuItemRegion = builder.Region()
@@ -138,7 +147,6 @@ namespace Sample1.SamplePackages
             builder.Region()
                 .Name("menu")
                 .Tag("ul")
-                .NeedsComponent("menuStyles")
                 .NeedsComponent("menuStyle1")
                 .ClassNames("{ns}_menu")
                 .ForEach<MenuItem>()

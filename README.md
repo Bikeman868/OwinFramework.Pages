@@ -162,7 +162,7 @@ you can write a Component that adds a reference to the Bootstrap css
 into the head part of the page. Now any other component can specify
 that it has a dependency on this Bootstrap Component. When you do this
 the Bootstrap Compoennt will be included on any page that contains
-dependant Components the the link in the header will only be written
+dependent Components the the link in the header will only be written
 once. Also, the bootstrap link will not be output on any pages that do 
 not need it.
 
@@ -255,7 +255,7 @@ a Dynamic Asset.
 Libraries are just Components that have other Components that depend on them.
 
 Any Component can declare a dependency on another Component. When this happens 
-the dependant components are automatically rendered onto the Page as needed.
+the dependent components are automatically rendered onto the Page as needed.
 
 Lets say for example you wrote a Component that writes a link to the Bootstrap 
 css into the head section of the page. Any other component that needs Bootstrap 

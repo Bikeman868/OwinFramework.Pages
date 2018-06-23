@@ -155,11 +155,16 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.NeedsComponent(string componentName)
         {
+            _nameManager.AddResolutionHandler(() =>
+            {
+                _region.NeedsComponent(_nameManager.ResolveComponent(componentName, _region.Package));
+            });
             return this;
         }
 
         IRegionDefinition IRegionDefinition.NeedsComponent(IComponent component)
         {
+            _region.NeedsComponent(component);
             return this;
         }
 

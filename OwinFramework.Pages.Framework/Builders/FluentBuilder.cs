@@ -140,6 +140,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.IsRegion != null) BuildRegion(attributes);
             if (attributes.IsComponent != null) BuildComponent(attributes);
             if (attributes.IsService != null) BuildService(attributes);
+            if (attributes.IsDataProvider != null) BuildDataProvider(attributes);
         }
 
         public IComponentDefinition Component(IPackage package)
@@ -264,6 +265,14 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
+            if (attributes.NeedsComponents != null)
+            {
+                foreach (var component in attributes.NeedsComponents)
+                {
+                    page.NeedsComponent(component.ComponentName);
+                }
+            }
+
             page.Build();
         }
 
@@ -319,6 +328,14 @@ namespace OwinFramework.Pages.Framework.Builders
 
                 if (attributes.Container.ClassNames != null && attributes.Container.ClassNames.Length > 0)
                     layout.ClassNames(attributes.Container.ClassNames);
+            }
+
+            if (attributes.NeedsComponents != null)
+            {
+                foreach (var component in attributes.NeedsComponents)
+                {
+                    layout.NeedsComponent(component.ComponentName);
+                }
             }
 
             if (attributes.ChildContainer != null)
@@ -383,6 +400,14 @@ namespace OwinFramework.Pages.Framework.Builders
                     region.ClassNames(attributes.Container.ClassNames);
             }
 
+            if (attributes.NeedsComponents != null)
+            {
+                foreach (var component in attributes.NeedsComponents)
+                {
+                    region.NeedsComponent(component.ComponentName);
+                }
+            }
+
             if (attributes.UsesLayouts != null)
                 foreach(var usesLayout in attributes.UsesLayouts)
                     region.Layout(usesLayout.LayoutName);
@@ -426,6 +451,14 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
+            if (attributes.NeedsComponents != null)
+            {
+                foreach (var neededComponent in attributes.NeedsComponents)
+                {
+                    component.NeedsComponent(neededComponent.ComponentName);
+                }
+            }
+
             if (attributes.DeployCsss != null)
                 foreach(var deployCss in attributes.DeployCsss)
                     component.DeployCss(deployCss.CssSelector, deployCss.CssStyle);
@@ -447,6 +480,10 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Name(attributes.IsService.Name);
 
             service.Build();
+        }
+
+        private void BuildDataProvider(AttributeSet attributes)
+        {
         }
 
     }

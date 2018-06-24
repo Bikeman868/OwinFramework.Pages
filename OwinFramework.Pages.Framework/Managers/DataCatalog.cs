@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -17,7 +18,6 @@ namespace OwinFramework.Pages.Framework.Managers
         private readonly HashSet<string> _assemblies;
         private readonly HashSet<string> _types;
         private readonly List<Registration> _providers;
-        private readonly IThreadSafeDictionary<string, Registration> _providersByName;
         private readonly IThreadSafeDictionary<Type, List<Registration>> _providersByType;
 
         private class Registration
@@ -62,7 +62,6 @@ namespace OwinFramework.Pages.Framework.Managers
             _assemblies = new HashSet<string>();
             _types = new HashSet<string>();
             _providers = new List<Registration>();
-            _providersByName = dictionaryFactory.Create<string, Registration>(StringComparer.InvariantCultureIgnoreCase);
             _providersByType = dictionaryFactory.Create<Type, List<Registration>>();
 
             nameManager.AddResolutionHandler(() =>
@@ -73,6 +72,13 @@ namespace OwinFramework.Pages.Framework.Managers
                         {
                             provider.DependentProviders.Add(_nameManager.ResolveDataProvider(name, provider.DataProvider.Package));
                         }
+                    }
+
+                    var comparer = new RegistrationComparer();
+                    foreach(var type in _providersByType.Keys)
+                    {
+                        var providers = _providersByType[type];
+                        providers.Sort(comparer);
                     }
                 });
         }
@@ -94,16 +100,12 @@ namespace OwinFramework.Pages.Framework.Managers
                 registration.Priority += 1;
 
             if (registration.Types.Count > 1)
-                registration.Priority += 1;
-
-            foreach(var name in registration.Names)
-                _providersByName.Add(name, registration);
+                registration.Priority += 2;
 
             foreach (var type in registration.Types)
             {
                 var providers = _providersByType.GetOrAdd(type, s => new List<Registration>(), null);
                 providers.Add(registration);
-                providers.Sort(new RegistrationComparer());
             }
 
             return this;
@@ -165,9 +167,72 @@ namespace OwinFramework.Pages.Framework.Managers
             return this;
         }
 
-        public T Ensure<T>(IRenderContext renderContext, IDataContext dataContext) where T : class
+        public void AddData(
+            IList<Type> types, 
+            IList<string> scopeOrder,
+            IRenderContext renderContext, 
+            IDataContext dataContext)
         {
-            return null;
+            foreach(var type in types)
+            {
+                List<Registration> possibleProviders;
+                if (!_providersByType.TryGetValue(type, out possibleProviders))
+                    throw new DataCatalogException("This request requires data of type " + type.FullName +
+                        " but there are no data providers that can provide this type of data.");
+
+                Registration provider = null;
+                if (scopeOrder != null && scopeOrder.Count > 0)
+                {
+                    foreach (var scope in scopeOrder)
+                    {
+                        provider = possibleProviders.FirstOrDefault(r => r.Scopes != null && r.Scopes.Contains(scope, StringComparer.OrdinalIgnoreCase));
+                        if (provider != null) break;
+                    }
+                }
+
+                if (provider == null)
+                    provider = possibleProviders.FirstOrDefault(r => r.Scopes == null || r.Scopes.Count == 0);
+
+                if (provider == null)
+                {
+                    if (scopeOrder != null && scopeOrder.Count > 0)
+                    {
+                        throw new DataCatalogException("This request requires data of type " + type.FullName +
+                            " in one of these scopes : " + string.Join(", ", scopeOrder) +
+                            ". None of the data providers for this type of" +
+                            " data have any of these scopes defined.");
+                    }
+                    throw new DataCatalogException("This request requires data of type " + type.FullName +
+                        " with no scope, but all of the data providers for this type of" +
+                        " data have a scope defined.");
+                }
+
+                if (provider.DependentProviders != null && provider.DependentProviders.Count > 0)
+                {
+                    foreach(var dependentProvider in provider.DependentProviders)
+                    {
+                        dataContext.Ensure(dependentProvider);
+                    }
+                }
+
+                if (provider.DependentTypes != null && provider.DependentTypes.Count > 0)
+                {
+                    foreach(var dependentType in provider.DependentTypes)
+                    {
+                        try
+                        {
+                            dataContext.Ensure(dependentType);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new DataCatalogException("The " + provider.DataProvider.Name +
+                                " data provider is dependent on having " + dependentType.FullName +
+                                " data available in the data context but there is no suitable data" +
+                                " provider available to supply it.", ex);
+                        }
+                    }
+                }
+            }
         }
 
         private Registration ProcessCustomAttributes(IDataProvider dataProvider)

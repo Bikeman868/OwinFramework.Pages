@@ -9,7 +9,6 @@
         /// <summary>
         /// Creates and initializes a new data context instance
         /// </summary>
-        /// <returns></returns>
-        IDataContext Create();
+        IDataContext Create(IRenderContext renderContext);
     }
 }

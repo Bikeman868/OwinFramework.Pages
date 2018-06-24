@@ -145,14 +145,24 @@ namespace OwinFramework.Pages.Html.Runtime
             private class State
             {
                 public AssetDeployment AssetDeployment;
+                public string Scope;
+                public List<RequiredData> DataNeeds = new List<RequiredData>();
+                public List<IDataProvider> Providers = new List<IDataProvider>();
 
                 public State Clone()
                 {
                     return new State
                     {
-                        AssetDeployment = AssetDeployment
+                        AssetDeployment = AssetDeployment,
+                        Scope = Scope
                     };
                 }
+            }
+
+            private class RequiredData
+            {
+                public Type DataType;
+                public string DataName;
             }
 
             public class ElementRegistration

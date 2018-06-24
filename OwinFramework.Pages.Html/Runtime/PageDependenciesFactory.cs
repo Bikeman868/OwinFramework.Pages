@@ -33,9 +33,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IPageDependencies Create(IOwinContext context)
         {
+            var renderContext = _renderContextFactory.Create();
             return new PageDependencies(
-                _renderContextFactory.Create(),
-                _dataContextFactory.Create(),
+                renderContext,
+                _dataContextFactory.Create(renderContext),
                 _assetManager,
                 _nameManager)
                 .Initialize(context);

@@ -109,6 +109,7 @@
     <Compile Include="Enums\ElementType.cs" />
     <Compile Include="Enums\CommentStyle.cs" />
     <Compile Include="Enums\HtmlFormat.cs" />
+    <Compile Include="Exceptions\DataCatalogException.cs" />
     <Compile Include="Exceptions\FluentBuilderException.cs" />
     <Compile Include="Exceptions\InvalidNameException.cs" />
     <Compile Include="Exceptions\NameResolutionFailureException.cs" />

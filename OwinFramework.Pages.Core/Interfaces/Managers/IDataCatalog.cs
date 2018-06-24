@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -36,13 +37,18 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         IDataCatalog Register(Assembly assembly, Func<Type, object> factoryFunc);
 
         /// <summary>
-        /// Checks to see if the data context contains data of the specified
-        /// type and if not adds it by locating a suitable data provider
+        /// Adds data to the data context by locating and executing data providers
         /// </summary>
-        /// <typeparam name="T">The type of data that we need to be in context</typeparam>
+        /// <param name="types">The types of data missing from the data context</param>
+        /// <param name="scopeOrder">The scopes in the data context heirachy in the order 
+        /// of preference. The data catalog will satisfy the data need using the 
+        /// first matching scope from this list</param>
         /// <param name="renderContext">The response rendering context</param>
-        /// <param name="dataContext">The data context to search and add to if necessary</param>
-        /// <returns>Returns data from the data context</returns>
-        T Ensure<T>(IRenderContext renderContext, IDataContext dataContext) where T : class;
+        /// <param name="dataContext">The data context to add the missing data to</param>
+        void AddData(
+            IList<Type> types, 
+            IList<string> scopeOrder,
+            IRenderContext renderContext, 
+            IDataContext dataContext);
     }
 }

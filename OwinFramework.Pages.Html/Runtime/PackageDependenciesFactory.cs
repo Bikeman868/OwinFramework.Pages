@@ -56,9 +56,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IPackageDependencies Create(IOwinContext context)
         {
+            var renderContext = _renderContextFactory.Create();
             return new PackageDependencies(
-                _renderContextFactory.Create(),
-                _dataContextFactory.Create(),
+                renderContext,
+                _dataContextFactory.Create(renderContext),
                 _assetManager,
                 _nameManager,
                 _moduleDependenciesFactory,

@@ -6,7 +6,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
-    /// Defines the injected dependencies of Package.They are packaged like this
+    /// Defines the injected dependencies of Package. They are packaged like this
     /// to avoid changing the constructor signature when new dependencies are added.
     /// </summary>
     public interface IPackageDependencies : IDisposable
@@ -15,11 +15,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// The request rendering context
         /// </summary>
         IRenderContext RenderContext { get; }
-
-        /// <summary>
-        /// The data binding context
-        /// </summary>
-        IDataContext DataContext { get; }
 
         /// <summary>
         /// Asset manager

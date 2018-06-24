@@ -3,6 +3,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
@@ -159,7 +160,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPageDefinition IPageDefinition.Title(Func<IRenderContext, IDataContext, string> titleFunc)
+        IPageDefinition IPageDefinition.Title(Func<IRenderContext, string> titleFunc)
         {
             _page.TitleFunc = titleFunc;
             return this;
@@ -171,12 +172,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPageDefinition IPageDefinition.BindTo<T>()
+        IPageDefinition IPageDefinition.BindTo<T>(string scopeName)
         {
             return this;
         }
 
-        IPageDefinition IPageDefinition.BindTo(Type dataType)
+        IPageDefinition IPageDefinition.BindTo(Type dataType, string scopeName)
         {
             return this;
         }

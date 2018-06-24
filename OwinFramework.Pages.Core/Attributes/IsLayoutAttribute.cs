@@ -19,9 +19,8 @@ namespace OwinFramework.Pages.Core.Attributes
         /// separate sibling regions. For example "region1(region2,region3(region4,region5)).region6"
         /// specifies that the layout directly contains region1 and region6 and that region1
         /// contains region2 and region 3, and that region3 further contains region 4 and region5</param>
-        /// <param name="dataContext">The name of a data context handler</param>
-        public IsLayoutAttribute(string name, string regionNesting, string dataContext = null)
-            : base(name, dataContext)
+        public IsLayoutAttribute(string name, string regionNesting)
+            : base(name)
         {
             Name = name;
             RegionNesting = regionNesting;

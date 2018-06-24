@@ -23,13 +23,12 @@ namespace OwinFramework.Pages.Html.Runtime
 
         protected IThreadSafeDictionary<string, IRegion> Content;
 
-        /// <summary>
-        /// Do not change this constructor signature, it will break application
-        /// classes that inherit from this class. Add dependencies to
-        /// ILayoutDependenciesFactory and ILayoutDependencies
-        /// </summary>
         public Layout(ILayoutDependenciesFactory layoutDependenciesFactory)
         {
+            // DO NOT change the method signature of this constructor as
+            // this would break all layouts in all applications that use
+            // this framework!!
+
             _layoutDependenciesFactory = layoutDependenciesFactory;
             Content = layoutDependenciesFactory.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
         }
@@ -67,7 +66,6 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual IWriteResult WriteHtml(
             IRenderContext renderContext, 
-            IDataContext dataContext,
             Func<string, IRegion> regionLookup)
         {
             var result = WriteResult.Continue();
@@ -79,7 +77,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 {
                     var region = regionLookup(regionName) ?? Content[regionName];
                     if (region != null)
-                        result.Add(region.WriteHtml(renderContext, dataContext));
+                        result.Add(region.WriteHtml(renderContext));
                 }
             }
             return result;

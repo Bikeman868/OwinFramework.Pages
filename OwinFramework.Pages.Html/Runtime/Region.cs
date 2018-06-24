@@ -3,6 +3,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Builders;
 
@@ -29,6 +30,10 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public Region(IRegionDependenciesFactory regionDependenciesFactory)
         {
+            // DO NOT change the method signature of this constructor as
+            // this would break all regions in all applications that use
+            // this framework!!
+
             _regionDependenciesFactory = regionDependenciesFactory;
         }
 
@@ -51,12 +56,11 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual IWriteResult WriteHtml(
             IRenderContext renderContext,
-            IDataContext dataContext, 
             IElement content)
         {
             return content == null 
                 ? WriteResult.Continue() 
-                : content.WriteHtml(renderContext, dataContext);
+                : content.WriteHtml(renderContext);
         }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Framework.Runtime
+namespace OwinFramework.Pages.Framework.DataModel
 {
     /// <summary>
     /// You can inherit from this base class to insulate your implementation from
@@ -16,35 +15,25 @@ namespace OwinFramework.Pages.Framework.Runtime
         public string Name { get; set; }
         public IPackage Package { get; set; }
 
-        private readonly List<string> _scopes = new List<string>();
-
         protected DataProvider(IDataProviderDependenciesFactory dependencies)
         {
-
-        }
-
-        public void AddScope(string scopeName)
-        {
-            _scopes.Add(scopeName);
-        }
-
-        public ICollection<string> Scopes
-        {
-            get { return _scopes; }
+            // DO NOT change the method signature of this constructor as
+            // this would break all data providers in all applications that use
+            // this framework!!
         }
 
         /// <summary>
         /// Override this method if your data provider can return different types of data
         /// </summary>
-        public virtual void EstablishContext(IRenderContext renderContext, IDataContext dataContext, Type dataType)
+        public virtual void Satisfy(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
         {
-            EstablishContext(renderContext, dataContext);
+            Satisfy(renderContext, dataContext);
         }
 
         /// <summary>
         /// Override this method if your data provider only provides one type of data
         /// </summary>
-        public virtual void EstablishContext(IRenderContext renderContext, IDataContext dataContext)
+        public virtual void Satisfy(IRenderContext renderContext, IDataContext dataContext)
         {
             throw new NotImplementedException("Data providers must override one of the EstablishContext overloads");
         }

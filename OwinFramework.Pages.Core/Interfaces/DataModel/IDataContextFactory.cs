@@ -1,4 +1,6 @@
-﻿namespace OwinFramework.Pages.Core.Interfaces.Runtime
+﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
+
+namespace OwinFramework.Pages.Core.Interfaces.DataModel
 {
     /// <summary>
     /// A factory for creating data contexts. The data context is used

@@ -35,7 +35,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Calculates the page page title
         /// </summary>
-        public Func<IRenderContext, IDataContext, string> TitleFunc { get; set; }
+        public Func<IRenderContext, string> TitleFunc { get; set; }
 
         /// <summary>
         /// Defines the layout of this page
@@ -66,6 +66,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
         protected Page(IPageDependenciesFactory dependencies)
         {
+            // DO NOT change the method signature of this constructor as
+            // this would break all pages in all applications that use
+            // this framework!!
+
             _dependencies = dependencies;
         }
 
@@ -272,7 +276,6 @@ namespace OwinFramework.Pages.Html.Runtime
             var dependencies = _dependencies.Create(owinContext);
             var context = dependencies.RenderContext;
             var html = context.Html;
-            var data = dependencies.DataContext;
 
             owinContext.Response.ContentType = "text/html";
 
@@ -281,9 +284,9 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 html.WriteDocumentStart(context.Language);
 
-                WritePageHead(context, data, html, writeResult);
-                WritePageBody(context, data, html, writeResult);
-                WriteInitializationScript(context, data, true);
+                WritePageHead(context, html, writeResult);
+                WritePageBody(context, html, writeResult);
+                WriteInitializationScript(context, true);
 
                 html.WriteDocumentEnd();
             }
@@ -349,7 +352,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return writeResult;
         }
 
-        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
@@ -357,7 +360,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 foreach (var component in _components)
                 {
-                    writeResult.Add(component.WriteInitializationScript(renderContext, dataContext));
+                    writeResult.Add(component.WriteInitializationScript(renderContext));
 
                     if (writeResult.IsComplete)
                         return writeResult;
@@ -365,18 +368,18 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             if (Layout != null)
-                writeResult.Add(Layout.WriteInitializationScript(renderContext, dataContext));
+                writeResult.Add(Layout.WriteInitializationScript(renderContext));
 
             return writeResult;
         }
 
-        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public override IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
             if (TitleFunc != null)
             {
-                renderContext.Html.WriteLine(TitleFunc(renderContext, dataContext));
+                renderContext.Html.WriteLine(TitleFunc(renderContext));
                 return writeResult;
             }
 
@@ -384,7 +387,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 foreach (var component in _components)
                 {
-                    writeResult.Add(component.WriteTitle(renderContext, dataContext));
+                    writeResult.Add(component.WriteTitle(renderContext));
 
                     if (writeResult.IsComplete)
                         return writeResult;
@@ -392,12 +395,12 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             if (Layout != null)
-                writeResult.Add(Layout.WriteTitle(renderContext, dataContext));
+                writeResult.Add(Layout.WriteTitle(renderContext));
 
             return writeResult;
         }
 
-        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public override IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
@@ -453,7 +456,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 foreach (var component in _components)
                 {
-                    writeResult.Add(component.WriteHead(renderContext, dataContext));
+                    writeResult.Add(component.WriteHead(renderContext));
 
                     if (writeResult.IsComplete)
                         return writeResult;
@@ -461,27 +464,27 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             if (Layout != null)
-                writeResult.Add(Layout.WriteHead(renderContext, dataContext));
+                writeResult.Add(Layout.WriteHead(renderContext));
 
             return writeResult;
         }
 
-        public override IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public override IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren)
         {
-            return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(renderContext, dataContext);
+            return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(renderContext);
         }
 
         #region Private methods
 
-        private void WritePageHead(IRenderContext context, IDataContext data, IHtmlWriter html, IWriteResult writeResult)
+        private void WritePageHead(IRenderContext context, IHtmlWriter html, IWriteResult writeResult)
         {
             html.WriteOpenTag("head");
 
             html.WriteOpenTag("title");
-            writeResult.Add(WriteTitle(context, data, true));
+            writeResult.Add(WriteTitle(context, true));
             html.WriteCloseTag("title");
 
-            writeResult.Add(WriteHead(context, data, true));
+            writeResult.Add(WriteHead(context, true));
 
             if (_inPageCssLines != null && _inPageCssLines.Count > 0)
             {
@@ -540,7 +543,7 @@ namespace OwinFramework.Pages.Html.Runtime
             html.WriteCloseTag("head");
         }
 
-        private void WritePageBody(IRenderContext context, IDataContext data, IHtmlWriter html, IWriteResult writeResult)
+        private void WritePageBody(IRenderContext context, IHtmlWriter html, IWriteResult writeResult)
         {
             var bodyClassNames = BodyClassNames;
             if (!string.IsNullOrEmpty(BodyStyle))
@@ -558,7 +561,7 @@ namespace OwinFramework.Pages.Html.Runtime
             else
                 html.WriteOpenTag("body", "class", bodyClassNames);
 
-            writeResult.Add(WriteHtml(context, data, true));
+            writeResult.Add(WriteHtml(context, true));
             html.WriteCloseTag("body");
         }
 

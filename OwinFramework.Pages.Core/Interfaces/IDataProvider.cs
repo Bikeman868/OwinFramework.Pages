@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
@@ -31,9 +32,10 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// type of data provided by this instance.
         /// </summary>
         /// <param name="renderContext">The request that is being handled</param>
-        /// <param name="dataContext">Output from dependent data providers can be read
-        /// from here. This data provider should output it's data into this context</param>
-        /// <param name="dataType">The type of data to add to the data context</param>
-        void EstablishContext(IRenderContext renderContext, IDataContext dataContext, Type dataType);
+        /// <param name="dataContext">The data context to use to get dependant data and where
+        /// new data should be added</param>
+        /// <param name="dependency">The data dependency to satisfy or null if 
+        /// this provider was not executed as a resault of a specific dependency</param>
+        void Satisfy(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency);
     }
 }

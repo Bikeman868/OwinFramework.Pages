@@ -9,7 +9,6 @@ namespace OwinFramework.Pages.Html.Runtime
     internal class PackageDependencies: IPackageDependencies
     {
         public IRenderContext RenderContext { get; private set; }
-        public IDataContext DataContext { get; private set; }
 
         public IAssetManager AssetManager { get; private set; }
         public INameManager NameManager { get; private set; }
@@ -23,7 +22,6 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public PackageDependencies(
             IRenderContext renderContext,
-            IDataContext dataContext,
             IAssetManager assetManager,
             INameManager nameManager,
             IModuleDependenciesFactory moduleDependenciesFactory,
@@ -34,7 +32,6 @@ namespace OwinFramework.Pages.Html.Runtime
             IDataProviderDependenciesFactory dataProviderDependenciesFactory)
         {
             RenderContext = renderContext;
-            DataContext = dataContext;
             AssetManager = assetManager;
             NameManager = nameManager;
             ModuleDependenciesFactory = moduleDependenciesFactory;
@@ -53,7 +50,6 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public void Dispose()
         {
-            DataContext.Dispose();
             RenderContext.Dispose();
         }
     }

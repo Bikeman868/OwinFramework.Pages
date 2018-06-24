@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
@@ -46,13 +47,11 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Writes the html for this region with specific content inside
         /// </summary>
         /// <param name="renderContext">The context to render into</param>
-        /// <param name="dataContext">The data to use for data binding operations</param>
         /// <param name="contentFunc">A function that will return the region to render
         /// for each region name. This function should return null to render the default
         /// region for the layout</param>
         IWriteResult WriteHtml(
             IRenderContext renderContext, 
-            IDataContext dataContext, 
             Func<string, IRegion> contentFunc);
     }
 }

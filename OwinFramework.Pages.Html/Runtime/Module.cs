@@ -16,6 +16,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public Module(IModuleDependenciesFactory dependencies)
         {
+            // DO NOT change the method signature of this constructor as
+            // this would break all modules in all applications that use
+            // this framework!!
         }
 
         /// <summary>

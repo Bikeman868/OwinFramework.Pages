@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -114,7 +115,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output initialization script
         /// </summary>
-        public virtual IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public virtual IWriteResult WriteInitializationScript(IRenderContext renderContext, bool includeChildren)
         {
             var result = WriteResult.Continue();
             if (!includeChildren) return result;
@@ -126,7 +127,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteInitializationScript(renderContext, dataContext));
+                    result.Add(children.Current.WriteInitializationScript(renderContext));
                 }
             }
             finally
@@ -140,7 +141,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output the page title
         /// </summary>
-        public virtual IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public virtual IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
         {
             var result = WriteResult.Continue();
             if (!includeChildren) return result;
@@ -152,7 +153,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteTitle(renderContext, dataContext));
+                    result.Add(children.Current.WriteTitle(renderContext));
                 }
             }
             finally
@@ -166,7 +167,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output into the page head
         /// </summary>
-        public virtual IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public virtual IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
         {
             var result = WriteResult.Continue();
             if (!includeChildren) return result;
@@ -178,7 +179,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteHead(renderContext, dataContext));
+                    result.Add(children.Current.WriteHead(renderContext));
                 }
             }
             finally
@@ -192,7 +193,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output html
         /// </summary>
-        public virtual IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public virtual IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren)
         {
             var result = WriteResult.Continue();
             if (!includeChildren) return result;
@@ -204,7 +205,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteHtml(renderContext, dataContext));
+                    result.Add(children.Current.WriteHtml(renderContext));
                 }
             }
             finally

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -15,11 +16,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Rendering context of the request
         /// </summary>
         IRenderContext RenderContext { get; }
-
-        /// <summary>
-        /// Data binding context
-        /// </summary>
-        IDataContext DataContext { get; }
 
         /// <summary>
         /// Asset manager

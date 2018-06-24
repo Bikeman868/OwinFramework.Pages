@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using Ioc.Modules;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Framework.Builders;
 using OwinFramework.Pages.Framework.Configuration;
+using OwinFramework.Pages.Framework.DataModel;
 using OwinFramework.Pages.Framework.Interfaces;
 using OwinFramework.Pages.Framework.Managers;
 using OwinFramework.Pages.Framework.Runtime;
@@ -37,6 +39,7 @@ namespace OwinFramework.Pages.Framework
                     new IocRegistration().Init<IAssetManager, AssetManager>(),
                     new IocRegistration().Init<INameManager, NameManager>(),
                     new IocRegistration().Init<IDataCatalog, DataCatalog>(),
+                    new IocRegistration().Init<IIdManager, IdManager>(),
 
                     // The request router is the top level entry point and the only
                     // interface that the middleware depends on

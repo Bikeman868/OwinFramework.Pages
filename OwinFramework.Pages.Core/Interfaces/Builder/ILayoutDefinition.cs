@@ -138,27 +138,25 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition NestedStyle(string style);
 
         /// <summary>
-        /// Adds metadata to the component that can be queried to establish
+        /// Adds metadata to the layout that can be queried to establish
         /// its data needs. You can call this more than once to add more than
         /// one type of required data.
         /// </summary>
-        /// <typeparam name="T">The type of data that this component binds to.
-        /// Provides context for data binding expressions within the component</typeparam>
-        ILayoutDefinition BindTo<T>() where T : class;
+        /// <typeparam name="T">The type of data that this layout or its children binds to.
+        /// Provides context for data binding expressions within the layout and its children</typeparam>
+        /// <param name="scope">Optional scope name used to resolve which data provider
+        /// will source the data</param>
+        ILayoutDefinition BindTo<T>(string scope = null) where T : class;
 
         /// <summary>
-        /// Adds metadata to the component that can be queried to establish
+        /// Adds metadata to the layout that can be queried to establish
         /// its data needs. You can call this more than once to add more than
         /// one type of required data.
         /// </summary>
-        ILayoutDefinition BindTo(Type dataType);
-
-        /// <summary>
-        /// Specifies the data scope. This will be used to identify the appropriate
-        /// data providers
-        /// </summary>
-        /// <param name="scopeName">The name of the data scope to use when resolving data providers</param>
-        ILayoutDefinition DataScope(string scopeName);
+        /// <param name="dataType">The type of data that this layout wil request</param>
+        /// <param name="scope">Optional scope name used to resolve which data provider
+        /// will source the data</param>
+        ILayoutDefinition BindTo(Type dataType, string scope = null);
 
         /// <summary>
         /// Specifies the name of a data provider. This is used as the first step in

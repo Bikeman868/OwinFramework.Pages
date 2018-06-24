@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Framework.DataModel;
 using OwinFramework.Pages.Framework.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 
@@ -66,10 +68,9 @@ namespace Sample1.SamplePackages
 
             public override IWriteResult WriteHtml(
                 IRenderContext renderContext, 
-                IDataContext dataContext, 
                 bool includeChildren)
             {
-                var menuItem = dataContext.Get<MenuItem>();
+                var menuItem = renderContext.CurrentDataContext.Get<MenuItem>();
                 if (menuItem != null)
                 {
                     var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;

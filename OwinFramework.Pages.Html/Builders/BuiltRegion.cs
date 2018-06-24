@@ -17,7 +17,6 @@ namespace OwinFramework.Pages.Html.Builders
 
         public override IWriteResult WriteHtml(
             IRenderContext renderContext,
-            IDataContext dataContext, 
             IElement content)
         {
             WriteOpen(renderContext.Html);
@@ -26,7 +25,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 // TODO: if data bound repeat content for each item on data bound list
 
-                var result = content.WriteHtml(renderContext, dataContext);
+                var result = content.WriteHtml(renderContext);
                 WriteClose(renderContext.Html);
                 return result;
             }

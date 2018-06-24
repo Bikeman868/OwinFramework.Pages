@@ -29,9 +29,14 @@ namespace OwinFramework.Pages.Core.Attributes
         /// need of the element
         /// </summary>
         /// <param name="dataType">The type of data needed by this element</param>
-        public NeedsDataAttribute(Type dataType)
+        /// <param name="scope">Optional scope specifier. When not specified data
+        /// from the closest parent region that has this data will be used regardless
+        /// of the scope. When scope is specified the closest parent region with
+        /// this type and scope will be used.</param>
+        public NeedsDataAttribute(Type dataType, string scope = null)
         {
             DataType = dataType;
+            Scope = scope;
         }
 
         /// <summary>
@@ -43,5 +48,10 @@ namespace OwinFramework.Pages.Core.Attributes
         /// The type of data required
         /// </summary>
         public Type DataType { get; set; }
+
+        /// <summary>
+        /// Selects a specific scope to get the data from
+        /// </summary>
+        public string Scope { get; set; }
     }
 }

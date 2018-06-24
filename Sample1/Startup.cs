@@ -9,6 +9,7 @@ using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
 using OwinFramework.Interfaces.Utility;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
 using Sample1.SamplePackages;

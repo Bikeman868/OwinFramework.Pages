@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Ioc.Modules;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 

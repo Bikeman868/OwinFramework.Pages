@@ -1,4 +1,5 @@
 ﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
@@ -35,5 +36,24 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Returns a flag indicating if the html should inclide comments
         /// </summary>
         bool IncludeComments { get; }
+
+        /// <summary>
+        /// Returns the data context that should be used for the current operation
+        /// </summary>
+        IDataContext CurrentDataContext { get; }
+
+        /// <summary>
+        /// Adds a request specific data context that is linked to a specific page,
+        /// service or region.
+        /// </summary>
+        /// <param name="id">A unique ID for this data context</param>
+        /// <param name="dataContext">A data context specific to this request</param>
+        void AddDataContext(int id, IDataContext dataContext);
+
+        /// <summary>
+        /// Switches the current data context based on unique id
+        /// </summary>
+        /// <param name="id">The id of the data context to make current</param>
+        void SelectDataContext(int id);
     }
 }

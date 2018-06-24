@@ -98,27 +98,33 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition Style(string style);
 
         /// <summary>
-        /// Adds metadata to the component that can be queried to establish
+        /// Adds metadata to the region that can be queried to establish
         /// its data needs. You can call this more than once to add more than
         /// one type of required data.
         /// </summary>
-        /// <typeparam name="T">The type of data that this component binds to.
-        /// Provides context for data binding expressions within the component</typeparam>
-        IRegionDefinition BindTo<T>() where T : class;
+        /// <typeparam name="T">The type of data that this page or its contents binds to.
+        /// Provides context for data binding expressions within the page and its contents</typeparam>
+        /// <param name="scope">Optional scope name used to resolve which data provider
+        /// will source the data</param>
+        IRegionDefinition BindTo<T>(string scope = null) where T : class;
 
         /// <summary>
-        /// Adds metadata to the component that can be queried to establish
+        /// Adds metadata to the page that can be queried to establish
         /// its data needs. You can call this more than once to add more than
         /// one type of required data.
         /// </summary>
-        IRegionDefinition BindTo(Type dataType);
+        /// <param name="dataType">The type of data that this page wil request</param>
+        /// <param name="scope">Optional scope name used to resolve which data provider
+        /// will source the data</param>
+        IRegionDefinition BindTo(Type dataType, string scope = null);
 
         /// <summary>
-        /// Specifies the data scope. This will be used to identify the appropriate
-        /// data providers
+        /// Instructs the region to use a specific scope when locating a data
+        /// provider for the specified type of data.
         /// </summary>
+        /// <param name="type">The type of data to scope</param>
         /// <param name="scopeName">The name of the data scope to use when resolving data providers</param>
-        IRegionDefinition DataScope(string scopeName);
+        IRegionDefinition DataScope(Type type, string scopeName);
 
         /// <summary>
         /// Specifies the name of a data provider. This is used as the first step in

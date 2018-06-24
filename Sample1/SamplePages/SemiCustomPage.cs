@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 
@@ -16,13 +17,13 @@ namespace Sample1.SamplePages
             : base(dependenciesFactory)
         {}
 
-        public override IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public override IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
         {
             renderContext.Html.WriteLine("Page title");
             return WriteResult.ResponseComplete();
         }
 
-        public override IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public override IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
         {
             renderContext.Html.WriteUnclosedElement(
                 "link", "rel", 
@@ -40,7 +41,6 @@ namespace Sample1.SamplePages
 
         public override IWriteResult WriteHtml(
             IRenderContext renderContext,
-            IDataContext dataContext, 
             bool includeChildren)
         {
             // Save this location in the output buffer

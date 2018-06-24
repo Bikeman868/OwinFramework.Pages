@@ -1,5 +1,6 @@
 ﻿using System;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime

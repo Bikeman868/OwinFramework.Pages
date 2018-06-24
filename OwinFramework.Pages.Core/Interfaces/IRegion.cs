@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
+﻿using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -42,11 +43,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Writes the html for this region with specific content inside
         /// </summary>
         /// <param name="renderContext">The context to render into</param>
-        /// <param name="dataContext">The data to use for data binding operations</param>
         /// <param name="content">The element to render inside the region</param>
         IWriteResult WriteHtml(
             IRenderContext renderContext, 
-            IDataContext dataContext, 
             IElement content);
     }
 }

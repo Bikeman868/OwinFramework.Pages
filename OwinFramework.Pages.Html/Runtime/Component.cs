@@ -13,6 +13,10 @@ namespace OwinFramework.Pages.Html.Runtime
         public override ElementType ElementType { get { return ElementType.Component; } }
 
         public Component(IComponentDependenciesFactory componentDependenciesFactory)
-        { }
+        {
+            // DO NOT change the method signature of this constructor as
+            // this would break all components in all applications that use
+            // this framework!!
+        }
     }
 }

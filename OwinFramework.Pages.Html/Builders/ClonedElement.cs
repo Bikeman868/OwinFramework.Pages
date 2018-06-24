@@ -146,9 +146,9 @@ namespace OwinFramework.Pages.Html.Builders
             return result;
         }
 
-        public IWriteResult WriteInitializationScript(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public IWriteResult WriteInitializationScript(IRenderContext renderContext, bool includeChildren)
         {
-            var result = Parent.WriteInitializationScript(renderContext, dataContext, false);
+            var result = Parent.WriteInitializationScript(renderContext, false);
 
             if (!includeChildren) return result;
 
@@ -159,7 +159,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteInitializationScript(renderContext, dataContext));
+                    result.Add(children.Current.WriteInitializationScript(renderContext));
                 }
             }
             finally
@@ -170,9 +170,9 @@ namespace OwinFramework.Pages.Html.Builders
             return result;
         }
 
-        public IWriteResult WriteTitle(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
         {
-            var result = Parent.WriteTitle(renderContext, dataContext, false);
+            var result = Parent.WriteTitle(renderContext, false);
 
             if (!includeChildren) return result;
 
@@ -183,7 +183,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteTitle(renderContext, dataContext));
+                    result.Add(children.Current.WriteTitle(renderContext));
                 }
             }
             finally
@@ -194,9 +194,9 @@ namespace OwinFramework.Pages.Html.Builders
             return result;
         }
 
-        public IWriteResult WriteHead(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
         {
-            var result = Parent.WriteHead(renderContext, dataContext, false);
+            var result = Parent.WriteHead(renderContext, false);
 
             if (!includeChildren) return result;
 
@@ -207,7 +207,7 @@ namespace OwinFramework.Pages.Html.Builders
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteHead(renderContext, dataContext));
+                    result.Add(children.Current.WriteHead(renderContext));
                 }
             }
             finally

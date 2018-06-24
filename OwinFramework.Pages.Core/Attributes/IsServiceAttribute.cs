@@ -14,10 +14,8 @@ namespace OwinFramework.Pages.Core.Attributes
         /// Constructs an attribute that defines a class to be a service
         /// </summary>
         /// <param name="name">The name of the service. Must be unique within a package</param>
-        /// <param name="dataContext">The name of the context handler to run to establish this
-        /// service's data context</param>
-        public IsServiceAttribute(string name, string dataContext = null)
-            : base(name, dataContext)
+        public IsServiceAttribute(string name)
+            : base(name)
         {
         }
     }

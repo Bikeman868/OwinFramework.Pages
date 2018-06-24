@@ -25,7 +25,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// </summary>
         /// <param name="titleFunc">A delegate that will calculate the 
         /// title for this page</param>
-        IPageDefinition Title(Func<IRenderContext, IDataContext, string> titleFunc);
+        IPageDefinition Title(Func<IRenderContext, string> titleFunc);
 
         /// <summary>
         /// Specifies that this page is part of a package and should
@@ -133,20 +133,25 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDefinition RegionLayout(string regionName, string layoutName);
 
         /// <summary>
-        /// Adds metadata to the component that can be queried to establish
+        /// Adds metadata to the page that can be queried to establish
         /// its data needs. You can call this more than once to add more than
         /// one type of required data.
         /// </summary>
-        /// <typeparam name="T">The type of data that this component binds to.
-        /// Provides context for data binding expressions within the component</typeparam>
-        IPageDefinition BindTo<T>() where T : class;
+        /// <typeparam name="T">The type of data that this page or its contents binds to.
+        /// Provides context for data binding expressions within the page and its contents</typeparam>
+        /// <param name="scope">Optional scope name used to resolve which data provider
+        /// will source the data</param>
+        IPageDefinition BindTo<T>(string scope = null) where T : class;
 
         /// <summary>
-        /// Adds metadata to the component that can be queried to establish
+        /// Adds metadata to the page that can be queried to establish
         /// its data needs. You can call this more than once to add more than
         /// one type of required data.
         /// </summary>
-        IPageDefinition BindTo(Type dataType);
+        /// <param name="dataType">The type of data that this page wil request</param>
+        /// <param name="scope">Optional scope name used to resolve which data provider
+        /// will source the data</param>
+        IPageDefinition BindTo(Type dataType, string scope = null);
 
         /// <summary>
         /// Specifies the data scope. This will be used to identify the appropriate

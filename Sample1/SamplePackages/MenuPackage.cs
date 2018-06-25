@@ -54,7 +54,7 @@ namespace Sample1.SamplePackages
                 : base(dependencies) 
             { }
 
-            public override void EstablishContext(IRenderContext renderContext, IDataContext dataContext)
+            public override void Satisfy(IRenderContext renderContext, IDataContext dataContext)
             {
                 var parent = dataContext.Get<MenuItem>();
                 dataContext.Set(parent.SubMenu);

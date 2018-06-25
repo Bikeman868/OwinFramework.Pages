@@ -156,7 +156,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (string.IsNullOrEmpty(title))
                 _page.TitleFunc = null;
             else
-                _page.TitleFunc = (r, d) => title;
+                _page.TitleFunc = r => title;
             return this;
         }
 

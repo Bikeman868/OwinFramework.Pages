@@ -70,21 +70,19 @@ namespace OwinFramework.Pages.Html.Builders
             return _content.Select(e => e.Value ?? Parent.GetRegion(e.Key)).GetEnumerator();
         }
 
-        public IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, bool includeChildren)
+        public IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren)
         {
             return Parent.WriteHtml(
                 renderContext,
-                dataContext,
                 includeChildren 
                     ? GetRegion
                     : (Func<string, IRegion>)null);
         }
 
-        public IWriteResult WriteHtml(IRenderContext renderContext, IDataContext dataContext, Func<string, IRegion> regionLookup)
+        public IWriteResult WriteHtml(IRenderContext renderContext, Func<string, IRegion> regionLookup)
         {
             return Parent.WriteHtml(
                 renderContext,
-                dataContext,
                 regionName =>
                 {
                     if (regionLookup == null) return null;

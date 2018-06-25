@@ -112,13 +112,19 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.BindTo<T>() 
+        public IRegionDefinition DataScope(Type type, string scopeName)
         {
             // TODO: Data binding
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.BindTo(Type dataType)
+        IRegionDefinition IRegionDefinition.BindTo<T>(string scopeName) 
+        {
+            // TODO: Data binding
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.BindTo(Type dataType, string scopeName)
         {
             // TODO: Data binding
             return this;
@@ -145,11 +151,6 @@ namespace OwinFramework.Pages.Html.Builders
         IRegionDefinition IRegionDefinition.DeployIn(IModule module)
         {
             _region.Module = module;
-            return this;
-        }
-
-        IRegionDefinition IRegionDefinition.DataScope(string scopeName)
-        {
             return this;
         }
 

@@ -92,12 +92,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IComponentDefinition IComponentDefinition.BindTo<T>()
+        IComponentDefinition IComponentDefinition.BindTo<T>(string scopeName)
         {
             return this;
         }
 
-        IComponentDefinition IComponentDefinition.BindTo(Type dataType)
+        IComponentDefinition IComponentDefinition.BindTo(Type dataType, string scopeName)
         {
             return this;
         }
@@ -110,11 +110,6 @@ namespace OwinFramework.Pages.Html.Builders
         IComponentDefinition IComponentDefinition.DataProvider(IDataProvider dataProvider)
         {
             // TODO: Data binding
-            return this;
-        }
-
-        IComponentDefinition IComponentDefinition.DataScope(string scopeName)
-        {
             return this;
         }
 

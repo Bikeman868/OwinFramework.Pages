@@ -201,12 +201,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.BindTo<T>()
+        ILayoutDefinition ILayoutDefinition.BindTo<T>(string scopeName)
         {
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.BindTo(Type dataType)
+        ILayoutDefinition ILayoutDefinition.BindTo(Type dataType, string scopeName)
         {
             return this;
         }
@@ -219,11 +219,6 @@ namespace OwinFramework.Pages.Html.Builders
         ILayoutDefinition ILayoutDefinition.DataProvider(IDataProvider dataProvider)
         {
             // TODO: Data binding
-            return this;
-        }
-
-        ILayoutDefinition ILayoutDefinition.DataScope(string scopeName)
-        {
             return this;
         }
 

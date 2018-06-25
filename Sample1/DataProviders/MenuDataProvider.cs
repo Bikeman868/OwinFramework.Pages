@@ -18,7 +18,7 @@ namespace Sample1.DataProviders
             : base(dependencies) 
         { }
 
-        public override void EstablishContext(IRenderContext renderContext, IDataContext dataContext)
+        public override void Satisfy(IRenderContext renderContext, IDataContext dataContext)
         {
             IList<MenuPackage.MenuItem> mainMenu = new List<MenuPackage.MenuItem>();
 

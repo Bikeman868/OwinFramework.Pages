@@ -1,6 +1,5 @@
 ﻿using System;
 using OwinFramework.Pages.Core.Enums;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -13,7 +12,6 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public override IWriteResult WriteHtml(
             IRenderContext renderContext,
-            IDataContext dataContext, 
             bool includeChildren)
         {
             if (renderContext.IncludeComments && !string.IsNullOrEmpty(Comment))

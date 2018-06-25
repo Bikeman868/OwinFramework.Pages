@@ -31,14 +31,17 @@ namespace OwinFramework.Pages.Framework
                     // just need to be wired up by IoC
                     new IocRegistration().Init<IFrameworkConfiguration, FrameworkConfiguration>(),
 
-                    // Data context is a shared concept, it applies to all response producing mechanisms
+                    // These classes are the data model
+                    new IocRegistration().Init<IDataCatalog, DataCatalog>(),
                     new IocRegistration().Init<IDataContextFactory, DataContextFactory>(),
+                    new IocRegistration().Init<IDataDependencyFactory, DataDependencyFactory>(),
+                    new IocRegistration().Init<IDataProviderDefinitionFactory, DataProviderDefinitionFactory>(),
+                    new IocRegistration().Init<IDataScopeFactory, DataScopeFactory>(),
 
                     // These classes implement core facilities. They are thread-safe singletons
                     new IocRegistration().Init<IFluentBuilder, FluentBuilder>(),
                     new IocRegistration().Init<IAssetManager, AssetManager>(),
                     new IocRegistration().Init<INameManager, NameManager>(),
-                    new IocRegistration().Init<IDataCatalog, DataCatalog>(),
                     new IocRegistration().Init<IIdManager, IdManager>(),
 
                     // The request router is the top level entry point and the only

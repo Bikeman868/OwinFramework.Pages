@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Extensions;
+using OwinFramework.Pages.Core.Interfaces.Collections;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -12,14 +14,18 @@ namespace OwinFramework.Pages.Html.Runtime
         public IHtmlWriter Html { get; private set; }
         public string Language { get; private set; }
         public bool IncludeComments { get; private set; }
+        public IDataContext CurrentDataContext { get; private set; }
 
         private readonly IAssetManager _assetManager;
+        private readonly IThreadSafeDictionary<int, IDataContext> _dataContexts;
 
         public RenderContext(
             IAssetManager assetManager,
-            IHtmlWriter htmlWriter)
+            IHtmlWriter htmlWriter,
+            IDictionaryFactory dictionaryFactory)
         {
             _assetManager = assetManager;
+            _dataContexts = dictionaryFactory.Create<int, IDataContext>();
             Html = htmlWriter;
         }
 
@@ -40,6 +46,16 @@ namespace OwinFramework.Pages.Html.Runtime
         public void Dispose()
         {
             Html.Dispose();
+        }
+
+        public void AddDataContext(int id, IDataContext dataContext)
+        {
+            _dataContexts.Add(id, dataContext);
+        }
+
+        public void SelectDataContext(int id)
+        {
+            CurrentDataContext = _dataContexts[id];
         }
     }
 }

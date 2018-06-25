@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
@@ -21,12 +19,12 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <summary>
         /// Parent  or null if this is the root
         /// </summary>
-        IDataScopeProvider Parent { get; }
+        IDataScopeProvider Parent { get; set; }
 
         /// <summary>
-        /// Children
+        /// Adds a child data scope provider
         /// </summary>
-        IList<IDataScopeProvider> Children { get; }
+        void AddChild(IDataScopeProvider child);
 
         /// <summary>
         /// This provider introduces a new scope foe these kinds of data. These

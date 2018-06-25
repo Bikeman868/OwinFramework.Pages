@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
-using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Managers;

@@ -1,4 +1,6 @@
-﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
+﻿using OwinFramework.Pages.Core.Interfaces.DataModel;
+
+namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// The IoC dependencies are wrapped in this factory so that when
@@ -11,5 +13,10 @@
         /// Constructs region dependencies
         /// </summary>
         IRegionDependencies Create();
+
+        /// <summary>
+        /// A factory for constructing data scope providers
+        /// </summary>
+        IDataScopeProviderFactory DataScopeProviderFactory { get; }
     }
 }

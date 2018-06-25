@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -50,5 +50,46 @@ namespace OwinFramework.Pages.Html.Builders
         {
             return Parent.WriteHtml(renderContext, content);
         }
+        
+        #region IDataScopeProvider
+
+        private readonly IDataScopeProvider _dataScopeProvider;
+
+        int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
+        IList<IDataScope> IDataScopeProvider.DataScopes { get { return _dataScopeProvider.DataScopes; } }
+        IDataContextDefinition IDataScopeProvider.DataContextDefinition { get { return _dataScopeProvider.DataContextDefinition; } }
+
+        IDataScopeProvider IDataScopeProvider.Parent
+        {
+            get { return _dataScopeProvider.Parent; }
+            set { _dataScopeProvider.Parent = value; }
+        }
+
+        bool IDataScopeProvider.Provides(Type type, string scopeName)
+        {
+            return _dataScopeProvider.Provides(type, scopeName);
+        }
+
+        void IDataScopeProvider.ResolveDataScopes()
+        {
+            _dataScopeProvider.ResolveDataScopes();
+        }
+
+        void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
+        {
+            _dataScopeProvider.SetupDataContext(renderContext);
+        }
+
+        void IDataScopeProvider.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
+        {
+            _dataScopeProvider.AddMissingData(renderContext, missingDependency);
+        }
+
+        void IDataScopeProvider.AddChild(IDataScopeProvider child)
+        {
+            _dataScopeProvider.AddChild(child);
+        }
+
+        #endregion
     }
 }

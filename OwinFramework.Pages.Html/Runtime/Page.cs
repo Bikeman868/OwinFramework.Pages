@@ -7,6 +7,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -58,6 +59,7 @@ namespace OwinFramework.Pages.Html.Runtime
         public override ElementType ElementType { get { return ElementType.Page; } }
 
         private readonly IPageDependenciesFactory _dependencies;
+        private readonly IDataScopeProvider _dataScopeProvider;
         private IList<IComponent> _components;
         private string _bodyStyleName;
         private IList<string> _inPageCssLines;
@@ -71,7 +73,10 @@ namespace OwinFramework.Pages.Html.Runtime
             // this framework!!
 
             _dependencies = dependencies;
+            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
         }
+
+        #region Page one-time initialization
 
         public virtual void Initialize()
         {
@@ -149,24 +154,16 @@ namespace OwinFramework.Pages.Html.Runtime
             private class State
             {
                 public AssetDeployment AssetDeployment;
-                public string Scope;
-                public List<RequiredData> DataNeeds = new List<RequiredData>();
-                public List<IDataProvider> Providers = new List<IDataProvider>();
+                public IDataScopeProvider ScopeProvider;
 
                 public State Clone()
                 {
                     return new State
                     {
                         AssetDeployment = AssetDeployment,
-                        Scope = Scope
+                        ScopeProvider = ScopeProvider
                     };
                 }
-            }
-
-            private class RequiredData
-            {
-                public Type DataType;
-                public string DataName;
             }
 
             public class ElementRegistration
@@ -182,10 +179,13 @@ namespace OwinFramework.Pages.Html.Runtime
             private readonly Page _page;
             private State _currentState = new State();
 
-            public Initializationdata(AssetDeployment assetDeployment, Page page)
+            public Initializationdata(
+                AssetDeployment assetDeployment, 
+                Page page)
             {
                 AssetDeployment = assetDeployment;
                 _page = page;
+                _currentState.ScopeProvider = _page._dataScopeProvider;
             }
 
             public void Push()
@@ -197,6 +197,12 @@ namespace OwinFramework.Pages.Html.Runtime
             public void Pop()
             {
                 _currentState = _stateStack.Pop();
+            }
+
+            public void AddScope(IDataScopeProvider scopeProvider)
+            {
+                scopeProvider.Parent = _currentState.ScopeProvider;
+                _currentState.ScopeProvider = scopeProvider;
             }
 
             public AssetDeployment AssetDeployment
@@ -233,6 +239,8 @@ namespace OwinFramework.Pages.Html.Runtime
             return _components.Concat(Layout.AsEnumerable<IElement>()).GetEnumerator();
         }
 
+        #endregion
+
         /// <summary>
         /// Adds a non-visual component to the page. These components can write to the
         /// page header, include javscript libraries, write canonical links etc
@@ -254,20 +262,6 @@ namespace OwinFramework.Pages.Html.Runtime
             AddComponent(component);
         }
 
-        public override IWriteResult WriteStaticCss(ICssWriter writer)
-        {
-            var writeResult = WriteResult.Continue();
-
-            return writeResult;
-        }
-
-        public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
-        {
-            var writeResult = WriteResult.Continue();
-
-            return writeResult;
-        }
-
         /// <summary>
         /// Override this method to completely takeover how the page is produced
         /// </summary>
@@ -278,6 +272,8 @@ namespace OwinFramework.Pages.Html.Runtime
             var html = context.Html;
 
             owinContext.Response.ContentType = "text/html";
+
+            _dataScopeProvider.SetupDataContext(context);
 
             var writeResult = WriteResult.Continue();
             try
@@ -306,6 +302,22 @@ namespace OwinFramework.Pages.Html.Runtime
                     html.ToResponse(owinContext);
                     dependencies.Dispose();
                 });
+        }
+
+        #region Outputting Html
+
+        public override IWriteResult WriteStaticCss(ICssWriter writer)
+        {
+            var writeResult = WriteResult.Continue();
+
+            return writeResult;
+        }
+
+        public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
+        {
+            var writeResult = WriteResult.Continue();
+
+            return writeResult;
         }
 
         public override IWriteResult WriteDynamicCss(ICssWriter writer, bool includeChildren)
@@ -474,6 +486,8 @@ namespace OwinFramework.Pages.Html.Runtime
             return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(renderContext);
         }
 
+        #endregion
+
         #region Private methods
 
         private void WritePageHead(IRenderContext context, IHtmlWriter html, IWriteResult writeResult)
@@ -566,5 +580,6 @@ namespace OwinFramework.Pages.Html.Runtime
         }
 
         #endregion
+
     }
 }

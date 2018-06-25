@@ -40,7 +40,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <summary>
         /// Returns the data context that should be used for the current operation
         /// </summary>
-        IDataContext CurrentDataContext { get; }
+        IDataContext Data { get; }
 
         /// <summary>
         /// Adds a request specific data context that is linked to a specific page,

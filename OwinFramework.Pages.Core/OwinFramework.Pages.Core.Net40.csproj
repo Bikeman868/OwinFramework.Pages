@@ -153,6 +153,7 @@
     <Compile Include="Interfaces\DataModel\IDataProviderRegistration.cs" />
     <Compile Include="Interfaces\DataModel\IDataScopeFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataScope.cs" />
+    <Compile Include="Interfaces\DataModel\IDataScopeProviderFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataScopeProvider.cs" />
     <Compile Include="Interfaces\IDataProvider.cs" />
     <Compile Include="Interfaces\DataModel\IDataCatalog.cs" />

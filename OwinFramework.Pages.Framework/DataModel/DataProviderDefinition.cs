@@ -1,5 +1,4 @@
-﻿using System;
-using OwinFramework.Pages.Core.Interfaces;
+﻿using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 

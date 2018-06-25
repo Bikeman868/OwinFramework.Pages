@@ -1,4 +1,5 @@
 ﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -36,5 +37,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Factory for constructing Javascript writers
         /// </summary>
         IJavascriptWriterFactory JavascriptWriterFactory { get; }
+
+        /// <summary>
+        /// A factory for constructing data scope providers
+        /// </summary>
+        IDataScopeProviderFactory DataScopeProviderFactory { get; }
     }
 }

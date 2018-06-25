@@ -12,25 +12,25 @@ namespace OwinFramework.Pages.Framework.DataModel
         private readonly IDataScopeFactory _dataScopeFactory;
         private readonly IDataCatalog _dataCatalog;
         private readonly IDataContextFactory _dataContextFactory;
+        private readonly List<DataScopeProvider> _children;
 
         public int Id { get; private set; }
-        public IDataScopeProvider Parent { get; private set; }
         public IList<IDataScope> DataScopes { get; private set; }
         public IDataContextDefinition DataContextDefinition { get; private set; }
 
-        private readonly List<DataScopeProvider> _children;
-        public IList<IDataScopeProvider> Children 
-        { 
-            get 
-            { 
-                return _children
-                    .Cast<IDataScopeProvider>()
-                    .ToList(); 
-            } 
+        IDataScopeProvider _parent;
+        public IDataScopeProvider Parent 
+        {
+            get { return _parent; }
+            set
+            {
+                _parent = value;
+                _parent.AddChild(this);
+            }
         }
 
+
         public DataScopeProvider(
-            IDataScopeProvider parent,
             IIdManager idManager,
             IDataScopeFactory dataScopeFactory,
             IDataCatalog dataCatalog,
@@ -40,10 +40,14 @@ namespace OwinFramework.Pages.Framework.DataModel
             _dataCatalog = dataCatalog;
             _dataContextFactory = dataContextFactory;
             Id = idManager.GetUniqueId();
-            Parent = parent;
             DataScopes = new List<IDataScope>();
 
             _children = new List<DataScopeProvider>();
+        }
+
+        public void AddChild(IDataScopeProvider child)
+        {
+            _children.Add((DataScopeProvider)child);
         }
 
         public bool Provides(Type type, string scopeName)
@@ -73,7 +77,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void SetupDataContext(IRenderContext renderContext)
         {
-            if (renderContext.CurrentDataContext != null)
+            if (renderContext.Data != null)
                 throw new Exception("The data scope provider should be used to setup a new render context");
 
             SetupDataContext(renderContext, _dataContextFactory.Create(renderContext), false);
@@ -116,5 +120,6 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             DataContextDefinition.Add(dataProviderRegistration.DataProvider, missingDependency);
         }
+
     }
 }

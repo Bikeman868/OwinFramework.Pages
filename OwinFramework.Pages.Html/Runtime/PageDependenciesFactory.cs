@@ -15,6 +15,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly INameManager _nameManager;
         private readonly ICssWriterFactory _cssWriterFactory;
         private readonly IJavascriptWriterFactory _javascriptWriterFactory;
+        private readonly IDataScopeProviderFactory _dataScopeProviderFactory;
 
         public PageDependenciesFactory(
             IRenderContextFactory renderContextFactory,
@@ -22,7 +23,8 @@ namespace OwinFramework.Pages.Html.Runtime
             IAssetManager assetManager,
             INameManager nameManager,
             ICssWriterFactory cssWriterFactory,
-            IJavascriptWriterFactory javascriptWriterFactory)
+            IJavascriptWriterFactory javascriptWriterFactory,
+            IDataScopeProviderFactory dataScopeProviderFactory)
         {
             _renderContextFactory = renderContextFactory;
             _dataContextFactory = dataContextFactory;
@@ -30,6 +32,7 @@ namespace OwinFramework.Pages.Html.Runtime
             _nameManager = nameManager;
             _cssWriterFactory = cssWriterFactory;
             _javascriptWriterFactory = javascriptWriterFactory;
+            _dataScopeProviderFactory = dataScopeProviderFactory;
         }
 
         public IPageDependencies Create(IOwinContext context)
@@ -61,6 +64,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public IJavascriptWriterFactory JavascriptWriterFactory
         {
             get { return _javascriptWriterFactory; }
+        }
+
+        public IDataScopeProviderFactory DataScopeProviderFactory
+        {
+            get { return _dataScopeProviderFactory; }
         }
     }
 }

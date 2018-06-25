@@ -70,7 +70,7 @@ namespace Sample1.SamplePackages
                 IRenderContext renderContext, 
                 bool includeChildren)
             {
-                var menuItem = renderContext.CurrentDataContext.Get<MenuItem>();
+                var menuItem = renderContext.Data.Get<MenuItem>();
                 if (menuItem != null)
                 {
                     var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;

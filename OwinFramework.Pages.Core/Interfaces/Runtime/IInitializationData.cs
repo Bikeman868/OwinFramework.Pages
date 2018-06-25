@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
@@ -29,6 +30,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// modified before initializing the children.
         /// </summary>
         AssetDeployment AssetDeployment { get; set; }
+
+        /// <summary>
+        /// Introduces a new data scope. All data binding below this point
+        /// will resolve using the new scope before deferring to its parent
+        /// </summary>
+        /// <param name="scopeProvider"></param>
+        void AddScope(IDataScopeProvider scopeProvider);
 
         /// <summary>
         /// Call this method to indicate that this element has a dependancy on

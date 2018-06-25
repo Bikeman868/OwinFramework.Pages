@@ -14,7 +14,7 @@ namespace OwinFramework.Pages.Html.Runtime
         public IHtmlWriter Html { get; private set; }
         public string Language { get; private set; }
         public bool IncludeComments { get; private set; }
-        public IDataContext CurrentDataContext { get; private set; }
+        public IDataContext Data { get; private set; }
 
         private readonly IAssetManager _assetManager;
         private readonly IThreadSafeDictionary<int, IDataContext> _dataContexts;
@@ -55,7 +55,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public void SelectDataContext(int id)
         {
-            CurrentDataContext = _dataContexts[id];
+            Data = _dataContexts[id];
         }
     }
 }

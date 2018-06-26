@@ -225,7 +225,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public IDataProviderRegistration FindProvider(IDataDependency dependency)
         {
-            if (dependency.DataType != null)
+            if (dependency.DataType == null)
                 throw new Exception("Data dependencies must include the data type thay are dependent on");
 
             List<Registration> registrations;

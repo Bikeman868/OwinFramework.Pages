@@ -193,7 +193,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output html
         /// </summary>
-        public virtual IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren)
+        public virtual IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
             var result = WriteResult.Continue();
             if (!includeChildren) return result;
@@ -205,7 +205,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteHtml(renderContext));
+                    result.Add(children.Current.WriteHtml(context));
                 }
             }
             finally

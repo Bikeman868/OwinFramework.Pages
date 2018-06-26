@@ -65,7 +65,7 @@ namespace OwinFramework.Pages.Html.Runtime
         }
 
         public virtual IWriteResult WriteHtml(
-            IRenderContext renderContext, 
+            IRenderContext context, 
             Func<string, IRegion> regionLookup)
         {
             var result = WriteResult.Continue();
@@ -77,7 +77,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 {
                     var region = regionLookup(regionName) ?? Content[regionName];
                     if (region != null)
-                        result.Add(region.WriteHtml(renderContext));
+                        result.Add(region.WriteHtml(context));
                 }
             }
             return result;

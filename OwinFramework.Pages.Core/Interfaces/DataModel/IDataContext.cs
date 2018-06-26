@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// established. When there is no data binding the overhead of
     /// creating a data context is avoided.
     /// </summary>
-    public interface IDataContext
+    public interface IDataContext: IDisposable
     {
         /// <summary>
         /// Gets and sets the current scope provider. This will only
@@ -53,6 +53,21 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// of the current data context. 0 means this instance, 1 means the
         /// parent context, 2 means the grandparent etc</param>
         void Set<T>(T value, string scopeName = null, int level = 0);
+
+        /// <summary>
+        /// Stores data in the data context
+        /// </summary>
+        /// <param name="type">The type to store store the data as</param>
+        /// <param name="value">The data to store</param>
+        /// <param name="scopeName">Optionally allows you to set the
+        /// data that will be returned when a specific scope is requested.
+        /// This is not normally required because the data context will
+        /// defer to its parent and the parents are organized
+        /// heirachically by scope already</param>
+        /// <param name="level">Use this parameter to write into an ancestor
+        /// of the current data context. 0 means this instance, 1 means the
+        /// parent context, 2 means the grandparent etc</param>
+        void Set(Type type, object value, string scopeName = null, int level = 0);
 
         /// <summary>
         /// Retrieves strongly typed data from the data context

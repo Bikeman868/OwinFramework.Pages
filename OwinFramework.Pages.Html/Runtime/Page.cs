@@ -481,9 +481,9 @@ namespace OwinFramework.Pages.Html.Runtime
             return writeResult;
         }
 
-        public override IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren)
+        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
-            return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(renderContext);
+            return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(context);
         }
 
         #endregion

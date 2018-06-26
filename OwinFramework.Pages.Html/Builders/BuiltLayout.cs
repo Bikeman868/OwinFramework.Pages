@@ -49,24 +49,24 @@ namespace OwinFramework.Pages.Html.Builders
             _visualElementMapping[_regionNameOrder.Count - 1] = _visualElements.Count - 1;
         }
 
-        public override IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren)
+        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
             return WriteHtml(
-                renderContext, 
+                context, 
                 includeChildren 
                 ? (Func<string, IRegion>)(regionName => Content[regionName])
                 : regionName => (IRegion)null);
         }
 
         public override IWriteResult WriteHtml(
-            IRenderContext renderContext, 
+            IRenderContext context, 
             Func<string, IRegion> regionLookup)
         {
             var result = WriteResult.Continue();
 
-            if (renderContext.IncludeComments)
+            if (context.IncludeComments)
             {
-                renderContext.Html.WriteComment(
+                context.Html.WriteComment(
                     (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
                     (Package == null ? " layout" : " layout from " + Package.Name + " package"));
 
@@ -82,11 +82,11 @@ namespace OwinFramework.Pages.Html.Builders
                     if (reverseMapping.ContainsKey(i))
                     {
                         var regionIndex = reverseMapping[i];
-                        renderContext.Html.WriteComment("layout '" + _regionNameOrder[regionIndex] + "' region");
+                        context.Html.WriteComment("layout '" + _regionNameOrder[regionIndex] + "' region");
                     }
                     var element = _visualElements[i](regionLookup);
                     if (element != null)
-                        result.Add(element.WriteHtml(renderContext));
+                        result.Add(element.WriteHtml(context));
                 }
             }
             else
@@ -95,7 +95,7 @@ namespace OwinFramework.Pages.Html.Builders
                 {
                     var element = elementFunction(regionLookup);
                     if (element != null)
-                        result.Add(element.WriteHtml(renderContext));
+                        result.Add(element.WriteHtml(context));
                 }
             }
 

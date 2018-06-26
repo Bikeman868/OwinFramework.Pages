@@ -18,17 +18,17 @@ namespace OwinFramework.Pages.Html.Builders
             : base(dependencies)
         { }
 
-        public override IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren)
+        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
-            if (renderContext.IncludeComments)
-                renderContext.Html.WriteComment(
+            if (context.IncludeComments)
+                context.Html.WriteComment(
                     (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
                     (Package == null ? " component" : " component from the " + Package.Name + " package"));
 
             if (HtmlWriters != null)
             {
                 foreach (var writer in HtmlWriters)
-                    writer(renderContext);
+                    writer(context);
             }
 
             return WriteResult.Continue();

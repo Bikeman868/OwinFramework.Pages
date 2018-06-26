@@ -146,10 +146,10 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// This method is called during page rendering and is this elements opportunity
         /// to output html into the page at the place where this element is on the page
         /// </summary>
-        /// <param name="renderContext">The rendering operation in progress</param>
+        /// <param name="context">The rendering operation in progress</param>
         /// <param name="includeChildren">When true recursively traverses the element
         /// tree below this one writing the html for all the descendants</param>
-        IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren = true);
+        IWriteResult WriteHtml(IRenderContext context, bool includeChildren = true);
     }
 
     /// <summary>

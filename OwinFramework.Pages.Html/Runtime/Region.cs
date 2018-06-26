@@ -57,12 +57,12 @@ namespace OwinFramework.Pages.Html.Runtime
         }
 
         public virtual IWriteResult WriteHtml(
-            IRenderContext renderContext,
+            IRenderContext context,
             IElement content)
         {
             return content == null 
                 ? WriteResult.Continue() 
-                : content.WriteHtml(renderContext);
+                : content.WriteHtml(context);
         }
 
         #region IDataScopeProvider

@@ -60,6 +60,19 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
         }
 
+        public void Set(Type type, object value, string scopeName = null, int level = 0)
+        {
+            var name = type.FullName;
+
+            if (level == 0 || _parent == null)
+                _properties[name] = value;
+            else
+            {
+                _parent.Set(type, value, scopeName, level - 1);
+                _properties.Remove(name);
+            }
+        }
+
         public T Get<T>(string scopeName, bool isRequired)
         {
             return (T)Get(typeof(T), scopeName, isRequired);

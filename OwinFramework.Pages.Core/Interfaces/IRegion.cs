@@ -42,10 +42,10 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <summary>
         /// Writes the html for this region with specific content inside
         /// </summary>
-        /// <param name="renderContext">The context to render into</param>
+        /// <param name="context">The context to render into</param>
         /// <param name="content">The element to render inside the region</param>
         IWriteResult WriteHtml(
-            IRenderContext renderContext, 
+            IRenderContext context, 
             IElement content);
     }
 }

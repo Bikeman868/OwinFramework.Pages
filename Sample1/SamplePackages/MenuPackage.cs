@@ -46,8 +46,8 @@ namespace Sample1.SamplePackages
             public IList<MenuItem> SubMenu { get; set; }
         }
 
-        [IsDataProvider(typeof(IList<MenuItem>), "submenu")]
-        [NeedsData(typeof(MenuItem))]
+        //[IsDataProvider(typeof(IList<MenuItem>), "submenu")]
+        //[NeedsData(typeof(MenuItem))]
         public class SubMenuDataProvider: DataProvider
         {
             public SubMenuDataProvider(IDataProviderDependenciesFactory dependencies) 
@@ -67,14 +67,14 @@ namespace Sample1.SamplePackages
                 : base(dependencies) { }
 
             public override IWriteResult WriteHtml(
-                IRenderContext renderContext, 
+                IRenderContext context, 
                 bool includeChildren)
             {
-                var menuItem = renderContext.Data.Get<MenuItem>();
+                var menuItem = context.Data.Get<MenuItem>();
                 if (menuItem != null)
                 {
                     var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
-                    renderContext.Html.WriteElement("a", menuItem.Name, "href", url);
+                    context.Html.WriteElement("a", menuItem.Name, "href", url);
                 }
                 return WriteResult.Continue();
             }

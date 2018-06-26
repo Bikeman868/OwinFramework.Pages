@@ -38,9 +38,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         bool IncludeComments { get; }
 
         /// <summary>
-        /// Returns the data context that should be used for the current operation
+        /// Gets and sets the data context that should be used for the current operation
         /// </summary>
-        IDataContext Data { get; }
+        IDataContext Data { get; set; }
 
         /// <summary>
         /// Adds a request specific data context that is linked to a specific page,

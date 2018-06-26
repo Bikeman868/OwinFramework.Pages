@@ -17,6 +17,10 @@ namespace OwinFramework.Pages.Html.Builders
         private string _style;
         private string[] _classNames;
 
+        private string _childTagName;
+        private string _childStyle;
+        private string[] _childClassNames;
+
         public RegionDefinition(
             INameManager nameManager,
             IHtmlHelper htmlHelper,
@@ -108,7 +112,19 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.ForEach<T>(string tag, string style, params string[] classes)
         {
-            // TODO: Data binding
+            _region.RepeatType = typeof(T);
+            _childTagName = tag;
+            _childStyle = style;
+            _childClassNames = classes;
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.ForEach(Type dataType, string tag, string style, params string[] classes)
+        {
+            _region.RepeatType = dataType;
+            _childTagName = tag;
+            _childStyle = style;
+            _childClassNames = classes;
             return this;
         }
 
@@ -126,7 +142,6 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.BindTo(Type dataType, string scopeName)
         {
-            // TODO: Data binding
             return this;
         }
 
@@ -137,12 +152,6 @@ namespace OwinFramework.Pages.Html.Builders
         }
 
         IRegionDefinition IRegionDefinition.DataProvider(IDataProvider dataProvider)
-        {
-            // TODO: Data binding
-            return this;
-        }
-
-        IRegionDefinition IRegionDefinition.ForEach(Type dataType, string tag, string style, params string[] classes)
         {
             // TODO: Data binding
             return this;
@@ -185,6 +194,13 @@ namespace OwinFramework.Pages.Html.Builders
                 var attributes = _htmlHelper.StyleAttributes(_style, _classNames, _region.Package);
                 _region.WriteOpen = w => w.WriteOpenTag(_tagName, attributes);
                 _region.WriteClose = w => w.WriteCloseTag(_tagName);
+            }
+
+            if (!string.IsNullOrEmpty(_childTagName))
+            {
+                var attributes = _htmlHelper.StyleAttributes(_childStyle, _childClassNames, _region.Package);
+                _region.WriteChildOpen = w => w.WriteOpenTag(_childTagName, attributes);
+                _region.WriteChildClose = w => w.WriteCloseTag(_childTagName);
             }
 
             _nameManager.Register(_region);

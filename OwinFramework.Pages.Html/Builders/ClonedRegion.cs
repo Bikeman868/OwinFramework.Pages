@@ -24,6 +24,8 @@ namespace OwinFramework.Pages.Html.Builders
         {
             _dependenciesFactory = dependenciesFactory;
             _content = content;
+            _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create();
+            _dataScopeProvider.Parent = parent;
         }
 
         public void Populate(IElement content)
@@ -41,14 +43,14 @@ namespace OwinFramework.Pages.Html.Builders
             return _content == null ? null : _content.AsEnumerable().GetEnumerator();
         }
 
-        public IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren)
+        public IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
-            return Parent.WriteHtml(renderContext, includeChildren ? _content : null);
+            return Parent.WriteHtml(context, includeChildren ? _content : null);
         }
 
-        public IWriteResult WriteHtml(IRenderContext renderContext, IElement content)
+        public IWriteResult WriteHtml(IRenderContext context, IElement content)
         {
-            return Parent.WriteHtml(renderContext, content);
+            return Parent.WriteHtml(context, content);
         }
         
         #region IDataScopeProvider

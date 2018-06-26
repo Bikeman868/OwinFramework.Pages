@@ -40,15 +40,15 @@ namespace Sample1.SamplePages
         }
 
         public override IWriteResult WriteHtml(
-            IRenderContext renderContext,
+            IRenderContext context,
             bool includeChildren)
         {
             // Save this location in the output buffer
-            var begining = renderContext.Html.CreateInsertionPoint();
+            var begining = context.Html.CreateInsertionPoint();
 
             // Write a paragraph of text
-            renderContext.Html.WriteElement("p", "This is a semi custom page", "class", "normal");
-            renderContext.Html.WriteLine();
+            context.Html.WriteElement("p", "This is a semi custom page", "class", "normal");
+            context.Html.WriteLine();
 
             // Use the saved buffer location to write the heading before the paragraph
             // and do this in a separate thread
@@ -62,8 +62,8 @@ namespace Sample1.SamplePages
                 });
 
             // Write a second paragraph of text
-            renderContext.Html.WriteElement("p", "My second paragraph of text", "class", "normal");
-            renderContext.Html.WriteLine();
+            context.Html.WriteElement("p", "My second paragraph of text", "class", "normal");
+            context.Html.WriteLine();
 
             return WriteResult.WaitFor(task);
         }

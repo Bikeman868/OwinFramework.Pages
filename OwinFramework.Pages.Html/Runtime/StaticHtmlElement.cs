@@ -11,13 +11,13 @@ namespace OwinFramework.Pages.Html.Runtime
         public override ElementType ElementType { get { return ElementType.Unnamed; } }
 
         public override IWriteResult WriteHtml(
-            IRenderContext renderContext,
+            IRenderContext context,
             bool includeChildren)
         {
-            if (renderContext.IncludeComments && !string.IsNullOrEmpty(Comment))
-                renderContext.Html.WriteComment(Comment);
+            if (context.IncludeComments && !string.IsNullOrEmpty(Comment))
+                context.Html.WriteComment(Comment);
 
-            WriteAction(renderContext.Html);
+            WriteAction(context.Html);
             return WriteResult.Continue();
         }
     }

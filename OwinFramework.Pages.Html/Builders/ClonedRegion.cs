@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -25,6 +26,22 @@ namespace OwinFramework.Pages.Html.Builders
             _dependenciesFactory = dependenciesFactory;
             _content = content;
             _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create(parent);
+        }
+
+        DebugElement IElement.GetDebugInfo()
+        {
+            return GetDebugInfo();
+        }
+
+        public DebugRegion GetDebugInfo()
+        {
+            var debugInfo = new DebugRegion
+            {
+                Content = _content == null ? null : _content.GetDebugInfo(),
+                ClonedFrom = Parent == null ? null : Parent.GetDebugInfo()
+            };
+            PopulateDebugInfo(debugInfo);
+            return debugInfo;
         }
 
         public void Populate(IElement content)

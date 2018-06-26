@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces;
+﻿using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 
 namespace OwinFramework.Pages.Framework.Builders
@@ -18,6 +19,17 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             // Packages defined declaratively do not build anything within them
             return this;
+        }
+
+        public DebugPackage GetDebugInfo()
+        {
+            return new DebugPackage
+            {
+                Name = Name,
+                Instance = this,
+                NamespaceName = NamespaceName,
+                Module = Module == null ? null : Module.GetDebugInfo()
+            };
         }
     }
 }

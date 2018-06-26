@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Builder;
+﻿using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Interfaces.Builder;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -19,6 +20,11 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// The unique namespace for everything in this package
         /// </summary>
         string NamespaceName { get; set; }
+
+        /// <summary>
+        /// Gets debugging information from this package
+        /// </summary>
+        DebugPackage GetDebugInfo();
 
         /// <summary>
         /// Gets and sets the module for this package. Setting the module

@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces;
+﻿using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 
 namespace OwinFramework.Pages.Framework.Runtime
@@ -37,6 +38,19 @@ namespace OwinFramework.Pages.Framework.Runtime
         public virtual IPackage Build(IFluentBuilder fluentBuilder)
         {
             return this;
+        }
+
+        /// <summary>
+        /// Returns debugging information
+        /// </summary>
+        public DebugPackage GetDebugInfo()
+        {
+            return new DebugPackage
+            {
+                Name = Name,
+                Instance = this,
+                Module = Module == null ? null : Module.GetDebugInfo()
+            };
         }
     }
 }

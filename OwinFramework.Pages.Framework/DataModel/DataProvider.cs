@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -36,6 +37,16 @@ namespace OwinFramework.Pages.Framework.DataModel
         public virtual void Satisfy(IRenderContext renderContext, IDataContext dataContext)
         {
             throw new NotImplementedException("Data providers must override one of the EstablishContext overloads");
+        }
+
+        public DebugDataProvider GetDebugInfo()
+        {
+            return new DebugDataProvider
+            {
+                Name = Name,
+                Instance = this,
+                Package = Package == null ? null : Package.GetDebugInfo()
+            };
         }
     }
 }

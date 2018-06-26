@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -30,11 +31,17 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// element name unique
         /// </summary>
         ElementType ElementType { get; }
-        
+
         /// <summary>
         /// Defines how the assets are deployed for this element
         /// </summary>
         AssetDeployment AssetDeployment { get; set; }
+
+        /// <summary>
+        /// Gets debuging information for this element
+        /// </summary>
+        /// <returns></returns>
+        DebugElement GetDebugInfo();
 
         /// <summary>
         /// This is called after name resolution. It is called once for each page where the

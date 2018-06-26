@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Enums;
+﻿using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 
@@ -19,6 +20,15 @@ namespace OwinFramework.Pages.Html.Runtime
             // DO NOT change the method signature of this constructor as
             // this would break all modules in all applications that use
             // this framework!!
+        }
+
+        public DebugModule GetDebugInfo()
+        {
+            return new DebugModule
+            {
+                Name = Name,
+                Instance = this,
+            };
         }
 
         /// <summary>

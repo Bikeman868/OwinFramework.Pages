@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
@@ -31,6 +33,21 @@ namespace OwinFramework.Pages.Html.Runtime
 
             _layoutDependenciesFactory = layoutDependenciesFactory;
             Content = layoutDependenciesFactory.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
+        }
+
+        public DebugLayout GetDebugInfo()
+        {
+            var debugInfo = new DebugLayout
+            {
+                Regions = Content.Select(kvp => 
+                    new DebugLayoutRegion 
+                    { 
+                        Name = kvp.Key,
+                        Region = kvp.Value == null ? null : kvp.Value.GetDebugInfo()
+                    }).ToList()
+            };
+            PopulateDebugInfo(debugInfo);
+            return debugInfo;
         }
 
         public IRegion GetRegion(string regionName)

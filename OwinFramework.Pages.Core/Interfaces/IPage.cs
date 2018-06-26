@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
+﻿using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -8,14 +9,19 @@ namespace OwinFramework.Pages.Core.Interfaces
     public interface IPage : IRunable
     {
         /// <summary>
-        /// The unique name of this element for its type within the package
+        /// The unique name of this page within the package
         /// </summary>
         string Name { get; set; }
 
         /// <summary>
-        /// Optional package - not all elements have to be packaged
+        /// Optional package - not all pages have to be packaged
         /// </summary>
         IPackage Package { get; set; }
+
+        /// <summary>
+        /// Gets debugging information from this page
+        /// </summary>
+        DebugPage GetDebugInfo();
 
         /// <summary>
         /// This method is called after all names have been resolves and all

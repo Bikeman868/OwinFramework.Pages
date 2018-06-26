@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -14,6 +14,12 @@ namespace OwinFramework.Pages.Html.Runtime
     {
         private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
         private List<IComponent> _dependentComponents;
+
+        protected void PopulateDebugInfo(DebugInfo debugInfo)
+        {
+            debugInfo.Name = Name;
+            debugInfo.Instance = this;
+        }
 
         /// <summary>
         /// Gets or sets the asset deployment scheme for this element

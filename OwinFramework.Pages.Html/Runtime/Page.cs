@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -580,5 +581,14 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
+        public DebugPage GetDebugInfo()
+        {
+            return new DebugPage
+            {
+                Name = Name,
+                Instance = this,
+                Layout = Layout == null ? null : Layout.GetDebugInfo()
+            };
+        }
     }
 }

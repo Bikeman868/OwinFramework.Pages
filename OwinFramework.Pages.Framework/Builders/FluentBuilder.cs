@@ -559,7 +559,6 @@ namespace OwinFramework.Pages.Framework.Builders
                 if (service != null)
                 {
                     Configure(attributes, service);
-                    _nameManager.Register(service);
                     return;
                 }
             }
@@ -682,7 +681,11 @@ namespace OwinFramework.Pages.Framework.Builders
                     service.Name = attributes.IsService.Name;
             }
 
-            ConfigureElement(attributes, service);
+            if (attributes.PartOf != null && !string.IsNullOrEmpty(attributes.PartOf.PackageName))
+            {
+                service.Package = _nameManager.ResolvePackage(attributes.PartOf.PackageName);
+            }
+
             ConfigureRunable(attributes, service);
         }
 

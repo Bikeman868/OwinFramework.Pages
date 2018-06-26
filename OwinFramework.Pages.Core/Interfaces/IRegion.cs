@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.DataModel;
+﻿using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
@@ -9,6 +10,11 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// </summary>
     public interface IRegion : IElement, IDataScopeProvider
     {
+        /// <summary>
+        /// Retrieves debugging information about the region
+        /// </summary>
+        DebugRegion GetDebugInfo();
+
         /// <summary>
         /// Constructs an element that is the result of puttting the
         /// supplied element inside this region. The supplied element 

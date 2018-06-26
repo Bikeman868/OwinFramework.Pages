@@ -73,7 +73,7 @@ namespace OwinFramework.Pages.Html.Runtime
             // this framework!!
 
             _dependencies = dependencies;
-            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
+            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create(null);
         }
 
         #region Page one-time initialization
@@ -199,10 +199,9 @@ namespace OwinFramework.Pages.Html.Runtime
                 _currentState = _stateStack.Pop();
             }
 
-            public void AddScope(IDataScopeProvider scopeProvider)
-            {
-                scopeProvider.Parent = _currentState.ScopeProvider;
-                _currentState.ScopeProvider = scopeProvider;
+            public void AddScope(IDataScopeProvider scopeProvider) 
+            { 
+                _currentState.ScopeProvider = scopeProvider; 
             }
 
             public AssetDeployment AssetDeployment

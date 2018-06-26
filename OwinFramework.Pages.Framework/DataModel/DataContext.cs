@@ -32,19 +32,21 @@ namespace OwinFramework.Pages.Framework.DataModel
         public DataContext Initialize(
             Action<IReusable> disposeAction, 
             IRenderContext renderContext, 
-            DataContext parent)
+            DataContext parent,
+            IDataScopeProvider scope)
         {
             base.Initialize(disposeAction);
             _properties.Clear();
             _dataProviders.Clear();
             _renderContext = renderContext;
             _parent = parent;
+            _scope = scope;
             return this;
         }
 
-        public IDataContext CreateChild()
+        public IDataContext CreateChild(IDataScopeProvider scope)
         {
-            return _dataContextFactory.Create(_renderContext, this);
+            return _dataContextFactory.Create(_renderContext, scope, this);
         }
         
         public void Set<T>(T value, string scopeName = null, int level = 0)
@@ -82,7 +84,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             var name = type.FullName;
 
-            if (string.IsNullOrEmpty(scopeName) || (_scope != null && _scope.Provides(type, scopeName)))
+            if (string.IsNullOrEmpty(scopeName) || (_scope != null && _scope.IsInScope(type, scopeName)))
             {
                 var retry = false;
                 while (true)

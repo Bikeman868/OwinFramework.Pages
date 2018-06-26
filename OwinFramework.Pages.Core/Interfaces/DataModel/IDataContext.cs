@@ -112,6 +112,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// and the original parent context is not affected.
         /// It is important NOT to dispose the parent before disposing of the child
         /// </summary>
-        IDataContext CreateChild();
+        /// <param name="scopeProvider">Attaching a scope provider to the new
+        /// data context establishes this context as a new data scope</param>
+        IDataContext CreateChild(IDataScopeProvider scopeProvider = null);
     }
 }

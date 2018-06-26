@@ -66,11 +66,8 @@
   <ItemGroup>
     <Compile Include="Builders\AttributeSet.cs" />
     <Compile Include="Builders\BuiltPackage.cs" />
-    <Compile Include="Builders\DataContextDefinition.cs" />
-    <Compile Include="Builders\DataReference.cs" />
     <Compile Include="Builders\PackageDefinition.cs" />
     <Compile Include="Configuration\FrameworkConfiguration.cs" />
-    <Compile Include="DataModel\DataContextDefinition.cs" />
     <Compile Include="DataModel\DataDependencyFactory.cs" />
     <Compile Include="DataModel\DataDependency.cs" />
     <Compile Include="DataModel\DataProviderDefinition.cs" />

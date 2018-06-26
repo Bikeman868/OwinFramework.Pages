@@ -11,6 +11,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <summary>
         /// Creates and initializes a new data context instance
         /// </summary>
-        IDataContext Create(IRenderContext renderContext);
+        IDataContext Create(IRenderContext renderContext, IDataScopeProvider dataScopeProvider);
     }
 }

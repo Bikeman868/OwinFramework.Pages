@@ -9,6 +9,6 @@
         /// <summary>
         /// Creates and initializes a new data scope provider
         /// </summary>
-        IDataScopeProvider Create();
+        IDataScopeProvider Create(IDataScopeProvider parent);
     }
 }

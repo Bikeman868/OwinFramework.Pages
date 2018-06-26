@@ -55,5 +55,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// </summary>
         /// <param name="id">The id of the data context to make current</param>
         void SelectDataContext(int id);
+
+        /// <summary>
+        /// Disposes of all data associated with this render context
+        /// </summary>
+        void DeleteDataContextTree();
     }
 }

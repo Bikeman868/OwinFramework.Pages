@@ -145,7 +145,6 @@
     <Compile Include="Interfaces\Collections\IQueue.cs" />
     <Compile Include="Interfaces\Collections\IQueueFactory.cs" />
     <Compile Include="Interfaces\Collections\IThreadSafeDictionary.cs" />
-    <Compile Include="Interfaces\DataModel\IDataContextDefinition.cs" />
     <Compile Include="Interfaces\DataModel\IDataDependency.cs" />
     <Compile Include="Interfaces\DataModel\IDataDependencyFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataProviderDefinitionFactory.cs" />

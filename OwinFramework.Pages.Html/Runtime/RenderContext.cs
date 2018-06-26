@@ -45,6 +45,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public void Dispose()
         {
+            DeleteDataContextTree();
             Html.Dispose();
         }
 
@@ -57,5 +58,14 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             Data = _dataContexts[id];
         }
+
+        public void DeleteDataContextTree()
+        {
+            Data = null;
+            foreach (var context in _dataContexts.Values)
+                context.Dispose();
+            _dataContexts.Clear();
+        }
+
     }
 }

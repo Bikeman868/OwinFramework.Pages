@@ -17,57 +17,89 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         int Id { get; }
 
         /// <summary>
-        /// Parent  or null if this is the root
+        /// Returns the parent scope
         /// </summary>
-        IDataScopeProvider Parent { get; set; }
+        IDataScopeProvider Parent { get; }
 
         /// <summary>
-        /// Adds a child data scope provider
+        /// Adds a child data scope provider establishing a nested scope
+        /// for data dependency resolution
         /// </summary>
         void AddChild(IDataScopeProvider child);
 
         /// <summary>
-        /// This provider introduces a new scope foe these kinds of data. These
-        /// definitions are used once only to create the data context definitions
-        /// by resolving types and scope names in the data provider catalog
+        /// Specifies the parent data scope provider. This is established 
+        /// when walking the element tree during initialization
         /// </summary>
-        IList<IDataScope> DataScopes { get; }
+        void SetParent(IDataScopeProvider parent);
 
         /// <summary>
-        /// This list is produced initially by resolving the DataScopes in the
-        /// data provider catalog. There is then a process of pruning anything
-        /// in the descendents that duplicates an ancestor in the tree.
-        /// At runtime when components request data that was not declared ahead
-        /// of time these need are added here so that the framework learns and
-        /// becomes more efficient on subsequent requests.
+        /// Adds a scope to this scope provider. Any requests for data
+        /// that match this scope will stop here. Any requests for data
+        /// outside of the scopes are propogated to the parent
         /// </summary>
-        IDataContextDefinition DataContextDefinition { get; }
+        /// <param name="type">The type of data handle or null to
+        /// handle alll types of data</param>
+        /// <param name="scopeName">The scope name to handle or null 
+        /// to handle all scopes</param>
+        void AddScope(Type type, string scopeName);
+
+        /// <summary>
+        /// Adds a data provider that should be executed when the data context
+        /// is created
+        /// </summary>
+        /// <param name="dataProvider">The data provider to execute</param>
+        /// <param name="dependency">The dependency that the provider will 
+        /// be asked to satisfy</param>
+        void Add(IDataProvider dataProvider, IDataDependency dependency = null);
+
+        /// <summary>
+        /// Adds a dependency on data. A suitable provider will be located
+        /// and added to this scope or a parent scope according to where this
+        /// scope is handled
+        /// </summary>
+        /// <param name="dependency">The data that the element depends on</param>
+        void Add(IDataDependency dependency);
 
         /// <summary>
         /// Used to determine if the particular type is available from this
-        /// scope provider. When it is not available the parent scope provider
-        /// will be examined etc.
+        /// scope provider.
         /// </summary>
         /// <param name="type">The type of data we are looking for</param>
         /// <param name="scopeName">The name of the scope for this data</param>
-        bool Provides(Type type, string scopeName);
+        bool IsInScope(Type type, string scopeName);
 
         /// <summary>
         /// This should be called once only on the root to traverse the tree
-        /// of data scope providers and populate their DataContextDefinitions
-        /// by resolving DataScopes in the data provider catalog.
+        /// of data scope providers and populate their data providers
+        /// by resolving dependencies in the data provider catalog.
         /// </summary>
-        void ResolveDataScopes();
+        /// <param name="existingProviders">A list of data providers already
+        /// added to the context by ancestors that should not be added
+        /// again here</param>
+        void ResolveDataProviders(IList<IDataProvider> existingProviders);
+
+        /// <summary>
+        /// Returns a list of the data providers that will execute when
+        /// a data context is established for this scope
+        /// </summary>
+        List<IDataProvider> DataProviders { get; }
 
         /// <summary>
         /// This should only be called on the root, it recursively traverses the
         /// tree of descendants creating a tree of data contexts in the render 
         /// context.
         /// </summary>
-        /// <param name="renderContext">A newly instantiated rander context to
+        /// <param name="renderContext">A newly instantiated render context to
         /// set the data context for</param>
         void SetupDataContext(IRenderContext renderContext);
 
+        /// <summary>
+        /// This is called recursively to construct a tree of data contexts
+        /// You should not call this method from your application
+        /// </summary>
+        void BuildDataContextTree(IRenderContext renderContext, IDataContext dataContext, bool isParentDataContext);
+    
         /// <summary>
         /// This is called in the case where dependencies are missing from the 
         /// data context because the dependencies were not correctly specified

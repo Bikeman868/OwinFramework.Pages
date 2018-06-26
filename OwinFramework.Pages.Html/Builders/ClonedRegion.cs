@@ -24,8 +24,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             _dependenciesFactory = dependenciesFactory;
             _content = content;
-            _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create();
-            _dataScopeProvider.Parent = parent;
+            _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create(parent);
         }
 
         public void Populate(IElement content)
@@ -52,29 +51,16 @@ namespace OwinFramework.Pages.Html.Builders
         {
             return Parent.WriteHtml(context, content);
         }
-        
+
         #region IDataScopeProvider
 
         private readonly IDataScopeProvider _dataScopeProvider;
 
         int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
-        IList<IDataScope> IDataScopeProvider.DataScopes { get { return _dataScopeProvider.DataScopes; } }
-        IDataContextDefinition IDataScopeProvider.DataContextDefinition { get { return _dataScopeProvider.DataContextDefinition; } }
 
-        IDataScopeProvider IDataScopeProvider.Parent
+        bool IDataScopeProvider.IsInScope(Type type, string scopeName)
         {
-            get { return _dataScopeProvider.Parent; }
-            set { _dataScopeProvider.Parent = value; }
-        }
-
-        bool IDataScopeProvider.Provides(Type type, string scopeName)
-        {
-            return _dataScopeProvider.Provides(type, scopeName);
-        }
-
-        void IDataScopeProvider.ResolveDataScopes()
-        {
-            _dataScopeProvider.ResolveDataScopes();
+            return _dataScopeProvider.IsInScope(type, scopeName);
         }
 
         void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
@@ -87,9 +73,49 @@ namespace OwinFramework.Pages.Html.Builders
             _dataScopeProvider.AddMissingData(renderContext, missingDependency);
         }
 
+        IDataScopeProvider IDataScopeProvider.Parent
+        {
+            get { return _dataScopeProvider.Parent; }
+        }
+
         void IDataScopeProvider.AddChild(IDataScopeProvider child)
         {
             _dataScopeProvider.AddChild(child);
+        }
+
+        void IDataScopeProvider.SetParent(IDataScopeProvider parent)
+        {
+            _dataScopeProvider.SetParent(parent);
+        }
+
+        void IDataScopeProvider.AddScope(Type type, string scopeName)
+        {
+            _dataScopeProvider.AddScope(type, scopeName);
+        }
+
+        void IDataScopeProvider.Add(IDataProvider dataProvider, IDataDependency dependency)
+        {
+            _dataScopeProvider.Add(dataProvider, dependency);
+        }
+
+        void IDataScopeProvider.Add(IDataDependency dependency)
+        {
+            _dataScopeProvider.Add(dependency);
+        }
+
+        void IDataScopeProvider.ResolveDataProviders(IList<IDataProvider> existingProviders)
+        {
+            _dataScopeProvider.ResolveDataProviders(existingProviders);
+        }
+
+        List<IDataProvider> IDataScopeProvider.DataProviders
+        {
+            get { return _dataScopeProvider.DataProviders; }
+        }
+
+        void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext dataContext, bool isParentDataContext)
+        {
+            _dataScopeProvider.BuildDataContextTree(renderContext, dataContext, isParentDataContext);
         }
 
         #endregion

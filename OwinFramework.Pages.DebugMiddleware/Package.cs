@@ -18,7 +18,8 @@ namespace OwinFramework.Pages.DebugMiddleware
             {
                 return new List<IocRegistration>
                 {
-                    new IocRegistration().Init<IRequestRouter>()
+                    new IocRegistration().Init<IRequestRouter>(),
+                    new IocRegistration().Init<IHtmlWriterFactory>(),
                 };
             }
         }

@@ -15,6 +15,13 @@ namespace OwinFramework.Pages.Html.Runtime
         private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
         private List<IComponent> _dependentComponents;
 
+        DebugElement IElement.GetDebugInfo() 
+        {
+            var debugInfo = new DebugElement();
+            PopulateDebugInfo(debugInfo);
+            return debugInfo;
+        }
+
         protected void PopulateDebugInfo(DebugInfo debugInfo)
         {
             debugInfo.Name = Name;

@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
@@ -374,6 +375,15 @@ namespace OwinFramework.Pages.Framework.Managers
                 "public, max-age=" + (int)_frameworkConfiguration.AssetCacheTime.TotalSeconds);
 
             return context.Response.WriteAsync(content ?? string.Empty);
+        }
+
+        DebugInfo IRunable.GetDebugInfo() 
+        { 
+            return new DebugInfo
+            {
+                Name = "Asset manager",
+                Instance = this
+            };
         }
 
         #endregion

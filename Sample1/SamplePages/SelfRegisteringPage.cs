@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -24,6 +25,17 @@ namespace Sample1.SamplePages
 
         public void Initialize()
         {
+        }
+
+        DebugInfo IRunable.GetDebugInfo() { return GetDebugInfo(); }
+
+        public DebugPage GetDebugInfo()
+        {
+            return new DebugPage
+            {
+                Name = Name,
+                Instance = this
+            };
         }
 
         Task IRunable.Run(IOwinContext context)

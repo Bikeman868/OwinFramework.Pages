@@ -581,6 +581,8 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
+        DebugInfo IRunable.GetDebugInfo() { return GetDebugInfo(); }
+
         public DebugPage GetDebugInfo()
         {
             return new DebugPage

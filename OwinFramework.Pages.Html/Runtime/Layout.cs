@@ -35,6 +35,8 @@ namespace OwinFramework.Pages.Html.Runtime
             Content = layoutDependenciesFactory.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
         }
 
+        DebugElement IElement.GetDebugInfo() { return GetDebugInfo(); }
+
         public DebugLayout GetDebugInfo()
         {
             var debugInfo = new DebugLayout

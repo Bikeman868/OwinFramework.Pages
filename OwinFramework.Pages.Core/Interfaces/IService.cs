@@ -22,7 +22,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <summary>
         /// Gets debugging information from this service
         /// </summary>
-        DebugService GetDebugInfo();
+        new DebugService GetDebugInfo();
 
         /// <summary>
         /// This method is called after all names have been resolved and all

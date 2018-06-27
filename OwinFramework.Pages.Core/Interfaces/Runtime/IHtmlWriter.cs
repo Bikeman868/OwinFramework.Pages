@@ -136,6 +136,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         IHtmlWriter WriteElement(string tag, string content, params string[] attributePairs);
 
         /// <summary>
+        /// Writes a simple html element with an opening and closing tag and some
+        /// content in between
+        /// </summary>
+        /// <param name="tag">The tag to write</param>
+        /// <param name="content">The content inside the element</param>
+        /// <param name="attributePairs">Attributes to apply to the opening tag</param>
+        IHtmlWriter WriteElementLine(string tag, string content, params string[] attributePairs);
+
+        /// <summary>
         /// Writes an element that only has the opening tag and has no closing tag
         /// </summary>
         /// <param name="tag">The html tag to write</param>

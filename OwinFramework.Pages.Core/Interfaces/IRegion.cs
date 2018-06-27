@@ -13,7 +13,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <summary>
         /// Retrieves debugging information about the region
         /// </summary>
-        DebugRegion GetDebugInfo();
+        new DebugRegion GetDebugInfo();
 
         /// <summary>
         /// Constructs an element that is the result of puttting the

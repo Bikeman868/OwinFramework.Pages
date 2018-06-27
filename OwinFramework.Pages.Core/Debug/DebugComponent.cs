@@ -11,17 +11,6 @@ namespace OwinFramework.Pages.Core.Debug
     public class DebugComponent: DebugElement
     {
         /// <summary>
-        /// The layout's regions
-        /// </summary>
-        public List<DebugRegion> Regions { get; set; }
-
-        /// <summary>
-        /// If this is a clone then this contains debug info
-        /// for the layout that was cloned
-        /// </summary>
-        public DebugLayout ClonedFrom { get; set; }
-
-        /// <summary>
         /// Default public constructor
         /// </summary>
         public DebugComponent()

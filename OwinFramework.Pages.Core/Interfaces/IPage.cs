@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <summary>
         /// Gets debugging information from this page
         /// </summary>
-        DebugPage GetDebugInfo();
+        new DebugPage GetDebugInfo();
 
         /// <summary>
         /// This method is called after all names have been resolves and all

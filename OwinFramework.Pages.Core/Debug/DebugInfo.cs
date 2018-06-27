@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace OwinFramework.Pages.Core.Debug
 {
@@ -23,6 +25,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The live instance that this is debug info for
         /// </summary>
+        [JsonIgnore, XmlIgnore]
         public object Instance { get; set; }
     }
 }

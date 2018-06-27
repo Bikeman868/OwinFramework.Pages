@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
@@ -29,6 +30,29 @@ namespace OwinFramework.Pages.Html.Builders
 
             foreach (var regionName in regionNames)
                 _content.Add(regionName, null);
+        }
+
+        DebugElement IElement.GetDebugInfo() { return GetDebugInfo(); }
+
+        public DebugLayout GetDebugInfo()
+        {
+            var debugInfo = new DebugLayout
+            {
+                ClonedFrom = new DebugLayout
+                {
+                    Instance = Parent,
+                    Name = Parent.Name
+                },
+                Regions = _content
+                    .Select(kvp => new DebugLayoutRegion 
+                    { 
+                        Name = kvp.Key,
+                        Region = kvp.Value == null ? null : kvp.Value.GetDebugInfo() 
+                    })
+                    .ToList()
+            };
+            PopulateDebugInfo(debugInfo);
+            return debugInfo;
         }
 
         public IRegion GetRegion(string regionName)

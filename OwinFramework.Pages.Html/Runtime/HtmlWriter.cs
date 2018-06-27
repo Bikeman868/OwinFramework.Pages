@@ -269,6 +269,20 @@ namespace OwinFramework.Pages.Html.Runtime
             return this;
         }
 
+        /// <summary>
+        /// Writes a simple html element with an opening and closing tag and some
+        /// content in between then writes a line break
+        /// </summary>
+        /// <param name="tag">The tag to write</param>
+        /// <param name="content">The content inside the element</param>
+        /// <param name="attributePairs">Attributes to apply to the opening tag</param>
+        public IHtmlWriter WriteElementLine(string tag, string content, params string[] attributePairs)
+        {
+            WriteElement(tag, content, attributePairs);
+            WriteLine();
+            return this;
+        }
+
         public IHtmlWriter WriteUnclosedElement(string tag, params string[] attributePairs)
         {
             if (Format == HtmlFormat.XHtml) 

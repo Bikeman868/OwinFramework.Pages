@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <summary>
         /// Gets debugging information about the layout
         /// </summary>
-        DebugLayout GetDebugInfo();
+        new DebugLayout GetDebugInfo();
 
         /// <summary>
         /// Changes the component that is displayed in a region of the layout

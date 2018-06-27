@@ -47,8 +47,7 @@ namespace Sample1.SamplePages
             var begining = context.Html.CreateInsertionPoint();
 
             // Write a paragraph of text
-            context.Html.WriteElement("p", "This is a semi custom page", "class", "normal");
-            context.Html.WriteLine();
+            context.Html.WriteElementLine("p", "This is a semi custom page", "class", "normal");
 
             // Use the saved buffer location to write the heading before the paragraph
             // and do this in a separate thread
@@ -57,13 +56,11 @@ namespace Sample1.SamplePages
                     // Simulate a call to a service or database here
                     Thread.Sleep(10);
 
-                    begining.WriteElement("h1", "Semi Custom", "class", "page-heading");
-                    begining.WriteLine();
+                    begining.WriteElementLine("h1", "Semi Custom", "class", "page-heading");
                 });
 
             // Write a second paragraph of text
-            context.Html.WriteElement("p", "My second paragraph of text", "class", "normal");
-            context.Html.WriteLine();
+            context.Html.WriteElementLine("p", "My second paragraph of text", "class", "normal");
 
             return WriteResult.WaitFor(task);
         }

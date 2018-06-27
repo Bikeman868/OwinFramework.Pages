@@ -16,10 +16,10 @@ using Sample1.SamplePackages;
 using Sample1.SamplePages;
 using Urchin.Client.Sources;
 using OwinFramework.Pages.Core;
-using OwinFramework.Pages.Core.Interfaces;
 using Sample1;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Debug;
 
 [assembly: OwinStartup(typeof(Startup))]
 
@@ -52,6 +52,7 @@ namespace Sample1
 
             // Define the middleware to add to the Owin Pipeline
             pipelineBuilder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/sample1/pages");
+            pipelineBuilder.Register(ninject.Get<DebugInfoMiddleware>()).ConfigureWith(config, "/sample1/pages/debugInfo");
             pipelineBuilder.Register(ninject.Get<OwinFramework.NotFound.NotFoundMiddleware>()).ConfigureWith(config, "/sample1/notFound");
             pipelineBuilder.Register(ninject.Get<OwinFramework.Documenter.DocumenterMiddleware>()).ConfigureWith(config, "/sample1/documenter").RunFirst();
             pipelineBuilder.Register(ninject.Get<OwinFramework.DefaultDocument.DefaultDocumentMiddleware>()).ConfigureWith(config, "/sample1/defaultDocument");

@@ -35,10 +35,14 @@ namespace OwinFramework.Pages.Html.Builders
 
         public DebugRegion GetDebugInfo()
         {
+            var parentDebugInfo = Parent == null ? null : Parent.GetDebugInfo();
+
             var debugInfo = new DebugRegion
             {
+                Type = "Cloned region",
                 Content = _content == null ? null : _content.GetDebugInfo(),
-                ClonedFrom = Parent == null ? null : Parent.GetDebugInfo()
+                ClonedFrom = parentDebugInfo,
+                Scope = _dataScopeProvider.GetDebugInfo()
             };
             PopulateDebugInfo(debugInfo);
             return debugInfo;
@@ -74,6 +78,11 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IDataScopeProvider _dataScopeProvider;
 
         int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
+
+        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo()
+        {
+            return _dataScopeProvider.GetDebugInfo();
+        }
 
         bool IDataScopeProvider.IsInScope(Type type, string scopeName)
         {

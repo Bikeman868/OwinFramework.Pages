@@ -118,6 +118,7 @@
     <Compile Include="Debug\DebugInfo.cs" />
     <Compile Include="Debug\DebugComponent.cs" />
     <Compile Include="Debug\DebugLayoutRegion.cs" />
+    <Compile Include="Debug\DebugDataScopeProvider.cs" />
     <Compile Include="Debug\DebugService.cs" />
     <Compile Include="Debug\DebugRegion.cs" />
     <Compile Include="Debug\DebugLayout.cs" />

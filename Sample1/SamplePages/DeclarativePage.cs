@@ -77,7 +77,7 @@ namespace Sample1.SamplePages
     [RenderHtml("menu.main", "<p class='{ns}_menu-item'>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
-    [IsComponent("heading")]
+    [IsComponent("title")]
     [PartOf("application")]
     [DeployedAs("navigation")]
     [RenderHtml("heading.main", "<h1>An example of fully declatative pages</h1>")]
@@ -129,7 +129,7 @@ namespace Sample1.SamplePages
      */
 
     /// <summary>
-    /// Defines a region called 'main.header' that is at the top of every page
+    /// Defines a region called 'header' that is at the top of every page
     /// </summary>
     [IsRegion("header")]
     [PartOf("application")]
@@ -137,6 +137,15 @@ namespace Sample1.SamplePages
     [Style("height: 90px; width:100%; padding:10px; background: gray; color: whitesmoke; clear: both;")]
     [UsesLayout("header")]
     internal class MainHeaderRegion { }
+
+    /// <summary>
+    /// Defines a region called 'header' that is at the top of every page
+    /// </summary>
+    [IsRegion("title")]
+    [PartOf("application")]
+    [DeployedAs("navigation")]
+    [UsesComponent("title")]
+    internal class TitleRegion { }
 
     /// <summary>
     /// Defines a region called 'body' that holds the main content area of each page
@@ -215,9 +224,8 @@ namespace Sample1.SamplePages
     [IsLayout("header", "title,menu")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [UsesRegion("title", "header")]
+    [UsesRegion("title", "title")]
     [UsesRegion("menu", "menus:menu")]
-    [RegionComponent("title", "heading")]
     internal class HeaderLayout { }
 
     /// <summary>

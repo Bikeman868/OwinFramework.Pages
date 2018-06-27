@@ -21,6 +21,11 @@ namespace OwinFramework.Pages.Core.Debug
         public List<DebugRoute> Routes { get; set; }
 
         /// <summary>
+        /// The data scope provider associated with this page
+        /// </summary>
+        public DebugDataScopeProvider Scope { get; set; }
+
+        /// <summary>
         /// Default public constructor
         /// </summary>
         public DebugPage()

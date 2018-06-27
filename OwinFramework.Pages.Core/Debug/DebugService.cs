@@ -11,14 +11,14 @@ namespace OwinFramework.Pages.Core.Debug
     public class DebugService : DebugInfo
     {
         /// <summary>
-        /// The layout of this page
-        /// </summary>
-        public DebugLayout Layout { get; set; }
-
-        /// <summary>
         /// Debug information about the URLs that are routed to this page
         /// </summary>
         public List<DebugRoute> Routes { get; set; }
+
+        /// <summary>
+        /// The data scope provider associated with this service
+        /// </summary>
+        public DebugDataScopeProvider Scope { get; set; }
 
         /// <summary>
         /// Default public constructor

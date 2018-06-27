@@ -589,7 +589,8 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 Name = Name,
                 Instance = this,
-                Layout = Layout == null ? null : Layout.GetDebugInfo()
+                Layout = Layout == null ? null : Layout.GetDebugInfo(),
+                Scope = _dataScopeProvider.GetDebugInfo()
             };
         }
     }

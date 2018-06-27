@@ -22,6 +22,11 @@ namespace OwinFramework.Pages.Core.Debug
         public DebugRegion ClonedFrom { get; set; }
 
         /// <summary>
+        /// The data scope provider associated with this region
+        /// </summary>
+        public DebugDataScopeProvider Scope { get; set; }
+
+        /// <summary>
         /// Default public constructor
         /// </summary>
         public DebugRegion()

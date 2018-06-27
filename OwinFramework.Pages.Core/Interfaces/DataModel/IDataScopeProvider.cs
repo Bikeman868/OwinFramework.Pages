@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
@@ -15,6 +16,11 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// corresponding data context during rendering operations.
         /// </summary>
         int Id { get; }
+
+        /// <summary>
+        /// Retrieves debugging information from this scope provider
+        /// </summary>
+        DebugDataScopeProvider GetDebugInfo();
 
         /// <summary>
         /// Returns the parent scope

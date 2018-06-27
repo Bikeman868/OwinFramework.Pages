@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -72,6 +73,33 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             SetParent(parent);
         }
+
+        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo()
+        {
+            return new DebugDataScopeProvider
+            {
+                Id = Id,
+                Parent = _parent == null ? null : _parent.GetDebugInfo(),
+                Children = _children.Select(
+                    c => new DebugDataScopeProvider 
+                    { 
+                        Id = c.Id
+                    }).ToList(),
+                Scopes = _dataScopes.Select(
+                    s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.FullName))
+                    .ToList(),
+                Dependencies = _dataScopes.Select(
+                    s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.FullName))
+                    .ToList(),
+                DataProviders = DataProviders.Select(
+                    dp => new DebugDataProvider 
+                    { 
+                        Name = dp.Name,
+                        Instance = dp
+                    }).ToList()
+            };
+        }
+
 
         #region Parent/child tree structure
 

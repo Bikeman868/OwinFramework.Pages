@@ -36,13 +36,12 @@ namespace OwinFramework.Pages.Html.Builders
 
         public DebugLayout GetDebugInfo()
         {
+            var parentDebugInfo = Parent.GetDebugInfo();
+
             var debugInfo = new DebugLayout
             {
-                ClonedFrom = new DebugLayout
-                {
-                    Instance = Parent,
-                    Name = Parent.Name
-                },
+                Type = "Cloned layout",
+                ClonedFrom = parentDebugInfo,
                 Regions = _content
                     .Select(kvp => new DebugLayoutRegion 
                     { 

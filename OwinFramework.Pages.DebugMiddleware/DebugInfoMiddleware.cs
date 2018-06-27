@@ -133,7 +133,7 @@ namespace OwinFramework.Pages.Core.Debug
                 }
 
                 var script = GetTextResource("html.js");
-                if (script != null)
+                if (!string.IsNullOrEmpty(script))
                 {
                     html.WriteScriptOpen();
                     foreach (var scriptLine in script.Replace("\r", "").Split('\n'))
@@ -157,14 +157,14 @@ namespace OwinFramework.Pages.Core.Debug
 
         private void StartIndent(IHtmlWriter html)
         {
-            html.WriteOpenTag("div");
-            html.WriteElementLine("div", null, "class", "indent");
-            html.WriteOpenTag("div", "class", "indented");
+            html.WriteOpenTag("div", "class", "indent");
+            html.WriteElementLine("span", null, "class", "indent");
+            html.WriteOpenTag("span", "class", "indented");
         }
 
         private void EndIndent(IHtmlWriter html)
         {
-            html.WriteCloseTag("div");
+            html.WriteCloseTag("span");
             html.WriteCloseTag("div");
         }
 
@@ -178,8 +178,120 @@ namespace OwinFramework.Pages.Core.Debug
                 html.WriteCloseTag("p");
             }
 
-            if (debugInfo is DebugPage) WriteHtml(html, (DebugPage)debugInfo);
+            if (debugInfo is DebugComponent) WriteHtml(html, (DebugComponent)debugInfo);
+            if (debugInfo is DebugDataProvider) WriteHtml(html, (DebugDataProvider)debugInfo);
+            if (debugInfo is DebugDataScopeProvider) WriteHtml(html, (DebugDataScopeProvider)debugInfo);
             if (debugInfo is DebugLayout) WriteHtml(html, (DebugLayout)debugInfo);
+            if (debugInfo is DebugModule) WriteHtml(html, (DebugModule)debugInfo);
+            if (debugInfo is DebugPackage) WriteHtml(html, (DebugPackage)debugInfo);
+            if (debugInfo is DebugPage) WriteHtml(html, (DebugPage)debugInfo);
+            if (debugInfo is DebugRegion) WriteHtml(html, (DebugRegion)debugInfo);
+            if (debugInfo is DebugRoute) WriteHtml(html, (DebugRoute)debugInfo);
+            if (debugInfo is DebugService) WriteHtml(html, (DebugService)debugInfo);
+        }
+
+        private void WriteHtml(IHtmlWriter html, DebugComponent component)
+        {
+        }
+
+        private void WriteHtml(IHtmlWriter html, DebugDataProvider dataProvider)
+        {
+        }
+
+        private void WriteHtml(IHtmlWriter html, DebugDataScopeProvider dataScopeProvider)
+        {
+            html.WriteElementLine("p", "Scope with id " + dataScopeProvider.Id);
+
+            if (dataScopeProvider.Parent != null)
+            {
+                html.WriteElementLine("p", "Parent scope");
+                StartIndent(html);
+                WriteDebugInfo(html, dataScopeProvider.Parent);
+                EndIndent(html);
+            }
+
+            if (dataScopeProvider.Children != null && dataScopeProvider.Children.Count > 0)
+            {
+                html.WriteElementLine("p", "Child scopes");
+                StartIndent(html);
+                foreach (var child in dataScopeProvider.Children)
+                    WriteDebugInfo(html, child);
+                EndIndent(html);
+            }
+
+            if (dataScopeProvider.Scopes != null && dataScopeProvider.Scopes.Count > 0)
+            {
+                html.WriteElementLine("p", "Scopes introduced");
+                html.WriteOpenTag("ul");
+                foreach (var scope in dataScopeProvider.Scopes)
+                    html.WriteElementLine("li", scope);
+                html.WriteCloseTag("ul");
+            }
+
+            if (dataScopeProvider.Dependencies != null && dataScopeProvider.Dependencies.Count > 0)
+            {
+                html.WriteElementLine("p", "Dependencies resolved");
+                html.WriteOpenTag("ul");
+                foreach (var dependencies in dataScopeProvider.Dependencies)
+                    html.WriteElementLine("li", dependencies);
+                html.WriteCloseTag("ul");
+            }
+
+            if (dataScopeProvider.DataProviders != null && dataScopeProvider.DataProviders.Count > 0)
+            {
+                html.WriteElementLine("p", "Data providers");
+                html.WriteOpenTag("ul");
+                foreach (var provider in dataScopeProvider.DataProviders)
+                    WriteDebugInfo(html, provider);
+                html.WriteCloseTag("ul");
+            }
+        }
+
+        private void WriteHtml(IHtmlWriter html, DebugLayout layout)
+        {
+            if (layout.ClonedFrom != null)
+            {
+                html.WriteElementLine("p", "Layout inherits from " + layout.ClonedFrom.Name + " layout");
+            }
+            
+            if (layout.Regions != null && layout.Regions.Count > 0)
+            {
+                html.WriteElementLine("p", "Layout has regions " + string.Join(", ", layout.Regions.Select(r => r.Name)));
+                foreach (var layoutRegion in layout.Regions)
+                {
+                    if (layoutRegion.Region == null)
+                    {
+                        html.WriteElementLine("p", "Region " + layoutRegion.Name + " has default region for the layout");
+                        var inheritedRegions = layout.ClonedFrom == null ? null : layout.ClonedFrom.Regions;
+                        if (inheritedRegions != null)
+                        {
+                            var inheritedRegion = inheritedRegions.FirstOrDefault(r => r.Name == layoutRegion.Name);
+                            if (inheritedRegion != null)
+                            {
+                                StartIndent(html);
+                                WriteDebugInfo(html, inheritedRegion.Region);
+                                EndIndent(html);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        html.WriteElementLine("p", "Region " + layoutRegion.Name + " overriden with");
+                        StartIndent(html);
+                        WriteDebugInfo(html, layoutRegion.Region);
+                        EndIndent(html);
+                    }
+                }
+            }
+
+        }
+
+        private void WriteHtml(IHtmlWriter html, DebugModule module)
+        {
+        }
+
+        private void WriteHtml(IHtmlWriter html, DebugPackage package)
+        {
         }
 
         private void WriteHtml(IHtmlWriter html, DebugPage page)
@@ -199,45 +311,39 @@ namespace OwinFramework.Pages.Core.Debug
             }
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugLayout layout)
+        private void WriteHtml(IHtmlWriter html, DebugRegion region)
         {
-            if (layout.ClonedFrom != null)
+            if (region.ClonedFrom != null)
             {
-                html.WriteElementLine("p", "Layout inherits from layout " + layout.ClonedFrom.Name);
-            }
-            
-            if (layout.Regions != null && layout.Regions.Count > 0)
-            {
-                html.WriteElementLine("p", "Layout has regions " + string.Join(", ", layout.Regions.Select(r => r.Name)));
-                foreach (var layoutRegion in layout.Regions)
-                {
-                    if (layoutRegion.Region == null)
-                    {
-                        html.WriteElementLine("p", "Region " + layoutRegion.Name + " inherits layout default content");
-                        var inheritedRegions = layout.ClonedFrom == null ? null : layout.ClonedFrom.Regions;
-                        if (inheritedRegions != null)
-                        {
-                            var inheritedRegion = inheritedRegions.FirstOrDefault(r => r.Name == layoutRegion.Name);
-                            if (inheritedRegion != null)
-                            {
-                                StartIndent(html);
-                                WriteDebugInfo(html, inheritedRegion.Region);
-                                EndIndent(html);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        html.WriteElementLine("p", "Region " + layoutRegion.Name + " contains");
-                        StartIndent(html);
-                        WriteDebugInfo(html, layoutRegion.Region);
-                        EndIndent(html);
-                    }
-                }
+                html.WriteElementLine("p", "Region inherits from " + region.ClonedFrom.Name + " region");
             }
 
+            if (region.Scope != null && 
+                region.Scope.Scopes != null && 
+                region.Scope.Scopes.Count > 0)
+            {
+                StartIndent(html);
+                WriteDebugInfo(html, region.Scope);
+                EndIndent(html);
+            }
+
+            if (region.Content != null)
+            {
+                html.WriteElementLine("p", "Region contains");
+                StartIndent(html);
+                WriteDebugInfo(html, region.Content);
+                EndIndent(html);
+            }
         }
 
+        private void WriteHtml(IHtmlWriter html, DebugRoute route)
+        {
+        }
+
+        private void WriteHtml(IHtmlWriter html, DebugService service)
+        {
+        }
+        
         #endregion
 
         #region SVG drawing

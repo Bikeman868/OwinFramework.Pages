@@ -24,8 +24,22 @@ namespace OwinFramework.Pages.Html.Builders
             : base(parent)
         {
             _dependenciesFactory = dependenciesFactory;
-            _content = content;
-            _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create(parent);
+            _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create();
+
+            content = content ?? parent.Content;
+
+            var layout = content as ILayout;
+            var region = content as IRegion;
+
+            _content = layout == null ? (region == null ? content : region.Clone(null)) : layout.Clone();
+        }
+
+        public override void Initialize(IInitializationData initializationData)
+        {
+            initializationData.Push();
+            initializationData.AddScope(_dataScopeProvider);
+            base.Initialize(initializationData);
+            initializationData.Pop();
         }
 
         DebugElement IElement.GetDebugInfo()
@@ -47,6 +61,8 @@ namespace OwinFramework.Pages.Html.Builders
             PopulateDebugInfo(debugInfo);
             return debugInfo;
         }
+
+        public IElement Content { get { return _content; } }
 
         public void Populate(IElement content)
         {

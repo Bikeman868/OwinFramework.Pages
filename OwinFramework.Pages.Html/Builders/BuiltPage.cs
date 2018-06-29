@@ -16,14 +16,8 @@ namespace OwinFramework.Pages.Html.Builders
 
         public override void Initialize()
         {
-            if (_regions != null && _regions.Count > 0)
-            {
-                if (!Layout.IsClone)
-                    Layout = Layout.Clone();
-
-                foreach (var region in _regions)
-                    Layout.Populate(region.Key, region.Value);
-            }
+            foreach (var region in _regions)
+                Layout.Populate(region.Key, region.Value);
 
             base.Initialize();
         }

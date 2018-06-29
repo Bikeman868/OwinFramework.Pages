@@ -23,7 +23,7 @@ namespace OwinFramework.Pages.Html.Runtime
         public override ElementType ElementType { get { return ElementType.Region; } }
         public bool IsClone { get { return false; } }
 
-        protected IElement Content;
+        public IElement Content { get; protected set; }
 
         /// <summary>
         /// Do not change this constructor signature, it will break application
@@ -37,7 +37,15 @@ namespace OwinFramework.Pages.Html.Runtime
             // this framework!!
 
             _regionDependenciesFactory = regionDependenciesFactory;
-            _dataScopeProvider = regionDependenciesFactory.DataScopeProviderFactory.Create(null);
+            _dataScopeProvider = regionDependenciesFactory.DataScopeProviderFactory.Create();
+        }
+
+        public override void Initialize(IInitializationData initializationData)
+        {
+            initializationData.Push();
+            initializationData.AddScope(_dataScopeProvider);
+            base.Initialize(initializationData);
+            initializationData.Pop();
         }
 
         DebugElement IElement.GetDebugInfo()
@@ -73,13 +81,56 @@ namespace OwinFramework.Pages.Html.Runtime
                 : Content.AsEnumerable().GetEnumerator();
         }
 
+        protected IDataContext SelectDataContext(IRenderContext context)
+        {
+            var data = context.Data;
+            context.SelectDataContext(_dataScopeProvider.Id);
+            return data;
+        }
+
         public virtual IWriteResult WriteHtml(
             IRenderContext context,
             IElement content)
         {
-            return content == null 
-                ? WriteResult.Continue() 
-                : content.WriteHtml(context);
+            if (content == null) return WriteResult.Continue();
+
+            var savedData = SelectDataContext(context);
+            var result = content.WriteHtml(context);
+            context.Data = savedData;
+
+            return result;
+        }
+
+        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
+        {
+            var savedData = SelectDataContext(context);
+            var result = base.WriteHead(context, includeChildren);
+            context.Data = savedData;
+
+            return result;
+        }
+
+        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
+        {
+            return WriteHtml(context, includeChildren ? Content : null);
+        }
+
+        public override IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
+        {
+            var savedData = SelectDataContext(context);
+            var result = base.WriteInitializationScript(context, includeChildren);
+            context.Data = savedData;
+
+            return result;
+        }
+
+        public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
+        {
+            var savedData = SelectDataContext(context);
+            var result = base.WriteInitializationScript(context, includeChildren);
+            context.Data = savedData;
+
+            return result;
         }
 
         #region IDataScopeProvider

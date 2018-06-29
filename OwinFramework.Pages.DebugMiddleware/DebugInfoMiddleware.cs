@@ -145,7 +145,7 @@ namespace OwinFramework.Pages.Core.Debug
                 html.WriteOpenTag("body");
 
                 html.WriteElementLine("h1", "Debug information for " + context.Request.Path);
-                WriteDebugInfo(html, debugInfo);
+                WriteDebugInfo(html, debugInfo, -1);
 
                 html.WriteCloseTag("body");
                 html.WriteDocumentEnd();
@@ -168,8 +168,10 @@ namespace OwinFramework.Pages.Core.Debug
             html.WriteCloseTag("div");
         }
 
-        private void WriteDebugInfo(IHtmlWriter html, DebugInfo debugInfo)
+        private void WriteDebugInfo(IHtmlWriter html, DebugInfo debugInfo, int depth)
         {
+            if (depth == 0) return;
+
             html.WriteElementLine("h2", debugInfo.Type + " " + debugInfo.Name);
             if (debugInfo.Instance != null)
             {
@@ -178,35 +180,37 @@ namespace OwinFramework.Pages.Core.Debug
                 html.WriteCloseTag("p");
             }
 
-            if (debugInfo is DebugComponent) WriteHtml(html, (DebugComponent)debugInfo);
-            if (debugInfo is DebugDataProvider) WriteHtml(html, (DebugDataProvider)debugInfo);
-            if (debugInfo is DebugDataScopeProvider) WriteHtml(html, (DebugDataScopeProvider)debugInfo);
-            if (debugInfo is DebugLayout) WriteHtml(html, (DebugLayout)debugInfo);
-            if (debugInfo is DebugModule) WriteHtml(html, (DebugModule)debugInfo);
-            if (debugInfo is DebugPackage) WriteHtml(html, (DebugPackage)debugInfo);
-            if (debugInfo is DebugPage) WriteHtml(html, (DebugPage)debugInfo);
-            if (debugInfo is DebugRegion) WriteHtml(html, (DebugRegion)debugInfo);
-            if (debugInfo is DebugRoute) WriteHtml(html, (DebugRoute)debugInfo);
-            if (debugInfo is DebugService) WriteHtml(html, (DebugService)debugInfo);
+            if (debugInfo is DebugComponent) WriteHtml(html, (DebugComponent)debugInfo, depth);
+            if (debugInfo is DebugDataProvider) WriteHtml(html, (DebugDataProvider)debugInfo, depth);
+            if (debugInfo is DebugDataScopeProvider) WriteHtml(html, (DebugDataScopeProvider)debugInfo, depth);
+            if (debugInfo is DebugLayout) WriteHtml(html, (DebugLayout)debugInfo, depth);
+            if (debugInfo is DebugModule) WriteHtml(html, (DebugModule)debugInfo, depth);
+            if (debugInfo is DebugPackage) WriteHtml(html, (DebugPackage)debugInfo, depth);
+            if (debugInfo is DebugPage) WriteHtml(html, (DebugPage)debugInfo, depth);
+            if (debugInfo is DebugRegion) WriteHtml(html, (DebugRegion)debugInfo, depth);
+            if (debugInfo is DebugRoute) WriteHtml(html, (DebugRoute)debugInfo, depth);
+            if (debugInfo is DebugService) WriteHtml(html, (DebugService)debugInfo, depth);
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugComponent component)
+        private void WriteHtml(IHtmlWriter html, DebugComponent component, int depth)
         {
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugDataProvider dataProvider)
+        private void WriteHtml(IHtmlWriter html, DebugDataProvider dataProvider, int depth)
         {
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugDataScopeProvider dataScopeProvider)
+        private void WriteHtml(IHtmlWriter html, DebugDataScopeProvider dataScopeProvider, int depth)
         {
             html.WriteElementLine("p", "Scope with id " + dataScopeProvider.Id);
+
+            if (depth == 1) return;
 
             if (dataScopeProvider.Parent != null)
             {
                 html.WriteElementLine("p", "Parent scope");
                 StartIndent(html);
-                WriteDebugInfo(html, dataScopeProvider.Parent);
+                WriteDebugInfo(html, dataScopeProvider.Parent, depth - 1);
                 EndIndent(html);
             }
 
@@ -215,7 +219,7 @@ namespace OwinFramework.Pages.Core.Debug
                 html.WriteElementLine("p", "Child scopes");
                 StartIndent(html);
                 foreach (var child in dataScopeProvider.Children)
-                    WriteDebugInfo(html, child);
+                    WriteDebugInfo(html, child, depth - 1);
                 EndIndent(html);
             }
 
@@ -242,12 +246,12 @@ namespace OwinFramework.Pages.Core.Debug
                 html.WriteElementLine("p", "Data providers");
                 html.WriteOpenTag("ul");
                 foreach (var provider in dataScopeProvider.DataProviders)
-                    WriteDebugInfo(html, provider);
+                    WriteDebugInfo(html, provider, depth - 1);
                 html.WriteCloseTag("ul");
             }
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugLayout layout)
+        private void WriteHtml(IHtmlWriter html, DebugLayout layout, int depth)
         {
             if (layout.ClonedFrom != null)
             {
@@ -269,7 +273,7 @@ namespace OwinFramework.Pages.Core.Debug
                             if (inheritedRegion != null)
                             {
                                 StartIndent(html);
-                                WriteDebugInfo(html, inheritedRegion.Region);
+                                WriteDebugInfo(html, inheritedRegion.Region, depth - 1);
                                 EndIndent(html);
                             }
                         }
@@ -278,7 +282,7 @@ namespace OwinFramework.Pages.Core.Debug
                     {
                         html.WriteElementLine("p", "Region " + layoutRegion.Name + " overriden with");
                         StartIndent(html);
-                        WriteDebugInfo(html, layoutRegion.Region);
+                        WriteDebugInfo(html, layoutRegion.Region, depth - 1);
                         EndIndent(html);
                     }
                 }
@@ -286,15 +290,15 @@ namespace OwinFramework.Pages.Core.Debug
 
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugModule module)
+        private void WriteHtml(IHtmlWriter html, DebugModule module, int depth)
         {
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugPackage package)
+        private void WriteHtml(IHtmlWriter html, DebugPackage package, int depth)
         {
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugPage page)
+        private void WriteHtml(IHtmlWriter html, DebugPage page, int depth)
         {
             if (page.Routes != null && page.Routes.Count > 0)
             {
@@ -303,44 +307,57 @@ namespace OwinFramework.Pages.Core.Debug
                     html.WriteElementLine("p", "Route: " + route);
             }
 
+            if (page.Scope != null)
+            {
+                if ((page.Scope.Scopes != null && page.Scope.Scopes.Count > 0) ||
+                    (page.Scope.DataProviders != null && page.Scope.DataProviders.Count > 0))
+                {
+                    StartIndent(html);
+                    WriteDebugInfo(html, page.Scope, 1);
+                    EndIndent(html);
+                }
+            }
+
             if (page.Layout != null)
             {
                 StartIndent(html);
-                WriteDebugInfo(html, page.Layout);
+                WriteDebugInfo(html, page.Layout, depth - 1);
                 EndIndent(html);
             }
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugRegion region)
+        private void WriteHtml(IHtmlWriter html, DebugRegion region, int depth)
         {
             if (region.ClonedFrom != null)
             {
                 html.WriteElementLine("p", "Region inherits from " + region.ClonedFrom.Name + " region");
             }
 
-            if (region.Scope != null && 
-                region.Scope.Scopes != null && 
-                region.Scope.Scopes.Count > 0)
+            if (region.Scope != null)
             {
-                StartIndent(html);
-                WriteDebugInfo(html, region.Scope);
-                EndIndent(html);
+                if ((region.Scope.Scopes != null && region.Scope.Scopes.Count > 0) ||
+                    (region.Scope.DataProviders != null && region.Scope.DataProviders.Count > 0))
+                {
+                    StartIndent(html);
+                    WriteDebugInfo(html, region.Scope, 2);
+                    EndIndent(html);
+                }
             }
 
             if (region.Content != null)
             {
                 html.WriteElementLine("p", "Region contains");
                 StartIndent(html);
-                WriteDebugInfo(html, region.Content);
+                WriteDebugInfo(html, region.Content, depth - 1);
                 EndIndent(html);
             }
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugRoute route)
+        private void WriteHtml(IHtmlWriter html, DebugRoute route, int depth)
         {
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugService service)
+        private void WriteHtml(IHtmlWriter html, DebugService service, int depth)
         {
         }
         

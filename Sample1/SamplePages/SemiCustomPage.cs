@@ -17,18 +17,18 @@ namespace Sample1.SamplePages
             : base(dependenciesFactory)
         {}
 
-        public override IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
+        public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
         {
-            renderContext.Html.WriteLine("Page title");
+            context.Html.WriteLine("Page title");
             return WriteResult.ResponseComplete();
         }
 
-        public override IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
+        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
         {
-            renderContext.Html.WriteUnclosedElement(
+            context.Html.WriteUnclosedElement(
                 "link", "rel", 
                 "stylesheet", "href", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
-            renderContext.Html.WriteLine();
+            context.Html.WriteLine();
             return WriteResult.Continue();
         }
 

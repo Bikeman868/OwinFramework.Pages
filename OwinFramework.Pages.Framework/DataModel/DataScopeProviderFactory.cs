@@ -28,15 +28,14 @@ namespace OwinFramework.Pages.Framework.DataModel
             _dataContextFactory = dataContextFactory;
         }
 
-        public IDataScopeProvider Create(IDataScopeProvider parent)
+        public IDataScopeProvider Create()
         {
             return new DataScopeProvider(
                 _idManager,
                 _dataScopeFactory,
                 _dataProviderDefinitionFactory,
                 _dataCatalog,
-                _dataContextFactory,
-                parent);
+                _dataContextFactory);
         }
     }
 }

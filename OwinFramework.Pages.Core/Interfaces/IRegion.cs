@@ -16,6 +16,11 @@ namespace OwinFramework.Pages.Core.Interfaces
         new DebugRegion GetDebugInfo();
 
         /// <summary>
+        /// Retrieves the contents of this region
+        /// </summary>
+        IElement Content { get; }
+
+        /// <summary>
         /// Constructs an element that is the result of puttting the
         /// supplied element inside this region. The supplied element 
         /// should be either a component or a Layout.

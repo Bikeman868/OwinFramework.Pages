@@ -132,7 +132,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 {
                     Task.WaitAll(_tasksToWaitFor);
                 }
-                catch (AggregateException e)
+                catch (AggregateException)
                 {
                     // This happens when the tasks are cancelled
                 }

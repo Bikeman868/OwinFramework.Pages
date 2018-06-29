@@ -42,7 +42,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Defines the layout of this page
         /// </summary>
-        public ILayout Layout { get; set; }
+        public ILayout Layout { get { return _layout; } set { _layout = value.Clone(); } }
 
         /// <summary>
         /// The names of the css class to attach to the body element
@@ -66,6 +66,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private IList<string> _inPageCssLines;
         private IList<string> _inPageScriptLines;
         private IList<IModule> _referencedModules;
+        private ILayout _layout;
 
         protected Page(IPageDependenciesFactory dependencies)
         {
@@ -74,7 +75,7 @@ namespace OwinFramework.Pages.Html.Runtime
             // this framework!!
 
             _dependencies = dependencies;
-            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create(null);
+            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
         }
 
         #region Page one-time initialization
@@ -91,7 +92,9 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             if (Layout != null)
+            {
                 Layout.Initialize(data);
+            }
 
             if (_components != null)
             {
@@ -201,7 +204,8 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             public void AddScope(IDataScopeProvider scopeProvider) 
-            { 
+            {
+                scopeProvider.SetParent(_currentState.ScopeProvider);
                 _currentState.ScopeProvider = scopeProvider; 
             }
 
@@ -234,9 +238,9 @@ namespace OwinFramework.Pages.Html.Runtime
         public override IEnumerator<IElement> GetChildren()
         {
             if (_components == null)
-                return Layout.AsEnumerable<IElement>().GetEnumerator();
+                return _layout.AsEnumerable<IElement>().GetEnumerator();
 
-            return _components.Concat(Layout.AsEnumerable<IElement>()).GetEnumerator();
+            return _components.Concat(_layout.AsEnumerable<IElement>()).GetEnumerator();
         }
 
         #endregion
@@ -339,8 +343,8 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
-            if (Layout != null)
-                writeResult.Add(Layout.WriteDynamicCss(writer));
+            if (_layout != null)
+                writeResult.Add(_layout.WriteDynamicCss(writer));
 
             return writeResult;
         }
@@ -358,13 +362,13 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
-            if (Layout != null)
-                writeResult.Add(Layout.WriteDynamicJavascript(writer));
+            if (_layout != null)
+                writeResult.Add(_layout.WriteDynamicJavascript(writer));
 
             return writeResult;
         }
 
-        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, bool includeChildren)
+        public override IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
@@ -372,26 +376,26 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 foreach (var component in _components)
                 {
-                    writeResult.Add(component.WriteInitializationScript(renderContext));
+                    writeResult.Add(component.WriteInitializationScript(context));
 
                     if (writeResult.IsComplete)
                         return writeResult;
                 }
             }
 
-            if (Layout != null)
-                writeResult.Add(Layout.WriteInitializationScript(renderContext));
+            if (_layout != null)
+                writeResult.Add(_layout.WriteInitializationScript(context));
 
             return writeResult;
         }
 
-        public override IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
+        public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
             if (TitleFunc != null)
             {
-                renderContext.Html.WriteLine(TitleFunc(renderContext));
+                context.Html.WriteLine(TitleFunc(context));
                 return writeResult;
             }
 
@@ -399,28 +403,28 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 foreach (var component in _components)
                 {
-                    writeResult.Add(component.WriteTitle(renderContext));
+                    writeResult.Add(component.WriteTitle(context));
 
                     if (writeResult.IsComplete)
                         return writeResult;
                 }
             }
 
-            if (Layout != null)
-                writeResult.Add(Layout.WriteTitle(renderContext));
+            if (_layout != null)
+                writeResult.Add(_layout.WriteTitle(context));
 
             return writeResult;
         }
 
-        public override IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
+        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
         {
             var writeResult = WriteResult.Continue();
 
             var websiteStylesUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Style);
             if (websiteStylesUrl != null)
             {
-                renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", websiteStylesUrl.ToString());
-                renderContext.Html.WriteLine();
+                context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", websiteStylesUrl.ToString());
+                context.Html.WriteLine();
             }
 
             foreach(var module in _referencedModules)
@@ -428,23 +432,23 @@ namespace OwinFramework.Pages.Html.Runtime
                 var moduleStylesUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Style);
                 if (moduleStylesUrl != null)
                 {
-                    renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
-                    renderContext.Html.WriteLine();
+                    context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
+                    context.Html.WriteLine();
                 }
             }
 
             var pageStylesUrl = _dependencies.AssetManager.GetPageAssetUrl(this, AssetType.Style);
             if (pageStylesUrl != null)
             {
-                renderContext.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", pageStylesUrl.ToString());
-                renderContext.Html.WriteLine();
+                context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", pageStylesUrl.ToString());
+                context.Html.WriteLine();
             }
 
             var websiteScriptUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Script);
             if (websiteScriptUrl != null)
             {
-                renderContext.Html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
-                renderContext.Html.WriteLine();
+                context.Html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
+                context.Html.WriteLine();
             }
 
             foreach (var module in _referencedModules)
@@ -452,38 +456,38 @@ namespace OwinFramework.Pages.Html.Runtime
                 var moduleScriptUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Script);
                 if (moduleScriptUrl != null)
                 {
-                    renderContext.Html.WriteElement("script", null, "type", "text/javascript", "src", moduleScriptUrl.ToString());
-                    renderContext.Html.WriteLine();
+                    context.Html.WriteElement("script", null, "type", "text/javascript", "src", moduleScriptUrl.ToString());
+                    context.Html.WriteLine();
                 }
             }
 
             var pageScriptUrl = _dependencies.AssetManager.GetPageAssetUrl(this, AssetType.Script);
             if (pageScriptUrl != null)
             {
-                renderContext.Html.WriteElement("script", null, "type", "text/javascript", "src", pageScriptUrl.ToString());
-                renderContext.Html.WriteLine();
+                context.Html.WriteElement("script", null, "type", "text/javascript", "src", pageScriptUrl.ToString());
+                context.Html.WriteLine();
             }
 
             if (_components != null)
             {
                 foreach (var component in _components)
                 {
-                    writeResult.Add(component.WriteHead(renderContext));
+                    writeResult.Add(component.WriteHead(context));
 
                     if (writeResult.IsComplete)
                         return writeResult;
                 }
             }
 
-            if (Layout != null)
-                writeResult.Add(Layout.WriteHead(renderContext));
+            if (_layout != null)
+                writeResult.Add(_layout.WriteHead(context));
 
             return writeResult;
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
-            return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(context);
+            return _layout == null ? WriteResult.Continue() : _layout.WriteHtml(context);
         }
 
         #endregion
@@ -589,7 +593,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 Name = Name,
                 Instance = this,
-                Layout = Layout == null ? null : Layout.GetDebugInfo(),
+                Layout = _layout == null ? null : _layout.GetDebugInfo(),
                 Scope = _dataScopeProvider.GetDebugInfo()
             };
         }

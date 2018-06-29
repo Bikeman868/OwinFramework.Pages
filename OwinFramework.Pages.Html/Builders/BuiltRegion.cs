@@ -44,6 +44,8 @@ namespace OwinFramework.Pages.Html.Builders
             IElement content)
         {
             var result = WriteResult.Continue();
+            var savedData = SelectDataContext(context);
+
             WriteOpen(context.Html);
 
             if (content != null)
@@ -55,28 +57,18 @@ namespace OwinFramework.Pages.Html.Builders
                 else
                 {
                     var list = (IEnumerable)context.Data.Get(_listType, RepeatScope);
-                    var data = context.Data;
-                    var childData = data.CreateChild();
-                    try
+                    foreach (var item in list)
                     {
-                        context.Data = childData;
-                        foreach (var item in list)
-                        {
-                            childData.Set(_repeatType, item);
-                            WriteChildOpen(context.Html);
-                            result.Add(content.WriteHtml(context));
-                            WriteChildClose(context.Html);
-                        }
-                    }
-                    finally
-                    {
-                        context.Data = data;
-                        childData.Dispose();
+                        context.Data.Set(_repeatType, item);
+                        WriteChildOpen(context.Html);
+                        result.Add(content.WriteHtml(context));
+                        WriteChildClose(context.Html);
                     }
                 }
             }
 
             WriteClose(context.Html);
+            context.Data = savedData;
             return result;
         }
     }

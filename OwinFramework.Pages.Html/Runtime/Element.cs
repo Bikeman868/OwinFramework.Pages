@@ -128,7 +128,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output initialization script
         /// </summary>
-        public virtual IWriteResult WriteInitializationScript(IRenderContext renderContext, bool includeChildren)
+        public virtual IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
         {
             var result = WriteResult.Continue();
             if (!includeChildren) return result;
@@ -140,7 +140,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteInitializationScript(renderContext));
+                    result.Add(children.Current.WriteInitializationScript(context));
                 }
             }
             finally
@@ -154,7 +154,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output the page title
         /// </summary>
-        public virtual IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
+        public virtual IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
         {
             var result = WriteResult.Continue();
             if (!includeChildren) return result;
@@ -166,7 +166,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteTitle(renderContext));
+                    result.Add(children.Current.WriteTitle(context));
                 }
             }
             finally
@@ -180,7 +180,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override to output into the page head
         /// </summary>
-        public virtual IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
+        public virtual IWriteResult WriteHead(IRenderContext context, bool includeChildren)
         {
             var result = WriteResult.Continue();
             if (!includeChildren) return result;
@@ -192,7 +192,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 while (!result.IsComplete && children.MoveNext())
                 {
-                    result.Add(children.Current.WriteHead(renderContext));
+                    result.Add(children.Current.WriteHead(context));
                 }
             }
             finally

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
@@ -125,29 +124,29 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// after all of the html has been written. This Javascript will run then the
         /// page loads.
         /// </summary>
-        /// <param name="renderContext">The rendering operation in progress</param>
+        /// <param name="context">The rendering operation in progress</param>
         /// <param name="includeChildren">When true recursively traverses the element
         /// tree below this one writing the initialization script for all the descendants</param>
-        IWriteResult WriteInitializationScript(IRenderContext renderContext, bool includeChildren = true);
+        IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren = true);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
         /// to output the page title.
         /// </summary>
-        /// <param name="renderContext">The rendering operation in progress</param>
+        /// <param name="context">The rendering operation in progress</param>
         /// <param name="includeChildren">When true recursively traverses the element
         /// tree below this one writing the page title for all the descendants</param>
-        IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren = true);
+        IWriteResult WriteTitle(IRenderContext context, bool includeChildren = true);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity
         /// to output html into the head part of the page. This can be used to write page
         /// style sheet references, canonical links etc.
         /// </summary>
-        /// <param name="renderContext">The rendering operation in progress</param>
+        /// <param name="context">The rendering operation in progress</param>
         /// <param name="includeChildren">When true recursively traverses the element
         /// tree below this one writing the page head for all the descendants</param>
-        IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren = true);
+        IWriteResult WriteHead(IRenderContext context, bool includeChildren = true);
 
         /// <summary>
         /// This method is called during page rendering and is this elements opportunity

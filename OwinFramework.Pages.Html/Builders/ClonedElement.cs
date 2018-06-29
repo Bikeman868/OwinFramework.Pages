@@ -34,7 +34,7 @@ namespace OwinFramework.Pages.Html.Builders
             set { _assetDeployment = value; }
         }
 
-        public void Initialize(IInitializationData initializationData)
+        public virtual void Initialize(IInitializationData initializationData)
         {
             var assetDeployment = AssetDeployment == AssetDeployment.Inherit && Module != null
                 ? Module.AssetDeployment

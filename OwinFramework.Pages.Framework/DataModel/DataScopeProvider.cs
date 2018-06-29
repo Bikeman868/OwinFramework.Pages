@@ -50,15 +50,13 @@ namespace OwinFramework.Pages.Framework.DataModel
         /// The parent scope or null if this is the page/service
         /// </summary>
         private IDataScopeProvider _parent;
-        public IDataScopeProvider Parent { get { return _parent; } }
 
         public DataScopeProvider(
             IIdManager idManager,
             IDataScopeFactory dataScopeFactory,
             IDataProviderDefinitionFactory dataProviderDefinitionFactory,
             IDataCatalog dataCatalog,
-            IDataContextFactory dataContextFactory,
-            IDataScopeProvider parent)
+            IDataContextFactory dataContextFactory)
         {
             _dataScopeFactory = dataScopeFactory;
             _dataProviderDefinitionFactory = dataProviderDefinitionFactory;
@@ -70,8 +68,6 @@ namespace OwinFramework.Pages.Framework.DataModel
             _children = new List<IDataScopeProvider>();
 
             Id = idManager.GetUniqueId();
-
-            SetParent(parent);
         }
 
         DebugDataScopeProvider IDataScopeProvider.GetDebugInfo()
@@ -103,8 +99,14 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         #region Parent/child tree structure
 
+        public IDataScopeProvider Parent { get { return _parent; } }
+
         public void SetParent(IDataScopeProvider parent)
         {
+            if (_parent != null)
+                throw new InvalidOperationException(
+                    "The parent of this data scope provider has already been set");
+
             _parent = parent;
 
             if (parent != null)

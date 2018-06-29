@@ -57,19 +57,16 @@ namespace OwinFramework.Pages.Html.Runtime
             IRegion region;
             if (!Content.TryGetValue(regionName, out region))
                 throw new Exception("Layout doe not have a '" + regionName + "' region");
+
             return region;
         }
 
         public void Populate(string regionName, IElement element)
         {
             var region = GetRegion(regionName);
-            if (region.IsClone)
+
+            if (region != null)
                 region.Populate(element);
-            else
-            {
-                region = region.Clone(element);
-                Content[regionName] = region;
-            }
         }
 
         public ILayout Clone()
@@ -80,7 +77,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public override IEnumerator<IElement> GetChildren()
         {
-            return Content.Values.GetEnumerator();
+            return Content.Values.Where(r => r != null).GetEnumerator();
         }
 
         public virtual IWriteResult WriteHtml(

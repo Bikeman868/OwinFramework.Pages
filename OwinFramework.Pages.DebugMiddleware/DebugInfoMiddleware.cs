@@ -10,10 +10,12 @@ using Microsoft.Owin;
 using Newtonsoft.Json;
 using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
+using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using Svg;
 
-namespace OwinFramework.Pages.Core.Debug
+namespace OwinFramework.Pages.DebugMiddleware
 {
     /// <summary>
     /// This middleware extracts and returns debug information when ?debug=true is added to the URL
@@ -22,16 +24,19 @@ namespace OwinFramework.Pages.Core.Debug
     {
         private readonly IRequestRouter _requestRouter;
         private readonly IHtmlWriterFactory _htmlWriterFactory;
+        private readonly IRenderContextFactory _renderContextFactory;
         private readonly IList<IDependency> _dependencies = new List<IDependency>();
         public IList<IDependency> Dependencies { get { return _dependencies; } }
         public string Name { get; set; }
 
         public DebugInfoMiddleware(
             IRequestRouter requestRouter,
-            IHtmlWriterFactory htmlWriterFactory)
+            IHtmlWriterFactory htmlWriterFactory,
+            IRenderContextFactory renderContextFactory)
         {
             _requestRouter = requestRouter;
             _htmlWriterFactory = htmlWriterFactory;
+            _renderContextFactory = renderContextFactory;
             this.RunFirst();
         }
 
@@ -199,6 +204,7 @@ namespace OwinFramework.Pages.Core.Debug
             if (debugInfo is DebugPackage) WriteHtml(html, (DebugPackage)debugInfo, depth);
             if (debugInfo is DebugPage) WriteHtml(html, (DebugPage)debugInfo, depth);
             if (debugInfo is DebugRegion) WriteHtml(html, (DebugRegion)debugInfo, depth);
+            if (debugInfo is DebugRenderContext) WriteHtml(html, (DebugRenderContext)debugInfo, depth);
             if (debugInfo is DebugRoute) WriteHtml(html, (DebugRoute)debugInfo, depth);
             if (debugInfo is DebugService) WriteHtml(html, (DebugService)debugInfo, depth);
         }
@@ -324,6 +330,17 @@ namespace OwinFramework.Pages.Core.Debug
                 StartIndent(html, false);
                 WriteDebugInfo(html, page.Scope, depth - 1);
                 EndIndent(html);
+
+                var dataScopeProvider = page.Scope.Instance as IDataScopeProvider;
+                if (dataScopeProvider != null)
+                {
+                    var renderContext = _renderContextFactory.Create();
+                    dataScopeProvider.SetupDataContext(renderContext);
+                    html.WriteElementLine("p", "Rendering data context");
+                    StartIndent(html, true);
+                    WriteDebugInfo(html, renderContext.GetDebugInfo(), depth - 1);
+                    EndIndent(html);
+                }
             }
 
             if (page.Layout != null)
@@ -361,6 +378,10 @@ namespace OwinFramework.Pages.Core.Debug
                 WriteDebugInfo(html, region.Content, depth - 1);
                 EndIndent(html);
             }
+        }
+
+        private void WriteHtml(IHtmlWriter html, DebugRenderContext renderContext, int depth)
+        {
         }
 
         private void WriteHtml(IHtmlWriter html, DebugRoute route, int depth)

@@ -103,7 +103,6 @@
     <Compile Include="Builders\BuiltRegion.cs" />
     <Compile Include="Builders\RegionInstance.cs" />
     <Compile Include="Builders\RegionDefinition.cs" />
-    <Compile Include="Interfaces\IRenderContextFactory.cs" />
     <Compile Include="Runtime\ComponentDependencies.cs" />
     <Compile Include="Runtime\ComponentDependenciesFactory.cs" />
     <Compile Include="Runtime\RegionDependenciesFactory.cs" />

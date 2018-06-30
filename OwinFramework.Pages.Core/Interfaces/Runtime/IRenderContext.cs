@@ -1,4 +1,5 @@
 ﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
@@ -13,6 +14,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Initializes the render context for a specific request
         /// </summary>
         IRenderContext Initialize(IOwinContext context);
+        
+        /// <summary>
+        /// Retrieved debugging information for this render context
+        /// </summary>
+        DebugRenderContext GetDebugInfo();
 
         /// <summary>
         /// Returns the Owin Context. This provides access to the request.

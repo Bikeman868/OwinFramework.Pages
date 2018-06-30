@@ -12,6 +12,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
+using OwinFramework.Pages.DebugMiddleware;
 using Sample1.SamplePackages;
 using Sample1.SamplePages;
 using Urchin.Client.Sources;

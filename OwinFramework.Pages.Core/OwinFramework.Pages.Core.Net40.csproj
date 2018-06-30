@@ -112,6 +112,7 @@
     <Compile Include="Collections\ThreadSafeDictionary.cs" />
     <Compile Include="Collections\ThreadSafeQueue.cs" />
     <Compile Include="Debug\DebugElement.cs" />
+    <Compile Include="Debug\DebugRenderContext.cs" />
     <Compile Include="Debug\DebugModule.cs" />
     <Compile Include="Debug\DebugPackage.cs" />
     <Compile Include="Debug\DebugDataProvider.cs" />
@@ -182,6 +183,7 @@
     <Compile Include="Interfaces\Runtime\ICssWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IInitializationData.cs" />
+    <Compile Include="Interfaces\Runtime\IRenderContextFactory.cs" />
     <Compile Include="Interfaces\Runtime\IReusable.cs" />
     <Compile Include="Interfaces\Collections\IStringBuilder.cs" />
     <Compile Include="Interfaces\Collections\IStringBuilderFactory.cs" />

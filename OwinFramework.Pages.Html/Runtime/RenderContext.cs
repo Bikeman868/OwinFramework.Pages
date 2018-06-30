@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Owin;
-using OwinFramework.Pages.Core.Extensions;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -47,6 +47,14 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             DeleteDataContextTree();
             Html.Dispose();
+        }
+
+        public DebugRenderContext GetDebugInfo()
+        {
+            return new DebugRenderContext
+            {
+                Instance = this
+            };
         }
 
         public void AddDataContext(int id, IDataContext dataContext)

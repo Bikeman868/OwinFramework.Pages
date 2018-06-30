@@ -42,7 +42,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Defines the layout of this page
         /// </summary>
-        public ILayout Layout { get { return _layout; } set { _layout = value.Clone(); } }
+        public ILayout Layout { get { return _layout; } set { _layout = value.CreateInstance(); } }
 
         /// <summary>
         /// The names of the css class to attach to the body element

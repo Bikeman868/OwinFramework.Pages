@@ -10,14 +10,14 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
-    internal class ClonedLayout: ClonedElement<ILayout>, ILayout
+    internal class LayoutInstance: ElementInstance<ILayout>, ILayout
     {
         public ElementType ElementType { get { return ElementType.Region; } }
 
         private readonly ILayoutDependenciesFactory _layoutDependencies;
         private readonly IThreadSafeDictionary<string, IRegion> _content;
 
-        public ClonedLayout(
+        public LayoutInstance(
             ILayoutDependenciesFactory layoutDependencies,
             ILayout parent,
             IEnumerable<string> regionNames)
@@ -27,7 +27,7 @@ namespace OwinFramework.Pages.Html.Builders
             _content = layoutDependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
 
             foreach (var regionName in regionNames)
-                _content.Add(regionName, Parent.GetRegion(regionName).Clone(null));
+                _content.Add(regionName, Parent.GetRegion(regionName).CreateInstance(null));
         }
 
         DebugElement IElement.GetDebugInfo() { return GetDebugInfo(); }
@@ -38,8 +38,8 @@ namespace OwinFramework.Pages.Html.Builders
 
             var debugInfo = new DebugLayout
             {
-                Type = "Cloned layout",
-                ClonedFrom = parentDebugInfo,
+                Type = "Layout instance",
+                InstanceOf = parentDebugInfo,
                 Regions = _content
                     .Select(kvp => new DebugLayoutRegion 
                     { 
@@ -69,10 +69,10 @@ namespace OwinFramework.Pages.Html.Builders
                 region.Populate(element);
         }
 
-        public ILayout Clone()
+        public ILayout CreateInstance()
         {
             using (var regionNames = _content.KeysLocked)
-                return new ClonedLayout(_layoutDependencies, this, regionNames);
+                return new LayoutInstance(_layoutDependencies, this, regionNames);
         }
 
         public override IEnumerator<IElement> GetChildren()

@@ -28,7 +28,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         public void AddRegion(string regionName, IRegion region, IElement element = null)
         {
-            Content[regionName] = region.Clone(element);
+            Content[regionName] = region.CreateInstance(element);
 
             if (_regionNameOrder == null)
                 _regionNameOrder = new List<string>();

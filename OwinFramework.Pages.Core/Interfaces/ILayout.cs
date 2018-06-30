@@ -30,24 +30,24 @@ namespace OwinFramework.Pages.Core.Interfaces
         IRegion GetRegion(string regionName);
 
         /// <summary>
-        /// Constructs a new laqyout instance that has a reference to
+        /// Constructs a new layout instance that has a reference to
         /// the original layout element, but can have different contents.
-        /// The properties of this clone layout will read/write to the
+        /// The properties of this instance will read/write to the
         /// original layout definition, but the Populate() method will
-        /// only populate the clone copy.
+        /// only populate the instance.
         /// This feature is necessary to allow different pages to contain
         /// the same layouts but with different content on each page.
         /// </summary>
-        ILayout Clone();
+        ILayout CreateInstance();
 
         /// <summary>
-        /// Returns a flag indicating if this is a clone or the original
+        /// Returns a flag indicating if this is a [age instance or the original
         /// layout definition. Calling the Populate() method on the original
         /// layout will change the region contents for all pages that use
         /// this layout and do not override the contents. Calling the 
-        /// Populate() method on a clone layout only affects that specific clone.
+        /// Populate() method on an instance only affects that specific instance.
         /// </summary>
-        bool IsClone { get; }
+        bool IsInstance { get; }
 
         /// <summary>
         /// Writes the html for this region with specific content inside

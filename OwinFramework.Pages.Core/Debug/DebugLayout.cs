@@ -16,10 +16,10 @@ namespace OwinFramework.Pages.Core.Debug
         public List<DebugLayoutRegion> Regions { get; set; }
 
         /// <summary>
-        /// If this is a clone then this contains debug info
-        /// for the layout that was cloned
+        /// If this is a page specific instance then this contains debug info
+        /// for the layout definition that this is an instance of
         /// </summary>
-        public DebugLayout ClonedFrom { get; set; }
+        public DebugLayout InstanceOf { get; set; }
 
         /// <summary>
         /// Default public constructor

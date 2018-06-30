@@ -10,14 +10,14 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
-    internal class ClonedRegion : ClonedElement<IRegion>, IRegion
+    internal class RegionInstance : ElementInstance<IRegion>, IRegion
     {
         public ElementType ElementType { get { return ElementType.Region; } }
 
         private readonly IRegionDependenciesFactory _dependenciesFactory;
         private IElement _content;
 
-        public ClonedRegion(
+        public RegionInstance(
             IRegionDependenciesFactory dependenciesFactory, 
             IRegion parent, 
             IElement content)
@@ -31,7 +31,7 @@ namespace OwinFramework.Pages.Html.Builders
             var layout = content as ILayout;
             var region = content as IRegion;
 
-            _content = layout == null ? (region == null ? content : region.Clone(null)) : layout.Clone();
+            _content = layout == null ? (region == null ? content : region.CreateInstance(null)) : layout.CreateInstance();
         }
 
         public override void Initialize(IInitializationData initializationData)
@@ -53,9 +53,9 @@ namespace OwinFramework.Pages.Html.Builders
 
             var debugInfo = new DebugRegion
             {
-                Type = "Cloned region",
+                Type = "Region instance",
                 Content = _content == null ? null : _content.GetDebugInfo(),
-                ClonedFrom = parentDebugInfo,
+                InstanceOf = parentDebugInfo,
                 Scope = _dataScopeProvider.GetDebugInfo()
             };
             PopulateDebugInfo(debugInfo);
@@ -69,9 +69,9 @@ namespace OwinFramework.Pages.Html.Builders
             _content = content;
         }
 
-        public IRegion Clone(IElement content)
+        public IRegion CreateInstance(IElement content)
         {
-            return new ClonedRegion(_dependenciesFactory, Parent, content);
+            return new RegionInstance(_dependenciesFactory, Parent, content);
         }
 
         public override IEnumerator<IElement> GetChildren()

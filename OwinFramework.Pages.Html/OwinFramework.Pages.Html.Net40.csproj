@@ -94,14 +94,14 @@
     <Compile Include="Runtime\HtmlWriter.cs" />
     <Compile Include="Runtime\HtmlWriterFactory.cs" />
     <Compile Include="Builders\BuiltLayout.cs" />
-    <Compile Include="Builders\ClonedElement.cs" />
-    <Compile Include="Builders\ClonedLayout.cs" />
+    <Compile Include="Builders\ElementInstance.cs" />
+    <Compile Include="Builders\LayoutInstance.cs" />
     <Compile Include="Builders\LayoutDefinition.cs" />
     <Compile Include="Runtime\PackageDependencies.cs" />
     <Compile Include="Runtime\PackageDependenciesFactory.cs" />
     <Compile Include="Runtime\StaticHtmlElement.cs" />
     <Compile Include="Builders\BuiltRegion.cs" />
-    <Compile Include="Builders\ClonedRegion.cs" />
+    <Compile Include="Builders\RegionInstance.cs" />
     <Compile Include="Builders\RegionDefinition.cs" />
     <Compile Include="Interfaces\IRenderContextFactory.cs" />
     <Compile Include="Runtime\ComponentDependencies.cs" />

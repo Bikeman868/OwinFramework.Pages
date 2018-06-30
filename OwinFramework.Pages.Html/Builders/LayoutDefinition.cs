@@ -326,7 +326,7 @@ namespace OwinFramework.Pages.Html.Builders
                             }
                             else if (_regionLayouts.ContainsKey(regionName))
                             {
-                                _layout.AddRegion(regionName, region, ((ILayout)_regionLayouts[regionName]).Clone());
+                                _layout.AddRegion(regionName, region, ((ILayout)_regionLayouts[regionName]).CreateInstance());
                             }
                             else
                                 _layout.AddRegion(regionName, region);

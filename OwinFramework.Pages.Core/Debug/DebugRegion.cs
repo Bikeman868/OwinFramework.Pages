@@ -16,10 +16,10 @@ namespace OwinFramework.Pages.Core.Debug
         public DebugInfo Content { get; set; }
 
         /// <summary>
-        /// If this is a clone then this contains debug info
-        /// for the region that was cloned
+        /// If this is a page specific instance then this contains debug info
+        /// for the region definition that this is an instance of
         /// </summary>
-        public DebugRegion ClonedFrom { get; set; }
+        public DebugRegion InstanceOf { get; set; }
 
         /// <summary>
         /// The data scope provider associated with this region

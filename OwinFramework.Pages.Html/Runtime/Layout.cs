@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Html.Runtime
     {
         private readonly ILayoutDependenciesFactory _layoutDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Layout; } }
-        public bool IsClone { get { return false; } }
+        public bool IsInstance { get { return false; } }
 
         protected IThreadSafeDictionary<string, IRegion> Content;
 
@@ -69,10 +69,10 @@ namespace OwinFramework.Pages.Html.Runtime
                 region.Populate(element);
         }
 
-        public ILayout Clone()
+        public ILayout CreateInstance()
         {
             using (var regionNames = Content.KeysLocked)
-                return new ClonedLayout(_layoutDependenciesFactory, this, regionNames);
+                return new LayoutInstance(_layoutDependenciesFactory, this, regionNames);
         }
 
         public override IEnumerator<IElement> GetChildren()

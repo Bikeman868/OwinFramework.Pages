@@ -253,9 +253,9 @@ namespace OwinFramework.Pages.Core.Debug
 
         private void WriteHtml(IHtmlWriter html, DebugLayout layout, int depth)
         {
-            if (layout.ClonedFrom != null)
+            if (layout.InstanceOf != null)
             {
-                html.WriteElementLine("p", "Layout inherits from " + layout.ClonedFrom.Name + " layout");
+                html.WriteElementLine("p", "Layout inherits from " + layout.InstanceOf.Name + " layout");
             }
             
             if (layout.Regions != null && layout.Regions.Count > 0)
@@ -266,7 +266,7 @@ namespace OwinFramework.Pages.Core.Debug
                     if (layoutRegion.Region == null)
                     {
                         html.WriteElementLine("p", "Region " + layoutRegion.Name + " has default region for the layout");
-                        var inheritedRegions = layout.ClonedFrom == null ? null : layout.ClonedFrom.Regions;
+                        var inheritedRegions = layout.InstanceOf == null ? null : layout.InstanceOf.Regions;
                         if (inheritedRegions != null)
                         {
                             var inheritedRegion = inheritedRegions.FirstOrDefault(r => r.Name == layoutRegion.Name);
@@ -328,9 +328,9 @@ namespace OwinFramework.Pages.Core.Debug
 
         private void WriteHtml(IHtmlWriter html, DebugRegion region, int depth)
         {
-            if (region.ClonedFrom != null)
+            if (region.InstanceOf != null)
             {
-                html.WriteElementLine("p", "Region inherits from " + region.ClonedFrom.Name + " region");
+                html.WriteElementLine("p", "Region inherits from " + region.InstanceOf.Name + " region");
             }
 
             if (region.Scope != null)

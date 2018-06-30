@@ -30,25 +30,25 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <summary>
         /// Constructs a new region instance that has a reference to
         /// the original region element, but can have different contents.
-        /// The properties of this clone region will read/write to the
+        /// The properties of this instance will read/write to the
         /// original region definition, but the Populate() method will
-        /// only populate the clone copy.
+        /// only populate the instance.
         /// This feature is necessary to allow different pages to contain
         /// the same regions but with different content on each page.
         /// </summary>
         /// <param name="content">The content to place inside the region.
-        /// All other properties of the clone will reflect the original
-        /// region that was cloned</param>
-        IRegion Clone(IElement content);
+        /// All other properties of the instance will reflect the original
+        /// region</param>
+        IRegion CreateInstance(IElement content);
 
         /// <summary>
-        /// Returns a flag indicating if this is a clone or the original
+        /// Returns a flag indicating if this is an instance or the original
         /// region definition. Calling the Populate() method on the original
         /// region will change the region contents for all pages that use
         /// this region and do not override the contents. Calling the 
-        /// Populate() method on a clone region only affects that specific clone.
+        /// Populate() method on an instance only affects that specific instance.
         /// </summary>
-        bool IsClone { get; }
+        bool IsInstance { get; }
 
         /// <summary>
         /// Writes the html for this region with specific content inside

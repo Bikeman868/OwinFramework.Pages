@@ -58,7 +58,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var debugInfo = new DebugRegion
             { 
                 Content = Content == null ? null : Content.GetDebugInfo(),
-                Scope = _dataScopeProvider.GetDebugInfo()
+                Scope = _dataScopeProvider.GetDebugInfo(-1, 2)
             };
             PopulateDebugInfo(debugInfo);
             return debugInfo;
@@ -139,9 +139,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
         int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
 
-        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo()
+        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
         {
-            return _dataScopeProvider.GetDebugInfo();
+            return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
         }
 
         bool IDataScopeProvider.IsInScope(Type type, string scopeName)

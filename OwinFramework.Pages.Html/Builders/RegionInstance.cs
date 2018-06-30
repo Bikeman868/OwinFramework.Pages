@@ -53,10 +53,10 @@ namespace OwinFramework.Pages.Html.Builders
 
             var debugInfo = new DebugRegion
             {
-                Type = "Region instance",
+                Type = "Instance of region",
                 Content = _content == null ? null : _content.GetDebugInfo(),
                 InstanceOf = parentDebugInfo,
-                Scope = _dataScopeProvider.GetDebugInfo()
+                Scope = _dataScopeProvider.GetDebugInfo(-1, 1)
             };
             PopulateDebugInfo(debugInfo);
             return debugInfo;
@@ -95,9 +95,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
 
-        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo()
+        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
         {
-            return _dataScopeProvider.GetDebugInfo();
+            return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
         }
 
         bool IDataScopeProvider.IsInScope(Type type, string scopeName)

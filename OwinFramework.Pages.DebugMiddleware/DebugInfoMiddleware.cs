@@ -147,6 +147,17 @@ namespace OwinFramework.Pages.Core.Debug
                 html.WriteElementLine("h1", "Debug information for " + context.Request.Path);
                 WriteDebugInfo(html, debugInfo, -1);
 
+                html.WriteScriptOpen();
+                html.WriteLine("var collapsibles = document.getElementsByClassName('indent');");
+                html.WriteLine("for (i = 0; i < collapsibles.length; i++) {");
+                html.WriteLine("  setCollapsible(collapsibles[i]);");
+                html.WriteLine("  collapsibles[i].addEventListener('click', function () {");
+                html.WriteLine("    this.classList.toggle('active');");
+                html.WriteLine("    setCollapsible(this);");
+                html.WriteLine("  });");
+                html.WriteLine("}");
+                html.WriteScriptClose();
+
                 html.WriteCloseTag("body");
                 html.WriteDocumentEnd();
 
@@ -155,10 +166,10 @@ namespace OwinFramework.Pages.Core.Debug
             }
         }
 
-        private void StartIndent(IHtmlWriter html)
+        private void StartIndent(IHtmlWriter html, bool expanded)
         {
-            html.WriteOpenTag("div", "class", "indent");
-            html.WriteElementLine("span", null, "class", "indent");
+            html.WriteOpenTag("div", "class", "section");
+            html.WriteElementLine("button", "+", "class", expanded ? "indent active": "indent");
             html.WriteOpenTag("span", "class", "indented");
         }
 
@@ -209,7 +220,7 @@ namespace OwinFramework.Pages.Core.Debug
             if (dataScopeProvider.Parent != null)
             {
                 html.WriteElementLine("p", "Parent scope");
-                StartIndent(html);
+                StartIndent(html, true);
                 WriteDebugInfo(html, dataScopeProvider.Parent, depth - 1);
                 EndIndent(html);
             }
@@ -217,7 +228,7 @@ namespace OwinFramework.Pages.Core.Debug
             if (dataScopeProvider.Children != null && dataScopeProvider.Children.Count > 0)
             {
                 html.WriteElementLine("p", "Child scopes");
-                StartIndent(html);
+                StartIndent(html, true);
                 foreach (var child in dataScopeProvider.Children)
                     WriteDebugInfo(html, child, depth - 1);
                 EndIndent(html);
@@ -272,7 +283,7 @@ namespace OwinFramework.Pages.Core.Debug
                             var inheritedRegion = inheritedRegions.FirstOrDefault(r => r.Name == layoutRegion.Name);
                             if (inheritedRegion != null)
                             {
-                                StartIndent(html);
+                                StartIndent(html, true);
                                 WriteDebugInfo(html, inheritedRegion.Region, depth - 1);
                                 EndIndent(html);
                             }
@@ -280,8 +291,8 @@ namespace OwinFramework.Pages.Core.Debug
                     }
                     else
                     {
-                        html.WriteElementLine("p", "Region " + layoutRegion.Name + " overriden with");
-                        StartIndent(html);
+                        html.WriteElementLine("p", "Region " + layoutRegion.Name + " contents");
+                        StartIndent(html, true);
                         WriteDebugInfo(html, layoutRegion.Region, depth - 1);
                         EndIndent(html);
                     }
@@ -309,18 +320,16 @@ namespace OwinFramework.Pages.Core.Debug
 
             if (page.Scope != null)
             {
-                if ((page.Scope.Scopes != null && page.Scope.Scopes.Count > 0) ||
-                    (page.Scope.DataProviders != null && page.Scope.DataProviders.Count > 0))
-                {
-                    StartIndent(html);
-                    WriteDebugInfo(html, page.Scope, 1);
-                    EndIndent(html);
-                }
+                html.WriteElementLine("p", "Page has a data scope");
+                StartIndent(html, false);
+                WriteDebugInfo(html, page.Scope, depth - 1);
+                EndIndent(html);
             }
 
             if (page.Layout != null)
             {
-                StartIndent(html);
+                html.WriteElementLine("p", "Page has a layout");
+                StartIndent(html, true);
                 WriteDebugInfo(html, page.Layout, depth - 1);
                 EndIndent(html);
             }
@@ -338,16 +347,17 @@ namespace OwinFramework.Pages.Core.Debug
                 if ((region.Scope.Scopes != null && region.Scope.Scopes.Count > 0) ||
                     (region.Scope.DataProviders != null && region.Scope.DataProviders.Count > 0))
                 {
-                    StartIndent(html);
-                    WriteDebugInfo(html, region.Scope, 2);
+                    html.WriteElementLine("p", "Region introduces a new data scope");
+                    StartIndent(html, false);
+                    WriteDebugInfo(html, region.Scope, 3);
                     EndIndent(html);
                 }
             }
 
             if (region.Content != null)
             {
-                html.WriteElementLine("p", "Region contains");
-                StartIndent(html);
+                html.WriteElementLine("p", "Region has contents");
+                StartIndent(html, true);
                 WriteDebugInfo(html, region.Content, depth - 1);
                 EndIndent(html);
             }

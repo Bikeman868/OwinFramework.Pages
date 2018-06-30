@@ -38,7 +38,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             var debugInfo = new DebugLayout
             {
-                Type = "Layout instance",
+                Type = "Instance of layout",
                 InstanceOf = parentDebugInfo,
                 Regions = _content
                     .Select(kvp => new DebugLayoutRegion 

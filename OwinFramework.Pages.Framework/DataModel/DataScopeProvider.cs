@@ -70,17 +70,17 @@ namespace OwinFramework.Pages.Framework.DataModel
             Id = idManager.GetUniqueId();
         }
 
-        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo()
+        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
         {
             return new DebugDataScopeProvider
             {
                 Id = Id,
-                Parent = _parent == null ? null : _parent.GetDebugInfo(),
-                Children = _children.Select(
-                    c => new DebugDataScopeProvider 
-                    { 
-                        Id = c.Id
-                    }).ToList(),
+                Parent = _parent == null || parentDepth == 0
+                    ? null 
+                    : _parent.GetDebugInfo(parentDepth - 1, 0),
+                Children = _children == null || childDepth == 0
+                    ? null
+                    : _children.Select(c => c.GetDebugInfo(0, childDepth - 1)).ToList(),
                 Scopes = _dataScopes.Select(
                     s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.FullName))
                     .ToList(),

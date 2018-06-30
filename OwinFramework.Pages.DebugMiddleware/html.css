@@ -1,9 +1,12 @@
-﻿h1 { font-size: 16px; }
-h2 { font-size: 15px; }
-h3 { font-size: 14px; }
+﻿h1 { font-size: 18px; padding-top: 0; margin-top: 0; padding-bottom: 5px; margin-bottom: 10px; border-bottom: 1px solid black; }
+h2 { font-size: 15px; padding-top: 0; margin-top: 0; padding-bottom: 2px; margin-bottom: 3px; }
+h3 { font-size: 12px; padding-top: 0; margin-top: 0; padding-bottom: 2px; margin-bottom: 3px; }
+p { padding: 0; margin-top: 0; margin-bottom: 3px; }
 
-body { font-size: 12px; }
+body { font-size: 12px; padding: 3px; margin: 10px; }
 
-div.indent { display: block; white-space: nowrap; }
-span.indent { display: inline-block; width: 15px; }
-span.indented { display: inline-block; border-left: 1px solid black; padding-left: 5px; white-space: normal; }
+div.section { display: block; white-space: nowrap; }
+
+button.indent { display: inline-block; width: 15px; height:15px; vertical-align: top; font-size: 9px; margin: 0; padding: 0; }
+
+span.indented {     display: inline-block;     vertical-align: top;     padding-left: 5px;     white-space: normal;     max-height: 0;    overflow: hidden;    transition: max-height 0.2s ease-out, padding-top 0.2s ease-out, padding-bottom 0.2s ease-out;}

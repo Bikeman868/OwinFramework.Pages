@@ -20,7 +20,13 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <summary>
         /// Retrieves debugging information from this scope provider
         /// </summary>
-        DebugDataScopeProvider GetDebugInfo();
+        /// <param name="parentDepth">How deeply to traverse the parents. Pass
+        /// -1 to go all the way to the top of the tree, 0 for no parent information,
+        /// 1 for the immediate parent, 2 for grandparents etc</param>
+        /// <param name="childDepth">How deeply to recurse the chilren. Pass -1 to recurse
+        /// indefinately to the buttom of the tree. Pass 0 for no children, 1 for
+        /// children but no grandchildren etc.</param>
+        DebugDataScopeProvider GetDebugInfo(int parentDepth, int childDepth);
 
         /// <summary>
         /// Returns the parent scope

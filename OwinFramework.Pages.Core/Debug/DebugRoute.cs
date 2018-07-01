@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OwinFramework.Pages.Core.Debug
+﻿namespace OwinFramework.Pages.Core.Debug
 {
     /// <summary>
     /// Debug info for routes

@@ -1,4 +1,6 @@
-﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
+﻿using Microsoft.Owin;
+
+namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// The IoC dependencies are wrapped in this factory so that when
@@ -11,6 +13,6 @@
         /// Constructs and initializes a module dependencies instance
         /// specific to the request
         /// </summary>
-        IModuleDependencies Create();
+        IModuleDependencies Create(IOwinContext context);
     }
 }

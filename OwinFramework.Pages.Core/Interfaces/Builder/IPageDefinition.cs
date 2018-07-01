@@ -157,8 +157,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Specifies the data scope. This will be used to identify the appropriate
         /// data providers
         /// </summary>
+        /// <param name="type">The type of data to resolve at the page level</param>
         /// <param name="scopeName">The name of the data scope to use when resolving data providers</param>
-        IPageDefinition DataScope(string scopeName);
+        IPageDefinition DataScope(Type type, string scopeName);
 
         /// <summary>
         /// Specifies the name of a data provider. This is used as the first step in

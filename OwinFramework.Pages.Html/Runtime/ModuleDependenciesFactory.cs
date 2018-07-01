@@ -1,11 +1,11 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.Collections;
+﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.Builder;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
     internal class ModuleDependenciesFactory: IModuleDependenciesFactory
     {
-        public IModuleDependencies Create()
+        public IModuleDependencies Create(IOwinContext context)
         {
             return new ModuleDependencies();
         }

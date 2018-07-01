@@ -3,36 +3,35 @@ using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Interfaces;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
     internal class PageDependenciesFactory: IPageDependenciesFactory
     {
         private readonly IRenderContextFactory _renderContextFactory;
-        private readonly IDataContextFactory _dataContextFactory;
         private readonly IAssetManager _assetManager;
         private readonly INameManager _nameManager;
         private readonly ICssWriterFactory _cssWriterFactory;
         private readonly IJavascriptWriterFactory _javascriptWriterFactory;
         private readonly IDataScopeProviderFactory _dataScopeProviderFactory;
+        private readonly IDataConsumerFactory _dataConsumerFactory;
 
         public PageDependenciesFactory(
             IRenderContextFactory renderContextFactory,
-            IDataContextFactory dataContextFactory,
             IAssetManager assetManager,
             INameManager nameManager,
             ICssWriterFactory cssWriterFactory,
             IJavascriptWriterFactory javascriptWriterFactory,
-            IDataScopeProviderFactory dataScopeProviderFactory)
+            IDataScopeProviderFactory dataScopeProviderFactory, 
+            IDataConsumerFactory dataConsumerFactory)
         {
             _renderContextFactory = renderContextFactory;
-            _dataContextFactory = dataContextFactory;
             _assetManager = assetManager;
             _nameManager = nameManager;
             _cssWriterFactory = cssWriterFactory;
             _javascriptWriterFactory = javascriptWriterFactory;
             _dataScopeProviderFactory = dataScopeProviderFactory;
+            _dataConsumerFactory = dataConsumerFactory;
         }
 
         public IPageDependencies Create(IOwinContext context)
@@ -68,6 +67,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public IDataScopeProviderFactory DataScopeProviderFactory
         {
             get { return _dataScopeProviderFactory; }
+        }
+
+        public IDataConsumerFactory DataConsumerFactory
+        {
+            get { return _dataConsumerFactory; }
         }
     }
 }

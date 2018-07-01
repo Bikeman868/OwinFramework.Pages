@@ -25,14 +25,15 @@ namespace OwinFramework.Pages.Html.Runtime
 
         protected IThreadSafeDictionary<string, IRegion> Content;
 
-        public Layout(ILayoutDependenciesFactory layoutDependenciesFactory)
+        public Layout(ILayoutDependenciesFactory dependencies)
+            : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as
             // this would break all layouts in all applications that use
             // this framework!!
 
-            _layoutDependenciesFactory = layoutDependenciesFactory;
-            Content = layoutDependenciesFactory.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
+            _layoutDependenciesFactory = dependencies;
+            Content = dependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         DebugElement IElement.GetDebugInfo() { return GetDebugInfo(); }

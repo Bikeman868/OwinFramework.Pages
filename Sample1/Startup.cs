@@ -20,7 +20,6 @@ using OwinFramework.Pages.Core;
 using Sample1;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
-using OwinFramework.Pages.Core.Debug;
 
 [assembly: OwinStartup(typeof(Startup))]
 

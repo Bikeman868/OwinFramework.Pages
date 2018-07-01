@@ -30,14 +30,15 @@ namespace OwinFramework.Pages.Html.Runtime
         /// classes that inherit from this class. Add dependencies to
         /// IRegionDependenciesFactory and IRegionDependencies
         /// </summary>
-        public Region(IRegionDependenciesFactory regionDependenciesFactory)
+        public Region(IRegionDependenciesFactory dependencies)
+            : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as
             // this would break all regions in all applications that use
             // this framework!!
 
-            _regionDependenciesFactory = regionDependenciesFactory;
-            _dataScopeProvider = regionDependenciesFactory.DataScopeProviderFactory.Create();
+            _regionDependenciesFactory = dependencies;
+            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
         }
 
         public override void Initialize(IInitializationData initializationData)
@@ -179,9 +180,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.AddScope(type, scopeName);
         }
 
-        void IDataScopeProvider.Add(IDataProvider dataProvider, IDataDependency dependency)
+        void IDataScopeProvider.Add(IDataProviderDefinition dataProviderDefinition)
         {
-            _dataScopeProvider.Add(dataProvider, dependency);
+            _dataScopeProvider.Add(dataProviderDefinition);
         }
 
         void IDataScopeProvider.Add(IDataDependency dependency)

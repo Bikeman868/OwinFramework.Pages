@@ -135,9 +135,9 @@ namespace OwinFramework.Pages.Html.Builders
             _dataScopeProvider.AddScope(type, scopeName);
         }
 
-        void IDataScopeProvider.Add(IDataProvider dataProvider, IDataDependency dependency)
+        void IDataScopeProvider.Add(IDataProviderDefinition dataProviderDefinition)
         {
-            _dataScopeProvider.Add(dataProvider, dependency);
+            _dataScopeProvider.Add(dataProviderDefinition);
         }
 
         void IDataScopeProvider.Add(IDataDependency dependency)

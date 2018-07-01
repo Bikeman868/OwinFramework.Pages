@@ -68,6 +68,8 @@
     <Compile Include="Builders\BuiltPackage.cs" />
     <Compile Include="Builders\PackageDefinition.cs" />
     <Compile Include="Configuration\FrameworkConfiguration.cs" />
+    <Compile Include="DataModel\DataConsumerFactory.cs" />
+    <Compile Include="DataModel\DataConsumer.cs" />
     <Compile Include="DataModel\DataDependencyFactory.cs" />
     <Compile Include="DataModel\DataDependency.cs" />
     <Compile Include="DataModel\DataProviderDefinition.cs" />

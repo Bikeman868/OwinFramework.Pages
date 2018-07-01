@@ -10,6 +10,8 @@ namespace OwinFramework.Pages.Html.Runtime
         public string Comment;
         public override ElementType ElementType { get { return ElementType.Unnamed; } }
 
+        public StaticHtmlElement() : base(null) { }
+
         public override IWriteResult WriteHtml(
             IRenderContext context,
             bool includeChildren)

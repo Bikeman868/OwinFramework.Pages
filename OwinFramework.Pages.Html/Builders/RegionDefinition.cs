@@ -3,6 +3,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Html.Interfaces;
 
@@ -130,30 +131,45 @@ namespace OwinFramework.Pages.Html.Builders
 
         public IRegionDefinition DataScope(Type type, string scopeName)
         {
-            // TODO: Data binding
+            var dataScope = _region as IDataScopeProvider;
+            if (dataScope != null)
+                dataScope.AddScope(null, scopeName);
             return this;
         }
 
         IRegionDefinition IRegionDefinition.BindTo<T>(string scopeName) 
         {
-            // TODO: Data binding
+            var dataConsumer = _region as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.NeedsData<T>(scopeName);
             return this;
         }
 
         IRegionDefinition IRegionDefinition.BindTo(Type dataType, string scopeName)
         {
+            var dataConsumer = _region as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.NeedsData(dataType, scopeName);
             return this;
         }
 
         IRegionDefinition IRegionDefinition.DataProvider(string dataProviderName)
         {
-            // TODO: Data binding
+            var dataConsumer = _region as IDataConsumer;
+            if (dataConsumer != null)
+            {
+                _nameManager.AddResolutionHandler(
+                    (nm, c) => c.NeedsProvider(nm.ResolveDataProvider(dataProviderName, _region.Package)),
+                    dataConsumer);
+            }
             return this;
         }
 
         IRegionDefinition IRegionDefinition.DataProvider(IDataProvider dataProvider)
         {
-            // TODO: Data binding
+            var dataConsumer = _region as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.NeedsProvider(dataProvider);
             return this;
         }
 

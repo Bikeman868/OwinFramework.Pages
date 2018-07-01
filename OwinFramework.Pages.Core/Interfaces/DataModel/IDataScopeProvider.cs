@@ -60,10 +60,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// Adds a data provider that should be executed when the data context
         /// is created
         /// </summary>
-        /// <param name="dataProvider">The data provider to execute</param>
-        /// <param name="dependency">The dependency that the provider will 
-        /// be asked to satisfy</param>
-        void Add(IDataProvider dataProvider, IDataDependency dependency = null);
+        /// <param name="dataProviderDefinition">The data provider to execute</param>
+        void Add(IDataProviderDefinition dataProviderDefinition);
 
         /// <summary>
         /// Adds a dependency on data. A suitable provider will be located

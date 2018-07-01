@@ -198,14 +198,14 @@ namespace OwinFramework.Pages.Framework.DataModel
             EnsureDependency(dependency, existingDependencies);
         }
 
-        public void Add(IDataProvider dataProvider, IDataDependency dependency)
+        public void Add(IDataProviderDefinition dataProviderDefinition)
         {
-            if (_dataProviderDefinitions.Any(dp => 
-                dp.DataProvider == dataProvider && 
-                (dp.Dependency == null || dependency == null || dp.Dependency.DataType == dependency.DataType)))
+            if (_dataProviderDefinitions.Any(dp =>
+                dp.DataProvider == dataProviderDefinition.DataProvider &&
+                (dp.Dependency == null || dataProviderDefinition.Dependency == null || dp.Dependency.DataType == dataProviderDefinition.Dependency.DataType)))
                 return;
 
-            _dataProviderDefinitions.Add(_dataProviderDefinitionFactory.Create(dataProvider, dependency));
+            _dataProviderDefinitions.Add(dataProviderDefinition);
         }
 
         private void EnsureDependency(IDataDependency dependency, IList<IDataProvider> existingProviders)
@@ -225,14 +225,14 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (existingProviders.Any(p => p == dataProviderRegistration.DataProvider))
                 return;
 
-            Add(dataProviderRegistration.DataProvider, dependency);
+            Add(_dataProviderDefinitionFactory.Create(dataProviderRegistration.DataProvider, dependency));
 
             if (dataProviderRegistration.DependentProviders != null)
             {
                 foreach (var dependent in dataProviderRegistration.DependentProviders)
                 {
                     if (existingProviders.All(p => p != dataProviderRegistration.DataProvider))
-                        Add(dependent, null);
+                        Add(_dataProviderDefinitionFactory.Create(dependent));
                 }
             }
         }

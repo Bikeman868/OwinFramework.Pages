@@ -1,7 +1,4 @@
-﻿using System;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
-
-namespace OwinFramework.Pages.Core.Interfaces.DataModel
+﻿namespace OwinFramework.Pages.Core.Interfaces.DataModel
 {
     /// <summary>
     /// Factory for IDataProviderDefinition

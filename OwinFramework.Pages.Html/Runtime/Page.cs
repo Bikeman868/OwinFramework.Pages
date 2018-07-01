@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// Base implementation of IPage. Inheriting from this olass will insulate you
     /// from any additions to the IPage interface
     /// </summary>
-    public abstract class Page: Element, IPage
+    public abstract class Page: Element, IPage, IDataScopeProvider, IDataConsumer
     {
         /// <summary>
         /// Returns the name of the permission that the user must have to view this page
@@ -61,6 +61,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         private readonly IPageDependenciesFactory _dependencies;
         private readonly IDataScopeProvider _dataScopeProvider;
+        private readonly IDataConsumer _dataConsumer;
         private IList<IComponent> _components;
         private string _bodyStyleName;
         private IList<string> _inPageCssLines;
@@ -69,6 +70,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private ILayout _layout;
 
         protected Page(IPageDependenciesFactory dependencies)
+            : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as
             // this would break all pages in all applications that use
@@ -76,6 +78,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             _dependencies = dependencies;
             _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
+            _dataConsumer = dependencies.DataConsumerFactory.Create();
         }
 
         #region Page one-time initialization
@@ -585,6 +588,79 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
+        #region IDataScopeProvider
+
+        int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
+
+        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
+        {
+            return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
+        }
+
+        bool IDataScopeProvider.IsInScope(Type type, string scopeName)
+        {
+            return _dataScopeProvider.IsInScope(type, scopeName);
+        }
+
+        void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
+        {
+            _dataScopeProvider.SetupDataContext(renderContext);
+        }
+
+        void IDataScopeProvider.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
+        {
+            _dataScopeProvider.AddMissingData(renderContext, missingDependency);
+        }
+
+        IDataScopeProvider IDataScopeProvider.Parent
+        {
+            get { return _dataScopeProvider.Parent; }
+        }
+
+        void IDataScopeProvider.AddChild(IDataScopeProvider child)
+        {
+            _dataScopeProvider.AddChild(child);
+        }
+
+        void IDataScopeProvider.SetParent(IDataScopeProvider parent)
+        {
+            _dataScopeProvider.SetParent(parent);
+        }
+
+        void IDataScopeProvider.AddScope(Type type, string scopeName)
+        {
+            _dataScopeProvider.AddScope(type, scopeName);
+        }
+
+        void IDataScopeProvider.Add(IDataProviderDefinition dataProviderDefinition)
+        {
+            _dataScopeProvider.Add(dataProviderDefinition);
+        }
+
+        void IDataScopeProvider.Add(IDataDependency dependency)
+        {
+            _dataScopeProvider.Add(dependency);
+        }
+
+        void IDataScopeProvider.ResolveDataProviders(IList<IDataProvider> existingProviders)
+        {
+            _dataScopeProvider.ResolveDataProviders(existingProviders);
+        }
+
+        List<IDataProvider> IDataScopeProvider.DataProviders
+        {
+            get { return _dataScopeProvider.DataProviders; }
+        }
+
+        void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
+        {
+            _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
+        }
+
+        #endregion
+
+        #region Debug info
+
         DebugInfo IRunable.GetDebugInfo() { return GetDebugInfo(); }
 
         public DebugPage GetDebugInfo()
@@ -597,5 +673,41 @@ namespace OwinFramework.Pages.Html.Runtime
                 Scope = _dataScopeProvider.GetDebugInfo(0, -1)
             };
         }
+
+        #endregion
+
+        #region IDataConsumer
+
+        void IDataConsumer.ResolveDependencies(IDataScopeProvider scopeProvider)
+        {
+            _dataConsumer.ResolveDependencies(scopeProvider);
+        }
+
+        void IDataConsumer.NeedsData<T>(string scopeName)
+        {
+            _dataConsumer.NeedsData<T>(scopeName);
+        }
+
+        void IDataConsumer.NeedsData(Type dataType, string scopeName)
+        {
+            _dataConsumer.NeedsData(dataType, scopeName);
+        }
+
+        void IDataConsumer.CanUseData<T>(string scopeName)
+        {
+            _dataConsumer.CanUseData<T>(scopeName);
+        }
+
+        void IDataConsumer.CanUseData(Type dataType, string scopeName)
+        {
+            _dataConsumer.CanUseData(dataType, scopeName);
+        }
+
+        void IDataConsumer.NeedsProvider(IDataProvider dataProvider, IDataDependency dependency)
+        {
+            _dataConsumer.NeedsProvider(dataProvider, dependency);
+        }
+
+        #endregion
     }
 }

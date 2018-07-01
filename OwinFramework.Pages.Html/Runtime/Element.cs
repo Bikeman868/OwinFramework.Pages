@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -10,10 +12,18 @@ namespace OwinFramework.Pages.Html.Runtime
     /// Base implementation of IPage. Inheriting from this olass will insulate you
     /// from any additions to the IPage interface
     /// </summary>
-    public abstract class Element: IElement
+    public abstract class Element: IElement, IDataConsumer
     {
+        private readonly IDataConsumer _dataConsumer;
         private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
         private List<IComponent> _dependentComponents;
+
+        protected Element(IDataConsumerFactory dataConsumerFactory)
+        {
+            _dataConsumer = dataConsumerFactory == null
+                ? null
+                : dataConsumerFactory.Create();
+        }
 
         DebugElement IElement.GetDebugInfo() 
         {
@@ -293,5 +303,51 @@ namespace OwinFramework.Pages.Html.Runtime
 
             _dependentComponents.Add(component);
         }
+
+        #region IDataConsumer
+
+        void IDataConsumer.ResolveDependencies(IDataScopeProvider scopeProvider)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.ResolveDependencies(scopeProvider);
+        }
+
+        void IDataConsumer.NeedsData<T>(string scopeName)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.NeedsData<T>(scopeName);
+        }
+
+        void IDataConsumer.NeedsData(Type dataType, string scopeName)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.NeedsData(dataType, scopeName);
+        }
+
+        void IDataConsumer.CanUseData<T>(string scopeName)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.CanUseData<T>(scopeName);
+        }
+
+        void IDataConsumer.CanUseData(Type dataType, string scopeName)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.CanUseData(dataType, scopeName);
+        }
+
+        void IDataConsumer.NeedsProvider(IDataProvider dataProvider, IDataDependency dependency)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.NeedsProvider(dataProvider, dependency);
+        }
+
+        #endregion
     }
 }

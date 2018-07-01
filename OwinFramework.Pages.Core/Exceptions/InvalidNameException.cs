@@ -1,5 +1,4 @@
 ﻿using OwinFramework.Pages.Core.Interfaces;
-using System;
 
 namespace OwinFramework.Pages.Core.Exceptions
 {

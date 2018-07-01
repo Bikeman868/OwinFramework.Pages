@@ -5,6 +5,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Html.Interfaces;
 
@@ -203,22 +204,37 @@ namespace OwinFramework.Pages.Html.Builders
 
         ILayoutDefinition ILayoutDefinition.BindTo<T>(string scopeName)
         {
+            var dataConsumer = _layout as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.NeedsData<T>(scopeName);
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.BindTo(Type dataType, string scopeName)
         {
+            var dataConsumer = _layout as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.NeedsData(dataType, scopeName);
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.DataProvider(string providerName)
+        ILayoutDefinition ILayoutDefinition.DataProvider(string dataProviderName)
         {
+            var dataConsumer = _layout as IDataConsumer;
+            if (dataConsumer != null)
+            {
+                _nameManager.AddResolutionHandler(
+                    (nm, c) => c.NeedsProvider(nm.ResolveDataProvider(dataProviderName, _layout.Package)),
+                    dataConsumer);
+            }
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.DataProvider(IDataProvider dataProvider)
         {
-            // TODO: Data binding
+            var dataConsumer = _layout as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.NeedsProvider(dataProvider);
             return this;
         }
 

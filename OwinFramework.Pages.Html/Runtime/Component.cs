@@ -15,7 +15,8 @@ namespace OwinFramework.Pages.Html.Runtime
 
         DebugElement IElement.GetDebugInfo() { return GetDebugInfo(); }
 
-        public Component(IComponentDependenciesFactory componentDependenciesFactory)
+        public Component(IComponentDependenciesFactory dependencies)
+            : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as
             // this would break all components in all applications that use

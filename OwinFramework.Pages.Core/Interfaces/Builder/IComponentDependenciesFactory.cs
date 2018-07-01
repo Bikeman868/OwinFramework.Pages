@@ -1,4 +1,7 @@
-﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
+﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
+
+namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// The IoC dependencies are wrapped in this factory so that when
@@ -8,9 +11,14 @@
     public interface IComponentDependenciesFactory
     {
         /// <summary>
-        /// Constructs and initializes a package dependencies instance
+        /// Returns a factory that can construct data consumer mixins
+        /// </summary>
+        IDataConsumerFactory DataConsumerFactory { get; }
+
+        /// <summary>
+        /// Constructs and initializes a component dependencies instance
         /// specific to the request
         /// </summary>
-        IComponentDependencies Create();
+        IComponentDependencies Create(IOwinContext context);
     }
 }

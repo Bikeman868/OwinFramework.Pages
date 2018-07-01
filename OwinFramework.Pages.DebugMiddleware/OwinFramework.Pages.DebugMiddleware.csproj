@@ -83,6 +83,8 @@
   <ItemGroup>
     <EmbeddedResource Include="html.js" />
     <EmbeddedResource Include="html.css" />
+    <EmbeddedResource Include="svg.css" />
+    <EmbeddedResource Include="svg.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

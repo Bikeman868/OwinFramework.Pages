@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.DataModel;
+﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
@@ -10,13 +11,18 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
     public interface IRegionDependenciesFactory
     {
         /// <summary>
-        /// Constructs region dependencies
+        /// Constructs region dependencies specific to a request
         /// </summary>
-        IRegionDependencies Create();
+        IRegionDependencies Create(IOwinContext context);
 
         /// <summary>
         /// A factory for constructing data scope providers
         /// </summary>
         IDataScopeProviderFactory DataScopeProviderFactory { get; }
+
+        /// <summary>
+        /// Returns a factory that can construct data consumer mixins
+        /// </summary>
+        IDataConsumerFactory DataConsumerFactory { get; }
     }
 }

@@ -437,6 +437,9 @@ namespace OwinFramework.Pages.DebugMiddleware
         private SvgDocument GetDrawing(DebugInfo debugInfo)
         {
             var drawing = CreateSvg();
+
+            // TODO: Make an SVG drawing of the page
+
             Finalize(drawing);
             return drawing;
         }

@@ -1,6 +1,4 @@
-﻿using OwinFramework.Pages.Core.Enums;
-
-namespace OwinFramework.Pages.Core.Interfaces.Builder
+﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// Defines the fluent syntax for building modules

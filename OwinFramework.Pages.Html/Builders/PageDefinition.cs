@@ -7,7 +7,6 @@ using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
-using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -174,27 +173,45 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.BindTo<T>(string scopeName)
         {
+            var dataConsumer = _page as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.NeedsData<T>(scopeName);
             return this;
         }
 
         IPageDefinition IPageDefinition.BindTo(Type dataType, string scopeName)
         {
+            var dataConsumer = _page as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.NeedsData(dataType, scopeName);
             return this;
         }
 
-        IPageDefinition IPageDefinition.DataProvider(string providerName)
+        IPageDefinition IPageDefinition.DataProvider(string dataProviderName)
         {
+            var dataConsumer = _page as IDataConsumer;
+            if (dataConsumer != null)
+            {
+                _nameManager.AddResolutionHandler(
+                    (nm, c) => c.NeedsProvider(nm.ResolveDataProvider(dataProviderName, _page.Package)), 
+                    dataConsumer);
+            }
             return this;
         }
 
         IPageDefinition IPageDefinition.DataProvider(IDataProvider dataProvider)
         {
-            // TODO: Data binding
+            var dataConsumer = _page as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.NeedsProvider(dataProvider);
             return this;
         }
 
-        IPageDefinition IPageDefinition.DataScope(string scopeName)
+        IPageDefinition IPageDefinition.DataScope(Type type, string scopeName)
         {
+            var dataScope = _page as IDataScopeProvider;
+            if (dataScope != null)
+                dataScope.AddScope(type, scopeName);
             return this;
         }
 

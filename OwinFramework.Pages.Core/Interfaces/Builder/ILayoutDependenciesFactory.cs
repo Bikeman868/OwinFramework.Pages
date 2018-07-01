@@ -1,4 +1,6 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Collections;
+﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.Collections;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
@@ -10,13 +12,18 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
     public interface ILayoutDependenciesFactory
     {
         /// <summary>
-        /// Constructs and initializes a layout dependencies instance
+        /// Constructs and initializes a layout dependencies specific to a request
         /// </summary>
-        ILayoutDependencies Create();
+        ILayoutDependencies Create(IOwinContext context);
 
         /// <summary>
         /// The dictionary factory is a singleton and therefore alwaya available
         /// </summary>
         IDictionaryFactory DictionaryFactory { get; }
+
+        /// <summary>
+        /// Returns a factory that can construct data consumer mixins
+        /// </summary>
+        IDataConsumerFactory DataConsumerFactory { get; }
     }
 }

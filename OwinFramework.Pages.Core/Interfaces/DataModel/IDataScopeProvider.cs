@@ -110,7 +110,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// This is called recursively to construct a tree of data contexts
         /// You should not call this method from your application
         /// </summary>
-        void BuildDataContextTree(IRenderContext renderContext, IDataContext dataContext, bool isParentDataContext);
+        void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext);
     
         /// <summary>
         /// This is called in the case where dependencies are missing from the 

@@ -74,6 +74,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             return new DebugDataScopeProvider
             {
+                Instance = this,
                 Id = Id,
                 Parent = _parent == null || parentDepth == 0
                     ? null 
@@ -244,33 +245,35 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (renderContext.Data != null)
                 throw new Exception("The data scope provider should be used to setup a new render context");
 
-            var rootDataContext = _dataContextFactory.Create(renderContext, this);
-            BuildDataContextTree(renderContext, rootDataContext, false);
+            BuildDataContextTree(renderContext, null);
 
             renderContext.SelectDataContext(Id);
         }
 
-        public void BuildDataContextTree(IRenderContext renderContext, IDataContext dataContext, bool isParentDataContext)
+        public void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
         {
-            if (_dataProviderDefinitions != null && _dataProviderDefinitions.Count > 0)
-            {
-                if (isParentDataContext)
-                    dataContext = dataContext.CreateChild(this);
+            if ((_dataProviderDefinitions == null || _dataProviderDefinitions.Count == 0) &&
+                (_children == null || _children.Count == 0))
+                return;
 
+            var dataContext = parentDataContext == null 
+                ? _dataContextFactory.Create(renderContext, this) 
+                : parentDataContext.CreateChild(this);
+
+            renderContext.AddDataContext(Id, dataContext);
+
+            if (_dataProviderDefinitions != null)
+            {
                 foreach (var providerDefinition in _dataProviderDefinitions)
                     providerDefinition.Execute(renderContext, dataContext);
-
-                renderContext.AddDataContext(Id, dataContext);
-            }
-            else
-            {
-                if (!isParentDataContext)
-                    renderContext.AddDataContext(Id, dataContext);
             }
 
-            foreach(var child in _children)
+            if (_children != null)
             {
-                child.BuildDataContextTree(renderContext, dataContext, true);
+                foreach (var child in _children)
+                {
+                    child.BuildDataContextTree(renderContext, dataContext);
+                }
             }
         }
 

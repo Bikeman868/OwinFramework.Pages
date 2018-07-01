@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace OwinFramework.Pages.Core.Debug
 {
@@ -17,5 +14,11 @@ namespace OwinFramework.Pages.Core.Debug
         {
             Type = "Render context";
         }
+
+        /// <summary>
+        /// Debug information about the data that will be 
+        /// used for data binding during this rendering operation
+        /// </summary>
+        public IDictionary<int, DebugDataContext> Data { get; set; }
     }
 }

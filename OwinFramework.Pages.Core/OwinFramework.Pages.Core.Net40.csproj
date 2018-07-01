@@ -112,6 +112,7 @@
     <Compile Include="Collections\ThreadSafeDictionary.cs" />
     <Compile Include="Collections\ThreadSafeQueue.cs" />
     <Compile Include="Debug\DebugElement.cs" />
+    <Compile Include="Debug\DebugDataContext.cs" />
     <Compile Include="Debug\DebugRenderContext.cs" />
     <Compile Include="Debug\DebugModule.cs" />
     <Compile Include="Debug\DebugPackage.cs" />

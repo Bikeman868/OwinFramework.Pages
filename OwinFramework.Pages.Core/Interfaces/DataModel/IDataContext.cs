@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Debug;
 
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
 {
@@ -10,6 +11,11 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// </summary>
     public interface IDataContext: IDisposable
     {
+        /// <summary>
+        /// Retrieves debugging information from this data context
+        /// </summary>
+        DebugDataContext GetDebugInfo();
+
         /// <summary>
         /// Gets and sets the current scope provider. This will only
         /// be used in the case where a component tries to retrieve

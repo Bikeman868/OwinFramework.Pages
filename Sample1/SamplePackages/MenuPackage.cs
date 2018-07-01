@@ -46,8 +46,8 @@ namespace Sample1.SamplePackages
             public IList<MenuItem> SubMenu { get; set; }
         }
 
-        //[IsDataProvider(typeof(IList<MenuItem>), "submenu")]
-        //[NeedsData(typeof(MenuItem))]
+        [IsDataProvider(typeof(IList<MenuItem>), "submenu")]
+        [NeedsData(typeof(MenuItem))]
         public class SubMenuDataProvider: DataProvider
         {
             public SubMenuDataProvider(IDataProviderDependenciesFactory dependencies) 
@@ -61,7 +61,8 @@ namespace Sample1.SamplePackages
             }
         }
 
-        private class MenuItemComponent: Component
+        [NeedsData(typeof(MenuItem))]
+        private class MenuItemComponent : Component
         {
             public MenuItemComponent(IComponentDependenciesFactory dependencies) 
                 : base(dependencies) { }

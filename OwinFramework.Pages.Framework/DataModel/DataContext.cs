@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Collections;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -42,6 +44,17 @@ namespace OwinFramework.Pages.Framework.DataModel
             _parent = parent;
             _scope = scope;
             return this;
+        }
+
+        public DebugDataContext GetDebugInfo()
+        {
+            return new DebugDataContext
+            {
+                Instance = this,
+                Scope = _scope,
+                Parent = _parent == null ? null : _parent.GetDebugInfo(),
+                Properties = _properties.Keys.ToList()
+            };
         }
 
         public IDataContext CreateChild(IDataScopeProvider scope)

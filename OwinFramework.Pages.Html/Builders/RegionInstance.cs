@@ -155,9 +155,9 @@ namespace OwinFramework.Pages.Html.Builders
             get { return _dataScopeProvider.DataProviders; }
         }
 
-        void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext dataContext, bool isParentDataContext)
+        void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
         {
-            _dataScopeProvider.BuildDataContextTree(renderContext, dataContext, isParentDataContext);
+            _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
         }
 
         #endregion

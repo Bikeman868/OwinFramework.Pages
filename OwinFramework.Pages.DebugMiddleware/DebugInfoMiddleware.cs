@@ -197,6 +197,7 @@ namespace OwinFramework.Pages.DebugMiddleware
             }
 
             if (debugInfo is DebugComponent) WriteHtml(html, (DebugComponent)debugInfo, depth);
+            if (debugInfo is DebugDataContext) WriteHtml(html, (DebugDataContext)debugInfo, depth);
             if (debugInfo is DebugDataProvider) WriteHtml(html, (DebugDataProvider)debugInfo, depth);
             if (debugInfo is DebugDataScopeProvider) WriteHtml(html, (DebugDataScopeProvider)debugInfo, depth);
             if (debugInfo is DebugLayout) WriteHtml(html, (DebugLayout)debugInfo, depth);
@@ -211,6 +212,14 @@ namespace OwinFramework.Pages.DebugMiddleware
 
         private void WriteHtml(IHtmlWriter html, DebugComponent component, int depth)
         {
+        }
+
+        private void WriteHtml(IHtmlWriter html, DebugDataContext dataContext, int depth)
+        {
+            if (dataContext.Properties != null)
+            {
+                html.WriteElementLine("p", "Properties: " + string.Join(", ", dataContext.Properties));
+            }
         }
 
         private void WriteHtml(IHtmlWriter html, DebugDataProvider dataProvider, int depth)
@@ -336,10 +345,18 @@ namespace OwinFramework.Pages.DebugMiddleware
                 {
                     var renderContext = _renderContextFactory.Create();
                     dataScopeProvider.SetupDataContext(renderContext);
-                    html.WriteElementLine("p", "Rendering data context");
-                    StartIndent(html, true);
-                    WriteDebugInfo(html, renderContext.GetDebugInfo(), depth - 1);
-                    EndIndent(html);
+                    var debugRenderContext = renderContext.GetDebugInfo();
+                    var data = debugRenderContext.Data;
+                    if (data != null)
+                    {
+                        foreach (var kv in data)
+                        {
+                            html.WriteElementLine("p", "Rendering data context " + kv.Key);
+                            StartIndent(html, true);
+                            WriteDebugInfo(html, kv.Value, depth - 1);
+                            EndIndent(html);
+                        }
+                    }
                 }
             }
 

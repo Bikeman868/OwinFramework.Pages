@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Collections;
@@ -53,7 +55,10 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             return new DebugRenderContext
             {
-                Instance = this
+                Instance = this,
+                Data = _dataContexts
+                    .Select(kv => new KeyValuePair<int, DebugDataContext>(kv.Key, kv.Value.GetDebugInfo()))
+                    .ToDictionary(kv => kv.Key, kv => kv.Value)
             };
         }
 
@@ -64,7 +69,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public void SelectDataContext(int id)
         {
-            Data = _dataContexts[id];
+            IDataContext data;
+            if (_dataContexts.TryGetValue(id, out data))
+                Data = data;
         }
 
         public void DeleteDataContextTree()

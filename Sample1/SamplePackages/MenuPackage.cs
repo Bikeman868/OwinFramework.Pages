@@ -104,17 +104,19 @@ namespace Sample1.SamplePackages
 
         public override IPackage Build(IFluentBuilder builder)
         {
-            // This component is used to display menu items
-            var menuItemComponent = new MenuItemComponent(_dependencies.ComponentDependenciesFactory) 
-            {
-                Package = this
-            };
+            // This component displays a menu item
+            var menuItemComponent = builder.Register(
+                new MenuItemComponent(_dependencies.ComponentDependenciesFactory) 
+                { 
+                    Package = this
+                });
 
             // This data provider extracts sub-menu items from the current menu item
-            var subMenuDataProvider = new SubMenuDataProvider(_dependencies.DataProviderDependenciesFactory)
-            {
-                Package = this
-            };
+            var subMenuDataProvider = builder.Register(
+                new SubMenuDataProvider(_dependencies.DataProviderDependenciesFactory)
+                {
+                    Package = this
+                });
 
             // This region is a container for the options on the main menu
             var mainMenuItemRegion = builder.Region()

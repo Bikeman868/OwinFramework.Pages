@@ -218,6 +218,12 @@ namespace OwinFramework.Pages.Html.Runtime
                 set { _currentState.AssetDeployment = value; }
             }
 
+            public IDataScopeProvider ScopeProvider
+            {
+                get { return _currentState.ScopeProvider; }
+                set { _currentState.ScopeProvider = value; }
+            }
+
             public IInitializationData NeedsComponent(IComponent component)
             {
                 _page.AddComponent(component);

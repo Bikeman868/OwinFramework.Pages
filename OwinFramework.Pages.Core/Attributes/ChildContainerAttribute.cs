@@ -14,7 +14,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// clasing html for a region
         /// </summary>
         /// <param name="tag">The tag to use to enclose the contents of this element</param>
-        public ChildContainerAttribute(string tag = "divl")
+        public ChildContainerAttribute(string tag = "div")
         {
             Tag = tag;
         }

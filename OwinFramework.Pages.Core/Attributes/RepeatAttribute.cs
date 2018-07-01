@@ -42,5 +42,11 @@ namespace OwinFramework.Pages.Core.Attributes
         /// The name of the component to place in this region
         /// </summary>
         public string[] ClassNames { get; set; }
+
+        /// <summary>
+        /// Optional scope name to allow grandchildren to bind to this
+        /// data even if the children add context data of the same type
+        /// </summary>
+        public string ScopeName { get; set; }
     }
 }

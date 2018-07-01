@@ -7,6 +7,7 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
@@ -30,7 +31,7 @@ namespace OwinFramework.Pages.Framework.Builders
         private readonly INameManager _nameManager;
         private readonly IRequestRouter _requestRouter;
         private readonly HashSet<string> _assemblies;
-        private readonly HashSet<string> _types;
+        private readonly HashSet<Type> _types;
         private readonly IPackage _packageContext;
 
         public FluentBuilder(
@@ -40,7 +41,7 @@ namespace OwinFramework.Pages.Framework.Builders
             _nameManager = nameManager;
             _requestRouter = requestRouter;
             _assemblies = new HashSet<string>();
-            _types = new HashSet<string>();
+            _types = new HashSet<Type>();
         }
 
         private FluentBuilder(
@@ -60,33 +61,19 @@ namespace OwinFramework.Pages.Framework.Builders
             ServiceBuilder = parent.ServiceBuilder;
         }
 
-        void IFluentBuilder.Register(IPackage package, string namespaceName)
+        IPackage IFluentBuilder.Register(IPackage package, string namespaceName)
         {
-            if (!_types.Add(package.GetType().FullName))
-                return;
+            var type = package.GetType();
+            if (!_types.Add(type)) return package;
 
-            var attributes = package.GetType().GetCustomAttributes(true);
+            var attributes = new AttributeSet(type);
 
-            foreach (var attribute in attributes)
+            if (!string.IsNullOrEmpty(namespaceName) && attributes.IsPackage != null)
             {
-                var isPackage = attribute as IsPackageAttribute;
-
-                if (isPackage != null)
-                {
-                    if (string.IsNullOrEmpty(package.Name))
-                        package.Name = isPackage.Name;
-
-                    if (string.IsNullOrEmpty(package.NamespaceName))
-                        package.NamespaceName = isPackage.NamespaceName;
-                }
+                    attributes.IsPackage.NamespaceName = namespaceName;
             }
 
-            if (!string.IsNullOrEmpty(namespaceName))
-                package.NamespaceName = namespaceName;
-
-            _nameManager.Register(package);
-
-            package.Build(new FluentBuilder(this, package));
+            return BuildPackage(attributes, package, null);
         }
 
         void IFluentBuilder.Register(Assembly assembly, Func<Type, object> factory)
@@ -135,21 +122,57 @@ namespace OwinFramework.Pages.Framework.Builders
                 throw new AggregateException(exceptions);
         }
 
-        void IFluentBuilder.Register(Type type, Func<Type, object> factory)
+        object IFluentBuilder.Register(Type type, Func<Type, object> factory)
         {
-            if (!_types.Add(type.FullName))
-                return;
+            if (!_types.Add(type))
+                return null;
 
             var attributes = new AttributeSet(type);
 
-            if (attributes.IsPackage != null) BuildPackage(attributes, factory);
-            if (attributes.IsModule != null) BuildModule(attributes, factory);
-            if (attributes.IsPage != null) BuildPage(attributes, factory);
-            if (attributes.IsLayout != null) BuildLayout(attributes, factory);
-            if (attributes.IsRegion != null) BuildRegion(attributes, factory);
-            if (attributes.IsComponent != null) BuildComponent(attributes, factory);
-            if (attributes.IsService != null) BuildService(attributes, factory);
-            if (attributes.IsDataProvider != null) BuildDataProvider(attributes, factory);
+            if (attributes.IsPackage != null) return BuildPackage(attributes, null, factory);
+            if (attributes.IsModule != null) return BuildModule(attributes, null, factory);
+            if (attributes.IsPage != null) return BuildPage(attributes, null, factory);
+            if (attributes.IsLayout != null) return BuildLayout(attributes, null, factory);
+            if (attributes.IsRegion != null) return BuildRegion(attributes, null, factory);
+            if (attributes.IsComponent != null) return BuildComponent(attributes, null, factory);
+            if (attributes.IsService != null) return BuildService(attributes, null, factory);
+            if (attributes.IsDataProvider != null) return BuildDataProvider(attributes, null, factory);
+
+            return null;
+        }
+
+        T IFluentBuilder.Register<T>(T element)
+        {
+            var type = element.GetType();
+            if (!_types.Add(type)) return element;
+
+            var attributes = new AttributeSet(type);
+
+            var package = element as IPackage;
+            if (package != null) BuildPackage(attributes, package, null);
+
+            var module = element as IModule;
+            if (module != null) BuildModule(attributes, module, null);
+
+            var page = element as IPage;
+            if (page != null) BuildPage(attributes, page, null);
+
+            var layout = element as ILayout;
+            if (layout != null) BuildLayout(attributes, layout, null);
+
+            var Region = element as IRegion;
+            if (Region != null) BuildRegion(attributes, Region, null);
+
+            var component = element as IComponent;
+            if (component != null) BuildComponent(attributes, component, null);
+
+            var service = element as IService;
+            if (service != null) BuildService(attributes, service, null);
+
+            var dataProvider = element as IDataProvider;
+            if (dataProvider != null) BuildDataProvider(attributes, dataProvider, null);
+
+            return element;
         }
 
         public IComponentDefinition Component(IPackage package)
@@ -194,16 +217,26 @@ namespace OwinFramework.Pages.Framework.Builders
             return ModuleBuilder.Module();
         }
 
-        private void BuildPackage(AttributeSet attributes, Func<Type, object> factory)
+        private IPackage BuildPackage(AttributeSet attributes, IPackage package, Func<Type, object> factory)
         {
-            if (factory != null && typeof(IPackage).IsAssignableFrom(attributes.Type))
+            if (package == null && factory != null && typeof(IPackage).IsAssignableFrom(attributes.Type))
+                package = factory(attributes.Type) as IPackage;
+
+            if (package != null)
             {
-                var package = factory(attributes.Type) as IPackage;
-                if (package != null)
+                if (attributes.IsPackage != null)
                 {
-                    ((IFluentBuilder)this).Register(package);
-                    return;
+                    if (string.IsNullOrEmpty(package.Name))
+                        package.Name = attributes.IsPackage.Name;
+
+                    if (string.IsNullOrEmpty(package.NamespaceName))
+                        package.NamespaceName = attributes.IsPackage.NamespaceName;
                 }
+
+                package.Build(new FluentBuilder(this, package));
+
+                _nameManager.Register(package);
+                return package;
             }
 
             IPackageDefinition packageDefinition = new PackageDefinition(attributes.Type, this, _nameManager);
@@ -214,44 +247,42 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.DeployedAs != null)
                 packageDefinition.Module(attributes.DeployedAs.ModuleName);
 
-            packageDefinition.Build();
+            return packageDefinition.Build();
         }
 
-        private void BuildModule(AttributeSet attributes, Func<Type, object> factory)
+        private IModule BuildModule(AttributeSet attributes, IModule module, Func<Type, object> factory)
         {
-            if (factory != null && typeof(IModule).IsAssignableFrom(attributes.Type))
+            if (module == null && factory != null && typeof(IModule).IsAssignableFrom(attributes.Type))
+                module = factory(attributes.Type) as IModule;
+
+            if (module != null)
             {
-                var module = factory(attributes.Type) as IModule;
-                if (module != null)
+                if (attributes.IsModule != null)
                 {
-                    if (attributes.IsModule != null)
-                    {
-                        if (!string.IsNullOrEmpty(attributes.IsModule.Name))
-                            module.Name = attributes.IsModule.Name;
-                        module.AssetDeployment = attributes.IsModule.AssetDeployment;
-                    }
-                    _nameManager.Register(module);
-                    return;
+                    if (!string.IsNullOrEmpty(attributes.IsModule.Name))
+                        module.Name = attributes.IsModule.Name;
+                    module.AssetDeployment = attributes.IsModule.AssetDeployment;
                 }
+                _nameManager.Register(module);
+                return module;
             }
 
             var moduleDefinition = Module()
                 .Name(attributes.IsModule.Name)
                 .AssetDeployment(attributes.IsModule.AssetDeployment);
 
-            moduleDefinition.Build();
+            return moduleDefinition.Build();
         }
 
-        private void BuildPage(AttributeSet attributes, Func<Type, object> factory)
+        private IPage BuildPage(AttributeSet attributes, IPage page, Func<Type, object> factory)
         {
-            if (factory != null && typeof(IPage).IsAssignableFrom(attributes.Type))
+            if (page == null && factory != null && typeof(IPage).IsAssignableFrom(attributes.Type))
+                page = factory(attributes.Type) as IPage;
+
+            if (page != null)
             {
-                var page = factory(attributes.Type) as IPage;
-                if (page != null)
-                {
-                    Configure(attributes, page);
-                    return;
-                }
+                Configure(attributes, page);
+                return page;
             }
 
             var pageDefinition = Page(attributes.Type, _packageContext)
@@ -318,20 +349,19 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
-            pageDefinition.Build();
+            return pageDefinition.Build();
         }
 
-        private void BuildLayout(AttributeSet attributes, Func<Type, object> factory)
+        private ILayout BuildLayout(AttributeSet attributes, ILayout layout, Func<Type, object> factory)
         {
-            if (factory != null && typeof(ILayout).IsAssignableFrom(attributes.Type))
+            if (layout == null && factory != null && typeof(ILayout).IsAssignableFrom(attributes.Type))
+                layout = factory(attributes.Type) as ILayout;
+
+            if (layout != null)
             {
-                var layout = factory(attributes.Type) as ILayout;
-                if (layout != null)
-                {
-                    Configure(attributes, layout);
-                    _nameManager.Register(layout);
-                    return;
-                }
+                Configure(attributes, layout);
+                _nameManager.Register(layout);
+                return layout;
             }
 
             var layoutDefinition = Layout(_packageContext)
@@ -407,20 +437,19 @@ namespace OwinFramework.Pages.Framework.Builders
                 foreach (var usesRegion in attributes.UsesRegions)
                     layoutDefinition.Region(usesRegion.RegionName, usesRegion.RegionElement);
     
-            layoutDefinition.Build();
+            return layoutDefinition.Build();
         }
 
-        private void BuildRegion(AttributeSet attributes, Func<Type, object> factory)
+        private IRegion BuildRegion(AttributeSet attributes, IRegion region, Func<Type, object> factory)
         {
-            if (factory != null && typeof(IRegion).IsAssignableFrom(attributes.Type))
+            if (region == null && factory != null && typeof(IRegion).IsAssignableFrom(attributes.Type))
+                region = factory(attributes.Type) as IRegion;
+
+            if (region != null)
             {
-                var region = factory(attributes.Type) as IRegion;
-                if (region != null)
-                {
-                    Configure(attributes, region);
-                    _nameManager.Register(region);
-                    return;
-                }
+                Configure(attributes, region);
+                _nameManager.Register(region);
+                return region;
             }
 
             var regionDefinition = Region(_packageContext)
@@ -483,20 +512,19 @@ namespace OwinFramework.Pages.Framework.Builders
                 foreach(var usesComponent in attributes.UsesComponents)
                     regionDefinition.Component(usesComponent.ComponentName);
 
-            regionDefinition.Build();
+            return regionDefinition.Build();
         }
 
-        private void BuildComponent(AttributeSet attributes, Func<Type, object> factory)
+        private IComponent BuildComponent(AttributeSet attributes, IComponent component, Func<Type, object> factory)
         {
-            if (factory != null && typeof(IComponent).IsAssignableFrom(attributes.Type))
+            if (component == null && factory != null && typeof(IComponent).IsAssignableFrom(attributes.Type))
+                component = factory(attributes.Type) as IComponent;
+
+            if (component != null)
             {
-                var component = factory(attributes.Type) as IComponent;
-                if (component != null)
-                {
-                    Configure(attributes, component);
-                    _nameManager.Register(component);
-                    return;
-                }
+                Configure(attributes, component);
+                _nameManager.Register(component);
+                return component;
             }
 
             var componentDefinition = Component(_packageContext)
@@ -549,29 +577,29 @@ namespace OwinFramework.Pages.Framework.Builders
                     attributes.DeployFunction.Body,
                     attributes.DeployFunction.IsPublic);
 
-            componentDefinition.Build();
+            return componentDefinition.Build();
         }
 
-        private void BuildService(AttributeSet attributes, Func<Type, object> factory)
+        private IService BuildService(AttributeSet attributes, IService service, Func<Type, object> factory)
         {
-            if (factory != null && typeof(IService).IsAssignableFrom(attributes.Type))
+            if (service == null && factory != null && typeof(IService).IsAssignableFrom(attributes.Type))
+                service = factory(attributes.Type) as IService;
+
+            if (service != null)
             {
-                var service = factory(attributes.Type) as IService;
-                if (service != null)
-                {
-                    Configure(attributes, service);
-                    return;
-                }
+                Configure(attributes, service);
+                return service;
             }
 
             var serviceDefinition = Service(attributes.Type, _packageContext)
                 .Name(attributes.IsService.Name);
 
-            serviceDefinition.Build();
+            return serviceDefinition.Build();
         }
 
-        private void BuildDataProvider(AttributeSet attributes, Func<Type, object> factory)
+        private IDataProvider BuildDataProvider(AttributeSet attributes, IDataProvider dataProvider, Func<Type, object> factory)
         {
+            return dataProvider;
         }
 
         private void Configure(AttributeSet attributes, IPage page)
@@ -739,6 +767,41 @@ namespace OwinFramework.Pages.Framework.Builders
                     {
                         element.Module = _nameManager.ResolveModule(attributes.DeployedAs.ModuleName);
                     });
+                }
+            }
+
+            var dataConsumer = element as IDataConsumer;
+            if (dataConsumer != null)
+            {
+                if (attributes.NeedsDatas != null)
+                {
+                    foreach (var need in attributes.NeedsDatas)
+                    {
+                        if (need.DataType != null || !string.IsNullOrEmpty(need.Scope))
+                            dataConsumer.NeedsData(need.DataType, need.Scope);
+
+                        if (!string.IsNullOrEmpty(need.DataProviderName))
+                            _nameManager.AddResolutionHandler(
+                                (nm, dc) => dc.NeedsProvider(nm.ResolveDataProvider(need.DataProviderName)), 
+                                dataConsumer);
+                    }
+                }
+            }
+
+            var dataScopeProvider = element as IDataScopeProvider;
+            if (dataScopeProvider != null)
+            {
+                if (attributes.DataScopes != null)
+                {
+                    foreach(var dataScope in attributes.DataScopes)
+                    {
+                        dataScopeProvider.AddScope(dataScope.DataType, dataScope.Scope);
+                    }
+                }
+
+                if (attributes.Repeat != null)
+                {
+                    dataScopeProvider.AddScope(attributes.Repeat.ItemType, attributes.Repeat.ScopeName);
                 }
             }
         }

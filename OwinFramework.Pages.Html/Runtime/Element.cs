@@ -271,6 +271,9 @@ namespace OwinFramework.Pages.Html.Runtime
                     initializationData.NeedsComponent(component);
             }
 
+            if (_dataConsumer != null)
+                _dataConsumer.ResolveDependencies(initializationData.ScopeProvider);
+
             var children = GetChildren();
             if (children == null) return;
             

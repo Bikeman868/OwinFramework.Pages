@@ -28,6 +28,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         AssetDeployment AssetDeployment { get; set; }
 
         /// <summary>
+        /// The scope provider for the current scope
+        /// </summary>
+        IDataScopeProvider ScopeProvider { get; set; }
+
+        /// <summary>
         /// Introduces a new data scope. All data binding below this point
         /// will resolve using the new scope before deferring to its parent
         /// </summary>

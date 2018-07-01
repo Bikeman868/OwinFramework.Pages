@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Registers all components, layouts, regions etc defined in the package. Optionally
         /// allows you to modify the namespace of the package from the default one
         /// </summary>
-        void Register(IPackage package, string namespaceName = null);
+        IPackage Register(IPackage package, string namespaceName = null);
 
         /// <summary>
         /// Searches within the given assembly for all eleemnts and
@@ -36,7 +36,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="type">The element type to register</param>
         /// <param name="factory">Optional factory. If supplied then it will be used
         /// to construct classes that implement interfaces like ILayout, IRegion etc.</param>
-        void Register(Type type, Func<Type, object> factory = null);
+        object Register(Type type, Func<Type, object> factory = null);
+
+        /// <summary>
+        /// Registeres a an element that was already constructed by the application
+        /// </summary>
+        /// <param name="element">The element type to register</param>
+        T Register<T>(T element);
 
         /// <summary>
         /// Defines how modules are built

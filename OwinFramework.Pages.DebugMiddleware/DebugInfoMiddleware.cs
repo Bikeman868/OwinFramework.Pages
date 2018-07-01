@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using Svg;
@@ -192,7 +193,7 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (debugInfo.Instance != null)
             {
                 html.WriteOpenTag("p");
-                html.WriteElementLine("i", debugInfo.Instance.GetType().FullName);
+                html.WriteElementLine("i", debugInfo.Instance.GetType().DisplayName());
                 html.WriteCloseTag("p");
             }
 
@@ -218,7 +219,8 @@ namespace OwinFramework.Pages.DebugMiddleware
         {
             if (dataContext.Properties != null)
             {
-                html.WriteElementLine("p", "Properties: " + string.Join(", ", dataContext.Properties));
+                foreach (var property in dataContext.Properties)
+                    html.WriteElementLine("p", "Data: " + property.DisplayName());
             }
         }
 
@@ -228,8 +230,6 @@ namespace OwinFramework.Pages.DebugMiddleware
 
         private void WriteHtml(IHtmlWriter html, DebugDataScopeProvider dataScopeProvider, int depth)
         {
-            html.WriteElementLine("p", "Scope with id " + dataScopeProvider.Id);
-
             if (depth == 1) return;
 
             if (dataScopeProvider.Parent != null)
@@ -243,7 +243,7 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (dataScopeProvider.Children != null && dataScopeProvider.Children.Count > 0)
             {
                 html.WriteElementLine("p", "Child scopes");
-                StartIndent(html, true);
+                StartIndent(html, false);
                 foreach (var child in dataScopeProvider.Children)
                     WriteDebugInfo(html, child, depth - 1);
                 EndIndent(html);
@@ -336,9 +336,8 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (page.Scope != null)
             {
                 html.WriteElementLine("p", "Page has a data scope");
-                StartIndent(html, false);
+                StartIndent(html, true);
                 WriteDebugInfo(html, page.Scope, depth - 1);
-                EndIndent(html);
 
                 var dataScopeProvider = page.Scope.Instance as IDataScopeProvider;
                 if (dataScopeProvider != null)
@@ -351,13 +350,21 @@ namespace OwinFramework.Pages.DebugMiddleware
                     {
                         foreach (var kv in data)
                         {
-                            html.WriteElementLine("p", "Rendering data context " + kv.Key);
-                            StartIndent(html, true);
-                            WriteDebugInfo(html, kv.Value, depth - 1);
-                            EndIndent(html);
+                            var scopeId = kv.Key;
+                            var dataContext = kv.Value;
+                            if (dataContext != null && 
+                                dataContext.Properties != null && 
+                                dataContext.Properties.Count > 0)
+                            {
+                                html.WriteElementLine("h3", "Data in context for data scope " + scopeId);
+                                foreach (var property in dataContext.Properties)
+                                    html.WriteElementLine("p", "Data: " + property.DisplayName());
+                            }
                         }
                     }
                 }
+
+                EndIndent(html);
             }
 
             if (page.Layout != null)

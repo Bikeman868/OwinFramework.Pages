@@ -79,6 +79,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\TypeDisplayNameTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +89,24 @@
   <ItemGroup>
     <Folder Include="Html\" />
     <Folder Include="Restful\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">
+      <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
+      <Name>OwinFramework.Pages.Core.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Framework\OwinFramework.Pages.Framework.Net40.csproj">
+      <Project>{83e44b37-d3aa-4622-a03b-3c976ea58c83}</Project>
+      <Name>OwinFramework.Pages.Framework.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Html\OwinFramework.Pages.Html.Net40.csproj">
+      <Project>{68b65603-bb88-4c0a-8cfc-32b92561b881}</Project>
+      <Name>OwinFramework.Pages.Html.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net40.csproj">
+      <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>
+      <Name>OwinFramework.Pages.Restful.Net40</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

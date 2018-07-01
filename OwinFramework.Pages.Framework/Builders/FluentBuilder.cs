@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Exceptions;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -636,7 +637,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 if (attributes.UsesComponents.Count > 1)
                     throw new RegionBuilderException("Regions can only host one component but you " +
-                        "have more than one [UsesComponent] attribute on " + attributes.Type.FullName);
+                        "have more than one [UsesComponent] attribute on " + attributes.Type.DisplayName());
                 if (attributes.UsesComponents.Count == 1)
                 {
                     _nameManager.AddResolutionHandler(() =>
@@ -650,7 +651,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 if (attributes.UsesLayouts.Count > 1)
                     throw new RegionBuilderException("Regions can only host one layout but you " +
-                        "have more than one [UsesLayout] attribute on " + attributes.Type.FullName);
+                        "have more than one [UsesLayout] attribute on " + attributes.Type.DisplayName());
                 if (attributes.UsesLayouts.Count == 1)
                 {
                     _nameManager.AddResolutionHandler(() =>

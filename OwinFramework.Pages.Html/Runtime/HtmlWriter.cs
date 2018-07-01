@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin;
@@ -260,7 +261,7 @@ namespace OwinFramework.Pages.Html.Runtime
             Write('>');
 
             if (!string.IsNullOrEmpty(content))
-                Write(content);
+                Write(Escape(content));
 
             Write("</");
             Write(tag);
@@ -370,6 +371,30 @@ namespace OwinFramework.Pages.Html.Runtime
             return this;
         }
 
+        #region Private helpers
+
+        private string Escape(string text)
+        {
+            const string invalid = "<>&";
+            var replacement = new[] { "&lt;", "&gt;", "&amp;" };
+
+            if (!text.Any(invalid.Contains)) return text;
+
+            using (var sb = _stringBuilderFactory.Create())
+            {
+                foreach (var c in text)
+                {
+                    var pos = invalid.IndexOf(c);
+                    if (pos < 0)
+                        sb.Append(c);
+                    else
+                        sb.Append(replacement[pos]);
+                }
+                return sb.ToString();
+            }
+        }
+
+        #endregion
 
         #region IHtmlWriter
 

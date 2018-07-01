@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Exceptions;
+using OwinFramework.Pages.Core.Extensions;
 
 namespace OwinFramework.Pages.Framework.Builders
 {
@@ -87,7 +88,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attribute is T)
             {
                 if (existing != null)
-                    throw new FluentBuilderException("You can only add the " + typeof(T).Name + " attribute once to " + Type.FullName);
+                    throw new FluentBuilderException("You can only add the " + typeof(T).Name + " attribute once to " + Type.DisplayName());
                 return (T)attribute;
             }
             return existing;
@@ -117,89 +118,89 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private void ValidatePackage()
         {
-            if (IsModule != null) throw new FluentBuilderException("A class can not be a package and a module. " + Type.FullName);
-            if (IsPage != null) throw new FluentBuilderException("A class can not be a package and a page. " + Type.FullName);
-            if (IsLayout != null) throw new FluentBuilderException("A class can not be a package and a layout. " + Type.FullName);
-            if (IsRegion != null) throw new FluentBuilderException("A class can not be a package and a region. " + Type.FullName);
-            if (IsComponent != null) throw new FluentBuilderException("A class can not be a package and a component. " + Type.FullName);
-            if (IsService != null) throw new FluentBuilderException("A class can not be a package and a service. " + Type.FullName);
-            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a package and a data provider. " + Type.FullName);
+            if (IsModule != null) throw new FluentBuilderException("A class can not be a package and a module. " + Type.DisplayName());
+            if (IsPage != null) throw new FluentBuilderException("A class can not be a package and a page. " + Type.DisplayName());
+            if (IsLayout != null) throw new FluentBuilderException("A class can not be a package and a layout. " + Type.DisplayName());
+            if (IsRegion != null) throw new FluentBuilderException("A class can not be a package and a region. " + Type.DisplayName());
+            if (IsComponent != null) throw new FluentBuilderException("A class can not be a package and a component. " + Type.DisplayName());
+            if (IsService != null) throw new FluentBuilderException("A class can not be a package and a service. " + Type.DisplayName());
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a package and a data provider. " + Type.DisplayName());
         }
 
         private void ValidateModule()
         {
-            if (IsPackage != null) throw new FluentBuilderException("A class can not be a module and a package. " + Type.FullName);
-            if (IsPage != null) throw new FluentBuilderException("A class can not be a module and a page. " + Type.FullName);
-            if (IsLayout != null) throw new FluentBuilderException("A class can not be a module and a layout. " + Type.FullName);
-            if (IsRegion != null) throw new FluentBuilderException("A class can not be a module and a region. " + Type.FullName);
-            if (IsComponent != null) throw new FluentBuilderException("A class can not be a module and a component. " + Type.FullName);
-            if (IsService != null) throw new FluentBuilderException("A class can not be a module and a service. " + Type.FullName);
+            if (IsPackage != null) throw new FluentBuilderException("A class can not be a module and a package. " + Type.DisplayName());
+            if (IsPage != null) throw new FluentBuilderException("A class can not be a module and a page. " + Type.DisplayName());
+            if (IsLayout != null) throw new FluentBuilderException("A class can not be a module and a layout. " + Type.DisplayName());
+            if (IsRegion != null) throw new FluentBuilderException("A class can not be a module and a region. " + Type.DisplayName());
+            if (IsComponent != null) throw new FluentBuilderException("A class can not be a module and a component. " + Type.DisplayName());
+            if (IsService != null) throw new FluentBuilderException("A class can not be a module and a service. " + Type.DisplayName());
         }
 
         private void ValidatePage()
         {
-            if (IsPackage != null) throw new FluentBuilderException("A class can not be a page and a package. " + Type.FullName);
-            if (IsModule != null) throw new FluentBuilderException("A class can not be a page and a module. " + Type.FullName);
-            if (IsLayout != null) throw new FluentBuilderException("A class can not be a page and a layout. " + Type.FullName);
-            if (IsRegion != null) throw new FluentBuilderException("A class can not be a page and a region. " + Type.FullName);
-            if (IsComponent != null) throw new FluentBuilderException("A class can not be a page and a component. " + Type.FullName);
-            if (IsService != null) throw new FluentBuilderException("A class can not be a page and a service. " + Type.FullName);
-            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a page and a data provider. " + Type.FullName);
+            if (IsPackage != null) throw new FluentBuilderException("A class can not be a page and a package. " + Type.DisplayName());
+            if (IsModule != null) throw new FluentBuilderException("A class can not be a page and a module. " + Type.DisplayName());
+            if (IsLayout != null) throw new FluentBuilderException("A class can not be a page and a layout. " + Type.DisplayName());
+            if (IsRegion != null) throw new FluentBuilderException("A class can not be a page and a region. " + Type.DisplayName());
+            if (IsComponent != null) throw new FluentBuilderException("A class can not be a page and a component. " + Type.DisplayName());
+            if (IsService != null) throw new FluentBuilderException("A class can not be a page and a service. " + Type.DisplayName());
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a page and a data provider. " + Type.DisplayName());
         }
 
         private void ValidateLayout()
         {
-            if (IsPackage != null) throw new FluentBuilderException("A class can not be a layout and a package. " + Type.FullName);
-            if (IsModule != null) throw new FluentBuilderException("A class can not be a layout and a module. " + Type.FullName);
-            if (IsPage != null) throw new FluentBuilderException("A class can not be a layout and a page. " + Type.FullName);
-            if (IsRegion != null) throw new FluentBuilderException("A class can not be a layout and a region. " + Type.FullName);
-            if (IsComponent != null) throw new FluentBuilderException("A class can not be a layout and a component. " + Type.FullName);
-            if (IsService != null) throw new FluentBuilderException("A class can not be a layout and a service. " + Type.FullName);
-            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a layout and a data provider. " + Type.FullName);
+            if (IsPackage != null) throw new FluentBuilderException("A class can not be a layout and a package. " + Type.DisplayName());
+            if (IsModule != null) throw new FluentBuilderException("A class can not be a layout and a module. " + Type.DisplayName());
+            if (IsPage != null) throw new FluentBuilderException("A class can not be a layout and a page. " + Type.DisplayName());
+            if (IsRegion != null) throw new FluentBuilderException("A class can not be a layout and a region. " + Type.DisplayName());
+            if (IsComponent != null) throw new FluentBuilderException("A class can not be a layout and a component. " + Type.DisplayName());
+            if (IsService != null) throw new FluentBuilderException("A class can not be a layout and a service. " + Type.DisplayName());
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a layout and a data provider. " + Type.DisplayName());
         }
 
         private void ValidateRegion()
         {
-            if (IsPackage != null) throw new FluentBuilderException("A class can not be a region and a package. " + Type.FullName);
-            if (IsModule != null) throw new FluentBuilderException("A class can not be a region and a module. " + Type.FullName);
-            if (IsPage != null) throw new FluentBuilderException("A class can not be a region and a page. " + Type.FullName);
-            if (IsLayout != null) throw new FluentBuilderException("A class can not be a region and a layout. " + Type.FullName);
-            if (IsComponent != null) throw new FluentBuilderException("A class can not be a region and a component. " + Type.FullName);
-            if (IsService != null) throw new FluentBuilderException("A class can not be a region and a service. " + Type.FullName);
-            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a region and a data provider. " + Type.FullName);
+            if (IsPackage != null) throw new FluentBuilderException("A class can not be a region and a package. " + Type.DisplayName());
+            if (IsModule != null) throw new FluentBuilderException("A class can not be a region and a module. " + Type.DisplayName());
+            if (IsPage != null) throw new FluentBuilderException("A class can not be a region and a page. " + Type.DisplayName());
+            if (IsLayout != null) throw new FluentBuilderException("A class can not be a region and a layout. " + Type.DisplayName());
+            if (IsComponent != null) throw new FluentBuilderException("A class can not be a region and a component. " + Type.DisplayName());
+            if (IsService != null) throw new FluentBuilderException("A class can not be a region and a service. " + Type.DisplayName());
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a region and a data provider. " + Type.DisplayName());
         }
 
         private void ValidateComponent()
         {
-            if (IsPackage != null) throw new FluentBuilderException("A class can not be a component and a package. " + Type.FullName);
-            if (IsModule != null) throw new FluentBuilderException("A class can not be a component and a module. " + Type.FullName);
-            if (IsPage != null) throw new FluentBuilderException("A class can not be a component and a page. " + Type.FullName);
-            if (IsLayout != null) throw new FluentBuilderException("A class can not be a component and a layout. " + Type.FullName);
-            if (IsRegion != null) throw new FluentBuilderException("A class can not be a component and a region. " + Type.FullName);
-            if (IsService != null) throw new FluentBuilderException("A class can not be a component and a service. " + Type.FullName);
-            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a component and a data provider. " + Type.FullName);
+            if (IsPackage != null) throw new FluentBuilderException("A class can not be a component and a package. " + Type.DisplayName());
+            if (IsModule != null) throw new FluentBuilderException("A class can not be a component and a module. " + Type.DisplayName());
+            if (IsPage != null) throw new FluentBuilderException("A class can not be a component and a page. " + Type.DisplayName());
+            if (IsLayout != null) throw new FluentBuilderException("A class can not be a component and a layout. " + Type.DisplayName());
+            if (IsRegion != null) throw new FluentBuilderException("A class can not be a component and a region. " + Type.DisplayName());
+            if (IsService != null) throw new FluentBuilderException("A class can not be a component and a service. " + Type.DisplayName());
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a component and a data provider. " + Type.DisplayName());
         }
 
         private void ValidateService()
         {
-            if (IsPackage != null) throw new FluentBuilderException("A class can not be a service and a package. " + Type.FullName);
-            if (IsModule != null) throw new FluentBuilderException("A class can not be a service and a module. " + Type.FullName);
-            if (IsPage != null) throw new FluentBuilderException("A class can not be a service and a page. " + Type.FullName);
-            if (IsLayout != null) throw new FluentBuilderException("A class can not be a service and a layout. " + Type.FullName);
-            if (IsRegion != null) throw new FluentBuilderException("A class can not be a service and a region. " + Type.FullName);
-            if (IsComponent != null) throw new FluentBuilderException("A class can not be a service and a component. " + Type.FullName);
-            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a service and a data provider. " + Type.FullName);
+            if (IsPackage != null) throw new FluentBuilderException("A class can not be a service and a package. " + Type.DisplayName());
+            if (IsModule != null) throw new FluentBuilderException("A class can not be a service and a module. " + Type.DisplayName());
+            if (IsPage != null) throw new FluentBuilderException("A class can not be a service and a page. " + Type.DisplayName());
+            if (IsLayout != null) throw new FluentBuilderException("A class can not be a service and a layout. " + Type.DisplayName());
+            if (IsRegion != null) throw new FluentBuilderException("A class can not be a service and a region. " + Type.DisplayName());
+            if (IsComponent != null) throw new FluentBuilderException("A class can not be a service and a component. " + Type.DisplayName());
+            if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a service and a data provider. " + Type.DisplayName());
         }
 
         private void ValidateDataProvider()
         {
-            if (IsPackage != null) throw new FluentBuilderException("A class can not be a data provider and a package. " + Type.FullName);
-            if (IsModule != null) throw new FluentBuilderException("A class can not be a data provider and a module. " + Type.FullName);
-            if (IsPage != null) throw new FluentBuilderException("A class can not be a data provider and a page. " + Type.FullName);
-            if (IsLayout != null) throw new FluentBuilderException("A class can not be a data provider and a layout. " + Type.FullName);
-            if (IsRegion != null) throw new FluentBuilderException("A class can not be a data provider and a region. " + Type.FullName);
-            if (IsComponent != null) throw new FluentBuilderException("A class can not be a data provider and a component. " + Type.FullName);
-            if (IsService != null) throw new FluentBuilderException("A class can not be a data provider and a service. " + Type.FullName);
+            if (IsPackage != null) throw new FluentBuilderException("A class can not be a data provider and a package. " + Type.DisplayName());
+            if (IsModule != null) throw new FluentBuilderException("A class can not be a data provider and a module. " + Type.DisplayName());
+            if (IsPage != null) throw new FluentBuilderException("A class can not be a data provider and a page. " + Type.DisplayName());
+            if (IsLayout != null) throw new FluentBuilderException("A class can not be a data provider and a layout. " + Type.DisplayName());
+            if (IsRegion != null) throw new FluentBuilderException("A class can not be a data provider and a region. " + Type.DisplayName());
+            if (IsComponent != null) throw new FluentBuilderException("A class can not be a data provider and a component. " + Type.DisplayName());
+            if (IsService != null) throw new FluentBuilderException("A class can not be a data provider and a service. " + Type.DisplayName());
         }
     }
 }

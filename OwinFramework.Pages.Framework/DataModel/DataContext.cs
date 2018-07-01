@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.Core.Collections;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -14,7 +15,7 @@ namespace OwinFramework.Pages.Framework.DataModel
     {
         private readonly DataContextFactory _dataContextFactory;
         private readonly IDataDependencyFactory _dataDependencyFactory;
-        private readonly IThreadSafeDictionary<string, object> _properties;
+        private readonly IThreadSafeDictionary<Type, object> _properties;
         private readonly List<IDataProvider> _dataProviders = new List<IDataProvider>();
 
         private IRenderContext _renderContext;
@@ -28,7 +29,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             _dataContextFactory = dataContextFactory;
             _dataDependencyFactory = dataDependencyFactory;
-            _properties = dictionaryFactory.Create<string, object>(StringComparer.OrdinalIgnoreCase);
+            _properties = dictionaryFactory.Create<Type, object>();
         }
 
         public DataContext Initialize(
@@ -64,27 +65,25 @@ namespace OwinFramework.Pages.Framework.DataModel
         
         public void Set<T>(T value, string scopeName = null, int level = 0)
         {
-            var name = typeof(T).FullName;
+            var type = typeof(T);
 
             if (level == 0 || _parent == null)
-                _properties[name] = value;
+                _properties[type] = value;
             else
             {
                 _parent.Set(value, scopeName, level - 1);
-                _properties.Remove(name);
+                _properties.Remove(type);
             }
         }
 
         public void Set(Type type, object value, string scopeName = null, int level = 0)
         {
-            var name = type.FullName;
-
             if (level == 0 || _parent == null)
-                _properties[name] = value;
+                _properties[type] = value;
             else
             {
                 _parent.Set(type, value, scopeName, level - 1);
-                _properties.Remove(name);
+                _properties.Remove(type);
             }
         }
 
@@ -95,15 +94,13 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public object Get(Type type, string scopeName, bool isRequired)
         {
-            var name = type.FullName;
-
             if (string.IsNullOrEmpty(scopeName) || (_scope != null && _scope.IsInScope(type, scopeName)))
             {
                 var retry = false;
                 while (true)
                 {
                     object result;
-                    if (_properties.TryGetValue(name, out result))
+                    if (_properties.TryGetValue(type, out result))
                         return result;
 
                     result = _parent == null ? null : _parent.Get(type, null, false);
@@ -113,14 +110,14 @@ namespace OwinFramework.Pages.Framework.DataModel
 
                     if (retry)
                         throw new Exception("This data context does not know how to find missing" +
-                            " data of type " + name + " because after adding it to the scope provider"+
+                            " data of type " + type.DisplayName() + " because after adding it to the scope provider" +
                             " the dependency could still not be resolved");
 
                     if (_scope == null)
                     {
                         if (_parent == null)
                             throw new Exception("This data context does not know how to find missing"+
-                                " data of type " + name + " because it does not have a scope provider");
+                                " data of type " + type.DisplayName() + " because it does not have a scope provider");
                         return _parent.Get(type, scopeName, true);
                     }
 

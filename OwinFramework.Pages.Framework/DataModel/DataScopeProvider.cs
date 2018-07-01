@@ -75,6 +75,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             return new DebugDataScopeProvider
             {
                 Instance = this,
+                Name = Id.ToString(),
                 Id = Id,
                 Parent = _parent == null || parentDepth == 0
                     ? null 

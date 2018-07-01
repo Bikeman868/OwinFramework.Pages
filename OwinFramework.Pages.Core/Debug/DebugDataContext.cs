@@ -34,6 +34,6 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The properties that are overriden in this context
         /// </summary>
-        public List<string> Properties { get; set; }
+        public List<Type> Properties { get; set; }
     }
 }

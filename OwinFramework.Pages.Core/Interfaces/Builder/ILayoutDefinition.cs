@@ -194,6 +194,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Builds the layout
         /// </summary>
-        ILayout Build(Type type = null);
+        ILayout Build();
     }
 }

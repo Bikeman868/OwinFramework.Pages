@@ -18,6 +18,7 @@ namespace OwinFramework.Pages.Framework.DataModel
     /// </summary>
     public class DataScopeProvider: IDataScopeProvider
     {
+        private readonly IIdManager _idManager;
         private readonly IDataScopeFactory _dataScopeFactory;
         private readonly IDataProviderDefinitionFactory _dataProviderDefinitionFactory;
         private readonly IDataCatalog _dataCatalog;
@@ -48,6 +49,12 @@ namespace OwinFramework.Pages.Framework.DataModel
         public int Id { get; private set; }
 
         /// <summary>
+        /// Set this to the name of the element that this is providing data scope
+        /// for. This will be either a region, page or service
+        /// </summary>
+        public string ElementName { get; set; }
+
+        /// <summary>
         /// The parent scope or null if this is the page/service
         /// </summary>
         private IDataScopeProvider _parent;
@@ -59,6 +66,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             IDataCatalog dataCatalog,
             IDataContextFactory dataContextFactory)
         {
+            _idManager = idManager;
             _dataScopeFactory = dataScopeFactory;
             _dataProviderDefinitionFactory = dataProviderDefinitionFactory;
             _dataCatalog = dataCatalog;
@@ -71,12 +79,32 @@ namespace OwinFramework.Pages.Framework.DataModel
             Id = idManager.GetUniqueId();
         }
 
+        private DataScopeProvider(DataScopeProvider original)
+        {
+            _idManager = original._idManager;
+            _dataScopeFactory = original._dataScopeFactory;
+            _dataProviderDefinitionFactory = original._dataProviderDefinitionFactory;
+            _dataCatalog = original._dataCatalog;
+            _dataContextFactory = original._dataContextFactory;
+
+            _dataScopes = original._dataScopes.ToList();
+            _dataProviderDefinitions = original._dataProviderDefinitions.ToList();
+            _children = new List<IDataScopeProvider>();
+
+            Id = _idManager.GetUniqueId();
+        }
+
+        public IDataScopeProvider Clone()
+        {
+            return new DataScopeProvider(this);
+        }
+
         DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
         {
             return new DebugDataScopeProvider
             {
                 Instance = this,
-                Name = Id.ToString(),
+                Name = Id + " (" + ElementName + ")",
                 Id = Id,
                 Parent = _parent == null || parentDepth == 0
                     ? null 
@@ -198,7 +226,15 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public bool CanSatisfyDependency(IDataDependency dependency)
         {
-            return _dataScopes.Any(s => s.IsMatch(dependency) && s.IsProvidedByElement);
+            if (_dataScopes != null &&
+                _dataScopes.Any(s => s.IsMatch(dependency) && s.IsProvidedByElement))
+                return true;
+
+            if (_dataProviderDefinitions != null && 
+                _dataProviderDefinitions.Any(dp => dp.DataProvider.CanSatisfy(dependency)))
+                return true;
+
+            return false;
         }
 
         public void Add(IDataDependency dependency)

@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces;
+﻿using System;
+using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Html.Interfaces;
@@ -28,9 +29,9 @@ namespace OwinFramework.Pages.Html.Builders
             _fluentBuilder = fluentBuilder;
         }
 
-        IComponentDefinition IComponentBuilder.Component(IPackage package)
+        IComponentDefinition IComponentBuilder.Component(Type declaringType, IPackage package)
         {
-            return new ComponentDefinition(_nameManager, _assetManager, _htmlHelper, _fluentBuilder, _componentDependenciesFactory, package);
+            return new ComponentDefinition(declaringType, _nameManager, _assetManager, _htmlHelper, _fluentBuilder, _componentDependenciesFactory, package);
         }
     }
 }

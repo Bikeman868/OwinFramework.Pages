@@ -248,9 +248,9 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPage IPageDefinition.Build(Type type)
+        IPage IPageDefinition.Build()
         {
-            return _fluentBuilder.Register(_page, type);
+            return _fluentBuilder.Register(_page, _declaringType);
         }
     }
 }

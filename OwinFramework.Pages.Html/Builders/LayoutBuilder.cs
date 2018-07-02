@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces;
+﻿using System;
+using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Html.Interfaces;
@@ -29,9 +30,9 @@ namespace OwinFramework.Pages.Html.Builders
             _fluentBuilder = fluentBuilder;
         }
 
-        ILayoutDefinition ILayoutBuilder.Layout(IPackage package)
+        ILayoutDefinition ILayoutBuilder.Layout(Type declaringType, IPackage package)
         {
-            return new LayoutDefinition(_nameManager, _htmlHelper, _fluentBuilder, _layoutDependenciesFactory, package);
+            return new LayoutDefinition(declaringType, _nameManager, _htmlHelper, _fluentBuilder, _layoutDependenciesFactory, package);
         }
     }
 }

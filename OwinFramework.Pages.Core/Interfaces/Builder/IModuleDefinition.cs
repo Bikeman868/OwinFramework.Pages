@@ -22,6 +22,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Builds the module
         /// </summary>
-        IModule Build(Type type = null);
+        IModule Build();
     }
 }

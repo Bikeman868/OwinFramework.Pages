@@ -24,6 +24,15 @@ namespace OwinFramework.Pages.Framework.DataModel
         }
 
         /// <summary>
+        /// Overrider this method to let the dependency resolution system know whether
+        /// your data provider can satisfy a dependecy of not
+        /// </summary>
+        public virtual bool CanSatisfy(IDataDependency dependency)
+        {
+            return false;
+        }
+
+        /// <summary>
         /// Override this method if your data provider can return different types of data
         /// </summary>
         public virtual void Satisfy(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)

@@ -18,6 +18,11 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         int Id { get; }
 
         /// <summary>
+        /// The name of the element that this is providing scope to
+        /// </summary>
+        string ElementName { get; set; }
+
+        /// <summary>
         /// Retrieves debugging information from this scope provider
         /// </summary>
         /// <param name="parentDepth">How deeply to traverse the parents. Pass
@@ -32,6 +37,12 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// Returns the parent scope
         /// </summary>
         IDataScopeProvider Parent { get; }
+
+        /// <summary>
+        /// Creates a copy of this scope provider that can be subsequently modified
+        /// </summary>
+        /// <returns></returns>
+        IDataScopeProvider Clone();
 
         /// <summary>
         /// Adds a child data scope provider establishing a nested scope

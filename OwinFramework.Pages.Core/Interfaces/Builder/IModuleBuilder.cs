@@ -1,4 +1,6 @@
-﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
+﻿using System;
+
+namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// Use the module builder to construct modules using a fluent syntax
@@ -8,6 +10,6 @@
         /// <summary>
         /// Starts building a new module
         /// </summary>
-        IModuleDefinition Module();
+        IModuleDefinition Module(Type declaringType = null);
     }
 }

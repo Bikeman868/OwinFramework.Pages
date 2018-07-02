@@ -601,6 +601,17 @@ namespace OwinFramework.Pages.Html.Runtime
 
         int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
 
+        string IDataScopeProvider.ElementName
+        {
+            get { return _dataScopeProvider.ElementName; }
+            set { _dataScopeProvider.ElementName = value; }
+        }
+
+        IDataScopeProvider IDataScopeProvider.Clone()
+        {
+            return _dataScopeProvider.Clone();
+        }
+
         DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
         {
             return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
@@ -684,6 +695,8 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public DebugPage GetDebugInfo()
         {
+            _dataScopeProvider.ElementName = "Page " + Name;
+
             return new DebugPage
             {
                 Name = Name,

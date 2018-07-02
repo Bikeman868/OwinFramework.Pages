@@ -82,6 +82,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Builds the service
         /// </summary>
-        IService Build(Type type = null);
+        IService Build();
     }
 }

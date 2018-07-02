@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
@@ -52,6 +53,13 @@ namespace Sample1.SamplePackages
                 : base(dependencies) 
             { }
 
+            public override bool CanSatisfy(IDataDependency dependency)
+            {
+                return 
+                    dependency.DataType == typeof(IList<MenuItem>) && 
+                    string.Equals("submanu", dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
+            }
+
             public override void Satisfy(IRenderContext renderContext, IDataContext dataContext)
             {
                 var parent = dataContext.Get<MenuItem>();
@@ -73,7 +81,7 @@ namespace Sample1.SamplePackages
                 if (menuItem != null)
                 {
                     var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
-                    context.Html.WriteElement("a", menuItem.Name, "href", url);
+                    context.Html.WriteElementLine("a", menuItem.Name, "href", url);
                 }
                 return WriteResult.Continue();
             }
@@ -121,16 +129,17 @@ namespace Sample1.SamplePackages
             // This region is a container for the options on the main menu
             var mainMenuItemRegion = builder.Region()
                 .BindTo<MenuItem>()
+                .Tag("div")
                 .Component(menuItemComponent)
                 .Build();
 
             // This region is a container for the drop down menu items. It
             // renders one menu item component for each menu item in the sub-menu
             var dropDownMenuRegion = builder.Region()
-                .Tag("div")
+                .Tag("ul")
                 .ClassNames("{ns}_dropdown")
                 .DataProvider(subMenuDataProvider)
-                .ForEach<MenuItem>()
+                .ForEach<MenuItem>("li", null, "{ns}_option")
                 .Component(menuItemComponent)
                 .Build();
 

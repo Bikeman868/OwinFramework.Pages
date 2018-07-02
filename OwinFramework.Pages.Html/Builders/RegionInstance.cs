@@ -24,7 +24,7 @@ namespace OwinFramework.Pages.Html.Builders
             : base(parent)
         {
             _dependenciesFactory = dependenciesFactory;
-            _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create();
+            _dataScopeProvider = parent.Clone();
 
             content = content ?? parent.Content;
 
@@ -50,6 +50,8 @@ namespace OwinFramework.Pages.Html.Builders
         public DebugRegion GetDebugInfo()
         {
             var parentDebugInfo = Parent == null ? null : Parent.GetDebugInfo();
+
+            _dataScopeProvider.ElementName = "Region " + Name;
 
             var debugInfo = new DebugRegion
             {
@@ -94,6 +96,17 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IDataScopeProvider _dataScopeProvider;
 
         int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
+
+        string IDataScopeProvider.ElementName
+        {
+            get { return _dataScopeProvider.ElementName; }
+            set { _dataScopeProvider.ElementName = value; }
+        }
+
+        IDataScopeProvider IDataScopeProvider.Clone()
+        {
+            return _dataScopeProvider.Clone();
+        }
 
         DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
         {

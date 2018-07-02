@@ -32,6 +32,11 @@ namespace OwinFramework.Pages.Core.Interfaces
         DebugDataProvider GetDebugInfo();
 
         /// <summary>
+        /// Tests whether this data provider can satisfy the dependency
+        /// </summary>
+        bool CanSatisfy(IDataDependency dependency);
+
+        /// <summary>
         /// The runtime will call this for each page request that needs the
         /// type of data provided by this instance.
         /// </summary>

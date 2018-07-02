@@ -177,6 +177,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Builds the region
         /// </summary>
-        IRegion Build(Type type = null);
+        IRegion Build();
     }
 }

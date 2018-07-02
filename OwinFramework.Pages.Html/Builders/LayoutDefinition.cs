@@ -13,6 +13,7 @@ namespace OwinFramework.Pages.Html.Builders
 {
     public class LayoutDefinition : ILayoutDefinition
     {
+        private readonly Type _declaringType;
         private readonly INameManager _nameManager;
         private readonly BuiltLayout _layout;
         private readonly IHtmlHelper _htmlHelper;
@@ -79,12 +80,14 @@ namespace OwinFramework.Pages.Html.Builders
         }
 
         public LayoutDefinition(
+            Type declaringType,
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,
             ILayoutDependenciesFactory layoutDependenciesFactory,
             IPackage package)
         {
+            _declaringType = declaringType;
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
@@ -271,7 +274,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public ILayout Build(Type type)
+        public ILayout Build()
         {
             _nameManager.AddResolutionHandler(() =>
             {
@@ -306,7 +309,7 @@ namespace OwinFramework.Pages.Html.Builders
                 WriteClosingTag();
             });
 
-            return _fluentBuilder.Register(_layout, type);
+            return _fluentBuilder.Register(_layout, _declaringType);
         }
 
         private void AddRegionSet(RegionSet regionSet)

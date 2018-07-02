@@ -43,7 +43,9 @@ namespace OwinFramework.Pages.DebugMiddleware
 
         public Task Invoke(IOwinContext context, Func<Task> next)
         {
-            if (context.Request.Query["debug"] != "true") return next();
+            var debug = context.Request.Query["debug"];
+            if (string.IsNullOrEmpty(debug)) 
+                return next();
 
             var runable = _requestRouter.Route(context);
             if (runable == null)
@@ -53,6 +55,18 @@ namespace OwinFramework.Pages.DebugMiddleware
             }
 
             var debugInfo = runable.GetDebugInfo();
+
+            if (string.Equals("svg", debug))
+                return WriteSvg(context, debugInfo);
+
+            if (string.Equals("html", debug))
+                return WriteHtml(context, debugInfo);
+
+            if (string.Equals("xml", debug))
+                return WriteXml(context, debugInfo);
+
+            if (string.Equals("json", debug))
+                return WriteJson(context, debugInfo);
 
             var accept = context.Request.Accept;
 
@@ -232,23 +246,6 @@ namespace OwinFramework.Pages.DebugMiddleware
         {
             if (depth == 1) return;
 
-            if (dataScopeProvider.Parent != null)
-            {
-                html.WriteElementLine("p", "Parent scope");
-                StartIndent(html, true);
-                WriteDebugInfo(html, dataScopeProvider.Parent, depth - 1);
-                EndIndent(html);
-            }
-
-            if (dataScopeProvider.Children != null && dataScopeProvider.Children.Count > 0)
-            {
-                html.WriteElementLine("p", "Child scopes");
-                StartIndent(html, false);
-                foreach (var child in dataScopeProvider.Children)
-                    WriteDebugInfo(html, child, depth - 1);
-                EndIndent(html);
-            }
-
             if (dataScopeProvider.Scopes != null && dataScopeProvider.Scopes.Count > 0)
             {
                 html.WriteElementLine("p", "Scopes introduced");
@@ -274,6 +271,23 @@ namespace OwinFramework.Pages.DebugMiddleware
                 foreach (var provider in dataScopeProvider.DataProviders)
                     WriteDebugInfo(html, provider, depth - 1);
                 html.WriteCloseTag("ul");
+            }
+
+            if (dataScopeProvider.Parent != null)
+            {
+                html.WriteElementLine("p", "Parent scope");
+                StartIndent(html, true);
+                WriteDebugInfo(html, dataScopeProvider.Parent, depth - 1);
+                EndIndent(html);
+            }
+
+            if (dataScopeProvider.Children != null && dataScopeProvider.Children.Count > 0)
+            {
+                html.WriteElementLine("p", "Child scopes");
+                StartIndent(html, false);
+                foreach (var child in dataScopeProvider.Children)
+                    WriteDebugInfo(html, child, depth - 1);
+                EndIndent(html);
             }
         }
 

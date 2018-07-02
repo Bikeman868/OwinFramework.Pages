@@ -11,6 +11,7 @@ namespace OwinFramework.Pages.Html.Builders
 {
     public class RegionDefinition : IRegionDefinition
     {
+        private readonly Type _declaringType;
         private readonly INameManager _nameManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
@@ -24,12 +25,14 @@ namespace OwinFramework.Pages.Html.Builders
         private string[] _childClassNames;
 
         public RegionDefinition(
+            Type declaringType,
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,
             IRegionDependenciesFactory regionDependenciesFactory,
             IPackage package)
         {
+            _declaringType = declaringType;
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
@@ -120,6 +123,9 @@ namespace OwinFramework.Pages.Html.Builders
             _childTagName = tag;
             _childStyle = style;
             _childClassNames = classes;
+
+            ((IDataScopeProvider)_region).ElementIsProvider(_region.RepeatType, null);
+
             return this;
         }
 
@@ -129,6 +135,9 @@ namespace OwinFramework.Pages.Html.Builders
             _childTagName = tag;
             _childStyle = style;
             _childClassNames = classes;
+            
+            ((IDataScopeProvider)_region).ElementIsProvider(_region.RepeatType, null);
+            
             return this;
         }
 
@@ -206,7 +215,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegion IRegionDefinition.Build(Type type)
+        IRegion IRegionDefinition.Build()
         {
             if (!string.IsNullOrEmpty(_tagName))
             {
@@ -222,7 +231,7 @@ namespace OwinFramework.Pages.Html.Builders
                 _region.WriteChildClose = w => w.WriteCloseTag(_childTagName);
             }
 
-            return _fluentBuilder.Register(_region, type);
+            return _fluentBuilder.Register(_region, _declaringType);
         }
     }
 }

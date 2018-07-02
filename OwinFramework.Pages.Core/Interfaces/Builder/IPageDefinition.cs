@@ -197,6 +197,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Builds the page
         /// </summary>
-        IPage Build(Type type = null);
+        IPage Build();
     }
 }

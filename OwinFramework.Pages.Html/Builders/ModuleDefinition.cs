@@ -7,13 +7,16 @@ namespace OwinFramework.Pages.Html.Builders
 {
     internal class ModuleDefinition : IModuleDefinition
     {
+        private readonly Type _declaringType;
         private readonly IFluentBuilder _fluentBuilder;
         private readonly BuiltModule _module;
 
         public ModuleDefinition(
+            Type declaringType,
             IModuleDependenciesFactory moduleDependencies,
             IFluentBuilder fluentBuilder)
         {
+            _declaringType = declaringType;
             _fluentBuilder = fluentBuilder;
             _module = new BuiltModule(moduleDependencies);
         }
@@ -30,9 +33,9 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IModule Build(Type type)
+        public IModule Build()
         {
-            return _fluentBuilder.Register(_module, type);
+            return _fluentBuilder.Register(_module, _declaringType);
         }
     }
 }

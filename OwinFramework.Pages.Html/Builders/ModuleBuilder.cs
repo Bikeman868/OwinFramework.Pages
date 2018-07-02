@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Builder;
+﻿using System;
+using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 
 namespace OwinFramework.Pages.Html.Builders
@@ -16,9 +17,9 @@ namespace OwinFramework.Pages.Html.Builders
             _fluentBuilder = fluentBuilder;
         }
 
-        IModuleDefinition IModuleBuilder.Module()
+        IModuleDefinition IModuleBuilder.Module(Type declaringType)
         {
-            return new ModuleDefinition(_moduleDependenciesFactory, _fluentBuilder);
+            return new ModuleDefinition(declaringType, _moduleDependenciesFactory, _fluentBuilder);
         }
 
     }

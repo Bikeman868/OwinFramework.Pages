@@ -1,4 +1,6 @@
-﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
+﻿using System;
+
+namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// Use the region builder to construct regions using a fluent syntax
@@ -8,6 +10,6 @@
         /// <summary>
         /// Starts building a new region
         /// </summary>
-        IRegionDefinition Region(IPackage package = null);
+        IRegionDefinition Region(Type declaringType = null, IPackage package = null);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace OwinFramework.Pages.Core.Interfaces.Builder
+﻿using System;
+
+namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
     /// <summary>
     /// Use the layout builder to construct layouts using a fluent syntax
@@ -8,6 +10,6 @@
         /// <summary>
         /// Starts building a new layout
         /// </summary>
-        ILayoutDefinition Layout(IPackage package = null);
+        ILayoutDefinition Layout(Type declaringType = null, IPackage package = null);
     }
 }

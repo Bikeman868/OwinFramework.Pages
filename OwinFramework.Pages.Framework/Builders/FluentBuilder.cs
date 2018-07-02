@@ -200,25 +200,25 @@ namespace OwinFramework.Pages.Framework.Builders
 
         #region Entry points for fluently building various types of element
 
-        public IComponentDefinition Component(IPackage package)
+        public IComponentDefinition Component(Type declaringType, IPackage package)
         {
             if (ComponentBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build components");
-            return ComponentBuilder.Component(package ?? _packageContext);
+            return ComponentBuilder.Component(declaringType, package ?? _packageContext);
         }
 
-        public IRegionDefinition Region(IPackage package)
+        public IRegionDefinition Region(Type declaringType, IPackage package)
         {
             if (RegionBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build regions");
-            return RegionBuilder.Region(package ?? _packageContext);
+            return RegionBuilder.Region(declaringType, package ?? _packageContext);
         }
 
-        public ILayoutDefinition Layout(IPackage package)
+        public ILayoutDefinition Layout(Type declaringType, IPackage package)
         {
             if (LayoutBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build layouts");
-            return LayoutBuilder.Layout(package ?? _packageContext);
+            return LayoutBuilder.Layout(declaringType, package ?? _packageContext);
         }
 
         public IPageDefinition Page(Type declaringType, IPackage package)
@@ -235,11 +235,11 @@ namespace OwinFramework.Pages.Framework.Builders
             return ServiceBuilder.Service(declaringType, package ?? _packageContext);
         }
 
-        public IModuleDefinition Module()
+        public IModuleDefinition Module(Type declaringType)
         {
             if (ModuleBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build modules");
-            return ModuleBuilder.Module();
+            return ModuleBuilder.Module(declaringType);
         }
 
         #endregion
@@ -267,7 +267,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 module = factory(attributes.Type) as IModule;
 
             if (module == null)
-                return Module().Build(attributes.Type);
+                return Module(attributes.Type).Build();
 
             Configure(attributes, module);
             _nameManager.Register(module);
@@ -312,7 +312,7 @@ namespace OwinFramework.Pages.Framework.Builders
                         pageDefinition.NeedsComponent(component.ComponentName);
                 }
 
-                return pageDefinition.Build(attributes.Type);
+                return pageDefinition.Build();
             }
 
             Configure(attributes, page);
@@ -328,7 +328,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (layout == null)
             {
-                var layoutDefinition = Layout(_packageContext)
+                var layoutDefinition = Layout(attributes.Type, _packageContext)
                     .RegionNesting(attributes.IsLayout.RegionNesting);
 
                 if (attributes.Style != null)
@@ -373,7 +373,7 @@ namespace OwinFramework.Pages.Framework.Builders
                     foreach (var usesRegion in attributes.UsesRegions)
                         layoutDefinition.Region(usesRegion.RegionName, usesRegion.RegionElement);
 
-                return layoutDefinition.Build(attributes.Type);
+                return layoutDefinition.Build();
             }
 
             Configure(attributes, layout);
@@ -388,7 +388,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (region == null)
             {
-                var regionDefinition = Region(_packageContext);
+                var regionDefinition = Region(attributes.Type, _packageContext);
 
                 if (attributes.Style != null)
                 {
@@ -426,7 +426,7 @@ namespace OwinFramework.Pages.Framework.Builders
                     foreach(var usesComponent in attributes.UsesComponents)
                         regionDefinition.Component(usesComponent.ComponentName);
 
-                return regionDefinition.Build(attributes.Type);
+                return regionDefinition.Build();
             }
 
             Configure(attributes, region);
@@ -442,7 +442,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (component == null)
             {
-                var componentDefinition = Component(_packageContext);
+                var componentDefinition = Component(attributes.Type, _packageContext);
 
                 if (attributes.RenderHtmls != null)
                 {
@@ -468,7 +468,7 @@ namespace OwinFramework.Pages.Framework.Builders
                         attributes.DeployFunction.Body,
                         attributes.DeployFunction.IsPublic);
 
-                return componentDefinition.Build(attributes.Type);
+                return componentDefinition.Build();
             }
 
             Configure(attributes, component);
@@ -483,7 +483,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 service = factory(attributes.Type) as IService;
 
             if (service == null)
-                return Service(attributes.Type, _packageContext).Build(attributes.Type);
+                return Service(attributes.Type, _packageContext).Build();
 
             Configure(attributes, service);
             _nameManager.Register(service);
@@ -598,7 +598,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.IsRegion != null)
             {
                 if (!string.IsNullOrEmpty(attributes.IsRegion.Name))
-                    region.Name = attributes.IsRegion.Name;
+                    ((IElement)region).Name = attributes.IsRegion.Name;
             }
 
             if (attributes.UsesComponents != null)
@@ -680,7 +680,7 @@ namespace OwinFramework.Pages.Framework.Builders
                     {
                         if (string.IsNullOrEmpty(route.Path))
                             continue;
-                        _requestRouter.Register(runable, new FilterByPath(route.Path), route.Priority);
+                        _requestRouter.Register(runable, new FilterByPath(route.Path), route.Priority, attributes.Type);
                     }
                     else
                     {
@@ -692,7 +692,8 @@ namespace OwinFramework.Pages.Framework.Builders
                                 new FilterAllFilters(
                                     new FilterByMethod(route.Methods),
                                     new FilterByPath(route.Path)),
-                                route.Priority);
+                                route.Priority,
+                                attributes.Type);
                     }
                 }
             }

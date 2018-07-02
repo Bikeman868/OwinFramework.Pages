@@ -16,6 +16,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly INameManager _nameManager;
         private readonly IAssetManager _assetManager;
         private readonly IHtmlHelper _htmlHelper;
+        private readonly IFluentBuilder _fluentBuilder;
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly BuiltComponent _component;
         private readonly List<FunctionDefinition> _functionDefinitions;
@@ -48,12 +49,14 @@ namespace OwinFramework.Pages.Html.Builders
             INameManager nameManager,
             IAssetManager assetManager,
             IHtmlHelper htmlHelper,
+            IFluentBuilder fluentBuilder,
             IComponentDependenciesFactory componentDependenciesFactory,
             IPackage package)
         {
             _nameManager = nameManager;
             _assetManager = assetManager;
             _htmlHelper = htmlHelper;
+            _fluentBuilder = fluentBuilder;
             _componentDependenciesFactory = componentDependenciesFactory;
             _component = new BuiltComponent(componentDependenciesFactory);
             _cssDefinitions = new List<CssDefinition>();
@@ -191,7 +194,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IComponent Build()
+        public IComponent Build(Type type)
         {
             _component.CssRules = _cssDefinitions
                 .Select(d =>
@@ -242,9 +245,7 @@ namespace OwinFramework.Pages.Html.Builders
                     })
                 .ToList();
 
-            _nameManager.Register(_component);
-
-            return _component;
+            return _fluentBuilder.Register(_component, type);
         }
     }
 }

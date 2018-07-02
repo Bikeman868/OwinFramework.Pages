@@ -22,6 +22,13 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         string ScopeName { get; set; }
 
         /// <summary>
+        /// This flag is set when the elements adds this data to the
+        /// context during the rendering operation, therefore we do not need
+        /// to resolve a data provider
+        /// </summary>
+        bool IsProvidedByElement { get; set; }
+
+        /// <summary>
         /// Adds a new dependency if it matches this scope
         /// </summary>
         bool Add(IDataDependency dependency);

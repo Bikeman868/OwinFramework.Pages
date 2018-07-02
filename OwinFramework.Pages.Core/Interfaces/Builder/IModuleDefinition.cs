@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Enums;
+﻿using System;
+using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
@@ -21,6 +22,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Builds the module
         /// </summary>
-        IModule Build();
+        IModule Build(Type type = null);
     }
 }

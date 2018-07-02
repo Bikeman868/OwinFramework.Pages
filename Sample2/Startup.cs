@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Ioc.Modules;
 using Microsoft.Owin;
 using Ninject;
@@ -34,7 +35,7 @@ namespace Sample2
 
             var fluentBuilder = ninject.Get<IFluentBuilder>();
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
-            fluentBuilder.Register(Assembly.GetExecutingAssembly());
+            fluentBuilder.Register(Assembly.GetExecutingAssembly(), (Func<Type, object>)null);
 
             var nameManager = ninject.Get<INameManager>();
             nameManager.Bind();

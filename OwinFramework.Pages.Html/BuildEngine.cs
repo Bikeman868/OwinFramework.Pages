@@ -17,6 +17,7 @@ namespace OwinFramework.Pages.Html
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly IAssetManager _assetManager;
         private readonly IHtmlHelper _htmlHelper;
+        private readonly IFluentBuilder _fluentBuilder;
 
         public BuildEngine(
             IRequestRouter requestRouter,
@@ -27,7 +28,8 @@ namespace OwinFramework.Pages.Html
             IRegionDependenciesFactory regionDependenciesFactory,
             IComponentDependenciesFactory componentDependenciesFactory,
             IAssetManager assetManager,
-            IHtmlHelper htmlHelper)
+            IHtmlHelper htmlHelper,
+            IFluentBuilder fluentBuilder)
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
@@ -38,34 +40,39 @@ namespace OwinFramework.Pages.Html
             _componentDependenciesFactory = componentDependenciesFactory;
             _assetManager = assetManager;
             _htmlHelper = htmlHelper;
+            _fluentBuilder = fluentBuilder;
         }
 
         public void Install(IFluentBuilder builder)
         {
             builder.ModuleBuilder = new ModuleBuilder(
                 _moduleDependenciesFactory,
-                _nameManager);
+                _fluentBuilder);
 
             builder.PageBuilder = new PageBuilder(
                 _requestRouter,
                 _nameManager,
-                _pageDependenciesFactory);
+                _pageDependenciesFactory,
+                _fluentBuilder);
 
             builder.LayoutBuilder = new LayoutBuilder(
                 _nameManager,
                 _htmlHelper,
-                _layoutDependenciesFactory);
+                _layoutDependenciesFactory,
+                _fluentBuilder);
 
             builder.RegionBuilder = new RegionBuilder(
                 _nameManager,
                 _htmlHelper,
-                _regionDependenciesFactory);
+                _regionDependenciesFactory,
+                _fluentBuilder);
 
             builder.ComponentBuilder = new ComponentBuilder(
                 _nameManager,
                 _assetManager,
                 _htmlHelper,
-                _componentDependenciesFactory);
+                _componentDependenciesFactory,
+                _fluentBuilder);
         }
     }
 }

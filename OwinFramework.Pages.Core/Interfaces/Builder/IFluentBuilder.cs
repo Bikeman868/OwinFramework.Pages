@@ -42,7 +42,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Registeres a an element that was already constructed by the application
         /// </summary>
         /// <param name="element">The element type to register</param>
-        T Register<T>(T element);
+        /// <param name="type">The type from which this proxy was derrived or
+        /// null if this is not a proxy implementation</param>
+        T Register<T>(T element, Type type = null) where T: class;
 
         /// <summary>
         /// Defines how modules are built

@@ -15,20 +15,23 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly INameManager _nameManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
+        private readonly IFluentBuilder _fluentBuilder;
 
         public RegionBuilder(
             INameManager nameManager,
             IHtmlHelper htmlHelper,
-            IRegionDependenciesFactory regionDependenciesFactory)
+            IRegionDependenciesFactory regionDependenciesFactory,
+            IFluentBuilder fluentBuilder)
         {
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _regionDependenciesFactory = regionDependenciesFactory;
+            _fluentBuilder = fluentBuilder;
         }
 
         IRegionDefinition IRegionBuilder.Region(IPackage package)
         {
-            return new RegionDefinition(_nameManager, _htmlHelper, _regionDependenciesFactory, package);
+            return new RegionDefinition(_nameManager, _htmlHelper, _fluentBuilder, _regionDependenciesFactory, package);
         }
     }
 }

@@ -11,22 +11,26 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IAssetManager _assetManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
+        private readonly IFluentBuilder _fluentBuilder;
 
         public ComponentBuilder(
             INameManager nameManager,
             IAssetManager assetManager,
             IHtmlHelper htmlHelper,
-            IComponentDependenciesFactory componentDependenciesFactory)
+            IComponentDependenciesFactory componentDependenciesFactory,
+            IFluentBuilder fluentBuilder)
+
         {
             _nameManager = nameManager;
             _assetManager = assetManager;
             _htmlHelper = htmlHelper;
             _componentDependenciesFactory = componentDependenciesFactory;
+            _fluentBuilder = fluentBuilder;
         }
 
         IComponentDefinition IComponentBuilder.Component(IPackage package)
         {
-            return new ComponentDefinition(_nameManager, _assetManager, _htmlHelper, _componentDependenciesFactory, package);
+            return new ComponentDefinition(_nameManager, _assetManager, _htmlHelper, _fluentBuilder, _componentDependenciesFactory, package);
         }
     }
 }

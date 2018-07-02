@@ -127,15 +127,14 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void AddScope(Type type, string scopeName)
         {
-            if (_dataScopes.Any(s => 
-                (s.DataType == type) && 
-                (string.Equals(s.ScopeName, scopeName, StringComparison.InvariantCultureIgnoreCase))))
-                return;
-
-            var dataScope = _dataScopeFactory.Create(type, scopeName);
-            _dataScopes.Add(dataScope);
+            AddScope(type, scopeName, false);
         }
-        
+
+        public void ElementIsProvider(Type type, string scopeName)
+        {
+            AddScope(type, scopeName, true);
+        }
+
         public bool IsInScope(Type type, string scopeName)
         {
             if (type == null)
@@ -146,6 +145,18 @@ namespace OwinFramework.Pages.Framework.DataModel
                 (string.IsNullOrEmpty(s.ScopeName) || 
                  string.IsNullOrEmpty(scopeName) || 
                  string.Equals(s.ScopeName, scopeName, StringComparison.InvariantCultureIgnoreCase)));
+        }
+
+        public void AddScope(Type type, string scopeName, bool providedByElement)
+        {
+            if (_dataScopes.Any(s =>
+                (s.DataType == type) &&
+                (string.Equals(s.ScopeName, scopeName, StringComparison.InvariantCultureIgnoreCase))))
+                return;
+
+            var dataScope = _dataScopeFactory.Create(type, scopeName);
+            dataScope.IsProvidedByElement = providedByElement;
+            _dataScopes.Add(dataScope);
         }
 
         #endregion
@@ -159,7 +170,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void ResolveDataProviders(IList<IDataProvider> existingProviders)
         {
-            foreach (var dataScope in _dataScopes)
+            foreach (var dataScope in _dataScopes.Where(s => !s.IsProvidedByElement))
             {
                 foreach (var dependency in dataScope.Dependencies)
                 {

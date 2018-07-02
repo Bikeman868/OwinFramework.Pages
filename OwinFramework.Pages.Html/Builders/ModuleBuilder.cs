@@ -5,20 +5,20 @@ namespace OwinFramework.Pages.Html.Builders
 {
     internal class ModuleBuilder: IModuleBuilder
     {
-        private readonly INameManager _nameManager;
+        private readonly IFluentBuilder _fluentBuilder;
         private readonly IModuleDependenciesFactory _moduleDependenciesFactory;
 
         public ModuleBuilder(
             IModuleDependenciesFactory moduleDependenciesFactory,
-                INameManager nameManager)
+            IFluentBuilder fluentBuilder)
         {
             _moduleDependenciesFactory = moduleDependenciesFactory;
-            _nameManager = nameManager;
+            _fluentBuilder = fluentBuilder;
         }
 
         IModuleDefinition IModuleBuilder.Module()
         {
-            return new ModuleDefinition(_moduleDependenciesFactory, _nameManager);
+            return new ModuleDefinition(_moduleDependenciesFactory, _fluentBuilder);
         }
 
     }

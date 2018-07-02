@@ -8,6 +8,7 @@ namespace OwinFramework.Pages.Framework.DataModel
     {
         public Type DataType { get; set; }
         public string ScopeName { get; set; }
+        public bool IsProvidedByElement { get; set; }
 
         private readonly List<IDataDependency> _dependencies = new List<IDataDependency>();
 

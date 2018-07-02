@@ -138,6 +138,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Builds the module
         /// </summary>
-        IComponent Build();
+        IComponent Build(Type type = null);
     }
 }

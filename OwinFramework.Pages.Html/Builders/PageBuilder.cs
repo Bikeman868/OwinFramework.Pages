@@ -18,15 +18,18 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
         private readonly IPageDependenciesFactory _pageDependenciesFactory;
+        private readonly IFluentBuilder _fluentBuilder;
 
         public PageBuilder(
             IRequestRouter requestRouter,
             INameManager nameManager,
-            IPageDependenciesFactory pageDependenciesFactory)
+            IPageDependenciesFactory pageDependenciesFactory,
+            IFluentBuilder fluentBuilder)
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
             _pageDependenciesFactory = pageDependenciesFactory;
+            _fluentBuilder = fluentBuilder;
         }
 
         public IPageDefinition Page(Type declaringType, IPackage package)
@@ -35,6 +38,7 @@ namespace OwinFramework.Pages.Html.Builders
                 declaringType, 
                 _requestRouter, 
                 _nameManager,
+                _fluentBuilder,
                 _pageDependenciesFactory,
                 package);
         }

@@ -14,6 +14,7 @@ namespace OwinFramework.Pages.Html.Builders
     {
         private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
+        private readonly IFluentBuilder _fluentBuilder;
         private readonly BuiltPage _page;
         private readonly Type _declaringType;
 
@@ -21,12 +22,14 @@ namespace OwinFramework.Pages.Html.Builders
             Type declaringType,
             IRequestRouter requestRouter,
             INameManager nameManager,
+            IFluentBuilder fluentBuilder,
             IPageDependenciesFactory pageDependenciesFactory,
             IPackage package)
         {
             _declaringType = declaringType;
             _requestRouter = requestRouter;
             _nameManager = nameManager;
+            _fluentBuilder = fluentBuilder;
             _page = new BuiltPage(pageDependenciesFactory);
             _page.Package = package;
         }
@@ -245,10 +248,9 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPage IPageDefinition.Build()
+        IPage IPageDefinition.Build(Type type)
         {
-            _nameManager.Register(_page);
-            return _page;
+            return _fluentBuilder.Register(_page, type);
         }
     }
 }

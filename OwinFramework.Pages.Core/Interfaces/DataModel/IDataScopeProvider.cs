@@ -57,6 +57,17 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         void AddScope(Type type, string scopeName);
 
         /// <summary>
+        /// Tells the scope provider that rendering this element adds data
+        /// to the data context and therefore a data provider does not need
+        /// to be identified
+        /// </summary>
+        /// <param name="type">The type of data added when the element is
+        /// rendered</param>
+        /// <param name="scopeName">Optional scope name for data binding
+        /// ame resolution</param>
+        void ElementIsProvider(Type type, string scopeName);
+
+        /// <summary>
         /// Adds a data provider that should be executed when the data context
         /// is created
         /// </summary>

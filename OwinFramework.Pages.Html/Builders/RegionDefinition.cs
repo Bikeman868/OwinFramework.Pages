@@ -13,6 +13,7 @@ namespace OwinFramework.Pages.Html.Builders
     {
         private readonly INameManager _nameManager;
         private readonly IHtmlHelper _htmlHelper;
+        private readonly IFluentBuilder _fluentBuilder;
         private readonly BuiltRegion _region;
         private string _tagName = "div";
         private string _style;
@@ -25,11 +26,13 @@ namespace OwinFramework.Pages.Html.Builders
         public RegionDefinition(
             INameManager nameManager,
             IHtmlHelper htmlHelper,
+            IFluentBuilder fluentBuilder,
             IRegionDependenciesFactory regionDependenciesFactory,
             IPackage package)
         {
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
+            _fluentBuilder = fluentBuilder;
             _region = new BuiltRegion(regionDependenciesFactory);
             _region.Package = package;
         }
@@ -203,7 +206,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegion IRegionDefinition.Build()
+        IRegion IRegionDefinition.Build(Type type)
         {
             if (!string.IsNullOrEmpty(_tagName))
             {
@@ -219,9 +222,7 @@ namespace OwinFramework.Pages.Html.Builders
                 _region.WriteChildClose = w => w.WriteCloseTag(_childTagName);
             }
 
-            _nameManager.Register(_region);
-
-            return _region;
+            return _fluentBuilder.Register(_region, type);
         }
     }
 }

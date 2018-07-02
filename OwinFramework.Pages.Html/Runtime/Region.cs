@@ -190,6 +190,11 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.Add(dataProviderDefinition);
         }
 
+        bool IDataScopeProvider.CanSatisfyDependency(IDataDependency dependency)
+        {
+            return _dataScopeProvider.CanSatisfyDependency(dependency);
+        }
+
         void IDataScopeProvider.Add(IDataDependency dependency)
         {
             _dataScopeProvider.Add(dependency);

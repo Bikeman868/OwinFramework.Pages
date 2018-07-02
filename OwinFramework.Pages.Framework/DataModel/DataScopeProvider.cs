@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -195,13 +196,24 @@ namespace OwinFramework.Pages.Framework.DataModel
             SetupDataContext(renderContext);
         }
 
+        public bool CanSatisfyDependency(IDataDependency dependency)
+        {
+            return _dataScopes.Any(s => s.IsMatch(dependency) && s.IsProvidedByElement);
+        }
+
         public void Add(IDataDependency dependency)
         {
+            if (CanSatisfyDependency(dependency))
+                return;
+
             var existingDependencies = DataProviders;
 
             var parent = _parent;
             while (parent != null)
             {
+                if (parent.CanSatisfyDependency(dependency))
+                    return;
+
                 existingDependencies.AddRange(parent.DataProviders);
                 parent = parent.Parent;
             }
@@ -224,7 +236,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             var dataProviderRegistration = _dataCatalog.FindProvider(dependency);
 
             if (dataProviderRegistration == null)
-                throw new Exception("No data providers found that can supply missing data for " + dependency.ScopeName + " " + dependency.DataType);
+                throw new Exception("No data providers found that can supply missing data for " + dependency.ScopeName + " " + dependency.DataType.DisplayName());
 
             EnsureDependency(dataProviderRegistration, dependency, existingProviders);
         }

@@ -252,7 +252,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 package = factory(attributes.Type) as IPackage;
 
             if (package == null)
-                package = ((IPackageDefinition)new PackageDefinition(attributes.Type, this, _nameManager)).Build();
+                return ((IPackageDefinition)new PackageDefinition(attributes.Type, this, _nameManager)).Build();
 
             Configure(attributes, package);
             _nameManager.Register(package);
@@ -267,7 +267,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 module = factory(attributes.Type) as IModule;
 
             if (module == null)
-                module = Module().Build();
+                return Module().Build(attributes.Type);
 
             Configure(attributes, module);
             _nameManager.Register(module);
@@ -312,10 +312,12 @@ namespace OwinFramework.Pages.Framework.Builders
                         pageDefinition.NeedsComponent(component.ComponentName);
                 }
 
-                page = pageDefinition.Build();
+                return pageDefinition.Build(attributes.Type);
             }
 
             Configure(attributes, page);
+            _nameManager.Register(page);
+
             return page;
         }
 
@@ -371,7 +373,7 @@ namespace OwinFramework.Pages.Framework.Builders
                     foreach (var usesRegion in attributes.UsesRegions)
                         layoutDefinition.Region(usesRegion.RegionName, usesRegion.RegionElement);
 
-                layout = layoutDefinition.Build();
+                return layoutDefinition.Build(attributes.Type);
             }
 
             Configure(attributes, layout);
@@ -424,7 +426,7 @@ namespace OwinFramework.Pages.Framework.Builders
                     foreach(var usesComponent in attributes.UsesComponents)
                         regionDefinition.Component(usesComponent.ComponentName);
 
-                region = regionDefinition.Build();
+                return regionDefinition.Build(attributes.Type);
             }
 
             Configure(attributes, region);
@@ -466,7 +468,7 @@ namespace OwinFramework.Pages.Framework.Builders
                         attributes.DeployFunction.Body,
                         attributes.DeployFunction.IsPublic);
 
-                component = componentDefinition.Build();
+                return componentDefinition.Build(attributes.Type);
             }
 
             Configure(attributes, component);
@@ -481,9 +483,11 @@ namespace OwinFramework.Pages.Framework.Builders
                 service = factory(attributes.Type) as IService;
 
             if (service == null)
-                service = Service(attributes.Type, _packageContext).Build();
+                return Service(attributes.Type, _packageContext).Build(attributes.Type);
 
             Configure(attributes, service);
+            _nameManager.Register(service);
+
             return service;
         }
 
@@ -495,7 +499,7 @@ namespace OwinFramework.Pages.Framework.Builders
             //if (dataProvider == null)
             //{
             //    var dataProviderDefinition = DataProvider(attributes.Type, _packageContext).Build();
-            //    dataProvider = dataProviderDefinition.Build();
+            //    return dataProviderDefinition.Build(attributes.Type);
             //}
 
             //Configure(attributes, dataProvider);

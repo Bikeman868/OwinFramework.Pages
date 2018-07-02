@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.Managers
 {
@@ -16,10 +17,16 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         void Bind();
 
         /// <summary>
-        /// Registers the name of a component
+        /// Registers the name of an element
         /// </summary>
-        /// <param name="element">The component to register</param>
+        /// <param name="element">The element to register</param>
         void Register(IElement element);
+
+        /// <summary>
+        /// Registers the name of a runable
+        /// </summary>
+        /// <param name="runable">The runable to register</param>
+        void Register(IRunable runable);
 
         /// <summary>
         /// Registers the name of a module

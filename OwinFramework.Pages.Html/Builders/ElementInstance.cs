@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -77,19 +78,19 @@ namespace OwinFramework.Pages.Html.Builders
         public string Name
         {
             get { return Parent.Name; }
-            set { throw new InvalidOperationException("You can not name an instance " + typeof(T).Name); }
+            set { throw new InvalidOperationException("You can not name an instance " + typeof(T).DisplayName()); }
         }
 
         public IPackage Package
         {
             get { return Parent.Package; }
-            set { throw new InvalidOperationException("You can not set the package for an instance " + typeof(T).Name); }
+            set { throw new InvalidOperationException("You can not set the package for an instance " + typeof(T).DisplayName()); }
         }
 
         public IModule Module
         {
             get { return Parent.Module; }
-            set { throw new InvalidOperationException("You can not set the module for an instance " + typeof(T).Name); }
+            set { throw new InvalidOperationException("You can not set the module for an instance " + typeof(T).DisplayName()); }
         }
 
         public virtual IEnumerator<IElement> GetChildren()

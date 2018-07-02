@@ -4,6 +4,7 @@ using System.Linq;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.Managers
 {
@@ -67,6 +68,25 @@ namespace OwinFramework.Pages.Framework.Managers
 
             var service = element as IService;
             if (service != null) lock (_services) _services.Add(name, service);
+        }
+
+        public void Register(IRunable runable)
+        {
+            var page = runable as IPage;
+            if (page != null)
+            {
+                if (string.IsNullOrEmpty(page.Name))
+                    page.Name = GenerateElementName(page.Package);
+                lock (_pages) _pages.Add(page.Name, page);
+            }
+
+            var service = runable as IService;
+            if (service != null)
+            {
+                if (string.IsNullOrEmpty(service.Name))
+                    service.Name = GenerateElementName(service.Package);
+                lock (_services) _services.Add(service.Name, service);
+            }
         }
 
         public void Register(IModule module)

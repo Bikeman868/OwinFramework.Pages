@@ -91,6 +91,13 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         bool IsInScope(Type type, string scopeName);
 
         /// <summary>
+        /// Checks the scopes and data providers and returns a flag indicating
+        /// if a specific dependency is resolvable with this scope. Does not
+        /// check parehnt scopes.
+        /// </summary>
+        bool CanSatisfyDependency(IDataDependency dependency);
+
+        /// <summary>
         /// This should be called once only on the root to traverse the tree
         /// of data scope providers and populate their data providers
         /// by resolving dependencies in the data provider catalog.

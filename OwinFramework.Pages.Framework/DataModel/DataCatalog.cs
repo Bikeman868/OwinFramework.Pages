@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -123,19 +124,19 @@ namespace OwinFramework.Pages.Framework.DataModel
                 return this;
 
             if (!typeof(IDataProvider).IsAssignableFrom(dataProviderType))
-                throw new NotImplementedException(dataProviderType.FullName + 
+                throw new NotImplementedException(dataProviderType.DisplayName() + 
                     " can not be registered as a data provider because it does not implement the IDataProvider interface");
 
             var factoryInstance = factoryFunc(dataProviderType);
 
             if (factoryInstance == null)
-                throw new NotImplementedException(dataProviderType.FullName +
+                throw new NotImplementedException(dataProviderType.DisplayName() +
                     " can not be registered as a data provider because the factory function did not return an instance");
 
             var dataProvider = factoryInstance as IDataProvider;
 
             if (dataProvider == null)
-                throw new NotImplementedException(dataProviderType.FullName +
+                throw new NotImplementedException(dataProviderType.DisplayName() +
                     " can not be registered as a data provider because the instance constructed by the factory function does not implement IDataProvider");
 
             return Register(dataProvider);

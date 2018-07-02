@@ -436,13 +436,16 @@ namespace OwinFramework.Pages.Html.Runtime
                 context.Html.WriteLine();
             }
 
-            foreach(var module in _referencedModules)
+            if (_referencedModules != null)
             {
-                var moduleStylesUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Style);
-                if (moduleStylesUrl != null)
+                foreach (var module in _referencedModules)
                 {
-                    context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
-                    context.Html.WriteLine();
+                    var moduleStylesUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Style);
+                    if (moduleStylesUrl != null)
+                    {
+                        context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
+                        context.Html.WriteLine();
+                    }
                 }
             }
 
@@ -646,6 +649,11 @@ namespace OwinFramework.Pages.Html.Runtime
         void IDataScopeProvider.Add(IDataProviderDefinition dataProviderDefinition)
         {
             _dataScopeProvider.Add(dataProviderDefinition);
+        }
+
+        bool IDataScopeProvider.CanSatisfyDependency(IDataDependency dependency)
+        {
+            return _dataScopeProvider.CanSatisfyDependency(dependency);
         }
 
         void IDataScopeProvider.Add(IDataDependency dependency)

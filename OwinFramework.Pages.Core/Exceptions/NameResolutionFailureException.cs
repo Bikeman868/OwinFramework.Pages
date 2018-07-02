@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces;
+﻿using OwinFramework.Pages.Core.Extensions;
+using OwinFramework.Pages.Core.Interfaces;
 using System;
 
 namespace OwinFramework.Pages.Core.Exceptions
@@ -12,10 +13,10 @@ namespace OwinFramework.Pages.Core.Exceptions
         /// Constructs a builder exception
         /// </summary>
         public NameResolutionFailureException(Type elementType, IPackage package, string name) 
-            : base("Failed to resolve " + elementType.Name + " '" + name + "' from " + 
+            : base("Failed to resolve " + elementType.DisplayName() + " '" + name + "' from " + 
                 (package == null 
                     ? "global namespace" 
-                    : package.Name + " package with namespace '"+package.NamespaceName+"'"))
+                    : package.Name + " package with namespace '" + package.NamespaceName+"'"))
         { }
     }
 }

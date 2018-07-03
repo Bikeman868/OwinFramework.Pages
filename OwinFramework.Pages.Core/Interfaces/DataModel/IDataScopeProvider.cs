@@ -116,13 +116,13 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <param name="existingProviders">A list of data providers already
         /// added to the context by ancestors that should not be added
         /// again here</param>
-        void ResolveDataProviders(IList<IDataProvider> existingProviders);
+        void ResolveDataProviders(IList<IDataProviderDefinition> existingProviders);
 
         /// <summary>
         /// Returns a list of the data providers that will execute when
         /// a data context is established for this scope
         /// </summary>
-        List<IDataProvider> DataProviders { get; }
+        List<IDataProviderDefinition> DataProviders { get; }
 
         /// <summary>
         /// This should only be called on the root, it recursively traverses the

@@ -397,6 +397,13 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteElementLine("p", "Region inherits from " + region.InstanceOf.Name + " region");
             }
 
+            if (region.RepeatType != null)
+            {
+                html.WriteElementLine("p", 
+                    "Repeat region for each " + region.RepeatType.DisplayName() + 
+                    (string.IsNullOrEmpty(region.RepeatScope) ? string.Empty : " in " + region.RepeatScope + "scope"));
+            }
+
             if (region.Scope != null)
             {
                 if ((region.Scope.Scopes != null && region.Scope.Scopes.Count > 0) ||

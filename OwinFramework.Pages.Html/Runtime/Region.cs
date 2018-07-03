@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
@@ -25,6 +26,26 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IElement Content { get; protected set; }
 
+        public Action<IHtmlWriter> WriteOpen { get; set; }
+        public Action<IHtmlWriter> WriteClose { get; set; }
+        public Action<IHtmlWriter> WriteChildOpen { get; set; }
+        public Action<IHtmlWriter> WriteChildClose { get; set; }
+
+        private Type _repeatType;
+        private Type _listType;
+
+        public string RepeatScope { get; set; }
+
+        public Type RepeatType
+        {
+            get { return _repeatType; }
+            set
+            {
+                _repeatType = value;
+                _listType = typeof(IList<>).MakeGenericType(value);
+            }
+        }
+
         /// <summary>
         /// Do not change this constructor signature, it will break application
         /// classes that inherit from this class. Add dependencies to
@@ -39,6 +60,11 @@ namespace OwinFramework.Pages.Html.Runtime
 
             _regionDependenciesFactory = dependencies;
             _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
+
+            WriteOpen = w => { };
+            WriteClose = w => { };
+            WriteChildOpen = w => { };
+            WriteChildClose = w => { };
         }
 
         public override void Initialize(IInitializationData initializationData)
@@ -59,7 +85,9 @@ namespace OwinFramework.Pages.Html.Runtime
             var debugInfo = new DebugRegion
             { 
                 Content = Content == null ? null : Content.GetDebugInfo(),
-                Scope = _dataScopeProvider.GetDebugInfo(-1, 2)
+                Scope = _dataScopeProvider.GetDebugInfo(-1, 2),
+                RepeatScope = RepeatScope,
+                RepeatType = RepeatType
             };
             PopulateDebugInfo(debugInfo);
             return debugInfo;
@@ -93,12 +121,32 @@ namespace OwinFramework.Pages.Html.Runtime
             IRenderContext context,
             IElement content)
         {
-            if (content == null) return WriteResult.Continue();
-
+            var result = WriteResult.Continue();
             var savedData = SelectDataContext(context);
-            var result = content.WriteHtml(context);
-            context.Data = savedData;
 
+            WriteOpen(context.Html);
+
+            if (content != null)
+            {
+                if (_repeatType == null)
+                {
+                    result.Add(content.WriteHtml(context));
+                }
+                else
+                {
+                    var list = (IEnumerable)context.Data.Get(_listType, RepeatScope);
+                    foreach (var item in list)
+                    {
+                        context.Data.Set(_repeatType, item);
+                        WriteChildOpen(context.Html);
+                        result.Add(content.WriteHtml(context));
+                        WriteChildClose(context.Html);
+                    }
+                }
+            }
+
+            WriteClose(context.Html);
+            context.Data = savedData;
             return result;
         }
 
@@ -211,12 +259,12 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.Add(dependency);
         }
 
-        void IDataScopeProvider.ResolveDataProviders(IList<IDataProvider> existingProviders)
+        void IDataScopeProvider.ResolveDataProviders(IList<IDataProviderDefinition> existingProviders)
         {
             _dataScopeProvider.ResolveDataProviders(existingProviders);
         }
 
-        List<IDataProvider> IDataScopeProvider.DataProviders
+        List<IDataProviderDefinition> IDataScopeProvider.DataProviders
         {
             get { return _dataScopeProvider.DataProviders; }
         }

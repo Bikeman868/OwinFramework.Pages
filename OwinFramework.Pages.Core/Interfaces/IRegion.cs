@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Debug;
+﻿using System;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -19,6 +20,17 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Retrieves the contents of this region
         /// </summary>
         IElement Content { get; }
+
+        /// <summary>
+        /// The scope name used to resolve data references in the 
+        /// repeated data
+        /// </summary>
+        string RepeatScope { get; set; }
+
+        /// <summary>
+        /// The type of data to repeat
+        /// </summary>
+        Type RepeatType { get; set; }
 
         /// <summary>
         /// Constructs an element that is the result of puttting the

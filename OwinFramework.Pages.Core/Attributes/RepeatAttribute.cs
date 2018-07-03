@@ -12,10 +12,11 @@ namespace OwinFramework.Pages.Core.Attributes
         /// Constructs and initializes an attribute that defines how the region repeats
         /// </summary>
         /// <param name="itemType">The type of data to repeat</param>
+        /// <param name="scopeName">Scope name used to resolve data reference</param>
         /// <param name="tag">The tag to use to enclose the contents of this element</param>
         /// <param name="style">Custom css style to apply</param>
         /// <param name="classNames">Css class names to apply</param>
-        public RepeatAttribute(Type itemType, string tag = "div", string style = "", params string[] classNames)
+        public RepeatAttribute(Type itemType, string scopeName, string tag = "div", string style = "", params string[] classNames)
         {
             ItemType = itemType;
             Tag = tag;

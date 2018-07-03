@@ -117,9 +117,11 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.ForEach<T>(string tag, string style, params string[] classes)
+        IRegionDefinition IRegionDefinition.ForEach<T>(string scopeName, string tag, string style, params string[] classes)
         {
             _region.RepeatType = typeof(T);
+            _region.RepeatScope = scopeName;
+
             _childTagName = tag;
             _childStyle = style;
             _childClassNames = classes;
@@ -129,9 +131,11 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.ForEach(Type dataType, string tag, string style, params string[] classes)
+        IRegionDefinition IRegionDefinition.ForEach(Type dataType, string scopeName, string tag, string style, params string[] classes)
         {
             _region.RepeatType = dataType;
+            _region.RepeatScope = scopeName;
+
             _childTagName = tag;
             _childStyle = style;
             _childClassNames = classes;
@@ -145,7 +149,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             var dataScope = _region as IDataScopeProvider;
             if (dataScope != null)
-                dataScope.AddScope(null, scopeName);
+                dataScope.AddScope(type, scopeName);
             return this;
         }
 

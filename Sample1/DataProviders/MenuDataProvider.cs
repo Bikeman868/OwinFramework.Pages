@@ -8,7 +8,7 @@ using Sample1.SamplePackages;
 
 namespace Sample1.DataProviders
 {
-    [IsDataProvider(typeof(IList<MenuPackage.MenuItem>))]
+    [IsDataProvider("menu", typeof(IList<MenuPackage.MenuItem>))]
     public class MenuDataProvider: DataProvider
     {
         public MenuDataProvider(IDataProviderDependenciesFactory dependencies) 

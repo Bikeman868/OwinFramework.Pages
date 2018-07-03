@@ -118,11 +118,17 @@ namespace OwinFramework.Pages.Framework.DataModel
                 Dependencies = _dataScopes.Select(
                     s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.FullName))
                     .ToList(),
-                DataProviders = DataProviders.Select(
+                DataProviders = _dataProviderDefinitions.Select(
                     dp => new DebugDataProvider 
                     { 
-                        Name = dp.Name,
-                        Instance = dp
+                        Name = dp.DataProvider.Name,
+                        Instance = dp.DataProvider,
+                        Package = dp.DataProvider.Package == null
+                            ? null
+                            : dp.DataProvider.Package.GetDebugInfo(),
+                        Dependency = dp.Dependency == null 
+                            ? null
+                            : dp.Dependency.DataType.DisplayName() + dp.Dependency.ScopeName
                     }).ToList()
             };
         }
@@ -192,12 +198,12 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         #region Data providers
 
-        public List<IDataProvider> DataProviders
+        public List<IDataProviderDefinition> DataProviders
         {
-            get { return _dataProviderDefinitions.Select(dp => dp.DataProvider).ToList(); }
+            get { lock(_dataProviderDefinitions) return _dataProviderDefinitions.ToList(); }
         }
 
-        public void ResolveDataProviders(IList<IDataProvider> existingProviders)
+        public void ResolveDataProviders(IList<IDataProviderDefinition> existingProviders)
         {
             foreach (var dataScope in _dataScopes.Where(s => !s.IsProvidedByElement))
             {
@@ -207,8 +213,11 @@ namespace OwinFramework.Pages.Framework.DataModel
                 }
             }
 
-            if (_dataProviderDefinitions.Count > 0)
-                existingProviders = existingProviders.Concat(_dataProviderDefinitions.Select(d => d.DataProvider)).ToList();
+            lock (_dataProviderDefinitions)
+            {
+                if (_dataProviderDefinitions.Count > 0)
+                    existingProviders = existingProviders.Concat(_dataProviderDefinitions).ToList();
+            }
 
             foreach (var child in _children)
             {
@@ -267,7 +276,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             _dataProviderDefinitions.Add(dataProviderDefinition);
         }
 
-        private void EnsureDependency(IDataDependency dependency, IList<IDataProvider> existingProviders)
+        private void EnsureDependency(IDataDependency dependency, IList<IDataProviderDefinition> existingProviders)
         {
             var dataProviderRegistration = _dataCatalog.FindProvider(dependency);
 
@@ -277,11 +286,11 @@ namespace OwinFramework.Pages.Framework.DataModel
             EnsureDependency(dataProviderRegistration, dependency, existingProviders);
         }
 
-        private void EnsureDependency(IDataProviderRegistration dataProviderRegistration, IDataDependency dependency, IList<IDataProvider> existingProviders)
+        private void EnsureDependency(IDataProviderRegistration dataProviderRegistration, IDataDependency dependency, IList<IDataProviderDefinition> existingProviders)
         {
             if (dataProviderRegistration == null) return;
 
-            if (existingProviders.Any(p => p == dataProviderRegistration.DataProvider))
+            if (existingProviders.Any(p => p.DataProvider == dataProviderRegistration.DataProvider))
                 return;
 
             Add(_dataProviderDefinitionFactory.Create(dataProviderRegistration.DataProvider, dependency));
@@ -290,7 +299,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             {
                 foreach (var dependent in dataProviderRegistration.DependentProviders)
                 {
-                    if (existingProviders.All(p => p != dataProviderRegistration.DataProvider))
+                    if (existingProviders.All(p => p.DataProvider != dataProviderRegistration.DataProvider))
                         Add(_dataProviderDefinitionFactory.Create(dependent));
                 }
             }

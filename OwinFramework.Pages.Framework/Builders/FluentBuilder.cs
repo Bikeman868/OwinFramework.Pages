@@ -399,6 +399,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 if (attributes.Repeat != null)
                     regionDefinition.ForEach(
                         attributes.Repeat.ItemType, 
+                        attributes.Repeat.ScopeName,
                         attributes.Repeat.Tag, 
                         attributes.Repeat.Style, 
                         attributes.Repeat.ClassNames);
@@ -598,7 +599,16 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.IsRegion != null)
             {
                 if (!string.IsNullOrEmpty(attributes.IsRegion.Name))
-                    ((IElement)region).Name = attributes.IsRegion.Name;
+                    region.Name = attributes.IsRegion.Name;
+            }
+
+            if (attributes.Repeat != null)
+            {
+                region.RepeatScope = attributes.Repeat.ScopeName;
+                region.RepeatType = attributes.Repeat.ItemType;
+                region.RepeatType = attributes.Repeat.ItemType;
+                region.RepeatType = attributes.Repeat.ItemType;
+                region.RepeatType = attributes.Repeat.ItemType;
             }
 
             if (attributes.UsesComponents != null)

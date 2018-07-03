@@ -56,8 +56,8 @@ namespace Sample1.SamplePackages
             public override bool CanSatisfy(IDataDependency dependency)
             {
                 return 
-                    dependency.DataType == typeof(IList<MenuItem>) && 
-                    string.Equals("submanu", dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
+                    dependency.DataType == typeof(IList<MenuItem>) &&
+                    string.Equals("submenu", dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
             }
 
             public override void Satisfy(IRenderContext renderContext, IDataContext dataContext)
@@ -78,6 +78,26 @@ namespace Sample1.SamplePackages
                 bool includeChildren)
             {
                 var menuItem = context.Data.Get<MenuItem>();
+                if (menuItem != null)
+                {
+                    var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
+                    context.Html.WriteElementLine("a", menuItem.Name, "href", url);
+                }
+                return WriteResult.Continue();
+            }
+        }
+
+        [NeedsData(typeof(MenuItem), "submenu")]
+        private class SubMenuItemComponent : Component
+        {
+            public SubMenuItemComponent(IComponentDependenciesFactory dependencies)
+                : base(dependencies) { }
+
+            public override IWriteResult WriteHtml(
+                IRenderContext context,
+                bool includeChildren)
+            {
+                var menuItem = context.Data.Get<MenuItem>("submenu");
                 if (menuItem != null)
                 {
                     var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
@@ -112,10 +132,17 @@ namespace Sample1.SamplePackages
 
         public override IPackage Build(IFluentBuilder builder)
         {
-            // This component displays a menu item
-            var menuItemComponent = builder.Register(
+            // This component displays a main menu item
+            var mainMenuItemComponent = builder.Register(
                 new MenuItemComponent(_dependencies.ComponentDependenciesFactory) 
                 { 
+                    Package = this
+                });
+
+            // This component displays a main menu item
+            var subMenuItemComponent = builder.Register(
+                new SubMenuItemComponent(_dependencies.ComponentDependenciesFactory)
+                {
                     Package = this
                 });
 
@@ -130,7 +157,7 @@ namespace Sample1.SamplePackages
             var mainMenuItemRegion = builder.Region()
                 .BindTo<MenuItem>()
                 .Tag("div")
-                .Component(menuItemComponent)
+                .Component(mainMenuItemComponent)
                 .Build();
 
             // This region is a container for the drop down menu items. It
@@ -139,8 +166,8 @@ namespace Sample1.SamplePackages
                 .Tag("ul")
                 .ClassNames("{ns}_dropdown")
                 .DataProvider(subMenuDataProvider)
-                .ForEach<MenuItem>("li", null, "{ns}_option")
-                .Component(menuItemComponent)
+                .ForEach<MenuItem>("submenu", "li", null, "{ns}_option")
+                .Component(subMenuItemComponent)
                 .Build();
 
             // This layout defines the main menu option and the sub-menu that

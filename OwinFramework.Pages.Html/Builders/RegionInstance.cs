@@ -14,6 +14,18 @@ namespace OwinFramework.Pages.Html.Builders
     {
         public ElementType ElementType { get { return ElementType.Region; } }
 
+        public string RepeatScope 
+        { 
+            get { return Parent.RepeatScope; }
+            set { throw new InvalidOperationException("You can not set the repeat scope on a region instance"); }
+         }
+
+        public Type RepeatType
+        {
+            get { return Parent.RepeatType; }
+            set { throw new InvalidOperationException("You can not set the repeat type on region instance"); }
+        }
+
         private readonly IRegionDependenciesFactory _dependenciesFactory;
         private IElement _content;
 
@@ -31,7 +43,9 @@ namespace OwinFramework.Pages.Html.Builders
             var layout = content as ILayout;
             var region = content as IRegion;
 
-            _content = layout == null ? (region == null ? content : region.CreateInstance(null)) : layout.CreateInstance();
+            _content = layout == null 
+                ? (region == null ? content 
+                : region.CreateInstance(null)) : layout.CreateInstance();
         }
 
         public override void Initialize(IInitializationData initializationData)
@@ -58,7 +72,9 @@ namespace OwinFramework.Pages.Html.Builders
                 Type = "Instance of region",
                 Content = _content == null ? null : _content.GetDebugInfo(),
                 InstanceOf = parentDebugInfo,
-                Scope = _dataScopeProvider.GetDebugInfo(-1, 1)
+                Scope = _dataScopeProvider.GetDebugInfo(-1, 1),
+                RepeatScope = RepeatScope,
+                RepeatType = RepeatType
             };
             PopulateDebugInfo(debugInfo);
             return debugInfo;
@@ -168,12 +184,12 @@ namespace OwinFramework.Pages.Html.Builders
             _dataScopeProvider.Add(dependency);
         }
 
-        void IDataScopeProvider.ResolveDataProviders(IList<IDataProvider> existingProviders)
+        void IDataScopeProvider.ResolveDataProviders(IList<IDataProviderDefinition> existingProviders)
         {
             _dataScopeProvider.ResolveDataProviders(existingProviders);
         }
 
-        List<IDataProvider> IDataScopeProvider.DataProviders
+        List<IDataProviderDefinition> IDataScopeProvider.DataProviders
         {
             get { return _dataScopeProvider.DataProviders; }
         }

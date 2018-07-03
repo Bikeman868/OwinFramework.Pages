@@ -672,12 +672,12 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.Add(dependency);
         }
 
-        void IDataScopeProvider.ResolveDataProviders(IList<IDataProvider> existingProviders)
+        void IDataScopeProvider.ResolveDataProviders(IList<IDataProviderDefinition> existingProviders)
         {
             _dataScopeProvider.ResolveDataProviders(existingProviders);
         }
 
-        List<IDataProvider> IDataScopeProvider.DataProviders
+        List<IDataProviderDefinition> IDataScopeProvider.DataProviders
         {
             get { return _dataScopeProvider.DataProviders; }
         }

@@ -97,15 +97,53 @@ namespace OwinFramework.Pages.Html.Builders
             return _content == null ? null : _content.AsEnumerable().GetEnumerator();
         }
 
-        public IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
+        #region IElement rendering methods
+
+        public new IWriteResult WriteHead(IRenderContext context, bool includeChildren)
         {
-            return Parent.WriteHtml(context, includeChildren ? _content : null);
+            return Parent.WriteHead(context, _dataScopeProvider, includeChildren);
         }
 
-        public IWriteResult WriteHtml(IRenderContext context, IElement content)
+        public IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
-            return Parent.WriteHtml(context, content);
+            return Parent.WriteHtml(context, _dataScopeProvider, includeChildren ? _content : null);
         }
+
+        public new IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
+        {
+            return Parent.WriteInitializationScript(context, _dataScopeProvider, includeChildren);
+        }
+
+        public new IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
+        {
+            return Parent.WriteTitle(context, _dataScopeProvider, includeChildren);
+        }
+
+        #endregion
+
+        #region IRegion specific rendering methods
+
+        public IWriteResult WriteHead(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
+        {
+            return Parent.WriteHead(context, scope, includeChildren);
+        }
+
+        public IWriteResult WriteHtml(IRenderContext context, IDataScopeProvider scope, IElement content)
+        {
+            return Parent.WriteHtml(context, scope, content);
+        }
+
+        public IWriteResult WriteInitializationScript(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
+        {
+            return Parent.WriteInitializationScript(context, scope, includeChildren);
+        }
+
+        public IWriteResult WriteTitle(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
+        {
+            return Parent.WriteTitle(context, scope, includeChildren);
+        }
+
+        #endregion
 
         #region IDataScopeProvider
 
@@ -129,9 +167,9 @@ namespace OwinFramework.Pages.Html.Builders
             return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
         }
 
-        bool IDataScopeProvider.IsInScope(Type type, string scopeName)
+        bool IDataScopeProvider.IsInScope(IDataDependency dependency)
         {
-            return _dataScopeProvider.IsInScope(type, scopeName);
+            return _dataScopeProvider.IsInScope(dependency);
         }
 
         void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
@@ -174,24 +212,9 @@ namespace OwinFramework.Pages.Html.Builders
             _dataScopeProvider.Add(dataProviderDefinition);
         }
 
-        bool IDataScopeProvider.CanSatisfyDependency(IDataDependency dependency)
-        {
-            return _dataScopeProvider.CanSatisfyDependency(dependency);
-        }
-
         void IDataScopeProvider.Add(IDataDependency dependency)
         {
             _dataScopeProvider.Add(dependency);
-        }
-
-        void IDataScopeProvider.ResolveDataProviders(IList<IDataProviderDefinition> existingProviders)
-        {
-            _dataScopeProvider.ResolveDataProviders(existingProviders);
-        }
-
-        List<IDataProviderDefinition> IDataScopeProvider.DataProviders
-        {
-            get { return _dataScopeProvider.DataProviders; }
         }
 
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
@@ -200,5 +223,7 @@ namespace OwinFramework.Pages.Html.Builders
         }
 
         #endregion
+
+
     }
 }

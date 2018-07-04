@@ -97,32 +97,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// Used to determine if the particular type is available from this
         /// scope provider.
         /// </summary>
-        /// <param name="type">The type of data we are looking for</param>
-        /// <param name="scopeName">The name of the scope for this data</param>
-        bool IsInScope(Type type, string scopeName);
-
-        /// <summary>
-        /// Checks the scopes and data providers and returns a flag indicating
-        /// if a specific dependency is resolvable with this scope. Does not
-        /// check parehnt scopes.
-        /// </summary>
-        bool CanSatisfyDependency(IDataDependency dependency);
-
-        /// <summary>
-        /// This should be called once only on the root to traverse the tree
-        /// of data scope providers and populate their data providers
-        /// by resolving dependencies in the data provider catalog.
-        /// </summary>
-        /// <param name="existingProviders">A list of data providers already
-        /// added to the context by ancestors that should not be added
-        /// again here</param>
-        void ResolveDataProviders(IList<IDataProviderDefinition> existingProviders);
-
-        /// <summary>
-        /// Returns a list of the data providers that will execute when
-        /// a data context is established for this scope
-        /// </summary>
-        List<IDataProviderDefinition> DataProviders { get; }
+        /// <param name="dependency">The type of data we are looking for</param>
+        bool IsInScope(IDataDependency dependency);
 
         /// <summary>
         /// This should only be called on the root, it recursively traverses the

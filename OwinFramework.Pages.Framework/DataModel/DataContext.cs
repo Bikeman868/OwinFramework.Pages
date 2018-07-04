@@ -94,7 +94,15 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public object Get(Type type, string scopeName, bool isRequired)
         {
-            if (string.IsNullOrEmpty(scopeName) || (_scope != null && _scope.IsInScope(type, scopeName)))
+            var isInScope = string.IsNullOrEmpty(scopeName);
+
+            if (!isInScope && _scope != null)
+            {
+                var dependency = _dataDependencyFactory.Create(type, scopeName);
+                isInScope = _scope.IsInScope(dependency);
+            }
+
+            if (isInScope)
             {
                 var retry = false;
                 while (true)

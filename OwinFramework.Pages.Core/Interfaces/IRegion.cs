@@ -63,12 +63,36 @@ namespace OwinFramework.Pages.Core.Interfaces
         bool IsInstance { get; }
 
         /// <summary>
-        /// Writes the html for this region with specific content inside
+        /// Writes the page head with a specific data scope
         /// </summary>
-        /// <param name="context">The context to render into</param>
-        /// <param name="content">The element to render inside the region</param>
+        IWriteResult WriteHead(
+            IRenderContext context, 
+            IDataScopeProvider scope,
+            bool includeChildren);
+
+        /// <summary>
+        /// Writes the html for this region with specific content inside and
+        /// a specific data scpoe
+        /// </summary>
         IWriteResult WriteHtml(
             IRenderContext context, 
+            IDataScopeProvider scope,
             IElement content);
+
+        /// <summary>
+        /// Writes the page initialization script with a specific data scope
+        /// </summary>
+        IWriteResult WriteInitializationScript(
+            IRenderContext context,
+            IDataScopeProvider scope,
+            bool includeChildren);
+
+        /// <summary>
+        /// Writes the page title with a specific data scope
+        /// </summary>
+        IWriteResult WriteTitle(
+            IRenderContext context,
+            IDataScopeProvider scope,
+            bool includeChildren);
     }
 }

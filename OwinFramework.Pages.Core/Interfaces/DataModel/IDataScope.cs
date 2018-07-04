@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
 {
@@ -27,17 +26,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// to resolve a data provider
         /// </summary>
         bool IsProvidedByElement { get; set; }
-
-        /// <summary>
-        /// Adds a new dependency if it matches this scope
-        /// </summary>
-        bool Add(IDataDependency dependency);
-
-        /// <summary>
-        /// This is  a list of element dependencies that match this scope
-        /// and therefore need to be added to the data context at runtime
-        /// </summary>
-        IList<IDataDependency> Dependencies { get; }
 
         /// <summary>
         /// Determines if this data scope can satisfy an element's data dependency

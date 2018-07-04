@@ -46,6 +46,8 @@ namespace OwinFramework.Pages.Html.Runtime
             }
         }
 
+        #region Construction and initialization
+
         /// <summary>
         /// Do not change this constructor signature, it will break application
         /// classes that inherit from this class. Add dependencies to
@@ -75,6 +77,10 @@ namespace OwinFramework.Pages.Html.Runtime
             initializationData.Pop();
         }
 
+        #endregion
+
+        #region Debug info
+
         DebugElement IElement.GetDebugInfo()
         {
             return GetDebugInfo();
@@ -93,6 +99,8 @@ namespace OwinFramework.Pages.Html.Runtime
             return debugInfo;
         }
 
+        #endregion
+
         public virtual void Populate(IElement content)
         {
             Content = content;
@@ -110,19 +118,34 @@ namespace OwinFramework.Pages.Html.Runtime
                 : Content.AsEnumerable().GetEnumerator();
         }
 
-        protected IDataContext SelectDataContext(IRenderContext context)
+        #region Methods called by region instances to render content
+
+        protected IDataContext SelectDataContext(IRenderContext context, IDataScopeProvider scope)
         {
             var data = context.Data;
-            context.SelectDataContext(_dataScopeProvider.Id);
+            context.SelectDataContext(scope.Id);
             return data;
+        }
+
+        public virtual IWriteResult WriteHead(
+            IRenderContext context, 
+            IDataScopeProvider scope,
+            bool includeChildren)
+        {
+            var savedData = SelectDataContext(context, scope);
+            var result = base.WriteHead(context, includeChildren);
+            context.Data = savedData;
+
+            return result;
         }
 
         public virtual IWriteResult WriteHtml(
             IRenderContext context,
+            IDataScopeProvider scope,
             IElement content)
         {
             var result = WriteResult.Continue();
-            var savedData = SelectDataContext(context);
+            var savedData = SelectDataContext(context, scope);
 
             WriteOpen(context.Html);
 
@@ -150,40 +173,58 @@ namespace OwinFramework.Pages.Html.Runtime
             return result;
         }
 
-        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
+        public virtual IWriteResult WriteInitializationScript(
+            IRenderContext context,
+            IDataScopeProvider scope,
+            bool includeChildren)
         {
-            var savedData = SelectDataContext(context);
-            var result = base.WriteHead(context, includeChildren);
+            var savedData = SelectDataContext(context, scope);
+            var result = base.WriteInitializationScript(context, includeChildren);
             context.Data = savedData;
 
             return result;
+        }
+
+        public virtual IWriteResult WriteTitle(
+            IRenderContext context,
+            IDataScopeProvider scope,
+            bool includeChildren)
+        {
+            var savedData = SelectDataContext(context, scope);
+            var result = base.WriteTitle(context, includeChildren);
+            context.Data = savedData;
+
+            return result;
+        }
+
+        #endregion
+
+        #region Overrides for base class render methods
+
+        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
+        {
+            return WriteHead(context, _dataScopeProvider, includeChildren);
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
-            return WriteHtml(context, includeChildren ? Content : null);
+            return WriteHtml(context, _dataScopeProvider, includeChildren ? Content : null);
         }
 
         public override IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
         {
-            var savedData = SelectDataContext(context);
-            var result = base.WriteInitializationScript(context, includeChildren);
-            context.Data = savedData;
-
-            return result;
+            return WriteInitializationScript(context, _dataScopeProvider, includeChildren);
         }
 
         public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
         {
-            var savedData = SelectDataContext(context);
-            var result = base.WriteInitializationScript(context, includeChildren);
-            context.Data = savedData;
-
-            return result;
+            return WriteTitle(context, _dataScopeProvider, includeChildren);
         }
 
+        #endregion
+
         #region IDataScopeProvider
-        
+
         private readonly IDataScopeProvider _dataScopeProvider;
 
         int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
@@ -204,9 +245,9 @@ namespace OwinFramework.Pages.Html.Runtime
             return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
         }
 
-        bool IDataScopeProvider.IsInScope(Type type, string scopeName)
+        bool IDataScopeProvider.IsInScope(IDataDependency dependency)
         {
-            return _dataScopeProvider.IsInScope(type, scopeName);
+            return _dataScopeProvider.IsInScope(dependency);
         }
 
         void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
@@ -249,24 +290,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.Add(dataProviderDefinition);
         }
 
-        bool IDataScopeProvider.CanSatisfyDependency(IDataDependency dependency)
-        {
-            return _dataScopeProvider.CanSatisfyDependency(dependency);
-        }
-
         void IDataScopeProvider.Add(IDataDependency dependency)
         {
             _dataScopeProvider.Add(dependency);
-        }
-
-        void IDataScopeProvider.ResolveDataProviders(IList<IDataProviderDefinition> existingProviders)
-        {
-            _dataScopeProvider.ResolveDataProviders(existingProviders);
-        }
-
-        List<IDataProviderDefinition> IDataScopeProvider.DataProviders
-        {
-            get { return _dataScopeProvider.DataProviders; }
         }
 
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)

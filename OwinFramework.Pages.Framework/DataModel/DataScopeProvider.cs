@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
-using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -44,6 +44,12 @@ namespace OwinFramework.Pages.Framework.DataModel
         private readonly IList<IDataScope> _dataScopes;
 
         /// <summary>
+        /// A list of the dependencies that matched this scope. For debug
+        /// info only
+        /// </summary>
+        private readonly IList<IDataDependency> _dependencies;
+
+        /// <summary>
         /// This unique ID is used to index the data contexts in the render context
         /// </summary>
         public int Id { get; private set; }
@@ -73,6 +79,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             _dataContextFactory = dataContextFactory;
 
             _dataScopes = new List<IDataScope>();
+            _dependencies = new List<IDataDependency>();
             _dataProviderDefinitions = new List<IDataProviderDefinition>();
             _children = new List<IDataScopeProvider>();
 
@@ -89,6 +96,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             _dataScopes = original._dataScopes.ToList();
             _dataProviderDefinitions = original._dataProviderDefinitions.ToList();
+            _dependencies = new List<IDataDependency>();
             _children = new List<IDataScopeProvider>();
 
             Id = _idManager.GetUniqueId();
@@ -101,6 +109,23 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
         {
+            List<DebugDataProvider> dataProviders;
+            lock (_dataProviderDefinitions)
+            {
+                dataProviders = _dataProviderDefinitions.Select(
+                    dp => new DebugDataProvider
+                    {
+                        Name = dp.DataProvider.Name,
+                        Instance = dp.DataProvider,
+                        Package = dp.DataProvider.Package == null
+                            ? null
+                            : dp.DataProvider.Package.GetDebugInfo(),
+                        Dependency = dp.Dependency == null
+                            ? null
+                            : dp.Dependency.DataType.DisplayName() + dp.Dependency.ScopeName
+                    }).ToList();
+            }
+
             return new DebugDataScopeProvider
             {
                 Instance = this,
@@ -115,21 +140,10 @@ namespace OwinFramework.Pages.Framework.DataModel
                 Scopes = _dataScopes.Select(
                     s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.FullName))
                     .ToList(),
-                Dependencies = _dataScopes.Select(
-                    s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.FullName))
+                Dependencies = _dependencies.Select(
+                    d => (string.IsNullOrEmpty(d.ScopeName) ? string.Empty : d.ScopeName + " ") + d.DataType.DisplayName())
                     .ToList(),
-                DataProviders = _dataProviderDefinitions.Select(
-                    dp => new DebugDataProvider 
-                    { 
-                        Name = dp.DataProvider.Name,
-                        Instance = dp.DataProvider,
-                        Package = dp.DataProvider.Package == null
-                            ? null
-                            : dp.DataProvider.Package.GetDebugInfo(),
-                        Dependency = dp.Dependency == null 
-                            ? null
-                            : dp.Dependency.DataType.DisplayName() + dp.Dependency.ScopeName
-                    }).ToList()
+                DataProviders = dataProviders
             };
         }
 
@@ -170,16 +184,12 @@ namespace OwinFramework.Pages.Framework.DataModel
             AddScope(type, scopeName, true);
         }
 
-        public bool IsInScope(Type type, string scopeName)
+        public bool IsInScope(IDataDependency dependency)
         {
-            if (type == null)
-                throw new ArgumentNullException("type");
+            if (dependency == null)
+                throw new ArgumentNullException("dependency");
 
-            return _dataScopes.Any(s => 
-                (s.DataType == null || s.DataType == type) &&
-                (string.IsNullOrEmpty(s.ScopeName) || 
-                 string.IsNullOrEmpty(scopeName) || 
-                 string.Equals(s.ScopeName, scopeName, StringComparison.InvariantCultureIgnoreCase)));
+            return _dataScopes.Any(s => s.IsMatch(dependency));
         }
 
         public void AddScope(Type type, string scopeName, bool providedByElement)
@@ -198,33 +208,6 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         #region Data providers
 
-        public List<IDataProviderDefinition> DataProviders
-        {
-            get { lock(_dataProviderDefinitions) return _dataProviderDefinitions.ToList(); }
-        }
-
-        public void ResolveDataProviders(IList<IDataProviderDefinition> existingProviders)
-        {
-            foreach (var dataScope in _dataScopes.Where(s => !s.IsProvidedByElement))
-            {
-                foreach (var dependency in dataScope.Dependencies)
-                {
-                    EnsureDependency(dependency, existingProviders);
-                }
-            }
-
-            lock (_dataProviderDefinitions)
-            {
-                if (_dataProviderDefinitions.Count > 0)
-                    existingProviders = existingProviders.Concat(_dataProviderDefinitions).ToList();
-            }
-
-            foreach (var child in _children)
-            {
-                child.ResolveDataProviders(existingProviders);
-            }
-        }
-
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
         {
             Add(missingDependency);
@@ -233,37 +216,40 @@ namespace OwinFramework.Pages.Framework.DataModel
             SetupDataContext(renderContext);
         }
 
-        public bool CanSatisfyDependency(IDataDependency dependency)
-        {
-            if (_dataScopes != null &&
-                _dataScopes.Any(s => s.IsMatch(dependency) && s.IsProvidedByElement))
-                return true;
-
-            if (_dataProviderDefinitions != null && 
-                _dataProviderDefinitions.Any(dp => dp.DataProvider.CanSatisfy(dependency)))
-                return true;
-
-            return false;
-        }
-
         public void Add(IDataDependency dependency)
         {
-            if (CanSatisfyDependency(dependency))
-                return;
+            var isInScope = Parent == null;
 
-            var existingDependencies = DataProviders;
-
-            var parent = _parent;
-            while (parent != null)
+            if (!isInScope && _dataScopes != null)
             {
-                if (parent.CanSatisfyDependency(dependency))
-                    return;
-
-                existingDependencies.AddRange(parent.DataProviders);
-                parent = parent.Parent;
+                foreach (var scope in _dataScopes)
+                {
+                    if (scope.IsMatch(dependency))
+                    {
+                        if (scope.IsProvidedByElement)
+                            return;
+                        isInScope = true;
+                    }
+                }
             }
 
-            EnsureDependency(dependency, existingDependencies);
+            if (isInScope)
+            {
+                _dependencies.Add(dependency);
+
+                if (_dataProviderDefinitions != null &&
+                    _dataProviderDefinitions.Any(dp => dp.DataProvider.CanSatisfy(dependency)))
+                    return;
+
+                var dataProviderRegistration = _dataCatalog.FindProvider(dependency);
+                if (dataProviderRegistration == null)
+                    throw new BuilderException("There is no data provider that can satisfy the dependency on " + dependency);
+
+                Add(_dataProviderDefinitionFactory.Create(dataProviderRegistration.DataProvider, dependency));
+                return;
+            }
+
+            Parent.Add(dependency);
         }
 
         public void Add(IDataProviderDefinition dataProviderDefinition)
@@ -274,35 +260,6 @@ namespace OwinFramework.Pages.Framework.DataModel
                 return;
 
             _dataProviderDefinitions.Add(dataProviderDefinition);
-        }
-
-        private void EnsureDependency(IDataDependency dependency, IList<IDataProviderDefinition> existingProviders)
-        {
-            var dataProviderRegistration = _dataCatalog.FindProvider(dependency);
-
-            if (dataProviderRegistration == null)
-                throw new Exception("No data providers found that can supply missing data for " + dependency.ScopeName + " " + dependency.DataType.DisplayName());
-
-            EnsureDependency(dataProviderRegistration, dependency, existingProviders);
-        }
-
-        private void EnsureDependency(IDataProviderRegistration dataProviderRegistration, IDataDependency dependency, IList<IDataProviderDefinition> existingProviders)
-        {
-            if (dataProviderRegistration == null) return;
-
-            if (existingProviders.Any(p => p.DataProvider == dataProviderRegistration.DataProvider))
-                return;
-
-            Add(_dataProviderDefinitionFactory.Create(dataProviderRegistration.DataProvider, dependency));
-
-            if (dataProviderRegistration.DependentProviders != null)
-            {
-                foreach (var dependent in dataProviderRegistration.DependentProviders)
-                {
-                    if (existingProviders.All(p => p.DataProvider != dataProviderRegistration.DataProvider))
-                        Add(_dataProviderDefinitionFactory.Create(dependent));
-                }
-            }
         }
 
         #endregion
@@ -321,9 +278,12 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
         {
-            if ((_dataProviderDefinitions == null || _dataProviderDefinitions.Count == 0) &&
-                (_children == null || _children.Count == 0))
-                return;
+            lock (_dataProviderDefinitions)
+            {
+                if ((_dataProviderDefinitions == null || _dataProviderDefinitions.Count == 0) &&
+                    (_children == null || _children.Count == 0))
+                    return;
+            }
 
             var dataContext = parentDataContext == null 
                 ? _dataContextFactory.Create(renderContext, this) 
@@ -333,8 +293,18 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             if (_dataProviderDefinitions != null)
             {
-                foreach (var providerDefinition in _dataProviderDefinitions)
+                int count;
+                lock(_dataProviderDefinitions)
+                    count = _dataProviderDefinitions.Count;
+
+                for (var i = 0; i < count; i++)
+                {
+                    IDataProviderDefinition providerDefinition;
+                    lock(_dataProviderDefinitions)
+                        providerDefinition = _dataProviderDefinitions[i];
+
                     providerDefinition.Execute(renderContext, dataContext);
+                }
             }
 
             if (_children != null)

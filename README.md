@@ -2,17 +2,17 @@
 
 This NuGet package is designed to work with the Owin Framework and adds the
 ability to design web pages and serve them in an extremely scaleable way. It
-also serves the Ajax requests providing both the front-end JavaScript and the
+also serves Ajax requests providing both the front-end JavaScript and the
 back-end Restful endpoints.
 
 Key features:
 * Very flexible, powerful, decoupled and extensible architecture
 * Scales to tens of thousands of pages per second per server
-* Designed from the ground up for maximum efficiency and minimal CPI cycles
+* Designed from the ground up for maximum efficiency and minimal CPU cycles
 * Pools and reuses objects to avoid thrashing the garbage collector
-* Supports multiple ways of defining elements to support all use cases. These methods can be used in any combination
-* Supports packages of elements that can be installed from third parties with namespaces to avoid naming conflicts
-* Works with all existing we development technologies and libraries: Angular, React, Boosstrap etc
+* Supports multiple ways of working to support every scenario
+* Supports packages that can be installed from third parties with namespaces to avoid naming conflicts
+* Works with all existing web development technologies and libraries: Angular, React, Boosstrap etc
 * Integrated support for writing web services and calling them from the UI
 * Good separation of concerns and modular architecture allows mix and match of components from different authors
 

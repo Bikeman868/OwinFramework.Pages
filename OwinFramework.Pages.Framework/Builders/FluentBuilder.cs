@@ -398,10 +398,11 @@ namespace OwinFramework.Pages.Framework.Builders
 
                 if (attributes.Repeat != null)
                     regionDefinition.ForEach(
-                        attributes.Repeat.ItemType, 
-                        attributes.Repeat.ScopeName,
+                        attributes.Repeat.RepeatType, 
+                        attributes.Repeat.RepeatScope,
                         attributes.Repeat.Tag, 
-                        attributes.Repeat.Style, 
+                        attributes.Repeat.Style,
+                        attributes.Repeat.ListScope,
                         attributes.Repeat.ClassNames);
 
                 if (attributes.Container != null)
@@ -503,7 +504,7 @@ namespace OwinFramework.Pages.Framework.Builders
             //    return dataProviderDefinition.Build(attributes.Type);
             //}
 
-            //Configure(attributes, dataProvider);
+            Configure(attributes, dataProvider);
             return dataProvider;
         }
 
@@ -604,11 +605,11 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (attributes.Repeat != null)
             {
-                region.RepeatScope = attributes.Repeat.ScopeName;
-                region.RepeatType = attributes.Repeat.ItemType;
-                region.RepeatType = attributes.Repeat.ItemType;
-                region.RepeatType = attributes.Repeat.ItemType;
-                region.RepeatType = attributes.Repeat.ItemType;
+                region.RepeatScope = attributes.Repeat.RepeatScope;
+                region.RepeatType = attributes.Repeat.RepeatType;
+                region.RepeatType = attributes.Repeat.RepeatType;
+                region.RepeatType = attributes.Repeat.RepeatType;
+                region.RepeatType = attributes.Repeat.RepeatType;
             }
 
             if (attributes.UsesComponents != null)
@@ -653,6 +654,16 @@ namespace OwinFramework.Pages.Framework.Builders
             }
             Configure(attributes, component as IElement);
             Configure(attributes, component as IDataConsumer);
+        }
+
+        private void Configure(AttributeSet attributes, IDataProvider dataProvider)
+        {
+            if (attributes.IsDataProvider != null)
+            {
+                if (!string.IsNullOrEmpty(attributes.IsDataProvider.Name))
+                    dataProvider.Name = attributes.IsDataProvider.Name;
+            }
+            Configure(attributes, dataProvider as IDataConsumer);
         }
 
         private void Configure(AttributeSet attributes, IService service)
@@ -762,7 +773,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (attributes.Repeat != null)
             {
-                dataScopeProvider.ElementIsProvider(attributes.Repeat.ItemType, attributes.Repeat.ScopeName);
+                dataScopeProvider.ElementIsProvider(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
             }
         }
 

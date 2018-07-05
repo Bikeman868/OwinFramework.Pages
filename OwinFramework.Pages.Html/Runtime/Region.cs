@@ -36,6 +36,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public string RepeatScope { get; set; }
 
+        public string ListScope { get; set; }
+
+        public Type ListType { get { return _listType; } }
+
         public Type RepeatType
         {
             get { return _repeatType; }
@@ -93,13 +97,17 @@ namespace OwinFramework.Pages.Html.Runtime
                 Content = Content == null ? null : Content.GetDebugInfo(),
                 Scope = _dataScopeProvider.GetDebugInfo(-1, 2),
                 RepeatScope = RepeatScope,
-                RepeatType = RepeatType
+                RepeatType = _repeatType,
+                ListType = _listType,
+                ListScope = ListScope
             };
             PopulateDebugInfo(debugInfo);
             return debugInfo;
         }
 
         #endregion
+
+        #region Setting up and wiring
 
         public virtual void Populate(IElement content)
         {
@@ -117,6 +125,8 @@ namespace OwinFramework.Pages.Html.Runtime
                 ? null 
                 : Content.AsEnumerable().GetEnumerator();
         }
+
+        #endregion
 
         #region Methods called by region instances to render content
 
@@ -157,10 +167,10 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
                 else
                 {
-                    var list = (IEnumerable)context.Data.Get(_listType, RepeatScope);
+                    var list = (IEnumerable)context.Data.Get(_listType, ListScope);
                     foreach (var item in list)
                     {
-                        context.Data.Set(_repeatType, item);
+                        context.Data.Set(_repeatType, item, RepeatScope);
                         WriteChildOpen(context.Html);
                         result.Add(content.WriteHtml(context));
                         WriteChildClose(context.Html);

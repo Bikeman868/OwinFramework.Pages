@@ -11,16 +11,19 @@ namespace OwinFramework.Pages.Framework.DataModel
     /// You can inherit from this base class to insulate your implementation from
     /// future additions to the IDataProvider interface
     /// </summary>
-    public class DataProvider: IDataProvider
+    public class DataProvider: IDataProvider, IDataConsumer
     {
         public string Name { get; set; }
         public IPackage Package { get; set; }
+
+        readonly IDataConsumer _dataConsumer;
 
         protected DataProvider(IDataProviderDependenciesFactory dependencies)
         {
             // DO NOT change the method signature of this constructor as
             // this would break all data providers in all applications that use
             // this framework!!
+            _dataConsumer = dependencies.DataConsumerFactory.Create();
         }
 
         /// <summary>
@@ -45,7 +48,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         /// </summary>
         public virtual void Satisfy(IRenderContext renderContext, IDataContext dataContext)
         {
-            throw new NotImplementedException("Data providers must override one of the EstablishContext overloads");
+            throw new NotImplementedException("Data providers must override one of the Satisfy() method overloads");
         }
 
         public DebugDataProvider GetDebugInfo()
@@ -57,5 +60,39 @@ namespace OwinFramework.Pages.Framework.DataModel
                 Package = Package == null ? null : Package.GetDebugInfo()
             };
         }
+
+        #region IDataConsumer
+
+        void IDataConsumer.ResolveDependencies(IDataScopeProvider scopeProvider)
+        {
+            _dataConsumer.ResolveDependencies(scopeProvider);
+        }
+
+        void IDataConsumer.NeedsData<T>(string scopeName)
+        {
+            _dataConsumer.NeedsData<T>(scopeName);
+        }
+
+        void IDataConsumer.NeedsData(Type dataType, string scopeName)
+        {
+            _dataConsumer.NeedsData(dataType, scopeName);
+        }
+
+        void IDataConsumer.CanUseData<T>(string scopeName = null)
+        {
+            _dataConsumer.CanUseData<T>(scopeName);
+        }
+
+        void IDataConsumer.CanUseData(Type dataType, string scopeName)
+        {
+            _dataConsumer.CanUseData(dataType, scopeName);
+        }
+
+        void IDataConsumer.NeedsProvider(IDataProvider dataProvider, IDataDependency dependency)
+        {
+            _dataConsumer.NeedsProvider(dataProvider, dependency);
+        }
+
+        #endregion
     }
 }

@@ -117,24 +117,26 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.ForEach<T>(string scopeName, string tag, string style, params string[] classes)
+        IRegionDefinition IRegionDefinition.ForEach<T>(string scopeName, string tag, string style, string listScope, params string[] classes)
         {
             _region.RepeatType = typeof(T);
             _region.RepeatScope = scopeName;
+            _region.ListScope = listScope;
 
             _childTagName = tag;
             _childStyle = style;
             _childClassNames = classes;
 
-            ((IDataScopeProvider)_region).ElementIsProvider(_region.RepeatType, null);
+            ((IDataScopeProvider)_region).ElementIsProvider(_region.RepeatType, scopeName);
 
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.ForEach(Type dataType, string scopeName, string tag, string style, params string[] classes)
+        IRegionDefinition IRegionDefinition.ForEach(Type dataType, string scopeName, string tag, string style, string listScope, params string[] classes)
         {
             _region.RepeatType = dataType;
             _region.RepeatScope = scopeName;
+            _region.ListScope = listScope;
 
             _childTagName = tag;
             _childStyle = style;

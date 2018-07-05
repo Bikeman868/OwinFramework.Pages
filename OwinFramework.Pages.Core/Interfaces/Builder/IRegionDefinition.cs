@@ -166,13 +166,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <typeparam name="T">Looks for a list or enumeration of objects 
         /// of this type in the rendering context and repeats the region
         /// once for each item</typeparam>
-        IRegionDefinition ForEach<T>(string scopeName = "", string tag = "", string style = "", params string[] classes);
+        IRegionDefinition ForEach<T>(string repeatScope = "", string tag = "", string style = "", string listScope = "", params string[] classes);
 
         /// <summary>
         /// Causes the region to be rendered multiple times, once
         /// for each object in the data context of the specified type
         /// </summary>
-        IRegionDefinition ForEach(Type dataType, string scopeName = "", string tag = "", string style = "", params string[] classes);
+        IRegionDefinition ForEach(Type repeatType, string repeatScope = "", string tag = "", string style = "", string listScope = "", params string[] classes);
 
         /// <summary>
         /// Builds the region

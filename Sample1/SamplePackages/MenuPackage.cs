@@ -51,7 +51,8 @@ namespace Sample1.SamplePackages
         {
             public SubMenuDataProvider(IDataProviderDependenciesFactory dependencies) 
                 : base(dependencies) 
-            { }
+            {
+            }
 
             public override bool CanSatisfy(IDataDependency dependency)
             {
@@ -166,7 +167,7 @@ namespace Sample1.SamplePackages
                 .Tag("ul")
                 .ClassNames("{ns}_dropdown")
                 .DataProvider(subMenuDataProvider)
-                .ForEach<MenuItem>("submenu", "li", null, "{ns}_option")
+                .ForEach<MenuItem>("submenu", "li", null, null, "{ns}_option")
                 .Component(subMenuItemComponent)
                 .Build();
 

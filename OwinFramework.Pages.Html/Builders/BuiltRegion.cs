@@ -9,7 +9,6 @@ namespace OwinFramework.Pages.Html.Builders
 {
     internal class BuiltRegion : Region
     {
-
         public BuiltRegion(IRegionDependenciesFactory regionDependenciesFactory)
             : base(regionDependenciesFactory)
         {

@@ -33,6 +33,18 @@ namespace OwinFramework.Pages.Core.Interfaces
         Type RepeatType { get; set; }
 
         /// <summary>
+        /// The scope name to use when resolving the list from
+        /// context
+        /// </summary>
+        string ListScope { get; set; }
+
+        /// <summary>
+        /// The type of list that the region will look for in the
+        /// data context
+        /// </summary>
+        Type ListType { get; }
+
+        /// <summary>
         /// Constructs an element that is the result of puttting the
         /// supplied element inside this region. The supplied element 
         /// should be either a component or a Layout.

@@ -257,7 +257,7 @@ namespace OwinFramework.Pages.DebugMiddleware
 
             if (dataScopeProvider.Dependencies != null && dataScopeProvider.Dependencies.Count > 0)
             {
-                html.WriteElementLine("p", "Dependencies resolved");
+                html.WriteElementLine("p", "Dependencies");
                 html.WriteOpenTag("ul");
                 foreach (var dependencies in dataScopeProvider.Dependencies)
                     html.WriteElementLine("li", dependencies);
@@ -267,10 +267,10 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (dataScopeProvider.DataProviders != null && dataScopeProvider.DataProviders.Count > 0)
             {
                 html.WriteElementLine("p", "Data providers");
-                html.WriteOpenTag("ul");
+                StartIndent(html, true);
                 foreach (var provider in dataScopeProvider.DataProviders)
                     WriteDebugInfo(html, provider, depth - 1);
-                html.WriteCloseTag("ul");
+                EndIndent(html);
             }
 
             if (dataScopeProvider.Parent != null)
@@ -395,13 +395,23 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (region.InstanceOf != null)
             {
                 html.WriteElementLine("p", "Region inherits from " + region.InstanceOf.Name + " region");
+                StartIndent(html, false);
+                WriteDebugInfo(html, region.InstanceOf, 1);
+                EndIndent(html);
             }
 
             if (region.RepeatType != null)
             {
-                html.WriteElementLine("p", 
-                    "Repeat region for each " + region.RepeatType.DisplayName() + 
-                    (string.IsNullOrEmpty(region.RepeatScope) ? string.Empty : " in " + region.RepeatScope + "scope"));
+                html.WriteOpenTag("p");
+                html.Write("Repeat region for each ");
+                html.WriteElement("i", region.RepeatType.DisplayName());
+                if (!string.IsNullOrEmpty(region.RepeatScope))
+                    html.Write(" in '" + region.RepeatScope + "' scope");
+                html.Write(" from ");
+                html.WriteElement("i", region.ListType.DisplayName());
+                if (!string.IsNullOrEmpty(region.ListScope))
+                    html.Write(" in '" + region.ListScope + "' scope");
+                html.WriteCloseTag("p");
             }
 
             if (region.Scope != null)
@@ -452,6 +462,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                 svg = Encoding.UTF8.GetString(stream.GetBuffer(), 0, (int)stream.Length);
             }
 
+            context.Response.ContentType = "image/svg+xml";
             return context.Response.WriteAsync(svg);
         }
 

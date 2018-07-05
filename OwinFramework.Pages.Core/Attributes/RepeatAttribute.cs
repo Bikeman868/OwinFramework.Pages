@@ -11,14 +11,15 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// Constructs and initializes an attribute that defines how the region repeats
         /// </summary>
-        /// <param name="itemType">The type of data to repeat</param>
-        /// <param name="scopeName">Scope name used to resolve data reference</param>
+        /// <param name="repeatType">The type of data to repeat</param>
+        /// <param name="repeatScope">Scope name used when setting repeated data in the data context</param>
         /// <param name="tag">The tag to use to enclose the contents of this element</param>
         /// <param name="style">Custom css style to apply</param>
         /// <param name="classNames">Css class names to apply</param>
-        public RepeatAttribute(Type itemType, string scopeName, string tag = "div", string style = "", params string[] classNames)
+        public RepeatAttribute(Type repeatType, string repeatScope, string tag = "div", string style = "", params string[] classNames)
         {
-            ItemType = itemType;
+            RepeatType = repeatType;
+            RepeatScope = repeatScope;
             Tag = tag;
             Style = style;
             ClassNames = classNames;
@@ -27,7 +28,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// The name of the region to populate
         /// </summary>
-        public Type ItemType { get; set; }
+        public Type RepeatType { get; set; }
 
         /// <summary>
         /// The name of the region to populate
@@ -45,9 +46,15 @@ namespace OwinFramework.Pages.Core.Attributes
         public string[] ClassNames { get; set; }
 
         /// <summary>
-        /// Optional scope name to allow grandchildren to bind to this
-        /// data even if the children add context data of the same type
+        /// Optional scope name to use when setting the repeating data into
+        /// the data context
         /// </summary>
-        public string ScopeName { get; set; }
+        public string RepeatScope { get; set; }
+
+        /// <summary>
+        /// Optional scope name to use when retrieving the list from the
+        /// data context
+        /// </summary>
+        public string ListScope { get; set; }
     }
 }

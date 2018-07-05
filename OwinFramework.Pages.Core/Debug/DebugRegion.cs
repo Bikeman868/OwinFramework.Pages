@@ -29,9 +29,19 @@ namespace OwinFramework.Pages.Core.Debug
         public Type RepeatType { get; set; }
 
         /// <summary>
+        /// The type of list to get from context for repeating
+        /// </summary>
+        public Type ListType { get; set; }
+
+        /// <summary>
         /// The scope name to use for the repeated type
         /// </summary>
         public string RepeatScope { get; set; }
+
+        /// <summary>
+        /// The scope name to use for retrieving the list
+        /// </summary>
+        public string ListScope { get; set; }
 
         /// <summary>
         /// Default public constructor

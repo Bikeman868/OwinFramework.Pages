@@ -1,4 +1,5 @@
 ﻿using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
@@ -9,6 +10,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
     /// </summary>
     public interface IDataProviderDependenciesFactory
     {
+        /// <summary>
+        /// A factory for constructing data consumers
+        /// </summary>
+        IDataConsumerFactory DataConsumerFactory { get; }
+
         /// <summary>
         /// Constructs and initializes a data provider dependencies 
         /// instance specifci to a request

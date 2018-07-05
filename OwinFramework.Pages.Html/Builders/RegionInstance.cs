@@ -26,6 +26,17 @@ namespace OwinFramework.Pages.Html.Builders
             set { throw new InvalidOperationException("You can not set the repeat type on region instance"); }
         }
 
+        public string ListScope
+        {
+            get { return Parent.ListScope; }
+            set { throw new InvalidOperationException("You can not set the list scope on a region instance"); }
+        }
+
+        public Type ListType
+        {
+            get { return Parent.ListType; }
+        }
+
         private readonly IRegionDependenciesFactory _dependenciesFactory;
         private IElement _content;
 
@@ -74,7 +85,9 @@ namespace OwinFramework.Pages.Html.Builders
                 InstanceOf = parentDebugInfo,
                 Scope = _dataScopeProvider.GetDebugInfo(-1, 1),
                 RepeatScope = RepeatScope,
-                RepeatType = RepeatType
+                RepeatType = RepeatType,
+                ListType = ListType,
+                ListScope = ListScope
             };
             PopulateDebugInfo(debugInfo);
             return debugInfo;

@@ -76,14 +76,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// rendered</param>
         /// <param name="scopeName">Optional scope name for data binding
         /// ame resolution</param>
-        void ElementIsProvider(Type type, string scopeName);
-
-        /// <summary>
-        /// Adds a data provider that should be executed when the data context
-        /// is created
-        /// </summary>
-        /// <param name="dataProviderDefinition">The data provider to execute</param>
-        void Add(IDataProviderDefinition dataProviderDefinition);
+        void AddElementScope(Type type, string scopeName);
 
         /// <summary>
         /// Adds a dependency on data. A suitable provider will be located
@@ -91,7 +84,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// scope is handled
         /// </summary>
         /// <param name="dependency">The data that the element depends on</param>
-        void Add(IDataDependency dependency);
+        /// <returns>The supply for this data</returns>
+        IDataSupply Add(IDataDependency dependency);
 
         /// <summary>
         /// Used to determine if the particular type is available from this

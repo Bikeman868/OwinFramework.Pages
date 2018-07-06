@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
@@ -11,12 +12,13 @@ namespace OwinFramework.Pages.Framework.DataModel
     /// You can inherit from this base class to insulate your implementation from
     /// future additions to the IDataProvider interface
     /// </summary>
-    public class DataProvider: IDataProvider, IDataConsumer
+    public class DataProvider: IDataProvider, IDataConsumer, IDataSupplier
     {
         public string Name { get; set; }
         public IPackage Package { get; set; }
 
         readonly IDataConsumer _dataConsumer;
+        readonly IDataSupplier _dataSupplier;
 
         protected DataProvider(IDataProviderDependenciesFactory dependencies)
         {
@@ -24,31 +26,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             // this would break all data providers in all applications that use
             // this framework!!
             _dataConsumer = dependencies.DataConsumerFactory.Create();
-        }
-
-        /// <summary>
-        /// Overrider this method to let the dependency resolution system know whether
-        /// your data provider can satisfy a dependecy of not
-        /// </summary>
-        public virtual bool CanSatisfy(IDataDependency dependency)
-        {
-            return false;
-        }
-
-        /// <summary>
-        /// Override this method if your data provider can return different types of data
-        /// </summary>
-        public virtual void Satisfy(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
-        {
-            Satisfy(renderContext, dataContext);
-        }
-
-        /// <summary>
-        /// Override this method if your data provider only provides one type of data
-        /// </summary>
-        public virtual void Satisfy(IRenderContext renderContext, IDataContext dataContext)
-        {
-            throw new NotImplementedException("Data providers must override one of the Satisfy() method overloads");
+            _dataSupplier = dependencies.DataSupplierFactory.Create();
         }
 
         public DebugDataProvider GetDebugInfo()
@@ -63,19 +41,14 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         #region IDataConsumer
 
-        void IDataConsumer.ResolveDependencies(IDataScopeProvider scopeProvider)
+        void IDataConsumer.HasDependency<T>(string scopeName)
         {
-            _dataConsumer.ResolveDependencies(scopeProvider);
+            _dataConsumer.HasDependency<T>(scopeName);
         }
 
-        void IDataConsumer.NeedsData<T>(string scopeName)
+        void IDataConsumer.HasDependency(Type dataType, string scopeName)
         {
-            _dataConsumer.NeedsData<T>(scopeName);
-        }
-
-        void IDataConsumer.NeedsData(Type dataType, string scopeName)
-        {
-            _dataConsumer.NeedsData(dataType, scopeName);
+            _dataConsumer.HasDependency(dataType, scopeName);
         }
 
         void IDataConsumer.CanUseData<T>(string scopeName = null)
@@ -88,9 +61,48 @@ namespace OwinFramework.Pages.Framework.DataModel
             _dataConsumer.CanUseData(dataType, scopeName);
         }
 
-        void IDataConsumer.NeedsProvider(IDataProvider dataProvider, IDataDependency dependency)
+        void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
         {
-            _dataConsumer.NeedsProvider(dataProvider, dependency);
+            _dataConsumer.HasDependency(dataProvider, dependency);
+        }
+
+        void IDataConsumer.HasDependency(IDataSupply dataSupply)
+        {
+            _dataConsumer.HasDependency(dataSupply);
+        }
+
+        IList<IDataSupply> IDataConsumer.GetDependencies(IDataScopeProvider dataScope)
+        {
+            return _dataConsumer.GetDependencies(dataScope);
+        }
+
+        #endregion
+
+        #region IDataSupplier
+
+        IList<Type> IDataSupplier.SuppliedTypes
+        {
+            get { return _dataSupplier.SuppliedTypes; }
+        }
+
+        bool IDataSupplier.IsScoped
+        {
+            get { return _dataSupplier.IsScoped; }
+        }
+
+        void IDataSupplier.Add(IDataDependency dependency, Action<IRenderContext, IDataContext, IDataDependency> action)
+        {
+            _dataSupplier.Add(dependency, action);
+        }
+
+        bool IDataSupplier.CanSupply(IDataDependency dependency)
+        {
+            return _dataSupplier.CanSupply(dependency);
+        }
+
+        IDataSupply IDataSupplier.GetSupply(IDataDependency dependency, IList<IDataSupply> dependencies)
+        {
+            return _dataSupplier.GetSupply(dependency, dependencies);
         }
 
         #endregion

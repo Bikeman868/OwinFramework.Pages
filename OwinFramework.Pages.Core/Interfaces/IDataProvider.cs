@@ -1,16 +1,14 @@
 ﻿using OwinFramework.Pages.Core.Debug;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
     /// <summary>
-    /// A data provider reads data from somewhere else, could be a service,
-    /// a database, in memory, or provided by another data provider, and
-    /// adds this data to the data context of the request.
-    /// Components that bind to data will use the data that is in this
-    /// data context. When multiple components on the page bind to the
-    /// same data the data provider will only be executed once.
+    /// A data provider supplies and/or consumes data and has a name.
+    /// Other elements can have a dependency of the data provider.
+    /// The provider will always be executed prior to anything that
+    /// depends on it.
+    /// When you write a class that implements IDataProvider you would 
+    /// typically implement IDataSupplier or IDataConsuler or both.
     /// </summary>
     public interface IDataProvider
     {
@@ -30,21 +28,5 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Gets debugging information from this data provider
         /// </summary>
         DebugDataProvider GetDebugInfo();
-
-        /// <summary>
-        /// Tests whether this data provider can satisfy the dependency
-        /// </summary>
-        bool CanSatisfy(IDataDependency dependency);
-
-        /// <summary>
-        /// The runtime will call this for each page request that needs the
-        /// type of data provided by this instance.
-        /// </summary>
-        /// <param name="renderContext">The request that is being handled</param>
-        /// <param name="dataContext">The data context to use to get dependant data and where
-        /// new data should be added</param>
-        /// <param name="dependency">The data dependency to satisfy or null if 
-        /// this provider was not executed as a resault of a specific dependency</param>
-        void Satisfy(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency);
     }
 }

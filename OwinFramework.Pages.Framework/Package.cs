@@ -35,7 +35,7 @@ namespace OwinFramework.Pages.Framework
                     new IocRegistration().Init<IDataCatalog, DataCatalog>(),
                     new IocRegistration().Init<IDataContextFactory, DataContextFactory>(),
                     new IocRegistration().Init<IDataDependencyFactory, DataDependencyFactory>(),
-                    new IocRegistration().Init<IDataProviderDefinitionFactory, DataProviderDefinitionFactory>(),
+                    new IocRegistration().Init<IDataSupplierFactory, DataSupplierFactory>(),
                     new IocRegistration().Init<IDataScopeFactory, DataScopeFactory>(),
                     new IocRegistration().Init<IDataScopeProviderFactory, DataScopeProviderFactory>(),
                     new IocRegistration().Init<IDataConsumerFactory, DataConsumerFactory>(),

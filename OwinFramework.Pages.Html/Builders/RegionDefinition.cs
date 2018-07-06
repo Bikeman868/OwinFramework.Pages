@@ -127,7 +127,7 @@ namespace OwinFramework.Pages.Html.Builders
             _childStyle = style;
             _childClassNames = classes;
 
-            ((IDataScopeProvider)_region).ElementIsProvider(_region.RepeatType, scopeName);
+            ((IDataScopeProvider)_region).AddElementScope(_region.RepeatType, scopeName);
 
             return this;
         }
@@ -142,7 +142,7 @@ namespace OwinFramework.Pages.Html.Builders
             _childStyle = style;
             _childClassNames = classes;
             
-            ((IDataScopeProvider)_region).ElementIsProvider(_region.RepeatType, null);
+            ((IDataScopeProvider)_region).AddElementScope(_region.RepeatType, null);
             
             return this;
         }
@@ -159,7 +159,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             var dataConsumer = _region as IDataConsumer;
             if (dataConsumer != null)
-                dataConsumer.NeedsData<T>(scopeName);
+                dataConsumer.HasDependency<T>(scopeName);
             return this;
         }
 
@@ -167,7 +167,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             var dataConsumer = _region as IDataConsumer;
             if (dataConsumer != null)
-                dataConsumer.NeedsData(dataType, scopeName);
+                dataConsumer.HasDependency(dataType, scopeName);
             return this;
         }
 
@@ -177,7 +177,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (dataConsumer != null)
             {
                 _nameManager.AddResolutionHandler(
-                    (nm, c) => c.NeedsProvider(nm.ResolveDataProvider(dataProviderName, _region.Package)),
+                    (nm, c) => c.HasDependency(nm.ResolveDataProvider(dataProviderName, _region.Package)),
                     dataConsumer);
             }
             return this;
@@ -187,7 +187,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             var dataConsumer = _region as IDataConsumer;
             if (dataConsumer != null)
-                dataConsumer.NeedsProvider(dataProvider);
+                dataConsumer.HasDependency(dataProvider);
             return this;
         }
 

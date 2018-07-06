@@ -272,7 +272,7 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             if (_dataConsumer != null)
-                _dataConsumer.ResolveDependencies(initializationData.ScopeProvider);
+                _dataConsumer.AddDependenciesToScope(initializationData.ScopeProvider);
 
             var children = GetChildren();
             if (children == null) return;
@@ -309,25 +309,25 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region IDataConsumer
 
-        void IDataConsumer.ResolveDependencies(IDataScopeProvider scopeProvider)
+        void IDataConsumer.AddDependenciesToScope(IDataScopeProvider scopeProvider)
         {
             if (_dataConsumer == null) return;
 
-            _dataConsumer.ResolveDependencies(scopeProvider);
+            _dataConsumer.AddDependenciesToScope(scopeProvider);
         }
 
-        void IDataConsumer.NeedsData<T>(string scopeName)
+        void IDataConsumer.HasDependency<T>(string scopeName)
         {
             if (_dataConsumer == null) return;
 
-            _dataConsumer.NeedsData<T>(scopeName);
+            _dataConsumer.HasDependency<T>(scopeName);
         }
 
-        void IDataConsumer.NeedsData(Type dataType, string scopeName)
+        void IDataConsumer.HasDependency(Type dataType, string scopeName)
         {
             if (_dataConsumer == null) return;
 
-            _dataConsumer.NeedsData(dataType, scopeName);
+            _dataConsumer.HasDependency(dataType, scopeName);
         }
 
         void IDataConsumer.CanUseData<T>(string scopeName)
@@ -344,11 +344,11 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataConsumer.CanUseData(dataType, scopeName);
         }
 
-        void IDataConsumer.NeedsProvider(IDataProvider dataProvider, IDataDependency dependency)
+        void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
         {
             if (_dataConsumer == null) return;
 
-            _dataConsumer.NeedsProvider(dataProvider, dependency);
+            _dataConsumer.HasDependency(dataProvider, dependency);
         }
 
         #endregion

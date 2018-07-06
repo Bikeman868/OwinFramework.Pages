@@ -169,13 +169,13 @@
     <Compile Include="Interfaces\DataModel\IDataDependency.cs" />
     <Compile Include="Interfaces\DataModel\IDataConsumerFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataDependencyFactory.cs" />
-    <Compile Include="Interfaces\DataModel\IDataProviderDefinitionFactory.cs" />
-    <Compile Include="Interfaces\DataModel\IDataProviderDefinition.cs" />
-    <Compile Include="Interfaces\DataModel\IDataProviderRegistration.cs" />
+    <Compile Include="Interfaces\DataModel\IDataSupplierFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataScopeFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataScope.cs" />
     <Compile Include="Interfaces\DataModel\IDataScopeProviderFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataScopeProvider.cs" />
+    <Compile Include="Interfaces\DataModel\IDataSupply.cs" />
+    <Compile Include="Interfaces\DataModel\IDataSupplier.cs" />
     <Compile Include="Interfaces\IDataProvider.cs" />
     <Compile Include="Interfaces\DataModel\IDataCatalog.cs" />
     <Compile Include="Interfaces\Managers\IIdManager.cs" />

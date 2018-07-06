@@ -16,6 +16,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IDataConsumerFactory DataConsumerFactory { get; }
 
         /// <summary>
+        /// A factory for constructing data suppliers
+        /// </summary>
+        IDataSupplierFactory DataSupplierFactory { get; }
+
+        /// <summary>
         /// Constructs and initializes a data provider dependencies 
         /// instance specifci to a request
         /// </summary>

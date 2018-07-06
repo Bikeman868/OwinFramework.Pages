@@ -72,12 +72,11 @@
     <Compile Include="DataModel\DataConsumer.cs" />
     <Compile Include="DataModel\DataDependencyFactory.cs" />
     <Compile Include="DataModel\DataDependency.cs" />
-    <Compile Include="DataModel\DataProviderDefinition.cs" />
-    <Compile Include="DataModel\DataProviderDefinitionFactory.cs" />
     <Compile Include="DataModel\DataScope.cs" />
     <Compile Include="DataModel\DataScopeFactory.cs" />
-    <Compile Include="DataModel\DataScopeProviderFactory.cs" />
     <Compile Include="DataModel\DataScopeProvider.cs" />
+    <Compile Include="DataModel\DataScopeProviderFactory.cs" />
+    <Compile Include="DataModel\DataSupplier.cs" />
     <Compile Include="Interfaces\IFrameworkConfiguration.cs" />
     <Compile Include="Managers\AssetManager.cs" />
     <Compile Include="DataModel\DataCatalog.cs" />

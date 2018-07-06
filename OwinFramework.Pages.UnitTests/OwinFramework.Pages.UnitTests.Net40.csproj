@@ -38,12 +38,12 @@
       <HintPath>..\packages\Microsoft.Owin.2.1.0\lib\net40\Microsoft.Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Moq, Version=4.2.1312.1319, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.2.1312.1319\lib\net40\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Moq.Modules, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.Modules.1.0.1\lib\Moq.Modules.dll</HintPath>
+    <Reference Include="Moq.Modules, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.Modules.1.0.2\lib\Moq.Modules.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -80,6 +80,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\TypeDisplayNameTests.cs" />
+    <Compile Include="Framework\Builders\FluentBuilderTests.cs" />
+    <Compile Include="Framework\DataModel\DataSupplierTests.cs" />
+    <Compile Include="Framework\Managers\NameManagerTests.cs" />
+    <Compile Include="Framework\Managers\AssetManagerTests.cs" />
+    <Compile Include="Framework\Managers\IdManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +107,10 @@
     <ProjectReference Include="..\OwinFramework.Pages.Html\OwinFramework.Pages.Html.Net40.csproj">
       <Project>{68b65603-bb88-4c0a-8cfc-32b92561b881}</Project>
       <Name>OwinFramework.Pages.Html.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Mocks\OwinFramework.Pages.Mocks.csproj">
+      <Project>{bcc4c479-ab07-4b80-b832-53aafefd6089}</Project>
+      <Name>OwinFramework.Pages.Mocks</Name>
     </ProjectReference>
     <ProjectReference Include="..\OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net40.csproj">
       <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>

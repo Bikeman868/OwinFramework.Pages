@@ -212,7 +212,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             var dataConsumer = _layout as IDataConsumer;
             if (dataConsumer != null)
-                dataConsumer.NeedsData<T>(scopeName);
+                dataConsumer.HasDependency<T>(scopeName);
             return this;
         }
 
@@ -220,7 +220,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             var dataConsumer = _layout as IDataConsumer;
             if (dataConsumer != null)
-                dataConsumer.NeedsData(dataType, scopeName);
+                dataConsumer.HasDependency(dataType, scopeName);
             return this;
         }
 
@@ -230,7 +230,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (dataConsumer != null)
             {
                 _nameManager.AddResolutionHandler(
-                    (nm, c) => c.NeedsProvider(nm.ResolveDataProvider(dataProviderName, _layout.Package)),
+                    (nm, c) => c.HasDependency(nm.ResolveDataProvider(dataProviderName, _layout.Package)),
                     dataConsumer);
             }
             return this;
@@ -240,7 +240,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             var dataConsumer = _layout as IDataConsumer;
             if (dataConsumer != null)
-                dataConsumer.NeedsProvider(dataProvider);
+                dataConsumer.HasDependency(dataProvider);
             return this;
         }
 

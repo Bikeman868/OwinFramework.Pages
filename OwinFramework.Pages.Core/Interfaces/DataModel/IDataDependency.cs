@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// the matching data scope providers to trigged the creation
     /// of a data context at runtime.
     /// </summary>
-    public interface IDataDependency
+    public interface IDataDependency: IEquatable<IDataDependency>
     {
         /// <summary>
         /// The type of data that the element needs

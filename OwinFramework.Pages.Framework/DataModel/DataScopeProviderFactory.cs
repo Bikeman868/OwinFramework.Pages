@@ -9,14 +9,14 @@ namespace OwinFramework.Pages.Framework.DataModel
         private readonly IDataScopeFactory _dataScopeFactory;
         private readonly IDataCatalog _dataCatalog;
         private readonly IDataContextFactory _dataContextFactory;
-        private readonly IDataProviderDefinitionFactory _dataProviderDefinitionFactory;
+        private readonly IDataSupplierFactory _dataProviderDefinitionFactory;
 
         public DataScopeProviderFactory(
             IIdManager idManager,
             IDataScopeFactory dataScopeFactory,
             IDataCatalog dataCatalog,
             IDataContextFactory dataContextFactory,
-            IDataProviderDefinitionFactory dataProviderDefinitionFactory)
+            IDataSupplierFactory dataProviderDefinitionFactory)
         {
             _idManager = idManager;
             _dataScopeFactory = dataScopeFactory;

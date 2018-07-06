@@ -19,7 +19,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         private readonly List<IDataProvider> _dataProviders = new List<IDataProvider>();
 
         private IRenderContext _renderContext;
-        private DataContext _parent;
+        private IDataContext _parent;
         private IDataScopeProvider _scope;
 
         public DataContext(
@@ -47,7 +47,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             return this;
         }
 
-        public DebugDataContext GetDebugInfo()
+        DebugDataContext IDataContext.GetDebugInfo()
         {
             return new DebugDataContext
             {
@@ -58,7 +58,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             };
         }
 
-        public IDataContext CreateChild(IDataScopeProvider scope)
+        IDataContext IDataContext.CreateChild(IDataScopeProvider scope)
         {
             return _dataContextFactory.Create(_renderContext, scope, this);
         }
@@ -76,7 +76,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
         }
 
-        public void Set(Type type, object value, string scopeName = null, int level = 0)
+        void IDataContext.Set(Type type, object value, string scopeName = null, int level = 0)
         {
             if (level == 0 || _parent == null)
                 _properties[type] = value;
@@ -87,12 +87,12 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
         }
 
-        public T Get<T>(string scopeName, bool isRequired)
+        T IDataContext.Get<T>(string scopeName, bool isRequired)
         {
-            return (T)Get(typeof(T), scopeName, isRequired);
+            return (T)((IDataContext)this).Get(typeof(T), scopeName, isRequired);
         }
 
-        public object Get(Type type, string scopeName, bool isRequired)
+        object IDataContext.Get(Type type, string scopeName, bool isRequired)
         {
             var isInScope = string.IsNullOrEmpty(scopeName);
 
@@ -126,7 +126,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                         if (_parent == null)
                             throw new Exception("This data context does not know how to find missing"+
                                 " data of type " + type.DisplayName() + " because it does not have a scope provider");
-                        return _parent.Get(type, scopeName, true);
+                        return _parent.Get(type, scopeName);
                     }
 
                     _scope.AddMissingData(_renderContext, _dataDependencyFactory.Create(type, scopeName));
@@ -137,28 +137,10 @@ namespace OwinFramework.Pages.Framework.DataModel
             return _parent == null ? null : _parent.Get(type, scopeName, isRequired);
         }
 
-        public void Ensure(Type type, string scopeName)
-        {
-            Get(type, scopeName, true);
-        }
-
-        public IDataScopeProvider Scope
+        IDataScopeProvider IDataContext.Scope
         {
             get { return _scope ?? (_parent == null ? null : _parent.Scope); }
             set { _scope = value; }
-        }
-
-        public void Ensure(IDataProviderDefinition providerDefinition)
-        {
-            var context = this;
-            do
-            {
-                if (context._dataProviders.Contains(providerDefinition.DataProvider)) return;
-                context = context._parent;
-            } while (context != null);
-
-            _dataProviders.Add(providerDefinition.DataProvider);
-            providerDefinition.Execute(_renderContext, this);
         }
     }
 }

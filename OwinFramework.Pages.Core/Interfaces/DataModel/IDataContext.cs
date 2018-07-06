@@ -28,24 +28,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         IDataScopeProvider Scope { get; set; }
 
         /// <summary>
-        /// If the specified data provider has not been executed in this
-        /// context then it is executed to add data to this context
-        /// </summary>
-        /// <param name="providerDefinition">The provider to run if not
-        /// run already</param>
-        void Ensure(IDataProviderDefinition providerDefinition);
-
-        /// <summary>
-        /// Makes sure that the data context contains the specified
-        /// type of data
-        /// </summary>
-        /// <param name="type">The type of data required in the context</param>
-        /// <param name="scopeName">Optional scope name will look for data
-        /// in an ancestor scope rather than the scope defined by the element
-        /// heirachy</param>
-        void Ensure(Type type, string scopeName = null);
-
-        /// <summary>
         /// Stores strongly typed data into the data context
         /// </summary>
         /// <typeparam name="T">The type of data to store</typeparam>

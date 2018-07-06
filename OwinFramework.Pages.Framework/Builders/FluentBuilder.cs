@@ -751,11 +751,11 @@ namespace OwinFramework.Pages.Framework.Builders
                 foreach (var need in attributes.NeedsDatas)
                 {
                     if (need.DataType != null || !string.IsNullOrEmpty(need.Scope))
-                        dataConsumer.NeedsData(need.DataType, need.Scope);
+                        dataConsumer.HasDependency(need.DataType, need.Scope);
 
                     if (!string.IsNullOrEmpty(need.DataProviderName))
                         _nameManager.AddResolutionHandler(
-                            (nm, dc) => dc.NeedsProvider(nm.ResolveDataProvider(need.DataProviderName)),
+                            (nm, dc) => dc.HasDependency(nm.ResolveDataProvider(need.DataProviderName)),
                             dataConsumer);
                 }
             }
@@ -773,7 +773,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (attributes.Repeat != null)
             {
-                dataScopeProvider.ElementIsProvider(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
+                dataScopeProvider.AddElementScope(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
             }
         }
 

@@ -13,133 +13,57 @@ namespace OwinFramework.Pages.Framework.DataModel
 {
     internal class DataCatalog: IDataCatalog
     {
-        private readonly IDictionaryFactory _dictionaryFactory;
-        private readonly INameManager _nameManager;
         private readonly HashSet<string> _assemblies;
-        private readonly HashSet<string> _types;
-        private readonly List<Registration> _providers;
-        private readonly IThreadSafeDictionary<Type, List<Registration>> _providersByType;
-
-        private class Registration : IDataProviderRegistration
-        {
-            public IDataProvider DataProvider { get; set; }
-            public int Priority { get; set; }
-            public IList<string> Scopes { get; private set; }
-            public IList<Type> Types { get; private set; }
-            public IList<IDataProvider> DependentProviders { get; private set; }
-
-            public readonly IList<string> Names = new List<string>();
-            public readonly IList<string> DependentProviderNames = new List<string>();
-            public readonly IList<Type> DependentTypes = new List<Type>();
-
-            public Registration()
-            {
-                Scopes = new List<string>();
-                Types = new List<Type>();
-                DependentProviders = new List<IDataProvider>();
-            }
-        }
-
-        private class RegistrationComparer: IComparer<Registration>
-        {
-            int IComparer<Registration>.Compare(Registration x, Registration y)
-            {
-                if (x.Priority < y.Priority) return -1;
-                if (x.Priority > y.Priority) return 1;
-                return 0;
-            }
-        }
-
-        // Algorithm:
-        // Does the data already exist anywhere in the tree
-        // Is the scope null
-        //    Is there a provider for this type of data and no scope
-        //    Is there a provider for this type of data with any scope
-        // Is there a scope
-        //   Is there a provider for this type of data and this scope
-        //   Move up to parent scope and try again
-        //  
+        private readonly HashSet<Type> _types;
+        private readonly IThreadSafeDictionary<Type, List<IDataSupplier>> _suppliers;
 
         public DataCatalog(
-            IDictionaryFactory dictionaryFactory,
-            INameManager nameManager)
+            IDictionaryFactory dictionaryFactory)
         {
-            _dictionaryFactory = dictionaryFactory;
-            _nameManager = nameManager;
             _assemblies = new HashSet<string>();
-            _types = new HashSet<string>();
-            _providers = new List<Registration>();
-            _providersByType = dictionaryFactory.Create<Type, List<Registration>>();
-
-            nameManager.AddResolutionHandler(() =>
-                { 
-                    foreach (var provider in _providers)
-                    {
-                        foreach(var name in provider.DependentProviderNames)
-                        {
-                            provider.DependentProviders.Add(_nameManager.ResolveDataProvider(name, provider.DataProvider.Package));
-                        }
-                    }
-
-                    var comparer = new RegistrationComparer();
-                    foreach(var type in _providersByType.Keys)
-                    {
-                        var providers = _providersByType[type];
-                        providers.Sort(comparer);
-                    }
-                });
+            _types = new HashSet<Type>();
+            _suppliers = dictionaryFactory.Create<Type, List<IDataSupplier>>();
         }
 
-        public IDataCatalog Register(IDataProvider dataProvider)
+        public IDataCatalog Register(IDataSupplier dataSupplier)
         {
-            if (dataProvider == null)
+            if (dataSupplier == null)
                 return this;
 
-            if (!_types.Add(dataProvider.GetType().FullName))
+            if (!_types.Add(dataSupplier.GetType()))
                 return this;
 
-            var registration = ProcessCustomAttributes(dataProvider);
-            _providers.Add(registration);
-
-            if (registration.Scopes == null || registration.Scopes.Count == 0)
-                registration.Priority += 4;
-            else if (registration.Scopes.Count > 1)
-                registration.Priority += 1;
-
-            if (registration.Types.Count > 1)
-                registration.Priority += 2;
-
-            foreach (var type in registration.Types)
+            foreach (var type in dataSupplier.SuppliedTypes)
             {
-                var providers = _providersByType.GetOrAdd(type, s => new List<Registration>(), null);
-                providers.Add(registration);
+                var suppliers = _suppliers.GetOrAdd(type, t => new List<IDataSupplier>(), null);
+                lock(suppliers) suppliers.Add(dataSupplier);
             }
 
             return this;
         }
 
-        public IDataCatalog Register(Type dataProviderType, Func<Type, object> factoryFunc)
+        public IDataCatalog Register(Type dataSupplierType, Func<Type, object> factoryFunc)
         {
-            if (_types.Contains(dataProviderType.FullName))
+            if (_types.Contains(dataSupplierType))
                 return this;
 
-            if (!typeof(IDataProvider).IsAssignableFrom(dataProviderType))
-                throw new NotImplementedException(dataProviderType.DisplayName() + 
-                    " can not be registered as a data provider because it does not implement the IDataProvider interface");
+            if (!typeof(IDataSupplier).IsAssignableFrom(dataSupplierType))
+                throw new NotImplementedException(dataSupplierType.DisplayName() +
+                    " can not be registered as a data provider because it does not implement the IDataSupplier interface");
 
-            var factoryInstance = factoryFunc(dataProviderType);
+            var factoryInstance = factoryFunc(dataSupplierType);
 
             if (factoryInstance == null)
-                throw new NotImplementedException(dataProviderType.DisplayName() +
-                    " can not be registered as a data provider because the factory function did not return an instance");
+                throw new NotImplementedException(dataSupplierType.DisplayName() +
+                    " can not be registered as a data supplier because the factory function did not return an instance");
 
-            var dataProvider = factoryInstance as IDataProvider;
+            var dataSupplier = factoryInstance as IDataSupplier;
 
-            if (dataProvider == null)
-                throw new NotImplementedException(dataProviderType.DisplayName() +
-                    " can not be registered as a data provider because the instance constructed by the factory function does not implement IDataProvider");
+            if (dataSupplier == null)
+                throw new NotImplementedException(dataSupplierType.DisplayName() +
+                    " can not be registered as a data supplier because the instance constructed by the factory function does not implement IDataSupplier");
 
-            return Register(dataProvider);
+            return Register(dataSupplier);
         }
 
         public IDataCatalog Register(Assembly assembly, Func<Type, object> factoryFunc)
@@ -174,77 +98,27 @@ namespace OwinFramework.Pages.Framework.DataModel
             return this;
         }
 
-        private Registration ProcessCustomAttributes(IDataProvider dataProvider)
-        {
-            var registration = new Registration { DataProvider = dataProvider };
-
-            foreach (var attribute in dataProvider.GetType().GetCustomAttributes(true))
-            {
-                var isDataProvider = attribute as IsDataProviderAttribute;
-                var needsData = attribute as NeedsDataAttribute;
-                var partOf = attribute as PartOfAttribute;
-
-                if (isDataProvider != null)
-                {
-                    if (!string.IsNullOrEmpty(isDataProvider.Name))
-                    {
-                        dataProvider.Name = isDataProvider.Name;
-                        registration.Names.Add(isDataProvider.Name);
-                    }
-
-                    if (!string.IsNullOrEmpty(isDataProvider.Scope))
-                        registration.Scopes.Add(isDataProvider.Scope);
-
-                    if (isDataProvider.Type != null)
-                        registration.Types.Add(isDataProvider.Type);
-                }
-
-                if (needsData != null)
-                {
-                    if (!string.IsNullOrEmpty(needsData.DataProviderName))
-                        registration.DependentProviderNames.Add(needsData.DataProviderName);
-
-                    if (needsData.DataType != null)
-                        registration.DependentTypes.Add(needsData.DataType);
-                }
-
-                if (partOf != null)
-                {
-                    if (!string.IsNullOrEmpty(partOf.PackageName))
-                        dataProvider.Package = _nameManager.ResolvePackage(partOf.PackageName);
-                }
-
-            }
-
-            foreach (var name in registration.Names)
-            {
-                _nameManager.Register(registration.DataProvider, name);
-            }
-
-            return registration;
-        }
-
-        public IDataProviderRegistration FindProvider(IDataDependency dependency)
+        public IDataSupplier FindSupplier(IDataDependency dependency)
         {
             if (dependency.DataType == null)
                 throw new Exception("Data dependencies must include the data type thay are dependent on");
 
-            List<Registration> registrations;
-            if (!_providersByType.TryGetValue(dependency.DataType, out registrations))
+            List<IDataSupplier> suppliers;
+            if (!_suppliers.TryGetValue(dependency.DataType, out suppliers))
                 return null;
 
-            Registration registration = null;
+            IDataSupplier supplier = null;
             if (!string.IsNullOrEmpty(dependency.ScopeName))
             {
-                registration = registrations
-                    .FirstOrDefault(r => r.Scopes != null && r.Scopes.Any(s => string.Equals(s, dependency.ScopeName, StringComparison.OrdinalIgnoreCase)));
+                lock (suppliers) supplier = suppliers.FirstOrDefault(s => !s.IsScoped && s.CanSupply(dependency));
             }
 
-            if (registration == null)
-                registration = registrations
-                    .FirstOrDefault(r => r.Scopes == null || r.Scopes.Count == 0);
+            if (supplier == null)
+            {
+                lock (suppliers) supplier = suppliers.FirstOrDefault(s => s.IsScoped && s.CanSupply(dependency));
+            }
 
-            return registration;
+            return supplier;
         }
     }
 }

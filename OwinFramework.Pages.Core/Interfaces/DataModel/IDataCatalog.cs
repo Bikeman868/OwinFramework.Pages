@@ -13,16 +13,16 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <summary>
         /// Adds a data provider to the data catalog
         /// </summary>
-        /// <param name="dataProvider">The data provider to register</param>
-        IDataCatalog Register(IDataProvider dataProvider);
+        /// <param name="dataSupplier">The data supplier to register</param>
+        IDataCatalog Register(IDataSupplier dataSupplier);
 
         /// <summary>
         /// Adds a data provider to the data catalog
         /// </summary>
-        /// <param name="dataProviderType">The type of data provider to register</param>
+        /// <param name="dataSupplierType">The type of data provider to register</param>
         /// <param name="factoryFunc">A function that knows how to construct 
         /// the data providers in your application</param>
-        IDataCatalog Register(Type dataProviderType, Func<Type, object> factoryFunc);
+        IDataCatalog Register(Type dataSupplierType, Func<Type, object> factoryFunc);
 
         /// <summary>
         /// Scans an assembly, finds all of the data providers and registers them
@@ -37,6 +37,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// Locates a data provider that can satisfy the dependency. Returns null
         /// if none can be found
         /// </summary>
-        IDataProviderRegistration FindProvider(IDataDependency dependency);
+        IDataSupplier FindSupplier(IDataDependency dependency);
     }
 }

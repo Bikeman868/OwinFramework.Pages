@@ -7,5 +7,25 @@ namespace OwinFramework.Pages.Framework.DataModel
     {
         public Type DataType { get; set; }
         public string ScopeName { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            
+            var other = obj as IDataDependency;
+            if (other == null) return false;
+
+            if (DataType != other.DataType) return false;
+
+            if (string.IsNullOrEmpty(ScopeName))
+                return string.IsNullOrEmpty(other.ScopeName);
+
+            return string.Equals(ScopeName, other.ScopeName, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        bool IEquatable<IDataDependency>.Equals(IDataDependency other)
+        {
+            return Equals(other);
+        }
     }
 }

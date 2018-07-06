@@ -4,11 +4,11 @@ namespace OwinFramework.Pages.Framework.DataModel
 {
     public class DataConsumerFactory: IDataConsumerFactory
     {
-        private readonly IDataProviderDefinitionFactory _dataProviderDefinitionFactory;
+        private readonly IDataSupplierFactory _dataProviderDefinitionFactory;
         private readonly IDataDependencyFactory _dataDependencyFactory;
 
         public DataConsumerFactory(
-            IDataProviderDefinitionFactory dataProviderDefinitionFactory,
+            IDataSupplierFactory dataProviderDefinitionFactory,
             IDataDependencyFactory dataDependencyFactory)
         {
             _dataProviderDefinitionFactory = dataProviderDefinitionFactory;

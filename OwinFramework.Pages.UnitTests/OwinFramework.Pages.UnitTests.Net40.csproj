@@ -81,6 +81,8 @@
   <ItemGroup>
     <Compile Include="Core\TypeDisplayNameTests.cs" />
     <Compile Include="Framework\Builders\FluentBuilderTests.cs" />
+    <Compile Include="Framework\DataModel\DataCatalogTests.cs" />
+    <Compile Include="Framework\DataModel\DataConsumerTests.cs" />
     <Compile Include="Framework\DataModel\DataSupplierTests.cs" />
     <Compile Include="Framework\Managers\NameManagerTests.cs" />
     <Compile Include="Framework\Managers\AssetManagerTests.cs" />

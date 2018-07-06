@@ -5,12 +5,21 @@ using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Mocks.DataModel
 {
-    public class MockDataDependencyFactory: MockImplementationProvider<IDataDependencyFactory>
+    public class MockDataDependencyFactory: ConcreteImplementationProvider<IDataDependencyFactory>, IDataDependencyFactory
     {
-        protected override void SetupMock(IMockProducer mockProducer, Mock<IDataDependencyFactory> mock)
+        protected override IDataDependencyFactory GetImplementation(IMockProducer mockProducer)
         {
-            mock.Setup(m => m.Create(It.IsAny<Type>(), It.IsAny<string>()))
-                .Returns<Type, string>((t, s) => new DataDependency { DataType = t, ScopeName = s });
+            return this;
+        }
+
+        public IDataDependency Create(Type type, string scopeName = null)
+        {
+            return new DataDependency { DataType = type, ScopeName = scopeName };
+        }
+
+        public IDataDependency Create<T>(string scopeName = null)
+        {
+            return new DataDependency { DataType = typeof(T), ScopeName = scopeName };
         }
 
         private class DataDependency: IDataDependency
@@ -25,5 +34,7 @@ namespace OwinFramework.Pages.Mocks.DataModel
                 return string.Equals(ScopeName, other.ScopeName, StringComparison.OrdinalIgnoreCase);
             }
         }
+
+
     }
 }

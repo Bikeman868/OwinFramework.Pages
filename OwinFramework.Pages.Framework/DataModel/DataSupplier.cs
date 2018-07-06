@@ -87,6 +87,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 if (dependency == null) return false;
                 if (dependency.DataType != Dependency.DataType) return false;
                 if (string.IsNullOrEmpty(dependency.ScopeName)) return true;
+                if (string.IsNullOrEmpty(Dependency.ScopeName)) return true;
                 return String.Equals(Dependency.ScopeName, dependency.ScopeName);
             }
         }

@@ -183,10 +183,19 @@ namespace OwinFramework.Pages.Framework.DataModel
             var result = _dependencySupplies.FirstOrDefault(ds => ds.Dependency.Equals(dependency));
             if (result != null) return result.DataSupply;
 
+            if (_dataScopes.Any(s => s.IsProvidedByElement && s.IsMatch(dependency)))
+                return null;
+
             if (_parent != null && !IsInScope(dependency))
                 return _parent.Add(dependency);
 
             var dataSupplier = _dataCatalog.FindSupplier(dependency);
+
+            if (dataSupplier == null)
+                throw new Exception(
+                    "There are no registered data suppliers that can fulfil the dependency on " +
+                    dependency.DataType.DisplayName() + (string.IsNullOrEmpty(dependency.ScopeName) 
+                    ? string.Empty : " with '" + dependency.ScopeName + "' scope"));
             
             IList<IDataSupply> supplierDependencies = null;
             var dataConsumer = dataSupplier as IDataConsumer;

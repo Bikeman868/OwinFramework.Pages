@@ -108,14 +108,18 @@ namespace OwinFramework.Pages.Framework.DataModel
                 return null;
 
             IDataSupplier supplier = null;
-            if (!string.IsNullOrEmpty(dependency.ScopeName))
+            if (string.IsNullOrEmpty(dependency.ScopeName))
             {
                 lock (suppliers) supplier = suppliers.FirstOrDefault(s => !s.IsScoped && s.IsSupplierOf(dependency));
+            }
+            else
+            {
+                lock (suppliers) supplier = suppliers.FirstOrDefault(s => s.IsScoped && s.IsSupplierOf(dependency));
             }
 
             if (supplier == null)
             {
-                lock (suppliers) supplier = suppliers.FirstOrDefault(s => s.IsScoped && s.IsSupplierOf(dependency));
+                lock (suppliers) supplier = suppliers.FirstOrDefault(s => s.IsSupplierOf(dependency));
             }
 
             return supplier;

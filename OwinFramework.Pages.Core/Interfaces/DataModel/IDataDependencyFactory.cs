@@ -11,5 +11,10 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// Creates and initial;izes a new data dependency
         /// </summary>
         IDataDependency Create(Type type, string scopeName = null);
+
+        /// <summary>
+        /// Creates and initial;izes a new data dependency
+        /// </summary>
+        IDataDependency Create<T>(string scopeName = null);
     }
 }

@@ -272,7 +272,10 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             if (_dataConsumer != null)
-                _dataConsumer.AddDependenciesToScope(initializationData.ScopeProvider);
+            {
+                // TODO: is this required here?
+                var dependentSupplies = _dataConsumer.GetDependencies(initializationData.ScopeProvider);
+            }
 
             var children = GetChildren();
             if (children == null) return;
@@ -309,11 +312,18 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region IDataConsumer
 
-        void IDataConsumer.AddDependenciesToScope(IDataScopeProvider scopeProvider)
+        void IDataConsumer.HasDependency(IDataSupply dataSupply)
         {
             if (_dataConsumer == null) return;
 
-            _dataConsumer.AddDependenciesToScope(scopeProvider);
+            _dataConsumer.HasDependency(dataSupply);
+        }
+
+        IList<IDataSupply> IDataConsumer.GetDependencies(IDataScopeProvider dataScope)
+        {
+            if (_dataConsumer == null) return null;
+
+            return _dataConsumer.GetDependencies(dataScope);
         }
 
         void IDataConsumer.HasDependency<T>(string scopeName)

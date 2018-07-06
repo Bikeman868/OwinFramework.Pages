@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataModel\MockDataDependencyFactory.cs" />
+    <Compile Include="Managers\MockIdManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -62,7 +63,6 @@
   <ItemGroup>
     <Folder Include="Builder\" />
     <Folder Include="Collections\" />
-    <Folder Include="Managers\" />
     <Folder Include="Runtime\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

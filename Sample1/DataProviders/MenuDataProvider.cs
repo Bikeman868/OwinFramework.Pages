@@ -11,13 +11,12 @@ namespace Sample1.DataProviders
     [IsDataProvider("menu", typeof(IList<MenuPackage.MenuItem>))]
     public class MenuDataProvider: DataProvider
     {
+        private readonly IList<MenuPackage.MenuItem> _mainMenu;
+
         public MenuDataProvider(IDataProviderDependenciesFactory dependencies) 
             : base(dependencies) 
-        { }
-
-        public override void Satisfy(IRenderContext renderContext, IDataContext dataContext)
         {
-            IList<MenuPackage.MenuItem> mainMenu = new List<MenuPackage.MenuItem>();
+            _mainMenu = new List<MenuPackage.MenuItem>();
 
             var communityMenu = new MenuPackage.MenuItem
             {
@@ -30,7 +29,7 @@ namespace Sample1.DataProviders
                         new MenuPackage.MenuItem { Name = "Trending", Url = "#" }
                     }
             };
-            mainMenu.Add(communityMenu);
+            _mainMenu.Add(communityMenu);
 
             var newsMenu = new MenuPackage.MenuItem
             {
@@ -42,9 +41,15 @@ namespace Sample1.DataProviders
                         new MenuPackage.MenuItem { Name = "Trending", Url = "#" }
                     }
             };
-            mainMenu.Add(newsMenu);
+            _mainMenu.Add(newsMenu);
+        }
 
-            dataContext.Set(mainMenu);
+        public override void Supply(
+            IRenderContext renderContext,
+            IDataContext dataContext,
+            IDataDependency dependency)
+        {
+            dataContext.Set(_mainMenu);
         }
     }
 

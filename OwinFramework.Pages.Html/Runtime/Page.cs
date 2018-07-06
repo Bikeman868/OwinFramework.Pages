@@ -657,14 +657,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.AddElementScope(type, scopeName);
         }
 
-        void IDataScopeProvider.Add(IDataProviderDefinition dataProviderDefinition)
+        IDataSupply IDataScopeProvider.Add(IDataDependency dependency)
         {
-            _dataScopeProvider.Add(dataProviderDefinition);
-        }
-
-        void IDataScopeProvider.Add(IDataDependency dependency)
-        {
-            _dataScopeProvider.Add(dependency);
+            return _dataScopeProvider.Add(dependency);
         }
 
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
@@ -695,9 +690,14 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region IDataConsumer
 
-        void IDataConsumer.AddDependenciesToScope(IDataScopeProvider scopeProvider)
+        void IDataConsumer.HasDependency(IDataSupply dataSupply)
         {
-            _dataConsumer.AddDependenciesToScope(scopeProvider);
+            _dataConsumer.HasDependency(dataSupply);
+        }
+
+        IList<IDataSupply> IDataConsumer.GetDependencies(IDataScopeProvider dataScope)
+        {
+            return _dataConsumer.GetDependencies(dataScope);
         }
 
         void IDataConsumer.HasDependency<T>(string scopeName)

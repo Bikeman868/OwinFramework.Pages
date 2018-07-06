@@ -17,6 +17,13 @@ namespace OwinFramework.Pages.Mocks.DataModel
         {
             public Type DataType { get; set; }
             public string ScopeName { get; set; }
+
+            public bool Equals(IDataDependency other)
+            {
+                if (ReferenceEquals(other, null)) return false;
+                if (DataType != other.DataType) return false;
+                return string.Equals(ScopeName, other.ScopeName, StringComparison.OrdinalIgnoreCase);
+            }
         }
     }
 }

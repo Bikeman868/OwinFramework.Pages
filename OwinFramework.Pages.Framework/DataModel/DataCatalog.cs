@@ -110,12 +110,12 @@ namespace OwinFramework.Pages.Framework.DataModel
             IDataSupplier supplier = null;
             if (!string.IsNullOrEmpty(dependency.ScopeName))
             {
-                lock (suppliers) supplier = suppliers.FirstOrDefault(s => !s.IsScoped && s.CanSupply(dependency));
+                lock (suppliers) supplier = suppliers.FirstOrDefault(s => !s.IsScoped && s.IsSupplierOf(dependency));
             }
 
             if (supplier == null)
             {
-                lock (suppliers) supplier = suppliers.FirstOrDefault(s => s.IsScoped && s.CanSupply(dependency));
+                lock (suppliers) supplier = suppliers.FirstOrDefault(s => s.IsScoped && s.IsSupplierOf(dependency));
             }
 
             return supplier;

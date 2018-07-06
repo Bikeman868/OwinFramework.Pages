@@ -43,7 +43,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 IsScoped = true;
         }
 
-        bool IDataSupplier.CanSupply(IDataDependency dependency)
+        bool IDataSupplier.IsSupplierOf(IDataDependency dependency)
         {
             return _dataSupplies.Any(s => s.IsMatch(dependency));
         }

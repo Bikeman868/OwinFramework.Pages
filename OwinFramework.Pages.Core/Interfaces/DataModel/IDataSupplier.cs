@@ -30,7 +30,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <summary>
         /// Tests whether this supplier can supply this type of data
         /// </summary>
-        bool CanSupply(IDataDependency dependency);
+        bool IsSupplierOf(IDataDependency dependency);
 
         /// <summary>
         /// Gets an instance that will add a specific type of data to the render context

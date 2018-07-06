@@ -45,23 +45,19 @@ namespace Sample1.SamplePackages
             public IList<MenuItem> SubMenu { get; set; }
         }
 
-        [IsDataProvider(typeof(IList<MenuItem>), "submenu")]
-        [NeedsData(typeof(MenuItem))]
         public class SubMenuDataProvider: DataProvider
         {
             public SubMenuDataProvider(IDataProviderDependenciesFactory dependencies) 
                 : base(dependencies) 
             {
+                DataConsumer.HasDependency<MenuItem>();
+                Add<IList<MenuItem>>("submenu");
             }
 
-            public override bool CanSatisfy(IDataDependency dependency)
-            {
-                return 
-                    dependency.DataType == typeof(IList<MenuItem>) &&
-                    string.Equals("submenu", dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
-            }
-
-            public override void Satisfy(IRenderContext renderContext, IDataContext dataContext)
+            public override void Supply(
+                IRenderContext renderContext,
+                IDataContext dataContext,
+                IDataDependency dependency)
             {
                 var parent = dataContext.Get<MenuItem>();
                 dataContext.Set(parent.SubMenu);

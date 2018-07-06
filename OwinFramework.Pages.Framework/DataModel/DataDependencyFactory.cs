@@ -13,5 +13,14 @@ namespace OwinFramework.Pages.Framework.DataModel
                 ScopeName = scopeName
             };
         }
+
+        public IDataDependency Create<T>(string scopeName = null)
+        {
+            return new DataDependency
+            {
+                DataType = typeof(T),
+                ScopeName = scopeName
+            };
+        }
     }
 }

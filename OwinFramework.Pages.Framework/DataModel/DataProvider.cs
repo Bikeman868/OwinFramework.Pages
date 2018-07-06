@@ -17,16 +17,18 @@ namespace OwinFramework.Pages.Framework.DataModel
         public string Name { get; set; }
         public IPackage Package { get; set; }
 
-        readonly IDataConsumer _dataConsumer;
-        readonly IDataSupplier _dataSupplier;
+        protected readonly IDataConsumer DataConsumer;
+        protected readonly IDataSupplier DataSupplier;
+        protected readonly IDataProviderDependenciesFactory Dependencies;
 
         protected DataProvider(IDataProviderDependenciesFactory dependencies)
         {
             // DO NOT change the method signature of this constructor as
             // this would break all data providers in all applications that use
             // this framework!!
-            _dataConsumer = dependencies.DataConsumerFactory.Create();
-            _dataSupplier = dependencies.DataSupplierFactory.Create();
+            Dependencies = dependencies;
+            DataConsumer = dependencies.DataConsumerFactory.Create();
+            DataSupplier = dependencies.DataSupplierFactory.Create();
         }
 
         public DebugDataProvider GetDebugInfo()
@@ -39,41 +41,60 @@ namespace OwinFramework.Pages.Framework.DataModel
             };
         }
 
+        public void Add<T>(string scopeName = null)
+        {
+            var suppliedDependency = Dependencies.DataDependencyFactory.Create<T>(scopeName);
+            DataSupplier.Add(suppliedDependency, Supply);
+        }
+
+        public void Add(Type type, string scopeName = null)
+        {
+            var suppliedDependency = Dependencies.DataDependencyFactory.Create(type, scopeName);
+            DataSupplier.Add(suppliedDependency, Supply);
+        }
+
+        public virtual void Supply(
+            IRenderContext renderContext,
+            IDataContext dataContext,
+            IDataDependency dependency)
+        {
+        }
+
         #region IDataConsumer
 
         void IDataConsumer.HasDependency<T>(string scopeName)
         {
-            _dataConsumer.HasDependency<T>(scopeName);
+            DataConsumer.HasDependency<T>(scopeName);
         }
 
         void IDataConsumer.HasDependency(Type dataType, string scopeName)
         {
-            _dataConsumer.HasDependency(dataType, scopeName);
+            DataConsumer.HasDependency(dataType, scopeName);
         }
 
         void IDataConsumer.CanUseData<T>(string scopeName = null)
         {
-            _dataConsumer.CanUseData<T>(scopeName);
+            DataConsumer.CanUseData<T>(scopeName);
         }
 
         void IDataConsumer.CanUseData(Type dataType, string scopeName)
         {
-            _dataConsumer.CanUseData(dataType, scopeName);
+            DataConsumer.CanUseData(dataType, scopeName);
         }
 
         void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
         {
-            _dataConsumer.HasDependency(dataProvider, dependency);
+            DataConsumer.HasDependency(dataProvider, dependency);
         }
 
         void IDataConsumer.HasDependency(IDataSupply dataSupply)
         {
-            _dataConsumer.HasDependency(dataSupply);
+            DataConsumer.HasDependency(dataSupply);
         }
 
         IList<IDataSupply> IDataConsumer.GetDependencies(IDataScopeProvider dataScope)
         {
-            return _dataConsumer.GetDependencies(dataScope);
+            return DataConsumer.GetDependencies(dataScope);
         }
 
         #endregion
@@ -82,27 +103,27 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         IList<Type> IDataSupplier.SuppliedTypes
         {
-            get { return _dataSupplier.SuppliedTypes; }
+            get { return DataSupplier.SuppliedTypes; }
         }
 
         bool IDataSupplier.IsScoped
         {
-            get { return _dataSupplier.IsScoped; }
+            get { return DataSupplier.IsScoped; }
         }
 
         void IDataSupplier.Add(IDataDependency dependency, Action<IRenderContext, IDataContext, IDataDependency> action)
         {
-            _dataSupplier.Add(dependency, action);
+            DataSupplier.Add(dependency, action);
         }
 
-        bool IDataSupplier.CanSupply(IDataDependency dependency)
+        bool IDataSupplier.IsSupplierOf(IDataDependency dependency)
         {
-            return _dataSupplier.CanSupply(dependency);
+            return DataSupplier.IsSupplierOf(dependency);
         }
 
         IDataSupply IDataSupplier.GetSupply(IDataDependency dependency, IList<IDataSupply> dependencies)
         {
-            return _dataSupplier.GetSupply(dependency, dependencies);
+            return DataSupplier.GetSupply(dependency, dependencies);
         }
 
         #endregion

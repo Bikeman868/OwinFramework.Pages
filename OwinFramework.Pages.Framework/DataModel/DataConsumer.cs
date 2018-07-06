@@ -58,7 +58,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (dataSupplier == null)
                 throw new Exception("Data provider " + dataProvider.Name + " is not a supplier of data");
 
-            if (!dataSupplier.CanSupply(dependency))
+            if (!dataSupplier.IsSupplierOf(dependency))
                 throw new Exception("Data provider " + dataProvider.Name + " does not supply the requested data");
 
             if (_dataProviderDependencies == null)

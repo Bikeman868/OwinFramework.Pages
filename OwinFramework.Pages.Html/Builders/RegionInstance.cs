@@ -220,14 +220,9 @@ namespace OwinFramework.Pages.Html.Builders
             _dataScopeProvider.AddElementScope(type, scopeName);
         }
 
-        void IDataScopeProvider.Add(IDataProviderDefinition dataProviderDefinition)
+        IDataSupply IDataScopeProvider.Add(IDataDependency dependency)
         {
-            _dataScopeProvider.Add(dataProviderDefinition);
-        }
-
-        void IDataScopeProvider.Add(IDataDependency dependency)
-        {
-            _dataScopeProvider.Add(dependency);
+            return _dataScopeProvider.Add(dependency);
         }
 
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
@@ -236,7 +231,5 @@ namespace OwinFramework.Pages.Html.Builders
         }
 
         #endregion
-
-
     }
 }

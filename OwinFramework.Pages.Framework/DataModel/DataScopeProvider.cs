@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -110,7 +111,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                     s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.FullName))
                     .ToList(),
                 Dependencies = _dependencySupplies.Select(
-                    d => (string.IsNullOrEmpty(d.ScopeName) ? string.Empty : d.ScopeName + " ") + d.DataType.DisplayName())
+                    d => (string.IsNullOrEmpty(d.Dependency.ScopeName) ? string.Empty : d.Dependency.ScopeName + " ") + d.Dependency.DataType.DisplayName())
                     .ToList(),
             };
         }
@@ -228,9 +229,9 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
         {
-            lock (_dataSupplies)
+            lock (_dependencySupplies)
             {
-                if ((_dataSupplies == null || _dataSupplies.Count == 0) &&
+                if ((_dependencySupplies == null || _dependencySupplies.Count == 0) &&
                     (_children == null || _children.Count == 0))
                     return;
             }
@@ -241,19 +242,19 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             renderContext.AddDataContext(Id, dataContext);
 
-            if (_dataSupplies != null)
+            if (_dependencySupplies != null)
             {
                 int count;
-                lock (_dataSupplies)
-                    count = _dataSupplies.Count;
+                lock (_dependencySupplies)
+                    count = _dependencySupplies.Count;
 
                 for (var i = 0; i < count; i++)
                 {
-                    IDataSupply dataSupply;
-                    lock (_dataSupplies)
-                        dataSupply = _dataSupplies[i];
+                    DependencySupply dependencySupply;
+                    lock (_dependencySupplies)
+                        dependencySupply = _dependencySupplies[i];
 
-                    dataSupply.Supply(renderContext, dataContext);
+                    dependencySupply.DataSupply.Supply(renderContext, dataContext);
                 }
             }
 

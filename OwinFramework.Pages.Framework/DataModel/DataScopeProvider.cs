@@ -31,8 +31,8 @@ namespace OwinFramework.Pages.Framework.DataModel
         private readonly IList<IDataScope> _dataScopes;
 
         /// <summary>
-        /// A list of the dependencies that matched this scope. For debug
-        /// info only
+        /// A list of the dependencies that matched this scope. These are
+        /// executed to build the data context tree for each request
         /// </summary>
         private readonly IList<DependencySupply> _dependencySupplies;
 

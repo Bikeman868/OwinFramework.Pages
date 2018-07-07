@@ -38,9 +38,9 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         }
 
         [Test]
-        public void Should_register_data_providers()
+        public void Should_register_unscoped_data_provider_and_resolve_unscoped()
         {
-            var personProvider = new PersonProvider(SetupMock<IDataProviderDependenciesFactory>());
+            var personProvider = new PersonProvider1(_dataProviderDependenciesFactory);
             _fluentBuilder.Register(personProvider);
 
             var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
@@ -66,6 +66,147 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
             Assert.AreEqual("Halliday", person.LastName);
         }
 
+        [Test]
+        public void Should_register_unscoped_data_provider_and_resolve_scoped()
+        {
+            var personProvider = new PersonProvider1(_dataProviderDependenciesFactory);
+            _fluentBuilder.Register(personProvider);
+
+            var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
+            Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
+
+            var dependency = _dataProviderDependenciesFactory.DataDependencyFactory.Create<Person>("scope");
+            var dataSupplier = _dataCatalog.FindSupplier(dependency);
+
+            Assert.IsNotNull(dataSupplier);
+
+            var dataSupply = dataSupplier.GetSupply(dependency);
+
+            Assert.IsNotNull(dataSupply);
+
+            var renderContext = SetupMock<IRenderContext>();
+            var dataContext = SetupMock<IDataContext>();
+            dataSupply.Supply(renderContext, dataContext);
+
+            var person = dataContext.Get<Person>();
+
+            Assert.IsNotNull(person);
+            Assert.AreEqual("Martin", person.FirstName);
+            Assert.AreEqual("Halliday", person.LastName);
+        }
+
+        [Test]
+        public void Should_register_scoped_data_provider_and_resolve_unscoped()
+        {
+            var personProvider = new PersonProvider2(_dataProviderDependenciesFactory);
+            _fluentBuilder.Register(personProvider);
+
+            var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
+            Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
+
+            var dependency = _dataProviderDependenciesFactory.DataDependencyFactory.Create<Person>();
+            var dataSupplier = _dataCatalog.FindSupplier(dependency);
+
+            Assert.IsNotNull(dataSupplier);
+
+            var dataSupply = dataSupplier.GetSupply(dependency);
+
+            Assert.IsNotNull(dataSupply);
+
+            var renderContext = SetupMock<IRenderContext>();
+            var dataContext = SetupMock<IDataContext>();
+            dataSupply.Supply(renderContext, dataContext);
+
+            var person = dataContext.Get<Person>();
+
+            Assert.IsNotNull(person);
+            Assert.AreEqual("John", person.FirstName);
+            Assert.AreEqual("Doe", person.LastName);
+        }
+
+        [Test]
+        public void Should_register_scoped_data_provider_and_resolve_scoped()
+        {
+            var personProvider = new PersonProvider2(_dataProviderDependenciesFactory);
+            _fluentBuilder.Register(personProvider);
+
+            var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
+            Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
+
+            var dependency = _dataProviderDependenciesFactory.DataDependencyFactory.Create<Person>("logged-in");
+            var dataSupplier = _dataCatalog.FindSupplier(dependency);
+
+            Assert.IsNotNull(dataSupplier);
+
+            var dataSupply = dataSupplier.GetSupply(dependency);
+
+            Assert.IsNotNull(dataSupply);
+
+            var renderContext = SetupMock<IRenderContext>();
+            var dataContext = SetupMock<IDataContext>();
+            dataSupply.Supply(renderContext, dataContext);
+
+            var person = dataContext.Get<Person>();
+
+            Assert.IsNotNull(person);
+            Assert.AreEqual("John", person.FirstName);
+            Assert.AreEqual("Doe", person.LastName);
+        }
+
+        [Test]
+        public void Should_distinguish_scoped_data_provider()
+        {
+            var personProvider1 = new PersonProvider1(_dataProviderDependenciesFactory);
+            _fluentBuilder.Register(personProvider1);
+
+            var personProvider2 = new PersonProvider2(_dataProviderDependenciesFactory);
+            _fluentBuilder.Register(personProvider2);
+
+            var dependency = _dataProviderDependenciesFactory.DataDependencyFactory.Create<Person>("logged-in");
+            var dataSupplier = _dataCatalog.FindSupplier(dependency);
+
+            var dataSupply = dataSupplier.GetSupply(dependency);
+
+            Assert.IsNotNull(dataSupply);
+
+            var renderContext = SetupMock<IRenderContext>();
+            var dataContext = SetupMock<IDataContext>();
+            dataSupply.Supply(renderContext, dataContext);
+
+            var person = dataContext.Get<Person>();
+
+            Assert.IsNotNull(person);
+            Assert.AreEqual("John", person.FirstName);
+            Assert.AreEqual("Doe", person.LastName);
+        }
+
+        [Test]
+        public void Should_distinguish_unscoped_data_provider()
+        {
+            var personProvider1 = new PersonProvider1(_dataProviderDependenciesFactory);
+            _fluentBuilder.Register(personProvider1);
+
+            var personProvider2 = new PersonProvider2(_dataProviderDependenciesFactory);
+            _fluentBuilder.Register(personProvider2);
+
+            var dependency1 = _dataProviderDependenciesFactory.DataDependencyFactory.Create<Person>();
+            var dataSupplier1 = _dataCatalog.FindSupplier(dependency1);
+
+            var dataSupply = dataSupplier1.GetSupply(dependency1);
+
+            Assert.IsNotNull(dataSupply);
+
+            var renderContext = SetupMock<IRenderContext>();
+            var dataContext = SetupMock<IDataContext>();
+            dataSupply.Supply(renderContext, dataContext);
+
+            var person = dataContext.Get<Person>();
+
+            Assert.IsNotNull(person);
+            Assert.AreEqual("Martin", person.FirstName);
+            Assert.AreEqual("Halliday", person.LastName);
+        }
+
         public class Person
         {
             public string FirstName;
@@ -73,9 +214,9 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         }
 
         [IsDataProvider(typeof(Person))]
-        public class PersonProvider : DataProvider
+        public class PersonProvider1 : DataProvider
         {
-            public PersonProvider(IDataProviderDependenciesFactory dependencies)
+            public PersonProvider1(IDataProviderDependenciesFactory dependencies)
                 : base(dependencies)
             { }
 
@@ -85,6 +226,22 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
                 IDataDependency dependency)
             {
                 dataContext.Set(new Person { FirstName = "Martin", LastName = "Halliday" });
+            }
+        }
+
+        [IsDataProvider(typeof(Person), "logged-in")]
+        public class PersonProvider2 : DataProvider
+        {
+            public PersonProvider2(IDataProviderDependenciesFactory dependencies)
+                : base(dependencies)
+            { }
+
+            public override void Supply(
+                IRenderContext renderContext,
+                IDataContext dataContext,
+                IDataDependency dependency)
+            {
+                dataContext.Set(new Person { FirstName = "John", LastName = "Doe" });
             }
         }
     }

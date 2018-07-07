@@ -8,11 +8,11 @@ using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Html.Builders
+namespace OwinFramework.Pages.Html.Elements
 {
     internal class RegionInstance : ElementInstance<IRegion>, IRegion
     {
-        public ElementType ElementType { get { return ElementType.Region; } }
+        public override ElementType ElementType { get { return ElementType.Region; } }
 
         public string RepeatScope 
         { 
@@ -44,7 +44,7 @@ namespace OwinFramework.Pages.Html.Builders
             IRegionDependenciesFactory dependenciesFactory, 
             IRegion parent, 
             IElement content)
-            : base(parent)
+            : base(dependenciesFactory.DataConsumerFactory, parent)
         {
             _dependenciesFactory = dependenciesFactory;
             _dataScopeProvider = parent.Clone();
@@ -65,11 +65,6 @@ namespace OwinFramework.Pages.Html.Builders
             initializationData.AddScope(_dataScopeProvider);
             base.Initialize(initializationData);
             initializationData.Pop();
-        }
-
-        DebugElement IElement.GetDebugInfo()
-        {
-            return GetDebugInfo();
         }
 
         public DebugRegion GetDebugInfo()
@@ -112,22 +107,22 @@ namespace OwinFramework.Pages.Html.Builders
 
         #region IElement rendering methods
 
-        public new IWriteResult WriteHead(IRenderContext context, bool includeChildren)
+        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
         {
             return Parent.WriteHead(context, _dataScopeProvider, includeChildren);
         }
 
-        public IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
+        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
             return Parent.WriteHtml(context, _dataScopeProvider, includeChildren ? _content : null);
         }
 
-        public new IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
+        public override IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
         {
             return Parent.WriteInitializationScript(context, _dataScopeProvider, includeChildren);
         }
 
-        public new IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
+        public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
         {
             return Parent.WriteTitle(context, _dataScopeProvider, includeChildren);
         }

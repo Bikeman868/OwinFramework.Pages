@@ -159,6 +159,21 @@ namespace OwinFramework.Pages.Framework.Managers
 
             if (exception != null) throw exception;
 
+            foreach (var service in _services.Values)
+            {
+                try
+                {
+                    service.Initialize();
+                }
+                catch (Exception ex)
+                {
+                    if (exception == null) exception = ex;
+                    System.Diagnostics.Trace.WriteLine("Exception initializing service '" + service.Name + "'. " + ex.Message);
+                }
+            }
+
+            if (exception != null) throw exception;
+
             foreach (var page in _pages.Values)
             {
                 try

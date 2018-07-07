@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
@@ -8,11 +8,11 @@ using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Html.Builders
+namespace OwinFramework.Pages.Html.Elements
 {
     internal class LayoutInstance: ElementInstance<ILayout>, ILayout
     {
-        public ElementType ElementType { get { return ElementType.Region; } }
+        public override ElementType ElementType { get { return ElementType.Region; } }
 
         private readonly ILayoutDependenciesFactory _layoutDependencies;
         private readonly IThreadSafeDictionary<string, IRegion> _content;
@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Html.Builders
             ILayoutDependenciesFactory layoutDependencies,
             ILayout parent,
             IEnumerable<string> regionNames)
-            : base(parent)
+            : base(layoutDependencies.DataConsumerFactory, parent)
         {
             _layoutDependencies = layoutDependencies;
             _content = layoutDependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
@@ -29,8 +29,6 @@ namespace OwinFramework.Pages.Html.Builders
             foreach (var regionName in regionNames)
                 _content.Add(regionName, Parent.GetRegion(regionName).CreateInstance(null));
         }
-
-        DebugElement IElement.GetDebugInfo() { return GetDebugInfo(); }
 
         public DebugLayout GetDebugInfo()
         {
@@ -80,7 +78,7 @@ namespace OwinFramework.Pages.Html.Builders
             return _content.Select(e => e.Value).Where(r => r != null).GetEnumerator();
         }
 
-        public IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
+        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
             return Parent.WriteHtml(
                 context,

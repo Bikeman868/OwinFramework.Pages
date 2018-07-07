@@ -10,6 +10,7 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Elements;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
@@ -94,22 +95,8 @@ namespace OwinFramework.Pages.Html.Runtime
                     : Module.AssetDeployment;
             }
 
-            if (Layout != null)
-            {
-                Layout.Initialize(data);
-            }
-
-            if (_components != null)
-            {
-                var skip = 0;
-                do
-                {
-                    var newComponents = _components.Skip(skip).ToList();
-                    foreach (var component in newComponents)
-                        component.Initialize(data);
-                    skip += newComponents.Count;
-                } while (_components.Count > skip);
-            }
+            InitializeDependants(data);
+            InitializeChildren(data, AssetDeployment);
 
             _referencedModules = new List<IModule>();
             var styles = _dependencies.CssWriterFactory.Create();

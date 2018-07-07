@@ -64,12 +64,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildEngine.cs" />
-    <Compile Include="Builders\BuiltComponent.cs" />
-    <Compile Include="Builders\BuiltModule.cs" />
-    <Compile Include="Builders\BuiltPage.cs" />
+    <Compile Include="Elements\BuiltComponent.cs" />
+    <Compile Include="Elements\BuiltModule.cs" />
+    <Compile Include="Elements\BuiltPage.cs" />
     <Compile Include="Builders\ComponentBuilder.cs" />
     <Compile Include="Builders\ComponentDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
+    <Compile Include="Elements\ElementBase.cs" />
     <Compile Include="Interfaces\IHtmlHelper.cs" />
     <Compile Include="Builders\LayoutBuilder.cs" />
     <Compile Include="Builders\ModuleBuilder.cs" />
@@ -90,18 +91,18 @@
     <Compile Include="Runtime\JavascriptWriterFactory.cs" />
     <Compile Include="Runtime\ModuleDependencies.cs" />
     <Compile Include="Runtime\ModuleDependenciesFactory.cs" />
-    <Compile Include="Runtime\Element.cs" />
+    <Compile Include="Elements\Element.cs" />
     <Compile Include="Runtime\HtmlWriter.cs" />
     <Compile Include="Runtime\HtmlWriterFactory.cs" />
-    <Compile Include="Builders\BuiltLayout.cs" />
-    <Compile Include="Builders\ElementInstance.cs" />
-    <Compile Include="Builders\LayoutInstance.cs" />
+    <Compile Include="Elements\BuiltLayout.cs" />
+    <Compile Include="Elements\ElementInstance.cs" />
+    <Compile Include="Elements\LayoutInstance.cs" />
     <Compile Include="Builders\LayoutDefinition.cs" />
     <Compile Include="Runtime\PackageDependencies.cs" />
     <Compile Include="Runtime\PackageDependenciesFactory.cs" />
     <Compile Include="Runtime\StaticHtmlElement.cs" />
-    <Compile Include="Builders\BuiltRegion.cs" />
-    <Compile Include="Builders\RegionInstance.cs" />
+    <Compile Include="Elements\BuiltRegion.cs" />
+    <Compile Include="Elements\RegionInstance.cs" />
     <Compile Include="Builders\RegionDefinition.cs" />
     <Compile Include="Runtime\ComponentDependencies.cs" />
     <Compile Include="Runtime\ComponentDependenciesFactory.cs" />

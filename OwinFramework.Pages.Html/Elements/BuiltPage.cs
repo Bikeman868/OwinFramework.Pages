@@ -3,7 +3,7 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Html.Builders
+namespace OwinFramework.Pages.Html.Elements
 {
     internal class BuiltPage : Page
     {

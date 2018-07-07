@@ -94,37 +94,38 @@ namespace OwinFramework.Pages.Framework.Builders
 
             var types = assembly.GetTypes();
 
-            var packageTypes = types.Where(t => t.GetCustomAttributes(true).Any(a => a is IsPackageAttribute)).ToList();
-            var otherTypes = types.Where(t => !t.GetCustomAttributes(true).Any(a => a is IsPackageAttribute)).ToList();
+            var packageTypes = new List<Type>();
+            var dataProviderTypes = new List<Type>();
+            var otherTypes = new List<Type>();
+
+            foreach(var type in types)
+            {
+                var customAttributes = type.GetCustomAttributes(true);
+                if (customAttributes.Any(a => a is IsPackageAttribute))
+                    packageTypes.Add(type);
+                else if (customAttributes.Any(a => a is IsDataProviderAttribute))
+                    dataProviderTypes.Add(type);
+                else if (customAttributes.Length > 0)
+                    otherTypes.Add(type);
+            }
 
             var  exceptions = new List<Exception>();
 
-            // Must register packages first because they define the 
-            // namespace for the other elements
-            foreach (var type in packageTypes)
-            {
-                try
+            Action<Type> register = t =>
                 {
-                    ((IFluentBuilder)this).Register(type, factory);
-                }
-                catch (Exception ex)
-                {
-                    exceptions.Add(ex);
-                }
-            }
+                    try
+                    {
+                        ((IFluentBuilder)this).Register(t, factory);
+                    }
+                    catch (Exception ex)
+                    {
+                        exceptions.Add(ex);
+                    }
+                };
 
-            // Register everything else
-            foreach (var type in otherTypes)
-            {
-                try
-                {
-                    ((IFluentBuilder)this).Register(type, factory);
-                }
-                catch (Exception ex)
-                {
-                    exceptions.Add(ex);
-                }
-            }
+            foreach (var type in packageTypes) register(type);
+            foreach (var type in dataProviderTypes) register(type);
+            foreach (var type in otherTypes) register(type);
 
             if (exceptions.Count == 1)
                 throw exceptions[0];

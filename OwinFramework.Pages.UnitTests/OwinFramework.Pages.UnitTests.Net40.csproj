@@ -87,6 +87,7 @@
     <Compile Include="Framework\Managers\NameManagerTests.cs" />
     <Compile Include="Framework\Managers\AssetManagerTests.cs" />
     <Compile Include="Framework\Managers\IdManagerTests.cs" />
+    <Compile Include="Html\Runtime\FluentBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -94,7 +95,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Html\" />
+    <Folder Include="Html\Builders\" />
     <Folder Include="Restful\" />
   </ItemGroup>
   <ItemGroup>

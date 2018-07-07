@@ -30,28 +30,33 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private readonly INameManager _nameManager;
         private readonly IRequestRouter _requestRouter;
+        private readonly IDataCatalog _dataCatalog;
         private readonly HashSet<string> _assemblies;
         private readonly HashSet<Type> _types;
         private readonly IPackage _packageContext;
 
         public FluentBuilder(
             INameManager nameManager,
-            IRequestRouter requestRouter)
+            IRequestRouter requestRouter,
+            IDataCatalog dataCatalog)
         {
             _nameManager = nameManager;
             _requestRouter = requestRouter;
+            _dataCatalog = dataCatalog;
             _assemblies = new HashSet<string>();
             _types = new HashSet<Type>();
         }
 
         private FluentBuilder(
             FluentBuilder parent,
-            IPackage packageContext)
+            IPackage packageContext,
+            IDataCatalog dataCatalog)
         {
             _nameManager = parent._nameManager;
             _assemblies = parent._assemblies;
             _types = parent._types;
             _packageContext = packageContext;
+            _dataCatalog = dataCatalog;
 
             ModuleBuilder = parent.ModuleBuilder;
             PageBuilder = parent.PageBuilder;
@@ -257,7 +262,7 @@ namespace OwinFramework.Pages.Framework.Builders
             Configure(attributes, package);
             _nameManager.Register(package);
 
-            package.Build(new FluentBuilder(this, package));
+            package.Build(new FluentBuilder(this, package, _dataCatalog));
             return package;
         }
 
@@ -505,6 +510,13 @@ namespace OwinFramework.Pages.Framework.Builders
             //}
 
             Configure(attributes, dataProvider);
+
+            _nameManager.Register(dataProvider);
+
+            var dataSupplier = dataProvider as IDataSupplier;
+            if (dataSupplier != null)
+                _dataCatalog.Register(dataSupplier);
+
             return dataProvider;
         }
 
@@ -662,7 +674,19 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 if (!string.IsNullOrEmpty(attributes.IsDataProvider.Name))
                     dataProvider.Name = attributes.IsDataProvider.Name;
+
+                if (attributes.IsDataProvider.Type != null)
+                    dataProvider.Add(attributes.IsDataProvider.Type, attributes.IsDataProvider.Scope);
             }
+
+            if (attributes.SuppliesDatas != null)
+            {
+                foreach(var data in attributes.SuppliesDatas)
+                {
+                    dataProvider.Add(data.DataType, data.Scope);
+                }
+            }
+
             Configure(attributes, dataProvider as IDataConsumer);
         }
 

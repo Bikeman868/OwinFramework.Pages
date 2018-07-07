@@ -44,6 +44,7 @@ namespace OwinFramework.Pages.Framework.Builders
         public IList<UsesLayoutAttribute> UsesLayouts;
         public IList<UsesRegionAttribute> UsesRegions;
         public IList<DataScopeAttribute> DataScopes;
+        public IList<SuppliesDataAttribute> SuppliesDatas;
 
         public AttributeSet(Type type)
         {
@@ -82,6 +83,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 UsesLayouts = Add(UsesLayouts, attribute);
                 UsesRegions = Add(UsesRegions, attribute);
                 DataScopes = Add(DataScopes, attribute);
+                SuppliesDatas = Add(SuppliesDatas, attribute);
             }
         }
 

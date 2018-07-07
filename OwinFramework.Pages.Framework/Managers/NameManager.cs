@@ -62,12 +62,6 @@ namespace OwinFramework.Pages.Framework.Managers
 
             var layout = element as ILayout;
             if (layout != null) lock (_layouts) _layouts.Add(name, layout);
-
-            var page = element as IPage;
-            if (page != null) lock (_pages) _pages.Add(name, page);
-
-            var service = element as IService;
-            if (service != null) lock (_services) _services.Add(name, service);
         }
 
         public void Register(IRunable runable)
@@ -77,6 +71,9 @@ namespace OwinFramework.Pages.Framework.Managers
             {
                 if (string.IsNullOrEmpty(page.Name))
                     page.Name = GenerateElementName(page.Package);
+                else
+                    ValidateName(page.Name, page.Package);
+
                 lock (_pages) _pages.Add(page.Name, page);
             }
 
@@ -85,6 +82,9 @@ namespace OwinFramework.Pages.Framework.Managers
             {
                 if (string.IsNullOrEmpty(service.Name))
                     service.Name = GenerateElementName(service.Package);
+                else
+                    ValidateName(service.Name, service.Package);
+
                 lock (_services) _services.Add(service.Name, service);
             }
         }
@@ -110,20 +110,15 @@ namespace OwinFramework.Pages.Framework.Managers
             lock(_packages) _packages[package.Name] = package;
         }
 
-        public void Register(IDataProvider dataProvider, string providerName)
+        public void Register(IDataProvider dataProvider)
         {
             if (string.IsNullOrEmpty(dataProvider.Name))
                 dataProvider.Name = GenerateElementName(dataProvider.Package);
             else
                 ValidateName(dataProvider.Name, dataProvider.Package);
 
-            if (string.IsNullOrEmpty(providerName))
-                providerName = dataProvider.Name;
-            else
-                ValidateName(providerName, dataProvider.Package);
-
             var name = dataProvider.Package == null
-                ? providerName
+                ? dataProvider.Name
                 : dataProvider.Package.NamespaceName + ":" + dataProvider.Name;
 
             lock (_dataProviders) _dataProviders[name] = dataProvider;

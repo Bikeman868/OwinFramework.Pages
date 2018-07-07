@@ -43,9 +43,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// <summary>
         /// Registers the name of a data provider
         /// </summary>
-        /// <param name="dataProvider">The package to register</param>
-        /// <param name="name">The name to register</param>
-        void Register(IDataProvider dataProvider, string name);
+        /// <param name="dataProvider">The data provider to register</param>
+        void Register(IDataProvider dataProvider);
 
         /// <summary>
         /// Adds a callback function to execute after all components have been

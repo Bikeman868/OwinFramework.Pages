@@ -58,7 +58,7 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             IRegion region;
             if (!Content.TryGetValue(regionName, out region))
-                throw new Exception("Layout doe not have a '" + regionName + "' region");
+                throw new Exception("Layout does not have a '" + regionName + "' region");
 
             return region;
         }

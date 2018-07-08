@@ -255,12 +255,21 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteCloseTag("ul");
             }
 
+            if (dataScopeProvider.Dependencies != null && dataScopeProvider.Dependencies.Count > 0)
+            {
+                html.WriteElementLine("p", "Dependencies satisfied");
+                html.WriteOpenTag("ul");
+                foreach (var dependency in dataScopeProvider.Dependencies)
+                    html.WriteElementLine("li", dependency);
+                html.WriteCloseTag("ul");
+            }
+
             if (dataScopeProvider.DataSupplies != null && dataScopeProvider.DataSupplies.Count > 0)
             {
-                html.WriteElementLine("p", "Dependencies");
+                html.WriteElementLine("p", "Data supplies");
                 html.WriteOpenTag("ul");
-                foreach (var dependencies in dataScopeProvider.DataSupplies)
-                    html.WriteElementLine("li", dependencies);
+                foreach (var dataSupplier in dataScopeProvider.DataSupplies)
+                    html.WriteElementLine("li", dataSupplier);
                 html.WriteCloseTag("ul");
             }
 

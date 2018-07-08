@@ -48,6 +48,7 @@ namespace OwinFramework.Pages.Html.Elements
         {
             _dependenciesFactory = dependenciesFactory;
             _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create();
+            _dataScopeProvider.ElementName = "Region instance " + parent.Name;
 
             content = content ?? parent.Content;
 

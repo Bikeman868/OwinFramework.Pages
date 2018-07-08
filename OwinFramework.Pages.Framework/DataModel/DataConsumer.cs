@@ -12,7 +12,6 @@ namespace OwinFramework.Pages.Framework.DataModel
     /// </summary>
     public class DataConsumer: IDataConsumer
     {
-        private readonly IDataSupplierFactory _dataProviderDefinitionFactory;
         private readonly IDataDependencyFactory _dataDependencyFactory;
 
         private List<DataProviderDependency> _dataProviderDependencies;
@@ -20,10 +19,8 @@ namespace OwinFramework.Pages.Framework.DataModel
         private List<IDataDependency> _dataDependencies;
 
         public DataConsumer(
-            IDataSupplierFactory dataProviderDefinitionFactory,
             IDataDependencyFactory dataDependencyFactory)
         {
-            _dataProviderDefinitionFactory = dataProviderDefinitionFactory;
             _dataDependencyFactory = dataDependencyFactory;
         }
 
@@ -75,27 +72,28 @@ namespace OwinFramework.Pages.Framework.DataModel
             _dataSupplyDependencies.Add(dataSupply);
         }
 
-        public IList<IDataSupply> GetDependencies(IDataScopeProvider dataScope)
+        public void AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
         {
-            var dataSupplies = new List<IDataSupply>();
-
             if (_dataSupplyDependencies != null)
-                dataSupplies.AddRange(_dataSupplyDependencies);
+            {
+                foreach (var dataSupply in _dataSupplyDependencies)
+                    dataScope.AddSupply(dataSupply);
+            }
 
             if (_dataProviderDependencies != null)
             {
                 foreach (var dataProviderDependency in _dataProviderDependencies)
                 {
-                    var dataConsumer = dataProviderDependency.DataProvider as IDataConsumer;
-                    var dependencies = dataConsumer == null
-                        ? null 
-                        : dataConsumer.GetDependencies(dataScope);
-
                     var dataSupplier = dataProviderDependency.DataProvider as IDataSupplier;
-                    if (dataSupplier != null)
+                    if (!ReferenceEquals(dataSupplier, null))
                     {
-                        var dataSupply = dataSupplier.GetSupply(dataProviderDependency.Dependency, dependencies);
-                        dataSupplies.Add(dataSupply);
+                        dataScope.AddSupplier(dataSupplier, dataProviderDependency.Dependency);
+                    }
+
+                    var dataConsumer = dataProviderDependency.DataProvider as IDataConsumer;
+                    if (!ReferenceEquals(dataConsumer, null))
+                    {
+                        dataConsumer.AddDependenciesToScopeProvider(dataScope);
                     }
                 }
             }
@@ -104,12 +102,9 @@ namespace OwinFramework.Pages.Framework.DataModel
             {
                 foreach (var dependency in _dataDependencies)
                 {
-                    var dataSupply = dataScope.Add(dependency);
-                    dataSupplies.Add(dataSupply);
+                    dataScope.AddDependency(dependency);
                 }
             }
-
-            return dataSupplies;
         }
 
         private class DataProviderDependency

@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Framework.DataModel
@@ -7,6 +8,13 @@ namespace OwinFramework.Pages.Framework.DataModel
     {
         public Type DataType { get; set; }
         public string ScopeName { get; set; }
+
+        public override string ToString()
+        {
+            return string.IsNullOrEmpty(ScopeName)
+                ? DataType.DisplayName()
+                : "'" + ScopeName + "' " + DataType.DisplayName();
+        }
 
         public override bool Equals(object obj)
         {

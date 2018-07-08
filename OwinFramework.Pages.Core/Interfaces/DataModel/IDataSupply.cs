@@ -16,11 +16,5 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <param name="dataContext">The data context to use to get dependant data and where
         /// new data should be added</param>
         void Supply(IRenderContext renderContext, IDataContext dataContext);
-
-        /// <summary>
-        /// The supplies that this one depends on. These other supplies must
-        /// be executed before this one
-        /// </summary>
-        IList<IDataSupply> DependentSupplies { get; }
     }
 }

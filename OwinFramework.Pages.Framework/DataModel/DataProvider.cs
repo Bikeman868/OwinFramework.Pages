@@ -92,9 +92,9 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataConsumer.HasDependency(dataSupply);
         }
 
-        IList<IDataSupply> IDataConsumer.GetDependencies(IDataScopeProvider dataScope)
+        void IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
         {
-            return DataConsumer.GetDependencies(dataScope);
+            DataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
         #endregion
@@ -121,9 +121,9 @@ namespace OwinFramework.Pages.Framework.DataModel
             return DataSupplier.IsSupplierOf(dependency);
         }
 
-        IDataSupply IDataSupplier.GetSupply(IDataDependency dependency, IList<IDataSupply> dependencies)
+        IDataSupply IDataSupplier.GetSupply(IDataDependency dependency)
         {
-            return DataSupplier.GetSupply(dependency, dependencies);
+            return DataSupplier.GetSupply(dependency);
         }
 
         #endregion

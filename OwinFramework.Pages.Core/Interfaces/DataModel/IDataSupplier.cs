@@ -37,7 +37,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// when executed
         /// </summary>
         /// <param name="dependency">The type of data to supply</param>
-        /// <param name="dependencies">Other supplies that this one depends on</param>
-        IDataSupply GetSupply(IDataDependency dependency, IList<IDataSupply> dependencies = null);
+        IDataSupply GetSupply(IDataDependency dependency);
     }
 }

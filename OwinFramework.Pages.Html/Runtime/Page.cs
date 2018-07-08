@@ -195,7 +195,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             public void AddScope(IDataScopeProvider scopeProvider) 
             {
-                scopeProvider.SetParent(_currentState.ScopeProvider);
+                scopeProvider.Initialize(_currentState.ScopeProvider);
                 _currentState.ScopeProvider = scopeProvider; 
             }
 
@@ -584,6 +584,25 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
+        #region Debug info
+
+        DebugInfo IRunable.GetDebugInfo() { return GetDebugInfo(); }
+
+        public DebugPage GetDebugInfo()
+        {
+            _dataScopeProvider.ElementName = "Page " + Name;
+
+            return new DebugPage
+            {
+                Name = Name,
+                Instance = this,
+                Layout = _layout == null ? null : _layout.GetDebugInfo(),
+                Scope = _dataScopeProvider.GetDebugInfo(0, -1)
+            };
+        }
+
+        #endregion
+
         #region IDataScopeProvider
 
         int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
@@ -592,11 +611,6 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             get { return _dataScopeProvider.ElementName; }
             set { _dataScopeProvider.ElementName = value; }
-        }
-
-        IDataScopeProvider IDataScopeProvider.Clone()
-        {
-            return _dataScopeProvider.Clone();
         }
 
         DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
@@ -629,9 +643,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.AddChild(child);
         }
 
-        void IDataScopeProvider.SetParent(IDataScopeProvider parent)
+        void IDataScopeProvider.Initialize(IDataScopeProvider parent)
         {
-            _dataScopeProvider.SetParent(parent);
+            _dataScopeProvider.Initialize(parent);
         }
 
         void IDataScopeProvider.AddScope(Type type, string scopeName)
@@ -639,14 +653,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.AddScope(type, scopeName);
         }
 
-        void IDataScopeProvider.AddElementScope(Type type, string scopeName)
+        void IDataScopeProvider.AddDependency(IDataDependency dependency)
         {
-            _dataScopeProvider.AddElementScope(type, scopeName);
-        }
-
-        IDataSupply IDataScopeProvider.Add(IDataDependency dependency)
-        {
-            return _dataScopeProvider.Add(dependency);
+            _dataScopeProvider.AddDependency(dependency);
         }
 
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
@@ -654,23 +663,19 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
         }
 
-        #endregion
-
-        #region Debug info
-
-        DebugInfo IRunable.GetDebugInfo() { return GetDebugInfo(); }
-
-        public DebugPage GetDebugInfo()
+        void IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            _dataScopeProvider.ElementName = "Page " + Name;
+            _dataScopeProvider.AddSupplier(supplier, dependency);
+        }
 
-            return new DebugPage
-            {
-                Name = Name,
-                Instance = this,
-                Layout = _layout == null ? null : _layout.GetDebugInfo(),
-                Scope = _dataScopeProvider.GetDebugInfo(0, -1)
-            };
+        void IDataScopeProvider.AddSupply(IDataSupply supply)
+        {
+            _dataScopeProvider.AddSupply(supply);
+        }
+
+        void IDataScopeProvider.AddConsumer(IDataConsumer consumer)
+        {
+            _dataScopeProvider.AddConsumer(consumer);
         }
 
         #endregion
@@ -682,9 +687,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataConsumer.HasDependency(dataSupply);
         }
 
-        IList<IDataSupply> IDataConsumer.GetDependencies(IDataScopeProvider dataScope)
+        void IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
         {
-            return _dataConsumer.GetDependencies(dataScope);
+            _dataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
         void IDataConsumer.HasDependency<T>(string scopeName)

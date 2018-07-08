@@ -224,7 +224,7 @@ namespace OwinFramework.Pages.Html.Elements
 
             if (_dataConsumer != null)
             {
-                _dataConsumer.GetDependencies(initializationData.ScopeProvider);
+                _dataConsumer.AddDependenciesToScopeProvider(initializationData.ScopeProvider);
             }
         }
 
@@ -274,11 +274,11 @@ namespace OwinFramework.Pages.Html.Elements
             _dataConsumer.HasDependency(dataSupply);
         }
 
-        IList<IDataSupply> IDataConsumer.GetDependencies(IDataScopeProvider dataScope)
+        void IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
         {
-            if (_dataConsumer == null) return null;
+            if (_dataConsumer == null) return;
 
-            return _dataConsumer.GetDependencies(dataScope);
+            _dataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
         void IDataConsumer.HasDependency<T>(string scopeName)

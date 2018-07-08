@@ -31,6 +31,8 @@ namespace OwinFramework.Pages.Framework.Builders
         private readonly INameManager _nameManager;
         private readonly IRequestRouter _requestRouter;
         private readonly IDataCatalog _dataCatalog;
+        private readonly IDataDependencyFactory _dataDependencyFactory;
+        private readonly IDataSupplierFactory _dataSupplierFactory;
         private readonly HashSet<string> _assemblies;
         private readonly HashSet<Type> _types;
         private readonly IPackage _packageContext;
@@ -38,11 +40,15 @@ namespace OwinFramework.Pages.Framework.Builders
         public FluentBuilder(
             INameManager nameManager,
             IRequestRouter requestRouter,
-            IDataCatalog dataCatalog)
+            IDataCatalog dataCatalog,
+            IDataDependencyFactory dataDependencyFactory,
+            IDataSupplierFactory dataSupplierFactory)
         {
             _nameManager = nameManager;
             _requestRouter = requestRouter;
             _dataCatalog = dataCatalog;
+            _dataDependencyFactory = dataDependencyFactory;
+            _dataSupplierFactory = dataSupplierFactory;
             _assemblies = new HashSet<string>();
             _types = new HashSet<Type>();
         }
@@ -50,13 +56,17 @@ namespace OwinFramework.Pages.Framework.Builders
         private FluentBuilder(
             FluentBuilder parent,
             IPackage packageContext,
-            IDataCatalog dataCatalog)
+            IDataCatalog dataCatalog,
+            IDataDependencyFactory dataDependencyFactory,
+            IDataSupplierFactory dataSupplierFactory)
         {
             _nameManager = parent._nameManager;
             _assemblies = parent._assemblies;
             _types = parent._types;
             _packageContext = packageContext;
             _dataCatalog = dataCatalog;
+            _dataDependencyFactory = dataDependencyFactory;
+            _dataSupplierFactory = dataSupplierFactory;
 
             ModuleBuilder = parent.ModuleBuilder;
             PageBuilder = parent.PageBuilder;
@@ -263,7 +273,12 @@ namespace OwinFramework.Pages.Framework.Builders
             Configure(attributes, package);
             _nameManager.Register(package);
 
-            package.Build(new FluentBuilder(this, package, _dataCatalog));
+            package.Build(new FluentBuilder(
+                this, 
+                package, 
+                _dataCatalog, 
+                _dataDependencyFactory,
+                _dataSupplierFactory));
             return package;
         }
 
@@ -798,7 +813,19 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (attributes.Repeat != null)
             {
-                dataScopeProvider.AddElementScope(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
+                // When data scope providers repeat data they effectively are a supplier
+                // of the data they repeat, but the supplier itself does not add the
+                // data to the data context, it is added by the repeating action during
+                // the rendering operation. We need to add a supplier here otherwide the
+                // data scope provider will try to resolve dependencies on the repeated
+                // data by looking in the data catalog.
+
+                var dependency = _dataDependencyFactory.Create(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
+                var supplier = _dataSupplierFactory.Create();
+                supplier.Add(dependency, (rc, dc, d) => { });
+
+                dataScopeProvider.AddScope(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
+                dataScopeProvider.AddSupplier(supplier, dependency);
             }
         }
 

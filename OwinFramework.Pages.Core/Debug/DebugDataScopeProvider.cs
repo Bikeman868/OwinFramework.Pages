@@ -28,6 +28,11 @@ namespace OwinFramework.Pages.Core.Debug
         public List<string> Scopes { get; set; }
 
         /// <summary>
+        /// A list of daat supplies that will be added to the data context
+        /// </summary>
+        public List<string> DataSupplies { get; set; }
+
+        /// <summary>
         /// A list of dependencies that resolved to this scope
         /// </summary>
         public List<string> Dependencies { get; set; }

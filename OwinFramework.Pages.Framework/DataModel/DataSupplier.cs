@@ -48,7 +48,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             return _dataSupplies.Any(s => s.IsMatch(dependency));
         }
 
-        IDataSupply IDataSupplier.GetSupply(IDataDependency dependency, IList<IDataSupply> dependencies)
+        IDataSupply IDataSupplier.GetSupply(IDataDependency dependency)
         {
             var supply = _dataSupplies.FirstOrDefault(s => s.IsMatch(dependency));
 
@@ -58,8 +58,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                     {
                         DataSupplierId = _dataSupplierId,
                         Dependency = supply.Dependency,
-                        Action = supply.Action,
-                        DependentSupplies = dependencies
+                        Action = supply.Action
                     };
         }
 
@@ -67,7 +66,6 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             public int DataSupplierId;
             public IDataDependency Dependency;
-            public IList<IDataSupply> DependentSupplies { get; set; }
             public Action<IRenderContext, IDataContext, IDataDependency> Action;
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)

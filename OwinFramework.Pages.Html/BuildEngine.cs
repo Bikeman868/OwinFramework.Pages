@@ -1,4 +1,5 @@
 ﻿using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Builders;
@@ -18,6 +19,8 @@ namespace OwinFramework.Pages.Html
         private readonly IAssetManager _assetManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
+        private readonly IDataDependencyFactory _dataDependencyFactory;
+        private readonly IDataSupplierFactory _dataSupplierFactory;
 
         public BuildEngine(
             IRequestRouter requestRouter,
@@ -29,7 +32,9 @@ namespace OwinFramework.Pages.Html
             IComponentDependenciesFactory componentDependenciesFactory,
             IAssetManager assetManager,
             IHtmlHelper htmlHelper,
-            IFluentBuilder fluentBuilder)
+            IFluentBuilder fluentBuilder,
+            IDataDependencyFactory dataDependencyFactory,
+            IDataSupplierFactory dataSupplierFactory)
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
@@ -41,6 +46,8 @@ namespace OwinFramework.Pages.Html
             _assetManager = assetManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
+            _dataDependencyFactory = dataDependencyFactory;
+            _dataSupplierFactory = dataSupplierFactory;
         }
 
         public void Install(IFluentBuilder builder)
@@ -65,7 +72,9 @@ namespace OwinFramework.Pages.Html
                 _nameManager,
                 _htmlHelper,
                 _regionDependenciesFactory,
-                _fluentBuilder);
+                _fluentBuilder,
+                _dataDependencyFactory,
+                _dataSupplierFactory);
 
             builder.ComponentBuilder = new ComponentBuilder(
                 _nameManager,

@@ -105,7 +105,7 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
                 return string.Equals(dependency.ScopeName, ScopeName, StringComparison.OrdinalIgnoreCase);
             }
 
-            public IDataSupply GetSupply(IDataDependency dependency, IList<IDataSupply> dependencies = null)
+            public IDataSupply GetSupply(IDataDependency dependency)
             {
                 throw new NotImplementedException();
             }

@@ -24,5 +24,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Returns a factory that can construct data consumer mixins
         /// </summary>
         IDataConsumerFactory DataConsumerFactory { get; }
+
+        /// <summary>
+        /// Returns a factory that can construct data dependencies
+        /// </summary>
+        IDataDependencyFactory DataDependencyFactory { get; }
+
+        /// <summary>
+        /// Returns a factory that can construct data suppliers
+        /// </summary>
+        IDataSupplierFactory DataSupplierFactory { get; }
     }
 }

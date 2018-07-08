@@ -11,88 +11,30 @@ namespace OwinFramework.Pages.Framework.DataModel
 {
     internal class DataScopeProvider : IDataScopeProvider
     {
-        private readonly IIdManager _idManager;
+        /*******************************************************************
+        * Injected dependencies satisfied by IoC
+        *******************************************************************/
+
         private readonly IDataScopeFactory _dataScopeFactory;
-        private readonly IDataSupplierFactory _dataProviderDefinitionFactory;
         private readonly IDataCatalog _dataCatalog;
         private readonly IDataContextFactory _dataContextFactory;
-
-        /// <summary>
-        /// When constructing a tree of data contexts for a request the tree is
-        /// traversed using these collections of children
-        /// </summary>
-        private readonly IList<IDataScopeProvider> _children;
-
-        /// <summary>
-        /// These are the scopes that this scope provider overrides. Any
-        /// requests for data that match this scope will be handled here
-        /// and otherwise passed up to the parent
-        /// </summary>
-        private readonly IList<IDataScope> _dataScopes;
-
-        /// <summary>
-        /// A list of the dependencies that matched this scope. These are
-        /// executed to build the data context tree for each request
-        /// </summary>
-        private readonly IList<DependencySupply> _dependencySupplies;
-
-        /// <summary>
-        /// This unique ID is used to index the data contexts in the render context
-        /// </summary>
-        public int Id { get; private set; }
-
-        /// <summary>
-        /// Set this to the name of the element that this is providing data scope
-        /// for. This will be either a region, page or service
-        /// </summary>
-        public string ElementName { get; set; }
-
-        /// <summary>
-        /// The parent scope or null if this is the page/service
-        /// </summary>
-        private IDataScopeProvider _parent;
 
         public DataScopeProvider(
             IIdManager idManager,
             IDataScopeFactory dataScopeFactory,
-            IDataSupplierFactory dataProviderDefinitionFactory,
             IDataCatalog dataCatalog,
             IDataContextFactory dataContextFactory)
         {
-            _idManager = idManager;
             _dataScopeFactory = dataScopeFactory;
-            _dataProviderDefinitionFactory = dataProviderDefinitionFactory;
             _dataCatalog = dataCatalog;
             _dataContextFactory = dataContextFactory;
-
-            _dataScopes = new List<IDataScope>();
-            _dependencySupplies = new List<DependencySupply>();
-            _children = new List<IDataScopeProvider>();
 
             Id = idManager.GetUniqueId();
         }
 
-        private DataScopeProvider(DataScopeProvider original)
-        {
-            _idManager = original._idManager;
-            _dataScopeFactory = original._dataScopeFactory;
-            _dataProviderDefinitionFactory = original._dataProviderDefinitionFactory;
-            _dataCatalog = original._dataCatalog;
-            _dataContextFactory = original._dataContextFactory;
-
-            _dataScopes = original._dataScopes.ToList();
-            _dependencySupplies = new List<DependencySupply>();
-            _children = new List<IDataScopeProvider>();
-
-            Id = _idManager.GetUniqueId();
-        }
-
-        public IDataScopeProvider Clone()
-        {
-            return new DataScopeProvider(this);
-        }
-
-        #region Debug info
+        /*******************************************************************
+        * Information for helping with debugging only
+        *******************************************************************/
 
         public DebugDataScopeProvider GetDebugInfo(int parentDepth, int childDepth)
         {
@@ -107,31 +49,96 @@ namespace OwinFramework.Pages.Framework.DataModel
                 Children = _children == null || childDepth == 0
                     ? null
                     : _children.Select(c => c.GetDebugInfo(0, childDepth - 1)).ToList(),
-                Scopes = _dataScopes.Select(
-                    s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.FullName))
+                Scopes = _dataScopes
+                    .Select(s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.DisplayName()))
                     .ToList(),
-                Dependencies = _dependencySupplies.Select(
-                    d => (string.IsNullOrEmpty(d.Dependency.ScopeName) ? string.Empty : d.Dependency.ScopeName + " ") + d.Dependency.DataType.DisplayName())
+                Dependencies = _suppliedDependencies
+                    .Select(sd => sd.Dependency)
+                    .Select(d => d.DataType.DisplayName() + 
+                        (string.IsNullOrEmpty(d.ScopeName) ? "" : " in '" + d.ScopeName + "' scope"))
                     .ToList(),
+                DataSupplies = _dataSupplies.Select(
+                    d => d.GetType().DisplayName()).ToList(),
             };
         }
 
-        #endregion
+        /*******************************************************************
+        * These class members can be used to set up the scope provider
+        * prior to initialization.
+        *******************************************************************/
 
-        #region Parent/child tree structure
+        public int Id { get; private set; }
+        public string ElementName { get; set; }
+        private readonly IList<IDataScope> _dataScopes = new List<IDataScope>();
+        private readonly IList<IDataSupply> _dataSupplies = new List<IDataSupply>();
+        private readonly IList<SuppliedDependency> _suppliedDependencies = new List<SuppliedDependency>();
+
+        public void AddScope(Type type, string scopeName)
+        {
+            if (_dataScopes.Any(s =>
+                (s.DataType == type) &&
+                (string.Equals(s.ScopeName, scopeName, StringComparison.InvariantCultureIgnoreCase))))
+                return;
+
+            var dataScope = _dataScopeFactory.Create(type, scopeName);
+            _dataScopes.Add(dataScope);
+        }
+
+        public void AddSupply(IDataSupply supply)
+        {
+            if (supply == null) return;
+            lock(_dataSupplies) _dataSupplies.Add(supply);
+        }
+
+        public void AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        {
+            lock(_suppliedDependencies)
+            {
+                if (_suppliedDependencies.Any(d => 
+                    d.Supplier == supplier && 
+                    d.Dependency.Equals(dependency)))
+                    return;
+
+                _suppliedDependencies.Add(new SuppliedDependency
+                    {
+                        Supplier = supplier,
+                        Dependency = dependency
+                    });
+            }
+
+            var supply = supplier.GetSupply(dependency);
+            AddSupply(supply);
+        }
+
+        private class SuppliedDependency
+        {
+            public IDataSupplier Supplier;
+            public IDataDependency Dependency;
+        }
+
+        /*******************************************************************
+        * These class members must be used to initialize the scope provider
+        * before it can resolve dependencies
+        *******************************************************************/
+
+        private readonly IList<IDataScopeProvider> _children = new List<IDataScopeProvider>();
+        private IDataScopeProvider _parent;
+        private bool _isInitialized;
 
         public IDataScopeProvider Parent { get { return _parent; } }
 
-        public void SetParent(IDataScopeProvider parent)
+        public void Initialize(IDataScopeProvider parent)
         {
-            if (_parent != null)
+            if (_isInitialized)
                 throw new InvalidOperationException(
-                    "The parent of this data scope provider has already been set");
+                    "The data scope provider can only be initialized once");
 
             _parent = parent;
 
             if (parent != null)
                 parent.AddChild(this);
+
+            _isInitialized = true;
         }
 
         public void AddChild(IDataScopeProvider child)
@@ -140,91 +147,56 @@ namespace OwinFramework.Pages.Framework.DataModel
                 _children.Add(child);
         }
 
-        #endregion
+        /*******************************************************************
+        * These class members can only be used after initialization 
+        * to resolve data needs into data supplies
+        *******************************************************************/
 
-        #region Scopes handled by this provider
-
-        public void AddScope(Type type, string scopeName)
+        public void AddDependency(IDataDependency dependency)
         {
-            AddScope(type, scopeName, false);
-        }
-
-        public void AddElementScope(Type type, string scopeName)
-        {
-            AddScope(type, scopeName, true);
-        }
-
-        private void AddScope(Type type, string scopeName, bool providedByElement)
-        {
-            if (_dataScopes.Any(s =>
-                (s.DataType == type) &&
-                (string.Equals(s.ScopeName, scopeName, StringComparison.InvariantCultureIgnoreCase))))
-                return;
-
-            var dataScope = _dataScopeFactory.Create(type, scopeName);
-            dataScope.IsProvidedByElement = providedByElement;
-            _dataScopes.Add(dataScope);
-        }
-
-        public bool IsInScope(IDataDependency dependency)
-        {
-            if (dependency == null)
-                throw new ArgumentNullException("dependency");
-
-            return _dataScopes.Any(s => s.IsMatch(dependency));
-        }
-
-        #endregion
-
-        #region Satisfying dependencies
-
-        public IDataSupply Add(IDataDependency dependency)
-        {
-            var result = _dependencySupplies.FirstOrDefault(ds => ds.Dependency.Equals(dependency));
-            if (result != null) return result.DataSupply;
-
-            if (_dataScopes.Any(s => s.IsProvidedByElement && s.IsMatch(dependency)))
-                return null;
+            if (!_isInitialized)
+                throw new InvalidOperationException(
+                    "You can not add dependencies to a data scope provider until after initialization");
 
             if (_parent != null && !IsInScope(dependency))
-                return _parent.Add(dependency);
-
-            var dataSupplier = _dataCatalog.FindSupplier(dependency);
-
-            if (dataSupplier == null)
-                throw new Exception(
-                    "There are no registered data suppliers that can fulfil the dependency on " +
-                    dependency.DataType.DisplayName() + (string.IsNullOrEmpty(dependency.ScopeName) 
-                    ? string.Empty : " with '" + dependency.ScopeName + "' scope"));
-            
-            IList<IDataSupply> supplierDependencies = null;
-            var dataConsumer = dataSupplier as IDataConsumer;
-            if (dataConsumer != null)
-                supplierDependencies = dataConsumer.GetDependencies(this);
-
-            var supply = dataSupplier.GetSupply(dependency, supplierDependencies);
-
-            var dependencySupply = new DependencySupply
             {
-                Dependency = dependency,
-                DataSupply = supply
-            };
-            _dependencySupplies.Add(dependencySupply);
+                _parent.AddDependency(dependency);
+                return;
+            }
 
-            return supply;
+            lock (_suppliedDependencies)
+            {
+                if (_suppliedDependencies.Any(d => d.Dependency.Equals(dependency)))
+                    return;
+            }
+
+            var supplier = _dataCatalog.FindSupplier(dependency);
+
+            if (supplier == null)
+                throw new Exception("Data scope provider was asked to provide " +
+                    dependency + " data but the data catalog does not have any "+
+                    "suppliers for that kind of data");
+
+            AddSupplier(supplier, dependency);
+            AddConsumer(supplier as IDataConsumer);
         }
 
-        public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
+        public void AddConsumer(IDataConsumer consumer)
         {
-            Add(missingDependency);
+            if (!_isInitialized)
+                throw new InvalidOperationException(
+                    "You can not add consumers to a data scope provider until after initialization");
 
-            renderContext.DeleteDataContextTree();
-            SetupDataContext(renderContext);
+            if (ReferenceEquals(consumer, null)) return;
+
+            consumer.AddDependenciesToScopeProvider(this);
         }
 
-        #endregion
-
-        #region Setting up the data context
+        /*******************************************************************
+        * These class members can only be used after initialization 
+        * to build the data context for a request. You only need to call
+        * this on the root scope provider, it will traverse the child tree
+        *******************************************************************/
 
         public void SetupDataContext(IRenderContext renderContext)
         {
@@ -238,9 +210,9 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
         {
-            lock (_dependencySupplies)
+            lock (_dataSupplies)
             {
-                if ((_dependencySupplies == null || _dependencySupplies.Count == 0) &&
+                if ((_dataSupplies == null || _dataSupplies.Count == 0) &&
                     (_children == null || _children.Count == 0))
                     return;
             }
@@ -251,19 +223,17 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             renderContext.AddDataContext(Id, dataContext);
 
-            if (_dependencySupplies != null)
+            if (_dataSupplies != null)
             {
                 int count;
-                lock (_dependencySupplies)
-                    count = _dependencySupplies.Count;
+                lock (_dataSupplies)
+                    count = _dataSupplies.Count;
 
                 for (var i = 0; i < count; i++)
                 {
-                    DependencySupply dependencySupply;
-                    lock (_dependencySupplies)
-                        dependencySupply = _dependencySupplies[i];
-
-                    dependencySupply.DataSupply.Supply(renderContext, dataContext);
+                    IDataSupply dataSupply;
+                    lock (_dataSupplies) dataSupply = _dataSupplies[i];
+                    dataSupply.Supply(renderContext, dataContext);
                 }
             }
 
@@ -277,12 +247,26 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         }
 
-        #endregion
-    
-        private class DependencySupply
+        /*******************************************************************
+        * These class members are called by the data context to add data
+        * that is missing because the application developer forgot to
+        * declare the dependency
+        *******************************************************************/
+
+        public bool IsInScope(IDataDependency dependency)
         {
-            public IDataDependency Dependency;
-            public IDataSupply DataSupply;
+            if (dependency == null)
+                throw new ArgumentNullException("dependency");
+
+            return _dataScopes.Any(s => s.IsMatch(dependency));
         }
+
+        public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
+        {
+            AddDependency(missingDependency);
+            renderContext.DeleteDataContextTree();
+            SetupDataContext(renderContext);
+        }
+
     }
 }

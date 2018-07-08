@@ -22,7 +22,6 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
             Reset();
 
             _dataConsumer = new DataConsumer(
-                SetupMock<IDataSupplierFactory>(),
                 SetupMock<IDataDependencyFactory>());
         }
 
@@ -30,25 +29,14 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
         public void Should_register_type_dependencies()
         {
             var dataScopeProvider = SetupMock<IDataScopeProvider>();
-            var renderContext = SetupMock<IRenderContext>();
-            var dataContext = SetupMock<IDataContext>();
 
             var mockDataScopeProvider = GetMock<MockDataScopeProvider, IDataScopeProvider>();
             mockDataScopeProvider.SupplyAction = dc => dc.Set(new TestType { Value = 99 });
 
             _dataConsumer.HasDependency<TestType>();
-            var dataSuppliers = _dataConsumer.GetDependencies(dataScopeProvider);
+            _dataConsumer.AddDependenciesToScopeProvider(dataScopeProvider);
 
-            Assert.IsNotNull(dataSuppliers);
-            Assert.AreEqual(1, dataSuppliers.Count);
-
-            var dataSupplier = dataSuppliers[0];
-
-            dataSupplier.Supply(renderContext, dataContext);
-
-            var testType = dataContext.Get<TestType>();
-            Assert.IsNotNull(testType);
-            Assert.AreEqual(99, testType.Value);
+            Assert.IsTrue(mockDataScopeProvider.DataDependencies.Any(d => d.DataType == typeof(TestType)));
         }
 
         private class TestType

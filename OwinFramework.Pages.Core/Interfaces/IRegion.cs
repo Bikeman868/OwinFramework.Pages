@@ -9,7 +9,7 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// A region is part of a layout. The region can contain a 
     /// single component or a layout
     /// </summary>
-    public interface IRegion : IElement, IDataScopeProvider
+    public interface IRegion : IElement
     {
         /// <summary>
         /// Retrieves debugging information about the region

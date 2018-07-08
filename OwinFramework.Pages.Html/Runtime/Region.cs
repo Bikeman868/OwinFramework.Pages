@@ -8,7 +8,6 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Builders;
 using OwinFramework.Pages.Html.Elements;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -66,20 +65,11 @@ namespace OwinFramework.Pages.Html.Runtime
             // this framework!!
 
             _regionDependenciesFactory = dependencies;
-            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
 
             WriteOpen = w => { };
             WriteClose = w => { };
             WriteChildOpen = w => { };
             WriteChildClose = w => { };
-        }
-
-        public override void Initialize(IInitializationData initializationData)
-        {
-            initializationData.Push();
-            initializationData.AddScope(_dataScopeProvider);
-            base.Initialize(initializationData);
-            initializationData.Pop();
         }
 
         #endregion
@@ -96,7 +86,6 @@ namespace OwinFramework.Pages.Html.Runtime
             var debugInfo = new DebugRegion
             { 
                 Content = Content == null ? null : Content.GetDebugInfo(),
-                Scope = _dataScopeProvider.GetDebugInfo(-1, 2),
                 RepeatScope = RepeatScope,
                 RepeatType = _repeatType,
                 ListType = _listType,
@@ -206,104 +195,6 @@ namespace OwinFramework.Pages.Html.Runtime
             context.Data = savedData;
 
             return result;
-        }
-
-        #endregion
-
-        #region Overrides for base class render methods
-
-        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
-        {
-            return WriteHead(context, _dataScopeProvider, includeChildren);
-        }
-
-        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
-        {
-            return WriteHtml(context, _dataScopeProvider, includeChildren ? Content : null);
-        }
-
-        public override IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
-        {
-            return WriteInitializationScript(context, _dataScopeProvider, includeChildren);
-        }
-
-        public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
-        {
-            return WriteTitle(context, _dataScopeProvider, includeChildren);
-        }
-
-        #endregion
-
-        #region IDataScopeProvider
-
-        private readonly IDataScopeProvider _dataScopeProvider;
-
-        int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
-
-        string IDataScopeProvider.ElementName
-        { 
-            get { return _dataScopeProvider.ElementName; } 
-            set { _dataScopeProvider.ElementName  = value; } 
-        }
-
-        IDataScopeProvider IDataScopeProvider.Clone()
-        {
-            return _dataScopeProvider.Clone();
-        }
-
-        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
-        {
-            return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
-        }
-
-        bool IDataScopeProvider.IsInScope(IDataDependency dependency)
-        {
-            return _dataScopeProvider.IsInScope(dependency);
-        }
-
-        void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
-        {
-            _dataScopeProvider.SetupDataContext(renderContext);
-        }
-
-        void IDataScopeProvider.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
-        {
-            _dataScopeProvider.AddMissingData(renderContext, missingDependency);
-        }
-
-        IDataScopeProvider IDataScopeProvider.Parent
-        {
-            get { return _dataScopeProvider.Parent; }
-        }
-
-        void IDataScopeProvider.AddChild(IDataScopeProvider child)
-        {
-            _dataScopeProvider.AddChild(child);
-        }
-
-        void IDataScopeProvider.SetParent(IDataScopeProvider parent)
-        {
-            _dataScopeProvider.SetParent(parent);
-        }
-
-        void IDataScopeProvider.AddScope(Type type, string scopeName)
-        {
-            _dataScopeProvider.AddScope(type, scopeName);
-        }
-
-        void IDataScopeProvider.AddElementScope(Type type, string scopeName)
-        {
-            _dataScopeProvider.AddElementScope(type, scopeName);
-        }
-
-        IDataSupply IDataScopeProvider.Add(IDataDependency dependency)
-        {
-            return _dataScopeProvider.Add(dependency);
-        }
-
-        void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
-        {
-            _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
         }
 
         #endregion

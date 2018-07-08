@@ -18,6 +18,9 @@ namespace OwinFramework.Pages.Mocks.Runtime
         public string ScopeName { get; set; }
 
         public Action<IDataContext> SupplyAction;
+        public List<IDataDependency> DataDependencies = new List<IDataDependency>();
+        public List<IDataConsumer> DataConsumers = new List<IDataConsumer>();
+        public List<IDataSupply> DataSupplies = new List<IDataSupply>();
 
         public MockDataScopeProvider()
         {
@@ -46,7 +49,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
         {
         }
 
-        public void SetParent(IDataScopeProvider parent)
+        public void Initialize(IDataScopeProvider parent)
         {
             Parent = parent;
         }
@@ -57,18 +60,23 @@ namespace OwinFramework.Pages.Mocks.Runtime
             ScopeName = scopeName;
         }
 
-        public void AddElementScope(Type type, string scopeName)
+        public void AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            ScopeType = type;
-            ScopeName = scopeName;
         }
 
-        public IDataSupply Add(IDataDependency dependency)
+        public void AddSupply(IDataSupply supply)
         {
-            ScopeType = dependency.DataType;
-            ScopeName = dependency.ScopeName;
+            DataSupplies.Add(supply);
+        }
 
-            return new MockDataSupply { SupplyAction = SupplyAction };
+        public void AddDependency(IDataDependency dependency)
+        {
+            DataDependencies.Add(dependency);
+        }
+
+        public void AddConsumer(IDataConsumer consumer)
+        {
+            DataConsumers.Add(consumer);
         }
 
         public bool IsInScope(IDataDependency dependency)
@@ -94,8 +102,6 @@ namespace OwinFramework.Pages.Mocks.Runtime
         private class MockDataSupply : IDataSupply
         {
             public Action<IDataContext> SupplyAction;
-
-            public IList<IDataSupply> DependentSupplies { get { return null; } }
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {

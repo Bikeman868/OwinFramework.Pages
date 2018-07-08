@@ -69,9 +69,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// all of its dependencies
         /// </summary>
         /// <param name="dataScope">The data scope to add missing dependencies to</param>
-        /// <returns>A list of all of the data providers that this element depends
-        /// on. The scope provider can use this list to ensure that providers
-        /// are executed in the correct order to satisfy all dependencies</returns>
-        IList<IDataSupply> GetDependencies(IDataScopeProvider dataScope);
+        void AddDependenciesToScopeProvider(IDataScopeProvider dataScope);
     }
 }

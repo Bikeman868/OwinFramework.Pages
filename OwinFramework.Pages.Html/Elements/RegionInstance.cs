@@ -10,7 +10,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal class RegionInstance : ElementInstance<IRegion>, IRegion
+    internal class RegionInstance : ElementInstance<IRegion>, IRegion, IDataScopeProvider
     {
         public override ElementType ElementType { get { return ElementType.Region; } }
 
@@ -47,7 +47,7 @@ namespace OwinFramework.Pages.Html.Elements
             : base(dependenciesFactory.DataConsumerFactory, parent)
         {
             _dependenciesFactory = dependenciesFactory;
-            _dataScopeProvider = parent.Clone();
+            _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create();
 
             content = content ?? parent.Content;
 
@@ -55,14 +55,34 @@ namespace OwinFramework.Pages.Html.Elements
             var region = content as IRegion;
 
             _content = layout == null 
-                ? (region == null ? content 
-                : region.CreateInstance(null)) : layout.CreateInstance();
+                ? (region == null 
+                    ? content 
+                    : region.CreateInstance(null)) 
+                : layout.CreateInstance();
         }
 
         public override void Initialize(IInitializationData initializationData)
         {
             initializationData.Push();
             initializationData.AddScope(_dataScopeProvider);
+
+            if (RepeatType != null)
+            {
+                // When regions repeat data they effectively are a supplier
+                // of the data they repeat, but the supplier itself does not add the
+                // data to the data context, it is added by the repeating action during
+                // the rendering operation. We need to add a supplier here otherwise the
+                // data scope provider will try to resolve dependencies on the repeated
+                // data by looking in the data catalog.
+
+                var dependency = _dependenciesFactory.DataDependencyFactory.Create(RepeatType, RepeatScope);
+                var supplier = _dependenciesFactory.DataSupplierFactory.Create();
+                supplier.Add(dependency, (rc, dc, d) => { });
+
+                _dataScopeProvider.AddScope(RepeatType, RepeatScope);
+                _dataScopeProvider.AddSupplier(supplier, dependency);
+            }
+
             base.Initialize(initializationData);
             initializationData.Pop();
         }
@@ -165,11 +185,6 @@ namespace OwinFramework.Pages.Html.Elements
             set { _dataScopeProvider.ElementName = value; }
         }
 
-        IDataScopeProvider IDataScopeProvider.Clone()
-        {
-            return _dataScopeProvider.Clone();
-        }
-
         DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
         {
             return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
@@ -200,9 +215,9 @@ namespace OwinFramework.Pages.Html.Elements
             _dataScopeProvider.AddChild(child);
         }
 
-        void IDataScopeProvider.SetParent(IDataScopeProvider parent)
+        void IDataScopeProvider.Initialize(IDataScopeProvider parent)
         {
-            _dataScopeProvider.SetParent(parent);
+            _dataScopeProvider.Initialize(parent);
         }
 
         void IDataScopeProvider.AddScope(Type type, string scopeName)
@@ -210,19 +225,29 @@ namespace OwinFramework.Pages.Html.Elements
             _dataScopeProvider.AddScope(type, scopeName);
         }
 
-        void IDataScopeProvider.AddElementScope(Type type, string scopeName)
+        void IDataScopeProvider.AddDependency(IDataDependency dependency)
         {
-            _dataScopeProvider.AddElementScope(type, scopeName);
-        }
-
-        IDataSupply IDataScopeProvider.Add(IDataDependency dependency)
-        {
-            return _dataScopeProvider.Add(dependency);
+            _dataScopeProvider.AddDependency(dependency);
         }
 
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
         {
             _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
+        }
+
+        void IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        {
+            _dataScopeProvider.AddSupplier(supplier, dependency);
+        }
+
+        void IDataScopeProvider.AddSupply(IDataSupply supply)
+        {
+            _dataScopeProvider.AddSupply(supply);
+        }
+
+        void IDataScopeProvider.AddConsumer(IDataConsumer consumer)
+        {
+            _dataScopeProvider.AddConsumer(consumer);
         }
 
         #endregion

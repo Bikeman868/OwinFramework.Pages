@@ -35,7 +35,7 @@ namespace OwinFramework.Pages.Mocks.DataModel
                 return Dependency == null || Dependency.DataType == dependency.DataType;
             }
 
-            public IDataSupply GetSupply(IDataDependency dependency, IList<IDataSupply> dependencies = null)
+            public IDataSupply GetSupply(IDataDependency dependency)
             {
                 return this;
             }

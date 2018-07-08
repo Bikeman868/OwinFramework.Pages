@@ -34,7 +34,12 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
             _requestRouter = SetupMock<IRequestRouter>();
             _dataCatalog = SetupMock<IDataCatalog>();
 
-            _fluentBuilder = new FluentBuilder(_nameManager, _requestRouter, _dataCatalog);
+            _fluentBuilder = new FluentBuilder(
+                _nameManager,
+                _requestRouter,
+                _dataCatalog,
+                _dataProviderDependenciesFactory.DataDependencyFactory,
+                _dataProviderDependenciesFactory.DataSupplierFactory);
         }
 
         [Test]

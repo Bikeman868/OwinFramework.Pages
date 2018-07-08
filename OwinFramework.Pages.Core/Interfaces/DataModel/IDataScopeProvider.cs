@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -11,6 +10,12 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// </summary>
     public interface IDataScopeProvider
     {
+
+/*******************************************************************
+* These interface members can be used to set up the scope provider
+* prior to initialization.
+*******************************************************************/
+
         /// <summary>
         /// A unique ID for this scope provider. This is used to find the
         /// corresponding data context during rendering operations.
@@ -34,29 +39,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         DebugDataScopeProvider GetDebugInfo(int parentDepth, int childDepth);
 
         /// <summary>
-        /// Returns the parent scope
-        /// </summary>
-        IDataScopeProvider Parent { get; }
-
-        /// <summary>
-        /// Creates a copy of this scope provider that can be subsequently modified
-        /// </summary>
-        /// <returns></returns>
-        IDataScopeProvider Clone();
-
-        /// <summary>
-        /// Adds a child data scope provider establishing a nested scope
-        /// for data dependency resolution
-        /// </summary>
-        void AddChild(IDataScopeProvider child);
-
-        /// <summary>
-        /// Specifies the parent data scope provider. This is established 
-        /// when walking the element tree during initialization
-        /// </summary>
-        void SetParent(IDataScopeProvider parent);
-
-        /// <summary>
         /// Adds a scope to this scope provider. Any requests for data
         /// that match this scope will stop here. Any requests for data
         /// outside of the scopes are propogated to the parent
@@ -68,31 +50,69 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         void AddScope(Type type, string scopeName);
 
         /// <summary>
-        /// Tells the scope provider that rendering this element adds data
-        /// to the data context and therefore a data provider does not need
-        /// to be identified
+        /// Adds a supplier to the list of suppliers that must be run for
+        /// each request to supply data required by the element. Can be called
+        /// before or after initialization
         /// </summary>
-        /// <param name="type">The type of data added when the element is
-        /// rendered</param>
-        /// <param name="scopeName">Optional scope name for data binding
-        /// ame resolution</param>
-        void AddElementScope(Type type, string scopeName);
+        void AddSupplier(IDataSupplier supplier, IDataDependency dependency);
+
+        /// <summary>
+        /// Adds a data supply to the list of what must be supplied to the 
+        /// data context for rendering. Can be called before or after
+        /// initialization
+        /// </summary>
+        void AddSupply(IDataSupply supply);
+
+/*******************************************************************
+* These interface members are used to build scope providers into a
+* tree heirachy. This has to happen before dependencies can be 
+* resolved.
+*******************************************************************/
+
+        /// <summary>
+        /// Constructs the parent/child tree of data scope providers and
+        /// gets the scope provider into a state where it can resolve
+        /// data needs
+        /// </summary>
+        void Initialize(IDataScopeProvider parent);
+
+        /// <summary>
+        /// Returns the parent scope
+        /// </summary>
+        IDataScopeProvider Parent { get; }
+
+        /// <summary>
+        /// Adds a child data scope provider establishing a nested scope
+        /// for data dependency resolution
+        /// </summary>
+        void AddChild(IDataScopeProvider child);
+
+/*******************************************************************
+* These interface members can be used after initialization to 
+* tell the scope provider what data it needs to be able to supply.
+* These data needs might be met by this scope provider or deferred
+* to the parent.
+*******************************************************************/
 
         /// <summary>
         /// Adds a dependency on data. A suitable provider will be located
         /// and added to this scope or a parent scope according to where this
-        /// scope is handled
+        /// scope is handled.
+        /// This method can only be called after initialization
         /// </summary>
-        /// <param name="dependency">The data that the element depends on</param>
-        /// <returns>The supply for this data</returns>
-        IDataSupply Add(IDataDependency dependency);
+        void AddDependency(IDataDependency dependency);
 
         /// <summary>
-        /// Used to determine if the particular type is available from this
-        /// scope provider.
+        /// Must be called after initialization, adds data suppliers to
+        /// this scope or its ancestors to satisfy the needs of this
+        /// data consumer
         /// </summary>
-        /// <param name="dependency">The type of data we are looking for</param>
-        bool IsInScope(IDataDependency dependency);
+        void AddConsumer(IDataConsumer consumer);
+
+    /*******************************************************************
+    * These interface members build the data context for a request using
+    * the data supplies that were resolved from the data needs
+    *******************************************************************/
 
         /// <summary>
         /// This should only be called on the root, it recursively traverses the
@@ -108,12 +128,31 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// You should not call this method from your application
         /// </summary>
         void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext);
-    
+
+    /*******************************************************************
+    * These interface members are used to dynamically add new dependencies
+    * discovered at runtime when the application tries to retrieve data
+    * that it did not declare as a data need.
+    *******************************************************************/
+
+        /// <summary>
+        /// Used to determine if the particular type is available from this
+        /// scope provider.
+        /// </summary>
+        /// <param name="dependency">The type of data we are looking for</param>
+        bool IsInScope(IDataDependency dependency);
+
         /// <summary>
         /// This is called in the case where dependencies are missing from the 
         /// data context because the dependencies were not correctly specified
         /// up front. It adds the new dependency going forward
         /// </summary>
+        /// <remarks>This is an expensive method that tears down and
+        /// recreates the whole data context, running all of the data supplies
+        /// again. This only happens when the application tries to use data
+        /// that it did not deplare that it needed. The missing dependecny is
+        /// added to the scope provider so that this will not happen again
+        /// on subsequent requests for the same page or service.</remarks>
         void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency);
     }
 }

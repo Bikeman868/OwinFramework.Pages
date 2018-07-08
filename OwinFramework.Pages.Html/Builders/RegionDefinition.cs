@@ -16,6 +16,8 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly INameManager _nameManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
+        private readonly IDataDependencyFactory _dataDependencyFactory;
+        private readonly IDataSupplierFactory _dataSupplierFactory;
         private readonly BuiltRegion _region;
         private string _tagName = "div";
         private string _style;
@@ -31,12 +33,16 @@ namespace OwinFramework.Pages.Html.Builders
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,
             IRegionDependenciesFactory regionDependenciesFactory,
+            IDataDependencyFactory dataDependencyFactory,
+            IDataSupplierFactory dataSupplierFactory,
             IPackage package)
         {
             _declaringType = declaringType;
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
+            _dataDependencyFactory = dataDependencyFactory;
+            _dataSupplierFactory = dataSupplierFactory;
             _region = new BuiltRegion(regionDependenciesFactory);
             _region.Package = package;
         }
@@ -127,9 +133,6 @@ namespace OwinFramework.Pages.Html.Builders
             _childTagName = tag;
             _childStyle = style;
             _childClassNames = classes;
-
-            ((IDataScopeProvider)_region).AddElementScope(_region.RepeatType, scopeName);
-
             return this;
         }
 
@@ -142,9 +145,7 @@ namespace OwinFramework.Pages.Html.Builders
             _childTagName = tag;
             _childStyle = style;
             _childClassNames = classes;
-            
-            ((IDataScopeProvider)_region).AddElementScope(_region.RepeatType, null);
-            
+
             return this;
         }
 

@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// Base implementation of IPage. Inheriting from this olass will insulate you
     /// from any additions to the IPage interface
     /// </summary>
-    public abstract class Page: Element, IPage, IDataScopeProvider, IDataConsumer
+    public class Page: Element, IPage, IDataScopeProvider, IDataConsumer
     {
         /// <summary>
         /// Returns the name of the permission that the user must have to view this page
@@ -60,6 +60,8 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public override ElementType ElementType { get { return ElementType.Page; } }
 
+        private Dictionary<string, IElement> _regions;
+
         private readonly IPageDependenciesFactory _dependencies;
         private readonly IDataScopeProvider _dataScopeProvider;
         private readonly IDataConsumer _dataConsumer;
@@ -70,7 +72,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private IList<IModule> _referencedModules;
         private ILayout _layout;
 
-        protected Page(IPageDependenciesFactory dependencies)
+        public Page(IPageDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as
@@ -94,6 +96,9 @@ namespace OwinFramework.Pages.Html.Runtime
                     ? AssetDeployment.PerWebsite 
                     : Module.AssetDeployment;
             }
+
+            foreach (var region in _regions)
+                Layout.Populate(region.Key, region.Value);
 
             InitializeDependants(data);
             InitializeChildren(data, AssetDeployment);
@@ -241,6 +246,13 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
+        public void PopulateRegion(string regionName, IElement element)
+        {
+            if (_regions == null)
+                _regions = new Dictionary<string, IElement>();
+            _regions[regionName] = element;
+        }
+        
         /// <summary>
         /// Adds a non-visual component to the page. These components can write to the
         /// page header, include javscript libraries, write canonical links etc

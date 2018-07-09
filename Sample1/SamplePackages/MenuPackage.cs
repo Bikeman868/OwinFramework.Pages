@@ -30,13 +30,8 @@ namespace Sample1.SamplePackages
         // I created and tested the CSS/Html for this package here:
         // https://www.w3schools.com/code/tryit.asp?filename=FSITSDF3RKHE
 
-        private readonly IPackageDependenciesFactory _dependencies;
-
         public MenuPackage(IPackageDependenciesFactory dependencies)
-            : base(dependencies)
-        {
-            _dependencies = dependencies;
-        }
+            : base(dependencies) { }
 
         public class MenuItem
         {
@@ -131,27 +126,27 @@ namespace Sample1.SamplePackages
         {
             // This component displays a main menu item
             var mainMenuItemComponent = builder.Register(
-                new MenuItemComponent(_dependencies.ComponentDependenciesFactory) 
+                new MenuItemComponent(Dependencies.ComponentDependenciesFactory) 
                 { 
                     Package = this
                 });
 
             // This component displays a main menu item
             var subMenuItemComponent = builder.Register(
-                new SubMenuItemComponent(_dependencies.ComponentDependenciesFactory)
+                new SubMenuItemComponent(Dependencies.ComponentDependenciesFactory)
                 {
                     Package = this
                 });
 
             // This data provider extracts sub-menu items from the current menu item
             var subMenuDataProvider = builder.Register(
-                new SubMenuDataProvider(_dependencies.DataProviderDependenciesFactory)
+                new SubMenuDataProvider(Dependencies.DataProviderDependenciesFactory)
                 {
                     Package = this
                 });
 
             // This region is a container for the options on the main menu
-            var mainMenuItemRegion = builder.Region()
+            var mainMenuItemRegion = builder.BuildUpRegion()
                 .BindTo<MenuItem>()
                 .Tag("div")
                 .Component(mainMenuItemComponent)
@@ -159,7 +154,7 @@ namespace Sample1.SamplePackages
 
             // This region is a container for the drop down menu items. It
             // renders one menu item component for each menu item in the sub-menu
-            var dropDownMenuRegion = builder.Region()
+            var dropDownMenuRegion = builder.BuildUpRegion()
                 .Tag("ul")
                 .ClassNames("{ns}_dropdown")
                 .DataProvider(subMenuDataProvider)
@@ -169,7 +164,7 @@ namespace Sample1.SamplePackages
 
             // This layout defines the main menu option and the sub-menu that
             // drops down wen the main menu option is tapped
-            var menuOptionLayout = builder.Layout()
+            var menuOptionLayout = builder.BuildUpLayout()
                 .Tag("li")
                 .ClassNames("{ns}_option")
                 .RegionNesting("head,submenu")
@@ -179,7 +174,7 @@ namespace Sample1.SamplePackages
 
             // This region is the whole menu structure with top level menu 
             // options and sub-menus beneath each option
-            builder.Region()
+            builder.BuildUpRegion()
                 .Name("menu")
                 .Tag("ul")
                 .NeedsComponent("menuStyle1")

@@ -27,9 +27,9 @@ namespace OwinFramework.Pages.Framework.Builders
         public IRegionBuilder RegionBuilder { get; set; }
         public IComponentBuilder ComponentBuilder { get; set; }
         public IServiceBuilder ServiceBuilder { get; set; }
+        public IPackageBuilder PackageBuilder { get; set; }
 
         private readonly INameManager _nameManager;
-        private readonly IRequestRouter _requestRouter;
         private readonly IDataCatalog _dataCatalog;
         private readonly IDataDependencyFactory _dataDependencyFactory;
         private readonly IDataSupplierFactory _dataSupplierFactory;
@@ -39,13 +39,11 @@ namespace OwinFramework.Pages.Framework.Builders
 
         public FluentBuilder(
             INameManager nameManager,
-            IRequestRouter requestRouter,
             IDataCatalog dataCatalog,
             IDataDependencyFactory dataDependencyFactory,
             IDataSupplierFactory dataSupplierFactory)
         {
             _nameManager = nameManager;
-            _requestRouter = requestRouter;
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;
             _dataSupplierFactory = dataSupplierFactory;
@@ -83,14 +81,7 @@ namespace OwinFramework.Pages.Framework.Builders
             var type = package.GetType();
             if (!_types.Add(type)) return package;
 
-            var attributes = new AttributeSet(type);
-
-            if (!string.IsNullOrEmpty(namespaceName) && attributes.IsPackage != null)
-            {
-                attributes.IsPackage.NamespaceName = namespaceName;
-            }
-
-            return BuildPackage(attributes, package, null);
+            return BuildPackage(package, type, null, namespaceName);
         }
 
         #endregion
@@ -154,14 +145,14 @@ namespace OwinFramework.Pages.Framework.Builders
 
             var attributes = new AttributeSet(type);
 
-            if (attributes.IsPackage != null) return BuildPackage(attributes, null, factory);
-            if (attributes.IsModule != null) return BuildModule(attributes, null, factory);
-            if (attributes.IsPage != null) return BuildPage(attributes, null, factory);
-            if (attributes.IsLayout != null) return BuildLayout(attributes, null, factory);
-            if (attributes.IsRegion != null) return BuildRegion(attributes, null, factory);
-            if (attributes.IsComponent != null) return BuildComponent(attributes, null, factory);
-            if (attributes.IsService != null) return BuildService(attributes, null, factory);
-            if (attributes.IsDataProvider != null) return BuildDataProvider(attributes, null, factory);
+            if (attributes.IsPackage != null) return BuildPackage(type, factory);
+            if (attributes.IsModule != null) return BuildModule(type, factory);
+            if (attributes.IsPage != null) return BuildPage(type, factory);
+            if (attributes.IsLayout != null) return BuildLayout(type, factory);
+            if (attributes.IsRegion != null) return BuildRegion(type, factory);
+            if (attributes.IsComponent != null) return BuildComponent(type, factory);
+            if (attributes.IsService != null) return BuildService(type, factory);
+            if (attributes.IsDataProvider != null) return BuildDataProvider(type, factory);
 
             return null;
         }
@@ -170,235 +161,214 @@ namespace OwinFramework.Pages.Framework.Builders
 
         #region Registering pre-built elements
 
-        T IFluentBuilder.Register<T>(T element, Type type)
+        /// <summary>
+        /// This method is called from the ElementDefinition.Build() method 
+        /// when the element is completely built and configured. It can also be
+        /// called at application startup to register custom types that were built
+        /// by the application
+        /// </summary>
+        void IFluentBuilder.Register(object obj)
         {
-            if (element == null) return null;
-            type = type ?? element.GetType();
-
-            var attributes = new AttributeSet(type);
-
-            var package = element as IPackage;
+            var package = obj as IPackage;
             if (package != null)
-                return (T)BuildPackage(attributes, package, null);
+                _nameManager.Register(package);
 
-            var module = element as IModule;
+            var module = obj as IModule;
             if (module != null)
-                return (T)BuildModule(attributes, module, null);
+                _nameManager.Register(module);
 
-            var page = element as IPage;
-            if (page != null) 
-                return (T)BuildPage(attributes, page, null);
+            var element = obj as IElement;
+            if (element != null)
+                _nameManager.Register(element);
 
-            var layout = element as ILayout;
-            if (layout != null) 
-                return (T)BuildLayout(attributes, layout, null);
-
-            var region = element as IRegion;
-            if (region != null) 
-                return (T)BuildRegion(attributes, region, null);
-
-            var component = element as IComponent;
-            if (component != null) 
-                return (T)BuildComponent(attributes, component, null);
-
-            var service = element as IService;
-            if (service != null) 
-                return (T)BuildService(attributes, service, null);
-
-            var dataProvider = element as IDataProvider;
-            if (dataProvider != null) 
-                return (T)BuildDataProvider(attributes, dataProvider, null);
-
-            throw new FluentBuilderException("Fluent builder does no know how to register instance of " + type.DisplayName());
+            var dataProvider = obj as IDataProvider;
+            if (dataProvider != null)
+                _nameManager.Register(dataProvider);
         }
 
         #endregion
 
         #region Entry points for fluently building various types of element
 
-        public IComponentDefinition Component(Type declaringType, IPackage package)
+        /// <summary>
+        /// Calls the component builder plug-in to return a fluent interface for configuring a component.
+        /// You can pass a component instance or allow the builder to build one from scratch
+        /// </summary>
+        /// <param name="componentInstance">Optional instance to configure</param>
+        /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <returns></returns>
+        public IComponentDefinition BuildUpComponent(object componentInstance, Type declaringType, IPackage package)
         {
             if (ComponentBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build components");
-            return ComponentBuilder.Component(declaringType, package ?? _packageContext);
+            return ComponentBuilder.BuildUpComponent(componentInstance, declaringType, package ?? _packageContext);
         }
 
-        public IRegionDefinition Region(Type declaringType, IPackage package)
+        /// <summary>
+        /// Calls the region builder plug-in to return a fluent interface for configuring a region.
+        /// You can pass a region instance or allow the builder to build one from scratch
+        /// </summary>
+        /// <param name="regionInstance">Optional instance to configure</param>
+        /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <returns></returns>
+        public IRegionDefinition BuildUpRegion(object regionInstance, Type declaringType, IPackage package)
         {
             if (RegionBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build regions");
-            return RegionBuilder.Region(declaringType, package ?? _packageContext);
+            return RegionBuilder.BuildUpRegion(regionInstance, declaringType, package ?? _packageContext);
         }
 
-        public ILayoutDefinition Layout(Type declaringType, IPackage package)
+        /// <summary>
+        /// Calls the layout builder plug-in to return a fluent interface for configuring a layout.
+        /// You can pass a layout instance or allow the builder to build one from scratch
+        /// </summary>
+        /// <param name="layoutInstance">Optional instance to configure</param>
+        /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <returns></returns>
+        public ILayoutDefinition BuildUpLayout(object layoutInstance, Type declaringType, IPackage package)
         {
             if (LayoutBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build layouts");
-            return LayoutBuilder.Layout(declaringType, package ?? _packageContext);
+            return LayoutBuilder.BuildUpLayout(layoutInstance, declaringType, package ?? _packageContext);
         }
 
-        public IPageDefinition Page(Type declaringType, IPackage package)
+        /// <summary>
+        /// Calls the page builder plug-in to return a fluent interface for configuring a page.
+        /// You can pass a page instance or allow the builder to build one from scratch
+        /// </summary>
+        /// <param name="pageInstance">Optional instance to configure</param>
+        /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <returns></returns>
+        public IPageDefinition BuildUpPage(object pageInstance, Type declaringType, IPackage package)
         {
             if (PageBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build pages");
-            return PageBuilder.Page(declaringType, package ?? _packageContext);
+            return PageBuilder.BuildUpPage(pageInstance, declaringType, package ?? _packageContext);
         }
 
-        public IServiceDefinition Service(Type declaringType, IPackage package)
+        /// <summary>
+        /// Calls the service builder plug-in to return a fluent interface for configuring a service.
+        /// You can pass a service instance or allow the builder to build one from scratch
+        /// </summary>
+        /// <param name="serviceInstance">Optional instance to configure</param>
+        /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <returns></returns>
+        public IServiceDefinition BuildUpService(object serviceInstance, Type declaringType, IPackage package)
         {
             if (ServiceBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build services");
-            return ServiceBuilder.Service(declaringType, package ?? _packageContext);
+            return ServiceBuilder.BuildUpService(serviceInstance, declaringType, package ?? _packageContext);
         }
 
-        public IModuleDefinition Module(Type declaringType)
+        /// <summary>
+        /// Calls the module builder plug-in to return a fluent interface for configuring a module.
+        /// You can pass a module instance or allow the builder to build one from scratch
+        /// </summary>
+        /// <param name="moduleInstance">Optional instance to configure</param>
+        /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <returns></returns>
+        public IModuleDefinition BuildUpModule(object moduleInstance, Type declaringType)
         {
             if (ModuleBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build modules");
-            return ModuleBuilder.Module(declaringType);
+            return ModuleBuilder.BuildUpModule(moduleInstance, declaringType);
+        }
+
+        /// <summary>
+        /// Calls the module builder plug-in to return a fluent interface for configuring a module.
+        /// You can pass a module instance or allow the builder to build one from scratch
+        /// </summary>
+        /// <param name="packageInstance">Optional instance to configure</param>
+        /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <returns></returns>
+        public IPackageDefinition BuildUpPackage(object packageInstance, Type declaringType)
+        {
+            if (PackageBuilder == null)
+                throw new FluentBuilderException("There is no build engine installed that knows how to build packages");
+            return PackageBuilder.BuildUpPackage(packageInstance, declaringType);
         }
 
         #endregion
 
         #region Builders for each element type
 
-        private IPackage BuildPackage(AttributeSet attributes, IPackage package, Func<Type, object> factory)
+        /// <summary>
+        /// This is called when a module is discovered through reflection and it needs
+        /// to be consutucted and initialized, or when a package is explicitly registered
+        /// with a custom namespace
+        /// </summary>
+        private IPackage BuildPackage(IPackage package, Type type, Func<Type, object> factory, string namespaceName)
         {
-            if (package == null && factory != null && typeof(IPackage).IsAssignableFrom(attributes.Type))
-                package = factory(attributes.Type) as IPackage;
+            if (package == null && factory != null && typeof(IPackage).IsAssignableFrom(type))
+                package = factory(type) as IPackage;
 
-            if (package == null)
-                return ((IPackageDefinition)new PackageDefinition(attributes.Type, this, _nameManager)).Build();
+            var packageDefinition = BuildUpPackage(package, type);
 
-            Configure(attributes, package);
-            _nameManager.Register(package);
+            if (!string.IsNullOrEmpty(namespaceName))
+                packageDefinition.NamespaceName(namespaceName);
 
-            package.Build(new FluentBuilder(
-                this, 
-                package, 
-                _dataCatalog, 
+            package = packageDefinition.Build();
+
+            var packageBuilder = new FluentBuilder(
+                this,
+                package,
+                _dataCatalog,
                 _dataDependencyFactory,
-                _dataSupplierFactory));
+                _dataSupplierFactory);
+
+            package.Build(packageBuilder);
+            
             return package;
         }
 
-        private IModule BuildModule(AttributeSet attributes, IModule module, Func<Type, object> factory)
+        /// <summary>
+        /// This is called when a module is discovered through reflection and it needs
+        /// to be consutucted and initialized
+        /// </summary>
+        private IModule BuildModule(Type type, Func<Type, object> factory)
         {
-            if (module == null && factory != null && typeof(IModule).IsAssignableFrom(attributes.Type))
-                module = factory(attributes.Type) as IModule;
+            IModule module = null;
 
-            if (module == null)
-                return Module(attributes.Type).Build();
+            if (factory != null && typeof(IModule).IsAssignableFrom(type))
+                module = factory(type) as IModule;
 
-            Configure(attributes, module);
-            _nameManager.Register(module);
+            var moduleDefinition = BuildUpModule(module, type);
+            module = moduleDefinition.Build();
 
             return module;
         }
 
-        private IPage BuildPage(AttributeSet attributes, IPage page, Func<Type, object> factory)
+        /// <summary>
+        /// This is called when a page is discovered through reflection and it needs
+        /// to be consutucted and initialized
+        /// </summary>
+        private IPage BuildPage(Type type, Func<Type, object> factory)
         {
-            if (page == null && factory != null && typeof(IPage).IsAssignableFrom(attributes.Type))
-                page = factory(attributes.Type) as IPage;
+            IPage page = null;
 
-            if (page == null)
-            {
-                var pageDefinition = Page(attributes.Type, _packageContext);
+            if (factory != null && typeof(IPage).IsAssignableFrom(type))
+                page = factory(type) as IPage;
 
-                if (attributes.UsesLayouts != null)
-                    foreach (var usesLayout in attributes.UsesLayouts)
-                        pageDefinition.Layout(usesLayout.LayoutName);
-
-                if (attributes.PageTitle != null)
-                    pageDefinition.Title(attributes.PageTitle.Title);
-
-                if (attributes.Style != null)
-                    pageDefinition.BodyStyle(attributes.Style.CssStyle);
-
-                if (attributes.RegionComponents != null)
-                {
-                    foreach (var regionComponent in attributes.RegionComponents)
-                        pageDefinition.RegionComponent(regionComponent.Region, regionComponent.Component);
-                }
-
-                if (attributes.RegionLayouts != null)
-                {
-                    foreach (var regionLayout in attributes.RegionLayouts)
-                        pageDefinition.RegionLayout(regionLayout.Region, regionLayout.Layout);
-                }
-
-                if (attributes.NeedsComponents != null)
-                {
-                    foreach (var component in attributes.NeedsComponents)
-                        pageDefinition.NeedsComponent(component.ComponentName);
-                }
-
-                return pageDefinition.Build();
-            }
-
-            Configure(attributes, page);
-            _nameManager.Register(page);
+            var pageDefinition = BuildUpPage(page, type, _packageContext);
+            page = pageDefinition.Build();
 
             return page;
         }
 
-        private ILayout BuildLayout(AttributeSet attributes, ILayout layout, Func<Type, object> factory)
+        /// <summary>
+        /// This is called when a layout is discovered through reflection and it needs
+        /// to be consutucted and initialized
+        /// </summary>
+        private ILayout BuildLayout(Type type, Func<Type, object> factory)
         {
-            if (layout == null && factory != null && typeof(ILayout).IsAssignableFrom(attributes.Type))
-                layout = factory(attributes.Type) as ILayout;
+            ILayout layout = null;
 
-            if (layout == null)
-            {
-                var layoutDefinition = Layout(attributes.Type, _packageContext)
-                    .RegionNesting(attributes.IsLayout.RegionNesting);
+            if (factory != null && typeof(ILayout).IsAssignableFrom(type))
+                layout = factory(type) as ILayout;
 
-                if (attributes.Style != null)
-                {
-                    if (!string.IsNullOrEmpty(attributes.Style.CssStyle))
-                        layoutDefinition.Style(attributes.Style.CssStyle);
-                }
+            var layoutDefinition = BuildUpLayout(layout, type, _packageContext);
+            layout = layoutDefinition.Build();
 
-                if (attributes.ChildStyle != null)
-                {
-                    if (!string.IsNullOrEmpty(attributes.ChildStyle.CssStyle))
-                        layoutDefinition.NestedStyle(attributes.ChildStyle.CssStyle);
-                }
-
-                if (attributes.Container != null)
-                {
-                    if (!string.IsNullOrEmpty(attributes.Container.Tag))
-                        layoutDefinition.Tag(attributes.Container.Tag);
-
-                    if (attributes.Container.ClassNames != null && attributes.Container.ClassNames.Length > 0)
-                        layoutDefinition.ClassNames(attributes.Container.ClassNames);
-                }
-
-                if (attributes.NeedsComponents != null)
-                {
-                    foreach (var component in attributes.NeedsComponents)
-                    {
-                        layoutDefinition.NeedsComponent(component.ComponentName);
-                    }
-                }
-
-                if (attributes.ChildContainer != null)
-                {
-                    if (!string.IsNullOrEmpty(attributes.ChildContainer.Tag))
-                        layoutDefinition.NestingTag(attributes.ChildContainer.Tag);
-
-                    if (attributes.ChildContainer.ClassNames != null && attributes.ChildContainer.ClassNames.Length > 0)
-                        layoutDefinition.NestedClassNames(attributes.ChildContainer.ClassNames);
-                }
-
-                if (attributes.UsesRegions != null)
-                    foreach (var usesRegion in attributes.UsesRegions)
-                        layoutDefinition.Region(usesRegion.RegionName, usesRegion.RegionElement);
-
-                return layoutDefinition.Build();
-            }
-
-            Configure(attributes, layout);
-            _nameManager.Register(layout);
             return layout;
         }
 
@@ -409,7 +379,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (region == null)
             {
-                var regionDefinition = Region(attributes.Type, _packageContext);
+                var regionDefinition = BuildUpRegion(attributes.Type, _packageContext);
 
                 if (attributes.Style != null)
                 {
@@ -465,7 +435,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (component == null)
             {
-                var componentDefinition = Component(attributes.Type, _packageContext);
+                var componentDefinition = BuildUpComponent(attributes.Type, _packageContext);
 
                 if (attributes.RenderHtmls != null)
                 {
@@ -506,7 +476,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 service = factory(attributes.Type) as IService;
 
             if (service == null)
-                return Service(attributes.Type, _packageContext).Build();
+                return BuildUpService(attributes.Type, _packageContext).Build();
 
             Configure(attributes, service);
             _nameManager.Register(service);
@@ -538,297 +508,5 @@ namespace OwinFramework.Pages.Framework.Builders
 
         #endregion
 
-        #region Configure instances based on attributes attached to declaring type
-
-        private void Configure(AttributeSet attributes, IPackage package)
-        {
-            if (attributes.IsPackage != null)
-            {
-                if (string.IsNullOrEmpty(package.Name))
-                    package.Name = attributes.IsPackage.Name;
-
-                if (string.IsNullOrEmpty(package.NamespaceName))
-                    package.NamespaceName = attributes.IsPackage.NamespaceName;
-            }
-
-            if (attributes.DeployedAs != null && !string.IsNullOrEmpty(attributes.DeployedAs.ModuleName))
-                _nameManager.AddResolutionHandler((nm, p) => p.Module = nm.ResolveModule(attributes.DeployedAs.ModuleName), package);
-        }
-
-        private void Configure(AttributeSet attributes, IModule module)
-        {
-            if (module == null) return;
-
-            if (attributes.IsModule != null)
-            {
-                if (!string.IsNullOrEmpty(attributes.IsModule.Name))
-                    module.Name = attributes.IsModule.Name;
-                module.AssetDeployment = attributes.IsModule.AssetDeployment;
-            }
-        }
-
-        private void Configure(AttributeSet attributes, IPage page)
-        {
-            if (page == null) return;
-
-            if (attributes.IsPage != null)
-            {
-                if (!string.IsNullOrEmpty(attributes.IsPage.Name))
-                    page.Name = attributes.IsPage.Name;
-            }
-
-            if (attributes.PartOf != null && !string.IsNullOrEmpty(attributes.PartOf.PackageName))
-            {
-                page.Package = _nameManager.ResolvePackage(attributes.PartOf.PackageName);
-            }
-
-            Configure(attributes, page as IRunable);
-            Configure(attributes, page as IDataConsumer);
-            Configure(attributes, page as IDataScopeProvider);
-        }
-
-        private void Configure(AttributeSet attributes, ILayout layout)
-        {
-            if (attributes.IsLayout != null)
-            {
-                if (!string.IsNullOrEmpty(attributes.IsLayout.Name))
-                    layout.Name = attributes.IsLayout.Name;
-            }
-
-            if (attributes.RegionComponents != null)
-            {
-                foreach (var regionComponent in attributes.RegionComponents)
-                {
-                    var rc = regionComponent;
-                    _nameManager.AddResolutionHandler(() =>
-                    {
-                        layout.Populate(rc.Region, _nameManager.ResolveComponent(rc.Component, layout.Package));
-                    });
-                }
-            }
-
-            if (attributes.RegionLayouts != null)
-            {
-                foreach (var regionLayout in attributes.RegionLayouts)
-                {
-                    var rl = regionLayout;
-                    _nameManager.AddResolutionHandler(() =>
-                    {
-                        layout.Populate(rl.Region, _nameManager.ResolveLayout(rl.Layout, layout.Package));
-                    });
-                }
-            }
-
-            Configure(attributes, layout as IElement);
-            Configure(attributes, layout as IDataConsumer);
-        }
-
-        private void Configure(AttributeSet attributes, IRegion region)
-        {
-            if (attributes.IsRegion != null)
-            {
-                if (!string.IsNullOrEmpty(attributes.IsRegion.Name))
-                    region.Name = attributes.IsRegion.Name;
-            }
-
-            if (attributes.Repeat != null)
-            {
-                region.RepeatScope = attributes.Repeat.RepeatScope;
-                region.RepeatType = attributes.Repeat.RepeatType;
-                region.RepeatType = attributes.Repeat.RepeatType;
-                region.RepeatType = attributes.Repeat.RepeatType;
-                region.RepeatType = attributes.Repeat.RepeatType;
-            }
-
-            if (attributes.UsesComponents != null)
-            {
-                if (attributes.UsesComponents.Count > 1)
-                    throw new RegionBuilderException("Regions can only host one component but you " +
-                        "have more than one [UsesComponent] attribute on " + attributes.Type.DisplayName());
-                if (attributes.UsesComponents.Count == 1)
-                {
-                    _nameManager.AddResolutionHandler(() =>
-                    {
-                        region.Populate(_nameManager.ResolveComponent(attributes.UsesComponents[0].ComponentName, region.Package));
-                    });
-                }
-            }
-
-            if (attributes.UsesLayouts != null)
-            {
-                if (attributes.UsesLayouts.Count > 1)
-                    throw new RegionBuilderException("Regions can only host one layout but you " +
-                        "have more than one [UsesLayout] attribute on " + attributes.Type.DisplayName());
-                if (attributes.UsesLayouts.Count == 1)
-                {
-                    _nameManager.AddResolutionHandler(() =>
-                    {
-                        region.Populate(_nameManager.ResolveLayout(attributes.UsesLayouts[0].LayoutName, region.Package));
-                    });
-                }
-            }
-
-            Configure(attributes, region as IElement);
-            Configure(attributes, region as IDataConsumer);
-            Configure(attributes, region as IDataScopeProvider);
-        }
-
-        private void Configure(AttributeSet attributes, IComponent component)
-        {
-            if (attributes.IsComponent != null)
-            {
-                if (!string.IsNullOrEmpty(attributes.IsComponent.Name))
-                    component.Name = attributes.IsComponent.Name;
-            }
-            Configure(attributes, component as IElement);
-            Configure(attributes, component as IDataConsumer);
-        }
-
-        private void Configure(AttributeSet attributes, IDataProvider dataProvider)
-        {
-            if (attributes.IsDataProvider != null)
-            {
-                if (!string.IsNullOrEmpty(attributes.IsDataProvider.Name))
-                    dataProvider.Name = attributes.IsDataProvider.Name;
-
-                if (attributes.IsDataProvider.Type != null)
-                    dataProvider.Add(attributes.IsDataProvider.Type, attributes.IsDataProvider.Scope);
-            }
-
-            if (attributes.SuppliesDatas != null)
-            {
-                foreach(var data in attributes.SuppliesDatas)
-                {
-                    dataProvider.Add(data.DataType, data.Scope);
-                }
-            }
-
-            Configure(attributes, dataProvider as IDataConsumer);
-        }
-
-        private void Configure(AttributeSet attributes, IService service)
-        {
-            if (attributes.IsService != null)
-            {
-                if (!string.IsNullOrEmpty(attributes.IsService.Name))
-                    service.Name = attributes.IsService.Name;
-            }
-
-            if (attributes.PartOf != null && !string.IsNullOrEmpty(attributes.PartOf.PackageName))
-            {
-                service.Package = _nameManager.ResolvePackage(attributes.PartOf.PackageName);
-            }
-
-            Configure(attributes, service as IRunable);
-            Configure(attributes, service as IDataScopeProvider);
-            Configure(attributes, service as IDataConsumer);
-        }
-
-        private void Configure(AttributeSet attributes, IRunable runable)
-        {
-            if (runable == null) return;
-
-            if (attributes.RequiresPermission != null)
-            {
-                runable.RequiredPermission = attributes.RequiresPermission.PermissionName;
-            }
-
-            if (attributes.Routes != null)
-            {
-                foreach (var route in attributes.Routes)
-                {
-                    if (route.Methods == null || route.Methods.Length == 0)
-                    {
-                        if (string.IsNullOrEmpty(route.Path))
-                            continue;
-                        _requestRouter.Register(runable, new FilterByPath(route.Path), route.Priority, attributes.Type);
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(route.Path))
-                            _requestRouter.Register(runable, new FilterByMethod(route.Methods), route.Priority);
-                        else
-                            _requestRouter.Register(
-                                runable,
-                                new FilterAllFilters(
-                                    new FilterByMethod(route.Methods),
-                                    new FilterByPath(route.Path)),
-                                route.Priority,
-                                attributes.Type);
-                    }
-                }
-            }
-        }
-
-        private void Configure(AttributeSet attributes, IElement element)
-        {
-            if (element == null) return;
-
-            if (attributes.PartOf != null && !string.IsNullOrEmpty(attributes.PartOf.PackageName))
-            {
-                element.Package = _nameManager.ResolvePackage(attributes.PartOf.PackageName);
-            }
-
-            if (attributes.DeployedAs != null)
-            {
-                element.AssetDeployment = attributes.DeployedAs.Deployment;
-                if (!string.IsNullOrEmpty(attributes.DeployedAs.ModuleName))
-                {
-                    _nameManager.AddResolutionHandler(() =>
-                    {
-                        element.Module = _nameManager.ResolveModule(attributes.DeployedAs.ModuleName);
-                    });
-                }
-            }
-        }
-
-        private void Configure(AttributeSet attributes, IDataConsumer dataConsumer)
-        {
-            if (dataConsumer == null) return;
-             
-            if (attributes.NeedsDatas != null)
-            {
-                foreach (var need in attributes.NeedsDatas)
-                {
-                    if (need.DataType != null || !string.IsNullOrEmpty(need.Scope))
-                        dataConsumer.HasDependency(need.DataType, need.Scope);
-
-                    if (!string.IsNullOrEmpty(need.DataProviderName))
-                        _nameManager.AddResolutionHandler(
-                            (nm, dc) => dc.HasDependency(nm.ResolveDataProvider(need.DataProviderName)),
-                            dataConsumer);
-                }
-            }
-        }
-
-        private void Configure(AttributeSet attributes, IDataScopeProvider dataScopeProvider)
-        {
-            if (dataScopeProvider == null) return;
-
-            if (attributes.DataScopes != null)
-            {
-                foreach (var dataScope in attributes.DataScopes)
-                    dataScopeProvider.AddScope(dataScope.DataType, dataScope.Scope);
-            }
-
-            if (attributes.Repeat != null)
-            {
-                // When data scope providers repeat data they effectively are a supplier
-                // of the data they repeat, but the supplier itself does not add the
-                // data to the data context, it is added by the repeating action during
-                // the rendering operation. We need to add a supplier here otherwide the
-                // data scope provider will try to resolve dependencies on the repeated
-                // data by looking in the data catalog.
-
-                var dependency = _dataDependencyFactory.Create(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
-                var supplier = _dataSupplierFactory.Create();
-                supplier.Add(dependency, (rc, dc, d) => { });
-
-                dataScopeProvider.AddScope(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
-                dataScopeProvider.AddSupplier(supplier, dependency);
-            }
-        }
-
-        #endregion
     }
 }

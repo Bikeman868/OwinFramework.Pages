@@ -6,18 +6,8 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// <summary>
     /// A page produces html in response to a request from a browser
     /// </summary>
-    public interface IPage : IRunable
+    public interface IPage : IRunable, INamed, IPackagable
     {
-        /// <summary>
-        /// The unique name of this page within the package
-        /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// Optional package - not all pages have to be packaged
-        /// </summary>
-        IPackage Package { get; set; }
-
         /// <summary>
         /// Gets debugging information from this page
         /// </summary>

@@ -9,7 +9,7 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// A region is part of a layout. The region can contain a 
     /// single component or a layout
     /// </summary>
-    public interface IRegion : IElement
+    public interface IRegion : IElement, IDataRepeater
     {
         /// <summary>
         /// Retrieves debugging information about the region
@@ -20,29 +20,6 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Retrieves the contents of this region
         /// </summary>
         IElement Content { get; }
-
-        /// <summary>
-        /// The scope name used to resolve data references in the 
-        /// repeated data
-        /// </summary>
-        string RepeatScope { get; set; }
-
-        /// <summary>
-        /// The type of data to repeat
-        /// </summary>
-        Type RepeatType { get; set; }
-
-        /// <summary>
-        /// The scope name to use when resolving the list from
-        /// context
-        /// </summary>
-        string ListScope { get; set; }
-
-        /// <summary>
-        /// The type of list that the region will look for in the
-        /// data context
-        /// </summary>
-        Type ListType { get; }
 
         /// <summary>
         /// Constructs an element that is the result of puttting the
@@ -78,16 +55,16 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Writes the page head with a specific data scope
         /// </summary>
         IWriteResult WriteHead(
-            IRenderContext context, 
+            IRenderContext context,
             IDataScopeProvider scope,
             bool includeChildren);
 
         /// <summary>
-        /// Writes the html for this region with specific content inside and
+        /// Writes the html with specific content inside and
         /// a specific data scpoe
         /// </summary>
         IWriteResult WriteHtml(
-            IRenderContext context, 
+            IRenderContext context,
             IDataScopeProvider scope,
             IElement content);
 

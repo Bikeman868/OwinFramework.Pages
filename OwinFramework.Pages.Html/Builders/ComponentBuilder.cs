@@ -3,6 +3,7 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Html.Interfaces;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -29,9 +30,12 @@ namespace OwinFramework.Pages.Html.Builders
             _fluentBuilder = fluentBuilder;
         }
 
-        IComponentDefinition IComponentBuilder.Component(Type declaringType, IPackage package)
+        IComponentDefinition IComponentBuilder.BuildUpComponent(object componentInstance, Type declaringType, IPackage package)
         {
-            return new ComponentDefinition(declaringType, _nameManager, _assetManager, _htmlHelper, _fluentBuilder, _componentDependenciesFactory, package);
+            var component = componentInstance as Component ?? new Component(_componentDependenciesFactory);
+            if (declaringType == null) declaringType = (componentInstance ?? component).GetType();
+
+            return new ComponentDefinition(component, declaringType, _nameManager, _assetManager, _htmlHelper, _fluentBuilder, package);
         }
     }
 }

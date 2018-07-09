@@ -2,24 +2,21 @@
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Html.Elements;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
     internal class ModuleDefinition : IModuleDefinition
     {
-        private readonly Type _declaringType;
         private readonly IFluentBuilder _fluentBuilder;
-        private readonly BuiltModule _module;
+        private readonly Module _module;
 
         public ModuleDefinition(
-            Type declaringType,
-            IModuleDependenciesFactory moduleDependencies,
+            Module module,
             IFluentBuilder fluentBuilder)
         {
-            _declaringType = declaringType;
+            _module = module;
             _fluentBuilder = fluentBuilder;
-            _module = new BuiltModule(moduleDependencies);
         }
 
         public IModuleDefinition Name(string name)
@@ -36,7 +33,8 @@ namespace OwinFramework.Pages.Html.Builders
 
         public IModule Build()
         {
-            return _fluentBuilder.Register(_module, _declaringType);
+            _fluentBuilder.Register(_module);
+            return _module;
         }
     }
 }

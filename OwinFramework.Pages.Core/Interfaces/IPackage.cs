@@ -1,5 +1,6 @@
 ﻿using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -9,13 +10,8 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// are discovered at startup which makes all of their
     /// elements available to the website builder
     /// </summary>
-    public interface IPackage
+    public interface IPackage: INamed
     {
-        /// <summary>
-        /// The unique name of this package
-        /// </summary>
-        string Name { get; set; }
-
         /// <summary>
         /// The unique namespace for everything in this package
         /// </summary>

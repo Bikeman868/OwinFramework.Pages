@@ -7,7 +7,7 @@ using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
-using OwinFramework.Pages.Html.Elements;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -16,23 +16,25 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
         private readonly IFluentBuilder _fluentBuilder;
-        private readonly BuiltPage _page;
         private readonly Type _declaringType;
+        private readonly Page _page;
 
         public PageDefinition(
-            Type declaringType,
+            Page page,
             IRequestRouter requestRouter,
             INameManager nameManager,
             IFluentBuilder fluentBuilder,
-            IPageDependenciesFactory pageDependenciesFactory,
-            IPackage package)
+            IPackage package,
+            Type declaringType)
         {
-            _declaringType = declaringType;
             _requestRouter = requestRouter;
             _nameManager = nameManager;
             _fluentBuilder = fluentBuilder;
-            _page = new BuiltPage(pageDependenciesFactory);
-            _page.Package = package;
+            _declaringType = declaringType;
+            _page = page;
+
+            if (package != null)
+                _page.Package = package;
         }
 
         IPageDefinition IPageDefinition.Name(string name)
@@ -132,10 +134,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.RegionComponent(string regionName, string componentName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _page.PopulateRegion(regionName, _nameManager.ResolveComponent(componentName, _page.Package));
-            });
+            _nameManager.AddResolutionHandler((nm, p) =>
+                p.PopulateRegion(regionName, nm.ResolveComponent(componentName, p.Package)),
+                _page);
             return this;
         }
 
@@ -147,10 +148,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.RegionLayout(string regionName, string layoutName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _page.PopulateRegion(regionName, _nameManager.ResolveLayout(layoutName, _page.Package));
-            });
+            _nameManager.AddResolutionHandler((nm, p) =>
+                p.PopulateRegion(regionName, nm.ResolveLayout(layoutName, p.Package)),
+                _page);
             return this;
         }
 
@@ -236,10 +236,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.NeedsComponent(string componentName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _page.NeedsComponent(_nameManager.ResolveComponent(componentName, _page.Package));
-            });
+            _nameManager.AddResolutionHandler((nm, p) =>
+                p.NeedsComponent(nm.ResolveComponent(componentName, p.Package)),
+                _page);
             return this;
         }
 
@@ -251,7 +250,8 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPage IPageDefinition.Build()
         {
-            return _fluentBuilder.Register(_page, _declaringType);
+            _fluentBuilder.Register(_page);
+            return _page;
         }
     }
 }

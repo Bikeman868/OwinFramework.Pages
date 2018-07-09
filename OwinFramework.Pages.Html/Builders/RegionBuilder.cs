@@ -1,9 +1,9 @@
 ﻿using System;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Html.Interfaces;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -13,35 +13,30 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IHtmlHelper _htmlHelper;
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         private readonly IFluentBuilder _fluentBuilder;
-        private readonly IDataDependencyFactory _dataDependencyFactory;
-        private readonly IDataSupplierFactory _dataSupplierFactory;
 
         public RegionBuilder(
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IRegionDependenciesFactory regionDependenciesFactory,
-            IFluentBuilder fluentBuilder,
-            IDataDependencyFactory dataDependencyFactory,
-            IDataSupplierFactory dataSupplierFactory)
+            IFluentBuilder fluentBuilder)
         {
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _regionDependenciesFactory = regionDependenciesFactory;
             _fluentBuilder = fluentBuilder;
-            _dataDependencyFactory = dataDependencyFactory;
-            _dataSupplierFactory = dataSupplierFactory;
         }
 
-        IRegionDefinition IRegionBuilder.Region(Type declaringType, IPackage package)
+        IRegionDefinition IRegionBuilder.BuildUpRegion(object regionInstance, Type declaringType, IPackage package)
         {
+            var region = regionInstance as Region ?? new Region(_regionDependenciesFactory);
+            if (declaringType == null) declaringType = (regionInstance ?? region).GetType();
+
             return new RegionDefinition(
+                region,
                 declaringType, 
                 _nameManager, 
                 _htmlHelper, 
-                _fluentBuilder, 
-                _regionDependenciesFactory, 
-                _dataDependencyFactory, 
-                _dataSupplierFactory, 
+                _fluentBuilder,
                 package);
         }
     }

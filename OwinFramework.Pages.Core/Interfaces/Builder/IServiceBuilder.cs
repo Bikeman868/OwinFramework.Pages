@@ -8,8 +8,14 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
     public interface IServiceBuilder
     {
         /// <summary>
-        /// Starts building a new service
+        /// Starts building a new service or configuring an existing service
         /// </summary>
-        IServiceDefinition Service(Type declaringType = null, IPackage package = null);
+        /// <param name="serviceInstance">Pass an instance of the Service class to 
+        /// configure an instance of a derrived class or pass null to construct an
+        /// instance of the Service class</param>
+        /// <param name="declaringType">Type type to extract custom attributes from
+        /// that can also define the behaviour of the service</param>
+        /// <param name="package">Optional package adds a namespace to this service</param>
+        IServiceDefinition BuildUpService(object serviceInstance, Type declaringType = null, IPackage package = null);
     }
 }

@@ -9,18 +9,16 @@ namespace OwinFramework.Pages.Framework.Builders
     {
         private readonly IFluentBuilder _builder;
         private readonly INameManager _nameManager;
-        private readonly BuiltPackage _package;
-        private readonly Type _declaringType;
+        private readonly Runtime.Package _package;
 
         public PackageDefinition(
-            Type declaringType,
+            Runtime.Package package,
             IFluentBuilder builder,
             INameManager nameManager)
         {
-            _declaringType = declaringType;
+            _package = package;
             _builder = builder;
             _nameManager = nameManager;
-            _package = new BuiltPackage();
         }
 
         IPackageDefinition IPackageDefinition.Name(string name)
@@ -37,7 +35,9 @@ namespace OwinFramework.Pages.Framework.Builders
 
         IPackageDefinition IPackageDefinition.Module(string moduleName)
         {
-            _nameManager.AddResolutionHandler(nm => _package.Module = nm.ResolveModule("moduleName"));
+            _nameManager.AddResolutionHandler((nm, p) => 
+                p.Module = nm.ResolveModule(moduleName),
+                _package);
             return this;
         }
 
@@ -49,7 +49,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
         IPackage IPackageDefinition.Build()
         {
-            return _builder.Register(_package, _declaringType);
+            return _builder.Register(_package);
         }
     }
 }

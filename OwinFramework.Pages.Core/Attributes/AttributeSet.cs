@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 
-namespace OwinFramework.Pages.Framework.Builders
+namespace OwinFramework.Pages.Core.Attributes
 {
-    internal class AttributeSet
+    public class AttributeSet
     {
         public Type Type;
 

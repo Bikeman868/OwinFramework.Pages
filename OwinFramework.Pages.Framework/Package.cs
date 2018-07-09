@@ -30,6 +30,8 @@ namespace OwinFramework.Pages.Framework
                     // These interface mappings are internal to this assembly and
                     // just need to be wired up by IoC
                     new IocRegistration().Init<IFrameworkConfiguration, FrameworkConfiguration>(),
+                    new IocRegistration().Init<IElementConfiguror, ElementConfiguror>(),
+                    new IocRegistration().Init<IPackageDependenciesFactory, PackageDependenciesFactory>(),
 
                     // These classes are the data model
                     new IocRegistration().Init<IDataCatalog, DataCatalog>(),

@@ -7,16 +7,15 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
-using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Interfaces;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
     public class LayoutDefinition : ILayoutDefinition
     {
-        private readonly Type _declaringType;
         private readonly INameManager _nameManager;
-        private readonly BuiltLayout _layout;
+        private readonly Layout _layout;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
 
@@ -81,24 +80,23 @@ namespace OwinFramework.Pages.Html.Builders
         }
 
         public LayoutDefinition(
-            Type declaringType,
+            Layout layout,
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,
-            ILayoutDependenciesFactory layoutDependenciesFactory,
             IPackage package)
         {
-            _declaringType = declaringType;
+            _layout = layout;
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
 
-            _layout = new BuiltLayout(layoutDependenciesFactory);
             _regionElements = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             _regionLayouts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             _regionComponents = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            _layout.Package = package;
+            if (package != null)
+                _layout.Package = package;
         }
 
         public ILayoutDefinition Name(string name)
@@ -262,10 +260,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         ILayoutDefinition ILayoutDefinition.NeedsComponent(string componentName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _layout.NeedsComponent(_nameManager.ResolveComponent(componentName, _layout.Package));
-            });
+            _nameManager.AddResolutionHandler((nm, l) =>
+                l.NeedsComponent(nm.ResolveComponent(componentName, l.Package)),
+                _layout);
             return this;
         }
 
@@ -310,7 +307,8 @@ namespace OwinFramework.Pages.Html.Builders
                 WriteClosingTag();
             });
 
-            return _fluentBuilder.Register(_layout, _declaringType);
+            _fluentBuilder.Register(_layout);
+            return _layout;
         }
 
         private void AddRegionSet(RegionSet regionSet)

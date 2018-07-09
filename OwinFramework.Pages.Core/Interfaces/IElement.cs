@@ -8,33 +8,13 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// <summary>
     /// All classes that contribute to response rendering inherit from this interface
     /// </summary>
-    public interface IElement
+    public interface IElement: IDeployable, IPackagable, INamed
     {
-        /// <summary>
-        /// The unique name of this element for its type within the package
-        /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// Optional package - not all elements have to be packaged
-        /// </summary>
-        IPackage Package { get; set; }
-
-        /// <summary>
-        /// Optional module that this elements assets are deployed to
-        /// </summary>
-        IModule Module { get; set; }
-
         /// <summary>
         /// Returns the type of element. This is used to make the fully qualified
         /// element name unique
         /// </summary>
         ElementType ElementType { get; }
-
-        /// <summary>
-        /// Defines how the assets are deployed for this element
-        /// </summary>
-        AssetDeployment AssetDeployment { get; set; }
 
         /// <summary>
         /// Gets debuging information for this element
@@ -54,36 +34,6 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// the entire element tree.
         /// </summary>
         IEnumerator<IElement> GetChildren();
-
-        /// <summary>
-        /// This is where the element is responsible for outputting its static CSS classes.
-        /// Static classes are defined as styles whose names are fixed at design time
-        /// and can therefore be written to a file and served statically. The
-        /// name will be prefixed with a namespace from the package it belomgs to.
-        /// This method can be called during page rendering to write the assets
-        /// into the page, it could be called once at startup to create an asset
-        /// file, or it could be called during deployment to produce an asset
-        /// file that is deployed and served statically
-        /// </summary>
-        /// <param name="writer">The text writer to srite them to</param>
-        /// <rereturns>An object indicating how/when the write was completed.
-        /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteStaticCss(ICssWriter writer);
-
-        /// <summary>
-        /// This is where the element is responsible for outputting its static Javascript functions.
-        /// Static functions are defined as functions whose names are fixed at design time
-        /// and can therefore be written to a file and served statically. The
-        /// name will be prefixed with a namespace from the package it belomgs to.
-        /// This method can be called during page rendering to write the assets
-        /// into the page, it could be called once at startup to create an asset
-        /// file, or it could be called during deployment to produce an asset
-        /// file that is deployed and served statically
-        /// </summary>
-        /// <param name="writer">The text writer to srite them to</param>
-        /// <rereturns>An object indicating how/when the write was completed.
-        /// You can return null if the write completed normally and synchronously</rereturns>
-        IWriteResult WriteStaticJavascript(IJavascriptWriter writer);
 
         /// <summary>
         /// This is where the element is responsible for outputting its dynamic css rules.

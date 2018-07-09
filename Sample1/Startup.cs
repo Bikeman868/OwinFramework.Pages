@@ -88,6 +88,7 @@ namespace Sample1
             // You must install build engines before trying to build elements using the
             // fluent builder. You can use the built-in engines, install NuGet packages
             // that provide build engines, or write your own.
+            ninject.Get<OwinFramework.Pages.Framework.BuildEngine>().Install(fluentBuilder);
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
             ninject.Get<OwinFramework.Pages.Restful.BuildEngine>().Install(fluentBuilder);
 

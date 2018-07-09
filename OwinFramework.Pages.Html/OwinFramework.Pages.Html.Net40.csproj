@@ -65,8 +65,6 @@
   <ItemGroup>
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Elements\BuiltComponent.cs" />
-    <Compile Include="Elements\BuiltModule.cs" />
-    <Compile Include="Elements\BuiltPage.cs" />
     <Compile Include="Builders\ComponentBuilder.cs" />
     <Compile Include="Builders\ComponentDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
@@ -94,14 +92,10 @@
     <Compile Include="Elements\Element.cs" />
     <Compile Include="Runtime\HtmlWriter.cs" />
     <Compile Include="Runtime\HtmlWriterFactory.cs" />
-    <Compile Include="Elements\BuiltLayout.cs" />
     <Compile Include="Elements\ElementInstance.cs" />
     <Compile Include="Elements\LayoutInstance.cs" />
     <Compile Include="Builders\LayoutDefinition.cs" />
-    <Compile Include="Runtime\PackageDependencies.cs" />
-    <Compile Include="Runtime\PackageDependenciesFactory.cs" />
     <Compile Include="Runtime\StaticHtmlElement.cs" />
-    <Compile Include="Elements\BuiltRegion.cs" />
     <Compile Include="Elements\RegionInstance.cs" />
     <Compile Include="Builders\RegionDefinition.cs" />
     <Compile Include="Runtime\ComponentDependencies.cs" />

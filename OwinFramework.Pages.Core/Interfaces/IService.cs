@@ -7,18 +7,8 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// A service responds to browser requests by executing business logic
     /// and returning data in response. The response data can be any mime type.
     /// </summary>
-    public interface IService : IRunable
+    public interface IService : IRunable, INamed, IPackagable
     {
-        /// <summary>
-        /// The unique name of this service
-        /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// Optional package - not all services have to be packaged
-        /// </summary>
-        IPackage Package { get; set; }
-
         /// <summary>
         /// Gets debugging information from this service
         /// </summary>

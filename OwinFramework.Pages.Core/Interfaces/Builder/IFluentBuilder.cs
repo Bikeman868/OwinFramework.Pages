@@ -12,7 +12,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutBuilder,
         IPageBuilder,
         IServiceBuilder,
-        IModuleBuilder
+        IModuleBuilder,
+        IPackageBuilder
     {
         /// <summary>
         /// Registers all components, layouts, regions etc defined in the package. Optionally
@@ -41,10 +42,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Registeres a an element that was already constructed by the application
         /// </summary>
-        /// <param name="element">The element type to register</param>
-        /// <param name="type">The type from which this proxy was derrived or
-        /// null if this is not a proxy implementation</param>
-        T Register<T>(T element, Type type = null) where T: class;
+        /// <param name="element">The element to register</param>
+        void Register(object element);
+
+        /// <summary>
+        /// Defines how packages are built
+        /// </summary>
+        IPackageBuilder PackageBuilder { get; set; }
 
         /// <summary>
         /// Defines how modules are built

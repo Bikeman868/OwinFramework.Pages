@@ -5,8 +5,8 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
-using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Interfaces;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -16,9 +16,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly INameManager _nameManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
-        private readonly IDataDependencyFactory _dataDependencyFactory;
-        private readonly IDataSupplierFactory _dataSupplierFactory;
-        private readonly BuiltRegion _region;
+        private readonly Region _region;
         private string _tagName = "div";
         private string _style;
         private string[] _classNames;
@@ -28,23 +26,21 @@ namespace OwinFramework.Pages.Html.Builders
         private string[] _childClassNames;
 
         public RegionDefinition(
+            Region region,
             Type declaringType,
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,
-            IRegionDependenciesFactory regionDependenciesFactory,
-            IDataDependencyFactory dataDependencyFactory,
-            IDataSupplierFactory dataSupplierFactory,
             IPackage package)
         {
+            _region = region;
             _declaringType = declaringType;
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
-            _dataDependencyFactory = dataDependencyFactory;
-            _dataSupplierFactory = dataSupplierFactory;
-            _region = new BuiltRegion(regionDependenciesFactory);
-            _region.Package = package;
+
+            if (package != null)
+                _region.Package = package;
         }
 
         IRegionDefinition IRegionDefinition.Name(string name)

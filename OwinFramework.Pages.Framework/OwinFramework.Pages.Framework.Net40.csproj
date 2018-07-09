@@ -64,8 +64,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Builders\AttributeSet.cs" />
-    <Compile Include="Builders\BuiltPackage.cs" />
+    <Compile Include="BuildEngine.cs" />
+    <Compile Include="Builders\ElementConfiguror.cs" />
+    <Compile Include="Builders\PackageBuilder.cs" />
     <Compile Include="Builders\PackageDefinition.cs" />
     <Compile Include="Configuration\FrameworkConfiguration.cs" />
     <Compile Include="DataModel\DataConsumerFactory.cs" />
@@ -90,6 +91,8 @@
     <Compile Include="DataModel\DataContextFactory.cs" />
     <Compile Include="DataModel\DataProvider.cs" />
     <Compile Include="Runtime\Package.cs" />
+    <Compile Include="Runtime\PackageDependencies.cs" />
+    <Compile Include="Runtime\PackageDependenciesFactory.cs" />
     <Compile Include="Runtime\RequestRouter.cs" />
   </ItemGroup>
   <ItemGroup>

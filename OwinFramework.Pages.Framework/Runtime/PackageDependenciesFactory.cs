@@ -4,7 +4,7 @@ using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime
+namespace OwinFramework.Pages.Framework.Runtime
 {
     internal class PackageDependenciesFactory: IPackageDependenciesFactory
     {

@@ -9,6 +9,7 @@ using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Interfaces;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -19,8 +20,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IAssetManager _assetManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
-        private readonly IComponentDependenciesFactory _componentDependenciesFactory;
-        private readonly BuiltComponent _component;
+        private readonly Component _component;
         private readonly List<FunctionDefinition> _functionDefinitions;
         private readonly List<CssDefinition> _cssDefinitions;
         private readonly List<HtmlDefinition> _htmlToRender;
@@ -48,26 +48,27 @@ namespace OwinFramework.Pages.Html.Builders
         }
 
         public ComponentDefinition(
+            Component component,
             Type declaringType,
             INameManager nameManager,
             IAssetManager assetManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,
-            IComponentDependenciesFactory componentDependenciesFactory,
             IPackage package)
         {
+            _component = component;
             _declaringType = declaringType;
             _nameManager = nameManager;
             _assetManager = assetManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
-            _componentDependenciesFactory = componentDependenciesFactory;
-            _component = new BuiltComponent(componentDependenciesFactory);
+
             _cssDefinitions = new List<CssDefinition>();
             _functionDefinitions = new List<FunctionDefinition>();
             _htmlToRender = new List<HtmlDefinition>();
 
-            _component.Package = package;
+            if (package != null)
+                _component.Package = package;
         }
 
         IComponentDefinition IComponentDefinition.Name(string name)

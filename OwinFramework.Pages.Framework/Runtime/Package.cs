@@ -27,8 +27,22 @@ namespace OwinFramework.Pages.Framework.Runtime
         /// </summary>
         public IModule Module { get; set; }
 
+        /// <summary>
+        /// IoC dependencies are wrapped up into a single interface
+        /// so that the constructor signature will not change if more
+        /// dependencies are added later
+        /// </summary>
+        protected readonly IPackageDependenciesFactory Dependencies;
+
+        /// <summary>
+        /// Default IoC constructor
+        /// </summary>
         public Package(IPackageDependenciesFactory dependencies)
-        { }
+        {
+            // DO NOT CHANGE THE METHOD SIGNATURE OF THIS CONSTRUCTOR
+           
+            Dependencies = dependencies;
+        }
 
         /// <summary>
         /// Override this to build package elements

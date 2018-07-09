@@ -63,10 +63,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\AttributeSet.cs" />
     <Compile Include="Attributes\ChildContainerAttribute.cs" />
     <Compile Include="Attributes\IsDataProviderAttribute.cs" />
     <Compile Include="Attributes\DeployCss.cs" />
-    <Compile Include="Attributes\DeployFunction.cs" />
+    <Compile Include="Attributes\DeployFunctionAttribute.cs" />
     <Compile Include="Attributes\NeedsComponentAttribute.cs" />
     <Compile Include="Attributes\DataScopeAttribute.cs" />
     <Compile Include="Attributes\SuppliesDataAttribute.cs" />
@@ -145,8 +146,10 @@
     <Compile Include="Interfaces\Builder\IComponentDependencies.cs" />
     <Compile Include="Interfaces\Builder\IDataProviderDependenciesFactory.cs" />
     <Compile Include="Interfaces\Builder\IComponentDependenciesFactory.cs" />
+    <Compile Include="Interfaces\Builder\IElementConfiguror.cs" />
     <Compile Include="Interfaces\Builder\ILayoutDependencies.cs" />
     <Compile Include="Interfaces\Builder\ILayoutDependenciesFactory.cs" />
+    <Compile Include="Interfaces\Builder\IPackageBuilder.cs" />
     <Compile Include="Interfaces\Builder\IModuleDependencies.cs" />
     <Compile Include="Interfaces\Builder\IModuleDependenciesFactory.cs" />
     <Compile Include="Interfaces\Builder\IPackageDefinition.cs" />
@@ -182,12 +185,16 @@
     <Compile Include="Interfaces\Managers\IIdManager.cs" />
     <Compile Include="Interfaces\DataModel\IDataContextFactory.cs" />
     <Compile Include="Interfaces\Runtime\ICssWriter.cs" />
+    <Compile Include="Interfaces\Runtime\IDataRepeater.cs" />
+    <Compile Include="Interfaces\Runtime\IDeployable.cs" />
     <Compile Include="Interfaces\Runtime\IJavascriptWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IJavascriptWriter.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriter.cs" />
     <Compile Include="Interfaces\Runtime\ICssWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IInitializationData.cs" />
+    <Compile Include="Interfaces\Runtime\INamed.cs" />
+    <Compile Include="Interfaces\Runtime\IPackagable.cs" />
     <Compile Include="Interfaces\Runtime\IRenderContextFactory.cs" />
     <Compile Include="Interfaces\Runtime\IReusable.cs" />
     <Compile Include="Interfaces\Collections\IStringBuilder.cs" />

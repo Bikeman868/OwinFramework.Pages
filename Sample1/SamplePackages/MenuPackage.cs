@@ -55,7 +55,7 @@ namespace Sample1.SamplePackages
                 IDataDependency dependency)
             {
                 var parent = dataContext.Get<MenuItem>();
-                dataContext.Set(parent.SubMenu);
+                dataContext.Set(parent.SubMenu, "submenu");
             }
         }
 
@@ -125,25 +125,30 @@ namespace Sample1.SamplePackages
         public override IPackage Build(IFluentBuilder builder)
         {
             // This component displays a main menu item
-            var mainMenuItemComponent = builder.Register(
-                new MenuItemComponent(Dependencies.ComponentDependenciesFactory) 
-                { 
-                    Package = this
-                });
+            var mainMenuItemComponent = builder.BuildUpComponent(
+                new MenuItemComponent(Dependencies.ComponentDependenciesFactory))
+                .Build();
 
             // This component displays a main menu item
-            var subMenuItemComponent = builder.Register(
-                new SubMenuItemComponent(Dependencies.ComponentDependenciesFactory)
-                {
-                    Package = this
-                });
+            var subMenuItemComponent = builder.BuildUpComponent(
+                new SubMenuItemComponent(Dependencies.ComponentDependenciesFactory))
+                .Build();
 
             // This data provider extracts sub-menu items from the current menu item
-            var subMenuDataProvider = builder.Register(
-                new SubMenuDataProvider(Dependencies.DataProviderDependenciesFactory)
-                {
-                    Package = this
-                });
+            var subMenuDataProvider1 = builder.BuildUpDataProvider(
+                new SubMenuDataProvider(Dependencies.DataProviderDependenciesFactory))
+                .Build();
+
+            // This data provider extracts sub-menu items from the current menu item
+            var subMenuDataProvider2 = builder.BuildUpDataProvider()
+                .BindTo<MenuItem>()
+                .Provides<IList<MenuItem>>((rc, dc, d) => 
+                    {
+                        var menuItem = dc.Get<MenuItem>();
+                        dc.Set(menuItem.SubMenu, "submenu");
+                    },
+                    "submenu")
+                .Build();
 
             // This region is a container for the options on the main menu
             var mainMenuItemRegion = builder.BuildUpRegion()
@@ -157,7 +162,7 @@ namespace Sample1.SamplePackages
             var dropDownMenuRegion = builder.BuildUpRegion()
                 .Tag("ul")
                 .ClassNames("{ns}_dropdown")
-                .DataProvider(subMenuDataProvider)
+                .DataProvider(subMenuDataProvider1)
                 .ForEach<MenuItem>("submenu", "li", null, "submenu", "{ns}_option")
                 .Component(subMenuItemComponent)
                 .Build();

@@ -12,7 +12,7 @@ namespace OwinFramework.Pages.Framework.DataModel
     /// You can inherit from this base class to insulate your implementation from
     /// future additions to the IDataProvider interface
     /// </summary>
-    public class DataProvider: IDataProvider, IDataConsumer, IDataSupplier
+    public class DataProvider: IDataProvider, IDataConsumer
     {
         public string Name { get; set; }
         public IPackage Package { get; set; }
@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         protected readonly IDataSupplier DataSupplier;
         protected readonly IDataProviderDependenciesFactory Dependencies;
 
-        protected DataProvider(IDataProviderDependenciesFactory dependencies)
+        public DataProvider(IDataProviderDependenciesFactory dependencies)
         {
             // DO NOT change the method signature of this constructor as
             // this would break all data providers in all applications that use

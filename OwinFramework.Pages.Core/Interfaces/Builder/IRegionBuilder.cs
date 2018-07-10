@@ -16,6 +16,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="declaringType">Type type to extract custom attributes from
         /// that can also define the behaviour of the region</param>
         /// <param name="package">Optional package adds a namespace to this region</param>
-        IRegionDefinition BuildUpRegion(object regionInstance, Type declaringType = null, IPackage package = null);
+        IRegionDefinition BuildUpRegion(object regionInstance = null, Type declaringType = null, IPackage package = null);
     }
 }

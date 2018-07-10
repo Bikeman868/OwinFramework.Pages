@@ -39,8 +39,6 @@ namespace OwinFramework.Pages.Html
                     // be base classes that applications can inherit from. The IoC dependencies
                     // are wrapped so that we can add new dependencies in the future without
                     // changing the method signature of the constructor
-                    new IocRegistration().Init<IPackageDependenciesFactory, PackageDependenciesFactory>(),
-                    new IocRegistration().Init<IPackageDependencies, PackageDependencies>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IModuleDependenciesFactory, ModuleDependenciesFactory>(),
                     new IocRegistration().Init<IModuleDependencies, ModuleDependencies>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IPageDependenciesFactory, PageDependenciesFactory>(),

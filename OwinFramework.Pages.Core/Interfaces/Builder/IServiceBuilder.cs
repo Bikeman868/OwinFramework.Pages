@@ -16,6 +16,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="declaringType">Type type to extract custom attributes from
         /// that can also define the behaviour of the service</param>
         /// <param name="package">Optional package adds a namespace to this service</param>
-        IServiceDefinition BuildUpService(object serviceInstance, Type declaringType = null, IPackage package = null);
+        IServiceDefinition BuildUpService(object serviceInstance = null, Type declaringType = null, IPackage package = null);
     }
 }

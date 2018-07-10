@@ -5,46 +5,174 @@ using OwinFramework.Pages.Core.Extensions;
 
 namespace OwinFramework.Pages.Core.Attributes
 {
+    /// <summary>
+    /// Encapsulates the attributes that can be attached to classes
+    /// to define them as elements of the page
+    /// </summary>
     public class AttributeSet
     {
+        /// <summary>
+        /// This is the type whos attributes are captured here
+        /// </summary>
         public Type Type;
 
-        // Attributes that define the type of element
+        /// <summary>
+        /// Defines this class as a package
+        /// </summary>
         public IsPackageAttribute IsPackage;
+
+        /// <summary>
+        /// Defines this class as a module
+        /// </summary>
         public IsModuleAttribute IsModule;
+
+        /// <summary>
+        /// Defines this class as a page
+        /// </summary>
         public IsPageAttribute IsPage;
+
+        /// <summary>
+        /// Defines this class as a layout
+        /// </summary>
         public IsLayoutAttribute IsLayout;
+
+        /// <summary>
+        /// Defines this class as a region
+        /// </summary>
         public IsRegionAttribute IsRegion;
+
+        /// <summary>
+        /// Defines this class as a component
+        /// </summary>
         public IsComponentAttribute IsComponent;
+
+        /// <summary>
+        /// Defines this class as a service
+        /// </summary>
         public IsServiceAttribute IsService;
+
+        /// <summary>
+        /// Defines this class as a data provider
+        /// </summary>
         public IsDataProviderAttribute IsDataProvider;
 
-        // Attributes that can only be applied once
+        /// <summary>
+        /// Specifies how child containers should be handled
+        /// </summary>
         public ChildContainerAttribute ChildContainer;
+
+        /// <summary>
+        /// Specifies how child elements should be styled
+        /// </summary>
         public ChildStyleAttribute ChildStyle;
+
+        /// <summary>
+        /// Specifies how the main containers should behave
+        /// </summary>
         public ContainerAttribute Container;
+
+        /// <summary>
+        /// Specifies how the main containers should be styled
+        /// </summary>
         public DeployFunctionAttribute DeployFunction;
+
+        /// <summary>
+        /// Specifies how the JavaScript and css assets for this 
+        /// element should be deployed to the browser
+        /// </summary>
         public DeployedAsAttribute DeployedAs;
+
+        /// <summary>
+        /// Adds static text to the title of the page
+        /// </summary>
         public PageTitleAttribute PageTitle;
+
+        /// <summary>
+        /// Defines this element to be part of a package. The package
+        /// defines the namespace to use for JavaScript and css
+        /// </summary>
         public PartOfAttribute PartOf;
+
+        /// <summary>
+        /// Specifies that this element should bind to a list of data
+        /// and repeat its contents for each item on the list
+        /// </summary>
         public RepeatAttribute Repeat;
+
+        /// <summary>
+        /// Specifies a permission that the user must have assigned
+        /// to them to be able to access this element
+        /// </summary>
         public RequiresPermissionAttribute RequiresPermission;
+
+        /// <summary>
+        /// Defines how to style this element
+        /// </summary>
         public StyleAttribute Style;
 
-        // Attributes that can be applied multiple times
+        /// <summary>
+        /// Defines a static css asset to deploy on any page that includes this element
+        /// </summary>
         public IList<DeployCssAttribute> DeployCsss;
+
+        /// <summary>
+        /// Defines a component that must be present on any page that includes this element
+        /// </summary>
         public IList<NeedsComponentAttribute> NeedsComponents;
+
+        /// <summary>
+        /// Specifies that this element needs specific data to be available at page rendering time
+        /// </summary>
         public IList<NeedsDataAttribute> NeedsDatas;
+
+        /// <summary>
+        /// For a layout, specifies a component to place in one of the regions of the layout
+        /// </summary>
         public IList<RegionComponentAttribute> RegionComponents;
+
+        /// <summary>
+        /// For a layout, specifies a layout to place in one of the regions of the layout
+        /// </summary>
         public IList<RegionLayoutAttribute> RegionLayouts;
+
+        /// <summary>
+        /// Defines some static html to render into the page
+        /// </summary>
         public IList<RenderHtmlAttribute> RenderHtmls;
+
+        /// <summary>
+        /// Defines URLs that should be routed to this page or service
+        /// </summary>
         public IList<RouteAttribute> Routes;
+
+        /// <summary>
+        /// For a region, specifies the component to render inside the region
+        /// </summary>
         public IList<UsesComponentAttribute> UsesComponents;
+
+        /// <summary>
+        /// For a region, specifies the layout to render inside the region
+        /// </summary>
         public IList<UsesLayoutAttribute> UsesLayouts;
+
+        /// <summary>
+        /// For a layout, defines the region component to use for each region of the layout
+        /// </summary>
         public IList<UsesRegionAttribute> UsesRegions;
+
+        /// <summary>
+        /// For a region, defines a type of data that will be resolved within this region
+        /// </summary>
         public IList<DataScopeAttribute> DataScopes;
+
+        /// <summary>
+        /// For a data provider, defines a type of data that it can supply
+        /// </summary>
         public IList<SuppliesDataAttribute> SuppliesDatas;
 
+        /// <summary>
+        /// Constructs a new attribute set for a class type
+        /// </summary>
         public AttributeSet(Type type)
         {
             Type = type;
@@ -107,6 +235,9 @@ namespace OwinFramework.Pages.Core.Attributes
             return list;
         }
 
+        /// <summary>
+        /// Checks these attributes and reports any attributes that are missplaced
+        /// </summary>
         public void Validate()
         {
             if (IsPackage != null) ValidatePackage();

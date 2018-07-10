@@ -125,14 +125,14 @@ namespace Sample1.SamplePackages
             #region These properties do not need to do anything
 
             IElement IRegion.Content { get { return null; } }
-            string IRegion.RepeatScope { get; set; }
-            Type IRegion.RepeatType { get; set; }
-            string IRegion.ListScope { get; set; }
-            Type IRegion.ListType { get { return null; } }
-            string IElement.Name { get; set; }
-            IPackage IElement.Package { get; set; }
-            IModule IElement.Module { get; set; }
-            AssetDeployment IElement.AssetDeployment { get; set; }
+            string IDataRepeater.RepeatScope { get; set; }
+            Type IDataRepeater.RepeatType { get; set; }
+            string IDataRepeater.ListScope { get; set; }
+            Type IDataRepeater.ListType { get { return null; } }
+            string INamed.Name { get; set; }
+            IPackage IPackagable.Package { get; set; }
+            IModule IDeployable.Module { get; set; }
+            AssetDeployment IDeployable.AssetDeployment { get; set; }
 
             #endregion
 
@@ -150,7 +150,7 @@ namespace Sample1.SamplePackages
 
             IRegion IRegion.CreateInstance(IElement content)
             {
-                return new RegionExample3 
+                return new RegionExample5 
                 { 
                     _content = content,
                     _isInstance = true
@@ -211,12 +211,12 @@ namespace Sample1.SamplePackages
                 return _content.AsEnumerable().GetEnumerator();
             }
 
-            IWriteResult IElement.WriteStaticCss(ICssWriter writer)
+            IWriteResult IDeployable.WriteStaticCss(ICssWriter writer)
             {
                 return _content.WriteStaticCss(writer);
             }
 
-            IWriteResult IElement.WriteStaticJavascript(IJavascriptWriter writer)
+            IWriteResult IDeployable.WriteStaticJavascript(IJavascriptWriter writer)
             {
                 return _content.WriteStaticJavascript(writer);
             }

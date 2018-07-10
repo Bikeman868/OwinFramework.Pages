@@ -136,7 +136,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IComponentDefinition Render(string assetName, string html);
 
         /// <summary>
-        /// Builds the module
+        /// Builds the component
         /// </summary>
         IComponent Build();
     }

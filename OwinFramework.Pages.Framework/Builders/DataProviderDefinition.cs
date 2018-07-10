@@ -1,0 +1,118 @@
+﻿using System;
+using OwinFramework.Pages.Core.Exceptions;
+using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Framework.DataModel;
+
+namespace OwinFramework.Pages.Framework.Builders
+{
+    internal class DataProviderDefinition : IDataProviderDefinition
+    {
+        private readonly IFluentBuilder _builder;
+        private readonly IDataDependencyFactory _dataDependencyFactory;
+        private readonly INameManager _nameManager;
+        private readonly DataProvider _dataProvider;
+
+        public DataProviderDefinition(
+            DataProvider dataProvider,
+            IFluentBuilder builder,
+            IDataDependencyFactory dataDependencyFactory,
+            INameManager nameManager)
+        {
+            _dataProvider = dataProvider;
+            _builder = builder;
+            _dataDependencyFactory = dataDependencyFactory;
+            _nameManager = nameManager;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.Name(string name)
+        {
+            _dataProvider.Name = name;
+            return this;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.BindTo<T>(string scope)
+        {
+            var dataConsumer = _dataProvider as IDataConsumer;
+            if (dataConsumer == null)
+                throw new FluentBuilderException("This data provider is not a consumer of data");
+
+            dataConsumer.HasDependency<T>(scope);
+
+            return this;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.BindTo(Type dataType, string scope)
+        {
+            var dataConsumer = _dataProvider as IDataConsumer;
+            if (dataConsumer == null)
+                throw new FluentBuilderException("This data provider is not a consumer of data");
+
+            dataConsumer.HasDependency(dataType, scope);
+
+            return this;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.PartOf(IPackage package)
+        {
+            _dataProvider.Package = package;
+            return this;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.PartOf(string packageName)
+        {
+            _dataProvider.Package = _nameManager.ResolvePackage(packageName);
+            return this;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.Provides<T>(string scope)
+        {
+            _dataProvider.Add<T>(scope);
+            return this;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.Provides(Type dataType, string scope)
+        {
+            _dataProvider.Add(dataType, scope);
+            return this;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.Provides(
+            Type dataType, 
+            Action<IRenderContext, IDataContext, IDataDependency> action, 
+            string scope)
+        {
+            var dataSupplier = _dataProvider as IDataSupplier;
+            if (dataSupplier == null)
+                throw new FluentBuilderException("This data provider is not a consumer of data");
+
+            var dataDependency = _dataDependencyFactory.Create(dataType, scope);
+            dataSupplier.Add(dataDependency, action);
+
+            return this;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.Provides<T>(
+            Action<IRenderContext, IDataContext, IDataDependency> action,
+            string scope)
+        {
+            var dataSupplier = _dataProvider as IDataSupplier;
+            if (dataSupplier == null)
+                throw new FluentBuilderException("This data provider is not a consumer of data");
+
+            var dataDependency = _dataDependencyFactory.Create(typeof(T), scope);
+            dataSupplier.Add(dataDependency, action);
+
+            return this;
+        }
+
+        IDataProvider IDataProviderDefinition.Build()
+        {
+            _builder.Register(_dataProvider);
+            return _dataProvider;
+        }
+    }
+}

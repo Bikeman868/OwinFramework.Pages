@@ -7,7 +7,6 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Interfaces;
 using OwinFramework.Pages.Html.Runtime;
 
@@ -15,7 +14,6 @@ namespace OwinFramework.Pages.Html.Builders
 {
     internal class ComponentDefinition : IComponentDefinition
     {
-        private readonly Type _declaringType;
         private readonly INameManager _nameManager;
         private readonly IAssetManager _assetManager;
         private readonly IHtmlHelper _htmlHelper;
@@ -49,7 +47,6 @@ namespace OwinFramework.Pages.Html.Builders
 
         public ComponentDefinition(
             Component component,
-            Type declaringType,
             INameManager nameManager,
             IAssetManager assetManager,
             IHtmlHelper htmlHelper,
@@ -57,7 +54,6 @@ namespace OwinFramework.Pages.Html.Builders
             IPackage package)
         {
             _component = component;
-            _declaringType = declaringType;
             _nameManager = nameManager;
             _assetManager = assetManager;
             _htmlHelper = htmlHelper;
@@ -250,7 +246,8 @@ namespace OwinFramework.Pages.Html.Builders
                     })
                 .ToList();
 
-            return _fluentBuilder.Register(_component, _declaringType);
+            _fluentBuilder.Register(_component);
+            return _component;
         }
     }
 }

@@ -18,9 +18,7 @@ namespace OwinFramework.Pages.Html
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly IAssetManager _assetManager;
         private readonly IHtmlHelper _htmlHelper;
-        private readonly IFluentBuilder _fluentBuilder;
-        private readonly IDataDependencyFactory _dataDependencyFactory;
-        private readonly IDataSupplierFactory _dataSupplierFactory;
+        private readonly IElementConfiguror _elementConfiguror;
 
         public BuildEngine(
             IRequestRouter requestRouter,
@@ -32,9 +30,7 @@ namespace OwinFramework.Pages.Html
             IComponentDependenciesFactory componentDependenciesFactory,
             IAssetManager assetManager,
             IHtmlHelper htmlHelper,
-            IFluentBuilder fluentBuilder,
-            IDataDependencyFactory dataDependencyFactory,
-            IDataSupplierFactory dataSupplierFactory)
+            IElementConfiguror elementConfiguror)
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
@@ -45,43 +41,44 @@ namespace OwinFramework.Pages.Html
             _componentDependenciesFactory = componentDependenciesFactory;
             _assetManager = assetManager;
             _htmlHelper = htmlHelper;
-            _fluentBuilder = fluentBuilder;
-            _dataDependencyFactory = dataDependencyFactory;
-            _dataSupplierFactory = dataSupplierFactory;
+            _elementConfiguror = elementConfiguror;
         }
 
         public void Install(IFluentBuilder builder)
         {
             builder.ModuleBuilder = new ModuleBuilder(
                 _moduleDependenciesFactory,
-                _fluentBuilder);
+                _elementConfiguror,
+                builder);
 
             builder.PageBuilder = new PageBuilder(
                 _requestRouter,
                 _nameManager,
                 _pageDependenciesFactory,
-                _fluentBuilder);
+                _elementConfiguror,
+                builder);
 
             builder.LayoutBuilder = new LayoutBuilder(
+                _layoutDependenciesFactory,
                 _nameManager,
                 _htmlHelper,
-                _layoutDependenciesFactory,
-                _fluentBuilder);
+                _elementConfiguror,
+                builder);
 
             builder.RegionBuilder = new RegionBuilder(
                 _nameManager,
                 _htmlHelper,
                 _regionDependenciesFactory,
-                _fluentBuilder,
-                _dataDependencyFactory,
-                _dataSupplierFactory);
+                _elementConfiguror,
+                builder);
 
             builder.ComponentBuilder = new ComponentBuilder(
                 _nameManager,
                 _assetManager,
                 _htmlHelper,
                 _componentDependenciesFactory,
-                _fluentBuilder);
+                _elementConfiguror,
+                builder);
         }
     }
 }

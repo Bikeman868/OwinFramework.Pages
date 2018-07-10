@@ -13,7 +13,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageBuilder,
         IServiceBuilder,
         IModuleBuilder,
-        IPackageBuilder
+        IPackageBuilder,
+        IDataProviderBuilder
     {
         /// <summary>
         /// Registers all components, layouts, regions etc defined in the package. Optionally
@@ -79,5 +80,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Defines how services are built
         /// </summary>
         IServiceBuilder ServiceBuilder { get; set; }
+
+        /// <summary>
+        /// Defines how services are built
+        /// </summary>
+        IDataProviderBuilder DataProviderBuilder { get; set; }
     }
 }

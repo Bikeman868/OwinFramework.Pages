@@ -64,7 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildEngine.cs" />
-    <Compile Include="Elements\BuiltComponent.cs" />
     <Compile Include="Builders\ComponentBuilder.cs" />
     <Compile Include="Builders\ComponentDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />

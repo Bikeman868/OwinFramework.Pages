@@ -144,7 +144,16 @@ namespace OwinFramework.Pages.Framework.Builders
                 if (!string.IsNullOrEmpty(attributes.IsLayout.Name))
                     layout.Name = attributes.IsLayout.Name;
 
-                layout.RegionNesting(attributes.IsLayout.RegionNesting);
+                // TODO: Figure out how region nesting used to work
+
+                //public ILayoutDefinition RegionNesting(string regionNesting)
+                //{
+                //    var position = 0;
+                //    _regionSet = RegionSet.Parse(regionNesting, ref position);
+                //    return this;
+                //}
+
+                //layout.RegionNesting(attributes.IsLayout.RegionNesting);
             }
 
             if (attributes.RegionComponents != null)

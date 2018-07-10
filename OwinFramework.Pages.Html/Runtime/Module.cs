@@ -2,6 +2,7 @@
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
@@ -14,6 +15,7 @@ namespace OwinFramework.Pages.Html.Runtime
         public string Name { get; set; }
 
         private AssetDeployment _assetDeployment = AssetDeployment.PerModule;
+        IModule IDeployable.Module { get; set; }
 
         public Module(IModuleDependenciesFactory dependencies)
         {
@@ -38,6 +40,17 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             get { return _assetDeployment; }
             set { _assetDeployment = value; }
+        }
+
+
+        public IWriteResult WriteStaticCss(ICssWriter writer)
+        {
+            return WriteResult.Continue();
+        }
+
+        public IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
+        {
+            return WriteResult.Continue();
         }
     }
 }

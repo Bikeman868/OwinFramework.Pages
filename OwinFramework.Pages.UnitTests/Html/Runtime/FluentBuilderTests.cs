@@ -19,7 +19,6 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
     {
         private IDataProviderDependenciesFactory _dataProviderDependenciesFactory;
         private INameManager _nameManager;
-        private IRequestRouter _requestRouter;
         private IFluentBuilder _fluentBuilder;
 
         private IDataCatalog _dataCatalog;
@@ -31,12 +30,10 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
 
             _dataProviderDependenciesFactory = SetupMock<IDataProviderDependenciesFactory>();
             _nameManager = SetupMock<INameManager>();
-            _requestRouter = SetupMock<IRequestRouter>();
             _dataCatalog = SetupMock<IDataCatalog>();
 
             _fluentBuilder = new FluentBuilder(
                 _nameManager,
-                _requestRouter,
                 _dataCatalog,
                 _dataProviderDependenciesFactory.DataDependencyFactory,
                 _dataProviderDependenciesFactory.DataSupplierFactory);

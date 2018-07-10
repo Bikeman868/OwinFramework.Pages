@@ -143,7 +143,9 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Interfaces\Builder\IBuildEngine.cs" />
+    <Compile Include="Interfaces\Builder\IDataProviderDefinition.cs" />
     <Compile Include="Interfaces\Builder\IComponentDependencies.cs" />
+    <Compile Include="Interfaces\Builder\IDataProviderBuilder.cs" />
     <Compile Include="Interfaces\Builder\IDataProviderDependenciesFactory.cs" />
     <Compile Include="Interfaces\Builder\IComponentDependenciesFactory.cs" />
     <Compile Include="Interfaces\Builder\IElementConfiguror.cs" />
@@ -156,7 +158,9 @@
     <Compile Include="Interfaces\Builder\IPackageDependencies.cs" />
     <Compile Include="Interfaces\Builder\IPackageDependenciesFactory.cs" />
     <Compile Include="Interfaces\Builder\IDataProviderDependencies.cs" />
+    <Compile Include="Interfaces\Builder\IServiceDependencies.cs" />
     <Compile Include="Interfaces\Builder\IPageDependencies.cs" />
+    <Compile Include="Interfaces\Builder\IServiceDependenciesFactory.cs" />
     <Compile Include="Interfaces\Builder\IPageDependenciesFactory.cs" />
     <Compile Include="Interfaces\Builder\IRegionDependencies.cs" />
     <Compile Include="Interfaces\Builder\IRegionDependenciesFactory.cs" />

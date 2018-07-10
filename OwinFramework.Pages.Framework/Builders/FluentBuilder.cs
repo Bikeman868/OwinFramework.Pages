@@ -28,6 +28,7 @@ namespace OwinFramework.Pages.Framework.Builders
         public IComponentBuilder ComponentBuilder { get; set; }
         public IServiceBuilder ServiceBuilder { get; set; }
         public IPackageBuilder PackageBuilder { get; set; }
+        public IDataProviderBuilder DataProviderBuilder { get; set; }
 
         private readonly INameManager _nameManager;
         private readonly IDataCatalog _dataCatalog;
@@ -145,7 +146,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             var attributes = new AttributeSet(type);
 
-            if (attributes.IsPackage != null) return BuildPackage(type, factory);
+            if (attributes.IsPackage != null) return BuildPackage(null, type, factory, null);
             if (attributes.IsModule != null) return BuildModule(type, factory);
             if (attributes.IsPage != null) return BuildPage(type, factory);
             if (attributes.IsLayout != null) return BuildLayout(type, factory);
@@ -184,6 +185,10 @@ namespace OwinFramework.Pages.Framework.Builders
             var dataProvider = obj as IDataProvider;
             if (dataProvider != null)
                 _nameManager.Register(dataProvider);
+
+            var dataSupplier = obj as IDataSupplier;
+            if (dataSupplier != null)
+                _dataCatalog.Register(dataSupplier);
         }
 
         #endregion
@@ -272,6 +277,20 @@ namespace OwinFramework.Pages.Framework.Builders
             if (ModuleBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build modules");
             return ModuleBuilder.BuildUpModule(moduleInstance, declaringType);
+        }
+
+        /// <summary>
+        /// Calls the data provider builder plug-in to return a fluent interface for configuring a data provider.
+        /// You can pass a data provider instance or allow the builder to build one from scratch
+        /// </summary>
+        /// <param name="dataProviderInstance">Optional instance to configure</param>
+        /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <returns></returns>
+        public IDataProviderDefinition BuildUpDataProvider(object dataProviderInstance, Type declaringType, IPackage package)
+        {
+            if (DataProviderBuilder == null)
+                throw new FluentBuilderException("There is no build engine installed that knows how to build data providers");
+            return DataProviderBuilder.BuildUpDataProvider(dataProviderInstance, declaringType, package ?? _packageContext);
         }
 
         /// <summary>
@@ -372,136 +391,66 @@ namespace OwinFramework.Pages.Framework.Builders
             return layout;
         }
 
-        private IRegion BuildRegion(AttributeSet attributes, IRegion region, Func<Type, object> factory)
+        /// <summary>
+        /// This is called when a region is discovered through reflection and it needs
+        /// to be consutucted and initialized
+        /// </summary>
+        private IRegion BuildRegion(Type type, Func<Type, object> factory)
         {
-            if (region == null && factory != null && typeof(IRegion).IsAssignableFrom(attributes.Type))
-                region = factory(attributes.Type) as IRegion;
+            IRegion region = null;
 
-            if (region == null)
-            {
-                var regionDefinition = BuildUpRegion(attributes.Type, _packageContext);
+            if (factory != null && typeof(IRegion).IsAssignableFrom(type))
+                region = factory(type) as IRegion;
 
-                if (attributes.Style != null)
-                {
-                    if (!string.IsNullOrEmpty(attributes.Style.CssStyle))
-                        regionDefinition.Style(attributes.Style.CssStyle);
-                }
-
-                if (attributes.Repeat != null)
-                    regionDefinition.ForEach(
-                        attributes.Repeat.RepeatType, 
-                        attributes.Repeat.RepeatScope,
-                        attributes.Repeat.Tag, 
-                        attributes.Repeat.Style,
-                        attributes.Repeat.ListScope,
-                        attributes.Repeat.ClassNames);
-
-                if (attributes.Container != null)
-                {
-                    if (!string.IsNullOrEmpty(attributes.Container.Tag))
-                        regionDefinition.Tag(attributes.Container.Tag);
-
-                    if (attributes.Container.ClassNames != null && attributes.Container.ClassNames.Length > 0)
-                        regionDefinition.ClassNames(attributes.Container.ClassNames);
-                }
-
-                if (attributes.NeedsComponents != null)
-                {
-                    foreach (var component in attributes.NeedsComponents)
-                        regionDefinition.NeedsComponent(component.ComponentName);
-                }
-
-                if (attributes.UsesLayouts != null)
-                    foreach(var usesLayout in attributes.UsesLayouts)
-                        regionDefinition.Layout(usesLayout.LayoutName);
-
-                if (attributes.UsesComponents != null)
-                    foreach(var usesComponent in attributes.UsesComponents)
-                        regionDefinition.Component(usesComponent.ComponentName);
-
-                return regionDefinition.Build();
-            }
-
-            Configure(attributes, region);
-            _nameManager.Register(region);
+            var regionDefinition = BuildUpRegion(region, type, _packageContext);
+            region = regionDefinition.Build();
 
             return region;
         }
 
-        private IComponent BuildComponent(AttributeSet attributes, IComponent component, Func<Type, object> factory)
+        /// <summary>
+        /// This is called when a component is discovered through reflection and it needs
+        /// to be consutucted and initialized
+        /// </summary>
+        private IComponent BuildComponent(Type type, Func<Type, object> factory)
         {
-            if (component == null && factory != null && typeof(IComponent).IsAssignableFrom(attributes.Type))
-                component = factory(attributes.Type) as IComponent;
+            IComponent component = null;
 
-            if (component == null)
-            {
-                var componentDefinition = BuildUpComponent(attributes.Type, _packageContext);
+            if (factory != null && typeof(IComponent).IsAssignableFrom(type))
+                component = factory(type) as IComponent;
 
-                if (attributes.RenderHtmls != null)
-                {
-                    foreach(var renderHtml in attributes.RenderHtmls.OrderBy(r => r.Order))
-                        componentDefinition.Render(renderHtml.TextName, renderHtml.Html);
-                }
-
-                if (attributes.NeedsComponents != null)
-                {
-                    foreach (var neededComponent in attributes.NeedsComponents)
-                        componentDefinition.NeedsComponent(neededComponent.ComponentName);
-                }
-
-                if (attributes.DeployCsss != null)
-                    foreach(var deployCss in attributes.DeployCsss)
-                        componentDefinition.DeployCss(deployCss.CssSelector, deployCss.CssStyle);
-
-                if (attributes.DeployFunction != null)
-                    componentDefinition.DeployFunction(
-                        attributes.DeployFunction.ReturnType,
-                        attributes.DeployFunction.FunctionName,
-                        attributes.DeployFunction.Parameters,
-                        attributes.DeployFunction.Body,
-                        attributes.DeployFunction.IsPublic);
-
-                return componentDefinition.Build();
-            }
-
-            Configure(attributes, component);
-            _nameManager.Register(component);
+            var componentDefinition = BuildUpComponent(component, type, _packageContext);
+            component = componentDefinition.Build();
 
             return component;
         }
 
-        private IService BuildService(AttributeSet attributes, IService service, Func<Type, object> factory)
+        /// <summary>
+        /// This is called when a service is discovered through reflection and it needs
+        /// to be consutucted and initialized
+        /// </summary>
+        private IService BuildService(Type type, Func<Type, object> factory)
         {
-            if (service == null && factory != null && typeof(IService).IsAssignableFrom(attributes.Type))
-                service = factory(attributes.Type) as IService;
+            IService service = null;
 
-            if (service == null)
-                return BuildUpService(attributes.Type, _packageContext).Build();
+            if (factory != null && typeof(IService).IsAssignableFrom(type))
+                service = factory(type) as IService;
 
-            Configure(attributes, service);
-            _nameManager.Register(service);
+            var serviceDefinition = BuildUpService(service, type, _packageContext);
+            service = serviceDefinition.Build();
 
             return service;
         }
 
-        private IDataProvider BuildDataProvider(AttributeSet attributes, IDataProvider dataProvider, Func<Type, object> factory)
+        private IDataProvider BuildDataProvider(Type type, Func<Type, object> factory)
         {
-            if (dataProvider == null && factory != null && typeof(IDataProvider).IsAssignableFrom(attributes.Type))
-                dataProvider = factory(attributes.Type) as IDataProvider;
+            IDataProvider dataProvider = null;
 
-            //if (dataProvider == null)
-            //{
-            //    var dataProviderDefinition = DataProvider(attributes.Type, _packageContext).Build();
-            //    return dataProviderDefinition.Build(attributes.Type);
-            //}
+            if (factory != null && typeof(IDataProvider).IsAssignableFrom(type))
+                dataProvider = factory(type) as IDataProvider;
 
-            Configure(attributes, dataProvider);
-
-            _nameManager.Register(dataProvider);
-
-            var dataSupplier = dataProvider as IDataSupplier;
-            if (dataSupplier != null)
-                _dataCatalog.Register(dataSupplier);
+            var dataProviderDefinition = BuildUpDataProvider(dataProvider, type, _packageContext);
+            dataProvider = dataProviderDefinition.Build();
 
             return dataProvider;
         }

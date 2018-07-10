@@ -12,7 +12,6 @@ namespace OwinFramework.Pages.Html.Builders
 {
     public class RegionDefinition : IRegionDefinition
     {
-        private readonly Type _declaringType;
         private readonly INameManager _nameManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
@@ -27,14 +26,12 @@ namespace OwinFramework.Pages.Html.Builders
 
         public RegionDefinition(
             Region region,
-            Type declaringType,
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,
             IPackage package)
         {
             _region = region;
-            _declaringType = declaringType;
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
@@ -80,10 +77,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Layout(string layoutName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _region.Populate(_nameManager.ResolveLayout(layoutName, _region.Package));
-            });
+            _nameManager.AddResolutionHandler((nm, r) =>
+                r.Populate(nm.ResolveLayout(layoutName, r.Package)),
+                _region);
             return this;
         }
 
@@ -95,10 +91,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Component(string componentName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _region.Populate(_nameManager.ResolveComponent(componentName, _region.Package));
-            });
+            _nameManager.AddResolutionHandler((nm, r) =>
+                r.Populate(nm.ResolveComponent(componentName, r.Package)),
+                _region);
             return this;
         }
 
@@ -147,6 +142,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         public IRegionDefinition DataScope(Type type, string scopeName)
         {
+            // TODO: This applies to the region instance not the region
             var dataScope = _region as IDataScopeProvider;
             if (dataScope != null)
                 dataScope.AddScope(type, scopeName);
@@ -197,10 +193,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.NeedsComponent(string componentName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _region.NeedsComponent(_nameManager.ResolveComponent(componentName, _region.Package));
-            });
+            _nameManager.AddResolutionHandler((nm, r) =>
+                r.NeedsComponent(nm.ResolveComponent(componentName, r.Package)),
+                _region);
             return this;
         }
 
@@ -212,10 +207,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.DeployIn(string moduleName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _region.Module = _nameManager.ResolveModule(moduleName);
-            });
+            _nameManager.AddResolutionHandler((nm, r) =>
+                r.Module = nm.ResolveModule(moduleName),
+                _region);
             return this;
         }
 
@@ -235,7 +229,8 @@ namespace OwinFramework.Pages.Html.Builders
                 _region.WriteChildClose = w => w.WriteCloseTag(_childTagName);
             }
 
-            return _fluentBuilder.Register(_region, _declaringType);
+            _fluentBuilder.Register(_region);
+            return _region;
         }
     }
 }

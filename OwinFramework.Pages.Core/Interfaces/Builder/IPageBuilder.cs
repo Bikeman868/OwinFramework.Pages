@@ -16,6 +16,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="declaringType">Type type to extract custom attributes from
         /// that can also define the behaviour of the page</param>
         /// <param name="package">Optional package adds a namespace to this page</param>
-        IPageDefinition BuildUpPage(object pageInstance, Type declaringType = null, IPackage package = null);
+        IPageDefinition BuildUpPage(object pageInstance = null, Type declaringType = null, IPackage package = null);
     }
 }

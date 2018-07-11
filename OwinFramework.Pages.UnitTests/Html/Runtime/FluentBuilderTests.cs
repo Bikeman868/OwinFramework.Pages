@@ -20,8 +20,11 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         private IDataProviderDependenciesFactory _dataProviderDependenciesFactory;
         private INameManager _nameManager;
         private IFluentBuilder _fluentBuilder;
-
+        private IElementConfiguror _elementConfiguror;
+        private IDataSupplierFactory _dataSupplierFactory;
+        private IDataDependencyFactory _dataDependencyFactory;
         private IDataCatalog _dataCatalog;
+        private IRequestRouter _requestRouter;
 
         [SetUp]
         public void Setup()
@@ -31,19 +34,36 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
             _dataProviderDependenciesFactory = SetupMock<IDataProviderDependenciesFactory>();
             _nameManager = SetupMock<INameManager>();
             _dataCatalog = SetupMock<IDataCatalog>();
+            _dataSupplierFactory = SetupMock<IDataSupplierFactory>();
+            _dataDependencyFactory = SetupMock<IDataDependencyFactory>();
+            _requestRouter = SetupMock<IRequestRouter>();
+
+            _elementConfiguror = new ElementConfiguror(
+                _dataSupplierFactory,
+                _dataDependencyFactory,
+                _nameManager,
+                _requestRouter);
 
             _fluentBuilder = new FluentBuilder(
                 _nameManager,
                 _dataCatalog,
                 _dataProviderDependenciesFactory.DataDependencyFactory,
                 _dataProviderDependenciesFactory.DataSupplierFactory);
+
+            _fluentBuilder.DataProviderBuilder = new DataProviderBuilder(
+                _dataProviderDependenciesFactory,
+                _elementConfiguror,
+                _nameManager,
+                _fluentBuilder);
         }
 
         [Test]
         public void Should_register_unscoped_data_provider_and_resolve_unscoped()
         {
             var personProvider = new PersonProvider1(_dataProviderDependenciesFactory);
-            _fluentBuilder.Register(personProvider);
+            var builtDataProvider = _fluentBuilder.BuildUpDataProvider(personProvider).Build();
+
+            Assert.IsNotNull(builtDataProvider);
 
             var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
             Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
@@ -72,7 +92,7 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         public void Should_register_unscoped_data_provider_and_resolve_scoped()
         {
             var personProvider = new PersonProvider1(_dataProviderDependenciesFactory);
-            _fluentBuilder.Register(personProvider);
+            _fluentBuilder.BuildUpDataProvider(personProvider);
 
             var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
             Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
@@ -101,7 +121,7 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         public void Should_register_scoped_data_provider_and_resolve_unscoped()
         {
             var personProvider = new PersonProvider2(_dataProviderDependenciesFactory);
-            _fluentBuilder.Register(personProvider);
+            _fluentBuilder.BuildUpDataProvider(personProvider);
 
             var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
             Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
@@ -130,7 +150,7 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         public void Should_register_scoped_data_provider_and_resolve_scoped()
         {
             var personProvider = new PersonProvider2(_dataProviderDependenciesFactory);
-            _fluentBuilder.Register(personProvider);
+            _fluentBuilder.BuildUpDataProvider(personProvider);
 
             var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
             Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
@@ -159,10 +179,10 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         public void Should_distinguish_scoped_data_provider()
         {
             var personProvider1 = new PersonProvider1(_dataProviderDependenciesFactory);
-            _fluentBuilder.Register(personProvider1);
+            _fluentBuilder.BuildUpDataProvider(personProvider1);
 
             var personProvider2 = new PersonProvider2(_dataProviderDependenciesFactory);
-            _fluentBuilder.Register(personProvider2);
+            _fluentBuilder.BuildUpDataProvider(personProvider2);
 
             var dependency = _dataProviderDependenciesFactory.DataDependencyFactory.Create<Person>("logged-in");
             var dataSupplier = _dataCatalog.FindSupplier(dependency);

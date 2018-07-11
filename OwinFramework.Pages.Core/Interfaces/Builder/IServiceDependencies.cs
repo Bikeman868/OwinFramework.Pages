@@ -29,6 +29,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Initializes thisinstance for a specific request
         /// </summary>
-        IPageDependencies Initialize(IOwinContext context);
+        IServiceDependencies Initialize(IOwinContext context);
     }
 }

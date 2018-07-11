@@ -69,6 +69,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Builders\ServiceBuilder.cs" />
     <Compile Include="Runtime\Service.cs" />
+    <Compile Include="Runtime\ServiceDependenciesFactory.cs" />
+    <Compile Include="Runtime\ServiceDependencies.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

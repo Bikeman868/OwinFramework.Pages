@@ -38,28 +38,52 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public DebugDataScopeProvider GetDebugInfo(int parentDepth, int childDepth)
         {
-            return new DebugDataScopeProvider
+            var debug = new DebugDataScopeProvider
             {
                 Instance = this,
                 Name = Id + " (" + ElementName + ")",
-                Id = Id,
-                Parent = _parent == null || parentDepth == 0
-                    ? null
-                    : _parent.GetDebugInfo(parentDepth - 1, 0),
-                Children = _children == null || childDepth == 0
-                    ? null
-                    : _children.Select(c => c.GetDebugInfo(0, childDepth - 1)).ToList(),
-                Scopes = _dataScopes
-                    .Select(s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.DisplayName()))
-                    .ToList(),
-                Dependencies = _suppliedDependencies
-                    .Select(sd => sd.Dependency)
-                    .Select(d => d.DataType.DisplayName() + 
-                        (string.IsNullOrEmpty(d.ScopeName) ? "" : " in '" + d.ScopeName + "' scope"))
-                    .ToList(),
-                DataSupplies = _dataSupplies.Select(
-                    d => d.GetType().DisplayName()).ToList(),
+                Id = Id
             };
+
+            if (parentDepth != 0 && !ReferenceEquals(_parent, null))
+            {
+                debug.Parent = _parent.GetDebugInfo(parentDepth - 1, 0);
+            }
+
+            if (childDepth != 0)
+            {
+                lock(_children)
+                {
+                    debug.Children = _children
+                        .Select(c => c.GetDebugInfo(0, childDepth - 1))
+                        .ToList();
+                }
+            }
+
+            lock (_dataScopes)
+            {
+                debug.Scopes = _dataScopes
+                    .Select(s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.DisplayName()))
+                    .ToList();
+            }
+
+            lock(_suppliedDependencies)
+            {
+                debug.Dependencies = _suppliedDependencies
+                    .Select(sd => sd.Dependency)
+                    .Select(d => d.DataType.DisplayName() +
+                        (string.IsNullOrEmpty(d.ScopeName) ? "" : " in '" + d.ScopeName + "' scope"))
+                    .ToList();
+            }
+
+            lock(_dataSupplies)
+            {
+                debug.DataSupplies = _dataSupplies
+                    .Select(d => d.GetType().DisplayName())
+                    .ToList();
+            }
+
+            return debug;
         }
 
         /*******************************************************************
@@ -75,13 +99,16 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void AddScope(Type type, string scopeName)
         {
-            if (_dataScopes.Any(s =>
-                (s.DataType == type) &&
-                (string.Equals(s.ScopeName, scopeName, StringComparison.InvariantCultureIgnoreCase))))
-                return;
+            lock (_dataScopes)
+            {
+                if (_dataScopes.Any(s =>
+                    (s.DataType == type) &&
+                    (string.Equals(s.ScopeName, scopeName, StringComparison.InvariantCultureIgnoreCase))))
+                    return;
 
-            var dataScope = _dataScopeFactory.Create(type, scopeName);
-            _dataScopes.Add(dataScope);
+                var dataScope = _dataScopeFactory.Create(type, scopeName);
+                _dataScopes.Add(dataScope);
+            }
         }
 
         public void AddSupply(IDataSupply supply)
@@ -225,11 +252,11 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             if (_dataSupplies != null)
             {
-                int count;
+                int dataSupplyCount;
                 lock (_dataSupplies)
-                    count = _dataSupplies.Count;
+                    dataSupplyCount = _dataSupplies.Count;
 
-                for (var i = 0; i < count; i++)
+                for (var i = 0; i < dataSupplyCount; i++)
                 {
                     IDataSupply dataSupply;
                     lock (_dataSupplies) dataSupply = _dataSupplies[i];
@@ -237,14 +264,16 @@ namespace OwinFramework.Pages.Framework.DataModel
                 }
             }
 
-            if (_children != null)
-            {
-                foreach (var child in _children)
-                {
-                    child.BuildDataContextTree(renderContext, dataContext);
-                }
-            }
+            int childCount;
+            lock (_children)
+                childCount = _children.Count;
 
+            for (var i = 0; i < childCount; i++)
+            {
+                IDataScopeProvider child;
+                lock (_children) child = _children[i];
+                child.BuildDataContextTree(renderContext, dataContext);
+            }
         }
 
         /*******************************************************************
@@ -255,10 +284,11 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public bool IsInScope(IDataDependency dependency)
         {
-            if (dependency == null)
+            if (ReferenceEquals(dependency, null))
                 throw new ArgumentNullException("dependency");
 
-            return _dataScopes.Any(s => s.IsMatch(dependency));
+            lock(_dataScopes)
+                return _dataScopes.Any(s => s.IsMatch(dependency));
         }
 
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)

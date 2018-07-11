@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Ioc.Modules;
+using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Restful.Runtime;
 
 namespace OwinFramework.Pages.Restful
 {
@@ -20,6 +22,9 @@ namespace OwinFramework.Pages.Restful
             {
                 return new List<IocRegistration>
                 {
+                    // These are the dependencies provided by this assembly
+                    new IocRegistration().Init<IServiceDependenciesFactory, ServiceDependenciesFactory>(),
+
                     // These are the external dependencies
                     new IocRegistration().Init<IRequestRouter>(),
                     new IocRegistration().Init<INameManager>(),

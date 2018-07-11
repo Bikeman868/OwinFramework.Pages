@@ -93,7 +93,9 @@
     <Compile Include="DataModel\DataContextFactory.cs" />
     <Compile Include="DataModel\DataProvider.cs" />
     <Compile Include="Runtime\Package.cs" />
+    <Compile Include="Runtime\DataProviderDependencies.cs" />
     <Compile Include="Runtime\PackageDependencies.cs" />
+    <Compile Include="Runtime\DataProviderDependenciesFactory.cs" />
     <Compile Include="Runtime\PackageDependenciesFactory.cs" />
     <Compile Include="Runtime\RequestRouter.cs" />
   </ItemGroup>

@@ -73,6 +73,8 @@ namespace OwinFramework.Pages.Framework.Builders
             RegionBuilder = parent.RegionBuilder;
             ComponentBuilder = parent.ComponentBuilder;
             ServiceBuilder = parent.ServiceBuilder;
+            PackageBuilder = parent.PackageBuilder;
+            DataProviderBuilder = parent.DataProviderBuilder;
         }
 
         #region Register a package overriding the namespace

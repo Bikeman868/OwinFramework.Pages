@@ -2,9 +2,9 @@
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 
-namespace OwinFramework.Pages.Html.Runtime
+namespace OwinFramework.Pages.Framework.Runtime
 {
-    internal class DataProviderDependenciesFactory : IDataProviderDependenciesFactory
+    internal class DataProviderDependenciesFactory: IDataProviderDependenciesFactory
     {
         public IDataConsumerFactory DataConsumerFactory { get; private set; }
         public IDataSupplierFactory DataSupplierFactory { get; private set; }
@@ -20,9 +20,9 @@ namespace OwinFramework.Pages.Html.Runtime
             DataDependencyFactory = dataDependencyFactory;
         }
 
-        public IDataProviderDependencies Create(IOwinContext context)
+        IDataProviderDependencies IDataProviderDependenciesFactory.Create(IOwinContext context)
         {
-            return new DataProviderDependencies();
+            return new DataProviderDependencies().Initialize(context);
         }
     }
 }

@@ -10,6 +10,7 @@ using OwinFramework.Pages.Html.Configuration;
 using OwinFramework.Pages.Html.Interfaces;
 using OwinFramework.Pages.Html.Runtime;
 using IPackage = Ioc.Modules.IPackage;
+using OwinFramework.Pages.Core.Interfaces.Collections;
 
 namespace OwinFramework.Pages.Html
 {
@@ -49,8 +50,6 @@ namespace OwinFramework.Pages.Html
                     new IocRegistration().Init<IRegionDependencies, RegionDependencies>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IComponentDependenciesFactory, ComponentDependenciesFactory>(),
                     new IocRegistration().Init<IComponentDependencies, ComponentDependencies>(IocLifetime.MultiInstance),
-                    new IocRegistration().Init<IDataProviderDependenciesFactory, DataProviderDependenciesFactory>(),
-                    new IocRegistration().Init<IDataProviderDependencies, DataProviderDependencies>(IocLifetime.MultiInstance),
 
                     // These are internal implementations that need to be wired up
                     new IocRegistration().Init<IHtmlConfiguration, HtmlConfiguration>(),
@@ -75,9 +74,17 @@ namespace OwinFramework.Pages.Html
                     new IocRegistration().Init<IComponentBuilder, ComponentBuilder>(),
 
                     // These are the external dependencies
+                    new IocRegistration().Init<IDictionaryFactory>(),
                     new IocRegistration().Init<IRequestRouter>(),
                     new IocRegistration().Init<INameManager>(),
+                    new IocRegistration().Init<IAssetManager>(),
                     new IocRegistration().Init<IDataCatalog>(),
+                    new IocRegistration().Init<IElementConfiguror>(),
+                    new IocRegistration().Init<IFluentBuilder>(),
+                    new IocRegistration().Init<IDataConsumerFactory>(),
+                    new IocRegistration().Init<IDataScopeProviderFactory>(),
+                    new IocRegistration().Init<IDataDependencyFactory>(),
+                    new IocRegistration().Init<IDataSupplierFactory>(),
                 };
             }
         }

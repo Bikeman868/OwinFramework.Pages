@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Ioc.Modules;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -32,7 +33,9 @@ namespace OwinFramework.Pages.Framework
                     new IocRegistration().Init<IFrameworkConfiguration, FrameworkConfiguration>(),
                     new IocRegistration().Init<IElementConfiguror, ElementConfiguror>(),
                     new IocRegistration().Init<IPackageDependenciesFactory, PackageDependenciesFactory>(),
+                    new IocRegistration().Init<IDataProviderDependenciesFactory, DataProviderDependenciesFactory>(),
                     new IocRegistration().Init<IPackageDependencies, PackageDependencies>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IDataProviderDependencies, DataProviderDependencies>(IocLifetime.MultiInstance),
 
                     // These classes are the data model
                     new IocRegistration().Init<IDataCatalog, DataCatalog>(),
@@ -45,6 +48,7 @@ namespace OwinFramework.Pages.Framework
 
                     // These classes implement core facilities. They are thread-safe singletons
                     new IocRegistration().Init<IFluentBuilder, FluentBuilder>(),
+                    new IocRegistration().Init<IElementConfiguror, ElementConfiguror>(),
                     new IocRegistration().Init<IAssetManager, AssetManager>(),
                     new IocRegistration().Init<INameManager, NameManager>(),
                     new IocRegistration().Init<IIdManager, IdManager>(),
@@ -52,6 +56,20 @@ namespace OwinFramework.Pages.Framework
                     // The request router is the top level entry point and the only
                     // interface that the middleware depends on
                     new IocRegistration().Init<IRequestRouter, RequestRouter>(),
+
+                    // These are the external dependencies for this package
+                    new IocRegistration().Init<IHtmlWriterFactory>(),
+                    new IocRegistration().Init<ICssWriterFactory>(),
+                    new IocRegistration().Init<IJavascriptWriterFactory>(),
+                    new IocRegistration().Init<IStringBuilderFactory>(),
+                    new IocRegistration().Init<IDictionaryFactory>(),
+
+                    new IocRegistration().Init<IModuleDependenciesFactory>(),
+                    new IocRegistration().Init<IPageDependenciesFactory>(),
+                    new IocRegistration().Init<ILayoutDependenciesFactory>(),
+                    new IocRegistration().Init<IRegionDependenciesFactory>(),
+                    new IocRegistration().Init<IComponentDependenciesFactory>(),
+                    new IocRegistration().Init<IDataProviderDependenciesFactory>(),
                 };
             }
         }

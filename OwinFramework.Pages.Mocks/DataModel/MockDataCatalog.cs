@@ -22,6 +22,8 @@ namespace OwinFramework.Pages.Mocks.DataModel
             if (dataSupplier == null)
                 return this;
 
+            if (ReferenceEquals(dataSupplier.SuppliedTypes, null)) return this;
+
             foreach (var type in dataSupplier.SuppliedTypes)
             {
                 if (!Suppliers.ContainsKey(type))

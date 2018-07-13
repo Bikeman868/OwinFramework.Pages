@@ -16,13 +16,43 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <param name="tag">The tag to use to enclose the contents of this element</param>
         /// <param name="style">Custom css style to apply</param>
         /// <param name="classNames">Css class names to apply</param>
-        public RepeatAttribute(Type repeatType, string repeatScope, string tag = "div", string style = "", params string[] classNames)
+        public RepeatAttribute(Type repeatType, string repeatScope, string tag, string style, params string[] classNames)
         {
             RepeatType = repeatType;
             RepeatScope = repeatScope;
             Tag = tag;
             Style = style;
             ClassNames = classNames;
+        }
+
+        /// <summary>
+        /// Constructs and initializes an attribute that defines how the region repeats
+        /// </summary>
+        /// <param name="repeatType">The type of data to repeat</param>
+        /// <param name="repeatScope">Scope name used when setting repeated data in the data context</param>
+        /// <param name="tag">The tag to use to enclose the contents of this element</param>
+        public RepeatAttribute(Type repeatType, string repeatScope, string tag)
+            : this(repeatType, repeatScope, tag, string.Empty, new string[0])
+        {
+        }
+
+        /// <summary>
+        /// Constructs and initializes an attribute that defines how the region repeats
+        /// </summary>
+        /// <param name="repeatType">The type of data to repeat</param>
+        /// <param name="repeatScope">Scope name used when setting repeated data in the data context</param>
+        public RepeatAttribute(Type repeatType, string repeatScope)
+            : this(repeatType, repeatScope, "div")
+        {
+        }
+
+        /// <summary>
+        /// Constructs and initializes an attribute that defines how the region repeats
+        /// </summary>
+        /// <param name="repeatType">The type of data to repeat</param>
+        public RepeatAttribute(Type repeatType)
+            : this(repeatType, string.Empty)
+        {
         }
 
         /// <summary>

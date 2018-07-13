@@ -97,7 +97,7 @@ namespace Sample1.SamplePackages
         /// name, and you can still use the Region Builder to override the properties using
         /// attributes and fluent syntax.
         /// </summary>
-        private class RegionExample4: Region
+        private class RegionExample4 : Region
         {
             public RegionExample4(IRegionDependenciesFactory dependencies) : base(dependencies)
             {

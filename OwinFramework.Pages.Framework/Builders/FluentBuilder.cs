@@ -325,10 +325,10 @@ namespace OwinFramework.Pages.Framework.Builders
 
             var packageDefinition = BuildUpPackage(package, type);
 
-            if (!string.IsNullOrEmpty(namespaceName))
-                packageDefinition.NamespaceName(namespaceName);
-
             package = packageDefinition.Build();
+
+            if (!string.IsNullOrEmpty(namespaceName))
+                package.NamespaceName = namespaceName;
 
             var packageBuilder = new FluentBuilder(
                 this,

@@ -20,7 +20,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Registers all components, layouts, regions etc defined in the package. Optionally
         /// allows you to modify the namespace of the package from the default one
         /// </summary>
-        IPackage Register(IPackage package, string namespaceName = null);
+        IPackage Register(IPackage package, string namespaceName);
 
         /// <summary>
         /// Searches within the given assembly for all eleemnts and

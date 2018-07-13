@@ -25,7 +25,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// </summary>
         /// <param name="tag">The tag to use to enclose the contents of this element</param>
         /// <param name="classNames">Css class names to apply</param>
-        public ChildContainerAttribute(string tag = "div", params string[] classNames)
+        public ChildContainerAttribute(string tag, params string[] classNames)
         {
             Tag = tag;
             ClassNames = classNames;

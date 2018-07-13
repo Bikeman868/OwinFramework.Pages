@@ -49,7 +49,8 @@ namespace OwinFramework.Pages.Framework.Builders
 
         IPackage IPackageDefinition.Build()
         {
-            return _builder.Register(_package);
+            _builder.Register(_package);
+            return _package;
         }
     }
 }

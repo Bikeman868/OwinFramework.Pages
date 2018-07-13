@@ -13,21 +13,20 @@ namespace OwinFramework.Pages.Core.Attributes
         /// clasing html for a region
         /// </summary>
         /// <param name="tag">The tag to use to enclose the contents of this element</param>
-        public ContainerAttribute(string tag = "div")
+        /// <param name="classNames">Css class names to apply</param>
+        public ContainerAttribute(string tag, params string[] classNames)
         {
             Tag = tag;
+            ClassNames = classNames;
         }
 
         /// <summary>
         /// Constructs and initializes an attribute that defines the opening and
         /// clasing html for a region
         /// </summary>
-        /// <param name="tag">The tag to use to enclose the contents of this element</param>
-        /// <param name="classNames">Css class names to apply</param>
-        public ContainerAttribute(string tag = "div", params string[] classNames)
+        public ContainerAttribute()
+            : this("div")
         {
-            Tag = tag;
-            ClassNames = classNames;
         }
 
         /// <summary>

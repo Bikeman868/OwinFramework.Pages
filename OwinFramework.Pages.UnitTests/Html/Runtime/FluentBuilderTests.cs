@@ -92,7 +92,9 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         public void Should_register_unscoped_data_provider_and_resolve_scoped()
         {
             var personProvider = new PersonProvider1(_dataProviderDependenciesFactory);
-            _fluentBuilder.BuildUpDataProvider(personProvider);
+            var builtDataProvider = _fluentBuilder.BuildUpDataProvider(personProvider).Build();
+
+            Assert.IsNotNull(builtDataProvider);
 
             var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
             Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
@@ -121,7 +123,9 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         public void Should_register_scoped_data_provider_and_resolve_unscoped()
         {
             var personProvider = new PersonProvider2(_dataProviderDependenciesFactory);
-            _fluentBuilder.BuildUpDataProvider(personProvider);
+            var builtDataProvider = _fluentBuilder.BuildUpDataProvider(personProvider).Build();
+
+            Assert.IsNotNull(builtDataProvider);
 
             var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
             Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
@@ -150,7 +154,9 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         public void Should_register_scoped_data_provider_and_resolve_scoped()
         {
             var personProvider = new PersonProvider2(_dataProviderDependenciesFactory);
-            _fluentBuilder.BuildUpDataProvider(personProvider);
+            var builtDataProvider = _fluentBuilder.BuildUpDataProvider(personProvider).Build();
+
+            Assert.IsNotNull(builtDataProvider);
 
             var dataProvider = _nameManager.ResolveDataProvider(personProvider.Name);
             Assert.IsTrue(ReferenceEquals(dataProvider, personProvider));
@@ -179,10 +185,10 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         public void Should_distinguish_scoped_data_provider()
         {
             var personProvider1 = new PersonProvider1(_dataProviderDependenciesFactory);
-            _fluentBuilder.BuildUpDataProvider(personProvider1);
+            _fluentBuilder.BuildUpDataProvider(personProvider1).Build();
 
             var personProvider2 = new PersonProvider2(_dataProviderDependenciesFactory);
-            _fluentBuilder.BuildUpDataProvider(personProvider2);
+            _fluentBuilder.BuildUpDataProvider(personProvider2).Build();
 
             var dependency = _dataProviderDependenciesFactory.DataDependencyFactory.Create<Person>("logged-in");
             var dataSupplier = _dataCatalog.FindSupplier(dependency);
@@ -206,10 +212,10 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         public void Should_distinguish_unscoped_data_provider()
         {
             var personProvider1 = new PersonProvider1(_dataProviderDependenciesFactory);
-            _fluentBuilder.Register(personProvider1);
+            _fluentBuilder.BuildUpDataProvider(personProvider1).Build();
 
             var personProvider2 = new PersonProvider2(_dataProviderDependenciesFactory);
-            _fluentBuilder.Register(personProvider2);
+            _fluentBuilder.BuildUpDataProvider(personProvider2).Build();
 
             var dependency1 = _dataProviderDependenciesFactory.DataDependencyFactory.Create<Person>();
             var dataSupplier1 = _dataCatalog.FindSupplier(dependency1);
@@ -242,7 +248,7 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
                 : base(dependencies)
             { }
 
-            public override void Supply(
+            protected override void Supply(
                 IRenderContext renderContext,
                 IDataContext dataContext,
                 IDataDependency dependency)
@@ -258,7 +264,7 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
                 : base(dependencies)
             { }
 
-            public override void Supply(
+            protected override void Supply(
                 IRenderContext renderContext,
                 IDataContext dataContext,
                 IDataDependency dependency)

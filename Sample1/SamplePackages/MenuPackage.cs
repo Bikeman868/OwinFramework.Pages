@@ -49,7 +49,7 @@ namespace Sample1.SamplePackages
                 Add<IList<MenuItem>>("submenu");
             }
 
-            public override void Supply(
+            protected override void Supply(
                 IRenderContext renderContext,
                 IDataContext dataContext,
                 IDataDependency dependency)

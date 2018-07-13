@@ -44,7 +44,7 @@ namespace Sample1.DataProviders
             _mainMenu.Add(newsMenu);
         }
 
-        public override void Supply(
+        protected override void Supply(
             IRenderContext renderContext,
             IDataContext dataContext,
             IDataDependency dependency)

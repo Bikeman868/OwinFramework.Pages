@@ -53,7 +53,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataSupplier.Add(suppliedDependency, Supply);
         }
 
-        public virtual void Supply(
+        protected virtual void Supply(
             IRenderContext renderContext,
             IDataContext dataContext,
             IDataDependency dependency)

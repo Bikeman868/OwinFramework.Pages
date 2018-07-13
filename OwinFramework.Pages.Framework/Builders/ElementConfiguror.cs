@@ -238,12 +238,9 @@ namespace OwinFramework.Pages.Framework.Builders
 
                 if (attributes.IsDataProvider.Type != null)
                 {
-                    var dependency = _dataDependencyFactory.Create(
-                        attributes.IsDataProvider.Type, 
+                    dataProvider.Add(
+                        attributes.IsDataProvider.Type,
                         attributes.IsDataProvider.Scope);
-
-                    // TODO: Is there a way to specify the action via attributes?
-                    dataProvider.Add(dependency, (rc, dc, dep) => { });
                 }
             }
         }

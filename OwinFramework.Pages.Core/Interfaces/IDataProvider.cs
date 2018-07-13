@@ -19,5 +19,17 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Gets debugging information from this data provider
         /// </summary>
         DebugDataProvider GetDebugInfo();
+
+        /// <summary>
+        /// Instructs the data provider to provide the specified type 
+        /// in a given scope.
+        /// </summary>
+        void Add<T>(string scopeName = null);
+
+        /// <summary>
+        /// Instructs the data provider to provide the specified type 
+        /// in a given scope.
+        /// </summary>
+        void Add(Type type, string scopeName = null);
     }
 }

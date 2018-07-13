@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Moq.Modules;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
-using Microsoft.Owin;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 
@@ -52,7 +48,12 @@ namespace OwinFramework.Pages.Mocks.Runtime
 
         public object Get(Type type, string scopeName = null, bool required = true)
         {
-            return Data[type];
+            object result;
+            if (Data.TryGetValue(type, out result))
+                return result;
+
+            if (required) throw new Exception("Required data was not present in mock data context");
+            return null;
         }
 
         public IDataContext CreateChild(IDataScopeProvider scopeProvider = null)

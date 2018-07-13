@@ -85,12 +85,16 @@ namespace OwinFramework.Pages.Framework.Builders
             Action<IRenderContext, IDataContext, IDataDependency> action, 
             string scope)
         {
-            var dataSupplier = _dataProvider as IDataSupplier;
-            if (dataSupplier == null)
-                throw new FluentBuilderException("This data provider is not a consumer of data");
-
-            var dataDependency = _dataDependencyFactory.Create(dataType, scope);
-            dataSupplier.Add(dataDependency, action);
+            if (action == null)
+            {
+                _dataProvider.Add(dataType, scope);
+            }
+            else
+            {
+                var dataDependency = _dataDependencyFactory.Create(dataType, scope);
+                var dataSupplier = (IDataSupplier)_dataProvider;
+                dataSupplier.Add(dataDependency, action);
+            }
 
             return this;
         }
@@ -99,12 +103,16 @@ namespace OwinFramework.Pages.Framework.Builders
             Action<IRenderContext, IDataContext, IDataDependency> action,
             string scope)
         {
-            var dataSupplier = _dataProvider as IDataSupplier;
-            if (dataSupplier == null)
-                throw new FluentBuilderException("This data provider is not a consumer of data");
-
-            var dataDependency = _dataDependencyFactory.Create(typeof(T), scope);
-            dataSupplier.Add(dataDependency, action);
+            if (action == null)
+            {
+                _dataProvider.Add<T>(scope);
+            }
+            else
+            {
+                var dataSupplier = (IDataSupplier)_dataProvider;
+                var dataDependency = _dataDependencyFactory.Create(typeof(T), scope);
+                dataSupplier.Add(dataDependency, action);
+            }
 
             return this;
         }

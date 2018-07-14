@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.Managers
@@ -50,26 +51,37 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// Adds a callback function to execute after all components have been
         /// registered. This can be used to resolve name references between elements
         /// </summary>
-        /// <param name="resolutionAction">A callback function to call when all
-        /// names are defined</param>
-        void AddResolutionHandler(Action resolutionAction);
+        /// <param name="resolutionAction">A callback function to call when all names are registered</param>
+        /// <param name="phase">The phase of name resolution to participate in</param>
+        void AddResolutionHandler(NameResolutionPhase phase, Action resolutionAction);
 
         /// <summary>
         /// Adds a callback function to execute after all components have been
         /// registered. This can be used to resolve name references between elements
         /// </summary>
-        /// <param name="resolutionAction">A callback function to call when all
-        /// names are defined</param>
-        void AddResolutionHandler(Action<INameManager> resolutionAction);
+        /// <param name="resolutionAction">A callback function to call when all names are registered</param>
+        /// <param name="phase">The phase of name resolution to participate in</param>
+        void AddResolutionHandler(NameResolutionPhase phase, Action<INameManager> resolutionAction);
 
         /// <summary>
         /// Adds a callback function to execute after all components have been
         /// registered. This can be used to resolve name references between elements
         /// </summary>
-        /// <param name="resolutionAction">A callback function to call when all</param>
+        /// <param name="resolutionAction">A callback function to call when all names are registered</param>
         /// <param name="context">Contextual data to pass back to the handler
         /// names are defined</param>
-        void AddResolutionHandler<T>(Action<INameManager, T> resolutionAction, T context);
+        /// <param name="phase">The phase of name resolution to participate in</param>
+        void AddResolutionHandler<T>(NameResolutionPhase phase, Action<INameManager, T> resolutionAction, T context);
+
+        /// <summary>
+        /// Adds a callback function to execute after all components have been
+        /// registered. This can be used to resolve name references between elements
+        /// </summary>
+        /// <param name="phase">The phase of name resolution to participate in</param>
+        /// <param name="resolutionAction">A callback function to call when all names are registered</param>
+        /// <param name="element">The element whose reference needs to be set</param>
+        /// <param name="name">The name of the dependent element</param>
+        void AddResolutionHandler<T1, T2>(NameResolutionPhase phase, Action<INameManager, T1, T2> resolutionAction, T1 element, T2 name);
 
         /// <summary>
         /// Finds the component with the specified name

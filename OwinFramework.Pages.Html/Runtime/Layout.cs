@@ -28,7 +28,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private Dictionary<int, int> _visualElementMapping;
         private List<string> _regionNameOrder;
 
-        protected IThreadSafeDictionary<string, IRegion> Content;
+        protected IThreadSafeDictionary<string, IRegion> RegionsByName;
 
         public Layout(ILayoutDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
@@ -38,7 +38,7 @@ namespace OwinFramework.Pages.Html.Runtime
             // this framework!!
 
             _layoutDependenciesFactory = dependencies;
-            Content = dependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
+            RegionsByName = dependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         DebugElement IElement.GetDebugInfo() { return GetDebugInfo(); }
@@ -47,7 +47,7 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             var debugInfo = new DebugLayout
             {
-                Regions = Content.Select(kvp => 
+                Regions = RegionsByName.Select(kvp => 
                     new DebugLayoutRegion 
                     { 
                         Name = kvp.Key,
@@ -61,7 +61,7 @@ namespace OwinFramework.Pages.Html.Runtime
         public IRegion GetRegion(string regionName)
         {
             IRegion region;
-            if (!Content.TryGetValue(regionName, out region))
+            if (!RegionsByName.TryGetValue(regionName, out region))
                 throw new Exception("Layout does not have a '" + regionName + "' region");
 
             return region;
@@ -78,7 +78,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public void AddRegion(string regionName, IRegion region, IElement element = null)
         {
-            Content[regionName] = region.CreateInstance(element);
+            RegionsByName[regionName] = element == null
+                ? region
+                : region.CreateInstance(element);
 
             if (_regionNameOrder == null)
                 _regionNameOrder = new List<string>();
@@ -99,20 +101,18 @@ namespace OwinFramework.Pages.Html.Runtime
         public void Populate(string regionName, IElement element)
         {
             var region = GetRegion(regionName);
-
-            if (region != null)
-                region.Populate(element);
+            region.Populate(element);
         }
 
         public ILayout CreateInstance()
         {
-            using (var regionNames = Content.KeysLocked)
+            using (var regionNames = RegionsByName.KeysLocked)
                 return new LayoutInstance(_layoutDependenciesFactory, this, regionNames);
         }
 
         public override IEnumerator<IElement> GetChildren()
         {
-            return Content.Values.Where(r => r != null).GetEnumerator();
+            return RegionsByName.Values.Where(r => r != null).GetEnumerator();
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
@@ -120,7 +120,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return WriteHtml(
                 context,
                 includeChildren
-                ? (Func<string, IRegion>)(regionName => Content[regionName])
+                ? (Func<string, IRegion>)(regionName => RegionsByName[regionName])
                 : regionName => (IRegion)null);
         }
 
@@ -132,9 +132,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
             if (context.IncludeComments)
             {
-                context.Html.WriteComment(
-                    (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
-                    (Package == null ? " layout" : " layout from " + Package.Name + " package"));
+                var layoutName = 
+                    (string.IsNullOrEmpty(Name) ? "unnamed layout" : "'" + Name + "' layout") +
+                    (Package == null ? string.Empty : " from the '" + Package.Name + "' package");
+                context.Html.WriteComment(layoutName);
 
                 var reverseMapping = new Dictionary<int, int>();
                 for (var i = 0; i < _regionNameOrder.Count; i++)
@@ -148,7 +149,7 @@ namespace OwinFramework.Pages.Html.Runtime
                     if (reverseMapping.ContainsKey(i))
                     {
                         var regionIndex = reverseMapping[i];
-                        context.Html.WriteComment("layout '" + _regionNameOrder[regionIndex] + "' region");
+                        context.Html.WriteComment("'" + _regionNameOrder[regionIndex] + "' region of the " + layoutName);
                     }
                     var element = _visualElements[i](regionLookup);
                     if (element != null)

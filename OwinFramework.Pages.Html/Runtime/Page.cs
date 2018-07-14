@@ -43,7 +43,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Defines the layout of this page
         /// </summary>
-        public ILayout Layout { get { return _layout; } set { _layout = value.CreateInstance(); } }
+        public ILayout Layout { get; set; }
 
         /// <summary>
         /// The names of the css class to attach to the body element
@@ -70,7 +70,6 @@ namespace OwinFramework.Pages.Html.Runtime
         private IList<string> _inPageCssLines;
         private IList<string> _inPageScriptLines;
         private IList<IModule> _referencedModules;
-        private ILayout _layout;
 
         public Page(IPageDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
@@ -97,8 +96,11 @@ namespace OwinFramework.Pages.Html.Runtime
                     : Module.AssetDeployment;
             }
 
-            foreach (var region in _regions)
-                Layout.Populate(region.Key, region.Value);
+            if (_regions != null)
+            {
+                foreach (var region in _regions)
+                    Layout.Populate(region.Key, region.Value);
+            }
 
             InitializeDependants(data);
             InitializeChildren(data, AssetDeployment);
@@ -239,9 +241,9 @@ namespace OwinFramework.Pages.Html.Runtime
         public override IEnumerator<IElement> GetChildren()
         {
             if (_components == null)
-                return _layout.AsEnumerable<IElement>().GetEnumerator();
+                return Layout.AsEnumerable<IElement>().GetEnumerator();
 
-            return _components.Concat(_layout.AsEnumerable<IElement>()).GetEnumerator();
+            return _components.Concat(Layout.AsEnumerable<IElement>()).GetEnumerator();
         }
 
         #endregion
@@ -351,8 +353,8 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
-            if (_layout != null)
-                writeResult.Add(_layout.WriteDynamicCss(writer));
+            if (Layout != null)
+                writeResult.Add(Layout.WriteDynamicCss(writer));
 
             return writeResult;
         }
@@ -370,8 +372,8 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
-            if (_layout != null)
-                writeResult.Add(_layout.WriteDynamicJavascript(writer));
+            if (Layout != null)
+                writeResult.Add(Layout.WriteDynamicJavascript(writer));
 
             return writeResult;
         }
@@ -391,8 +393,8 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
-            if (_layout != null)
-                writeResult.Add(_layout.WriteInitializationScript(context));
+            if (Layout != null)
+                writeResult.Add(Layout.WriteInitializationScript(context));
 
             return writeResult;
         }
@@ -418,8 +420,8 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
-            if (_layout != null)
-                writeResult.Add(_layout.WriteTitle(context));
+            if (Layout != null)
+                writeResult.Add(Layout.WriteTitle(context));
 
             return writeResult;
         }
@@ -493,15 +495,15 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
-            if (_layout != null)
-                writeResult.Add(_layout.WriteHead(context));
+            if (Layout != null)
+                writeResult.Add(Layout.WriteHead(context));
 
             return writeResult;
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
-            return _layout == null ? WriteResult.Continue() : _layout.WriteHtml(context);
+            return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(context);
         }
 
         #endregion
@@ -611,7 +613,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 Name = Name,
                 Instance = this,
-                Layout = _layout == null ? null : _layout.GetDebugInfo(),
+                Layout = Layout == null ? null : Layout.GetDebugInfo(),
                 Scope = _dataScopeProvider.GetDebugInfo(0, -1)
             };
         }

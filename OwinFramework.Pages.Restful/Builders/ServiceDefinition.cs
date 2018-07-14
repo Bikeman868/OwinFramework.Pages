@@ -2,18 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Restful.Runtime;
 
 namespace OwinFramework.Pages.Restful.Builders
 {
     internal class ServiceDefinition : IServiceDefinition
     {
+        private readonly IRequestRouter _requestRouter;
+        private readonly INameManager _nameManager;
+        private readonly IFluentBuilder _fluentBuilder;
+        private readonly Type _declaringType;
+        private readonly Service _service;
+
+        public ServiceDefinition(
+            Service service,
+            IRequestRouter requestRouter,
+            INameManager nameManager,
+            IFluentBuilder fluentBuilder,
+            IPackage package,
+            Type declaringType)
+        {
+            _requestRouter = requestRouter;
+            _nameManager = nameManager;
+            _fluentBuilder = fluentBuilder;
+            _declaringType = declaringType;
+            _service = service;
+
+            if (package != null)
+                _service.Package = package;
+        }
+
         public IServiceDefinition Name(string name)
         {
             throw new NotImplementedException();
         }
 
-        public IServiceDefinition PartOf(Core.Interfaces.IPackage package)
+        public IServiceDefinition PartOf(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -23,7 +52,7 @@ namespace OwinFramework.Pages.Restful.Builders
             throw new NotImplementedException();
         }
 
-        public IServiceDefinition DeployIn(Core.Interfaces.IModule module)
+        public IServiceDefinition DeployIn(IModule module)
         {
             throw new NotImplementedException();
         }
@@ -33,7 +62,7 @@ namespace OwinFramework.Pages.Restful.Builders
             throw new NotImplementedException();
         }
 
-        public IServiceDefinition AssetDeployment(Core.Enums.AssetDeployment assetDeployment)
+        public IServiceDefinition AssetDeployment(AssetDeployment assetDeployment)
         {
             throw new NotImplementedException();
         }
@@ -58,27 +87,22 @@ namespace OwinFramework.Pages.Restful.Builders
             throw new NotImplementedException();
         }
 
-        public Core.Interfaces.IService Build()
+        public IPageDefinition Route(string path, int priority, params Methods[] methods)
         {
             throw new NotImplementedException();
         }
 
-        public IPageDefinition Route(string path, int priority, params Core.Enums.Methods[] methods)
+        public IPageDefinition Route(IRequestFilter filter, int priority = 0)
         {
             throw new NotImplementedException();
         }
 
-        public IPageDefinition Route(Core.Interfaces.Runtime.IRequestFilter filter, int priority = 0)
+        public IServiceDefinition BindTo<T>(string scope) where T : class
         {
             throw new NotImplementedException();
         }
 
-        public IServiceDefinition BindTo<T>(string scope = null) where T : class
-        {
-            throw new NotImplementedException();
-        }
-
-        public IServiceDefinition BindTo(Type dataType, string scope = null)
+        public IServiceDefinition BindTo(Type dataType, string scope)
         {
             throw new NotImplementedException();
         }
@@ -88,9 +112,16 @@ namespace OwinFramework.Pages.Restful.Builders
             throw new NotImplementedException();
         }
 
-        public IPageDefinition DataProvider(Core.Interfaces.IDataProvider dataProvider)
+        public IPageDefinition DataProvider(IDataProvider dataProvider)
         {
             throw new NotImplementedException();
         }
+
+        public IService Build()
+        {
+            _nameManager.AddResolutionHandler(NameResolutionPhase.InitializeRunables, () => _service.Initialize());
+            return _service;
+        }
+
     }
 }

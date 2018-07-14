@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Html.Elements
         public override ElementType ElementType { get { return ElementType.Region; } }
 
         private readonly ILayoutDependenciesFactory _layoutDependencies;
-        private readonly IThreadSafeDictionary<string, IRegion> _content;
+        private readonly IThreadSafeDictionary<string, IRegion> _regionsByName;
 
         public LayoutInstance(
             ILayoutDependenciesFactory layoutDependencies,
@@ -24,10 +24,14 @@ namespace OwinFramework.Pages.Html.Elements
             : base(layoutDependencies.DataConsumerFactory, parent)
         {
             _layoutDependencies = layoutDependencies;
-            _content = layoutDependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
+            _regionsByName = layoutDependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
 
             foreach (var regionName in regionNames)
-                _content.Add(regionName, Parent.GetRegion(regionName).CreateInstance(null));
+            {
+                var parentRegion = Parent.GetRegion(regionName);
+                var regionInstance = parentRegion.CreateInstance(null);
+                _regionsByName.Add(regionName, regionInstance);
+            }
         }
 
         public DebugLayout GetDebugInfo()
@@ -38,7 +42,7 @@ namespace OwinFramework.Pages.Html.Elements
             {
                 Type = "Instance of layout",
                 InstanceOf = parentDebugInfo,
-                Regions = _content
+                Regions = _regionsByName
                     .Select(kvp => new DebugLayoutRegion 
                     { 
                         Name = kvp.Key,
@@ -53,7 +57,7 @@ namespace OwinFramework.Pages.Html.Elements
         public IRegion GetRegion(string regionName)
         {
             IRegion region;
-            if (_content.TryGetValue(regionName, out region))
+            if (_regionsByName.TryGetValue(regionName, out region))
                 return region;
 
             throw new Exception("Layout does not have a '" + regionName + "' region");
@@ -69,13 +73,13 @@ namespace OwinFramework.Pages.Html.Elements
 
         public ILayout CreateInstance()
         {
-            using (var regionNames = _content.KeysLocked)
+            using (var regionNames = _regionsByName.KeysLocked)
                 return new LayoutInstance(_layoutDependencies, this, regionNames);
         }
 
         public override IEnumerator<IElement> GetChildren()
         {
-            return _content.Select(e => e.Value).Where(r => r != null).GetEnumerator();
+            return _regionsByName.Select(e => e.Value).Where(r => r != null).GetEnumerator();
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)

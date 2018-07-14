@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Moq.Modules;
 using OwinFramework.Builder;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -106,19 +107,35 @@ namespace OwinFramework.Pages.Mocks.Managers
             DataProviders[name] = dataProvider;
         }
 
-        public void AddResolutionHandler(Action resolutionAction)
+        public void AddResolutionHandler(
+            NameResolutionPhase phase, 
+            Action resolutionAction)
         {
-            _pendingActions.Add(new PendingAction(resolutionAction));
+            _pendingActions.Add(new PendingAction(phase, resolutionAction));
         }
 
-        public void AddResolutionHandler(Action<INameManager> resolutionAction)
+        public void AddResolutionHandler(
+            NameResolutionPhase phase, 
+            Action<INameManager> resolutionAction)
         {
-            _pendingActions.Add(new PendingAction<INameManager>(resolutionAction, this));
+            _pendingActions.Add(new PendingAction<INameManager>(phase, resolutionAction, this));
         }
 
-        public void AddResolutionHandler<T>(Action<INameManager, T> resolutionAction, T context)
+        public void AddResolutionHandler<T>(
+            NameResolutionPhase phase, 
+            Action<INameManager, T> resolutionAction, 
+            T context)
         {
-            _pendingActions.Add(new PendingAction<INameManager, T>(resolutionAction, this, context));
+            _pendingActions.Add(new PendingAction<INameManager, T>(phase, resolutionAction, this, context));
+        }
+
+        public void AddResolutionHandler<T1, T2>(
+            NameResolutionPhase phase,
+            Action<INameManager, T1, T2> resolutionAction,
+            T1 element,
+            T2 name)
+        {
+            _pendingActions.Add(new PendingAction<INameManager, T1, T2>(phase, resolutionAction, this, element, name));
         }
 
         public IComponent ResolveComponent(string name, IPackage package = null)
@@ -218,16 +235,30 @@ namespace OwinFramework.Pages.Mocks.Managers
             throw new NameResolutionFailureException(typeof(T), package, name);
         }
 
-        private abstract class PendingActionBase
+        private abstract class PendingActionBase: IComparable<PendingActionBase>
         {
+            private NameResolutionPhase _phase;
+
+            protected PendingActionBase(NameResolutionPhase phase)
+            {
+                _phase = phase;
+            }
+
             public abstract void Invoke();
+
+            public int CompareTo(PendingActionBase other)
+            {
+                if (_phase == other._phase) return 0;
+                return _phase > other._phase ? 1 : -1;
+            }
         }
 
         private class PendingAction : PendingActionBase
         {
             private readonly Action _action;
 
-            public PendingAction(Action action)
+            public PendingAction(NameResolutionPhase phase, Action action)
+                : base(phase)
             {
                 _action = action;
             }
@@ -243,7 +274,8 @@ namespace OwinFramework.Pages.Mocks.Managers
             private readonly Action<T> _action;
             private readonly T _param;
 
-            public PendingAction(Action<T> action, T param)
+            public PendingAction(NameResolutionPhase phase, Action<T> action, T param)
+                : base(phase)
             {
                 _action = action;
                 _param = param;
@@ -261,7 +293,8 @@ namespace OwinFramework.Pages.Mocks.Managers
             private readonly T1 _param1;
             private readonly T2 _param2;
 
-            public PendingAction(Action<T1, T2> action, T1 param1, T2 param2)
+            public PendingAction(NameResolutionPhase phase, Action<T1, T2> action, T1 param1, T2 param2)
+                : base(phase)
             {
                 _action = action;
                 _param1 = param1;
@@ -271,6 +304,28 @@ namespace OwinFramework.Pages.Mocks.Managers
             public override void Invoke()
             {
                 _action(_param1, _param2);
+            }
+        }
+
+        private class PendingAction<T1, T2, T3> : PendingActionBase
+        {
+            private readonly Action<T1, T2, T3> _action;
+            private readonly T1 _param1;
+            private readonly T2 _param2;
+            private readonly T3 _param3;
+
+            public PendingAction(NameResolutionPhase phase, Action<T1, T2, T3> action, T1 param1, T2 param2, T3 param3)
+                : base(phase)
+            {
+                _action = action;
+                _param1 = param1;
+                _param2 = param2;
+                _param3 = param3;
+            }
+
+            public override void Invoke()
+            {
+                _action(_param1, _param2, _param3);
             }
         }
     }

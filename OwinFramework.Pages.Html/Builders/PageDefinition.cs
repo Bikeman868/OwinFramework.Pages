@@ -98,16 +98,28 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.Layout(ILayout layout)
         {
-            _page.Layout = layout;
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                (nm, p) =>
+                {
+                    var layoutInstance = layout.CreateInstance();
+                    p.Layout = layoutInstance;
+                },
+                _page);
             return this;
         }
 
         IPageDefinition IPageDefinition.Layout(string name)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _page.Layout = _nameManager.ResolveLayout(name, _page.Package);
-            });
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                (nm, p) => 
+                    {
+                        var layout = nm.ResolveLayout(name, p.Package);
+                        var layoutInstance = layout.CreateInstance();
+                        p.Layout = layoutInstance;
+                    },
+                _page);
             return this;
         }
 
@@ -119,8 +131,10 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.RegionComponent(string regionName, string componentName)
         {
-            _nameManager.AddResolutionHandler((nm, p) =>
-                p.PopulateRegion(regionName, nm.ResolveComponent(componentName, p.Package)),
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences, 
+                (nm, p) =>
+                    p.PopulateRegion(regionName, nm.ResolveComponent(componentName, p.Package)),
                 _page);
             return this;
         }
@@ -133,8 +147,10 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.RegionLayout(string regionName, string layoutName)
         {
-            _nameManager.AddResolutionHandler((nm, p) =>
-                p.PopulateRegion(regionName, nm.ResolveLayout(layoutName, p.Package)),
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, p) =>
+                    p.PopulateRegion(regionName, nm.ResolveLayout(layoutName, p.Package)),
                 _page);
             return this;
         }
@@ -182,7 +198,9 @@ namespace OwinFramework.Pages.Html.Builders
             if (dataConsumer != null)
             {
                 _nameManager.AddResolutionHandler(
-                    (nm, c) => c.HasDependency(nm.ResolveDataProvider(dataProviderName, _page.Package)), 
+                    NameResolutionPhase.ResolveElementReferences,
+                    (nm, p, c) => c.HasDependency(nm.ResolveDataProvider(dataProviderName, p.Package)), 
+                    _page,
                     dataConsumer);
             }
             return this;
@@ -212,17 +230,18 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.DeployIn(string moduleName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _page.Module = _nameManager.ResolveModule(moduleName);
-            });
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, p) => p.Module = nm.ResolveModule(moduleName),
+                _page);
             return this;
         }
 
         IPageDefinition IPageDefinition.NeedsComponent(string componentName)
         {
-            _nameManager.AddResolutionHandler((nm, p) =>
-                p.NeedsComponent(nm.ResolveComponent(componentName, p.Package)),
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, p) => p.NeedsComponent(nm.ResolveComponent(componentName, p.Package)),
                 _page);
             return this;
         }
@@ -236,6 +255,7 @@ namespace OwinFramework.Pages.Html.Builders
         IPage IPageDefinition.Build()
         {
             _fluentBuilder.Register(_page);
+            _nameManager.AddResolutionHandler(NameResolutionPhase.InitializeRunables, () => _page.Initialize());
             return _page;
         }
     }

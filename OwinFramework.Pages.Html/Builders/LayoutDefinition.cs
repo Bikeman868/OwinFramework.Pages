@@ -239,8 +239,10 @@ namespace OwinFramework.Pages.Html.Builders
             if (dataConsumer != null)
             {
                 _nameManager.AddResolutionHandler(
-                    (nm, c) => c.HasDependency(nm.ResolveDataProvider(dataProviderName, _layout.Package)),
-                    dataConsumer);
+                    NameResolutionPhase.ResolveElementReferences,
+                    (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n, _layout.Package)),
+                    dataConsumer,
+                    dataProviderName);
             }
             return this;
         }
@@ -261,18 +263,21 @@ namespace OwinFramework.Pages.Html.Builders
 
         ILayoutDefinition ILayoutDefinition.DeployIn(string moduleName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _layout.Module = _nameManager.ResolveModule(moduleName);
-            });
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, l, n) => l.Module = nm.ResolveModule(n),
+                _layout,
+                moduleName);
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.NeedsComponent(string componentName)
         {
-            _nameManager.AddResolutionHandler((nm, l) =>
-                l.NeedsComponent(nm.ResolveComponent(componentName, l.Package)),
-                _layout);
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, l, n) => l.NeedsComponent(nm.ResolveComponent(n, l.Package)),
+                _layout,
+                componentName);
             return this;
         }
 
@@ -284,38 +289,40 @@ namespace OwinFramework.Pages.Html.Builders
 
         public ILayout Build()
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                var regionComponentKeys = _regionComponents.Keys.ToList();
-                foreach (var regionName in regionComponentKeys)
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm) =>
                 {
-                    var componentRef = _regionComponents[regionName];
-                    var componentName = componentRef as string;
-                    var component = componentRef as IComponent;
+                    var regionComponentKeys = _regionComponents.Keys.ToList();
+                    foreach (var regionName in regionComponentKeys)
+                    {
+                        var componentRef = _regionComponents[regionName];
+                        var componentName = componentRef as string;
+                        var component = componentRef as IComponent;
 
-                    if (componentName != null)
-                        component = _nameManager.ResolveComponent(componentName, _layout.Package);
+                        if (componentName != null)
+                            component = nm.ResolveComponent(componentName, _layout.Package);
 
-                    _regionComponents[regionName] = component;
-                }
+                        _regionComponents[regionName] = component;
+                    }
 
-                var regionLayoutKeys = _regionLayouts.Keys.ToList();
-                foreach (var regionName in regionLayoutKeys)
-                {
-                    var layoutRef = _regionLayouts[regionName];
-                    var layoutName = layoutRef as string;
-                    var layout = layoutRef as ILayout;
+                    var regionLayoutKeys = _regionLayouts.Keys.ToList();
+                    foreach (var regionName in regionLayoutKeys)
+                    {
+                        var layoutRef = _regionLayouts[regionName];
+                        var layoutName = layoutRef as string;
+                        var layout = layoutRef as ILayout;
 
-                    if (layoutName != null)
-                        layout = _nameManager.ResolveLayout(layoutName, _layout.Package);
+                        if (layoutName != null)
+                            layout = nm.ResolveLayout(layoutName, _layout.Package);
 
-                    _regionLayouts[regionName] = layout;
-                }
+                        _regionLayouts[regionName] = layout;
+                    }
 
-                WriteOpeningTag();
-                AddRegionSet(_regionSet);
-                WriteClosingTag();
-            });
+                    WriteOpeningTag();
+                    AddRegionSet(_regionSet);
+                    WriteClosingTag();
+                });
 
             _fluentBuilder.Register(_layout);
             return _layout;
@@ -323,52 +330,51 @@ namespace OwinFramework.Pages.Html.Builders
 
         private void AddRegionSet(RegionSet regionSet)
         {
-            if (regionSet != null && regionSet.Elements != null)
+            if (regionSet == null || regionSet.Elements == null) return;
+
+            foreach (var element in regionSet.Elements)
             {
-                foreach (var element in regionSet.Elements)
+                var regionName = element as string;
+                var childRegionSet = element as RegionSet;
+
+                if (regionName != null)
                 {
-                    var regionName = element as string;
-                    var childRegionSet = element as RegionSet;
-
-                    if (regionName != null)
+                    if (!_regionElements.ContainsKey(regionName))
                     {
-                        if (!_regionElements.ContainsKey(regionName))
-                        {
-                            _layout.AddVisualElement(w => w.WriteElement("p", "Layout does not have a '" + regionName + "' region"), null);
-                            continue;
-                        }
-
-                        var regionElement = _regionElements[regionName];
-                        var region = regionElement as IRegion;
-                        var regionElementName = regionElement as string;
-
-                        if (region == null && regionElementName != null)
-                        {
-                            region = _nameManager.ResolveRegion(regionElementName, _layout.Package);
-                            if (region == null)
-                                _layout.AddVisualElement(w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'"), null);
-                        }
-
-                        if (region != null)
-                        {
-                            if (_regionComponents.ContainsKey(regionName))
-                            {
-                                _layout.AddRegion(regionName, region, (IComponent)_regionComponents[regionName]);
-                            }
-                            else if (_regionLayouts.ContainsKey(regionName))
-                            {
-                                _layout.AddRegion(regionName, region, ((ILayout)_regionLayouts[regionName]).CreateInstance());
-                            }
-                            else
-                                _layout.AddRegion(regionName, region);
-                        }
+                        _layout.AddVisualElement(w => w.WriteElement("p", "There is no region instance in the '" + regionName + "' region"), null);
+                        continue;
                     }
-                    else if (childRegionSet != null)
+
+                    var regionElement = _regionElements[regionName];
+                    var region = regionElement as IRegion;
+                    var regionElementName = regionElement as string;
+
+                    if (region == null && regionElementName != null)
                     {
-                        WriteNestingOpeningTag();
-                        AddRegionSet(childRegionSet);
-                        WriteNestingClosingTag();
+                        region = _nameManager.ResolveRegion(regionElementName, _layout.Package);
+                        if (region == null)
+                            _layout.AddVisualElement(w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'"), null);
                     }
+
+                    if (region != null)
+                    {
+                        if (_regionComponents.ContainsKey(regionName))
+                        {
+                            _layout.AddRegion(regionName, region, (IComponent)_regionComponents[regionName]);
+                        }
+                        else if (_regionLayouts.ContainsKey(regionName))
+                        {
+                            _layout.AddRegion(regionName, region, ((ILayout)_regionLayouts[regionName]).CreateInstance());
+                        }
+                        else
+                            _layout.AddRegion(regionName, region);
+                    }
+                }
+                else if (childRegionSet != null)
+                {
+                    WriteNestingOpeningTag();
+                    AddRegionSet(childRegionSet);
+                    WriteNestingClosingTag();
                 }
             }
         }

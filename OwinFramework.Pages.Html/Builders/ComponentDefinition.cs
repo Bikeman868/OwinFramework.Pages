@@ -125,10 +125,11 @@ namespace OwinFramework.Pages.Html.Builders
 
         IComponentDefinition IComponentDefinition.DeployIn(string moduleName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _component.Module = _nameManager.ResolveModule(moduleName);
-            });
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, c, n) => c.Module = nm.ResolveModule(n),
+                _component,
+                moduleName);
             return this;
         }
 
@@ -182,10 +183,11 @@ namespace OwinFramework.Pages.Html.Builders
 
         IComponentDefinition IComponentDefinition.NeedsComponent(string componentName)
         {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _component.NeedsComponent(_nameManager.ResolveComponent(componentName, _component.Package));
-            });
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, c, n) => c.NeedsComponent(nm.ResolveComponent(n)),
+                _component,
+                componentName);
             return this;
         }
 

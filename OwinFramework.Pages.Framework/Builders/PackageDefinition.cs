@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -35,9 +36,11 @@ namespace OwinFramework.Pages.Framework.Builders
 
         IPackageDefinition IPackageDefinition.Module(string moduleName)
         {
-            _nameManager.AddResolutionHandler((nm, p) => 
-                p.Module = nm.ResolveModule(moduleName),
-                _package);
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, p, n) => p.Module = nm.ResolveModule(n),
+                _package,
+                moduleName);
             return this;
         }
 

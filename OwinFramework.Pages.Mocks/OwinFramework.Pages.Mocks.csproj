@@ -59,6 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builder\MockComponentDependenciesFactory.cs" />
+    <Compile Include="Builder\MockLayoutDependenciesFactory.cs" />
     <Compile Include="DataModel\MockDataCatalog.cs" />
     <Compile Include="DataModel\MockDataSupplier.cs" />
     <Compile Include="DataModel\MockDataSupplierFactory.cs" />

@@ -118,7 +118,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         public IRegion CreateInstance(IElement content)
         {
-            return new RegionInstance(_dependenciesFactory, Parent, content);
+            return new RegionInstance(_dependenciesFactory, Parent, content ?? _content);
         }
 
         public override IEnumerator<IElement> GetChildren()

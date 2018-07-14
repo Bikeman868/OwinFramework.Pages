@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -233,6 +234,15 @@ namespace OwinFramework.Pages.Framework.Builders
                             function.Parameters, 
                             function.Body, 
                             function.IsPublic);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.UsesRegions, null))
+            {
+                foreach (var usesRegion in attributes.UsesRegions)
+                {
+                    layout
+                        .Region(usesRegion.RegionName, usesRegion.RegionElement);
                 }
             }
 
@@ -624,10 +634,11 @@ namespace OwinFramework.Pages.Framework.Builders
                 element.AssetDeployment = attributes.DeployedAs.Deployment;
                 if (!string.IsNullOrEmpty(attributes.DeployedAs.ModuleName))
                 {
-                    _nameManager.AddResolutionHandler(() =>
-                    {
-                        element.Module = _nameManager.ResolveModule(attributes.DeployedAs.ModuleName);
-                    });
+                    _nameManager.AddResolutionHandler(
+                        NameResolutionPhase.ResolveElementReferences,
+                        (nm, e, n) => e.Module = nm.ResolveModule(n),
+                        element, 
+                        attributes.DeployedAs.ModuleName);
                 }
             }
         }
@@ -664,11 +675,12 @@ namespace OwinFramework.Pages.Framework.Builders
                 if (attributes.UsesComponents.Count == 1)
                 {
                     hasComponent = true;
-                    var componentName = attributes.UsesComponents[0].ComponentName;
 
-                    _nameManager.AddResolutionHandler((nm, r) => 
-                        r.Populate(nm.ResolveComponent(componentName, r.Package)),
-                        region);
+                    _nameManager.AddResolutionHandler(
+                        NameResolutionPhase.ResolveElementReferences,
+                        (nm, r, n) => r.Populate(nm.ResolveComponent(n, r.Package)),
+                        region,
+                        attributes.UsesComponents[0].ComponentName);
                 }
             }
 
@@ -684,10 +696,11 @@ namespace OwinFramework.Pages.Framework.Builders
 
                 if (attributes.UsesLayouts.Count == 1)
                 {
-                    var layoutName = attributes.UsesLayouts[0].LayoutName;
-                    _nameManager.AddResolutionHandler((nm, r) => 
-                        r.Populate(nm.ResolveLayout(layoutName, r.Package)),
-                        region);
+                    _nameManager.AddResolutionHandler(
+                        NameResolutionPhase.ResolveElementReferences,
+                        (nm, r, n) => r.Populate(nm.ResolveLayout(n, r.Package)),
+                        region,
+                        attributes.UsesLayouts[0].LayoutName);
                 }
             }
         }
@@ -706,10 +719,11 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionComponent in attributes.RegionComponents)
                 {
-                    var rc = regionComponent;
-                    _nameManager.AddResolutionHandler((nm, l) =>
-                        l.Populate(rc.Region, nm.ResolveComponent(rc.Component, l.Package)), 
-                        layout);
+                    _nameManager.AddResolutionHandler(
+                        NameResolutionPhase.ResolveElementReferences,
+                        (nm, l, rc) => l.Populate(rc.Region, nm.ResolveComponent(rc.Component, l.Package)),
+                        layout,
+                        regionComponent);
                 }
             }
 
@@ -717,10 +731,11 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionLayout in attributes.RegionLayouts)
                 {
-                    var rl = regionLayout;
-                    _nameManager.AddResolutionHandler((nm, l) =>
-                        l.Populate(rl.Region, nm.ResolveLayout(rl.Layout, l.Package)), 
-                        layout);
+                    _nameManager.AddResolutionHandler(
+                        NameResolutionPhase.ResolveElementReferences,
+                        (nm, l, rl) => l.Populate(rl.Region, nm.ResolveComponent(rl.Layout, l.Package)),
+                        layout,
+                        regionLayout);
                 }
             }
         }
@@ -816,9 +831,11 @@ namespace OwinFramework.Pages.Framework.Builders
                 var moduleName = attributes.DeployedAs.ModuleName;
                 if (!string.IsNullOrEmpty(moduleName))
                 {
-                    _nameManager.AddResolutionHandler((nm, d) =>
-                        d.Module = nm.ResolveModule(moduleName),
-                        deployable);
+                    _nameManager.AddResolutionHandler(
+                        NameResolutionPhase.ResolveElementReferences,
+                        (nm, d, n) => d.Module = nm.ResolveModule(n),
+                        deployable,
+                        moduleName);
                 }
             }
         }
@@ -847,9 +864,13 @@ namespace OwinFramework.Pages.Framework.Builders
                         dataConsumer.HasDependency(need.DataType, need.Scope);
 
                     if (!string.IsNullOrEmpty(need.DataProviderName))
+                    {
                         _nameManager.AddResolutionHandler(
-                            (nm, dc) => dc.HasDependency(nm.ResolveDataProvider(need.DataProviderName)),
-                            dataConsumer);
+                            NameResolutionPhase.ResolveElementReferences,
+                            (nm, dc, n) => dc.HasDependency(nm.ResolveDataProvider(n)),
+                            dataConsumer,
+                            need.DataProviderName);
+                    }
                 }
             }
         }

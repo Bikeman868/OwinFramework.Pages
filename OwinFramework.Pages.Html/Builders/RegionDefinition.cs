@@ -77,9 +77,11 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Layout(string layoutName)
         {
-            _nameManager.AddResolutionHandler((nm, r) =>
-                r.Populate(nm.ResolveLayout(layoutName, r.Package)),
-                _region);
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, r, n) => r.Populate(nm.ResolveLayout(n, r.Package)),
+                _region,
+                layoutName);
             return this;
         }
 
@@ -91,9 +93,11 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Component(string componentName)
         {
-            _nameManager.AddResolutionHandler((nm, r) =>
-                r.Populate(nm.ResolveComponent(componentName, r.Package)),
-                _region);
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, r, n) => r.Populate(nm.ResolveComponent(n, r.Package)),
+                _region,
+                componentName);
             return this;
         }
 
@@ -171,8 +175,10 @@ namespace OwinFramework.Pages.Html.Builders
             if (dataConsumer != null)
             {
                 _nameManager.AddResolutionHandler(
-                    (nm, c) => c.HasDependency(nm.ResolveDataProvider(dataProviderName, _region.Package)),
-                    dataConsumer);
+                    NameResolutionPhase.ResolveElementReferences,
+                    (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n, _region.Package)),
+                    dataConsumer,
+                    dataProviderName);
             }
             return this;
         }
@@ -193,9 +199,11 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.NeedsComponent(string componentName)
         {
-            _nameManager.AddResolutionHandler((nm, r) =>
-                r.NeedsComponent(nm.ResolveComponent(componentName, r.Package)),
-                _region);
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, r, n) => r.NeedsComponent(nm.ResolveComponent(n, r.Package)),
+                _region,
+                componentName);
             return this;
         }
 
@@ -207,9 +215,11 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.DeployIn(string moduleName)
         {
-            _nameManager.AddResolutionHandler((nm, r) =>
-                r.Module = nm.ResolveModule(moduleName),
-                _region);
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, r, n) => r.Module = nm.ResolveModule(n),
+                _region,
+                moduleName);
             return this;
         }
 

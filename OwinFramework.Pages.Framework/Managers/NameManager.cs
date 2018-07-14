@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -19,7 +20,7 @@ namespace OwinFramework.Pages.Framework.Managers
         private readonly IDictionary<string, IPackage> _packages;
         private readonly IDictionary<string, IDataProvider> _dataProviders;
 
-        private readonly IList<PendingActionBase> _pendingActions;
+        private readonly List<PendingActionBase> _pendingActions;
 
         private readonly IDictionary<string, HashSet<string>> _assetNames;
         private readonly Random _random;
@@ -140,10 +141,12 @@ namespace OwinFramework.Pages.Framework.Managers
 
         public void Bind()
         {
-            Exception exception = null;
+            List<Exception> exceptions = null;
 
             lock (_pendingActions)
             {
+                _pendingActions.Sort();
+
                 foreach (var action in _pendingActions)
                     try
                     {
@@ -151,73 +154,75 @@ namespace OwinFramework.Pages.Framework.Managers
                     }
                     catch (Exception ex)
                     {
-                        if (exception == null) exception = ex;
+                        if (exceptions == null)
+                        {
+                            exceptions = new List<Exception> { ex };
+                        }
+                        else
+                        {
+                            if (exceptions.Count < 10)
+                                exceptions.Add(ex);
+                        }
                         System.Diagnostics.Trace.WriteLine("Exception during name resolution. " + ex.Message);
                     }
                 _pendingActions.Clear();
             }
 
-            if (exception != null) throw exception;
-
-            foreach (var service in _services.Values)
+            if (exceptions != null)
             {
-                try
-                {
-                    service.Initialize();
-                }
-                catch (Exception ex)
-                {
-                    if (exception == null) exception = ex;
-                    System.Diagnostics.Trace.WriteLine("Exception initializing service '" + service.Name + "'. " + ex.Message);
-                }
+                if (exceptions.Count == 1)
+                    throw exceptions[0];
+                throw new AggregateException("Multiple execptions were thrown during name resolution", exceptions);
             }
-
-            if (exception != null) throw exception;
-
-            foreach (var page in _pages.Values)
-            {
-                try
-                {
-                    page.Initialize();
-                }
-                catch (Exception ex)
-                {
-                    if (exception == null) exception = ex;
-                    System.Diagnostics.Trace.WriteLine("Exception initializing page '" + page.Name + "'. "+ ex.Message);
-                }
-            }
-
-            if (exception != null) throw exception;
         }
 
-        public void AddResolutionHandler(Action resolutionAction)
+        public void AddResolutionHandler(NameResolutionPhase phase, Action resolutionAction)
         {
             lock (_pendingActions)
-                _pendingActions.Add(new PendingAction(resolutionAction));
+                _pendingActions.Add(new PendingAction(phase, resolutionAction));
         }
 
-        public void AddResolutionHandler(Action<INameManager> resolutionAction)
+        public void AddResolutionHandler(NameResolutionPhase phase, Action<INameManager> resolutionAction)
         {
             lock (_pendingActions)
-                _pendingActions.Add(new PendingAction<INameManager>(resolutionAction, this));
+                _pendingActions.Add(new PendingAction<INameManager>(phase, resolutionAction, this));
         }
 
-        public void AddResolutionHandler<T>(Action<INameManager, T> resolutionAction, T context)
+        public void AddResolutionHandler<T>(NameResolutionPhase phase, Action<INameManager, T> resolutionAction, T context)
         {
             lock (_pendingActions)
-                _pendingActions.Add(new PendingAction<INameManager, T>(resolutionAction, this, context));
+                _pendingActions.Add(new PendingAction<INameManager, T>(phase, resolutionAction, this, context));
         }
 
-        private abstract class PendingActionBase
+        public void AddResolutionHandler<T1, T2>(NameResolutionPhase phase, Action<INameManager, T1, T2> resolutionAction, T1 param1, T2 param2)
         {
+            lock (_pendingActions)
+                _pendingActions.Add(new PendingAction<INameManager, T1, T2>(phase, resolutionAction, this, param1, param2));
+        }
+
+        private abstract class PendingActionBase : IComparable<PendingActionBase>
+        {
+            private readonly NameResolutionPhase _phase;
             public abstract void Invoke();
+
+            protected PendingActionBase(NameResolutionPhase phase)
+            {
+                _phase = phase;
+            }
+
+            public int CompareTo(PendingActionBase other)
+            {
+                if (_phase == other._phase) return 0;
+                return _phase > other._phase ? 1 : -1;
+            }
         }
 
         private class PendingAction : PendingActionBase
         {
             private readonly Action _action;
 
-            public PendingAction(Action action)
+            public PendingAction(NameResolutionPhase phase, Action action)
+                : base(phase)
             {
                 _action = action;
             }
@@ -233,7 +238,8 @@ namespace OwinFramework.Pages.Framework.Managers
             private readonly Action<T> _action;
             private readonly T _param;
 
-            public PendingAction(Action<T> action, T param)
+            public PendingAction(NameResolutionPhase phase, Action<T> action, T param)
+                : base(phase)
             {
                 _action = action;
                 _param = param;
@@ -251,7 +257,8 @@ namespace OwinFramework.Pages.Framework.Managers
             private readonly T1 _param1;
             private readonly T2 _param2;
 
-            public PendingAction(Action<T1, T2> action, T1 param1, T2 param2)
+            public PendingAction(NameResolutionPhase phase, Action<T1, T2> action, T1 param1, T2 param2)
+                : base(phase)
             {
                 _action = action;
                 _param1 = param1;
@@ -261,6 +268,28 @@ namespace OwinFramework.Pages.Framework.Managers
             public override void Invoke()
             {
                 _action(_param1, _param2);
+            }
+        }
+
+        private class PendingAction<T1, T2, T3> : PendingActionBase
+        {
+            private readonly Action<T1, T2, T3> _action;
+            private readonly T1 _param1;
+            private readonly T2 _param2;
+            private readonly T3 _param3;
+
+            public PendingAction(NameResolutionPhase phase, Action<T1, T2, T3> action, T1 param1, T2 param2, T3 param3)
+                : base(phase)
+            {
+                _action = action;
+                _param1 = param1;
+                _param2 = param2;
+                _param3 = param3;
+            }
+
+            public override void Invoke()
+            {
+                _action(_param1, _param2, _param3);
             }
         }
 

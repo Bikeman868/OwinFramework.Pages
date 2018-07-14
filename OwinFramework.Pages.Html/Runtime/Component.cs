@@ -40,12 +40,17 @@ namespace OwinFramework.Pages.Html.Runtime
             return debugInfo;
         }
 
+        private string GetCommentName()
+        {
+            return 
+                (string.IsNullOrEmpty(Name) ? "unnamed component" : "'" + Name + "' component") +
+                (Package == null ? string.Empty : " from the '" + Package.Name + "' package");
+        }
+
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
             if (context.IncludeComments)
-                context.Html.WriteComment(
-                    (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
-                    (Package == null ? " component" : " component from the " + Package.Name + " package"));
+                context.Html.WriteComment(GetCommentName());
 
             if (HtmlWriters != null)
             {
@@ -60,10 +65,8 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             if (CssRules != null && CssRules.Count > 0)
             {
-                writer.WriteComment(
-                    "css rules for " +
-                    (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
-                    (Package == null ? " component" : " component from the " + Package.Name + " package"));
+                if (writer.IncludeComments)
+                    writer.WriteComment("css rules for " + GetCommentName());
 
                 foreach (var rule in CssRules)
                     rule(writer);
@@ -76,12 +79,13 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             if (JavascriptFunctions != null && JavascriptFunctions.Count > 0)
             {
-                writer.WriteComment(
-                    "javascript functions for " +
-                    (string.IsNullOrEmpty(Name) ? "unnamed" : Name) +
-                    (Package == null ? " component" : " component from the " + Package.Name + " package"),
-                    CommentStyle.SingleLineC,
-                    Package);
+                if (writer.IncludeComments)
+                {
+                    writer.WriteComment(
+                        "javascript functions for " + GetCommentName(),
+                        CommentStyle.SingleLineC,
+                        Package);
+                }
 
                 foreach (var javascriptFunction in JavascriptFunctions)
                     javascriptFunction(writer);

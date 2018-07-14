@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
@@ -62,12 +63,11 @@ namespace OwinFramework.Pages.Framework.Builders
             if (dataConsumer == null)
                 throw new FluentBuilderException("This data provider is not a consumer of data");
 
-            _nameManager.AddResolutionHandler((nm, c) =>
-                {
-                    var dataProvider = nm.ResolveDataProvider(dataProviderName);
-                    c.HasDependency(dataProvider);
-                },
-                dataConsumer);
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n)),
+                dataConsumer,
+                dataProviderName);
 
             return this;
         }

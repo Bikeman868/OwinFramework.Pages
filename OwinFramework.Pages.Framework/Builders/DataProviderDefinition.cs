@@ -56,6 +56,33 @@ namespace OwinFramework.Pages.Framework.Builders
             return this;
         }
 
+        IDataProviderDefinition IDataProviderDefinition.DependsOn(string dataProviderName)
+        {
+            var dataConsumer = _dataProvider as IDataConsumer;
+            if (dataConsumer == null)
+                throw new FluentBuilderException("This data provider is not a consumer of data");
+
+            _nameManager.AddResolutionHandler((nm, c) =>
+                {
+                    var dataProvider = nm.ResolveDataProvider(dataProviderName);
+                    c.HasDependency(dataProvider);
+                },
+                dataConsumer);
+
+            return this;
+        }
+
+        IDataProviderDefinition IDataProviderDefinition.DependsOn(IDataProvider dataProvider)
+        {
+            var dataConsumer = _dataProvider as IDataConsumer;
+            if (dataConsumer == null)
+                throw new FluentBuilderException("This data provider is not a consumer of data");
+
+            dataConsumer.HasDependency(dataProvider);
+
+            return this;
+        }
+
         IDataProviderDefinition IDataProviderDefinition.PartOf(IPackage package)
         {
             _dataProvider.Package = package;
@@ -122,5 +149,6 @@ namespace OwinFramework.Pages.Framework.Builders
             _builder.Register(_dataProvider);
             return _dataProvider;
         }
+
     }
 }

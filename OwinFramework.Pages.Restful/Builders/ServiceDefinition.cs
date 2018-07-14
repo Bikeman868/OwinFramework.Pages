@@ -62,5 +62,35 @@ namespace OwinFramework.Pages.Restful.Builders
         {
             throw new NotImplementedException();
         }
+
+        public IPageDefinition Route(string path, int priority, params Core.Enums.Methods[] methods)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IPageDefinition Route(Core.Interfaces.Runtime.IRequestFilter filter, int priority = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IServiceDefinition BindTo<T>(string scope = null) where T : class
+        {
+            throw new NotImplementedException();
+        }
+
+        public IServiceDefinition BindTo(Type dataType, string scope = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IServiceDefinition DataScope(Type dataType, string scopeName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IPageDefinition DataProvider(Core.Interfaces.IDataProvider dataProvider)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

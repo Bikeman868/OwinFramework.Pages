@@ -72,11 +72,6 @@ namespace OwinFramework.Pages.Core.Attributes
         public ContainerAttribute Container;
 
         /// <summary>
-        /// Specifies how the main containers should be styled
-        /// </summary>
-        public DeployFunctionAttribute DeployFunction;
-
-        /// <summary>
         /// Specifies how the JavaScript and css assets for this 
         /// element should be deployed to the browser
         /// </summary>
@@ -114,6 +109,11 @@ namespace OwinFramework.Pages.Core.Attributes
         /// Defines a static css asset to deploy on any page that includes this element
         /// </summary>
         public IList<DeployCssAttribute> DeployCsss;
+
+        /// <summary>
+        /// A list of JavaScriot functions to deploy
+        /// </summary>
+        public IList<DeployFunctionAttribute> DeployFunctions;
 
         /// <summary>
         /// Defines a component that must be present on any page that includes this element
@@ -191,7 +191,6 @@ namespace OwinFramework.Pages.Core.Attributes
 
                 ChildContainer = Set(ChildContainer, attribute);
                 ChildStyle = Set(ChildStyle, attribute);
-                DeployFunction = Set(DeployFunction, attribute);
                 DeployedAs = Set(DeployedAs, attribute);
                 PageTitle = Set(PageTitle, attribute);
                 PartOf = Set(PartOf, attribute);
@@ -200,6 +199,7 @@ namespace OwinFramework.Pages.Core.Attributes
                 Style = Set(Style, attribute);
 
                 DeployCsss = Add(DeployCsss, attribute);
+                DeployFunctions = Add(DeployFunctions, attribute);
                 NeedsComponents = Add(NeedsComponents, attribute);
                 NeedsDatas = Add(NeedsDatas, attribute);
                 RegionComponents = Add(RegionComponents, attribute);

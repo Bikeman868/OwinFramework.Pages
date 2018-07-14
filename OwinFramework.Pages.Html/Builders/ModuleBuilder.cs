@@ -31,19 +31,12 @@ namespace OwinFramework.Pages.Html.Builders
             var module = moduleInstance as Module ?? new Module(_moduleDependenciesFactory);
             if (declaringType == null) declaringType = (moduleInstance ?? module).GetType();
 
-            var attributes = new AttributeSet(declaringType);
-            _elementConfiguror.Configure(module, attributes);
-
             var moduleDefinition = new ModuleDefinition(module, _fluentBuilder);
-            Configure(moduleDefinition, attributes);
+
+            var attributes = new AttributeSet(declaringType);
+            _elementConfiguror.Configure(moduleDefinition, attributes);
 
             return moduleDefinition;
         }
-
-        private void Configure(IModuleDefinition moduleDefinition, AttributeSet attributes)
-        {
-            // No additional configuration options for the concrete Module class
-        }
-
     }
 }

@@ -49,6 +49,23 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition DeployIn(string moduleName);
 
         /// <summary>
+        /// Adds a static asset to this component
+        /// </summary>
+        /// <param name="cssSelector">The selector for this style</param>
+        /// <param name="cssStyle">Style to apply when this selector matches elements</param>
+        ILayoutDefinition DeployCss(string cssSelector, string cssStyle);
+
+        /// <summary>
+        /// Specifies that this layout is deployed as part of a module
+        /// </summary>
+        /// <param name="returnType">Optional return type of this function. For example "void"</param>
+        /// <param name="functionName">The name of this function. For example "getData"</param>
+        /// <param name="parameters">TOptional parameters to this function. For example "id, name"</param>
+        /// <param name="functionBody">The body of this function. For example "alert('Hello, world');"</param>
+        /// <param name="isPublic">Pass true to export this function from the package namespace</param>
+        ILayoutDefinition DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic);
+
+        /// <summary>
         /// Defines how regions are nested. By default regions are rendered one
         /// after the other using whatever html is produced by the region.
         /// Calling this method introduces additional regions as defined by the

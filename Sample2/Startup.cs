@@ -21,11 +21,17 @@ namespace Sample2
     {
         public void Configuration(IAppBuilder app)
         {
+            #region Configure Ninject as the IoC container
+
             var packageLocator = new PackageLocator()
                 .ProbeBinFolderAssemblies()
                 .Add(Assembly.GetExecutingAssembly());
 
             var ninject = new StandardKernel(new Ioc.Modules.Ninject.Module(packageLocator));
+
+            #endregion
+
+            #region Build and Owin pipeline with only the Pages middleware in it
 
             var config = ninject.Get<IConfiguration>();
             var pipelineBuilder = ninject.Get<IBuilder>().EnableTracing();
@@ -33,30 +39,45 @@ namespace Sample2
             pipelineBuilder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/sample2/pages");
             app.UseBuilder(pipelineBuilder);
 
+            #endregion
+
+            #region Choose which builders to use for layouts, regions, components and pages
+
             var fluentBuilder = ninject.Get<IFluentBuilder>();
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
+            
+            #endregion
+
+            #region Find all the layouts, regions, components and pages in my website
+
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
+
+            #endregion
+
+            #region Resolve all the name references and bind everything together
 
             var nameManager = ninject.Get<INameManager>();
             nameManager.Bind();
+
+            #endregion
         }
     }
 
     [IsPage]                                                   // This is a webpage
     [Route("/", Methods.Get)]                                  // This page is served for GET requets for the website root
     [PageTitle("Getting started with Owin Framework Pages")]   // Specifies the page title
-    [UsesLayout("home-page-layout")]                           // The layout of this page is 'home-page-layout'
+    [UsesLayout("homePageLayout")]                             // The layout of this page is 'homePageLayout'
     internal class HomePage { }
 
-    [IsLayout("home-page-layout", "region1")]                  // The 'home-page-layout' has 1 region
-    [UsesRegion("region1", "default-region")]                  // Region 1 is implemented by the 'default-region'
-    [RegionComponent("region1", "hello-world")]                // Region 1 contains the 'hello-world' component
+    [IsLayout("homePageLayout", "region1")]                    // The 'homePageLayout' has 1 region called 'region1'
+    [UsesRegion("region1", "defaultRegion")]                   // Region 1 is implemented by the 'defaultRegion'
+    [RegionComponent("region1", "helloWorld")]                 // Region 1 contains the 'helloWorld' component
     internal class HomePageLayout { }
 
-    [IsRegion("default-region")]                               // Defines the 'default-region'
+    [IsRegion("defaultRegion")]                                // Defines the 'defaultRegion'
     internal class DefaultRegion { }
 
-    [IsComponent("hello-world")]                               // A components called 'hello-world'
-    [RenderHtmlAttribute("hello-world", "Hello, world")]       // Writes out a paragraph of text
+    [IsComponent("helloWorld")]                                // A components called 'helloWorld'
+    [RenderHtml("hello-world", "Hello, world")]                // Writes out a paragraph of text. The ID 'hello-world' can be used to provide translations into other locales
     internal class HelloWorldComponent { }
 }

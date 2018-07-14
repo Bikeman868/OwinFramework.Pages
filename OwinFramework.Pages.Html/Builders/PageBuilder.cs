@@ -40,46 +40,12 @@ namespace OwinFramework.Pages.Html.Builders
             var page = pageInstance as Page ?? new Page(_pageDependenciesFactory);
             if (declaringType == null) declaringType = (pageInstance ?? page).GetType();
 
-            var attributes = new AttributeSet(declaringType);
-            _elementConfiguror.Configure(page, attributes);
-
             var pageDefinition = new PageDefinition(page, _requestRouter, _nameManager, _fluentBuilder, package, declaringType);
-            Configure(pageDefinition, attributes);
+
+            var attributes = new AttributeSet(declaringType);
+            _elementConfiguror.Configure(pageDefinition, attributes);
 
             return pageDefinition;
-        }
-
-        private void Configure(IPageDefinition pageDefinition, AttributeSet attributes)
-        {
-            // TODO: Check that these are not already configured by IElementConfiguror 
-
-            if (attributes.UsesLayouts != null)
-                foreach (var usesLayout in attributes.UsesLayouts)
-                    pageDefinition.Layout(usesLayout.LayoutName);
-
-            if (attributes.PageTitle != null)
-                pageDefinition.Title(attributes.PageTitle.Title);
-
-            if (attributes.Style != null)
-                pageDefinition.BodyStyle(attributes.Style.CssStyle);
-
-            if (attributes.RegionComponents != null)
-            {
-                foreach (var regionComponent in attributes.RegionComponents)
-                    pageDefinition.RegionComponent(regionComponent.Region, regionComponent.Component);
-            }
-
-            if (attributes.RegionLayouts != null)
-            {
-                foreach (var regionLayout in attributes.RegionLayouts)
-                    pageDefinition.RegionLayout(regionLayout.Region, regionLayout.Layout);
-            }
-
-            if (attributes.NeedsComponents != null)
-            {
-                foreach (var component in attributes.NeedsComponents)
-                    pageDefinition.NeedsComponent(component.ComponentName);
-            }
         }
     }
 }

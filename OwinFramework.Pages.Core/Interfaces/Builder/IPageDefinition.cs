@@ -69,16 +69,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDefinition AssetDeployment(AssetDeployment assetDeployment);
 
         /// <summary>
-        /// Specifies the module that this page will be deployed with
-        /// </summary>
-        IPageDefinition Module(IModule module);
-
-        /// <summary>
-        /// Specifies the name of the module that this page will be deployed with
-        /// </summary>
-        IPageDefinition Module(string moduleName);
-
-        /// <summary>
         /// Specifies the relative path to this page on the website
         /// </summary>
         /// <param name="path">The URL path to this page</param>

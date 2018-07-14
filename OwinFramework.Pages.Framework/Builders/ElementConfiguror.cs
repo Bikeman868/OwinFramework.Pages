@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
@@ -30,6 +31,520 @@ namespace OwinFramework.Pages.Framework.Builders
             _requestRouter = requestRouter;
         }
 
+        #region Using fluent syntax to configure elements that inherit from the framework concrete types
+
+        public void Configure(IComponentDefinition component, AttributeSet attributes)
+        {
+            if (ReferenceEquals(component, null)) return;
+
+            if (!ReferenceEquals(attributes.IsComponent, null))
+            {
+                component
+                    .Name(attributes.IsComponent.Name);
+            }
+
+            if (!ReferenceEquals(attributes.DeployCsss, null))
+            {
+                foreach (var css in attributes.DeployCsss)
+                {
+                    component
+                        .DeployCss(css.CssSelector, css.CssStyle);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.DeployFunctions, null))
+            {
+                foreach (var function in attributes.DeployFunctions)
+                {
+                    component.DeployFunction(
+                        function.ReturnType,
+                        function.FunctionName,
+                        function.Parameters,
+                        function.Body,
+                        function.IsPublic);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.NeedsDatas, null))
+            {
+                foreach (var dataNeed in attributes.NeedsDatas)
+                {
+                    component
+                        .DataProvider(dataNeed.DataProviderName)
+                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.PartOf, null))
+            {
+                component
+                    .PartOf(attributes.PartOf.PackageName);
+            }
+
+            if (!ReferenceEquals(attributes.DeployedAs, null))
+            {
+                component
+                    .DeployIn(attributes.DeployedAs.ModuleName)
+                    .AssetDeployment(attributes.DeployedAs.Deployment);
+            }
+
+            if (!ReferenceEquals(attributes.NeedsComponents, null))
+            {
+                foreach(var need in attributes.NeedsComponents)
+                {
+                    component
+                        .NeedsComponent(need.ComponentName);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.RenderHtmls, null))
+            {
+                foreach (var html in attributes.RenderHtmls.OrderBy(h => h.Order))
+                {
+                    component
+                        .Render(html.TextName, html.Html);
+                }
+            }
+        }
+
+        public void Configure(IDataProviderDefinition dataProvider, AttributeSet attributes)
+        {
+            if (ReferenceEquals(dataProvider, null)) return;
+
+            if (!ReferenceEquals(attributes.IsDataProvider, null))
+            {
+                dataProvider
+                    .Name(attributes.IsDataProvider.Name)
+                    .Provides(attributes.IsDataProvider.Type, attributes.IsDataProvider.Scope);
+            }
+
+            if (!ReferenceEquals(attributes.NeedsDatas, null))
+            {
+                foreach(var dataNeed in attributes.NeedsDatas)
+                {
+                    dataProvider
+                        .DependsOn(dataNeed.DataProviderName)
+                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.PartOf, null))
+            {
+                dataProvider
+                    .PartOf(attributes.PartOf.PackageName);
+            }
+
+            if (!ReferenceEquals(attributes.SuppliesDatas, null))
+            {
+                foreach(var data in attributes.SuppliesDatas)
+                {
+                    dataProvider
+                        .Provides(data.DataType, data.Scope);
+                }
+            }
+        }
+
+        public void Configure(ILayoutDefinition layout, AttributeSet attributes)
+        {
+            if (ReferenceEquals(layout, null)) return;
+
+            if (!ReferenceEquals(attributes.IsLayout, null))
+            {
+                layout
+                    .Name(attributes.IsLayout.Name)
+                    .RegionNesting(attributes.IsLayout.RegionNesting);
+            }
+
+            if (!ReferenceEquals(attributes.NeedsDatas, null))
+            {
+                foreach (var dataNeed in attributes.NeedsDatas)
+                {
+                    layout
+                        .DataProvider(dataNeed.DataProviderName)
+                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.PartOf, null))
+            {
+                layout
+                    .PartOf(attributes.PartOf.PackageName);
+            }
+
+            if (!ReferenceEquals(attributes.DeployedAs, null))
+            {
+                layout
+                    .DeployIn(attributes.DeployedAs.ModuleName)
+                    .AssetDeployment(attributes.DeployedAs.Deployment);
+            }
+
+            if (!ReferenceEquals(attributes.NeedsComponents, null))
+            {
+                foreach (var need in attributes.NeedsComponents)
+                {
+                    layout
+                        .NeedsComponent(need.ComponentName);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.Container, null))
+            {
+                layout
+                    .Tag(attributes.Container.Tag)
+                    .ClassNames(attributes.Container.ClassNames);
+            }
+
+            if (!ReferenceEquals(attributes.Style, null))
+            {
+                layout
+                    .Style(attributes.Style.CssStyle);
+            }
+
+            if (!ReferenceEquals(attributes.ChildContainer, null))
+            {
+                layout
+                    .NestingTag(attributes.ChildContainer.Tag)
+                    .NestedClassNames(attributes.ChildContainer.ClassNames);
+            }
+
+            if (!ReferenceEquals(attributes.ChildStyle, null))
+            {
+                layout
+                    .NestedStyle(attributes.ChildStyle.CssStyle);
+            }
+
+            if (!ReferenceEquals(attributes.DeployCsss, null))
+            {
+                foreach(var css in attributes.DeployCsss)
+                {
+                    layout
+                        .DeployCss(css.CssSelector, css.CssStyle);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.DeployFunctions, null))
+            { 
+                foreach(var function in attributes.DeployFunctions)
+                {
+                    layout
+                        .DeployFunction(
+                            function.ReturnType, 
+                            function.FunctionName, 
+                            function.Parameters, 
+                            function.Body, 
+                            function.IsPublic);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.RegionComponents, null))
+            {
+                foreach(var regionComponent in attributes.RegionComponents)
+                {
+                    layout
+                        .Component(regionComponent.Region, regionComponent.Component);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.RegionLayouts, null))
+            {
+                foreach (var regionLayout in attributes.RegionLayouts)
+                {
+                    layout
+                        .Layout(regionLayout.Region, regionLayout.Layout);
+                }
+            }
+        }
+
+        public void Configure(IModuleDefinition module, AttributeSet attributes)
+        {
+            if (ReferenceEquals(module, null)) return;
+
+            if (!ReferenceEquals(attributes.IsModule, null))
+            {
+                module
+                    .Name(attributes.IsModule.Name)
+                    .AssetDeployment(attributes.IsModule.AssetDeployment);
+            }
+        }
+
+        public void Configure(IPackageDefinition package, AttributeSet attributes)
+        {
+            if (ReferenceEquals(package, null)) return;
+
+            if (!ReferenceEquals(attributes.IsPackage, null))
+            {
+                package
+                    .Name(attributes.IsPackage.Name)
+                    .NamespaceName(attributes.IsPackage.NamespaceName);
+            }
+
+            if (!ReferenceEquals(attributes.DeployedAs, null))
+            {
+                package
+                    .Module(attributes.DeployedAs.ModuleName);
+            }
+        }
+
+        public void Configure(IPageDefinition page, AttributeSet attributes)
+        {
+            if (ReferenceEquals(page, null)) return;
+
+            if (!ReferenceEquals(attributes.IsPage, null))
+            {
+                page
+                    .Name(attributes.IsPage.Name);
+            }
+
+            if (!ReferenceEquals(attributes.NeedsDatas, null))
+            {
+                foreach (var dataNeed in attributes.NeedsDatas)
+                {
+                    page
+                        .DataProvider(dataNeed.DataProviderName)
+                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.PartOf, null))
+            {
+                page
+                    .PartOf(attributes.PartOf.PackageName);
+            }
+
+            if (!ReferenceEquals(attributes.DeployedAs, null))
+            {
+                page
+                    .DeployIn(attributes.DeployedAs.ModuleName)
+                    .AssetDeployment(attributes.DeployedAs.Deployment);
+            }
+
+            if (!ReferenceEquals(attributes.NeedsComponents, null))
+            {
+                foreach (var need in attributes.NeedsComponents)
+                {
+                    page
+                        .NeedsComponent(need.ComponentName);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.RegionComponents, null))
+            {
+                foreach (var regionComponent in attributes.RegionComponents)
+                {
+                    page
+                        .RegionComponent(regionComponent.Region, regionComponent.Component);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.RegionLayouts, null))
+            {
+                foreach (var regionLayout in attributes.RegionLayouts)
+                {
+                    page
+                        .RegionLayout(regionLayout.Region, regionLayout.Layout);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.PageTitle, null))
+            {
+                page
+                    .Title(attributes.PageTitle.Title);
+            }
+
+            if (!ReferenceEquals(attributes.Style, null))
+            {
+                page
+                    .BodyStyle(attributes.Style.CssStyle);
+            }
+
+            if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
+            {
+                if (attributes.UsesLayouts.Count > 1)
+                    throw new FluentBuilderException("A page can not have more than one layout");
+
+                page
+                    .Layout(attributes.UsesLayouts[0].LayoutName);
+            }
+
+            if (!ReferenceEquals(attributes.Routes, null))
+            {
+                foreach (var route in attributes.Routes)
+                {
+                    page
+                        .Route(route.Path, route.Priority, route.Methods);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.DataScopes, null))
+            {
+                foreach (var dataScope in attributes.DataScopes)
+                {
+                    page
+                        .DataScope(dataScope.DataType, dataScope.Scope);
+                }
+            }
+        }
+
+        public void Configure(IRegionDefinition region, AttributeSet attributes)
+        {
+            if (ReferenceEquals(region, null)) return;
+
+            if (!ReferenceEquals(attributes.IsRegion, null))
+            {
+                region
+                    .Name(attributes.IsRegion.Name);
+            }
+
+            if (!ReferenceEquals(attributes.NeedsDatas, null))
+            {
+                foreach (var dataNeed in attributes.NeedsDatas)
+                {
+                    region
+                        .DataProvider(dataNeed.DataProviderName)
+                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.PartOf, null))
+            {
+                region
+                    .PartOf(attributes.PartOf.PackageName);
+            }
+
+            if (!ReferenceEquals(attributes.DeployedAs, null))
+            {
+                region
+                    .DeployIn(attributes.DeployedAs.ModuleName)
+                    .AssetDeployment(attributes.DeployedAs.Deployment);
+            }
+
+            if (!ReferenceEquals(attributes.NeedsComponents, null))
+            {
+                foreach (var need in attributes.NeedsComponents)
+                {
+                    region
+                        .NeedsComponent(need.ComponentName);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.Style, null))
+            {
+                region
+                    .Style(attributes.Style.CssStyle);
+            }
+
+            if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
+            {
+                if (attributes.UsesLayouts.Count > 1)
+                    throw new FluentBuilderException("A region can not have more than one layout");
+
+                region
+                    .Layout(attributes.UsesLayouts[0].LayoutName);
+            }
+
+            if (!ReferenceEquals(attributes.UsesComponents, null) && attributes.UsesComponents.Count > 0)
+            {
+                if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
+                    throw new FluentBuilderException("A region can contain a layout or a component, but not both");
+
+                if (attributes.UsesComponents.Count > 1)
+                    throw new FluentBuilderException("A region can not have more than one component");
+
+                region
+                    .Component(attributes.UsesComponents[0].ComponentName);
+            }
+
+            if (!ReferenceEquals(attributes.DataScopes, null))
+            {
+                foreach (var dataScope in attributes.DataScopes)
+                {
+                    region
+                        .DataScope(dataScope.DataType, dataScope.Scope);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.Container, null))
+            {
+                region
+                    .Tag(attributes.Container.Tag)
+                    .ClassNames(attributes.Container.ClassNames);
+            }
+
+            if (!ReferenceEquals(attributes.Style, null))
+            {
+                region
+                    .Style(attributes.Style.CssStyle);
+            }
+
+            if (!ReferenceEquals(attributes.Repeat, null))
+            {
+                region
+                    .ForEach(
+                        attributes.Repeat.RepeatType,
+                        attributes.Repeat.RepeatScope,
+                        attributes.Repeat.Tag,
+                        attributes.Repeat.Style,
+                        attributes.Repeat.ListScope,
+                        attributes.Repeat.ClassNames);
+            }
+        }
+
+        public void Configure(IServiceDefinition service, AttributeSet attributes)
+        {
+            if (ReferenceEquals(service, null)) return;
+
+            if (!ReferenceEquals(attributes.IsService, null))
+            {
+                service
+                    .Name(attributes.IsService.Name);
+            }
+
+            if (!ReferenceEquals(attributes.NeedsDatas, null))
+            {
+                foreach (var dataNeed in attributes.NeedsDatas)
+                {
+                    service
+                        .DataProvider(dataNeed.DataProviderName)
+                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.PartOf, null))
+            {
+                service
+                    .PartOf(attributes.PartOf.PackageName);
+            }
+
+            if (!ReferenceEquals(attributes.DeployedAs, null))
+            {
+                service
+                    .DeployIn(attributes.DeployedAs.ModuleName)
+                    .AssetDeployment(attributes.DeployedAs.Deployment);
+            }
+
+            if (!ReferenceEquals(attributes.Routes, null))
+            {
+                foreach (var route in attributes.Routes)
+                {
+                    service
+                        .Route(route.Path, route.Priority, route.Methods);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.DataScopes, null))
+            {
+                foreach (var dataScope in attributes.DataScopes)
+                {
+                    service
+                        .DataScope(dataScope.DataType, dataScope.Scope);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Configuring custom elements that directly implement the interfaces
+
         public void Configure(object element, AttributeSet attributes)
         {
             Configure(attributes, element as IElement);
@@ -50,6 +565,48 @@ namespace OwinFramework.Pages.Framework.Builders
             Configure(attributes, element as IDeployable);
             Configure(attributes, element as IDataRepeater);
         }
+
+        public void Configure(IComponent component, AttributeSet attributes)
+        {
+            Configure((object)component, attributes);
+        }
+
+        public void Configure(IDataProvider dataProvider, AttributeSet attributes)
+        {
+            Configure((object)dataProvider, attributes);
+        }
+
+        public void Configure(ILayout layout, AttributeSet attributes)
+        {
+            Configure((object)layout, attributes);
+        }
+
+        public void Configure(IModule module, AttributeSet attributes)
+        {
+            Configure((object)module, attributes);
+        }
+
+        public void Configure(IPackage package, AttributeSet attributes)
+        {
+            Configure((object)package, attributes);
+        }
+
+        public void Configure(IPage page, AttributeSet attributes)
+        {
+            Configure((object)page, attributes);
+        }
+
+        public void Configure(IRegion region, AttributeSet attributes)
+        {
+            Configure((object)region, attributes);
+        }
+
+        public void Configure(IService service, AttributeSet attributes)
+        {
+            Configure((object)service, attributes);
+        }
+        
+        #endregion
 
         #region Specific element types
 
@@ -143,17 +700,6 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 if (!string.IsNullOrEmpty(attributes.IsLayout.Name))
                     layout.Name = attributes.IsLayout.Name;
-
-                // TODO: Figure out how region nesting used to work
-
-                //public ILayoutDefinition RegionNesting(string regionNesting)
-                //{
-                //    var position = 0;
-                //    _regionSet = RegionSet.Parse(regionNesting, ref position);
-                //    return this;
-                //}
-
-                //layout.RegionNesting(attributes.IsLayout.RegionNesting);
             }
 
             if (attributes.RegionComponents != null)

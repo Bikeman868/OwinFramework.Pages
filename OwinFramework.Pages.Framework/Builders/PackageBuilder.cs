@@ -34,17 +34,12 @@ namespace OwinFramework.Pages.Framework.Builders
             var package = packageInstance as Runtime.Package ?? new Runtime.Package(_packageDependenciesFactory);
             if (declaringType == null) declaringType = (packageInstance ?? package).GetType();
 
-            var attributes = new AttributeSet(declaringType);
-            _elementConfiguror.Configure(package, attributes);
-
             var packageDefinition = new PackageDefinition(package, _fluentBuilder, _nameManager);
-            Configure(packageDefinition, attributes);
+
+            var attributes = new AttributeSet(declaringType);
+            _elementConfiguror.Configure(packageDefinition, attributes);
 
             return packageDefinition;
-        }
-
-        private void Configure(IPackageDefinition packageDefinition, AttributeSet attributes)
-        {
         }
     }
 }

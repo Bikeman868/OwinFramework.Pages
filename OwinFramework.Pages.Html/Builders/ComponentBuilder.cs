@@ -40,42 +40,12 @@ namespace OwinFramework.Pages.Html.Builders
             var component = componentInstance as Component ?? new Component(_componentDependenciesFactory);
             if (declaringType == null) declaringType = (componentInstance ?? component).GetType();
 
-            var attributes = new AttributeSet(declaringType);
-            _elementConfiguror.Configure(component, attributes);
-
             var componentDefinition = new ComponentDefinition(component, _nameManager, _assetManager, _htmlHelper, _fluentBuilder, package);
-            Configure(componentDefinition, attributes);
+            var attributes = new AttributeSet(declaringType);
+
+            _elementConfiguror.Configure(componentDefinition, attributes);
 
             return componentDefinition;
-        }
-
-        private void Configure(IComponentDefinition componentDefinition, AttributeSet attributes)
-        {
-            // TODO: Check that these are not already handled by IElementConfiguror
-
-            if (attributes.RenderHtmls != null)
-            {
-                foreach (var renderHtml in attributes.RenderHtmls.OrderBy(r => r.Order))
-                    componentDefinition.Render(renderHtml.TextName, renderHtml.Html);
-            }
-
-            if (attributes.NeedsComponents != null)
-            {
-                foreach (var neededComponent in attributes.NeedsComponents)
-                    componentDefinition.NeedsComponent(neededComponent.ComponentName);
-            }
-
-            if (attributes.DeployCsss != null)
-                foreach (var deployCss in attributes.DeployCsss)
-                    componentDefinition.DeployCss(deployCss.CssSelector, deployCss.CssStyle);
-
-            if (attributes.DeployFunction != null)
-                componentDefinition.DeployFunction(
-                    attributes.DeployFunction.ReturnType,
-                    attributes.DeployFunction.FunctionName,
-                    attributes.DeployFunction.Parameters,
-                    attributes.DeployFunction.Body,
-                    attributes.DeployFunction.IsPublic);
         }
     }
 }

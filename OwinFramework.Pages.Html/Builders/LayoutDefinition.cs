@@ -207,6 +207,16 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        ILayoutDefinition ILayoutDefinition.DeployCss(string cssSelector, string cssStyle)
+        {
+            return this;
+        }
+
+        ILayoutDefinition ILayoutDefinition.DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic)
+        {
+            return this;
+        }
+
         ILayoutDefinition ILayoutDefinition.BindTo<T>(string scopeName)
         {
             var dataConsumer = _layout as IDataConsumer;

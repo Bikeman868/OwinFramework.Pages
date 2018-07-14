@@ -37,21 +37,16 @@ namespace OwinFramework.Pages.Framework.Builders
             var dataProvider = dataProviderInstance as DataProvider ?? new DataProvider(_dataProviderDependenciesFactory);
             if (declaringType == null) declaringType = (dataProviderInstance ?? dataProvider).GetType();
 
-            var attributes = new AttributeSet(declaringType);
-            _elementConfiguror.Configure(dataProvider, attributes);
-
             var dataProviderDefinition = new DataProviderDefinition(
                 dataProvider, 
                 _fluentBuilder, 
                 _dataProviderDependenciesFactory.DataDependencyFactory, 
                 _nameManager);
-            Configure(dataProviderDefinition, attributes);
+
+            var attributes = new AttributeSet(declaringType);
+            _elementConfiguror.Configure(dataProviderDefinition, attributes);
 
             return dataProviderDefinition;
-        }
-
-        private void Configure(IDataProviderDefinition dataProviderDefinition, AttributeSet attributes)
-        {
         }
     }
 }

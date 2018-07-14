@@ -49,6 +49,8 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void Add(Type type, string scopeName = null)
         {
+            if (ReferenceEquals(type, null)) return;
+
             var suppliedDependency = Dependencies.DataDependencyFactory.Create(type, scopeName);
             DataSupplier.Add(suppliedDependency, Supply);
         }

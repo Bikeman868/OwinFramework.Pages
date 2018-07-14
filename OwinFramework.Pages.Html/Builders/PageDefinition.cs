@@ -66,21 +66,6 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPageDefinition IPageDefinition.Module(IModule module)
-        {
-            _page.Module = module;
-            return this;
-        }
-
-        IPageDefinition IPageDefinition.Module(string moduleName)
-        {
-            _nameManager.AddResolutionHandler(() =>
-            {
-                _page.Module = _nameManager.ResolveModule(moduleName);
-            });
-            return this;
-        }
-
         IPageDefinition IPageDefinition.Route(string path, int priority, params Methods[] methods)
         {
             if (methods == null || methods.Length == 0)

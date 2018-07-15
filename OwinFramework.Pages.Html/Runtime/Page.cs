@@ -241,9 +241,15 @@ namespace OwinFramework.Pages.Html.Runtime
         public override IEnumerator<IElement> GetChildren()
         {
             if (_components == null)
-                return Layout.AsEnumerable<IElement>().GetEnumerator();
+            {
+                return ReferenceEquals(Layout, null) 
+                    ? null 
+                    : Layout.AsEnumerable<IElement>().GetEnumerator();
+            }
 
-            return _components.Concat(Layout.AsEnumerable<IElement>()).GetEnumerator();
+            return ReferenceEquals(Layout, null)
+                ? _components.GetEnumerator()
+                : _components.Concat(Layout.AsEnumerable<IElement>()).GetEnumerator();
         }
 
         #endregion

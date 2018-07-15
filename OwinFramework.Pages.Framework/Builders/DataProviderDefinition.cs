@@ -35,24 +35,27 @@ namespace OwinFramework.Pages.Framework.Builders
             return this;
         }
 
-        IDataProviderDefinition IDataProviderDefinition.BindTo<T>(string scope)
+        IDataProviderDefinition IDataProviderDefinition.BindTo<T>(string scopeName)
         {
             var dataConsumer = _dataProvider as IDataConsumer;
             if (dataConsumer == null)
-                throw new FluentBuilderException("This data provider is not a consumer of data");
+                throw new DataProviderBuilderException("This data provider is not a consumer of data");
 
-            dataConsumer.HasDependency<T>(scope);
+            dataConsumer.HasDependency<T>(scopeName);
 
             return this;
         }
 
-        IDataProviderDefinition IDataProviderDefinition.BindTo(Type dataType, string scope)
+        IDataProviderDefinition IDataProviderDefinition.BindTo(Type dataType, string scopeName)
         {
+            if (dataType == null)
+                throw new DataProviderBuilderException("To define data binding you must specify the type of data to bind");
+
             var dataConsumer = _dataProvider as IDataConsumer;
             if (dataConsumer == null)
-                throw new FluentBuilderException("This data provider is not a consumer of data");
+                throw new DataProviderBuilderException("This data provider is not a consumer of data");
 
-            dataConsumer.HasDependency(dataType, scope);
+            dataConsumer.HasDependency(dataType, scopeName);
 
             return this;
         }
@@ -61,7 +64,10 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             var dataConsumer = _dataProvider as IDataConsumer;
             if (dataConsumer == null)
-                throw new FluentBuilderException("This data provider is not a consumer of data");
+                throw new DataProviderBuilderException("This data provider is not a consumer of data");
+
+            if (string.IsNullOrEmpty(dataProviderName))
+                throw new DataProviderBuilderException("You must provide the name of the data provider that this data provider depends on");
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
@@ -76,7 +82,7 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             var dataConsumer = _dataProvider as IDataConsumer;
             if (dataConsumer == null)
-                throw new FluentBuilderException("This data provider is not a consumer of data");
+                throw new DataProviderBuilderException("This data provider is not a consumer of data");
 
             dataConsumer.HasDependency(dataProvider);
 
@@ -91,7 +97,14 @@ namespace OwinFramework.Pages.Framework.Builders
 
         IDataProviderDefinition IDataProviderDefinition.PartOf(string packageName)
         {
-            _dataProvider.Package = _nameManager.ResolvePackage(packageName);
+            if (string.IsNullOrEmpty(packageName)) return this;
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolvePackageNames,
+                (nm, dp, n) => dp.Package = nm.ResolvePackage(n),
+                _dataProvider,
+                packageName);
+
             return this;
         }
 

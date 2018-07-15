@@ -24,23 +24,28 @@ namespace OwinFramework.Pages.Framework.Builders
 
         IPackageDefinition IPackageDefinition.Name(string name)
         {
-            _package.Name = name;
+            if (!string.IsNullOrEmpty(name))
+                _package.Name = name;
             return this;
         }
 
         IPackageDefinition IPackageDefinition.NamespaceName(string namespaceName)
         {
-            _package.NamespaceName = namespaceName;
+            if (!string.IsNullOrEmpty(namespaceName))
+                _package.NamespaceName = namespaceName;
             return this;
         }
 
         IPackageDefinition IPackageDefinition.Module(string moduleName)
         {
+            if (string.IsNullOrEmpty(moduleName)) return this;
+                
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 (nm, p, n) => p.Module = nm.ResolveModule(n),
                 _package,
                 moduleName);
+
             return this;
         }
 

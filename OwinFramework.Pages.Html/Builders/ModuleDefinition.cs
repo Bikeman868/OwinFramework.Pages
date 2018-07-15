@@ -21,7 +21,10 @@ namespace OwinFramework.Pages.Html.Builders
 
         public IModuleDefinition Name(string name)
         {
+            if (string.IsNullOrEmpty(name)) return this;
+
             _module.Name = name;
+
             return this;
         }
 

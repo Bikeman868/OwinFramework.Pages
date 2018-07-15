@@ -5,6 +5,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Interfaces;
@@ -22,21 +23,6 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly List<FunctionDefinition> _functionDefinitions;
         private readonly List<CssDefinition> _cssDefinitions;
         private readonly List<HtmlDefinition> _htmlToRender;
-
-        private class CssDefinition
-        {
-            public string Selector;
-            public string Style;
-        }
-
-        private class FunctionDefinition
-        {
-            public string ReturnType;
-            public string FunctionName;
-            public string Parameters;
-            public string Body;
-            public bool IsPublic;
-        }
 
         private class HtmlDefinition
         {
@@ -69,7 +55,10 @@ namespace OwinFramework.Pages.Html.Builders
 
         IComponentDefinition IComponentDefinition.Name(string name)
         {
+            if (string.IsNullOrEmpty(name)) return this;
+
             _component.Name = name;
+
             return this;
         }
 
@@ -81,12 +70,14 @@ namespace OwinFramework.Pages.Html.Builders
 
         IComponentDefinition IComponentDefinition.PartOf(string packageName)
         {
-            _component.Package = _nameManager.ResolvePackage(packageName);
+            if (string.IsNullOrEmpty(packageName)) return this;
 
-            if (_component.Package == null)
-                throw new ComponentBuilderException(
-                    "Package names must be registered before components can refer to them. " +
-                    "There is no registered package '" + packageName + "'");
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolvePackageNames,
+                (nm, c, n) => c.Package = nm.ResolvePackage(n),
+                _component,
+                packageName);
+
             return this;
         }
 
@@ -98,22 +89,54 @@ namespace OwinFramework.Pages.Html.Builders
 
         IComponentDefinition IComponentDefinition.BindTo<T>(string scopeName)
         {
+            var dataConsumer = _component as IDataConsumer;
+            if (dataConsumer == null)
+                throw new ComponentBuilderException("This component is not a consumer of data");
+
+            dataConsumer.HasDependency<T>(scopeName);
+
             return this;
         }
 
         IComponentDefinition IComponentDefinition.BindTo(Type dataType, string scopeName)
         {
+            if (dataType == null)
+                throw new ComponentBuilderException("To define data binding you must specify the type of data to bind");
+
+            var dataConsumer = _component as IDataConsumer;
+            if (dataConsumer == null)
+                throw new ComponentBuilderException("This component is not a consumer of data");
+
+            dataConsumer.HasDependency(dataType, scopeName);
+
             return this;
         }
 
-        IComponentDefinition IComponentDefinition.DataProvider(string providerName)
+        IComponentDefinition IComponentDefinition.DataProvider(string dataProviderName)
         {
+            if (string.IsNullOrEmpty(dataProviderName)) return this;
+
+            var dataConsumer = _component as IDataConsumer;
+            if (dataConsumer == null)
+                throw new ComponentBuilderException("This component is not a consumer of data");
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n)),
+                dataConsumer,
+                dataProviderName);
+
             return this;
         }
 
         IComponentDefinition IComponentDefinition.DataProvider(IDataProvider dataProvider)
         {
-            // TODO: Data binding
+            var dataConsumer = _component as IDataConsumer;
+            if (dataConsumer == null)
+                throw new ComponentBuilderException("This component is not a consumer of data");
+
+            dataConsumer.HasDependency(dataProvider);
+
             return this;
         }
 
@@ -125,21 +148,30 @@ namespace OwinFramework.Pages.Html.Builders
 
         IComponentDefinition IComponentDefinition.DeployIn(string moduleName)
         {
+            if (string.IsNullOrEmpty(moduleName)) return this;
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 (nm, c, n) => c.Module = nm.ResolveModule(n),
                 _component,
                 moduleName);
+            
             return this;
         }
 
         IComponentDefinition IComponentDefinition.Render(string assetName, string defaultHtml)
         {
+            if (string.IsNullOrEmpty(assetName))
+                throw new ComponentBuilderException("No asset name specified for component html");
+
+            if (string.IsNullOrEmpty(defaultHtml)) return this;
+
             _htmlToRender.Add(new HtmlDefinition 
             { 
                 AssetName = assetName, 
                 DefaultHtml = defaultHtml 
             });
+
             return this;
         }
 
@@ -183,17 +215,25 @@ namespace OwinFramework.Pages.Html.Builders
 
         IComponentDefinition IComponentDefinition.NeedsComponent(string componentName)
         {
+            if (string.IsNullOrEmpty(componentName))
+                throw new ComponentBuilderException("No component name provided in component dependency");
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 (nm, c, n) => c.NeedsComponent(nm.ResolveComponent(n)),
                 _component,
                 componentName);
+
             return this;
         }
 
         IComponentDefinition IComponentDefinition.NeedsComponent(IComponent component)
         {
+            if (ReferenceEquals(component, null))
+                throw new ComponentBuilderException("Null component reference for dependent component");
+
             _component.NeedsComponent(component);
+
             return this;
         }
 

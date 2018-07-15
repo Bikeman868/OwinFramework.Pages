@@ -132,6 +132,7 @@
     <Compile Include="Enums\CommentStyle.cs" />
     <Compile Include="Enums\HtmlFormat.cs" />
     <Compile Include="Enums\NameResolutionPhase.cs" />
+    <Compile Include="Exceptions\DataProviderBuilderException.cs" />
     <Compile Include="Exceptions\DataCatalogException.cs" />
     <Compile Include="Exceptions\FluentBuilderException.cs" />
     <Compile Include="Exceptions\InvalidNameException.cs" />

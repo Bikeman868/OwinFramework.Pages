@@ -24,6 +24,9 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly Dictionary<string, object> _regionLayouts;
         private readonly Dictionary<string, object> _regionComponents;
 
+        private readonly List<FunctionDefinition> _functionDefinitions;
+        private readonly List<CssDefinition> _cssDefinitions;
+
         private string _tag;
         private string[] _classNames;
         private string _style;
@@ -95,13 +98,19 @@ namespace OwinFramework.Pages.Html.Builders
             _regionLayouts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             _regionComponents = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
+            _cssDefinitions = new List<CssDefinition>();
+            _functionDefinitions = new List<FunctionDefinition>();
+
             if (package != null)
                 _layout.Package = package;
         }
 
         public ILayoutDefinition Name(string name)
         {
+            if (string.IsNullOrEmpty(name)) return this;
+
             _layout.Name = name;
+
             return this;
         }
 
@@ -113,12 +122,14 @@ namespace OwinFramework.Pages.Html.Builders
 
         public ILayoutDefinition PartOf(string packageName)
         {
-            _layout.Package = _nameManager.ResolvePackage(packageName);
+            if (string.IsNullOrEmpty(packageName)) return this;
 
-            if (_layout.Package == null)
-                throw new LayoutBuilderException(
-                    "Package names must be registered before layouts can refer to them. " +
-                    "There is no registered package '" + packageName + "'");
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolvePackageNames,
+                (nm, l, n) => l.Package = nm.ResolvePackage(n),
+                _layout,
+                packageName);
+
             return this;
         }
 
@@ -143,30 +154,55 @@ namespace OwinFramework.Pages.Html.Builders
 
         public ILayoutDefinition Region(string regionName, string name)
         {
+            if (string.IsNullOrEmpty(regionName))
+                throw new LayoutBuilderException("You must provide a region name when configuring layout regions");
+
+            if (string.IsNullOrEmpty(name))
+                throw new LayoutBuilderException("You must provide the name of the region element when configuring layout regions");
+
             _regionElements[regionName] = name;
             return this;
         }
 
         public ILayoutDefinition Component(string regionName, IComponent component)
         {
+            if (string.IsNullOrEmpty(regionName))
+                throw new LayoutBuilderException("You must provide a region name when defining which component to place into a layout region");
+
             _regionComponents[regionName] = component;
             return this;
         }
 
         public ILayoutDefinition Component(string regionName, string componentName)
         {
+            if (string.IsNullOrEmpty(regionName))
+                throw new LayoutBuilderException("You must provide a region name when defining which component to place into a layout region");
+
+            if (string.IsNullOrEmpty(componentName))
+                throw new LayoutBuilderException("You must provide the name of the component element when defining which component to place into a layout region");
+
             _regionComponents[regionName] = componentName;
             return this;
         }
 
         public ILayoutDefinition Layout(string regionName, ILayout layout)
         {
+            if (string.IsNullOrEmpty(regionName))
+                throw new LayoutBuilderException("You must provide a region name when defining which layout to place into a layout region");
+
             _regionLayouts[regionName] = layout;
+
             return this;
         }
 
         public ILayoutDefinition Layout(string regionName, string layoutName)
         {
+            if (string.IsNullOrEmpty(regionName))
+                throw new LayoutBuilderException("You must provide a region name when defining which layout to place into a layout region");
+
+            if (string.IsNullOrEmpty(regionName))
+                throw new LayoutBuilderException("You must provide the name of the layout element when defining which layout to place into a layout region");
+
             _regionLayouts[regionName] = layoutName;
             return this;
         }
@@ -209,49 +245,90 @@ namespace OwinFramework.Pages.Html.Builders
 
         ILayoutDefinition ILayoutDefinition.DeployCss(string cssSelector, string cssStyle)
         {
+            if (string.IsNullOrEmpty(cssSelector))
+                throw new LayoutBuilderException("No CSS selector is specified for component CSS asset");
+
+            if (string.IsNullOrEmpty(cssStyle))
+                throw new LayoutBuilderException("No CSS style is specified for component CSS asset");
+
+            var cssDefinition = new CssDefinition
+            {
+                Selector = cssSelector.Trim(),
+                Style = cssStyle.Trim()
+            };
+
+            if (!cssDefinition.Style.EndsWith(";"))
+                cssDefinition.Style += ";";
+
+            _cssDefinitions.Add(cssDefinition);
+
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic)
         {
+            var functionDefinition = new FunctionDefinition
+            {
+                ReturnType = returnType,
+                FunctionName = functionName,
+                Parameters = parameters,
+                Body = functionBody,
+                IsPublic = isPublic
+            };
+
+            _functionDefinitions.Add(functionDefinition);
+
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.BindTo<T>(string scopeName)
         {
             var dataConsumer = _layout as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency<T>(scopeName);
+            if (dataConsumer == null)
+                throw new LayoutBuilderException("This layout is not a consumer of data");
+
+            dataConsumer.HasDependency<T>(scopeName);
+
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.BindTo(Type dataType, string scopeName)
         {
+            if (dataType == null)
+                throw new FluentBuilderException("To define data binding you must specify the type of data to bind");
+
             var dataConsumer = _layout as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency(dataType, scopeName);
+            if (dataConsumer == null)
+                throw new LayoutBuilderException("This layout is not a consumer of data");
+
+            dataConsumer.HasDependency(dataType, scopeName);
+
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.DataProvider(string dataProviderName)
         {
             var dataConsumer = _layout as IDataConsumer;
-            if (dataConsumer != null)
-            {
-                _nameManager.AddResolutionHandler(
-                    NameResolutionPhase.ResolveElementReferences,
-                    (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n, _layout.Package)),
-                    dataConsumer,
-                    dataProviderName);
-            }
+            if (dataConsumer == null)
+                throw new LayoutBuilderException("This layout is not a consumer of data");
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n)),
+                dataConsumer,
+                dataProviderName);
+
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.DataProvider(IDataProvider dataProvider)
         {
             var dataConsumer = _layout as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency(dataProvider);
+            if (dataConsumer == null)
+                throw new LayoutBuilderException("This layout is not a consumer of data");
+
+            dataConsumer.HasDependency(dataProvider);
+
             return this;
         }
 
@@ -263,27 +340,38 @@ namespace OwinFramework.Pages.Html.Builders
 
         ILayoutDefinition ILayoutDefinition.DeployIn(string moduleName)
         {
+            if (string.IsNullOrEmpty(moduleName)) return this;
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 (nm, l, n) => l.Module = nm.ResolveModule(n),
                 _layout,
                 moduleName);
+
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.NeedsComponent(string componentName)
         {
+            if (string.IsNullOrEmpty(componentName))
+                throw new LayoutBuilderException("No component name provided in layout dependency");
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, l, n) => l.NeedsComponent(nm.ResolveComponent(n, l.Package)),
+                (nm, l, n) => l.NeedsComponent(nm.ResolveComponent(n)),
                 _layout,
                 componentName);
+
             return this;
         }
 
         ILayoutDefinition ILayoutDefinition.NeedsComponent(IComponent component)
         {
+            if (ReferenceEquals(component, null))
+                throw new LayoutBuilderException("Null component reference for dependent component");
+
             _layout.NeedsComponent(component);
+
             return this;
         }
 

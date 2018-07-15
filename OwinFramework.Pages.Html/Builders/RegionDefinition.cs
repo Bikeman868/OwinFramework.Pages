@@ -42,7 +42,10 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Name(string name)
         {
+            if (string.IsNullOrEmpty(name)) return this;
+
             _region.Name = name;
+
             return this;
         }
 
@@ -54,12 +57,14 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.PartOf(string packageName)
         {
-            _region.Package = _nameManager.ResolvePackage(packageName);
+            if (string.IsNullOrEmpty(packageName)) return this;
 
-            if (_region.Package == null)
-                throw new RegionBuilderException(
-                    "Package names must be registered before regions can refer to them. " +
-                    "There is no registered package '" + packageName + "'");
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolvePackageNames,
+                (nm, r, n) => r.Package = nm.ResolvePackage(n),
+                _region,
+                packageName);
+
             return this;
         }
 
@@ -77,11 +82,15 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Layout(string layoutName)
         {
+            if (string.IsNullOrEmpty(layoutName))
+                throw new RegionBuilderException("When defining the region layout a layout name must be specified");
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 (nm, r, n) => r.Populate(nm.ResolveLayout(n, r.Package)),
                 _region,
                 layoutName);
+
             return this;
         }
 
@@ -93,11 +102,15 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Component(string componentName)
         {
+            if (string.IsNullOrEmpty(componentName))
+                throw new RegionBuilderException("When defining the region component a component name must be specified");
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 (nm, r, n) => r.Populate(nm.ResolveComponent(n, r.Package)),
                 _region,
                 componentName);
+
             return this;
         }
 
@@ -119,7 +132,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.ForEach<T>(string scopeName, string tag, string style, string listScope, params string[] classes)
+        IRegionDefinition IRegionDefinition.ForEach<T>(
+            string scopeName, 
+            string tag, 
+            string style, 
+            string listScope, 
+            params string[] classes)
         {
             _region.RepeatType = typeof(T);
             _region.RepeatScope = scopeName;
@@ -131,8 +149,17 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.ForEach(Type dataType, string scopeName, string tag, string style, string listScope, params string[] classes)
+        IRegionDefinition IRegionDefinition.ForEach(
+            Type dataType, 
+            string scopeName, 
+            string tag, 
+            string style, 
+            string listScope, 
+            params string[] classes)
         {
+            if (dataType == null)
+                throw new RegionBuilderException("When confiuring a region to repeat the data type to repeat must be specified");
+
             _region.RepeatType = dataType;
             _region.RepeatScope = scopeName;
             _region.ListScope = listScope;
@@ -144,50 +171,71 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IRegionDefinition DataScope(Type type, string scopeName)
+        public IRegionDefinition DataScope(Type dataType, string scopeName)
         {
-            // TODO: This applies to the region instance not the region
+            if (dataType == null)
+                throw new RegionBuilderException("When confiuring a region to repeat the data type to repeat must be specified");
+
+            // TODO: the region is not a data scope provider, only the region instance
+
+            /*
             var dataScope = _region as IDataScopeProvider;
-            if (dataScope != null)
-                dataScope.AddScope(type, scopeName);
+            if (dataScope = null)
+               throw new RegionBuilderException("This region is not a data scope provider");
+            dataScope.AddScope(dataType, scopeName);
+            */
+
             return this;
         }
 
         IRegionDefinition IRegionDefinition.BindTo<T>(string scopeName) 
         {
             var dataConsumer = _region as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency<T>(scopeName);
+            if (dataConsumer == null)
+                throw new RegionBuilderException("This region is not a consumer of data");
+
+            dataConsumer.HasDependency<T>(scopeName);
+
             return this;
         }
 
         IRegionDefinition IRegionDefinition.BindTo(Type dataType, string scopeName)
         {
+            if (dataType == null)
+                throw new RegionBuilderException("To define data binding you must specify the type of data to bind");
+
             var dataConsumer = _region as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency(dataType, scopeName);
+            if (dataConsumer == null)
+                throw new RegionBuilderException("This region is not a consumer of data");
+
+            dataConsumer.HasDependency(dataType, scopeName);
+
             return this;
         }
 
         IRegionDefinition IRegionDefinition.DataProvider(string dataProviderName)
         {
             var dataConsumer = _region as IDataConsumer;
-            if (dataConsumer != null)
-            {
-                _nameManager.AddResolutionHandler(
-                    NameResolutionPhase.ResolveElementReferences,
-                    (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n, _region.Package)),
-                    dataConsumer,
-                    dataProviderName);
-            }
+            if (dataConsumer == null)
+                throw new RegionBuilderException("This region is not a consumer of data");
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n)),
+                dataConsumer,
+                dataProviderName);
+
             return this;
         }
 
         IRegionDefinition IRegionDefinition.DataProvider(IDataProvider dataProvider)
         {
             var dataConsumer = _region as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency(dataProvider);
+            if (dataConsumer == null)
+                throw new RegionBuilderException("This region is not a consumer of data");
+
+            dataConsumer.HasDependency(dataProvider);
+
             return this;
         }
 
@@ -199,27 +247,38 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.NeedsComponent(string componentName)
         {
+            if (string.IsNullOrEmpty(componentName))
+                throw new RegionBuilderException("No component name provided in region dependency");
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, r, n) => r.NeedsComponent(nm.ResolveComponent(n, r.Package)),
+                (nm, r, n) => r.NeedsComponent(nm.ResolveComponent(n)),
                 _region,
                 componentName);
+
             return this;
         }
 
         IRegionDefinition IRegionDefinition.NeedsComponent(IComponent component)
         {
+            if (ReferenceEquals(component, null))
+                throw new RegionBuilderException("Null component reference for dependent component");
+
             _region.NeedsComponent(component);
+
             return this;
         }
 
         IRegionDefinition IRegionDefinition.DeployIn(string moduleName)
         {
+            if (string.IsNullOrEmpty(moduleName)) return this;
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 (nm, r, n) => r.Module = nm.ResolveModule(n),
                 _region,
                 moduleName);
+
             return this;
         }
 

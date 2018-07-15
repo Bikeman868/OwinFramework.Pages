@@ -66,6 +66,8 @@
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Builders\ComponentBuilder.cs" />
     <Compile Include="Builders\ComponentDefinition.cs" />
+    <Compile Include="Builders\CssDefinition.cs" />
+    <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
     <Compile Include="Elements\ElementBase.cs" />
     <Compile Include="Interfaces\IHtmlHelper.cs" />

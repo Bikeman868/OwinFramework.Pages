@@ -39,7 +39,10 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.Name(string name)
         {
+            if (string.IsNullOrEmpty(name)) return this;
+
             _page.Name = name;
+
             return this;
         }
 
@@ -51,12 +54,14 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.PartOf(string packageName)
         {
-            _page.Package = _nameManager.ResolvePackage(packageName);
+            if (string.IsNullOrEmpty(packageName)) return this;
 
-            if (_page.Package == null)
-                throw new PageBuilderException(
-                    "Package names must be registered before pages can refer to them. " +
-                    "There is no registered package '" + packageName + "'");
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolvePackageNames,
+                (nm, p, n) => p.Package = nm.ResolvePackage(n),
+                _page,
+                packageName);
+
             return this;
         }
 
@@ -71,14 +76,18 @@ namespace OwinFramework.Pages.Html.Builders
             if (methods == null || methods.Length == 0)
             {
                 if (string.IsNullOrEmpty(path))
-                    return this;
+                    throw new PageBuilderException("The page route does not specify a path or any methods");
+
                 _requestRouter.Register(_page, new FilterByPath(path), priority, _declaringType);
             }
             else
             {
                 if (string.IsNullOrEmpty(path))
+                {
                     _requestRouter.Register(_page, new FilterByMethod(methods), priority, _declaringType);
+                }
                 else
+                {
                     _requestRouter.Register(
                         _page,
                         new FilterAllFilters(
@@ -86,6 +95,7 @@ namespace OwinFramework.Pages.Html.Builders
                             new FilterByPath(path)),
                         priority,
                         _declaringType);
+                }
             }
             return this;
         }
@@ -109,49 +119,71 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPageDefinition IPageDefinition.Layout(string name)
+        IPageDefinition IPageDefinition.Layout(string layoutName)
         {
+            if (string.IsNullOrEmpty(layoutName))
+                throw new PageBuilderException("The name of the layout to use for the page is required");
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.CreateInstances,
-                (nm, p) => 
+                (nm, p, n) => 
                     {
-                        var layout = nm.ResolveLayout(name, p.Package);
+                        var layout = nm.ResolveLayout(n, p.Package);
                         var layoutInstance = layout.CreateInstance();
                         p.Layout = layoutInstance;
                     },
-                _page);
+                _page,
+                layoutName);
             return this;
         }
 
         IPageDefinition IPageDefinition.RegionComponent(string regionName, IComponent component)
         {
+            if (string.IsNullOrEmpty(regionName))
+                throw new PageBuilderException("You must provide a region name when configuring page regions");
+
             _page.PopulateRegion(regionName, component);
             return this;
         }
 
         IPageDefinition IPageDefinition.RegionComponent(string regionName, string componentName)
         {
+            if (string.IsNullOrEmpty(regionName))
+                throw new PageBuilderException("You must provide a region name when configuring page regions");
+
+            if (string.IsNullOrEmpty(componentName))
+                throw new PageBuilderException("You must provide a component name when configuring a page region component");
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences, 
-                (nm, p) =>
-                    p.PopulateRegion(regionName, nm.ResolveComponent(componentName, p.Package)),
-                _page);
+                (nm, p, n) =>p.PopulateRegion(regionName, nm.ResolveComponent(n, p.Package)),
+                _page,
+                componentName);
             return this;
         }
 
         IPageDefinition IPageDefinition.RegionLayout(string regionName, ILayout layout)
         {
+            if (string.IsNullOrEmpty(regionName))
+                throw new PageBuilderException("You must provide a region name when configuring page regions");
+
             _page.PopulateRegion(regionName, layout);
             return this;
         }
 
         IPageDefinition IPageDefinition.RegionLayout(string regionName, string layoutName)
         {
+            if (string.IsNullOrEmpty(layoutName))
+                throw new PageBuilderException("You must provide a layout name when configuring a page region layout");
+
+            if (string.IsNullOrEmpty(layoutName))
+                throw new PageBuilderException("You must provide a layout name when configuring a page region layout");
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, p) =>
-                    p.PopulateRegion(regionName, nm.ResolveLayout(layoutName, p.Package)),
-                _page);
+                (nm, p, n) => p.PopulateRegion(regionName, nm.ResolveLayout(n, p.Package)),
+                _page,
+                layoutName);
             return this;
         }
 
@@ -179,46 +211,65 @@ namespace OwinFramework.Pages.Html.Builders
         IPageDefinition IPageDefinition.BindTo<T>(string scopeName)
         {
             var dataConsumer = _page as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency<T>(scopeName);
+            if (dataConsumer == null)
+                throw new PageBuilderException("This page is not a consumer of data");
+
+            dataConsumer.HasDependency<T>(scopeName);
+
             return this;
         }
 
         IPageDefinition IPageDefinition.BindTo(Type dataType, string scopeName)
         {
+            if (dataType == null)
+                throw new PageBuilderException("To define data binding you must specify the type of data to bind");
+
             var dataConsumer = _page as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency(dataType, scopeName);
+            if (dataConsumer == null)
+                throw new PageBuilderException("This layout is not a consumer of data");
+
+            dataConsumer.HasDependency(dataType, scopeName);
+
             return this;
         }
 
         IPageDefinition IPageDefinition.DataProvider(string dataProviderName)
         {
             var dataConsumer = _page as IDataConsumer;
-            if (dataConsumer != null)
-            {
-                _nameManager.AddResolutionHandler(
-                    NameResolutionPhase.ResolveElementReferences,
-                    (nm, p, c) => c.HasDependency(nm.ResolveDataProvider(dataProviderName, p.Package)), 
-                    _page,
-                    dataConsumer);
-            }
+            if (dataConsumer == null)
+                throw new PageBuilderException("This page is not a consumer of data");
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n)),
+                dataConsumer,
+                dataProviderName);
+
             return this;
         }
 
         IPageDefinition IPageDefinition.DataProvider(IDataProvider dataProvider)
         {
             var dataConsumer = _page as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency(dataProvider);
+            if (dataConsumer == null)
+                throw new PageBuilderException("This page is not a consumer of data");
+
+            dataConsumer.HasDependency(dataProvider);
+
             return this;
         }
 
         IPageDefinition IPageDefinition.DataScope(Type type, string scopeName)
         {
+            if (type == null)
+                throw new PageBuilderException("The page data scope type is null");
+
             var dataScope = _page as IDataScopeProvider;
-            if (dataScope != null)
-                dataScope.AddScope(type, scopeName);
+            if (dataScope == null)
+                throw new PageBuilderException("This page is not a data scope provider");
+
+            dataScope.AddScope(type, scopeName);
+
             return this;
         }
 
@@ -230,25 +281,38 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.DeployIn(string moduleName)
         {
+            if (string.IsNullOrEmpty(moduleName)) return this;
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, p) => p.Module = nm.ResolveModule(moduleName),
-                _page);
+                (nm, p, n) => p.Module = nm.ResolveModule(n),
+                _page,
+                moduleName);
+
             return this;
         }
 
         IPageDefinition IPageDefinition.NeedsComponent(string componentName)
         {
+            if (string.IsNullOrEmpty(componentName))
+                throw new PageBuilderException("No component name provided in page dependency");
+
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, p) => p.NeedsComponent(nm.ResolveComponent(componentName, p.Package)),
-                _page);
+                (nm, p, n) => p.NeedsComponent(nm.ResolveComponent(n)),
+                _page,
+                componentName);
+
             return this;
         }
 
         IPageDefinition IPageDefinition.NeedsComponent(IComponent component)
         {
+            if (ReferenceEquals(component, null))
+                throw new PageBuilderException("Null component reference for dependent component");
+
             _page.NeedsComponent(component);
+
             return this;
         }
 

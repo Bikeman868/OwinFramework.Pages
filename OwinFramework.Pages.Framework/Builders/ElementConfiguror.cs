@@ -40,16 +40,14 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.IsComponent, null))
             {
-                component
-                    .Name(attributes.IsComponent.Name);
+                component.Name(attributes.IsComponent.Name);
             }
 
             if (!ReferenceEquals(attributes.DeployCsss, null))
             {
                 foreach (var css in attributes.DeployCsss)
                 {
-                    component
-                        .DeployCss(css.CssSelector, css.CssStyle);
+                    component.DeployCss(css.CssSelector, css.CssStyle);
                 }
             }
 
@@ -70,16 +68,16 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var dataNeed in attributes.NeedsDatas)
                 {
-                    component
-                        .DataProvider(dataNeed.DataProviderName)
-                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                    if (!string.IsNullOrEmpty(dataNeed.DataProviderName))
+                        component.DataProvider(dataNeed.DataProviderName);
+                    if (dataNeed.DataType != null)
+                        component.BindTo(dataNeed.DataType, dataNeed.Scope);
                 }
             }
 
             if (!ReferenceEquals(attributes.PartOf, null))
             {
-                component
-                    .PartOf(attributes.PartOf.PackageName);
+                component.PartOf(attributes.PartOf.PackageName);
             }
 
             if (!ReferenceEquals(attributes.DeployedAs, null))
@@ -93,8 +91,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach(var need in attributes.NeedsComponents)
                 {
-                    component
-                        .NeedsComponent(need.ComponentName);
+                    component.NeedsComponent(need.ComponentName);
                 }
             }
 
@@ -102,8 +99,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var html in attributes.RenderHtmls.OrderBy(h => h.Order))
                 {
-                    component
-                        .Render(html.TextName, html.Html);
+                    component.Render(html.TextName, html.Html);
                 }
             }
         }
@@ -114,33 +110,32 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.IsDataProvider, null))
             {
-                dataProvider
-                    .Name(attributes.IsDataProvider.Name)
-                    .Provides(attributes.IsDataProvider.Type, attributes.IsDataProvider.Scope);
+                dataProvider.Name(attributes.IsDataProvider.Name);
+                if (attributes.IsDataProvider.Type != null)
+                    dataProvider.Provides(attributes.IsDataProvider.Type, attributes.IsDataProvider.Scope);
             }
 
             if (!ReferenceEquals(attributes.NeedsDatas, null))
             {
                 foreach(var dataNeed in attributes.NeedsDatas)
                 {
-                    dataProvider
-                        .DependsOn(dataNeed.DataProviderName)
-                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                    if (!string.IsNullOrEmpty(dataNeed.DataProviderName))
+                        dataProvider.DependsOn(dataNeed.DataProviderName);
+                    if (dataNeed.DataType != null)
+                        dataProvider.BindTo(dataNeed.DataType, dataNeed.Scope);
                 }
             }
 
             if (!ReferenceEquals(attributes.PartOf, null))
             {
-                dataProvider
-                    .PartOf(attributes.PartOf.PackageName);
+                dataProvider.PartOf(attributes.PartOf.PackageName);
             }
 
             if (!ReferenceEquals(attributes.SuppliesDatas, null))
             {
                 foreach(var data in attributes.SuppliesDatas)
                 {
-                    dataProvider
-                        .Provides(data.DataType, data.Scope);
+                    dataProvider.Provides(data.DataType, data.Scope);
                 }
             }
         }
@@ -160,16 +155,16 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var dataNeed in attributes.NeedsDatas)
                 {
-                    layout
-                        .DataProvider(dataNeed.DataProviderName)
-                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                    if (!string.IsNullOrEmpty(dataNeed.DataProviderName))
+                        layout.DataProvider(dataNeed.DataProviderName);
+                    if (dataNeed.DataType != null)
+                        layout.BindTo(dataNeed.DataType, dataNeed.Scope);
                 }
             }
 
             if (!ReferenceEquals(attributes.PartOf, null))
             {
-                layout
-                    .PartOf(attributes.PartOf.PackageName);
+                layout.PartOf(attributes.PartOf.PackageName);
             }
 
             if (!ReferenceEquals(attributes.DeployedAs, null))
@@ -183,8 +178,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var need in attributes.NeedsComponents)
                 {
-                    layout
-                        .NeedsComponent(need.ComponentName);
+                    layout.NeedsComponent(need.ComponentName);
                 }
             }
 
@@ -210,16 +204,14 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.ChildStyle, null))
             {
-                layout
-                    .NestedStyle(attributes.ChildStyle.CssStyle);
+                layout.NestedStyle(attributes.ChildStyle.CssStyle);
             }
 
             if (!ReferenceEquals(attributes.DeployCsss, null))
             {
                 foreach(var css in attributes.DeployCsss)
                 {
-                    layout
-                        .DeployCss(css.CssSelector, css.CssStyle);
+                    layout.DeployCss(css.CssSelector, css.CssStyle);
                 }
             }
 
@@ -227,13 +219,12 @@ namespace OwinFramework.Pages.Framework.Builders
             { 
                 foreach(var function in attributes.DeployFunctions)
                 {
-                    layout
-                        .DeployFunction(
-                            function.ReturnType, 
-                            function.FunctionName, 
-                            function.Parameters, 
-                            function.Body, 
-                            function.IsPublic);
+                    layout.DeployFunction(
+                        function.ReturnType, 
+                        function.FunctionName, 
+                        function.Parameters, 
+                        function.Body, 
+                        function.IsPublic);
                 }
             }
 
@@ -241,8 +232,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var usesRegion in attributes.UsesRegions)
                 {
-                    layout
-                        .Region(usesRegion.RegionName, usesRegion.RegionElement);
+                    layout.Region(usesRegion.RegionName, usesRegion.RegionElement);
                 }
             }
 
@@ -250,8 +240,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach(var regionComponent in attributes.RegionComponents)
                 {
-                    layout
-                        .Component(regionComponent.Region, regionComponent.Component);
+                    layout.Component(regionComponent.Region, regionComponent.Component);
                 }
             }
 
@@ -259,8 +248,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionLayout in attributes.RegionLayouts)
                 {
-                    layout
-                        .Layout(regionLayout.Region, regionLayout.Layout);
+                    layout.Layout(regionLayout.Region, regionLayout.Layout);
                 }
             }
         }
@@ -290,8 +278,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.DeployedAs, null))
             {
-                package
-                    .Module(attributes.DeployedAs.ModuleName);
+                package.Module(attributes.DeployedAs.ModuleName);
             }
         }
 
@@ -301,24 +288,23 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.IsPage, null))
             {
-                page
-                    .Name(attributes.IsPage.Name);
+                page.Name(attributes.IsPage.Name);
             }
 
             if (!ReferenceEquals(attributes.NeedsDatas, null))
             {
                 foreach (var dataNeed in attributes.NeedsDatas)
                 {
-                    page
-                        .DataProvider(dataNeed.DataProviderName)
-                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                    if (!string.IsNullOrEmpty(dataNeed.DataProviderName))
+                        page.DataProvider(dataNeed.DataProviderName);
+                    if (dataNeed.DataType != null)
+                        page.BindTo(dataNeed.DataType, dataNeed.Scope);
                 }
             }
 
             if (!ReferenceEquals(attributes.PartOf, null))
             {
-                page
-                    .PartOf(attributes.PartOf.PackageName);
+                page.PartOf(attributes.PartOf.PackageName);
             }
 
             if (!ReferenceEquals(attributes.DeployedAs, null))
@@ -332,8 +318,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var need in attributes.NeedsComponents)
                 {
-                    page
-                        .NeedsComponent(need.ComponentName);
+                    page.NeedsComponent(need.ComponentName);
                 }
             }
 
@@ -341,8 +326,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionComponent in attributes.RegionComponents)
                 {
-                    page
-                        .RegionComponent(regionComponent.Region, regionComponent.Component);
+                    page.RegionComponent(regionComponent.Region, regionComponent.Component);
                 }
             }
 
@@ -350,21 +334,18 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionLayout in attributes.RegionLayouts)
                 {
-                    page
-                        .RegionLayout(regionLayout.Region, regionLayout.Layout);
+                    page.RegionLayout(regionLayout.Region, regionLayout.Layout);
                 }
             }
 
             if (!ReferenceEquals(attributes.PageTitle, null))
             {
-                page
-                    .Title(attributes.PageTitle.Title);
+                page.Title(attributes.PageTitle.Title);
             }
 
             if (!ReferenceEquals(attributes.Style, null))
             {
-                page
-                    .BodyStyle(attributes.Style.CssStyle);
+                page.BodyStyle(attributes.Style.CssStyle);
             }
 
             if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
@@ -372,16 +353,14 @@ namespace OwinFramework.Pages.Framework.Builders
                 if (attributes.UsesLayouts.Count > 1)
                     throw new FluentBuilderException("A page can not have more than one layout");
 
-                page
-                    .Layout(attributes.UsesLayouts[0].LayoutName);
+                page.Layout(attributes.UsesLayouts[0].LayoutName);
             }
 
             if (!ReferenceEquals(attributes.Routes, null))
             {
                 foreach (var route in attributes.Routes)
                 {
-                    page
-                        .Route(route.Path, route.Priority, route.Methods);
+                    page.Route(route.Path, route.Priority, route.Methods);
                 }
             }
 
@@ -389,8 +368,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var dataScope in attributes.DataScopes)
                 {
-                    page
-                        .DataScope(dataScope.DataType, dataScope.Scope);
+                    page.DataScope(dataScope.DataType, dataScope.Scope);
                 }
             }
         }
@@ -401,24 +379,23 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.IsRegion, null))
             {
-                region
-                    .Name(attributes.IsRegion.Name);
+                region.Name(attributes.IsRegion.Name);
             }
 
             if (!ReferenceEquals(attributes.NeedsDatas, null))
             {
                 foreach (var dataNeed in attributes.NeedsDatas)
                 {
-                    region
-                        .DataProvider(dataNeed.DataProviderName)
-                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                    if (!string.IsNullOrEmpty(dataNeed.DataProviderName))
+                        region.DataProvider(dataNeed.DataProviderName);
+                    if (dataNeed.DataType != null)
+                        region.BindTo(dataNeed.DataType, dataNeed.Scope);
                 }
             }
 
             if (!ReferenceEquals(attributes.PartOf, null))
             {
-                region
-                    .PartOf(attributes.PartOf.PackageName);
+                region.PartOf(attributes.PartOf.PackageName);
             }
 
             if (!ReferenceEquals(attributes.DeployedAs, null))
@@ -432,15 +409,13 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var need in attributes.NeedsComponents)
                 {
-                    region
-                        .NeedsComponent(need.ComponentName);
+                    region.NeedsComponent(need.ComponentName);
                 }
             }
 
             if (!ReferenceEquals(attributes.Style, null))
             {
-                region
-                    .Style(attributes.Style.CssStyle);
+                region.Style(attributes.Style.CssStyle);
             }
 
             if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
@@ -448,8 +423,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 if (attributes.UsesLayouts.Count > 1)
                     throw new FluentBuilderException("A region can not have more than one layout");
 
-                region
-                    .Layout(attributes.UsesLayouts[0].LayoutName);
+                region.Layout(attributes.UsesLayouts[0].LayoutName);
             }
 
             if (!ReferenceEquals(attributes.UsesComponents, null) && attributes.UsesComponents.Count > 0)
@@ -460,16 +434,14 @@ namespace OwinFramework.Pages.Framework.Builders
                 if (attributes.UsesComponents.Count > 1)
                     throw new FluentBuilderException("A region can not have more than one component");
 
-                region
-                    .Component(attributes.UsesComponents[0].ComponentName);
+                region.Component(attributes.UsesComponents[0].ComponentName);
             }
 
             if (!ReferenceEquals(attributes.DataScopes, null))
             {
                 foreach (var dataScope in attributes.DataScopes)
                 {
-                    region
-                        .DataScope(dataScope.DataType, dataScope.Scope);
+                    region.DataScope(dataScope.DataType, dataScope.Scope);
                 }
             }
 
@@ -482,20 +454,18 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.Style, null))
             {
-                region
-                    .Style(attributes.Style.CssStyle);
+                region.Style(attributes.Style.CssStyle);
             }
 
             if (!ReferenceEquals(attributes.Repeat, null))
             {
-                region
-                    .ForEach(
-                        attributes.Repeat.RepeatType,
-                        attributes.Repeat.RepeatScope,
-                        attributes.Repeat.Tag,
-                        attributes.Repeat.Style,
-                        attributes.Repeat.ListScope,
-                        attributes.Repeat.ClassNames);
+                region.ForEach(
+                    attributes.Repeat.RepeatType,
+                    attributes.Repeat.RepeatScope,
+                    attributes.Repeat.Tag,
+                    attributes.Repeat.Style,
+                    attributes.Repeat.ListScope,
+                    attributes.Repeat.ClassNames);
             }
         }
 
@@ -505,24 +475,23 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.IsService, null))
             {
-                service
-                    .Name(attributes.IsService.Name);
+                service.Name(attributes.IsService.Name);
             }
 
             if (!ReferenceEquals(attributes.NeedsDatas, null))
             {
                 foreach (var dataNeed in attributes.NeedsDatas)
                 {
-                    service
-                        .DataProvider(dataNeed.DataProviderName)
-                        .BindTo(dataNeed.DataType, dataNeed.Scope);
+                    if (!string.IsNullOrEmpty(dataNeed.DataProviderName))
+                        service.DataProvider(dataNeed.DataProviderName);
+                    if (dataNeed.DataType != null)
+                        service.BindTo(dataNeed.DataType, dataNeed.Scope);
                 }
             }
 
             if (!ReferenceEquals(attributes.PartOf, null))
             {
-                service
-                    .PartOf(attributes.PartOf.PackageName);
+                service.PartOf(attributes.PartOf.PackageName);
             }
 
             if (!ReferenceEquals(attributes.DeployedAs, null))
@@ -536,8 +505,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var route in attributes.Routes)
                 {
-                    service
-                        .Route(route.Path, route.Priority, route.Methods);
+                    service.Route(route.Path, route.Priority, route.Methods);
                 }
             }
 
@@ -545,8 +513,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var dataScope in attributes.DataScopes)
                 {
-                    service
-                        .DataScope(dataScope.DataType, dataScope.Scope);
+                    service.DataScope(dataScope.DataType, dataScope.Scope);
                 }
             }
         }
@@ -622,25 +589,8 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private void Configure(AttributeSet attributes, IElement element)
         {
-            if (element == null) return;
-
-            if (attributes.PartOf != null && !string.IsNullOrEmpty(attributes.PartOf.PackageName))
-            {
-                element.Package = _nameManager.ResolvePackage(attributes.PartOf.PackageName);
-            }
-
-            if (attributes.DeployedAs != null)
-            {
-                element.AssetDeployment = attributes.DeployedAs.Deployment;
-                if (!string.IsNullOrEmpty(attributes.DeployedAs.ModuleName))
-                {
-                    _nameManager.AddResolutionHandler(
-                        NameResolutionPhase.ResolveElementReferences,
-                        (nm, e, n) => e.Module = nm.ResolveModule(n),
-                        element, 
-                        attributes.DeployedAs.ModuleName);
-                }
-            }
+            // All elements are IDeployable and IPackagable so they
+            // are taken care of by the generic configuration methods
         }
 
         private void Configure(AttributeSet attributes, IComponent component)
@@ -816,7 +766,11 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (attributes.PartOf != null && !string.IsNullOrEmpty(attributes.PartOf.PackageName))
             {
-                packagable.Package = _nameManager.ResolvePackage(attributes.PartOf.PackageName);
+                _nameManager.AddResolutionHandler(
+                    NameResolutionPhase.ResolvePackageNames,
+                    (nm, e, n) => e.Package = nm.ResolvePackage(n),
+                    packagable,
+                    attributes.PartOf.PackageName);
             }
         }
 

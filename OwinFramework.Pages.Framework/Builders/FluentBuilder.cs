@@ -98,21 +98,6 @@ namespace OwinFramework.Pages.Framework.Builders
 
             var types = assembly.GetTypes();
 
-            var packageTypes = new List<Type>();
-            var dataProviderTypes = new List<Type>();
-            var otherTypes = new List<Type>();
-
-            foreach(var type in types)
-            {
-                var customAttributes = type.GetCustomAttributes(true);
-                if (customAttributes.Any(a => a is IsPackageAttribute))
-                    packageTypes.Add(type);
-                else if (customAttributes.Any(a => a is IsDataProviderAttribute))
-                    dataProviderTypes.Add(type);
-                else if (customAttributes.Length > 0)
-                    otherTypes.Add(type);
-            }
-
             var  exceptions = new List<Exception>();
 
             Action<Type> register = t =>
@@ -127,9 +112,7 @@ namespace OwinFramework.Pages.Framework.Builders
                     }
                 };
 
-            foreach (var type in packageTypes) register(type);
-            foreach (var type in dataProviderTypes) register(type);
-            foreach (var type in otherTypes) register(type);
+            foreach (var type in types) register(type);
 
             if (exceptions.Count == 1)
                 throw exceptions[0];

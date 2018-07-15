@@ -15,7 +15,7 @@ namespace Sample1.SamplePackages
     /// a layout called 'menu' that will display a list of 'MenuItem' objects
     /// from the data context.
     /// To use this package put the 'Menu' region into a layout and write a
-    /// context handler to add a list of MenuItem objects to the
+    /// data provider to add a list of MenuItem objects to the
     /// data context.
     /// Note that adding the [IsPackage] attribute will make this package
     /// register automatically if you register the assembly that contains it, 
@@ -40,25 +40,48 @@ namespace Sample1.SamplePackages
             public IList<MenuItem> SubMenu { get; set; }
         }
 
-        public class SubMenuDataProvider: DataProvider
+        /// <summary>
+        /// This is how you would write a data provider that is configured in code. In
+        /// this case the configuration is in the constructor
+        /// </summary>
+        private class SubMenuDataProviderBare: DataProvider
         {
-            public SubMenuDataProvider(IDataProviderDependenciesFactory dependencies) 
+            public SubMenuDataProviderBare(IDataProviderDependenciesFactory dependencies) 
                 : base(dependencies) 
             {
                 DataConsumer.HasDependency<MenuItem>();
                 Add<IList<MenuItem>>("submenu");
             }
 
-            protected override void Supply(
-                IRenderContext renderContext,
-                IDataContext dataContext,
-                IDataDependency dependency)
+            protected override void Supply(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
             {
                 var parent = dataContext.Get<MenuItem>();
                 dataContext.Set(parent.SubMenu, "submenu");
             }
         }
 
+        /// <summary>
+        /// This is how you would write a data provider where the data it needs
+        /// and the data it supplies are defined using attributes attached to the class
+        /// </summary>
+        [NeedsData(typeof(MenuItem))]
+        [SuppliesData(typeof(IList<MenuItem>), "submenu")]
+        private class SubMenuDataProviderDecorated : DataProvider
+        {
+            public SubMenuDataProviderDecorated(IDataProviderDependenciesFactory dependencies)
+                : base(dependencies) { }
+
+            protected override void Supply(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
+            {
+                var parent = dataContext.Get<MenuItem>();
+                dataContext.Set(parent.SubMenu, "submenu");
+            }
+        }
+
+        /// <summary>
+        /// This is an example of writing a component that needs a MenuItem to work with and
+        /// writes html into the body of the page
+        /// </summary>
         [NeedsData(typeof(MenuItem))]
         private class MenuItemComponent : Component
         {
@@ -79,26 +102,9 @@ namespace Sample1.SamplePackages
             }
         }
 
-        [NeedsData(typeof(MenuItem), "submenu")]
-        private class SubMenuItemComponent : Component
-        {
-            public SubMenuItemComponent(IComponentDependenciesFactory dependencies)
-                : base(dependencies) { }
-
-            public override IWriteResult WriteHtml(
-                IRenderContext context,
-                bool includeChildren)
-            {
-                var menuItem = context.Data.Get<MenuItem>("submenu");
-                if (menuItem != null)
-                {
-                    var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
-                    context.Html.WriteElementLine("a", menuItem.Name, "href", url);
-                }
-                return WriteResult.Continue();
-            }
-        }
-
+        /// <summary>
+        /// This is an example if a component that just deploys static assets
+        /// </summary>
         [IsComponent("menuStyles")]
         [PartOf("menu")]
         [DeployCss("ul.{ns}_menu", "list-style-type: none; overflow: hidden; white-space: nowrap;")]
@@ -110,6 +116,9 @@ namespace Sample1.SamplePackages
         public class MenuStyles
         { }
 
+        /// <summary>
+        /// This is an example if a component that deploys static assets and depends on othre components
+        /// </summary>
         [IsComponent("menuStyle1")]
         [PartOf("menu")]
         [NeedsComponent("menuStyles")]
@@ -127,20 +136,30 @@ namespace Sample1.SamplePackages
             // This component displays a main menu item
             var mainMenuItemComponent = builder.BuildUpComponent(
                 new MenuItemComponent(Dependencies.ComponentDependenciesFactory))
+                .BindTo<MenuItem>()
                 .Build();
 
-            // This component displays a main menu item
+            // This component displays a submenu item
             var subMenuItemComponent = builder.BuildUpComponent(
-                new SubMenuItemComponent(Dependencies.ComponentDependenciesFactory))
+                new MenuItemComponent(Dependencies.ComponentDependenciesFactory))
+                .BindTo<MenuItem>("submenu")
                 .Build();
 
             // This data provider extracts sub-menu items from the current menu item
+            // using a custom data provider class
             var subMenuDataProvider1 = builder.BuildUpDataProvider(
-                new SubMenuDataProvider(Dependencies.DataProviderDependenciesFactory))
+                new SubMenuDataProviderBare(Dependencies.DataProviderDependenciesFactory))
                 .Build();
 
             // This data provider extracts sub-menu items from the current menu item
-            var subMenuDataProvider2 = builder.BuildUpDataProvider()
+            // using a custom data provider class decorated with attributes
+            var subMenuDataProvider2 = builder.BuildUpDataProvider(
+                new SubMenuDataProviderDecorated(Dependencies.DataProviderDependenciesFactory))
+                .Build();
+
+            // This data provider extracts sub-menu items from the current menu item
+            // using fluent syntax. No custom class is needed in this case
+            var subMenuDataProvider3 = builder.BuildUpDataProvider()
                 .BindTo<MenuItem>()
                 .Provides<IList<MenuItem>>((rc, dc, d) => 
                     {

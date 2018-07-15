@@ -1,5 +1,4 @@
 ﻿using System;
-using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
@@ -11,11 +10,6 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// </summary>
     public interface ILayout : IElement
     {
-        /// <summary>
-        /// Gets debugging information about the layout
-        /// </summary>
-        new DebugLayout GetDebugInfo();
-
         /// <summary>
         /// Changes the component that is displayed in a region of the layout
         /// </summary>

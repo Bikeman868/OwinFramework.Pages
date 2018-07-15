@@ -609,19 +609,16 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region Debug info
 
-        DebugInfo IRunable.GetDebugInfo() { return GetDebugInfo(); }
-
-        public DebugPage GetDebugInfo()
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
         {
             _dataScopeProvider.ElementName = "Page " + Name;
 
-            return new DebugPage
-            {
-                Name = Name,
-                Instance = this,
-                Layout = Layout == null ? null : Layout.GetDebugInfo(),
-                Scope = _dataScopeProvider.GetDebugInfo(0, -1)
-            };
+            var debugPage = debugInfo as DebugPage ?? new DebugPage();
+
+            debugPage.Layout = Layout == null ? null : (DebugLayout)Layout.GetDebugInfo();
+            debugPage.Scope = _dataScopeProvider.GetDebugInfo(0, -1);
+
+            return base.PopulateDebugInfo(debugPage);
         }
 
         #endregion

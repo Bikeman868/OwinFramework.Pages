@@ -88,25 +88,24 @@ namespace OwinFramework.Pages.Html.Elements
             initializationData.Pop();
         }
 
-        public DebugRegion GetDebugInfo()
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
         {
-            var parentDebugInfo = Parent == null ? null : Parent.GetDebugInfo();
+            var parentDebugInfo = Parent == null ? null : (DebugRegion)Parent.GetDebugInfo();
 
-            _dataScopeProvider.ElementName = "Region " + Name;
+            _dataScopeProvider.ElementName = "Region instance " + Name;
 
-            var debugInfo = new DebugRegion
-            {
-                Type = "Instance of region",
-                Content = _content == null ? null : _content.GetDebugInfo(),
-                InstanceOf = parentDebugInfo,
-                Scope = _dataScopeProvider.GetDebugInfo(-1, 1),
-                RepeatScope = RepeatScope,
-                RepeatType = RepeatType,
-                ListType = ListType,
-                ListScope = ListScope
-            };
-            PopulateDebugInfo(debugInfo);
-            return debugInfo;
+            var debugRegion = debugInfo as DebugRegion ?? new DebugRegion();
+
+            debugRegion.Type = "Instance of region";
+            debugRegion.Content = _content == null ? null : _content.GetDebugInfo();
+            debugRegion.InstanceOf = parentDebugInfo;
+            debugRegion.Scope = _dataScopeProvider.GetDebugInfo(-1, 1);
+            debugRegion.RepeatScope = RepeatScope;
+            debugRegion.RepeatType = RepeatType;
+            debugRegion.ListType = ListType;
+            debugRegion.ListScope = ListScope;
+
+            return base.PopulateDebugInfo(debugRegion);
         }
 
         public IElement Content { get { return _content; } }

@@ -897,8 +897,11 @@ namespace OwinFramework.Pages.Framework.Builders
                     else
                     {
                         if (string.IsNullOrEmpty(route.Path))
+                        {
                             _requestRouter.Register(runable, new FilterByMethod(route.Methods), route.Priority);
+                        }
                         else
+                        {
                             _requestRouter.Register(
                                 runable,
                                 new FilterAllFilters(
@@ -906,6 +909,7 @@ namespace OwinFramework.Pages.Framework.Builders
                                     new FilterByPath(route.Path)),
                                 route.Priority,
                                 attributes.Type);
+                        }
                     }
                 }
             }

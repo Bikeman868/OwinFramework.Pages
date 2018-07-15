@@ -76,23 +76,17 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region Debug info
 
-        DebugElement IElement.GetDebugInfo()
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
         {
-            return GetDebugInfo();
-        }
+            var debugRegion = debugInfo as DebugRegion ?? new DebugRegion();
 
-        public DebugRegion GetDebugInfo()
-        {
-            var debugInfo = new DebugRegion
-            { 
-                Content = Content == null ? null : Content.GetDebugInfo(),
-                RepeatScope = RepeatScope,
-                RepeatType = _repeatType,
-                ListType = _listType,
-                ListScope = ListScope
-            };
-            PopulateDebugInfo(debugInfo);
-            return debugInfo;
+            debugRegion.Content = Content == null ? null : Content.GetDebugInfo();
+            debugRegion.RepeatScope = RepeatScope;
+            debugRegion.RepeatType = _repeatType;
+            debugRegion.ListType = _listType;
+            debugRegion.ListScope = ListScope;
+
+            return base.PopulateDebugInfo(debugRegion);
         }
 
         #endregion
@@ -158,12 +152,15 @@ namespace OwinFramework.Pages.Html.Runtime
                 else
                 {
                     var list = (IEnumerable)context.Data.Get(_listType, ListScope);
-                    foreach (var item in list)
+                    if (list != null)
                     {
-                        context.Data.Set(_repeatType, item, RepeatScope);
-                        WriteChildOpen(context.Html);
-                        result.Add(content.WriteHtml(context));
-                        WriteChildClose(context.Html);
+                        foreach (var item in list)
+                        {
+                            context.Data.Set(_repeatType, item, RepeatScope);
+                            WriteChildOpen(context.Html);
+                            result.Add(content.WriteHtml(context));
+                            WriteChildClose(context.Html);
+                        }
                     }
                 }
             }

@@ -21,8 +21,6 @@ namespace OwinFramework.Pages.Html.Runtime
         public List<Action<ICssWriter>> CssRules;
         public List<Action<IJavascriptWriter>> JavascriptFunctions;
 
-        DebugElement IElement.GetDebugInfo() { return GetDebugInfo(); }
-
         public Component(IComponentDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
         {
@@ -31,13 +29,11 @@ namespace OwinFramework.Pages.Html.Runtime
             // this framework!!
         }
 
-        public DebugComponent GetDebugInfo()
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
         {
-            var debugInfo = new DebugComponent
-            {
-            };
-            PopulateDebugInfo(debugInfo);
-            return debugInfo;
+            var debugComponent = debugInfo as DebugComponent ?? new DebugComponent();
+
+            return base.PopulateDebugInfo(debugComponent);
         }
 
         private string GetCommentName()

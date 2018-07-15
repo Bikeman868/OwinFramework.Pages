@@ -5,7 +5,7 @@ namespace OwinFramework.Pages.Core.Debug
     /// <summary>
     /// Contains debugging information about a page
     /// </summary>
-    public class DebugPage : DebugInfo
+    public class DebugPage : DebugElement
     {
         /// <summary>
         /// The layout of this page

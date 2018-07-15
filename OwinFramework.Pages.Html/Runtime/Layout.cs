@@ -41,21 +41,18 @@ namespace OwinFramework.Pages.Html.Runtime
             RegionsByName = dependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
         }
 
-        DebugElement IElement.GetDebugInfo() { return GetDebugInfo(); }
-
-        public DebugLayout GetDebugInfo()
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
         {
-            var debugInfo = new DebugLayout
-            {
-                Regions = RegionsByName.Select(kvp => 
-                    new DebugLayoutRegion 
-                    { 
-                        Name = kvp.Key,
-                        Region = kvp.Value == null ? null : kvp.Value.GetDebugInfo()
-                    }).ToList()
-            };
-            PopulateDebugInfo(debugInfo);
-            return debugInfo;
+            var debugLayout = debugInfo as DebugLayout ?? new DebugLayout();
+
+            debugLayout.Regions = RegionsByName.Select(kvp =>
+                new DebugLayoutRegion
+                {
+                    Name = kvp.Key,
+                    Region = kvp.Value == null ? null : (DebugRegion)kvp.Value.GetDebugInfo()
+                }).ToList();
+
+            return base.PopulateDebugInfo(debugLayout);
         }
 
         public IRegion GetRegion(string regionName)
@@ -76,12 +73,8 @@ namespace OwinFramework.Pages.Html.Runtime
             _visualElements.Add(f => staticElement);
         }
 
-        public void AddRegion(string regionName, IRegion region, IElement element = null)
+        public void AddRegionVisualElement(string regionName)
         {
-            RegionsByName[regionName] = element == null
-                ? region
-                : region.CreateInstance(element);
-
             if (_regionNameOrder == null)
                 _regionNameOrder = new List<string>();
 
@@ -98,16 +91,24 @@ namespace OwinFramework.Pages.Html.Runtime
             _visualElementMapping[_regionNameOrder.Count - 1] = _visualElements.Count - 1;
         }
 
+        public void SetRegionInstance(string regionName, IRegion region)
+        {
+            RegionsByName[regionName] = region;
+        }
+
         public void Populate(string regionName, IElement element)
         {
             var region = GetRegion(regionName);
-            region.Populate(element);
+
+            if (region.IsInstance)
+                region.Populate(element);
+            else
+                SetRegionInstance(regionName, region.CreateInstance(element));
         }
 
         public ILayout CreateInstance()
         {
-            using (var regionNames = RegionsByName.KeysLocked)
-                return new LayoutInstance(_layoutDependenciesFactory, this, regionNames);
+            return new LayoutInstance(_layoutDependenciesFactory, this, _regionNameOrder);
         }
 
         public override IEnumerator<IElement> GetChildren()

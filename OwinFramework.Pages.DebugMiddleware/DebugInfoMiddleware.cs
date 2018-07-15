@@ -203,7 +203,7 @@ namespace OwinFramework.Pages.DebugMiddleware
         {
             if (depth == 0) return;
 
-            html.WriteElementLine("h2", debugInfo.Type + " " + debugInfo.Name);
+            html.WriteElementLine("h2", debugInfo.Type + " '" + debugInfo.Name + "'");
             if (debugInfo.Instance != null)
             {
                 html.WriteOpenTag("p");
@@ -275,28 +275,49 @@ namespace OwinFramework.Pages.DebugMiddleware
 
             if (dataScopeProvider.DataProviders != null && dataScopeProvider.DataProviders.Count > 0)
             {
-                html.WriteElementLine("p", "Data providers");
-                StartIndent(html, true);
-                foreach (var provider in dataScopeProvider.DataProviders)
-                    WriteDebugInfo(html, provider, depth - 1);
-                EndIndent(html);
+                if (depth == 1)
+                {
+                    html.WriteElementLine("p", "Has " + dataScopeProvider.DataProviders.Count + " data providers");
+                }
+                else
+                {
+                    html.WriteElementLine("p", "Data providers");
+                    StartIndent(html, true);
+                    foreach (var provider in dataScopeProvider.DataProviders)
+                        WriteDebugInfo(html, provider, depth - 1);
+                    EndIndent(html);
+                }
             }
 
             if (dataScopeProvider.Parent != null)
             {
-                html.WriteElementLine("p", "Parent scope");
-                StartIndent(html, true);
-                WriteDebugInfo(html, dataScopeProvider.Parent, depth - 1);
-                EndIndent(html);
+                if (depth == 1)
+                {
+                    html.WriteElementLine("p", "Has a parent scope");
+                }
+                else
+                {
+                    html.WriteElementLine("p", "Parent scope");
+                    StartIndent(html, true);
+                    WriteDebugInfo(html, dataScopeProvider.Parent, depth - 1);
+                    EndIndent(html);
+                }
             }
 
             if (dataScopeProvider.Children != null && dataScopeProvider.Children.Count > 0)
             {
-                html.WriteElementLine("p", "Child scopes");
-                StartIndent(html, false);
-                foreach (var child in dataScopeProvider.Children)
-                    WriteDebugInfo(html, child, depth - 1);
-                EndIndent(html);
+                if (depth == 1)
+                {
+                    html.WriteElementLine("p", "Has " + dataScopeProvider.Children.Count + " child scopes");
+                }
+                else
+                {
+                    html.WriteElementLine("p", "Child scopes");
+                    StartIndent(html, false);
+                    foreach (var child in dataScopeProvider.Children)
+                        WriteDebugInfo(html, child, depth - 1);
+                    EndIndent(html);
+                }
             }
         }
 
@@ -304,22 +325,28 @@ namespace OwinFramework.Pages.DebugMiddleware
         {
             if (layout.InstanceOf != null)
             {
-                html.WriteElementLine("p", "Layout inherits from " + layout.InstanceOf.Name + " layout");
+                html.WriteElementLine("p", "Layout inherits from '" + layout.InstanceOf.Name + "' layout");
+                if (depth != 1)
+                {
+                    StartIndent(html, false);
+                    WriteDebugInfo(html, layout.InstanceOf, 2);
+                    EndIndent(html);
+                }
             }
             
             if (layout.Regions != null && layout.Regions.Count > 0)
             {
-                html.WriteElementLine("p", "Layout has regions " + string.Join(", ", layout.Regions.Select(r => r.Name)));
+                html.WriteElementLine("p", "Layout has regions " + string.Join(", ", layout.Regions.Select(r => "'" + r.Name + "'")));
                 foreach (var layoutRegion in layout.Regions)
                 {
                     if (layoutRegion.Region == null)
                     {
-                        html.WriteElementLine("p", "Region " + layoutRegion.Name + " has default region for the layout");
+                        html.WriteElementLine("p", "Region '" + layoutRegion.Name + "' has default region for the layout");
                         var inheritedRegions = layout.InstanceOf == null ? null : layout.InstanceOf.Regions;
                         if (inheritedRegions != null)
                         {
                             var inheritedRegion = inheritedRegions.FirstOrDefault(r => r.Name == layoutRegion.Name);
-                            if (inheritedRegion != null)
+                            if (inheritedRegion != null && depth != 1)
                             {
                                 StartIndent(html, true);
                                 WriteDebugInfo(html, inheritedRegion.Region, depth - 1);
@@ -329,10 +356,17 @@ namespace OwinFramework.Pages.DebugMiddleware
                     }
                     else
                     {
-                        html.WriteElementLine("p", "Region " + layoutRegion.Name + " contents");
-                        StartIndent(html, true);
-                        WriteDebugInfo(html, layoutRegion.Region, depth - 1);
-                        EndIndent(html);
+                        if (depth == 1)
+                        {
+                            html.WriteElementLine("p", "Region '" + layoutRegion.Name + "' contains '" + layoutRegion.Region.Name + "'");
+                        }
+                        else
+                        { 
+                            html.WriteElementLine("p", "Region '" + layoutRegion.Name + "' contents");
+                            StartIndent(html, true);
+                            WriteDebugInfo(html, layoutRegion.Region, depth - 1);
+                            EndIndent(html);
+                        }
                     }
                 }
             }
@@ -393,9 +427,12 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (page.Layout != null)
             {
                 html.WriteElementLine("p", "Page has a layout");
-                StartIndent(html, true);
-                WriteDebugInfo(html, page.Layout, depth - 1);
-                EndIndent(html);
+                if (depth != 1)
+                {
+                    StartIndent(html, true);
+                    WriteDebugInfo(html, page.Layout, depth - 1);
+                    EndIndent(html);
+                }
             }
         }
 
@@ -403,10 +440,13 @@ namespace OwinFramework.Pages.DebugMiddleware
         {
             if (region.InstanceOf != null)
             {
-                html.WriteElementLine("p", "Region inherits from " + region.InstanceOf.Name + " region");
-                StartIndent(html, false);
-                WriteDebugInfo(html, region.InstanceOf, 1);
-                EndIndent(html);
+                html.WriteElementLine("p", "Region inherits from '" + region.InstanceOf.Name + "' region");
+                if (depth != 1)
+                {
+                    StartIndent(html, false);
+                    WriteDebugInfo(html, region.InstanceOf, 2);
+                    EndIndent(html);
+                }
             }
 
             if (region.RepeatType != null)
@@ -438,9 +478,12 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (region.Content != null)
             {
                 html.WriteElementLine("p", "Region has contents");
-                StartIndent(html, true);
-                WriteDebugInfo(html, region.Content, depth - 1);
-                EndIndent(html);
+                if (depth != 1)
+                {
+                    StartIndent(html, true);
+                    WriteDebugInfo(html, region.Content, depth - 1);
+                    EndIndent(html);
+                }
             }
         }
 

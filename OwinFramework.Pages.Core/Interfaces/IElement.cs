@@ -20,7 +20,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Gets debuging information for this element
         /// </summary>
         /// <returns></returns>
-        DebugElement GetDebugInfo();
+        DebugInfo GetDebugInfo();
 
         /// <summary>
         /// This is called after name resolution. It is called once for each page where the

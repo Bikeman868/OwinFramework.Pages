@@ -7,9 +7,5 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// </summary>
     public interface IComponent : IElement
     {
-        /// <summary>
-        /// Retrieves debugging information from this component
-        /// </summary>
-        new DebugComponent GetDebugInfo();
     }
 }

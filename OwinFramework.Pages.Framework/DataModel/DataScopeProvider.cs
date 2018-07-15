@@ -293,9 +293,12 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
         {
+            // TODO: fixup missing dependencies
+            /*
             AddDependency(missingDependency);
             renderContext.DeleteDataContextTree();
             SetupDataContext(renderContext);
+            */
         }
 
     }

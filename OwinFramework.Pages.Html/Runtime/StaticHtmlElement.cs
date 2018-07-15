@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Elements;
@@ -22,6 +23,12 @@ namespace OwinFramework.Pages.Html.Runtime
 
             WriteAction(context.Html);
             return WriteResult.Continue();
+        }
+
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
+        {
+            debugInfo.Type = "Static HTML";
+            return base.PopulateDebugInfo(debugInfo);
         }
     }
 }

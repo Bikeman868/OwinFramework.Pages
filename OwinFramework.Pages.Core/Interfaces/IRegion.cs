@@ -1,5 +1,4 @@
 ﻿using System;
-using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -11,11 +10,6 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// </summary>
     public interface IRegion : IElement, IDataRepeater
     {
-        /// <summary>
-        /// Retrieves debugging information about the region
-        /// </summary>
-        new DebugRegion GetDebugInfo();
-
         /// <summary>
         /// Retrieves the contents of this region
         /// </summary>

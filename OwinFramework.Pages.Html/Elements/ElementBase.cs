@@ -30,17 +30,16 @@ namespace OwinFramework.Pages.Html.Elements
                 : dataConsumerFactory.Create();
         }
 
-        DebugElement IElement.GetDebugInfo() 
+        public DebugInfo GetDebugInfo() 
         {
-            var debugInfo = new DebugElement ();
-            PopulateDebugInfo(debugInfo);
-            return debugInfo;
+            return PopulateDebugInfo(new DebugElement());
         }
 
-        protected virtual void PopulateDebugInfo(DebugInfo debugInfo)
+        protected virtual DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
         {
             debugInfo.Name = Name;
             debugInfo.Instance = this;
+            return debugInfo;
         }
 
         public abstract IWriteResult WriteStaticCss(ICssWriter writer);

@@ -110,12 +110,13 @@ namespace OwinFramework.Pages.Html.Builders
         {
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.CreateInstances,
-                (nm, p) =>
+                (nm, p, l) =>
                 {
-                    var layoutInstance = layout.CreateInstance();
+                    var layoutInstance = l.CreateInstance();
                     p.Layout = layoutInstance;
                 },
-                _page);
+                _page,
+                layout);
             return this;
         }
 

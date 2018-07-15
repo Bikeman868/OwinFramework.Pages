@@ -255,12 +255,7 @@ namespace Sample1.SamplePackages
 
             #region These methods do not need any implementation
 
-            DebugElement IElement.GetDebugInfo()
-            {
-                return null;
-            }
-
-            DebugRegion IRegion.GetDebugInfo()
+            DebugInfo IElement.GetDebugInfo()
             {
                 return null;
             }

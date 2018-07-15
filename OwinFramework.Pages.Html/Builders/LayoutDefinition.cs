@@ -35,53 +35,6 @@ namespace OwinFramework.Pages.Html.Builders
         private string[] _nestedClassNames;
         private string _nestedStyle;
 
-        private class RegionSet
-        {
-            public List<object> Elements;
-
-            public static RegionSet Parse(string regions, ref int position)
-            {
-                var result = new RegionSet
-                {
-                    Elements = new List<object>()
-                };
-
-                var start = position;
-                while (position < regions.Length)
-                {
-                    switch (regions[position])
-                    {
-                        case '(':
-                            result.Elements.AddRange(BuildList(regions, start, position));
-                            position++;
-                            result.Elements.Add(Parse(regions, ref position));
-                            position++;
-                            start = position;
-                            break;
-                        case ')':
-                            result.Elements.AddRange(BuildList(regions, start, position));
-                            return result;
-                        default:
-                            position++;
-                            break;
-                    }
-                }
-                result.Elements.AddRange(BuildList(regions, start, position));
-                return result;
-            }
-
-            private static List<object> BuildList(string regions, int start, int end)
-            {
-                var result = new List<object>();
-                if (end > start)
-                {
-                    var regionNames = regions.Substring(start, end - start);
-                    result.AddRange(regionNames.Split(',').Select(s => s.Trim()));
-                }
-                return result;
-            }
-        }
-
         public LayoutDefinition(
             Layout layout,
             INameManager nameManager,
@@ -379,7 +332,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm) =>
+                nm =>
                 {
                     var regionComponentKeys = _regionComponents.Keys.ToList();
                     foreach (var regionName in regionComponentKeys)
@@ -407,65 +360,163 @@ namespace OwinFramework.Pages.Html.Builders
                         _regionLayouts[regionName] = layout;
                     }
 
+                    ResolveRegionNames(_regionSet, nm);
+
                     WriteOpeningTag();
-                    AddRegionSet(_regionSet);
+                    WriteRegions(_regionSet);
                     WriteClosingTag();
                 });
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances, 
+                () => SetRegionInstances(_regionSet));
 
             _fluentBuilder.Register(_layout);
             return _layout;
         }
 
-        private void AddRegionSet(RegionSet regionSet)
+        #region Region nesting
+
+        private class RegionSetRegion
         {
-            if (regionSet == null || regionSet.Elements == null) return;
+            public RegionSet ChildRegions;
+            public string RegionName;
+            public string RegionElementName;
+            public IRegion Region;
+        }
 
-            foreach (var element in regionSet.Elements)
+        private class RegionSet
+        {
+            public List<RegionSetRegion> Regions;
+
+            public static RegionSet Parse(string regions, ref int position)
             {
-                var regionName = element as string;
-                var childRegionSet = element as RegionSet;
-
-                if (regionName != null)
+                var result = new RegionSet
                 {
-                    if (!_regionElements.ContainsKey(regionName))
-                    {
-                        _layout.AddVisualElement(w => w.WriteElement("p", "There is no region instance in the '" + regionName + "' region"), null);
-                        continue;
-                    }
+                    Regions = new List<RegionSetRegion>()
+                };
 
-                    var regionElement = _regionElements[regionName];
-                    var region = regionElement as IRegion;
-                    var regionElementName = regionElement as string;
-
-                    if (region == null && regionElementName != null)
+                var start = position;
+                while (position < regions.Length)
+                {
+                    switch (regions[position])
                     {
-                        region = _nameManager.ResolveRegion(regionElementName, _layout.Package);
-                        if (region == null)
-                            _layout.AddVisualElement(w => w.WriteElement("p", "Unknown region element '" + regionElementName + "'"), null);
-                    }
-
-                    if (region != null)
-                    {
-                        if (_regionComponents.ContainsKey(regionName))
-                        {
-                            _layout.AddRegion(regionName, region, (IComponent)_regionComponents[regionName]);
-                        }
-                        else if (_regionLayouts.ContainsKey(regionName))
-                        {
-                            _layout.AddRegion(regionName, region, ((ILayout)_regionLayouts[regionName]).CreateInstance());
-                        }
-                        else
-                            _layout.AddRegion(regionName, region);
+                        case '(':
+                            result.Regions.AddRange(BuildList(regions, start, position));
+                            position++;
+                            result.Regions.Add(new RegionSetRegion { ChildRegions = Parse(regions, ref position) });
+                            position++;
+                            start = position;
+                            break;
+                        case ')':
+                            result.Regions.AddRange(BuildList(regions, start, position));
+                            return result;
+                        default:
+                            position++;
+                            break;
                     }
                 }
-                else if (childRegionSet != null)
+                result.Regions.AddRange(BuildList(regions, start, position));
+                return result;
+            }
+
+            private static IEnumerable<RegionSetRegion> BuildList(string regions, int start, int end)
+            {
+                if (end <= start) return Enumerable.Empty<RegionSetRegion>();
+
+                var regionNames = regions.Substring(start, end - start);
+                return regionNames
+                    .Split(',')
+                    .Select(s => s.Trim())
+                    .Select(n => new RegionSetRegion { RegionName = n });
+            }
+        }
+
+        private void ResolveRegionNames(RegionSet regionSet, INameManager nameManager)
+        {
+            if (regionSet == null || regionSet.Regions == null) return;
+
+            foreach (var region in regionSet.Regions)
+            {
+                if (region.Region == null)
+                {
+                    if (region.RegionElementName == null)
+                    {
+                        if (region.RegionName != null)
+                        {
+                            object element;
+                            if (_regionElements.TryGetValue(region.RegionName, out element))
+                            {
+                                region.RegionElementName = element as string;
+                                region.Region = element as IRegion;
+                            }
+                        }
+                    }
+                    if (region.RegionElementName != null && region.Region == null)
+                    {
+                        region.Region = nameManager.ResolveRegion(region.RegionElementName, _layout.Package);
+                    }
+                }
+
+                if (region.Region != null)
+                {
+                    _layout.SetRegionInstance(region.RegionName, region.Region);
+                }
+
+                if (region.ChildRegions != null)
+                {
+                    ResolveRegionNames(region.ChildRegions, nameManager);
+                }
+            }
+        }
+
+        private void WriteRegions(RegionSet regionSet)
+        {
+            if (regionSet == null || regionSet.Regions == null) return;
+
+            foreach (var region in regionSet.Regions)
+            {
+                if (region.RegionName != null)
+                {
+                    _layout.AddRegionVisualElement(region.RegionName);
+                }
+
+                if (region.ChildRegions != null)
                 {
                     WriteNestingOpeningTag();
-                    AddRegionSet(childRegionSet);
+                    WriteRegions(region.ChildRegions);
                     WriteNestingClosingTag();
                 }
             }
         }
+
+        private void SetRegionInstances(RegionSet regionSet)
+        {
+            if (regionSet == null || regionSet.Regions == null) return;
+
+            foreach (var region in regionSet.Regions)
+            {
+                if (region.Region != null)
+                {
+                    IElement regionContent = null;
+
+                    if (_regionComponents.ContainsKey(region.RegionName))
+                        regionContent = _regionComponents[region.RegionName] as IElement;
+
+                    if (_regionLayouts.ContainsKey(region.RegionName))
+                        regionContent = _regionLayouts[region.RegionName] as IElement;
+
+                    _layout.Populate(region.RegionName, regionContent);
+                }
+
+                if (region.ChildRegions != null)
+                {
+                    SetRegionInstances(region.ChildRegions);
+                }
+            }
+        }
+
+        #endregion
 
         private void WriteOpeningTag()
         {
@@ -487,7 +538,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (!string.IsNullOrEmpty(_nestingTag))
             {
                 var attributes = _htmlHelper.StyleAttributes(_nestedStyle, _nestedClassNames, _layout.Package);
-                _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes), "grouping regions in layout");
+                _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes), "layout region grouping");
             }
         }
 

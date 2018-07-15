@@ -34,24 +34,23 @@ namespace OwinFramework.Pages.Html.Elements
             }
         }
 
-        public DebugLayout GetDebugInfo()
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
         {
-            var parentDebugInfo = Parent.GetDebugInfo();
+            var parentDebugInfo = (DebugLayout)Parent.GetDebugInfo();
 
-            var debugInfo = new DebugLayout
-            {
-                Type = "Instance of layout",
-                InstanceOf = parentDebugInfo,
-                Regions = _regionsByName
-                    .Select(kvp => new DebugLayoutRegion 
-                    { 
+            var debugLayout = debugInfo as DebugLayout ?? new DebugLayout();
+
+            debugLayout.Type = "Instance of layout";
+            debugLayout.InstanceOf = parentDebugInfo;
+            debugLayout.Regions = _regionsByName
+                .Select(kvp => new DebugLayoutRegion
+                    {
                         Name = kvp.Key,
-                        Region = kvp.Value == null ? null : kvp.Value.GetDebugInfo() 
+                        Region = kvp.Value == null ? null : (DebugRegion)kvp.Value.GetDebugInfo()
                     })
-                    .ToList()
-            };
-            PopulateDebugInfo(debugInfo);
-            return debugInfo;
+                .ToList();
+
+            return base.PopulateDebugInfo(debugLayout);
         }
 
         public IRegion GetRegion(string regionName)
@@ -66,9 +65,7 @@ namespace OwinFramework.Pages.Html.Elements
         public void Populate(string regionName, IElement element)
         {
             var region = GetRegion(regionName);
-
-            if (region != null)
-                region.Populate(element);
+            region.Populate(element);
         }
 
         public ILayout CreateInstance()

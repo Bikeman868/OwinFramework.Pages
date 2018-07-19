@@ -186,6 +186,8 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 AssetDeployment = assetDeployment;
                 _page = page;
+
+                _page._dataScopeProvider.Initialize(null);
                 _currentState.ScopeProvider = _page._dataScopeProvider;
             }
 
@@ -646,6 +648,11 @@ namespace OwinFramework.Pages.Html.Runtime
         void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
         {
             _dataScopeProvider.SetupDataContext(renderContext);
+        }
+
+        IDataScopeProvider IDataScopeProvider.CreateInstance()
+        {
+            return _dataScopeProvider.CreateInstance();
         }
 
         void IDataScopeProvider.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)

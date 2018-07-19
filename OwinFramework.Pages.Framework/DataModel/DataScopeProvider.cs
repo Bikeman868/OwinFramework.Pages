@@ -15,6 +15,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         * Injected dependencies satisfied by IoC
         *******************************************************************/
 
+        private readonly IIdManager _idManager;
         private readonly IDataScopeFactory _dataScopeFactory;
         private readonly IDataCatalog _dataCatalog;
         private readonly IDataContextFactory _dataContextFactory;
@@ -25,6 +26,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             IDataCatalog dataCatalog,
             IDataContextFactory dataContextFactory)
         {
+            _idManager = idManager;
             _dataScopeFactory = dataScopeFactory;
             _dataCatalog = dataCatalog;
             _dataContextFactory = dataContextFactory;
@@ -41,7 +43,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             var debug = new DebugDataScopeProvider
             {
                 Instance = this,
-                Name = Id + " (" + ElementName + ")",
+                Name = (_isInstance ? "Instance " : string.Empty) + "#" + Id + " - " + ElementName,
                 Id = Id
             };
 
@@ -93,6 +95,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public int Id { get; private set; }
         public string ElementName { get; set; }
+        private readonly bool _isInstance;
         private readonly IList<IDataScope> _dataScopes = new List<IDataScope>();
         private readonly IList<IDataSupply> _dataSupplies = new List<IDataSupply>();
         private readonly IList<SuppliedDependency> _suppliedDependencies = new List<SuppliedDependency>();
@@ -135,6 +138,36 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             var supply = supplier.GetSupply(dependency);
             AddSupply(supply);
+        }
+
+        private DataScopeProvider(
+            DataScopeProvider original,
+            IIdManager idManager,
+            IDataScopeFactory dataScopeFactory,
+            IDataCatalog dataCatalog,
+            IDataContextFactory dataContextFactory)
+        {
+            _idManager = idManager;
+            _dataScopeFactory = dataScopeFactory;
+            _dataCatalog = dataCatalog;
+            _dataContextFactory = dataContextFactory;
+
+            Id = idManager.GetUniqueId();
+            _isInstance = true;
+
+            _dataScopes = original._dataScopes.ToList();
+            _dataSupplies = original._dataSupplies.ToList();
+            _suppliedDependencies = original._suppliedDependencies.ToList();
+        }
+
+        public IDataScopeProvider CreateInstance()
+        {
+            return new DataScopeProvider(
+                this, 
+                _idManager, 
+                _dataScopeFactory, 
+                _dataCatalog, 
+                _dataContextFactory);
         }
 
         private class SuppliedDependency
@@ -293,12 +326,14 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
         {
-            // TODO: fixup missing dependencies
-            /*
             AddDependency(missingDependency);
             renderContext.DeleteDataContextTree();
-            SetupDataContext(renderContext);
-            */
+
+            var root = (IDataScopeProvider)this;
+            while (root.Parent != null)
+                root = root.Parent;
+
+            root.SetupDataContext(renderContext);
         }
 
     }

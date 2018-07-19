@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 {
     /// <summary>
     /// This is a mixin that should be added to any object that can
-    /// consume data from one or more data providers
+    /// consume data from one or more data suppliers
     /// </summary>
     public class DataConsumer: IDataConsumer
     {

@@ -9,7 +9,6 @@ namespace OwinFramework.Pages.Framework.DataModel
 {
     internal class DataSupplier: IDataSupplier
     {
-        private readonly IIdManager _idManager;
         private readonly int _dataSupplierId;
         private readonly List<RegisteredSupply> _dataSupplies;
 
@@ -18,7 +17,6 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public DataSupplier(IIdManager idManager)
         {
-            _idManager = idManager;
             _dataSupplierId = idManager.GetUniqueId();
             _dataSupplies = new List<RegisteredSupply>();
             SuppliedTypes = new List<Type>();

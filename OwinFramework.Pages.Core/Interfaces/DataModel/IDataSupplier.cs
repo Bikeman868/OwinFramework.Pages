@@ -5,14 +5,16 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
 {
     /// <summary>
-    /// Defines a mixin that indicates that this object can supply data.
+    /// Defines a mixin that indicates that this object can supply data. Supplying
+    /// data in this context means at runtime it can retrieve data from somewhere
+    /// and add it to the context of a page rendering operation.
     /// Objects can be both suppliers and consumers of data at the same time
     /// </summary>
     public interface IDataSupplier
     {
         /// <summary>
         /// Returns a list of the data types that this supplier can supply.
-        /// Call the CanSupply() method to discover if it can provide the type
+        /// Call the IsSupplierOf() method to discover if it can provide the type
         /// in a specific scope
         /// </summary>
         IList<Type> SuppliedTypes { get; }

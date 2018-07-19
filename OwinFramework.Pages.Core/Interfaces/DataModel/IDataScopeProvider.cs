@@ -63,6 +63,13 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// </summary>
         void AddSupply(IDataSupply supply);
 
+        /// <summary>
+        /// Creates a new data scope provider that has the same scopes
+        /// and providers as this one. 
+        /// Call this method before initialization.
+        /// </summary>
+        IDataScopeProvider CreateInstance();
+
 /*******************************************************************
 * These interface members are used to build scope providers into a
 * tree heirachy. This has to happen before dependencies can be 

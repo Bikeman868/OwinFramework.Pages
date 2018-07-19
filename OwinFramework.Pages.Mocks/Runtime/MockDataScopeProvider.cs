@@ -87,6 +87,11 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return string.Equals(dependency.ScopeName, ScopeName, StringComparison.OrdinalIgnoreCase);
         }
 
+        public IDataScopeProvider CreateInstance()
+        {
+            return this;
+        }
+
         public void SetupDataContext(IRenderContext renderContext)
         {
         }

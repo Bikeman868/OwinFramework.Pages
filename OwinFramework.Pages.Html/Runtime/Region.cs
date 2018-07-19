@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// You can also use this class directly but it provides only minimal region 
     /// functionallity
     /// </summary>
-    public class Region : Element, IRegion
+    public class Region : Element, IRegion, IDataScopeProvider
     {
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Region; } }
@@ -70,6 +70,8 @@ namespace OwinFramework.Pages.Html.Runtime
             WriteClose = w => { };
             WriteChildOpen = w => { };
             WriteChildClose = w => { };
+
+            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
         }
 
         #endregion
@@ -192,6 +194,90 @@ namespace OwinFramework.Pages.Html.Runtime
             context.Data = savedData;
 
             return result;
+        }
+
+        #endregion
+
+        #region IDataScopeProvider
+
+        private readonly IDataScopeProvider _dataScopeProvider;
+
+        int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
+
+        string IDataScopeProvider.ElementName
+        {
+            get { return _dataScopeProvider.ElementName; }
+            set { _dataScopeProvider.ElementName = value; }
+        }
+
+        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
+        {
+            return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
+        }
+
+        bool IDataScopeProvider.IsInScope(IDataDependency dependency)
+        {
+            return _dataScopeProvider.IsInScope(dependency);
+        }
+
+        void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
+        {
+            _dataScopeProvider.SetupDataContext(renderContext);
+        }
+
+        IDataScopeProvider IDataScopeProvider.CreateInstance()
+        {
+            return _dataScopeProvider.CreateInstance();
+        }
+
+        void IDataScopeProvider.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
+        {
+            _dataScopeProvider.AddMissingData(renderContext, missingDependency);
+        }
+
+        IDataScopeProvider IDataScopeProvider.Parent
+        {
+            get { return _dataScopeProvider.Parent; }
+        }
+
+        void IDataScopeProvider.AddChild(IDataScopeProvider child)
+        {
+            _dataScopeProvider.AddChild(child);
+        }
+
+        void IDataScopeProvider.Initialize(IDataScopeProvider parent)
+        {
+            _dataScopeProvider.Initialize(parent);
+        }
+
+        void IDataScopeProvider.AddScope(Type type, string scopeName)
+        {
+            _dataScopeProvider.AddScope(type, scopeName);
+        }
+
+        void IDataScopeProvider.AddDependency(IDataDependency dependency)
+        {
+            _dataScopeProvider.AddDependency(dependency);
+        }
+
+        void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
+        {
+            _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
+        }
+
+        void IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        {
+            _dataScopeProvider.AddSupplier(supplier, dependency);
+        }
+
+        void IDataScopeProvider.AddSupply(IDataSupply supply)
+        {
+            _dataScopeProvider.AddSupply(supply);
+        }
+
+        void IDataScopeProvider.AddConsumer(IDataConsumer consumer)
+        {
+            _dataScopeProvider.AddConsumer(consumer);
         }
 
         #endregion

@@ -47,7 +47,11 @@ namespace OwinFramework.Pages.Html.Elements
             : base(dependenciesFactory.DataConsumerFactory, parent)
         {
             _dependenciesFactory = dependenciesFactory;
-            _dataScopeProvider = dependenciesFactory.DataScopeProviderFactory.Create();
+
+            var parentDataScope = parent as IDataScopeProvider;
+            _dataScopeProvider = parentDataScope == null 
+                ? dependenciesFactory.DataScopeProviderFactory.Create()
+                : parentDataScope.CreateInstance();
             _dataScopeProvider.ElementName = "Region instance " + parent.Name;
 
             content = content ?? parent.Content;
@@ -198,6 +202,11 @@ namespace OwinFramework.Pages.Html.Elements
         void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
         {
             _dataScopeProvider.SetupDataContext(renderContext);
+        }
+
+        IDataScopeProvider IDataScopeProvider.CreateInstance()
+        {
+            return _dataScopeProvider.CreateInstance();
         }
 
         void IDataScopeProvider.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)

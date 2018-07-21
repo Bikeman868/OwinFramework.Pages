@@ -119,11 +119,18 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition BindTo(Type dataType, string scope = null);
 
         /// <summary>
-        /// Instructs the region to use a specific scope when locating a data
-        /// provider for the specified type of data.
+        /// Instructs the region to resolve dependencies on this type of data at thie
+        /// region and not bubble up through the parents.
+        /// </summary>
+        /// <param name="scopeName">The name of the data scope to use when resolving data providers</param>
+        IRegionDefinition DataScope<T>(string scopeName);
+
+        /// <summary>
+        /// Instructs the region to resolve dependencies on this type of data at thie
+        /// region and not bubble up through the parents.
         /// </summary>
         /// <param name="type">The type of data to scope</param>
-        /// <param name="scopeName">The name of the data scope to use when resolving data providers</param>
+        /// <param name="scopeName">Limits scope resolving to this scope name only</param>
         IRegionDefinition DataScope(Type type, string scopeName);
 
         /// <summary>

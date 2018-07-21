@@ -72,9 +72,13 @@ namespace OwinFramework.Pages.Framework.DataModel
             lock(_suppliedDependencies)
             {
                 debug.Dependencies = _suppliedDependencies
-                    .Select(sd => sd.Dependency)
-                    .Select(d => d.DataType.DisplayName() +
-                        (string.IsNullOrEmpty(d.ScopeName) ? "" : " in '" + d.ScopeName + "' scope"))
+                    .Select(sd =>
+                        {
+                            if (sd.Dependency == null)
+                                return sd.Supplier.GetType().DisplayName();
+                            var d = sd.Dependency;
+                            return d.DataType.DisplayName() + (string.IsNullOrEmpty(d.ScopeName) ? "" : " in '" + d.ScopeName + "' scope");
+                        })
                     .ToList();
             }
 
@@ -225,10 +229,8 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
 
             lock (_suppliedDependencies)
-            {
-                if (_suppliedDependencies.Any(d => d.Dependency.Equals(dependency)))
+                if (_suppliedDependencies.Any(d => d.Supplier.IsSupplierOf(dependency)))
                     return;
-            }
 
             var supplier = _dataCatalog.FindSupplier(dependency);
 
@@ -320,8 +322,15 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (ReferenceEquals(dependency, null))
                 throw new ArgumentNullException("dependency");
 
-            lock(_dataScopes)
-                return _dataScopes.Any(s => s.IsMatch(dependency));
+            lock (_dataScopes)
+                if (_dataScopes.Any(s => s.IsMatch(dependency)))
+                    return true;
+
+            lock (_suppliedDependencies)
+                if (_suppliedDependencies.Any(d => d.Supplier.IsSupplierOf(dependency)))
+                    return true;
+
+            return false;
         }
 
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)

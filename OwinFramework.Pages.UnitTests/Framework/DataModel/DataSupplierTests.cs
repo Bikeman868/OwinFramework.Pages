@@ -45,6 +45,9 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
             Assert.IsFalse(_dataSupplier.IsSupplierOf(dependencyFactory.Create(typeof(long), "other-scope")));
 
             var dataSupply = _dataSupplier.GetSupply(dependencyFactory.Create(typeof(int)));
+
+            Assert.IsNotNull(dataSupply);
+
             dataSupply.Supply(null, null);
 
             Assert.AreEqual(registeredDependency, actionDependency);
@@ -72,6 +75,9 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
             Assert.IsFalse(_dataSupplier.IsSupplierOf(dependencyFactory.Create(typeof(long), "other-scope")));
 
             var dataSupply = _dataSupplier.GetSupply(dependencyFactory.Create(typeof(int)));
+
+            Assert.IsNotNull(dataSupply);
+
             dataSupply.Supply(null, null);
 
             Assert.AreEqual(registeredDependency, actionDependency);

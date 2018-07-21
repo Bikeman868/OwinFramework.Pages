@@ -35,7 +35,7 @@ namespace OwinFramework.Pages.Html.Builders
             var region = regionInstance as Region ?? new Region(_regionDependenciesFactory);
             if (declaringType == null) declaringType = (regionInstance ?? region).GetType();
 
-            var regionDefinition = new RegionDefinition(region, _nameManager, _htmlHelper, _fluentBuilder, package);
+            var regionDefinition = new RegionDefinition(region, _nameManager, _htmlHelper, _fluentBuilder, _regionDependenciesFactory.DataDependencyFactory, package);
 
             var attributes = new AttributeSet(declaringType);
             _elementConfiguror.Configure(regionDefinition, attributes);

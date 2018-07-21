@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// You can also use this class directly but it provides only minimal region 
     /// functionallity
     /// </summary>
-    public class Region : Element, IRegion, IDataScopeProvider
+    public class Region : Element, IRegion, IDataScopeProvider, IDataSupplier
     {
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Region; } }
@@ -278,6 +278,43 @@ namespace OwinFramework.Pages.Html.Runtime
         void IDataScopeProvider.AddConsumer(IDataConsumer consumer)
         {
             _dataScopeProvider.AddConsumer(consumer);
+        }
+
+        #endregion
+
+        #region IDataSupplier
+
+        IList<Type> IDataSupplier.SuppliedTypes
+        {
+            get
+            {
+                return _repeatType == null 
+                    ? new List<Type>() 
+                    : new List<Type> { _repeatType };
+            }
+        }
+
+        bool IDataSupplier.IsScoped
+        {
+            get { return !string.IsNullOrEmpty(RepeatScope); }
+        }
+
+        void IDataSupplier.Add(IDataDependency dependency, Action<IRenderContext, IDataContext, IDataDependency> action)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IDataSupplier.IsSupplierOf(IDataDependency dependency)
+        {
+            if (_repeatType == null) return false;
+            if (dependency.DataType == null) return false;
+            if (_repeatType != dependency.DataType) return false;
+            return string.Equals(RepeatScope, dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        IDataSupply IDataSupplier.GetSupply(IDataDependency dependency)
+        {
+            return null;
         }
 
         #endregion

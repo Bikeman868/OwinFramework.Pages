@@ -20,6 +20,13 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         IList<Type> SuppliedTypes { get; }
 
         /// <summary>
+        /// This dependency will be used in cases where the application declares
+        /// a dependency on a supplier without specifying the particular type and
+        /// scope
+        /// </summary>
+        IDataDependency DefaultDependency { get; }
+
+        /// <summary>
         /// Indicates whether this supplier supplies data for a specific scope
         /// </summary>
         bool IsScoped { get; }

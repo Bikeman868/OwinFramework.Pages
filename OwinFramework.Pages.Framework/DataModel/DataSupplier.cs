@@ -46,6 +46,16 @@ namespace OwinFramework.Pages.Framework.DataModel
             return _dataSupplies.Any(s => s.IsMatch(dependency));
         }
 
+        IDataDependency IDataSupplier.DefaultDependency
+        {
+            get
+            {
+                return _dataSupplies.Count == 0
+                    ? null
+                    : _dataSupplies[0].Dependency;
+            }
+        }
+
         IDataSupply IDataSupplier.GetSupply(IDataDependency dependency)
         {
             var supply = _dataSupplies.FirstOrDefault(s => s.IsMatch(dependency));

@@ -17,22 +17,24 @@ namespace OwinFramework.Pages.Mocks.DataModel
 
         private class DataSupplier : IDataSupplier, IDataSupply
         {
-            public IList<Type> SuppliedTypes { get; set; }
-            public bool IsScoped { get; set; }
-            public IDataDependency Dependency;
-            public Action<IRenderContext, IDataContext, IDataDependency> Action;
+            public IList<Type> SuppliedTypes { get; private set; }
+            public bool IsScoped { get; private set; }
+            public IDataDependency DefaultDependency { get { return _dependency; } }
+
+            private IDataDependency _dependency;
+            private Action<IRenderContext, IDataContext, IDataDependency> _action;
 
             public void Add(IDataDependency dependency, Action<IRenderContext, IDataContext, IDataDependency> action)
             {
-                Dependency = dependency;
-                Action = action;
+                _dependency = dependency;
+                _action = action;
                 SuppliedTypes = new List<Type> { dependency.DataType };
                 IsScoped = !string.IsNullOrEmpty(dependency.ScopeName);
             }
 
             public bool IsSupplierOf(IDataDependency dependency)
             {
-                return Dependency == null || Dependency.DataType == dependency.DataType;
+                return _dependency == null || _dependency.DataType == dependency.DataType;
             }
 
             public IDataSupply GetSupply(IDataDependency dependency)
@@ -42,7 +44,7 @@ namespace OwinFramework.Pages.Mocks.DataModel
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {
-                Action(renderContext, dataContext, Dependency);
+                _action(renderContext, dataContext, _dependency);
 
                 if (OnDataSupplied != null)
                 {

@@ -122,10 +122,9 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-#if DEBUG
-            if (supplier == null) throw new ArgumentException("Supplier can not be null");
-            if (dependency == null) throw new ArgumentException("Dependency can not be null");
-#endif
+            if (supplier == null) throw new ArgumentNullException("Supplier can not be null");
+            if (dependency == null) throw new ArgumentNullException("Dependency can not be null");
+
             SuppliedDependency suppliedDependency;
 
             lock(_suppliedDependencies)
@@ -229,7 +228,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 throw new InvalidOperationException(
                     "You can not add dependencies to a data scope provider until after initialization");
 
-            if (_parent != null && !IsInScope(dependency))
+            if (_parent != null && !IsInScope(dependency) && !HasSupplier(dependency))
                 return _parent.AddDependency(dependency);
 
             lock (_suppliedDependencies)
@@ -337,14 +336,16 @@ namespace OwinFramework.Pages.Framework.DataModel
                 throw new ArgumentNullException("dependency");
 
             lock (_dataScopes)
-                if (_dataScopes.Any(s => s.IsMatch(dependency)))
-                    return true;
+                return _dataScopes.Any(s => s.IsMatch(dependency));
+        }
+
+        private bool HasSupplier(IDataDependency dependency)
+        {
+            if (ReferenceEquals(dependency, null))
+                throw new ArgumentNullException("dependency");
 
             lock (_suppliedDependencies)
-                if (_suppliedDependencies.Any(d => d.Supplier.IsSupplierOf(dependency)))
-                    return true;
-
-            return false;
+                return _suppliedDependencies.Any(d => d.Supplier.IsSupplierOf(dependency));
         }
 
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)

@@ -295,6 +295,16 @@ namespace OwinFramework.Pages.Html.Runtime
             }
         }
 
+        IDataDependency IDataSupplier.DefaultDependency 
+        { 
+            get
+            {
+                return RepeatType == null
+                    ? null 
+                    : _regionDependenciesFactory.DataDependencyFactory.Create(RepeatType, RepeatScope);
+            }
+        }
+
         bool IDataSupplier.IsScoped
         {
             get { return !string.IsNullOrEmpty(RepeatScope); }

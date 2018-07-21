@@ -21,12 +21,16 @@ namespace OwinFramework.Pages.Framework.Builders
             DataProvider dataProvider,
             IFluentBuilder builder,
             IDataDependencyFactory dataDependencyFactory,
-            INameManager nameManager)
+            INameManager nameManager,
+            IPackage package)
         {
             _dataProvider = dataProvider;
             _builder = builder;
             _dataDependencyFactory = dataDependencyFactory;
             _nameManager = nameManager;
+
+            if (package != null)
+                _dataProvider.Package = package;
         }
 
         IDataProviderDefinition IDataProviderDefinition.Name(string name)

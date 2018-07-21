@@ -109,6 +109,31 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
             {
                 throw new NotImplementedException();
             }
+
+            public IDataDependency DefaultDependency
+            {
+                get 
+                {
+                    return new DataDependency
+                    {
+                        DataType = typeof(T),
+                        ScopeName = ScopeName
+                    };
+                }
+            }
+
+            private class DataDependency: IDataDependency
+            {
+
+                public Type DataType { get; set; }
+                public string ScopeName { get; set; }
+
+                public bool Equals(IDataDependency other)
+                {
+                    if (ReferenceEquals(other, null)) return false;
+                    return DataType == other.DataType && ScopeName == other.ScopeName;
+                }
+            }
         }
 
         private class DataSupplier1<T> : DataSupplier<T> { }

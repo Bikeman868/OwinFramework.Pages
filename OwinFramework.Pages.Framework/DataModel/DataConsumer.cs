@@ -58,13 +58,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 throw new Exception("Data provider " + dataProvider.Name + " is not a supplier of data");
 
             if (ReferenceEquals(dependency, null))
-            {
-                var suppliedTypes = dataProvider.SuppliedTypes;
-                if (ReferenceEquals(suppliedTypes, null) || suppliedTypes.Count == 0)
-                    throw new InvalidOperationException("You must specify the dependency that this data provider satisfies");
-
-                dependency = _dataDependencyFactory.Create(suppliedTypes[0]);
-            }
+                dependency = dataSupplier.DefaultDependency;
 
             if (!dataSupplier.IsSupplierOf(dependency))
                 throw new Exception("Data provider " + dataProvider.Name + " is not a supplier of " + dependency);

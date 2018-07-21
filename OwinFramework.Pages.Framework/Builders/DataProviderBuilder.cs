@@ -41,7 +41,8 @@ namespace OwinFramework.Pages.Framework.Builders
                 dataProvider, 
                 _fluentBuilder, 
                 _dataProviderDependenciesFactory.DataDependencyFactory, 
-                _nameManager);
+                _nameManager,
+                package);
 
             var attributes = new AttributeSet(declaringType);
             _elementConfiguror.Configure(dataProviderDefinition, attributes);

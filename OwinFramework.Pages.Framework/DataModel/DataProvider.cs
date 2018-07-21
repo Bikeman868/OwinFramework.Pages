@@ -108,15 +108,9 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         #region IDataSupplier
 
-        IList<Type> IDataSupplier.SuppliedTypes
-        {
-            get { return DataSupplier.SuppliedTypes; }
-        }
-
-        bool IDataSupplier.IsScoped
-        {
-            get { return DataSupplier.IsScoped; }
-        }
+        IDataDependency IDataSupplier.DefaultDependency { get { return DataSupplier.DefaultDependency; } }
+        IList<Type> IDataSupplier.SuppliedTypes { get { return DataSupplier.SuppliedTypes; } }
+        bool IDataSupplier.IsScoped { get { return DataSupplier.IsScoped; } }
 
         void IDataSupplier.Add(IDataDependency dependency, Action<IRenderContext, IDataContext, IDataDependency> action)
         {

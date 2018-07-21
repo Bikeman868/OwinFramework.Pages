@@ -680,9 +680,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.AddScope(type, scopeName);
         }
 
-        void IDataScopeProvider.AddDependency(IDataDependency dependency)
+        IDataSupply IDataScopeProvider.AddDependency(IDataDependency dependency)
         {
-            _dataScopeProvider.AddDependency(dependency);
+            return _dataScopeProvider.AddDependency(dependency);
         }
 
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
@@ -690,9 +690,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
         }
 
-        void IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            _dataScopeProvider.AddSupplier(supplier, dependency);
+            return _dataScopeProvider.AddSupplier(supplier, dependency);
         }
 
         void IDataScopeProvider.AddSupply(IDataSupply supply)

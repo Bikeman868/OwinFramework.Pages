@@ -71,21 +71,17 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             lock(_suppliedDependencies)
             {
-                debug.Dependencies = _suppliedDependencies
+                debug.DataSupplies = _suppliedDependencies
                     .Select(sd =>
                         {
-                            if (sd.Dependency == null)
-                                return sd.Supplier.GetType().DisplayName();
+                            var s = sd.Supplier;
                             var d = sd.Dependency;
-                            return d.DataType.DisplayName() + (string.IsNullOrEmpty(d.ScopeName) ? "" : " in '" + d.ScopeName + "' scope");
+                            var result = d.DataType.DisplayName();
+                            if (!string.IsNullOrEmpty(d.ScopeName))
+                                result += " in '" + d.ScopeName + "' scope";
+                            result += " supplied by " + s.GetType().DisplayName();
+                            return result;
                         })
-                    .ToList();
-            }
-
-            lock(_dataSupplies)
-            {
-                debug.DataSupplies = _dataSupplies
-                    .Select(d => d.GetType().DisplayName())
                     .ToList();
             }
 
@@ -124,24 +120,34 @@ namespace OwinFramework.Pages.Framework.DataModel
             lock(_dataSupplies) _dataSupplies.Add(supply);
         }
 
-        public void AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
+#if DEBUG
+            if (supplier == null) throw new ArgumentException("Supplier can not be null");
+            if (dependency == null) throw new ArgumentException("Dependency can not be null");
+#endif
+            SuppliedDependency suppliedDependency;
+
             lock(_suppliedDependencies)
             {
-                if (_suppliedDependencies.Any(d => 
-                    d.Supplier == supplier && 
-                    d.Dependency.Equals(dependency)))
-                    return;
+                suppliedDependency = _suppliedDependencies
+                    .FirstOrDefault(d => d.Supplier == supplier && d.Dependency.Equals(dependency));
+                
+                if (suppliedDependency != null)
+                    return suppliedDependency.Supply;
 
-                _suppliedDependencies.Add(new SuppliedDependency
+                suppliedDependency = new SuppliedDependency
                     {
                         Supplier = supplier,
-                        Dependency = dependency
-                    });
+                        Dependency = dependency,
+                        Supply = supplier.GetSupply(dependency)
+                    };
+
+                _suppliedDependencies.Add(suppliedDependency);
             }
 
-            var supply = supplier.GetSupply(dependency);
-            AddSupply(supply);
+            AddSupply(suppliedDependency.Supply);
+            return suppliedDependency.Supply;
         }
 
         private DataScopeProvider(
@@ -178,6 +184,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             public IDataSupplier Supplier;
             public IDataDependency Dependency;
+            public IDataSupply Supply;
         }
 
         /*******************************************************************
@@ -216,21 +223,28 @@ namespace OwinFramework.Pages.Framework.DataModel
         * to resolve data needs into data supplies
         *******************************************************************/
 
-        public void AddDependency(IDataDependency dependency)
+        public IDataSupply AddDependency(IDataDependency dependency)
         {
             if (!_isInitialized)
                 throw new InvalidOperationException(
                     "You can not add dependencies to a data scope provider until after initialization");
 
             if (_parent != null && !IsInScope(dependency))
-            {
-                _parent.AddDependency(dependency);
-                return;
-            }
+                return _parent.AddDependency(dependency);
 
             lock (_suppliedDependencies)
-                if (_suppliedDependencies.Any(d => d.Supplier.IsSupplierOf(dependency)))
-                    return;
+            {
+                var suppliedDependency = _suppliedDependencies.FirstOrDefault(s => s.Dependency.Equals(dependency));
+                if (suppliedDependency != null)
+                    return suppliedDependency.Supply;
+
+                suppliedDependency = _suppliedDependencies.FirstOrDefault(d => d.Supplier.IsSupplierOf(dependency));
+                if (suppliedDependency != null)
+                {
+                    AddSupplier(suppliedDependency.Supplier, dependency);
+                    return suppliedDependency.Supply;
+                }
+            }
 
             var supplier = _dataCatalog.FindSupplier(dependency);
 
@@ -239,8 +253,10 @@ namespace OwinFramework.Pages.Framework.DataModel
                     dependency + " data but the data catalog does not have any "+
                     "suppliers for that kind of data");
 
-            AddSupplier(supplier, dependency);
+            var supply = AddSupplier(supplier, dependency);
             AddConsumer(supplier as IDataConsumer);
+
+            return supply;
         }
 
         public void AddConsumer(IDataConsumer consumer)
@@ -288,8 +304,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (_dataSupplies != null)
             {
                 int dataSupplyCount;
-                lock (_dataSupplies)
-                    dataSupplyCount = _dataSupplies.Count;
+                lock (_dataSupplies) dataSupplyCount = _dataSupplies.Count;
 
                 for (var i = 0; i < dataSupplyCount; i++)
                 {
@@ -300,8 +315,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
 
             int childCount;
-            lock (_children)
-                childCount = _children.Count;
+            lock (_children) childCount = _children.Count;
 
             for (var i = 0; i < childCount; i++)
             {

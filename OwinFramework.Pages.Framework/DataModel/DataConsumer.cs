@@ -50,13 +50,24 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void HasDependency(IDataProvider dataProvider, IDataDependency dependency)
         {
+            if (ReferenceEquals(dataProvider, null)) throw new ArgumentNullException("dataProvider");
+
             var dataSupplier = dataProvider as IDataSupplier;
 
             if (dataSupplier == null)
                 throw new Exception("Data provider " + dataProvider.Name + " is not a supplier of data");
 
-            if (dependency != null && !dataSupplier.IsSupplierOf(dependency))
-                throw new Exception("Data provider " + dataProvider.Name + " does not supply the requested data");
+            if (ReferenceEquals(dependency, null))
+            {
+                var suppliedTypes = dataProvider.SuppliedTypes;
+                if (ReferenceEquals(suppliedTypes, null) || suppliedTypes.Count == 0)
+                    throw new InvalidOperationException("You must specify the dependency that this data provider satisfies");
+
+                dependency = _dataDependencyFactory.Create(suppliedTypes[0]);
+            }
+
+            if (!dataSupplier.IsSupplierOf(dependency))
+                throw new Exception("Data provider " + dataProvider.Name + " is not a supplier of " + dependency);
 
             if (_dataProviderDependencies == null)
                 _dataProviderDependencies = new List<DataProviderDependency>();

@@ -257,45 +257,20 @@ namespace OwinFramework.Pages.DebugMiddleware
 
             if (dataScopeProvider.Scopes != null && dataScopeProvider.Scopes.Count > 0)
             {
-                html.WriteElementLine("p", "Scopes introduced");
+                html.WriteElementLine("p", "Dependencies resolved in this scope");
                 html.WriteOpenTag("ul");
                 foreach (var scope in dataScopeProvider.Scopes)
                     html.WriteElementLine("li", scope);
                 html.WriteCloseTag("ul");
             }
 
-            if (dataScopeProvider.Dependencies != null && dataScopeProvider.Dependencies.Count > 0)
-            {
-                html.WriteElementLine("p", "Dependencies satisfied");
-                html.WriteOpenTag("ul");
-                foreach (var dependency in dataScopeProvider.Dependencies)
-                    html.WriteElementLine("li", dependency);
-                html.WriteCloseTag("ul");
-            }
-
             if (dataScopeProvider.DataSupplies != null && dataScopeProvider.DataSupplies.Count > 0)
             {
-                html.WriteElementLine("p", "Data supplies");
+                html.WriteElementLine("p", "Data supplied in this scope");
                 html.WriteOpenTag("ul");
                 foreach (var dataSupplier in dataScopeProvider.DataSupplies)
                     html.WriteElementLine("li", dataSupplier);
                 html.WriteCloseTag("ul");
-            }
-
-            if (dataScopeProvider.DataProviders != null && dataScopeProvider.DataProviders.Count > 0)
-            {
-                if (depth == 1)
-                {
-                    html.WriteElementLine("p", "Has " + dataScopeProvider.DataProviders.Count + " data providers");
-                }
-                else
-                {
-                    html.WriteElementLine("p", "Data providers");
-                    StartIndent(html, true);
-                    foreach (var provider in dataScopeProvider.DataProviders)
-                        WriteDebugInfo(html, provider, depth - 1);
-                    EndIndent(html);
-                }
             }
 
             if (dataScopeProvider.Parent != null)
@@ -405,30 +380,30 @@ namespace OwinFramework.Pages.DebugMiddleware
                 StartIndent(html, true);
                 WriteDebugInfo(html, page.Scope, depth - 1);
 
-                var dataScopeProvider = page.Scope.Instance as IDataScopeProvider;
-                if (dataScopeProvider != null)
-                {
-                    var renderContext = _renderContextFactory.Create();
-                    dataScopeProvider.SetupDataContext(renderContext);
-                    var debugRenderContext = renderContext.GetDebugInfo();
-                    var data = debugRenderContext.Data;
-                    if (data != null)
-                    {
-                        foreach (var kv in data)
-                        {
-                            var scopeId = kv.Key;
-                            var dataContext = kv.Value;
-                            if (dataContext != null && 
-                                dataContext.Properties != null && 
-                                dataContext.Properties.Count > 0)
-                            {
-                                html.WriteElementLine("h3", "Data in context for data scope " + scopeId);
-                                foreach (var property in dataContext.Properties)
-                                    html.WriteElementLine("p", "Data: " + property.DisplayName());
-                            }
-                        }
-                    }
-                }
+                //var dataScopeProvider = page.Scope.Instance as IDataScopeProvider;
+                //if (dataScopeProvider != null)
+                //{
+                //    var renderContext = _renderContextFactory.Create();
+                //    dataScopeProvider.SetupDataContext(renderContext);
+                //    var debugRenderContext = renderContext.GetDebugInfo();
+                //    var data = debugRenderContext.Data;
+                //    if (data != null)
+                //    {
+                //        foreach (var kv in data)
+                //        {
+                //            var scopeId = kv.Key;
+                //            var dataContext = kv.Value;
+                //            if (dataContext != null && 
+                //                dataContext.Properties != null && 
+                //                dataContext.Properties.Count > 0)
+                //            {
+                //                html.WriteElementLine("h3", "Data in context for data scope " + scopeId);
+                //                foreach (var property in dataContext.Properties)
+                //                    html.WriteElementLine("p", "Data: " + property.DisplayName());
+                //            }
+                //        }
+                //    }
+                //}
 
                 EndIndent(html);
             }
@@ -474,8 +449,7 @@ namespace OwinFramework.Pages.DebugMiddleware
 
             if (region.Scope != null)
             {
-                if ((region.Scope.Scopes != null && region.Scope.Scopes.Count > 0) ||
-                    (region.Scope.DataProviders != null && region.Scope.DataProviders.Count > 0))
+                if (region.Scope.Scopes != null && region.Scope.Scopes.Count > 0)
                 {
                     html.WriteElementLine("p", "Region introduces a new data scope");
                     StartIndent(html, false);

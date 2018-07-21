@@ -54,13 +54,19 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// each request to supply data required by the element. Can be called
         /// before or after initialization
         /// </summary>
-        void AddSupplier(IDataSupplier supplier, IDataDependency dependency);
+        IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency);
 
         /// <summary>
         /// Adds a data supply to the list of what must be supplied to the 
         /// data context for rendering. Can be called before or after
-        /// initialization
+        /// initialization.
         /// </summary>
+        /// <remarks>Note that adding a data supply directly like this
+        /// give the scope provider no clue about what data is being
+        /// supplied, and therefore it does not know which dependencies
+        /// if any will be satified. Whenever possible add a DataSupplier
+        /// instead because it can let the data scope know which 
+        /// dependencies it satisfies.</remarks>
         void AddSupply(IDataSupply supply);
 
         /// <summary>
@@ -107,7 +113,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// scope is handled.
         /// This method can only be called after initialization
         /// </summary>
-        void AddDependency(IDataDependency dependency);
+        IDataSupply AddDependency(IDataDependency dependency);
 
         /// <summary>
         /// Must be called after initialization, adds data suppliers to

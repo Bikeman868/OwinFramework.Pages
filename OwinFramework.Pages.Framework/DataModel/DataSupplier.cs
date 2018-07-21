@@ -65,10 +65,21 @@ namespace OwinFramework.Pages.Framework.DataModel
             public int DataSupplierId;
             public IDataDependency Dependency;
             public Action<IRenderContext, IDataContext, IDataDependency> Action;
+            public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {
                 Action(renderContext, dataContext, Dependency);
+
+                if (OnDataSupplied != null)
+                {
+                    var args = new DataSuppliedEventArgs
+                    {
+                        RenderContext = renderContext,
+                        DataContext = dataContext
+                    };
+                    OnDataSupplied(this, args);
+                }
             }
         }
 

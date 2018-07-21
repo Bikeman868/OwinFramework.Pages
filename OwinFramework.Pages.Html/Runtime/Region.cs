@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// You can also use this class directly but it provides only minimal region 
     /// functionallity
     /// </summary>
-    public class Region : Element, IRegion, IDataScopeProvider, IDataSupplier
+    public class Region : Element, IRegion, IDataScopeProvider, IDataSupplier, IDataSupply
     {
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Region; } }
@@ -159,6 +159,7 @@ namespace OwinFramework.Pages.Html.Runtime
                         foreach (var item in list)
                         {
                             context.Data.Set(_repeatType, item, RepeatScope);
+                            Supply(context, context.Data);
                             WriteChildOpen(context.Html);
                             result.Add(content.WriteHtml(context));
                             WriteChildClose(context.Html);
@@ -255,9 +256,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.AddScope(type, scopeName);
         }
 
-        void IDataScopeProvider.AddDependency(IDataDependency dependency)
+        IDataSupply IDataScopeProvider.AddDependency(IDataDependency dependency)
         {
-            _dataScopeProvider.AddDependency(dependency);
+            return _dataScopeProvider.AddDependency(dependency);
         }
 
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
@@ -265,9 +266,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
         }
 
-        void IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            _dataScopeProvider.AddSupplier(supplier, dependency);
+            return _dataScopeProvider.AddSupplier(supplier, dependency);
         }
 
         void IDataScopeProvider.AddSupply(IDataSupply supply)
@@ -309,13 +310,29 @@ namespace OwinFramework.Pages.Html.Runtime
             if (_repeatType == null) return false;
             if (dependency.DataType == null) return false;
             if (_repeatType != dependency.DataType) return false;
+            if (string.IsNullOrEmpty(RepeatScope)) return string.IsNullOrEmpty(dependency.ScopeName);
             return string.Equals(RepeatScope, dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
         }
 
         IDataSupply IDataSupplier.GetSupply(IDataDependency dependency)
         {
-            return null;
+            return this;
         }
+
+        public void Supply(IRenderContext renderContext, IDataContext dataContext)
+        {
+            if (OnDataSupplied != null)
+            {
+                var args = new DataSuppliedEventArgs
+                {
+                    RenderContext = renderContext,
+                    DataContext = dataContext
+                };
+                OnDataSupplied(this, args);
+            }
+        }
+
+        public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
 
         #endregion
     }

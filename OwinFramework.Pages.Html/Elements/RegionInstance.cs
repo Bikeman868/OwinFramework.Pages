@@ -70,24 +70,6 @@ namespace OwinFramework.Pages.Html.Elements
         {
             initializationData.Push();
             initializationData.AddScope(_dataScopeProvider);
-
-            if (RepeatType != null)
-            {
-                // When regions repeat data they effectively are a supplier
-                // of the data they repeat, but the supplier itself does not add the
-                // data to the data context, it is added by the repeating action during
-                // the rendering operation. We need to add a supplier here otherwise the
-                // data scope provider will try to resolve dependencies on the repeated
-                // data by looking in the data catalog.
-
-                var dependency = _dependenciesFactory.DataDependencyFactory.Create(RepeatType, RepeatScope);
-                var supplier = _dependenciesFactory.DataSupplierFactory.Create();
-                supplier.Add(dependency, (rc, dc, d) => { });
-
-                _dataScopeProvider.AddScope(RepeatType, RepeatScope);
-                _dataScopeProvider.AddSupplier(supplier, dependency);
-            }
-
             base.Initialize(initializationData);
             initializationData.Pop();
         }
@@ -234,9 +216,9 @@ namespace OwinFramework.Pages.Html.Elements
             _dataScopeProvider.AddScope(type, scopeName);
         }
 
-        void IDataScopeProvider.AddDependency(IDataDependency dependency)
+        IDataSupply IDataScopeProvider.AddDependency(IDataDependency dependency)
         {
-            _dataScopeProvider.AddDependency(dependency);
+            return _dataScopeProvider.AddDependency(dependency);
         }
 
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
@@ -244,9 +226,9 @@ namespace OwinFramework.Pages.Html.Elements
             _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
         }
 
-        void IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            _dataScopeProvider.AddSupplier(supplier, dependency);
+            return _dataScopeProvider.AddSupplier(supplier, dependency);
         }
 
         void IDataScopeProvider.AddSupply(IDataSupply supply)

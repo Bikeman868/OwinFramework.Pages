@@ -43,12 +43,24 @@ namespace OwinFramework.Pages.Mocks.DataModel
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {
                 Action(renderContext, dataContext, Dependency);
+
+                if (OnDataSupplied != null)
+                {
+                    var args = new DataSuppliedEventArgs
+                    {
+                        RenderContext = renderContext,
+                        DataContext = dataContext
+                    };
+                    OnDataSupplied(this, args);
+                }
             }
 
             public IList<IDataSupply> DependentSupplies
             {
                 get { return null; }
             }
+
+            public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
         }
     }
 }

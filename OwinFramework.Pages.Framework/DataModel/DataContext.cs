@@ -118,10 +118,6 @@ namespace OwinFramework.Pages.Framework.DataModel
 
                     if (retry)
                     {
-                        // TODO: missing data after retry is an error
-                        if (type.IsValueType)
-                            return Activator.CreateInstance(type);
-                        return null;
                         throw new Exception("This data context does not know how to find missing" +
                             " data of type " + type.DisplayName() + " because after adding it to the scope provider" +
                             " the dependency could still not be resolved");

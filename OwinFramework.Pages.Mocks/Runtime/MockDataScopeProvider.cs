@@ -60,8 +60,9 @@ namespace OwinFramework.Pages.Mocks.Runtime
             ScopeName = scopeName;
         }
 
-        public void AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
+            return new MockDataSupply();
         }
 
         public void AddSupply(IDataSupply supply)
@@ -69,9 +70,10 @@ namespace OwinFramework.Pages.Mocks.Runtime
             DataSupplies.Add(supply);
         }
 
-        public void AddDependency(IDataDependency dependency)
+        public IDataSupply AddDependency(IDataDependency dependency)
         {
             DataDependencies.Add(dependency);
+            return new MockDataSupply();
         }
 
         public void AddConsumer(IDataConsumer consumer)
@@ -111,8 +113,21 @@ namespace OwinFramework.Pages.Mocks.Runtime
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {
                 if (SupplyAction != null)
+                {
                     SupplyAction(dataContext);
+                    if (OnDataSupplied != null)
+                    {
+                        var args = new DataSuppliedEventArgs 
+                        { 
+                            RenderContext = renderContext,
+                            DataContext = dataContext
+                        };
+                        OnDataSupplied(this, args);
+                    }
+                }
             }
+
+            public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
         }
     }
 }

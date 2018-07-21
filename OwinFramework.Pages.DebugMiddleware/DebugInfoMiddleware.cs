@@ -211,6 +211,15 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteCloseTag("p");
             }
 
+            if (debugInfo.DataConsumer != null)
+                html.WriteElementLine("p", "Needs data " + debugInfo.DataConsumer);
+
+            if (debugInfo.DependentComponents != null && debugInfo.DependentComponents.Count > 0)
+            {
+                foreach(var component in debugInfo.DependentComponents)
+                    html.WriteElementLine("p", "Needs component " + component.Name);
+            }
+
             if (debugInfo is DebugComponent) WriteHtml(html, (DebugComponent)debugInfo, depth);
             if (debugInfo is DebugDataContext) WriteHtml(html, (DebugDataContext)debugInfo, depth);
             if (debugInfo is DebugDataProvider) WriteHtml(html, (DebugDataProvider)debugInfo, depth);

@@ -44,7 +44,7 @@ namespace OwinFramework.Pages.Html.Elements
             IRegionDependenciesFactory dependenciesFactory, 
             IRegion parent, 
             IElement content)
-            : base(dependenciesFactory.DataConsumerFactory, parent)
+            : base(parent)
         {
             _dependenciesFactory = dependenciesFactory;
 

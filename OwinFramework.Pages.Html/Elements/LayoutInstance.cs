@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Html.Elements
             ILayoutDependenciesFactory layoutDependencies,
             ILayout parent,
             IEnumerable<string> regionNames)
-            : base(layoutDependencies.DataConsumerFactory, parent)
+            : base(parent)
         {
             _layoutDependencies = layoutDependencies;
             _regionsByName = layoutDependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);

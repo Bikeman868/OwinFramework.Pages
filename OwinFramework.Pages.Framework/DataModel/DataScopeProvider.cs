@@ -330,7 +330,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             renderContext.DeleteDataContextTree();
 
             var root = (IDataScopeProvider)this;
-            while (root.Parent != null)
+            while (!ReferenceEquals(root.Parent, null))
                 root = root.Parent;
 
             root.SetupDataContext(renderContext);

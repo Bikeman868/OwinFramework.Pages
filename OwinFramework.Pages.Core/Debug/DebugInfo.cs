@@ -1,5 +1,7 @@
 ﻿using System.Xml.Serialization;
 using Newtonsoft.Json;
+using OwinFramework.Pages.Core.Interfaces;
+using System.Collections.Generic;
 
 namespace OwinFramework.Pages.Core.Debug
 {
@@ -17,6 +19,16 @@ namespace OwinFramework.Pages.Core.Debug
         /// The type of component
         /// </summary>
         public string Type { get; set; }
+
+        /// <summary>
+        /// Information about data required by this element
+        /// </summary>
+        public string DataConsumer { get; set; }
+
+        /// <summary>
+        /// The components that this element depends on
+        /// </summary>
+        public List<IComponent> DependentComponents { get; set; }
 
         /// <summary>
         /// The live instance that this is debug info for

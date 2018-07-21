@@ -139,14 +139,13 @@ namespace OwinFramework.Pages.Html.Builders
             string listScope, 
             params string[] classes)
         {
-            _region.RepeatType = typeof(T);
-            _region.RepeatScope = scopeName;
-            _region.ListScope = listScope;
-
-            _childTagName = tag;
-            _childStyle = style;
-            _childClassNames = classes;
-            return this;
+            return ((IRegionDefinition)this).ForEach(
+                typeof(T),
+                scopeName,
+                tag,
+                style,
+                listScope,
+                classes);
         }
 
         IRegionDefinition IRegionDefinition.ForEach(
@@ -158,7 +157,7 @@ namespace OwinFramework.Pages.Html.Builders
             params string[] classes)
         {
             if (dataType == null)
-                throw new RegionBuilderException("When confiuring a region to repeat the data type to repeat must be specified");
+                throw new RegionBuilderException("When configuring a region to repeat the data type to repeat must be specified");
 
             _region.RepeatType = dataType;
             _region.RepeatScope = scopeName;
@@ -168,22 +167,22 @@ namespace OwinFramework.Pages.Html.Builders
             _childStyle = style;
             _childClassNames = classes;
 
+            var dataScope = _region as IDataScopeProvider;
+            dataScope.AddScope(_region.RepeatType, _region.RepeatScope);
+
+            var dataConsumer = _region as IDataConsumer;
+            dataConsumer.HasDependency(_region.ListType, _region.ListScope);
+
             return this;
         }
 
         public IRegionDefinition DataScope(Type dataType, string scopeName)
         {
-            if (dataType == null)
-                throw new RegionBuilderException("When confiuring a region to repeat the data type to repeat must be specified");
-
-            // TODO: the region is not a data scope provider, only the region instance
-
-            /*
             var dataScope = _region as IDataScopeProvider;
-            if (dataScope = null)
+            if (ReferenceEquals(dataScope, null))
                throw new RegionBuilderException("This region is not a data scope provider");
+
             dataScope.AddScope(dataType, scopeName);
-            */
 
             return this;
         }

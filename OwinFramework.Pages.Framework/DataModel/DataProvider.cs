@@ -99,6 +99,11 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
+        string IDataConsumer.GetDebugDescription()
+        {
+            return DataConsumer.GetDebugDescription();
+        }
+
         #endregion
 
         #region IDataSupplier

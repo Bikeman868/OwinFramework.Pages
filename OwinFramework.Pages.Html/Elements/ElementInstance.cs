@@ -17,14 +17,17 @@ namespace OwinFramework.Pages.Html.Elements
         private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
 
         protected ElementInstance(
-            IDataConsumerFactory dataConsumerFactory,
             T parent)
-            : base(dataConsumerFactory)
         {
             if (parent == null)
                 throw new ArgumentNullException("parent");
 
             Parent = parent;
+        }
+
+        public override IDataConsumer GetDataConsumer()
+        {
+            return Parent.GetDataConsumer();
         }
 
         public override AssetDeployment AssetDeployment

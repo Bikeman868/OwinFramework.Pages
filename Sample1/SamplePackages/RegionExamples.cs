@@ -260,6 +260,11 @@ namespace Sample1.SamplePackages
                 return null;
             }
 
+            IDataConsumer IElement.GetDataConsumer()
+            {
+                return null;
+            }
+
             #endregion
         }
         

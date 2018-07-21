@@ -744,6 +744,11 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataConsumer.HasDependency(dataProvider, dependency);
         }
 
+        string IDataConsumer.GetDebugDescription()
+        {
+            return _dataConsumer.GetDebugDescription();
+        }
+
         #endregion
     }
 }

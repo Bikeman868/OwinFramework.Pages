@@ -107,12 +107,27 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
         }
 
+        string IDataConsumer.GetDebugDescription()
+        {
+            var description = string.Empty;
+
+            if (_dataProviderDependencies != null)
+                description += " " + _dataProviderDependencies.Count + " data providers";
+
+            if (_dataSupplyDependencies != null)
+                description += " " + _dataSupplyDependencies.Count + " data suppliers";
+
+            if (_dataDependencies != null)
+                description += " " + _dataDependencies.Count + " data types";
+
+            return description.Length == 0 ? null : description;
+        }
+
         private class DataProviderDependency
         {
             public IDataProvider DataProvider;
             public IDataDependency Dependency;
         }
-
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
@@ -34,6 +35,12 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// the entire element tree.
         /// </summary>
         IEnumerator<IElement> GetChildren();
+
+        /// <summary>
+        /// Returns the data consumer for this element. The data consumer defines the
+        /// runtime data needs of this element
+        /// </summary>
+        IDataConsumer GetDataConsumer();
 
         /// <summary>
         /// This is where the element is responsible for outputting its dynamic css rules.

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -10,19 +8,38 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// Base implementation of IPage. Inheriting from this olass will insulate you
-    /// from any additions to the IPage interface
+    /// Base implementation elements that are constructed and configured
+    /// by the fluent builder.
     /// </summary>
-    public abstract class Element: ElementBase
+    public abstract class Element : ElementBase, IDataConsumer
     {
+        private readonly IDataConsumer _dataConsumer;
+
         private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
         private string _name;
         private IPackage _package;
         private IModule _module;
 
         protected Element(IDataConsumerFactory dataConsumerFactory)
-            : base(dataConsumerFactory)
-        { }
+        {
+            _dataConsumer = dataConsumerFactory == null
+                ? null
+                : dataConsumerFactory.Create();
+        }
+
+        public override IDataConsumer GetDataConsumer()
+        {
+            return _dataConsumer;
+        }
+
+        public override void Initialize(IInitializationData initializationData)
+        {
+            var assetDeployment = InitializeAssetDeployment(initializationData);
+            initializationData.HasElement(this, assetDeployment, Module);
+
+            InitializeDependants(initializationData);
+            InitializeChildren(initializationData, assetDeployment);
+        }
 
         public override AssetDeployment AssetDeployment
         {
@@ -47,6 +64,8 @@ namespace OwinFramework.Pages.Html.Elements
             get { return _module; }
             set { _module = value; }
         }
+
+        #region Writing HTML
 
         public override IWriteResult WriteStaticCss(ICssWriter writer)
         {
@@ -94,13 +113,65 @@ namespace OwinFramework.Pages.Html.Elements
             return includeChildren ? WriteChildrenHtml(result, renderContext) : result;
         }
 
-        public override void Initialize(IInitializationData initializationData)
-        {
-            var assetDeployment = InitializeAssetDeployment(initializationData);
-            initializationData.HasElement(this, assetDeployment, Module);
+        #endregion
 
-            InitializeDependants(initializationData);
-            InitializeChildren(initializationData, assetDeployment);
+        #region IDataConsumer
+
+        void IDataConsumer.HasDependency(IDataSupply dataSupply)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.HasDependency(dataSupply);
         }
+
+        void IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.AddDependenciesToScopeProvider(dataScope);
+        }
+
+        void IDataConsumer.HasDependency<T>(string scopeName)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.HasDependency<T>(scopeName);
+        }
+
+        void IDataConsumer.HasDependency(Type dataType, string scopeName)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.HasDependency(dataType, scopeName);
+        }
+
+        void IDataConsumer.CanUseData<T>(string scopeName)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.CanUseData<T>(scopeName);
+        }
+
+        void IDataConsumer.CanUseData(Type dataType, string scopeName)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.CanUseData(dataType, scopeName);
+        }
+
+        void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
+        {
+            if (_dataConsumer == null) return;
+
+            _dataConsumer.HasDependency(dataProvider, dependency);
+        }
+
+        string IDataConsumer.GetDebugDescription()
+        {
+            if (_dataConsumer == null) return null;
+            return _dataConsumer.GetDebugDescription();
+        }
+
+        #endregion
     }
 }

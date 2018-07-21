@@ -70,5 +70,10 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// </summary>
         /// <param name="dataScope">The data scope to add missing dependencies to</param>
         void AddDependenciesToScopeProvider(IDataScopeProvider dataScope);
+
+        /// <summary>
+        /// Gets a description used for debugging purposes only
+        /// </summary>
+        string GetDebugDescription();
     }
 }

@@ -12,9 +12,8 @@ namespace OwinFramework.Pages.Html.Elements
     /// <summary>
     /// Base class for all elements and element instances
     /// </summary>
-    public abstract class ElementBase: IElement, IDataConsumer
+    public abstract class ElementBase: IElement
     {
-        private readonly IDataConsumer _dataConsumer;
         private List<IComponent> _dependentComponents;
 
         public abstract AssetDeployment AssetDeployment { get; set; }
@@ -23,11 +22,8 @@ namespace OwinFramework.Pages.Html.Elements
         public abstract IPackage Package { get; set; }
         public abstract IModule Module { get; set; }
 
-        protected ElementBase(IDataConsumerFactory dataConsumerFactory)
+        protected ElementBase()
         {
-            _dataConsumer = dataConsumerFactory == null
-                ? null
-                : dataConsumerFactory.Create();
         }
 
         public DebugInfo GetDebugInfo() 
@@ -39,8 +35,33 @@ namespace OwinFramework.Pages.Html.Elements
         {
             debugInfo.Name = Name;
             debugInfo.Instance = this;
+
+            var dataConsumer = GetDataConsumer();
+            debugInfo.DataConsumer = ReferenceEquals(dataConsumer, null) 
+                ? null
+                : dataConsumer.GetDebugDescription();
+
+            debugInfo.DependentComponents = _dependentComponents;
+
             return debugInfo;
         }
+
+        public abstract IDataConsumer GetDataConsumer();
+
+        public virtual void NeedsComponent(IComponent component)
+        {
+            if (_dependentComponents == null)
+                _dependentComponents = new List<IComponent>();
+
+            _dependentComponents.Add(component);
+        }
+
+        public virtual IEnumerator<IElement> GetChildren()
+        {
+            return null;
+        }
+
+        #region Writing HTML
 
         public abstract IWriteResult WriteStaticCss(ICssWriter writer);
         public abstract IWriteResult WriteStaticJavascript(IJavascriptWriter writer);
@@ -50,12 +71,6 @@ namespace OwinFramework.Pages.Html.Elements
         public abstract IWriteResult WriteTitle(IRenderContext context, bool includeChildren);
         public abstract IWriteResult WriteHead(IRenderContext context, bool includeChildren);
         public abstract IWriteResult WriteHtml(IRenderContext context, bool includeChildren);
-        public abstract void Initialize(IInitializationData initializationData);
-
-        public virtual IEnumerator<IElement> GetChildren()
-        {
-            return null;
-        }
 
         protected IWriteResult WriteChildrenDynamicCss(
             IWriteResult writeResult, 
@@ -189,6 +204,12 @@ namespace OwinFramework.Pages.Html.Elements
             return writeResult;
         }
 
+        #endregion
+
+        #region Initialization
+
+        public abstract void Initialize(IInitializationData initializationData);
+
         protected AssetDeployment InitializeAssetDeployment(IInitializationData initializationData)
         {
             var assetDeployment = AssetDeployment == AssetDeployment.Inherit && Module != null
@@ -205,7 +226,7 @@ namespace OwinFramework.Pages.Html.Elements
             return assetDeployment;
         }
 
-        protected void InitializeDependants(IInitializationData initializationData)
+        protected virtual void InitializeDependants(IInitializationData initializationData)
         {
             if (_dependentComponents != null)
             {
@@ -221,10 +242,9 @@ namespace OwinFramework.Pages.Html.Elements
                 } while (_dependentComponents.Count > skip);
             }
 
-            if (_dataConsumer != null)
-            {
-                _dataConsumer.AddDependenciesToScopeProvider(initializationData.ScopeProvider);
-            }
+            var dataConsumer = GetDataConsumer();
+            if (dataConsumer != null)
+                dataConsumer.AddDependenciesToScopeProvider(initializationData.ScopeProvider);
         }
 
         protected void InitializeChildren(
@@ -254,65 +274,6 @@ namespace OwinFramework.Pages.Html.Elements
                 }
                 children.Dispose();
             }
-        }
-
-        public virtual void NeedsComponent(IComponent component)
-        {
-            if (_dependentComponents == null)
-                _dependentComponents = new List<IComponent>();
-
-            _dependentComponents.Add(component);
-        }
-
-        #region IDataConsumer
-
-        void IDataConsumer.HasDependency(IDataSupply dataSupply)
-        {
-            if (_dataConsumer == null) return;
-
-            _dataConsumer.HasDependency(dataSupply);
-        }
-
-        void IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
-        {
-            if (_dataConsumer == null) return;
-
-            _dataConsumer.AddDependenciesToScopeProvider(dataScope);
-        }
-
-        void IDataConsumer.HasDependency<T>(string scopeName)
-        {
-            if (_dataConsumer == null) return;
-
-            _dataConsumer.HasDependency<T>(scopeName);
-        }
-
-        void IDataConsumer.HasDependency(Type dataType, string scopeName)
-        {
-            if (_dataConsumer == null) return;
-
-            _dataConsumer.HasDependency(dataType, scopeName);
-        }
-
-        void IDataConsumer.CanUseData<T>(string scopeName)
-        {
-            if (_dataConsumer == null) return;
-
-            _dataConsumer.CanUseData<T>(scopeName);
-        }
-
-        void IDataConsumer.CanUseData(Type dataType, string scopeName)
-        {
-            if (_dataConsumer == null) return;
-
-            _dataConsumer.CanUseData(dataType, scopeName);
-        }
-
-        void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
-        {
-            if (_dataConsumer == null) return;
-
-            _dataConsumer.HasDependency(dataProvider, dependency);
         }
 
         #endregion

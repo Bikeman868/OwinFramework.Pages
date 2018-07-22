@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -166,7 +167,7 @@ namespace OwinFramework.Pages.Html.Elements
             _dataConsumer.HasDependency(dataProvider, dependency);
         }
 
-        string IDataConsumer.GetDebugDescription()
+        List<string> IDataConsumer.GetDebugDescription()
         {
             if (_dataConsumer == null) return null;
             return _dataConsumer.GetDebugDescription();

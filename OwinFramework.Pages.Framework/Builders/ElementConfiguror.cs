@@ -859,6 +859,10 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (attributes.Repeat != null)
             {
+                // TODO: This is no longer correct
+
+
+
                 // When data scope providers repeat data they effectively are a supplier
                 // of the data they repeat, but the supplier itself does not add the
                 // data to the data context, it is added by the repeating action during

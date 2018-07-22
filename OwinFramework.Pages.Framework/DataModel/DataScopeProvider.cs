@@ -309,7 +309,8 @@ namespace OwinFramework.Pages.Framework.DataModel
                 {
                     IDataSupply dataSupply;
                     lock (_dataSupplies) dataSupply = _dataSupplies[i];
-                    dataSupply.Supply(renderContext, dataContext);
+                    if (dataSupply.IsStatic)
+                        dataSupply.Supply(renderContext, dataContext);
                 }
             }
 

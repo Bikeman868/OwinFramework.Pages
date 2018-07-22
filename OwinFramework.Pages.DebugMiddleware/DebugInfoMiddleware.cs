@@ -211,8 +211,14 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteCloseTag("p");
             }
 
-            if (debugInfo.DataConsumer != null)
-                html.WriteElementLine("p", "Needs data " + debugInfo.DataConsumer);
+            if (debugInfo.DataConsumer != null && debugInfo.DataConsumer.Count > 0)
+            {
+                html.WriteElementLine("p", "Dependent data");
+                html.WriteOpenTag("ul");
+                foreach (var consumer in debugInfo.DataConsumer)
+                    html.WriteElementLine("li", consumer);
+                html.WriteCloseTag("ul");
+            }
 
             if (debugInfo.DependentComponents != null && debugInfo.DependentComponents.Count > 0)
             {
@@ -449,9 +455,9 @@ namespace OwinFramework.Pages.DebugMiddleware
 
             if (region.Scope != null)
             {
-                if (region.Scope.Scopes != null && region.Scope.Scopes.Count > 0)
+                if (region.Scope.Scopes != null)
                 {
-                    html.WriteElementLine("p", "Region introduces a new data scope");
+                    html.WriteElementLine("p", "Region data scope");
                     StartIndent(html, false);
                     WriteDebugInfo(html, region.Scope, 3);
                     EndIndent(html);

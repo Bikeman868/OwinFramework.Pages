@@ -23,7 +23,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// Information about data required by this element
         /// </summary>
-        public string DataConsumer { get; set; }
+        public List<string> DataConsumer { get; set; }
 
         /// <summary>
         /// The components that this element depends on

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
@@ -17,6 +16,17 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <param name="dataContext">The data context to use to get dependant data and where
         /// new data should be added</param>
         void Supply(IRenderContext renderContext, IDataContext dataContext);
+
+        /// <summary>
+        /// When this property returns true it means that the supplied data can
+        /// be preloaded into the daat context before the rendering operation begins
+        /// and the data remains static for the duration of the rendering operation.
+        /// When this property returns false it means that the data changes during
+        /// the rendering operation and any dependents of this supply should attach
+        /// to the OnDataSupplied event to be notified when the data in the
+        /// data context changes
+        /// </summary>
+        bool IsStatic { get; }
 
         /// <summary>
         /// There are a few unusual situations where other objects need to

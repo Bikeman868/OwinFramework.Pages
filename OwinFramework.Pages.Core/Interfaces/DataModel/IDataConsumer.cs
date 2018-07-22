@@ -74,6 +74,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <summary>
         /// Gets a description used for debugging purposes only
         /// </summary>
-        string GetDebugDescription();
+        List<string> GetDebugDescription();
     }
 }

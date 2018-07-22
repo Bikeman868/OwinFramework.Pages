@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 
@@ -112,20 +113,23 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
         }
 
-        string IDataConsumer.GetDebugDescription()
+        List<string> IDataConsumer.GetDebugDescription()
         {
-            var description = string.Empty;
+            var description = new List<string>();
 
             if (_dataProviderDependencies != null)
-                description += " " + _dataProviderDependencies.Count + " data providers";
+                foreach (var dataProvider in _dataProviderDependencies)
+                    description.Add("Needs " + dataProvider.Dependency + " from " + dataProvider.DataProvider);
 
             if (_dataSupplyDependencies != null)
-                description += " " + _dataSupplyDependencies.Count + " data suppliers";
+                foreach (var dataSupply in _dataSupplyDependencies)
+                    description.Add("Needs supply " + dataSupply.GetType().DisplayName());
 
             if (_dataDependencies != null)
-                description += " " + _dataDependencies.Count + " data types";
-
-            return description.Length == 0 ? null : description;
+                foreach (var dependency in _dataDependencies)
+                    description.Add("Needs data " + dependency);
+            
+            return description;
         }
 
         private class DataProviderDependency

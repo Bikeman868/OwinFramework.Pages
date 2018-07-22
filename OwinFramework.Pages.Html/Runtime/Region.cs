@@ -310,7 +310,10 @@ namespace OwinFramework.Pages.Html.Runtime
             get { return !string.IsNullOrEmpty(RepeatScope); }
         }
 
-        void IDataSupplier.Add(IDataDependency dependency, Action<IRenderContext, IDataContext, IDataDependency> action)
+        void IDataSupplier.Add(
+            IDataDependency dependency, 
+            Action<IRenderContext, IDataContext, IDataDependency> action,
+            bool isStatic)
         {
             throw new NotImplementedException();
         }
@@ -328,6 +331,8 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             return this;
         }
+
+        bool IDataSupply.IsStatic { get { return false; } }
 
         public void Supply(IRenderContext renderContext, IDataContext dataContext)
         {

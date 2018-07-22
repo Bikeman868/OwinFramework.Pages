@@ -109,6 +109,8 @@ namespace OwinFramework.Pages.Mocks.Runtime
         private class MockDataSupply : IDataSupply
         {
             public Action<IDataContext> SupplyAction;
+            public bool IsStatic { get { return true; } }
+            public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {
@@ -126,8 +128,6 @@ namespace OwinFramework.Pages.Mocks.Runtime
                     }
                 }
             }
-
-            public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
         }
     }
 }

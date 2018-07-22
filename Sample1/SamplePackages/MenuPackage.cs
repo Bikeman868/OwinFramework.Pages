@@ -82,7 +82,6 @@ namespace Sample1.SamplePackages
         /// This is an example of writing a component that needs a MenuItem to work with and
         /// writes html into the body of the page
         /// </summary>
-        [NeedsData(typeof(MenuItem))]
         private class MenuItemComponent : Component
         {
             public MenuItemComponent(IComponentDependenciesFactory dependencies) 

@@ -96,7 +96,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (_dataProviderDependencies != null)
             {
                 foreach (var dataProviderDependency in _dataProviderDependencies)
-                    dependentSupplies.Add(dataScope.AddSupplier(dataProviderDependency.DataProvider, dataProviderDependency.Dependency, null));
+                    dependentSupplies.Add(dataScope.AddSupplier(dataProviderDependency.DataProvider, dataProviderDependency.Dependency));
             }
 
             if (_dataDependencies != null)

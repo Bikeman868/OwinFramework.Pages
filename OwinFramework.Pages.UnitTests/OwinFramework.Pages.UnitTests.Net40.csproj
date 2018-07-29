@@ -87,6 +87,7 @@
     <Compile Include="Framework\Managers\NameManagerTests.cs" />
     <Compile Include="Framework\Managers\AssetManagerTests.cs" />
     <Compile Include="Framework\Managers\IdManagerTests.cs" />
+    <Compile Include="Framework\Utility\DependencySorterTests.cs" />
     <Compile Include="Html\Runtime\FluentBuilderTests.cs" />
     <Compile Include="SpikeTests\MixinExample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

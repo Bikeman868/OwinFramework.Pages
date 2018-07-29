@@ -6,6 +6,7 @@ using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Framework.Utility;
 
 namespace OwinFramework.Pages.Framework.DataModel
 {
@@ -109,8 +110,8 @@ namespace OwinFramework.Pages.Framework.DataModel
         public int Id { get; private set; }
         public string ElementName { get; set; }
         private readonly bool _isInstance;
-        private readonly IList<IDataScope> _dataScopes = new List<IDataScope>();
-        private readonly IList<SuppliedDependency> _suppliedDependencies = new List<SuppliedDependency>();
+        private readonly List<IDataScope> _dataScopes = new List<IDataScope>();
+        private readonly List<SuppliedDependency> _suppliedDependencies = new List<SuppliedDependency>();
 
         public void AddScope(Type type, string scopeName)
         {
@@ -140,7 +141,10 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
         }
 
-        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependencyToSupply, IList<IDataSupply> supplyDependencies)
+        public IDataSupply AddSupplier(
+            IDataSupplier supplier, 
+            IDataDependency dependencyToSupply, 
+            IList<IDataSupply> supplyDependencies)
         {
             if (supplier == null) throw new ArgumentNullException("supplier");
             if (dependencyToSupply == null) throw new ArgumentNullException("dependencyToSupply");
@@ -306,57 +310,22 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         private void OrderSuppliedDependencies()
         {
-            Func<int, bool> canSwap = i =>
-                {
-                    if (i >= _suppliedDependencies.Count - 1) return false;
-
-                    var sd = _suppliedDependencies[i + 1];
-                    if (sd.DependentSupplies == null || sd.DependentSupplies.Count == 0) return true;
-
-                    var supply = _suppliedDependencies[i].Supply;
-                    return sd.DependentSupplies.Any(s => ReferenceEquals(s, supply));
-                };
-
-            Action<int> swap = i =>
-                {
-                    var t = _suppliedDependencies[i + 1];
-                    _suppliedDependencies[i + 1] = _suppliedDependencies[i];
-                    _suppliedDependencies[i] = t;
-                };
-
-            Func<int, bool> moveDown = null;
-            moveDown = i =>
-                {
-                    var result = false;
-                    while (canSwap(i)) 
-                    {
-                        swap(i);
-                        i++;
-                        result = true;
-                    }
-                    if (i < _suppliedDependencies.Count - 1)
-                    {
-                        if (moveDown(i+1))
-                        {
-                            while (canSwap(i))
-                            {
-                                swap(i);
-                                i++;
-                                result = true;
-                            }
-                        }
-                    }
-                    return result;
-                };
-
             // TODO: If suppliers are also consumers and thier dependency list is empty then add the consumer and record the dependencies
+
+
+            Func<SuppliedDependency, SuppliedDependency, bool> isDependentOn = (d1, d2) =>
+                {
+                    if (d1.DependentSupplies == null || d1.DependentSupplies.Count == 0) return false;
+                    if (ReferenceEquals(d2.Supply, null)) return false;
+                    return d1.DependentSupplies.Any(s => ReferenceEquals(s, d2.Supply));
+                };
+            var listSorter = new DependencyListSorter<SuppliedDependency>();
 
             lock(_suppliedDependencies)
             {
-                for (var i = 0; i < _suppliedDependencies.Count - 1; i++)
-                {
-                    moveDown(i);
-                }
+                var orderedList = listSorter.Sort(_suppliedDependencies, isDependentOn);
+                _suppliedDependencies.Clear();
+                _suppliedDependencies.AddRange(orderedList);
             }
         }
 

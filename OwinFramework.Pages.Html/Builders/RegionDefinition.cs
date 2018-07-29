@@ -174,7 +174,7 @@ namespace OwinFramework.Pages.Html.Builders
             dataConsumer.HasDependency(_region.ListType, _region.ListScope);
 
             var dataScope = _region as IDataScopeProvider;
-            dataScope.AddSupplier(_region, _dataDependencyFactory.Create(dataType, scopeName), null);
+            dataScope.AddSupplier(_region, _dataDependencyFactory.Create(dataType, scopeName));
 
             return this;
         }

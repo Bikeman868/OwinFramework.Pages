@@ -94,12 +94,12 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataConsumer.HasDependency(dataSupply);
         }
 
-        void IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
+        IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
         {
-            DataConsumer.AddDependenciesToScopeProvider(dataScope);
+            return DataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
-        string IDataConsumer.GetDebugDescription()
+        List<string> IDataConsumer.GetDebugDescription()
         {
             return DataConsumer.GetDebugDescription();
         }

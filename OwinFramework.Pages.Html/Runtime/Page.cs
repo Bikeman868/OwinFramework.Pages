@@ -714,9 +714,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataConsumer.HasDependency(dataSupply);
         }
 
-        void IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
+        IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
         {
-            _dataConsumer.AddDependenciesToScopeProvider(dataScope);
+            return _dataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
         void IDataConsumer.HasDependency<T>(string scopeName)

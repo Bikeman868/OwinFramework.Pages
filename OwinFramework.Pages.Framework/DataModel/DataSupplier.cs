@@ -76,6 +76,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             public IDataDependency Dependency;
             public Action<IRenderContext, IDataContext, IDataDependency> Action;
             public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
+            public bool IsStatic { get; set; }
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {

@@ -29,8 +29,7 @@ namespace OwinFramework.Pages.Mocks.DataModel
 
             public void Add(
                 IDataDependency dependency, 
-                Action<IRenderContext, IDataContext, IDataDependency> action,
-                bool isStatic)
+                Action<IRenderContext, IDataContext, IDataDependency> action)
             {
                 _dependency = dependency;
                 _action = action;

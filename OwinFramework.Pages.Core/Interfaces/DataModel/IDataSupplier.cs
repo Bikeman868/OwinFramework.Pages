@@ -32,7 +32,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         bool IsScoped { get; }
 
         /// <summary>
-        /// Adds a type of data that this supplier can supply
+        /// Adds a lambda expresson that will add a specific type of data to 
+        /// the data context.
         /// </summary>
         void Add(IDataDependency dependency, Action<IRenderContext, IDataContext, IDataDependency> action);
 

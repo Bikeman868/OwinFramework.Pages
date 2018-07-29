@@ -75,13 +75,20 @@ namespace OwinFramework.Pages.Framework.DataModel
                     .Select(sd =>
                         {
                             var s = sd.Supplier;
-                            var d = sd.Dependency;
+                            if (ReferenceEquals(s, null))
+                            {
+                                return ReferenceEquals(sd.Supply, null) 
+                                    ? null 
+                                    : sd.Supply.GetType().DisplayName();
+                            }
+                            var d = sd.DependencySupplied;
                             var result = d.DataType.DisplayName();
                             if (!string.IsNullOrEmpty(d.ScopeName))
                                 result += " in '" + d.ScopeName + "' scope";
                             result += " supplied by " + s.GetType().DisplayName();
                             return result;
                         })
+                    .Where(s => s != null)
                     .ToList();
             }
 
@@ -97,7 +104,6 @@ namespace OwinFramework.Pages.Framework.DataModel
         public string ElementName { get; set; }
         private readonly bool _isInstance;
         private readonly IList<IDataScope> _dataScopes = new List<IDataScope>();
-        private readonly IList<IDataSupply> _dataSupplies = new List<IDataSupply>();
         private readonly IList<SuppliedDependency> _suppliedDependencies = new List<SuppliedDependency>();
 
         public void AddScope(Type type, string scopeName)
@@ -117,7 +123,15 @@ namespace OwinFramework.Pages.Framework.DataModel
         public void AddSupply(IDataSupply supply)
         {
             if (supply == null) return;
-            lock(_dataSupplies) _dataSupplies.Add(supply);
+
+            lock (_suppliedDependencies)
+            {
+                _suppliedDependencies.Add(
+                    new SuppliedDependency
+                    {
+                        Supply = supply
+                    });
+            }
         }
 
         public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency)
@@ -130,7 +144,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             lock(_suppliedDependencies)
             {
                 suppliedDependency = _suppliedDependencies
-                    .FirstOrDefault(d => d.Supplier == supplier && d.Dependency.Equals(dependency));
+                    .FirstOrDefault(d => d.Supplier == supplier && d.DependencySupplied.Equals(dependency));
                 
                 if (suppliedDependency != null)
                     return suppliedDependency.Supply;
@@ -138,7 +152,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 suppliedDependency = new SuppliedDependency
                     {
                         Supplier = supplier,
-                        Dependency = dependency,
+                        DependencySupplied = dependency,
                         Supply = supplier.GetSupply(dependency)
                     };
 
@@ -146,6 +160,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
 
             AddSupply(suppliedDependency.Supply);
+
             return suppliedDependency.Supply;
         }
 
@@ -165,7 +180,6 @@ namespace OwinFramework.Pages.Framework.DataModel
             _isInstance = true;
 
             _dataScopes = original._dataScopes.ToList();
-            _dataSupplies = original._dataSupplies.ToList();
             _suppliedDependencies = original._suppliedDependencies.ToList();
         }
 
@@ -182,8 +196,9 @@ namespace OwinFramework.Pages.Framework.DataModel
         private class SuppliedDependency
         {
             public IDataSupplier Supplier;
-            public IDataDependency Dependency;
+            public IDataDependency DependencySupplied;
             public IDataSupply Supply;
+            public IList<IDataSupply> DependentSupplies;
         }
 
         /*******************************************************************
@@ -233,11 +248,11 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             lock (_suppliedDependencies)
             {
-                var suppliedDependency = _suppliedDependencies.FirstOrDefault(s => s.Dependency.Equals(dependency));
+                var suppliedDependency = _suppliedDependencies.FirstOrDefault(s => !ReferenceEquals(s.DependencySupplied, null) && s.DependencySupplied.Equals(dependency));
                 if (suppliedDependency != null)
                     return suppliedDependency.Supply;
 
-                suppliedDependency = _suppliedDependencies.FirstOrDefault(d => d.Supplier.IsSupplierOf(dependency));
+                suppliedDependency = _suppliedDependencies.FirstOrDefault(d => !ReferenceEquals(d.Supplier, null) && d.Supplier.IsSupplierOf(dependency));
                 if (suppliedDependency != null)
                 {
                     AddSupplier(suppliedDependency.Supplier, dependency);
@@ -266,7 +281,96 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             if (ReferenceEquals(consumer, null)) return;
 
-            consumer.AddDependenciesToScopeProvider(this);
+            var dependentSupplies = consumer.AddDependenciesToScopeProvider(this);
+        }
+
+        private bool HasSupplier(IDataDependency dependency)
+        {
+            if (ReferenceEquals(dependency, null))
+                throw new ArgumentNullException("dependency");
+
+            lock (_suppliedDependencies)
+                return _suppliedDependencies.Any(d => 
+                        !ReferenceEquals(d.Supplier, null) && 
+                        d.Supplier.IsSupplierOf(dependency));
+        }
+
+        private readonly List<IDataSupply> _dataSupplies = new List<IDataSupply>();
+        private bool _dataSuppliesBuilt;
+        private bool _suppliesData;
+
+        private void OrderSuppliedDependencies()
+        {
+            Func<int, bool> canSwap = i =>
+                {
+                    if (i >= _suppliedDependencies.Count - 1) return false;
+
+                    var sd = _suppliedDependencies[i + 1];
+                    if (sd.DependentSupplies == null || sd.DependentSupplies.Count == 0) return true;
+
+                    var supply = _suppliedDependencies[i].Supply;
+                    return sd.DependentSupplies.Any(s => ReferenceEquals(s, supply));
+                };
+
+            Action<int> swap = i =>
+                {
+                    var t = _suppliedDependencies[i + 1];
+                    _suppliedDependencies[i + 1] = _suppliedDependencies[i];
+                    _suppliedDependencies[i] = t;
+                };
+
+            Func<int, bool> moveDown = null;
+            moveDown = i =>
+                {
+                    var result = false;
+                    while (canSwap(i)) 
+                    {
+                        swap(i);
+                        i++;
+                        result = true;
+                    }
+                    if (i < _suppliedDependencies.Count - 1)
+                    {
+                        if (moveDown(i+1))
+                        {
+                            while (canSwap(i))
+                            {
+                                swap(i);
+                                i++;
+                                result = true;
+                            }
+                        }
+                    }
+                    return result;
+                };
+
+            lock(_suppliedDependencies)
+            {
+                for (var i = 0; i < _suppliedDependencies.Count - 1; i++)
+                {
+                    moveDown(i);
+                }
+            }
+        }
+
+        private bool BuildSupplyList()
+        {
+            if (_dataSuppliesBuilt) return _suppliesData;
+
+            OrderSuppliedDependencies();
+
+            lock(_dataSupplies)
+            {
+                if (_dataSuppliesBuilt) return _suppliesData;
+
+                _dataSupplies.Clear();
+                _dataSupplies.AddRange(_suppliedDependencies.Select(s => s.Supply));
+
+                _suppliesData = _dataSupplies.Count > 0;
+                _dataSuppliesBuilt = true;
+            }
+
+            return _suppliesData;
         }
 
         /*******************************************************************
@@ -287,21 +391,16 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
         {
-            lock (_dataSupplies)
+            var dataContext = parentDataContext;
+
+            if (BuildSupplyList())
             {
-                if ((_dataSupplies == null || _dataSupplies.Count == 0) &&
-                    (_children == null || _children.Count == 0))
-                    return;
-            }
+                dataContext = parentDataContext == null
+                    ? _dataContextFactory.Create(renderContext, this)
+                    : parentDataContext.CreateChild(this);
 
-            var dataContext = parentDataContext == null
-                ? _dataContextFactory.Create(renderContext, this)
-                : parentDataContext.CreateChild(this);
+                renderContext.AddDataContext(Id, dataContext);
 
-            renderContext.AddDataContext(Id, dataContext);
-
-            if (_dataSupplies != null)
-            {
                 int dataSupplyCount;
                 lock (_dataSupplies) dataSupplyCount = _dataSupplies.Count;
 
@@ -338,15 +437,6 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             lock (_dataScopes)
                 return _dataScopes.Any(s => s.IsMatch(dependency));
-        }
-
-        private bool HasSupplier(IDataDependency dependency)
-        {
-            if (ReferenceEquals(dependency, null))
-                throw new ArgumentNullException("dependency");
-
-            lock (_suppliedDependencies)
-                return _suppliedDependencies.Any(d => d.Supplier.IsSupplierOf(dependency));
         }
 
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)

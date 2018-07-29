@@ -78,10 +78,17 @@ namespace OwinFramework.Pages.Framework.DataModel
             _dataSupplyDependencies.Add(dataSupply);
         }
 
-        public void AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
+        public IList<IDataSupply> AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
         {
-            if (_dataSupplyDependencies != null)
+            List<IDataSupply> dependentSupplies;
+
+            if (_dataSupplyDependencies == null)
             {
+                dependentSupplies = new List<IDataSupply>();
+            }
+            else
+            {
+                dependentSupplies = _dataSupplyDependencies.ToList();
                 foreach (var dataSupply in _dataSupplyDependencies)
                     dataScope.AddSupply(dataSupply);
             }
@@ -89,28 +96,16 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (_dataProviderDependencies != null)
             {
                 foreach (var dataProviderDependency in _dataProviderDependencies)
-                {
-                    var dataSupplier = dataProviderDependency.DataProvider as IDataSupplier;
-                    if (!ReferenceEquals(dataSupplier, null))
-                    {
-                        dataScope.AddSupplier(dataSupplier, dataProviderDependency.Dependency);
-                    }
-
-                    var dataConsumer = dataProviderDependency.DataProvider as IDataConsumer;
-                    if (!ReferenceEquals(dataConsumer, null))
-                    {
-                        dataConsumer.AddDependenciesToScopeProvider(dataScope);
-                    }
-                }
+                    dependentSupplies.Add(dataScope.AddSupplier(dataProviderDependency.DataProvider, dataProviderDependency.Dependency));
             }
 
             if (_dataDependencies != null)
             {
                 foreach (var dependency in _dataDependencies)
-                {
-                    dataScope.AddDependency(dependency);
-                }
+                    dependentSupplies.Add(dataScope.AddDependency(dependency));
             }
+
+            return dependentSupplies;
         }
 
         List<string> IDataConsumer.GetDebugDescription()

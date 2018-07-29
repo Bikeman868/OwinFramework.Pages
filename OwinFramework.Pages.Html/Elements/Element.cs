@@ -125,11 +125,11 @@ namespace OwinFramework.Pages.Html.Elements
             _dataConsumer.HasDependency(dataSupply);
         }
 
-        void IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
+        IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
         {
-            if (_dataConsumer == null) return;
+            if (_dataConsumer == null) return null;
 
-            _dataConsumer.AddDependenciesToScopeProvider(dataScope);
+            return _dataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
         void IDataConsumer.HasDependency<T>(string scopeName)

@@ -312,8 +312,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         void IDataSupplier.Add(
             IDataDependency dependency, 
-            Action<IRenderContext, IDataContext, IDataDependency> action,
-            bool isStatic)
+            Action<IRenderContext, IDataContext, IDataDependency> action)
         {
             throw new NotImplementedException();
         }

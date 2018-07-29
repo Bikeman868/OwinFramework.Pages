@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -54,7 +55,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// each request to supply data required by the element. Can be called
         /// before or after initialization
         /// </summary>
-        IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency);
+        IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependencyToSupply, IList<IDataSupply> supplyDependencies);
 
         /// <summary>
         /// Adds a data supply to the list of what must be supplied to the 
@@ -120,7 +121,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// this scope or its ancestors to satisfy the needs of this
         /// data consumer
         /// </summary>
-        void AddConsumer(IDataConsumer consumer);
+        IList<IDataSupply> AddConsumer(IDataConsumer consumer);
 
     /*******************************************************************
     * These interface members build the data context for a request using

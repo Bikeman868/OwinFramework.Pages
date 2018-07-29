@@ -170,11 +170,11 @@ namespace OwinFramework.Pages.Html.Builders
             _childStyle = style;
             _childClassNames = classes;
 
-            var dataScope = _region as IDataScopeProvider;
-            dataScope.AddSupplier(_region, _dataDependencyFactory.Create(dataType, scopeName));
-
             var dataConsumer = _region as IDataConsumer;
             dataConsumer.HasDependency(_region.ListType, _region.ListScope);
+
+            var dataScope = _region as IDataScopeProvider;
+            dataScope.AddSupplier(_region, _dataDependencyFactory.Create(dataType, scopeName), null);
 
             return this;
         }

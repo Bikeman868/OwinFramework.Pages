@@ -60,7 +60,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
             ScopeName = scopeName;
         }
 
-        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency, IList<IDataSupply> supplyDependencies)
         {
             return new MockDataSupply();
         }
@@ -76,9 +76,10 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return new MockDataSupply();
         }
 
-        public void AddConsumer(IDataConsumer consumer)
+        public IList<IDataSupply> AddConsumer(IDataConsumer consumer)
         {
             DataConsumers.Add(consumer);
+            return null;
         }
 
         public bool IsInScope(IDataDependency dependency)

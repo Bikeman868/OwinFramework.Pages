@@ -83,9 +83,15 @@ namespace OwinFramework.Pages.Framework.DataModel
                             }
                             var d = sd.DependencySupplied;
                             var result = d.DataType.DisplayName();
+
                             if (!string.IsNullOrEmpty(d.ScopeName))
                                 result += " in '" + d.ScopeName + "' scope";
+
                             result += " supplied by " + s.GetType().DisplayName();
+
+                            if (sd.DependentSupplies != null && sd.DependentSupplies.Count > 0)
+                                result += " dependent on " + sd.DependentSupplies.Count + " other supplies";
+
                             return result;
                         })
                     .Where(s => s != null)
@@ -134,17 +140,17 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
         }
 
-        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependencyToSupply, IList<IDataSupply> supplyDependencies)
         {
-            if (supplier == null) throw new ArgumentNullException("Supplier can not be null");
-            if (dependency == null) throw new ArgumentNullException("Dependency can not be null");
+            if (supplier == null) throw new ArgumentNullException("supplier");
+            if (dependencyToSupply == null) throw new ArgumentNullException("dependencyToSupply");
 
             SuppliedDependency suppliedDependency;
 
             lock(_suppliedDependencies)
             {
                 suppliedDependency = _suppliedDependencies
-                    .FirstOrDefault(d => d.Supplier == supplier && d.DependencySupplied.Equals(dependency));
+                    .FirstOrDefault(d => d.Supplier == supplier && d.DependencySupplied.Equals(dependencyToSupply));
                 
                 if (suppliedDependency != null)
                     return suppliedDependency.Supply;
@@ -152,14 +158,13 @@ namespace OwinFramework.Pages.Framework.DataModel
                 suppliedDependency = new SuppliedDependency
                     {
                         Supplier = supplier,
-                        DependencySupplied = dependency,
-                        Supply = supplier.GetSupply(dependency)
+                        DependencySupplied = dependencyToSupply,
+                        Supply = supplier.GetSupply(dependencyToSupply),
+                        DependentSupplies = supplyDependencies
                     };
 
                 _suppliedDependencies.Add(suppliedDependency);
             }
-
-            AddSupply(suppliedDependency.Supply);
 
             return suppliedDependency.Supply;
         }
@@ -255,7 +260,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 suppliedDependency = _suppliedDependencies.FirstOrDefault(d => !ReferenceEquals(d.Supplier, null) && d.Supplier.IsSupplierOf(dependency));
                 if (suppliedDependency != null)
                 {
-                    AddSupplier(suppliedDependency.Supplier, dependency);
+                    AddSupplier(suppliedDependency.Supplier, dependency, null);
                     return suppliedDependency.Supply;
                 }
             }
@@ -267,21 +272,21 @@ namespace OwinFramework.Pages.Framework.DataModel
                     dependency + " data but the data catalog does not have any "+
                     "suppliers for that kind of data");
 
-            var supply = AddSupplier(supplier, dependency);
-            AddConsumer(supplier as IDataConsumer);
+            var supplierDependencies = AddConsumer(supplier as IDataConsumer);
+            var supply = AddSupplier(supplier, dependency, supplierDependencies);
 
             return supply;
         }
 
-        public void AddConsumer(IDataConsumer consumer)
+        public IList<IDataSupply> AddConsumer(IDataConsumer consumer)
         {
             if (!_isInitialized)
                 throw new InvalidOperationException(
                     "You can not add consumers to a data scope provider until after initialization");
 
-            if (ReferenceEquals(consumer, null)) return;
-
-            var dependentSupplies = consumer.AddDependenciesToScopeProvider(this);
+            return ReferenceEquals(consumer, null) 
+                ? null 
+                : consumer.AddDependenciesToScopeProvider(this);
         }
 
         private bool HasSupplier(IDataDependency dependency)
@@ -343,6 +348,8 @@ namespace OwinFramework.Pages.Framework.DataModel
                     }
                     return result;
                 };
+
+            // TODO: If suppliers are also consumers and thier dependency list is empty then add the consumer and record the dependencies
 
             lock(_suppliedDependencies)
             {

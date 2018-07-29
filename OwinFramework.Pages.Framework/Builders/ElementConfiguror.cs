@@ -875,7 +875,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 supplier.Add(dependency, (rc, dc, d) => { });
 
                 dataScopeProvider.AddScope(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
-                dataScopeProvider.AddSupplier(supplier, dependency);
+                dataScopeProvider.AddSupplier(supplier, dependency, null);
             }
         }
 

@@ -266,9 +266,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
         }
 
-        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency, IList<IDataSupply> supplyDependencies)
         {
-            return _dataScopeProvider.AddSupplier(supplier, dependency);
+            return _dataScopeProvider.AddSupplier(supplier, dependency, supplyDependencies);
         }
 
         void IDataScopeProvider.AddSupply(IDataSupply supply)
@@ -276,9 +276,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.AddSupply(supply);
         }
 
-        void IDataScopeProvider.AddConsumer(IDataConsumer consumer)
+        IList<IDataSupply> IDataScopeProvider.AddConsumer(IDataConsumer consumer)
         {
-            _dataScopeProvider.AddConsumer(consumer);
+            return _dataScopeProvider.AddConsumer(consumer);
         }
 
         #endregion

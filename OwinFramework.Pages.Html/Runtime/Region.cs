@@ -349,22 +349,27 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region IDataSupply
 
+        private readonly List<IDataSupply> _dependentSupplies = new List<IDataSupply>();
+
         bool IDataSupply.IsStatic { get { return false; } set { } }
 
         void IDataSupply.Supply(IRenderContext renderContext, IDataContext dataContext)
         {
-            if (OnDataSupplied != null)
+            int count;
+            lock (_dependentSupplies) count = _dependentSupplies.Count;
+
+            for (var i = 0; i < count; i++)
             {
-                var args = new DataSuppliedEventArgs
-                {
-                    RenderContext = renderContext,
-                    DataContext = dataContext
-                };
-                OnDataSupplied(this, args);
+                IDataSupply dependent;
+                lock (_dependentSupplies) dependent = _dependentSupplies[i];
+                dependent.Supply(renderContext, dataContext);
             }
         }
 
-        public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
+        void IDataSupply.AddDependent(IDataSupply dataSupply)
+        {
+            lock (_dependentSupplies) _dependentSupplies.Add(dataSupply);
+        }
 
         string IDataSupply.ToString()
         {

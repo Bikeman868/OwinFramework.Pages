@@ -6,6 +6,7 @@ using Moq.Modules;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Mocks.DataModel;
 
 namespace OwinFramework.Pages.Mocks.Runtime
 {
@@ -62,7 +63,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
 
         public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            return new MockDataSupply();
+            return new MockDataSupplier.DataSupplier();
         }
 
         public void AddSupply(IDataSupply supply)
@@ -73,7 +74,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
         public IDataSupply AddDependency(IDataDependency dependency)
         {
             DataDependencies.Add(dependency);
-            return new MockDataSupply();
+            return new MockDataSupplier.DataSupplier();
         }
 
         public IList<IDataSupply> AddConsumer(IDataConsumer consumer)
@@ -107,28 +108,5 @@ namespace OwinFramework.Pages.Mocks.Runtime
         {
         }
 
-        private class MockDataSupply : IDataSupply
-        {
-            public Action<IDataContext> SupplyAction;
-            public bool IsStatic { get { return true; } set { } }
-            public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
-
-            public void Supply(IRenderContext renderContext, IDataContext dataContext)
-            {
-                if (SupplyAction != null)
-                {
-                    SupplyAction(dataContext);
-                    if (OnDataSupplied != null)
-                    {
-                        var args = new DataSuppliedEventArgs 
-                        { 
-                            RenderContext = renderContext,
-                            DataContext = dataContext
-                        };
-                        OnDataSupplied(this, args);
-                    }
-                }
-            }
-        }
     }
 }

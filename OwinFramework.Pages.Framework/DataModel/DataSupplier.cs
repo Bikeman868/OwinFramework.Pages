@@ -87,22 +87,27 @@ namespace OwinFramework.Pages.Framework.DataModel
             public int DataSupplierId;
             public IDataDependency Dependency;
             public Action<IRenderContext, IDataContext, IDataDependency> Action;
-            public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
             public bool IsStatic { get; set; }
+            private readonly List<IDataSupply> _dependentSupplies = new List<IDataSupply>();
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {
                 Action(renderContext, dataContext, Dependency);
 
-                if (OnDataSupplied != null)
+                int count;
+                lock (_dependentSupplies) count = _dependentSupplies.Count;
+
+                for (var i = 0; i < count; i++)
                 {
-                    var args = new DataSuppliedEventArgs
-                    {
-                        RenderContext = renderContext,
-                        DataContext = dataContext
-                    };
-                    OnDataSupplied(this, args);
+                    IDataSupply dependent;
+                    lock (_dependentSupplies) dependent = _dependentSupplies[i];
+                    dependent.Supply(renderContext, dataContext);
                 }
+            }
+
+            void IDataSupply.AddDependent(IDataSupply dataSupply)
+            {
+                lock (_dependentSupplies) _dependentSupplies.Add(dataSupply);
             }
 
             public override string ToString()

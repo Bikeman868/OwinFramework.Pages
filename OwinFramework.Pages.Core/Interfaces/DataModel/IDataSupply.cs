@@ -38,27 +38,11 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// of the region contents is bound to data that is derrived from the
         /// repeating type. Like I said this is a very rare and unusual situation.
         /// </summary>
-        event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
+        void AddDependent(IDataSupply dataSupply);
 
         /// <summary>
         /// Returns a description of this data supply
         /// </summary>
         string ToString();
-    }
-
-    /// <summary>
-    /// This encapsulates the arguments that are passed to the OnDataSupplied event
-    /// </summary>
-    public class DataSuppliedEventArgs : EventArgs
-    {
-        /// <summary>
-        /// The render context that was updated
-        /// </summary>
-        public IRenderContext RenderContext { get; set; }
-
-        /// <summary>
-        /// The data context that was updated
-        /// </summary>
-        public IDataContext DataContext { get; set; }
     }
 }

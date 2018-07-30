@@ -342,7 +342,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         private bool _dataSuppliesBuilt;
         private bool _suppliesData;
 
-        private void OrderSuppliedDependencies()
+        private List<SuppliedDependency> OrderSuppliedDependencies()
         {
             Func<SuppliedDependency, SuppliedDependency, bool> isDependentOn = (d1, d2) =>
                 {
@@ -357,6 +357,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 var orderedList = listSorter.Sort(_suppliedDependencies, isDependentOn);
                 _suppliedDependencies.Clear();
                 _suppliedDependencies.AddRange(orderedList);
+                return orderedList;
             }
         }
 
@@ -364,7 +365,22 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             if (_dataSuppliesBuilt) return _suppliesData;
 
-            OrderSuppliedDependencies();
+            var orderedSuppliers = OrderSuppliedDependencies();
+
+            foreach(var supplier in orderedSuppliers)
+            {
+                if (supplier.Supply != null &&
+                    supplier.Supply.IsStatic && 
+                    supplier.DependentSupplies != null && 
+                    supplier.DependentSupplies.Any(s => !s.IsStatic))
+                {
+                    supplier.Supply.IsStatic = false;
+                    foreach(var dynamicSupply in supplier.DependentSupplies.Where(s => !s.IsStatic))
+                    {
+                        dynamicSupply.AddDependent(supplier.Supply);
+                    }
+                }
+            }
 
             lock(_dataSupplies)
             {

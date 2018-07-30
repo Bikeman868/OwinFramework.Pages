@@ -20,7 +20,7 @@ namespace OwinFramework.Pages.Mocks.DataModel
             public IList<Type> SuppliedTypes { get; private set; }
             public bool IsScoped { get; private set; }
             public IDataDependency DefaultDependency { get { return _dependency; } }
-            public bool IsStatic { get { return true; } }
+            public bool IsStatic { get { return true; } set { } }
             public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
             public IList<IDataSupply> DependentSupplies { get { return null; } }
 

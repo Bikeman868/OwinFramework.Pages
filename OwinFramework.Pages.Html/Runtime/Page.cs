@@ -623,6 +623,13 @@ namespace OwinFramework.Pages.Html.Runtime
             return base.PopulateDebugInfo(debugPage);
         }
 
+        public override string ToString()
+        {
+            if (ReferenceEquals(Layout, null))
+                return "page with no layout";
+            return "page with '" + Layout + "' layout";
+        }
+
         #endregion
 
         #region IDataScopeProvider
@@ -690,9 +697,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
         }
 
-        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency, IList<IDataSupply> supplyDependencies)
+        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            return _dataScopeProvider.AddSupplier(supplier, dependency, supplyDependencies);
+            return _dataScopeProvider.AddSupplier(supplier, dependency);
         }
 
         void IDataScopeProvider.AddSupply(IDataSupply supply)

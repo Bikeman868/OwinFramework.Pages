@@ -48,5 +48,10 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// </summary>
         /// <param name="dependency">The type of data to supply</param>
         IDataSupply GetSupply(IDataDependency dependency);
+
+        /// <summary>
+        /// Returns a description of this data supplier
+        /// </summary>
+        string ToString();
     }
 }

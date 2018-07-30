@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -59,6 +60,11 @@ namespace OwinFramework.Pages.Html.Elements
         public virtual IEnumerator<IElement> GetChildren()
         {
             return null;
+        }
+
+        public override string ToString()
+        {
+            return GetType().DisplayName(TypeExtensions.NamespaceOption.Ending);
         }
 
         #region Writing HTML

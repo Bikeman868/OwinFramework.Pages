@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -66,8 +67,19 @@ namespace OwinFramework.Pages.Framework.DataModel
                     {
                         DataSupplierId = _dataSupplierId,
                         Dependency = supply.Dependency,
-                        Action = supply.Action
+                        Action = supply.Action,
+                        IsStatic = true
                     };
+        }
+
+        public override string ToString()
+        {
+            var result = "supplier #" + _dataSupplierId;
+            if (SuppliedTypes != null && SuppliedTypes.Count > 0)
+            {
+                result += " of [" + string.Join(", ", SuppliedTypes.Select(t => t.DisplayName(TypeExtensions.NamespaceOption.Ending))) + "]";
+            }
+            return result;
         }
 
         private class DataSupply : IDataSupply
@@ -91,6 +103,12 @@ namespace OwinFramework.Pages.Framework.DataModel
                     };
                     OnDataSupplied(this, args);
                 }
+            }
+
+            public override string ToString()
+            {
+                var data = Dependency == null ? "data" : Dependency.ToString();
+                return (IsStatic ? "static " : "dynamic ") + data + " from supplier #" + DataSupplierId;
             }
         }
 

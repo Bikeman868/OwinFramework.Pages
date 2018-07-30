@@ -57,11 +57,9 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// </summary>
         /// <param name="supplier">A supplier of data to add to this data scope</param>
         /// <param name="dependencyToSupply">The data that we want this supplier to supply</param>
-        /// <param name="supplyDependencies">Other data supplies that this supplier is dependent on</param>
         IDataSupply AddSupplier(
             IDataSupplier supplier, 
-            IDataDependency dependencyToSupply, 
-            IList<IDataSupply> supplyDependencies = null);
+            IDataDependency dependencyToSupply);
 
         /// <summary>
         /// Adds a data supply to the list of what must be supplied to the 

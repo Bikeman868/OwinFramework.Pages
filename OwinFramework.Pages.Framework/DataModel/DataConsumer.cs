@@ -114,11 +114,11 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             if (_dataProviderDependencies != null)
                 foreach (var dataProvider in _dataProviderDependencies)
-                    description.Add("Needs " + dataProvider.Dependency + " from " + dataProvider.DataProvider);
+                    description.Add("Needs " + dataProvider.Dependency + " from " + dataProvider.DataProvider.ToString());
 
             if (_dataSupplyDependencies != null)
                 foreach (var dataSupply in _dataSupplyDependencies)
-                    description.Add("Needs supply " + dataSupply.GetType().DisplayName());
+                    description.Add("Needs supply " + dataSupply.ToString());
 
             if (_dataDependencies != null)
                 foreach (var dependency in _dataDependencies)

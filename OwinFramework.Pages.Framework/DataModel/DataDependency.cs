@@ -12,8 +12,8 @@ namespace OwinFramework.Pages.Framework.DataModel
         public override string ToString()
         {
             return string.IsNullOrEmpty(ScopeName)
-                ? DataType.DisplayName()
-                : "'" + ScopeName + "' " + DataType.DisplayName();
+                ? DataType.DisplayName(TypeExtensions.NamespaceOption.Ending)
+                : "'" + ScopeName + "' " + DataType.DisplayName(TypeExtensions.NamespaceOption.Ending);
         }
 
         public override bool Equals(object obj)

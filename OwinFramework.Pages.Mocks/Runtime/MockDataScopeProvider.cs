@@ -60,7 +60,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
             ScopeName = scopeName;
         }
 
-        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency, IList<IDataSupply> supplyDependencies)
+        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
             return new MockDataSupply();
         }
@@ -110,7 +110,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
         private class MockDataSupply : IDataSupply
         {
             public Action<IDataContext> SupplyAction;
-            public bool IsStatic { get { return true; } }
+            public bool IsStatic { get { return true; } set { } }
             public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)

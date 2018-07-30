@@ -18,15 +18,15 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         void Supply(IRenderContext renderContext, IDataContext dataContext);
 
         /// <summary>
-        /// When this property returns true it means that the supplied data can
-        /// be preloaded into the daat context before the rendering operation begins
+        /// When this property is true it means that the supplied data can
+        /// be preloaded into the data context before the rendering operation begins
         /// and the data remains static for the duration of the rendering operation.
-        /// When this property returns false it means that the data changes during
+        /// When this property is false it means that the data changes during
         /// the rendering operation and any dependents of this supply should attach
         /// to the OnDataSupplied event to be notified when the data in the
         /// data context changes
         /// </summary>
-        bool IsStatic { get; }
+        bool IsStatic { get; set; }
 
         /// <summary>
         /// There are a few unusual situations where other objects need to
@@ -39,6 +39,11 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// repeating type. Like I said this is a very rare and unusual situation.
         /// </summary>
         event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
+
+        /// <summary>
+        /// Returns a description of this data supply
+        /// </summary>
+        string ToString();
     }
 
     /// <summary>

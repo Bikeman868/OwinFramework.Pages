@@ -91,6 +91,14 @@ namespace OwinFramework.Pages.Html.Runtime
             return base.PopulateDebugInfo(debugRegion);
         }
 
+        public override string ToString()
+        {
+            if (_repeatType == null) return "region is not repeating";
+            if (string.IsNullOrEmpty(RepeatScope))
+                return "region repeating " + _repeatType.DisplayName(TypeExtensions.NamespaceOption.Ending);
+            return "region repeating '" + RepeatScope + "' " + _repeatType.DisplayName(TypeExtensions.NamespaceOption.Ending);
+        }
+
         #endregion
 
         #region Setting up and wiring
@@ -159,7 +167,8 @@ namespace OwinFramework.Pages.Html.Runtime
                         foreach (var item in list)
                         {
                             context.Data.Set(_repeatType, item, RepeatScope);
-                            Supply(context, context.Data);
+                            ((IDataSupply)this).Supply(context, context.Data);
+
                             WriteChildOpen(context.Html);
                             result.Add(content.WriteHtml(context));
                             WriteChildClose(context.Html);
@@ -266,9 +275,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
         }
 
-        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency, IList<IDataSupply> supplyDependencies)
+        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            return _dataScopeProvider.AddSupplier(supplier, dependency, supplyDependencies);
+            return _dataScopeProvider.AddSupplier(supplier, dependency);
         }
 
         void IDataScopeProvider.AddSupply(IDataSupply supply)
@@ -331,9 +340,18 @@ namespace OwinFramework.Pages.Html.Runtime
             return this;
         }
 
-        bool IDataSupply.IsStatic { get { return false; } }
+        string IDataSupplier.ToString()
+        {
+            return ToString();
+        }
 
-        public void Supply(IRenderContext renderContext, IDataContext dataContext)
+        #endregion
+
+        #region IDataSupply
+
+        bool IDataSupply.IsStatic { get { return false; } set { } }
+
+        void IDataSupply.Supply(IRenderContext renderContext, IDataContext dataContext)
         {
             if (OnDataSupplied != null)
             {
@@ -347,6 +365,11 @@ namespace OwinFramework.Pages.Html.Runtime
         }
 
         public event EventHandler<DataSuppliedEventArgs> OnDataSupplied;
+
+        string IDataSupply.ToString()
+        {
+            return ToString();
+        }
 
         #endregion
     }

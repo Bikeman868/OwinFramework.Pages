@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -39,6 +40,14 @@ namespace OwinFramework.Pages.Framework.DataModel
                 Instance = this,
                 Package = Package == null ? null : Package.GetDebugInfo()
             };
+        }
+
+        public override string ToString()
+        {
+            var result = "data provider '" + Name + "'";
+            if (GetType() != typeof(DataProvider))
+                result += " of type " + GetType().DisplayName();
+            return result;
         }
 
         public void Add<T>(string scopeName = null)
@@ -125,6 +134,11 @@ namespace OwinFramework.Pages.Framework.DataModel
         IDataSupply IDataSupplier.GetSupply(IDataDependency dependency)
         {
             return DataSupplier.GetSupply(dependency);
+        }
+
+        string IDataSupplier.ToString()
+        {
+            return DataSupplier.ToString() + " " + ToString();
         }
 
         #endregion

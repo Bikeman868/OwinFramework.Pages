@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using Svg;
+using Svg.Transforms;
 
 namespace OwinFramework.Pages.DebugMiddleware
 {
@@ -408,29 +410,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                         }
                     }
 
-                    if (debugRenderContext != null && debugRenderContext.Data != null)
-                    {
-                        foreach (var kv in debugRenderContext.Data)
-                        {
-                            var scopeId = kv.Key;
-                            var dataContext = kv.Value;
-                            if (dataContext != null)
-                            {
-                                if (dataContext.Properties == null || dataContext.Properties.Count == 0)
-                                {
-                                    html.WriteElementLine("h3", "Only dynamic data in context for data scope #" + scopeId);
-                                }
-                                else
-                                {
-                                    html.WriteElementLine("h3", "Static data in context for data scope #" + scopeId);
-                                    html.WriteOpenTag("ul");
-                                    foreach (var property in dataContext.Properties)
-                                        html.WriteElementLine("li", property.DisplayName());
-                                    html.WriteCloseTag("ul");
-                                }
-                            }
-                        }
-                    }
+                    WriteHtml(html, debugRenderContext, depth - 1);
                 }
 
                 EndIndent(html);
@@ -500,6 +480,29 @@ namespace OwinFramework.Pages.DebugMiddleware
 
         private void WriteHtml(IHtmlWriter html, DebugRenderContext renderContext, int depth)
         {
+            if (renderContext != null && renderContext.Data != null)
+            {
+                foreach (var kv in renderContext.Data)
+                {
+                    var scopeId = kv.Key;
+                    var dataContext = kv.Value;
+                    if (dataContext != null)
+                    {
+                        if (dataContext.Properties == null || dataContext.Properties.Count == 0)
+                        {
+                            html.WriteElementLine("h3", "Only dynamic data in context for data scope #" + scopeId);
+                        }
+                        else
+                        {
+                            html.WriteElementLine("h3", "Static data in context for data scope #" + scopeId);
+                            html.WriteOpenTag("ul");
+                            foreach (var property in dataContext.Properties)
+                                html.WriteElementLine("li", property.DisplayName());
+                            html.WriteCloseTag("ul");
+                        }
+                    }
+                }
+            }
         }
 
         private void WriteHtml(IHtmlWriter html, DebugRoute route, int depth)
@@ -513,6 +516,12 @@ namespace OwinFramework.Pages.DebugMiddleware
         #endregion
 
         #region SVG drawing
+
+        private const float SvgTextHeight = 12;
+        private const float SvgTextLineSpacing = 15;
+        private const float SvgTextCharacterSpacing = 5;
+        private const float SvgBoxLeftMargin = 5;
+        private const float SvgBoxTopMargin = 5;
 
         private Task WriteSvg(IOwinContext context, DebugInfo debugInfo)
         {
@@ -533,9 +542,12 @@ namespace OwinFramework.Pages.DebugMiddleware
         {
             var drawing = CreateSvg();
 
-            // TODO: Make an SVG drawing of the page
+            var page = new PageDrawing();
+            page.Draw(drawing);
 
+            SetSize(drawing, page.Left + page.Width, page.Top + page.Height);
             Finalize(drawing);
+
             return drawing;
         }
 
@@ -570,7 +582,7 @@ namespace OwinFramework.Pages.DebugMiddleware
             return document;
         }
 
-        public void Finalize(SvgDocument document)
+        private void Finalize(SvgDocument document)
         {
             if (document != null)
             {
@@ -587,11 +599,164 @@ namespace OwinFramework.Pages.DebugMiddleware
             }
         }
 
-        public void SetSize(SvgDocument document, SvgUnit width, SvgUnit height)
+        private void SetSize(SvgDocument document, SvgUnit width, SvgUnit height)
         {
             document.Width = width;
             document.Height = height;
             document.ViewBox = new SvgViewBox(0, 0, width, height);
+        }
+
+        private class DrawingElement
+        {
+            public SvgUnit Left;
+            public SvgUnit Top;
+            public SvgUnit Width;
+            public SvgUnit Height;
+
+            public int ZOrder;
+            public string CssClass;
+
+            public List<DrawingElement> Children = new List<DrawingElement>();
+
+            public virtual void CalculateSize(SvgUnit leftMargin, SvgUnit topMargin, SvgUnit rightMargin, SvgUnit bottomMargin)
+            {
+                var minChildLeft = Children.Min(c => c.Left);
+                var minChildTop = Children.Min(c => c.Top);
+
+                var childLeftAdjustment = leftMargin - minChildLeft;
+                var childTopAdjustment = topMargin - minChildTop;
+
+                foreach(var child in Children)
+                {
+                    child.Left += childLeftAdjustment;
+                    child.Top += childTopAdjustment;
+                }
+
+                Width = Children.Max(c => c.Left + c.Width) + rightMargin;
+                Height = Children.Max(c => c.Top + c.Height) + bottomMargin;
+            }
+
+            protected virtual SvgElement GetContainer(SvgDocument document)
+            {
+                var group = new SvgGroup();
+                group.Transforms.Add(new SvgTranslate(Left, Top));
+
+                if (!string.IsNullOrEmpty(CssClass))
+                    group.CustomAttributes.Add("class", CssClass);
+
+                return group;
+            }
+
+            public virtual SvgElement Draw(SvgDocument document)
+            {
+                var container = GetContainer(document);
+                DrawChildren(document, container.Children);
+                return container;
+            }
+
+            protected void SortChildrenByZOrder(bool recursive = true)
+            {
+                if (recursive)
+                    foreach (var child in Children)
+                        child.SortChildrenByZOrder();
+
+                Children = Children.OrderBy(c => c.ZOrder).ToList();
+            }
+
+            protected virtual void DrawChildren(SvgDocument document, SvgElementCollection parent)
+            {
+                SortChildrenByZOrder();
+
+                foreach (var child in Children)
+                    parent.Add(child.Draw(document));
+            }
+        }
+
+        private class TextDrawing: DrawingElement
+        {
+            protected SvgUnit LeftMargin;
+            protected SvgUnit TopMargin;
+
+            public List<string> Text = new List<string>();
+
+            public override void CalculateSize(SvgUnit leftMargin, SvgUnit topMargin, SvgUnit rightMargin, SvgUnit bottomMargin)
+            {
+                base.CalculateSize(leftMargin, topMargin, rightMargin, bottomMargin);
+
+                var minimumHeight = SvgTextLineSpacing * Text.Count + topMargin + bottomMargin;
+                var minimumWidth = Text.Max(t => t.Length) * SvgTextCharacterSpacing + leftMargin + rightMargin;
+
+                if (Height < minimumHeight) Height = minimumHeight;
+                if (Width < minimumWidth) Width = minimumWidth;
+
+                LeftMargin = leftMargin;
+                TopMargin = topMargin;
+            }
+
+            public override SvgElement Draw(SvgDocument document)
+            {
+                var group = base.Draw(document);
+                for (var lineNumber = 0; lineNumber < Text.Count; lineNumber++)
+                {
+                    var text = new SvgText(Text[lineNumber]);
+                    text.Transforms.Add(new SvgTranslate(LeftMargin, TopMargin + SvgTextHeight + SvgTextLineSpacing * lineNumber));
+                    text.Children.Add(new SvgTextSpan());
+                    group.Children.Add(text);
+                }
+
+                return group;
+            }
+        }
+
+        private class BoxedTextDrawing : DrawingElement
+        {
+            public TextDrawing Text;
+            public SvgUnit CornerRadius;
+
+            public BoxedTextDrawing()
+            {
+                Text = new TextDrawing();
+                Children.Add(Text);
+            }
+
+            protected override SvgElement GetContainer(SvgDocument document)
+            {
+                var container = base.GetContainer(document);
+
+                var rectangle = new SvgRectangle
+                {
+                    Height = Height,
+                    Width = Width,
+                    CornerRadiusX = CornerRadius,
+                    CornerRadiusY = CornerRadius
+                };
+                container.Children.Add(rectangle);
+
+                return container;
+            }
+        }
+
+        private class PageDrawing: DrawingElement
+        {
+            public PageDrawing()
+            {
+                var box = new BoxedTextDrawing { CssClass = "region" };
+                box.Text.Text.Add("Hello");
+                box.CalculateSize(10, 10, 10, 10);
+
+                Children.Add(box);
+
+                SortChildrenByZOrder();
+            }
+
+            public override SvgElement Draw(SvgDocument document)
+            {
+                CalculateSize(10, 10, 10, 10);
+
+                var group = base.Draw(document);
+                document.Children.Add(group);
+                return group;
+            }
         }
 
         #endregion

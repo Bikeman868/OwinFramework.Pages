@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Mocks.DataModel
             public bool IsScoped { get; private set; }
             public IDataDependency DefaultDependency { get { return _dependency; } }
             public bool IsStatic { get { return true; } set { } }
-            private readonly List<IDataSupply> _dependentSupplies = new List<IDataSupply>();
+            private readonly List<Action<IRenderContext>> _dependentSupplies = new List<Action<IRenderContext>>();
 
             private IDataDependency _dependency;
             private Action<IRenderContext, IDataContext, IDataDependency> _action;
@@ -46,16 +46,16 @@ namespace OwinFramework.Pages.Mocks.DataModel
                 return this;
             }
 
-            void IDataSupply.AddDependent(IDataSupply dataSupply)
+            void IDataSupply.AddOnSupplyAction(Action<IRenderContext> renderAction)
             {
-                _dependentSupplies.Add(dataSupply);
+                _dependentSupplies.Add(renderAction);
             }
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {
                 _action(renderContext, dataContext, _dependency);
                 foreach (var dependent in _dependentSupplies)
-                    dependent.Supply(renderContext, dataContext);
+                    dependent(renderContext);
             }
         }
     }

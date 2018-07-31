@@ -413,7 +413,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             if (TitleFunc != null)
             {
-                context.Html.WriteLine(TitleFunc(context));
+                context.Html.Write(TitleFunc(context));
                 return writeResult;
             }
 
@@ -522,9 +522,9 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             html.WriteOpenTag("head");
 
-            html.WriteOpenTag("title");
+            html.Write("<title>");
             writeResult.Add(WriteTitle(context, true));
-            html.WriteCloseTag("title");
+            html.WriteLine("</title>");
 
             writeResult.Add(WriteHead(context, true));
 
@@ -710,6 +710,11 @@ namespace OwinFramework.Pages.Html.Runtime
         IList<IDataSupply> IDataScopeProvider.AddConsumer(IDataConsumer consumer)
         {
             return _dataScopeProvider.AddConsumer(consumer);
+        }
+
+        IDataContext IDataScopeProvider.SetDataContext(IRenderContext renderContext)
+        {
+            return _dataScopeProvider.SetDataContext(renderContext);
         }
 
         #endregion

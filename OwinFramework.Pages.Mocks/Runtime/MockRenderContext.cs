@@ -55,5 +55,10 @@ namespace OwinFramework.Pages.Mocks.Runtime
             DataContexts.Clear();
             Data = null;
         }
+
+        public IDataContext GetDataContext(int id)
+        {
+            return DataContexts[id];
+        }
     }
 }

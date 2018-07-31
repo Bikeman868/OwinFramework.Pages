@@ -386,30 +386,52 @@ namespace OwinFramework.Pages.DebugMiddleware
                 StartIndent(html, true);
                 WriteDebugInfo(html, page.Scope, depth - 1);
 
-                //var dataScopeProvider = page.Scope.Instance as IDataScopeProvider;
-                //if (dataScopeProvider != null)
-                //{
-                //    var renderContext = _renderContextFactory.Create();
-                //    dataScopeProvider.SetupDataContext(renderContext);
-                //    var debugRenderContext = renderContext.GetDebugInfo();
-                //    var data = debugRenderContext.Data;
-                //    if (data != null)
-                //    {
-                //        foreach (var kv in data)
-                //        {
-                //            var scopeId = kv.Key;
-                //            var dataContext = kv.Value;
-                //            if (dataContext != null && 
-                //                dataContext.Properties != null && 
-                //                dataContext.Properties.Count > 0)
-                //            {
-                //                html.WriteElementLine("h3", "Data in context for data scope " + scopeId);
-                //                foreach (var property in dataContext.Properties)
-                //                    html.WriteElementLine("p", "Data: " + property.DisplayName());
-                //            }
-                //        }
-                //    }
-                //}
+                var dataScopeProvider = page.Scope.Instance as IDataScopeProvider;
+                if (dataScopeProvider != null)
+                {
+                    DebugRenderContext debugRenderContext;
+                    try
+                    {
+                        var renderContext = _renderContextFactory.Create();
+                        dataScopeProvider.SetupDataContext(renderContext);
+                        debugRenderContext = renderContext.GetDebugInfo();
+                    }
+                    catch (Exception ex)
+                    {
+                        debugRenderContext = null;
+                        html.WriteElementLine("p", "Exception thrown when constructing data context tree: " + ex.Message);
+                        if (!string.IsNullOrEmpty(ex.StackTrace))
+                        {
+                            html.WriteOpenTag("pre");
+                            html.WriteLine(ex.StackTrace);
+                            html.WriteCloseTag("pre");
+                        }
+                    }
+
+                    if (debugRenderContext != null && debugRenderContext.Data != null)
+                    {
+                        foreach (var kv in debugRenderContext.Data)
+                        {
+                            var scopeId = kv.Key;
+                            var dataContext = kv.Value;
+                            if (dataContext != null)
+                            {
+                                if (dataContext.Properties == null || dataContext.Properties.Count == 0)
+                                {
+                                    html.WriteElementLine("h3", "Only dynamic data in context for data scope #" + scopeId);
+                                }
+                                else
+                                {
+                                    html.WriteElementLine("h3", "Static data in context for data scope #" + scopeId);
+                                    html.WriteOpenTag("ul");
+                                    foreach (var property in dataContext.Properties)
+                                        html.WriteElementLine("li", property.DisplayName());
+                                    html.WriteCloseTag("ul");
+                                }
+                            }
+                        }
+                    }
+                }
 
                 EndIndent(html);
             }

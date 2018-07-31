@@ -147,6 +147,14 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// </summary>
         void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext);
 
+        /// <summary>
+        /// Sets the current Data property of the render context to the 
+        /// date for this scope provider
+        /// </summary>
+        /// <returns>The previously selected data context so that you can
+        /// restore this later</returns>
+        IDataContext SetDataContext(IRenderContext renderContext);
+
     /*******************************************************************
     * These interface members are used to dynamically add new dependencies
     * discovered at runtime when the application tries to retrieve data

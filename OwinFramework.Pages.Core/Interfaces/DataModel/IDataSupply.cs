@@ -38,7 +38,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// of the region contents is bound to data that is derrived from the
         /// repeating type. Like I said this is a very rare and unusual situation.
         /// </summary>
-        void AddDependent(IDataSupply dataSupply);
+        void AddOnSupplyAction(Action<IRenderContext> onSupplyAction);
 
         /// <summary>
         /// Returns a description of this data supply

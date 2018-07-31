@@ -69,9 +69,15 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public void SelectDataContext(int id)
         {
+            Data = GetDataContext(id);
+        }
+
+        public IDataContext GetDataContext(int id)
+        {
             IDataContext data;
             if (_dataContexts.TryGetValue(id, out data))
-                Data = data;
+                return data;
+            throw new Exception("The render context does not contain a data context with ID=" + id);
         }
 
         public void DeleteDataContextTree()
@@ -81,6 +87,5 @@ namespace OwinFramework.Pages.Html.Runtime
                 context.Dispose();
             _dataContexts.Clear();
         }
-
     }
 }

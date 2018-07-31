@@ -57,6 +57,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         void AddDataContext(int id, IDataContext dataContext);
 
         /// <summary>
+        /// Gets the data context identified by a unique id
+        /// </summary>
+        IDataContext GetDataContext(int id);
+
+        /// <summary>
         /// Switches the current data context based on unique id
         /// </summary>
         /// <param name="id">The id of the data context to make current</param>

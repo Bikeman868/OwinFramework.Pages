@@ -108,5 +108,9 @@ namespace OwinFramework.Pages.Mocks.Runtime
         {
         }
 
+        public IDataContext SetDataContext(IRenderContext renderContext)
+        {
+            return renderContext.Data;
+        }
     }
 }

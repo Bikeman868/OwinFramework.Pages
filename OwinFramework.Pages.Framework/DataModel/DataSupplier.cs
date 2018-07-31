@@ -88,26 +88,26 @@ namespace OwinFramework.Pages.Framework.DataModel
             public IDataDependency Dependency;
             public Action<IRenderContext, IDataContext, IDataDependency> Action;
             public bool IsStatic { get; set; }
-            private readonly List<IDataSupply> _dependentSupplies = new List<IDataSupply>();
+            private readonly List<Action<IRenderContext>> _onSupplyActions = new List<Action<IRenderContext>>();
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {
                 Action(renderContext, dataContext, Dependency);
 
                 int count;
-                lock (_dependentSupplies) count = _dependentSupplies.Count;
+                lock (_onSupplyActions) count = _onSupplyActions.Count;
 
                 for (var i = 0; i < count; i++)
                 {
-                    IDataSupply dependent;
-                    lock (_dependentSupplies) dependent = _dependentSupplies[i];
-                    dependent.Supply(renderContext, dataContext);
+                    Action<IRenderContext> action;
+                    lock (_onSupplyActions) action = _onSupplyActions[i];
+                    action(renderContext);
                 }
             }
 
-            void IDataSupply.AddDependent(IDataSupply dataSupply)
+            void IDataSupply.AddOnSupplyAction(Action<IRenderContext> onSupplyAction)
             {
-                lock (_dependentSupplies) _dependentSupplies.Add(dataSupply);
+                lock (_onSupplyActions) _onSupplyActions.Add(onSupplyAction);
             }
 
             public override string ToString()

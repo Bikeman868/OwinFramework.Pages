@@ -241,6 +241,11 @@ namespace OwinFramework.Pages.Html.Elements
             return _dataScopeProvider.AddConsumer(consumer);
         }
 
+        IDataContext IDataScopeProvider.SetDataContext(IRenderContext renderContext)
+        {
+            return _dataScopeProvider.SetDataContext(renderContext);
+        }
+
         #endregion
     }
 }

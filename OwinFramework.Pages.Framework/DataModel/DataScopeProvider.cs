@@ -342,7 +342,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         private bool _dataSuppliesBuilt;
         private bool _suppliesData;
 
-        private List<SuppliedDependency> OrderSuppliedDependencies()
+        private List<SuppliedDependency> GetSuppliedDependenciesOrdered()
         {
             Func<SuppliedDependency, SuppliedDependency, bool> isDependentOn = (d1, d2) =>
                 {
@@ -353,11 +353,28 @@ namespace OwinFramework.Pages.Framework.DataModel
             var listSorter = new DependencyListSorter<SuppliedDependency>();
 
             lock(_suppliedDependencies)
+                return listSorter.Sort(_suppliedDependencies, isDependentOn);
+        }
+
+        private void CheckForDynamic(IEnumerable<SuppliedDependency> suppliedDependencies)
+        {
+            foreach (var supplier in suppliedDependencies)
             {
-                var orderedList = listSorter.Sort(_suppliedDependencies, isDependentOn);
-                _suppliedDependencies.Clear();
-                _suppliedDependencies.AddRange(orderedList);
-                return orderedList;
+                var supply = supplier.Supply;
+                if (supply == null || 
+                    !supply.IsStatic || 
+                    supplier.DependentSupplies == null ||
+                    supplier.DependentSupplies.All(s => s.IsStatic)) continue;
+
+                supply.IsStatic = false;
+                foreach (var dynamicSupply in supplier.DependentSupplies.Where(s => !s.IsStatic))
+                {
+                    dynamicSupply.AddOnSupplyAction(renderContext =>
+                    {
+                        var dataContext = renderContext.GetDataContext(Id);
+                        supply.Supply(renderContext, dataContext);
+                    });
+                }
             }
         }
 
@@ -365,26 +382,16 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             if (_dataSuppliesBuilt) return _suppliesData;
 
-            var orderedSuppliers = OrderSuppliedDependencies();
-
-            foreach(var supplier in orderedSuppliers)
-            {
-                if (supplier.Supply != null &&
-                    supplier.Supply.IsStatic && 
-                    supplier.DependentSupplies != null && 
-                    supplier.DependentSupplies.Any(s => !s.IsStatic))
-                {
-                    supplier.Supply.IsStatic = false;
-                    foreach(var dynamicSupply in supplier.DependentSupplies.Where(s => !s.IsStatic))
-                    {
-                        dynamicSupply.AddDependent(supplier.Supply);
-                    }
-                }
-            }
-
-            lock(_dataSupplies)
+            lock (_dataSupplies)
             {
                 if (_dataSuppliesBuilt) return _suppliesData;
+
+                var orderedSuppliers = GetSuppliedDependenciesOrdered();
+
+                CheckForDynamic(orderedSuppliers);
+
+                _suppliedDependencies.Clear();
+                _suppliedDependencies.AddRange(orderedSuppliers);
 
                 _dataSupplies.Clear();
                 _dataSupplies.AddRange(_suppliedDependencies.Select(s => s.Supply));
@@ -445,6 +452,14 @@ namespace OwinFramework.Pages.Framework.DataModel
                 lock (_children) child = _children[i];
                 child.BuildDataContextTree(renderContext, dataContext);
             }
+        }
+
+        IDataContext IDataScopeProvider.SetDataContext(IRenderContext renderContext)
+        {
+            var result = renderContext.Data;
+            if (BuildSupplyList())
+                renderContext.SelectDataContext(Id);
+            return result;
         }
 
         /*******************************************************************

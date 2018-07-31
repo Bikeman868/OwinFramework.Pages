@@ -124,19 +124,12 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region Methods called by region instances to render content
 
-        protected IDataContext SelectDataContext(IRenderContext context, IDataScopeProvider scope)
-        {
-            var data = context.Data;
-            context.SelectDataContext(scope.Id);
-            return data;
-        }
-
         public virtual IWriteResult WriteHead(
             IRenderContext context, 
             IDataScopeProvider scope,
             bool includeChildren)
         {
-            var savedData = SelectDataContext(context, scope);
+            var savedData = scope.SetDataContext(context);
             var result = base.WriteHead(context, includeChildren);
             context.Data = savedData;
 
@@ -149,7 +142,7 @@ namespace OwinFramework.Pages.Html.Runtime
             IElement content)
         {
             var result = WriteResult.Continue();
-            var savedData = SelectDataContext(context, scope);
+            var savedData = scope.SetDataContext(context);
 
             WriteOpen(context.Html);
 
@@ -187,7 +180,7 @@ namespace OwinFramework.Pages.Html.Runtime
             IDataScopeProvider scope,
             bool includeChildren)
         {
-            var savedData = SelectDataContext(context, scope);
+            var savedData = scope.SetDataContext(context);
             var result = base.WriteInitializationScript(context, includeChildren);
             context.Data = savedData;
 
@@ -199,7 +192,7 @@ namespace OwinFramework.Pages.Html.Runtime
             IDataScopeProvider scope,
             bool includeChildren)
         {
-            var savedData = SelectDataContext(context, scope);
+            var savedData = scope.SetDataContext(context);
             var result = base.WriteTitle(context, includeChildren);
             context.Data = savedData;
 
@@ -290,6 +283,11 @@ namespace OwinFramework.Pages.Html.Runtime
             return _dataScopeProvider.AddConsumer(consumer);
         }
 
+        IDataContext IDataScopeProvider.SetDataContext(IRenderContext renderContext)
+        {
+            return _dataScopeProvider.SetDataContext(renderContext);
+        }
+
         #endregion
 
         #region IDataSupplier
@@ -349,26 +347,26 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region IDataSupply
 
-        private readonly List<IDataSupply> _dependentSupplies = new List<IDataSupply>();
+        private readonly List<Action<IRenderContext>> _onSupplyActions = new List<Action<IRenderContext>>();
 
         bool IDataSupply.IsStatic { get { return false; } set { } }
 
         void IDataSupply.Supply(IRenderContext renderContext, IDataContext dataContext)
         {
             int count;
-            lock (_dependentSupplies) count = _dependentSupplies.Count;
+            lock (_onSupplyActions) count = _onSupplyActions.Count;
 
             for (var i = 0; i < count; i++)
             {
-                IDataSupply dependent;
-                lock (_dependentSupplies) dependent = _dependentSupplies[i];
-                dependent.Supply(renderContext, dataContext);
+                Action<IRenderContext> action;
+                lock (_onSupplyActions) action = _onSupplyActions[i];
+                action(renderContext);
             }
         }
 
-        void IDataSupply.AddDependent(IDataSupply dataSupply)
+        void IDataSupply.AddOnSupplyAction(Action<IRenderContext> dataSupplyAction)
         {
-            lock (_dependentSupplies) _dependentSupplies.Add(dataSupply);
+            lock (_onSupplyActions) _onSupplyActions.Add(dataSupplyAction);
         }
 
         string IDataSupply.ToString()

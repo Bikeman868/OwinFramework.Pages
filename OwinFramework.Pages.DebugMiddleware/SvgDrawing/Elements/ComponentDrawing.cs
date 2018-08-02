@@ -1,10 +1,11 @@
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
-namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
+namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class ComponentDrawing : DrawingElement
     {
-        public ComponentDrawing(DebugSvgDrawing drawing, DebugComponent debugComponent)
+        public ComponentDrawing(IDebugDrawing drawing, DrawingElement page, DebugComponent debugComponent)
         {
             LeftMargin = 5;
             RightMargin = 5;

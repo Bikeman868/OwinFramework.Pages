@@ -1,6 +1,6 @@
 using Svg;
 
-namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
+namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
 {
     internal class RectangleDrawing : DrawingElement
     {
@@ -15,9 +15,9 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
             CornerRadius = 3f;
         }
 
-        protected override SvgElement GetContainer(SvgDocument document)
+        protected override SvgElement GetContainer()
         {
-            var container = base.GetContainer(document);
+            var container = base.GetContainer();
 
             var rectangle = new SvgRectangle
             {

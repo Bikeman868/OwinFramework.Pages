@@ -1,11 +1,11 @@
 using OwinFramework.Pages.Core.Debug;
-using Svg;
+using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
-namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
+namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class PageDrawing: DrawingElement
     {
-        public PageDrawing(DebugSvgDrawing drawing, DebugPage debugPage)
+        public PageDrawing(IDebugDrawing drawing, DebugPage debugPage)
         {
             LeftMargin = 20;
             RightMargin = 20;
@@ -29,19 +29,10 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
 
             if (debugPage.Layout != null)
             {
-                var layout = new LayoutDrawing(drawing, debugPage.Layout);
+                var layout = new LayoutDrawing(drawing, this, debugPage.Layout);
                 layout.Top = text.Top + text.Height + 8;
                 page.AddChild(layout);
             }
-        }
-
-        public override SvgElement Draw(SvgDocument document)
-        {
-            CalculateSize();
-
-            var group = base.Draw(document);
-            document.Children.Add(@group);
-            return @group;
         }
     }
 }

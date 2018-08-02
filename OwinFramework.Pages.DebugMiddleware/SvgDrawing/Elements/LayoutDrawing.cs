@@ -1,10 +1,14 @@
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
+using Svg;
 
-namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
+namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class LayoutDrawing: DrawingElement
     {
-        public LayoutDrawing(DebugSvgDrawing drawing, DebugLayout debugLayout)
+        private readonly PopupBoxDrawing _popup;
+
+        public LayoutDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayout debugLayout)
         {
             LeftMargin = 5;
             RightMargin = 5;
@@ -24,7 +28,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
                 var x = LeftMargin;
                 foreach(var debugRegion in debugLayout.Regions)
                 {
-                    var region = new LayoutRegionDrawing(drawing, debugRegion);
+                    var region = new LayoutRegionDrawing(drawing, page, debugRegion);
                     region.Left = x;
                     region.Top = text.Top + text.Height + 8;
                     region.CalculateSize();
@@ -32,6 +36,21 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
                     layout.AddChild(region);
                 }
             }
+
+
+            var popupText = new TextDrawing();
+            popupText.Text.Add("Layout '" + debugLayout.Name + "'");
+            popupText.CalculateSize();
+
+            _popup = new PopupBoxDrawing(page);
+            _popup.AddChild(popupText);
+        }
+
+        protected override SvgElement GetContainer()
+        {
+            var container = base.GetContainer();
+            _popup.Attach(container);
+            return container;
         }
     }
 }

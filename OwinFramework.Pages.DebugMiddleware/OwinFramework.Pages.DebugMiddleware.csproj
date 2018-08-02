@@ -93,14 +93,16 @@
     <Compile Include="DebugInfoMiddleware.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SvgDrawing\DrawingElement.cs" />
-    <Compile Include="SvgDrawing\LayoutDrawing.cs" />
-    <Compile Include="SvgDrawing\PageDrawing.cs" />
-    <Compile Include="SvgDrawing\RectangleDrawing.cs" />
-    <Compile Include="SvgDrawing\ComponentDrawing.cs" />
-    <Compile Include="SvgDrawing\LayoutRegionDrawing.cs" />
-    <Compile Include="SvgDrawing\RegionDrawing.cs" />
-    <Compile Include="SvgDrawing\TextDrawing.cs" />
+    <Compile Include="SvgDrawing\Shapes\DrawingElement.cs" />
+    <Compile Include="SvgDrawing\IDebugDrawing.cs" />
+    <Compile Include="SvgDrawing\Elements\LayoutDrawing.cs" />
+    <Compile Include="SvgDrawing\Elements\PageDrawing.cs" />
+    <Compile Include="SvgDrawing\Shapes\PopupBoxDrawing.cs" />
+    <Compile Include="SvgDrawing\Shapes\RectangleDrawing.cs" />
+    <Compile Include="SvgDrawing\Elements\ComponentDrawing.cs" />
+    <Compile Include="SvgDrawing\Elements\LayoutRegionDrawing.cs" />
+    <Compile Include="SvgDrawing\Elements\RegionDrawing.cs" />
+    <Compile Include="SvgDrawing\Shapes\TextDrawing.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

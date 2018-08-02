@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
+using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements;
+using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 using Svg;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
 {
-    internal class DebugSvgDrawing
+    internal class DebugSvgDrawing : IDebugDrawing
     {
         public const float SvgTextHeight = 12;
         public const float SvgTextLineSpacing = 15;
@@ -34,10 +36,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
 
         private SvgDocument GetDrawing(DebugInfo debugInfo)
         {
-            var drawing = DrawDebugInfo(debugInfo);
+            var drawing = DrawRunnableDebugInfo(debugInfo);
+            drawing.CalculateSize();
+            var rootElement = drawing.Draw();
 
             var document = CreateSvg();
-            drawing.Draw(document);
+            document.Children.Add(rootElement);
 
             SetSize(document, drawing.Left + drawing.Width, drawing.Top + drawing.Height);
             Finalize(document);
@@ -45,12 +49,25 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
             return document;
         }
 
-        public DrawingElement DrawDebugInfo(DebugInfo debugInfo)
+        public DrawingElement DrawRunnableDebugInfo(DebugInfo debugInfo)
         {
             if (debugInfo is DebugPage) return new PageDrawing(this, (DebugPage)debugInfo);
-            if (debugInfo is DebugLayout) return new LayoutDrawing(this, (DebugLayout)debugInfo);
-            if (debugInfo is DebugRegion) return new RegionDrawing(this, (DebugRegion)debugInfo);
-            if (debugInfo is DebugComponent) return new ComponentDrawing(this, (DebugComponent)debugInfo);
+
+            return new TextDrawing
+            {
+                Text = new List<string> 
+                { 
+                    "Unknown type of runable debugInfo", 
+                    debugInfo.GetType().DisplayName()
+                }
+            };
+        }
+
+        public DrawingElement DrawDebugInfo(DrawingElement page, DebugInfo debugInfo)
+        {
+            if (debugInfo is DebugLayout) return new LayoutDrawing(this, page, (DebugLayout)debugInfo);
+            if (debugInfo is DebugRegion) return new RegionDrawing(this, page, (DebugRegion)debugInfo);
+            if (debugInfo is DebugComponent) return new ComponentDrawing(this, page, (DebugComponent)debugInfo);
 
             return new TextDrawing 
             { 

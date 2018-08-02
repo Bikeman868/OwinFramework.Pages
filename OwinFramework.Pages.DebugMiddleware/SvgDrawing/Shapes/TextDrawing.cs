@@ -3,7 +3,7 @@ using System.Linq;
 using Svg;
 using Svg.Transforms;
 
-namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
+namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
 {
     internal class TextDrawing: DrawingElement
     {
@@ -20,9 +20,9 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
             if (Width < minimumWidth) Width = minimumWidth;
         }
 
-        public override SvgElement Draw(SvgDocument document)
+        public override SvgElement Draw()
         {
-            var container = base.Draw(document);
+            var container = base.Draw();
 
             for (var lineNumber = 0; lineNumber < Text.Count; lineNumber++)
             {

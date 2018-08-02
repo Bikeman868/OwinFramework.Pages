@@ -4,7 +4,7 @@ using System.Linq;
 using Svg;
 using Svg.Transforms;
 
-namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
+namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
 {
     internal class DrawingElement
     {
@@ -54,7 +54,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
             }
         }
 
-        protected virtual SvgElement GetContainer(SvgDocument document)
+        protected virtual SvgElement GetContainer()
         {
             var group = new SvgGroup();
             @group.Transforms.Add(new SvgTranslate(Left, Top));
@@ -65,10 +65,10 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
             return @group;
         }
 
-        public virtual SvgElement Draw(SvgDocument document)
+        public virtual SvgElement Draw()
         {
-            var container = GetContainer(document);
-            DrawChildren(document, container.Children);
+            var container = GetContainer();
+            DrawChildren(container.Children);
             return container;
         }
 
@@ -80,12 +80,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
             Children = Children.OrderBy(c => c.ZOrder).ToList();
         }
 
-        protected virtual void DrawChildren(SvgDocument document, SvgElementCollection parent)
+        protected virtual void DrawChildren(SvgElementCollection parent)
         {
             SortChildrenByZOrder();
 
             foreach (var child in Children)
-                parent.Add(child.Draw(document));
+                parent.Add(child.Draw());
         }
     }
 }

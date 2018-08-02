@@ -28,3 +28,7 @@ g.component>text { stroke:#696969; fill:#696969; }
 
 g.datascope>rect { stroke:#808080; fill:#F5F5DC; }
 g.datascope>text { stroke:#696969; fill:#696969; }
+
+g.popup>rect { stroke:#808080; fill:#F5F5DC; }
+g.popup>text { stroke:#696969; fill:#696969; }
+

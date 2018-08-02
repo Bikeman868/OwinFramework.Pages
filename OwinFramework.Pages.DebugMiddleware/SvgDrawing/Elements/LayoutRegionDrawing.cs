@@ -1,10 +1,11 @@
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
-namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
+namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class LayoutRegionDrawing : DrawingElement
     {
-        public LayoutRegionDrawing(DebugSvgDrawing drawing, DebugLayoutRegion debugLayoutRegion)
+        public LayoutRegionDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayoutRegion debugLayoutRegion)
         {
             LeftMargin = 5;
             RightMargin = 5;
@@ -21,7 +22,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
 
             if (debugLayoutRegion.Region != null)
             {
-                var region = new RegionDrawing(drawing, debugLayoutRegion.Region);
+                var region = new RegionDrawing(drawing, page, debugLayoutRegion.Region);
                 region.Top = text.Top + text.Height + 5;
                 layoutRegion.AddChild(region);
             }

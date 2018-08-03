@@ -4,9 +4,10 @@ using Svg;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
-    internal class LayoutDrawing: DrawingElement
+    internal class LayoutDrawing : RectangleDrawing
     {
         private readonly PopupBoxDrawing _popup;
+        private readonly TextDrawing _title;
 
         public LayoutDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayout debugLayout)
         {
@@ -14,43 +15,57 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             RightMargin = 5;
             TopMargin = 5;
             BottomMargin = 5;
+            CssClass = "layout";
 
-            var layout = new RectangleDrawing { CssClass = "layout" };
-            AddChild(layout);
-
-            var text = new TextDrawing();
-            text.Text.Add("Layout '" + debugLayout.Name + "'");
-            text.CalculateSize();
-            layout.AddChild(text);
+            _title = new TextDrawing
+            {
+                Left = LeftMargin,
+                Top = TopMargin,
+                Text = new[] { "Layout '" + debugLayout.Name + "'" }
+            };
+            AddChild(_title);
 
             if (debugLayout.Regions != null)
             {
                 var x = LeftMargin;
                 foreach(var debugRegion in debugLayout.Regions)
                 {
-                    var region = new LayoutRegionDrawing(drawing, page, debugRegion);
-                    region.Left = x;
-                    region.Top = text.Top + text.Height + 8;
-                    region.CalculateSize();
+                    var region = new LayoutRegionDrawing(drawing, page, debugRegion)
+                    {
+                        Left = x,
+                        Top = _title.Top + _title.Height + 8
+                    };
+                    AddChild(region);
+
                     x += region.Width + 5;
-                    layout.AddChild(region);
                 }
             }
 
+            _popup = new PopupBoxDrawing();
 
-            var popupText = new TextDrawing();
-            popupText.Text.Add("Layout '" + debugLayout.Name + "'");
-            popupText.CalculateSize();
+            _popup.AddChild(new TextDrawing
+            {
+                Text = new[] { "Layout '" + debugLayout.Name + "'" }
+            });
 
-            _popup = new PopupBoxDrawing(page);
-            _popup.AddChild(popupText);
+            page.AddChild(_popup);
         }
 
-        protected override SvgElement GetContainer()
+        public override void Arrange()
         {
-            var container = base.GetContainer();
-            _popup.Attach(container);
-            return container;
+            base.Arrange();
+
+            float absoluteLeft, absoluteTop;
+            GetAbsolutePosition(out absoluteLeft, out absoluteTop);
+
+            _popup.SetAbsolutePosition(absoluteLeft, absoluteTop);
+        }
+
+        public override SvgElement Draw()
+        {
+            var drawing = base.Draw();
+            _popup.Attach(_title);
+            return drawing;
         }
     }
 }

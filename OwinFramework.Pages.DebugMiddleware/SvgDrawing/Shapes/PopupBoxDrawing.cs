@@ -10,7 +10,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
         public float CornerRadius;
         private readonly string _popupId;
 
-        public PopupBoxDrawing(DrawingElement page)
+        public PopupBoxDrawing()
         {
             LeftMargin = 5;
             RightMargin = 5;
@@ -20,12 +20,11 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             ZOrder = 100;
 
             _popupId = Guid.NewGuid().ToShortString();
-
-            page.AddChild(this);
         }
 
-        public void Attach(SvgElement element)
+        public void Attach(DrawingElement drawingElement)
         {
+            var element = drawingElement.Container;
             element.CustomAttributes.Add("onmousemove", "ShowPopup(evt, '" + _popupId + "')");
             element.CustomAttributes.Add("onmouseout", "HidePopup(evt, '" + _popupId + "')");
         }
@@ -34,7 +33,6 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
         {
             var container = new SvgGroup();
             container.Transforms.Add(new SvgTranslate(Left, Top));
-            container.ID = _popupId;
             container.CustomAttributes.Add("visibility", "hidden");
 
             if (String.IsNullOrEmpty(CssClass))

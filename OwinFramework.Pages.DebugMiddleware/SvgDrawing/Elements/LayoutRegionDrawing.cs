@@ -3,7 +3,7 @@ using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
-    internal class LayoutRegionDrawing : DrawingElement
+    internal class LayoutRegionDrawing : RectangleDrawing
     {
         public LayoutRegionDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayoutRegion debugLayoutRegion)
         {
@@ -11,20 +11,23 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             RightMargin = 5;
             TopMargin = 5;
             BottomMargin = 5;
+            CssClass = "layout-region";
 
-            var layoutRegion = new DrawingElement { CssClass = "layout-region" };
-            AddChild(layoutRegion);
-
-            var text = new TextDrawing();
-            text.Text.Add("'" + debugLayoutRegion.Name + "'");
-            text.CalculateSize();
-            layoutRegion.AddChild(text);
+            var text = new TextDrawing
+            {
+                Left = LeftMargin,
+                Top = TopMargin,
+                Text = new[] { "'" + debugLayoutRegion.Name + "'" }
+            };
+            AddChild(text);
 
             if (debugLayoutRegion.Region != null)
             {
-                var region = new RegionDrawing(drawing, page, debugLayoutRegion.Region);
-                region.Top = text.Top + text.Height + 5;
-                layoutRegion.AddChild(region);
+                var region = new RegionDrawing(drawing, page, debugLayoutRegion.Region)
+                {
+                    Top = text.Top + text.Height + 5
+                };
+                AddChild(region);
             }
         }
     }

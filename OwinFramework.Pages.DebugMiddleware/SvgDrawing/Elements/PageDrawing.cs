@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
-    internal class PageDrawing: DrawingElement
+    internal class PageDrawing : RectangleDrawing
     {
         public PageDrawing(IDebugDrawing drawing, DebugPage debugPage)
         {
@@ -11,27 +12,34 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             RightMargin = 20;
             TopMargin = 20;
             BottomMargin = 20;
+            CssClass = "page";
 
-            var page = new RectangleDrawing { CssClass = "page" };
-            AddChild(page);
+            var text = new List<string>();
 
-            var text = new TextDrawing();
-            text.Text.Add("Page '" + debugPage.Name + "'");
+            text.Add("Page '" + debugPage.Name + "'");
 
             if (debugPage.Routes != null)
             {
                 foreach (var route in debugPage.Routes)
-                    text.Text.Add(route.Route);
+                    text.Add(route.Route);
             }
 
-            text.CalculateSize();
-            page.AddChild(text);
+            var textDrawing = new TextDrawing
+            {
+                Left = LeftMargin,
+                Top = TopMargin,
+                Text = text.ToArray()
+            };
+            AddChild(textDrawing);
 
             if (debugPage.Layout != null)
             {
-                var layout = new LayoutDrawing(drawing, this, debugPage.Layout);
-                layout.Top = text.Top + text.Height + 8;
-                page.AddChild(layout);
+                var layout = new LayoutDrawing(drawing, this, debugPage.Layout)
+                {
+                    Left = LeftMargin,
+                    Top = textDrawing.Top + textDrawing.Height + 8
+                };
+                AddChild(layout);
             }
         }
     }

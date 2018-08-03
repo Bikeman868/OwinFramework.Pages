@@ -3,7 +3,7 @@ using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
-    internal class ComponentDrawing : DrawingElement
+    internal class ComponentDrawing : RectangleDrawing
     {
         public ComponentDrawing(IDebugDrawing drawing, DrawingElement page, DebugComponent debugComponent)
         {
@@ -11,14 +11,14 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             RightMargin = 5;
             TopMargin = 5;
             BottomMargin = 5;
+            CssClass = "component";
 
-            var layout = new RectangleDrawing { CssClass = "component" };
-            AddChild(layout);
-
-            var text = new TextDrawing();
-            text.Text.Add("Component '" + debugComponent.Name + "'");
-            text.CalculateSize();
-            layout.AddChild(text);
+            AddChild(new TextDrawing
+            {
+                Left = LeftMargin,
+                Top = TopMargin,
+                Text = new[] { "Component '" + debugComponent.Name + "'" }
+            });
         }
     }
 }

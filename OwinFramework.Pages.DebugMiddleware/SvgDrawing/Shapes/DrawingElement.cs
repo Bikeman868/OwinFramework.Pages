@@ -24,18 +24,21 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
         public List<DrawingElement> Children = new List<DrawingElement>();
         public DrawingElement Parent;
 
+        public SvgElement Container;
+
         public void AddChild(DrawingElement element)
         {
+            element.Arrange();
             Children.Add(element);
             element.Parent = this;
         }
 
-        public virtual void CalculateSize()
+        public virtual void Arrange()
         {
             if (Children.Count > 0)
             {
                 foreach (var child in Children)
-                    child.CalculateSize();
+                    child.Arrange();
 
                 var minChildLeft = Children.Min(c => c.Left);
                 var minChildTop = Children.Min(c => c.Top);
@@ -56,23 +59,23 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
 
         protected virtual SvgElement GetContainer()
         {
-            var group = new SvgGroup();
-            @group.Transforms.Add(new SvgTranslate(Left, Top));
+            var container = new SvgGroup();
+            container.Transforms.Add(new SvgTranslate(Left, Top));
 
             if (!String.IsNullOrEmpty(CssClass))
-                @group.CustomAttributes.Add("class", CssClass);
+                container.CustomAttributes.Add("class", CssClass);
 
-            return @group;
+            return container;
         }
 
         public virtual SvgElement Draw()
         {
-            var container = GetContainer();
-            DrawChildren(container.Children);
-            return container;
+            Container = GetContainer();
+            DrawChildren(Container.Children);
+            return Container;
         }
 
-        private void SortChildrenByZOrder()
+        public void SortChildrenByZOrder()
         {
             foreach (var child in Children)
                 child.SortChildrenByZOrder();
@@ -80,10 +83,30 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             Children = Children.OrderBy(c => c.ZOrder).ToList();
         }
 
+        public void GetAbsolutePosition(out float left, out float top)
+        {
+            left = Left;
+            top = Top;
+
+            var parent = Parent;
+            while (parent != null)
+            {
+                left += Parent.Left;
+                top += Parent.Top;
+                parent = parent.Parent;
+            }
+        }
+
+        public void SetAbsolutePosition(float left, float top)
+        {
+            float currentLeft, currentTop;
+            GetAbsolutePosition(out currentLeft, out currentTop);
+            Left += left - currentLeft;
+            Top += top - currentTop;
+        }
+
         protected virtual void DrawChildren(SvgElementCollection parent)
         {
-            SortChildrenByZOrder();
-
             foreach (var child in Children)
                 parent.Add(child.Draw());
         }

@@ -37,11 +37,11 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
         private SvgDocument GetDrawing(DebugInfo debugInfo)
         {
             var drawing = DrawRunnableDebugInfo(debugInfo);
-            drawing.CalculateSize();
-            var rootElement = drawing.Draw();
+            drawing.SortChildrenByZOrder();
+            drawing.Arrange();
 
             var document = CreateSvg();
-            document.Children.Add(rootElement);
+            document.Children.Add(drawing.Draw());
 
             SetSize(document, drawing.Left + drawing.Width, drawing.Top + drawing.Height);
             Finalize(document);
@@ -55,11 +55,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
 
             return new TextDrawing
             {
-                Text = new List<string> 
-                { 
-                    "Unknown type of runable debugInfo", 
-                    debugInfo.GetType().DisplayName()
-                }
+                Text = new []{ debugInfo.GetType().DisplayName() }
             };
         }
 
@@ -71,11 +67,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
 
             return new TextDrawing 
             { 
-                Text = new List<string> 
-                { 
-                    "Unknown type of debugInfo", 
-                    debugInfo.GetType().DisplayName()
-                } 
+                Text = new []{ debugInfo.GetType().DisplayName() } 
             };
         }
 

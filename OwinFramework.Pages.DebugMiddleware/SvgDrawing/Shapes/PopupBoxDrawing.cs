@@ -25,7 +25,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
         public void Attach(DrawingElement drawingElement)
         {
             var element = drawingElement.Container;
-            element.CustomAttributes.Add("onmousemove", "ShowPopup(evt, '" + _popupId + "')");
+            element.CustomAttributes.Add("onmouseover", "ShowPopup(evt, '" + _popupId + "')");
             element.CustomAttributes.Add("onmouseout", "HidePopup(evt, '" + _popupId + "')");
         }
 
@@ -50,6 +50,11 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             container.Children.Add(rectangle);
 
             return container;
+        }
+
+        protected override void ArrangeChildren()
+        {
+            ArrangeChildrenVertically(6);
         }
     }
 }

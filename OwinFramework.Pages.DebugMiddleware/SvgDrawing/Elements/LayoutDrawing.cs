@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 using Svg;
 
@@ -9,7 +10,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     internal class LayoutDrawing : RectangleDrawing
     {
         private readonly PopupBoxDrawing _popup;
-        private readonly TextDrawing _title;
+        private readonly DrawingElement _title;
         private readonly List<DrawingElement> _layoutRegions = new List<DrawingElement>();
 
         public LayoutDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayout debugLayout)
@@ -39,6 +40,16 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 Text = new[] { "Layout '" + debugLayout.Name + "'" }
             });
 
+            var details = new List<string>();
+            if (!ReferenceEquals(debugLayout.Instance, null))
+                details.Add("Implemented by: " + debugLayout.Instance.GetType().DisplayName());
+
+            _popup.AddChild(new TextDrawing
+            {
+                CssClass = "details",
+                Text = details.ToArray()
+            });
+
             page.AddChild(_popup);
         }
 
@@ -66,7 +77,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             float absoluteLeft, absoluteTop;
             GetAbsolutePosition(out absoluteLeft, out absoluteTop);
 
-            _popup.SetAbsolutePosition(absoluteLeft, absoluteTop);
+            _popup.SetAbsolutePosition(absoluteLeft, absoluteTop + _title.Top + _title.Height);
 
             base.PositionPopups();
         }

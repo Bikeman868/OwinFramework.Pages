@@ -8,6 +8,8 @@ body { font-size: 12px; padding: 3px; margin: 10px; }
 rect { stroke-width: 0.4; }
 text { stroke-width: 0.1; }
 
+g.details>text { font-size: 9px; }
+
 line.parent { stroke:#00008B }
 line.inherits { stroke:#00008B }
 

@@ -155,8 +155,8 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             var parent = Parent;
             while (parent != null)
             {
-                left += Parent.Left;
-                top += Parent.Top;
+                left += parent.Left;
+                top += parent.Top;
                 parent = parent.Parent;
             }
         }

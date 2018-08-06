@@ -25,12 +25,12 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// A list of scopes introduced
         /// </summary>
-        public List<string> Scopes { get; set; }
+        public List<DebugDataScope> Scopes { get; set; }
 
         /// <summary>
-        /// A list of daat supplies that will be added to the data context
+        /// A list of data supplies that will be added to the data context
         /// </summary>
-        public List<string> DataSupplies { get; set; }
+        public List<DebugSuppliedDependency> DataSupplies { get; set; }
 
         /// <summary>
         /// Default public constructor

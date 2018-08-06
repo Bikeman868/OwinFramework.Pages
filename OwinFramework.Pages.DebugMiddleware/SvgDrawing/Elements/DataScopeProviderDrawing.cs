@@ -14,9 +14,8 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             CssClass = "datascope";
 
             var details = new List<string>();
-
-            if (!ReferenceEquals(debugDataScope.Instance, null))
-                details.Add("Implemented by " + debugDataScope.Instance.GetType().DisplayName());
+            AddDebugInfo(details, debugDataScope);
+            AddDetails(details, Popup);
 
             if (!ReferenceEquals(debugDataScope.Scopes, null))
             {
@@ -27,13 +26,6 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             {
                 details.AddRange(debugDataScope.DataSupplies.Select(s => "Supply: " + s));
             }
-
-            AddChild(new TextDrawing
-            {
-                CssClass = "details",
-                TextSize = 9f / 12f,
-                Text = details.ToArray()
-            });
         }
 
         protected override void ArrangeChildren()

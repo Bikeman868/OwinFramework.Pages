@@ -1,18 +1,20 @@
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
-    internal class ComponentDrawing : RectangleDrawing
+    internal class ComponentDrawing : ElementDrawing
     {
         public ComponentDrawing(IDebugDrawing drawing, DrawingElement page, DebugComponent debugComponent)
+            : base(page, "Component '" + debugComponent.Name + "'")
         {
             CssClass = "component";
 
-            AddChild(new TextDrawing
-            {
-                Text = new[] { "Component '" + debugComponent.Name + "'" }
-            });
+            var details = new List<string>();
+            AddDebugInfo(details, debugComponent);
+            AddDetails(details, Popup);
         }
     }
 }

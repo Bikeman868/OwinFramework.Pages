@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Moq.Modules;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -56,6 +57,16 @@ namespace OwinFramework.Pages.Mocks.DataModel
                 _action(renderContext, dataContext, _dependency);
                 foreach (var dependent in _dependentSupplies)
                     dependent(renderContext);
+            }
+
+            DebugDataSupply IDataSupply.GetDebugInfo()
+            {
+                return new DebugDataSupply();
+            }
+
+            DebugDataSupplier IDataSupplier.GetDebugInfo()
+            {
+                return new DebugDataSupplier();
             }
         }
     }

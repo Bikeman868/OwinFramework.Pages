@@ -23,7 +23,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// Information about data required by this element
         /// </summary>
-        public List<string> DataConsumer { get; set; }
+        public DebugDataConsumer DataConsumer { get; set; }
 
         /// <summary>
         /// The components that this element depends on
@@ -35,5 +35,18 @@ namespace OwinFramework.Pages.Core.Debug
         /// </summary>
         [JsonIgnore, XmlIgnore]
         public object Instance { get; set; }
+
+        /// <summary>
+        /// Returns the default description
+        /// </summary>
+        public override string ToString()
+        {
+            var result = Type;
+
+            if (!string.IsNullOrEmpty(Name))
+                result += " '" + Name + "'";
+
+            return result;
+        }
     }
 }

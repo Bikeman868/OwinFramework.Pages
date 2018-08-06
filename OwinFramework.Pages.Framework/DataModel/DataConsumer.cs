@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -108,23 +109,32 @@ namespace OwinFramework.Pages.Framework.DataModel
             return dependentSupplies;
         }
 
-        List<string> IDataConsumer.GetDebugDescription()
+        DebugDataConsumer IDataConsumer.GetDebugInfo()
         {
-            var description = new List<string>();
-
-            if (_dataProviderDependencies != null)
-                foreach (var dataProvider in _dataProviderDependencies)
-                    description.Add("Needs " + dataProvider.Dependency + " from " + dataProvider.DataProvider.ToString());
-
-            if (_dataSupplyDependencies != null)
-                foreach (var dataSupply in _dataSupplyDependencies)
-                    description.Add("Needs supply " + dataSupply.ToString());
-
-            if (_dataDependencies != null)
-                foreach (var dependency in _dataDependencies)
-                    description.Add("Needs data " + dependency);
-            
-            return description;
+            return new DebugDataConsumer
+            {
+                DependentProviders = ReferenceEquals(_dataProviderDependencies, null)
+                    ? null
+                    : _dataProviderDependencies.Select(s => new DebugDataProviderDependency 
+                        {
+                            DataProvider = s.DataProvider == null ? null : s.DataProvider.GetDebugInfo(),
+                            Data = s.Dependency == null ? null : new DebugDataScope
+                            {
+                                DataType = s.Dependency.DataType,
+                                ScopeName = s.Dependency.ScopeName
+                            }
+                        }).ToList(),
+                DependentSupplies = ReferenceEquals(_dataSupplyDependencies, null)
+                    ? null
+                    : _dataSupplyDependencies.Select(s => s.GetDebugInfo()).ToList(),
+                DependentData = ReferenceEquals(_dataDependencies, null)
+                    ? null
+                    : _dataDependencies.Select(s => new DebugDataScope
+                        {
+                            DataType = s.DataType,
+                            ScopeName = s.ScopeName
+                        }).ToList()
+            };
         }
 
         private class DataProviderDependency

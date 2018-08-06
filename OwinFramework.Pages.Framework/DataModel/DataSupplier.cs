@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -65,11 +66,19 @@ namespace OwinFramework.Pages.Framework.DataModel
                 ? null
                 : new DataSupply 
                     {
-                        DataSupplierId = _dataSupplierId,
+                        DataSupplier = this,
                         Dependency = supply.Dependency,
                         Action = supply.Action,
                         IsStatic = true
                     };
+        }
+
+        DebugDataSupplier IDataSupplier.GetDebugInfo()
+        {
+            return new DebugDataSupplier
+            {
+                
+            };
         }
 
         public override string ToString()
@@ -84,10 +93,11 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         private class DataSupply : IDataSupply
         {
-            public int DataSupplierId;
+            public DataSupplier DataSupplier;
             public IDataDependency Dependency;
             public Action<IRenderContext, IDataContext, IDataDependency> Action;
             public bool IsStatic { get; set; }
+
             private readonly List<Action<IRenderContext>> _onSupplyActions = new List<Action<IRenderContext>>();
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
@@ -113,7 +123,15 @@ namespace OwinFramework.Pages.Framework.DataModel
             public override string ToString()
             {
                 var data = Dependency == null ? "data" : Dependency.ToString();
-                return (IsStatic ? "static " : "dynamic ") + data + " from supplier #" + DataSupplierId;
+                return (IsStatic ? "static " : "dynamic ") + data + " from supplier #" + DataSupplier._dataSupplierId;
+            }
+
+            public DebugDataSupply GetDebugInfo()
+            {
+                return new DebugDataSupply
+                {
+                    Supplier = ((IDataSupplier)DataSupplier).GetDebugInfo()
+                };
             }
         }
 

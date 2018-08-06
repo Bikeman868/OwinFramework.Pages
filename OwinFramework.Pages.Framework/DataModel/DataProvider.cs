@@ -108,9 +108,9 @@ namespace OwinFramework.Pages.Framework.DataModel
             return DataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
-        List<string> IDataConsumer.GetDebugDescription()
+        DebugDataConsumer IDataConsumer.GetDebugInfo()
         {
-            return DataConsumer.GetDebugDescription();
+            return DataConsumer.GetDebugInfo();
         }
 
         #endregion
@@ -136,9 +136,12 @@ namespace OwinFramework.Pages.Framework.DataModel
             return DataSupplier.GetSupply(dependency);
         }
 
-        string IDataSupplier.ToString()
+        DebugDataSupplier IDataSupplier.GetDebugInfo()
         {
-            return DataSupplier.ToString() + " " + ToString();
+            return new DebugDataSupplier
+            {
+                
+            };
         }
 
         #endregion

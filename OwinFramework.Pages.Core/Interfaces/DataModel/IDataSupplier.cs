@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
@@ -12,6 +13,11 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// </summary>
     public interface IDataSupplier
     {
+        /// <summary>
+        /// Retrieves information from the data supplier to help with debugging
+        /// </summary>
+        DebugDataSupplier GetDebugInfo();
+
         /// <summary>
         /// Returns a list of the data types that this supplier can supply.
         /// Call the IsSupplierOf() method to discover if it can provide the type
@@ -48,10 +54,5 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// </summary>
         /// <param name="dependency">The type of data to supply</param>
         IDataSupply GetSupply(IDataDependency dependency);
-
-        /// <summary>
-        /// Returns a description of this data supplier
-        /// </summary>
-        string ToString();
     }
 }

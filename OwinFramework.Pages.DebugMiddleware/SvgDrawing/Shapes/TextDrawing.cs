@@ -14,11 +14,14 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
         {
             base.ArrangeMargins();
 
-            var minimumHeight = DebugSvgDrawing.SvgTextLineSpacing * Text.Length * TextSize + TopMargin + BottomMargin;
-            var minimumWidth = Text.Max(t => t.Length) * DebugSvgDrawing.SvgTextCharacterSpacing * TextSize + LeftMargin + RightMargin;
+            if (Text.Length > 0)
+            {
+                var minimumHeight = DebugSvgDrawing.SvgTextLineSpacing * Text.Length * TextSize + TopMargin + BottomMargin;
+                var minimumWidth = Text.Max(t => t.Length) * DebugSvgDrawing.SvgTextCharacterSpacing * TextSize + LeftMargin + RightMargin;
 
-            if (Height < minimumHeight) Height = minimumHeight;
-            if (Width < minimumWidth) Width = minimumWidth;
+                if (Height < minimumHeight) Height = minimumHeight;
+                if (Width < minimumWidth) Width = minimumWidth;
+            }
         }
 
         public override SvgElement Draw()

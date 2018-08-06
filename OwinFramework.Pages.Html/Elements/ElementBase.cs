@@ -40,7 +40,7 @@ namespace OwinFramework.Pages.Html.Elements
             var dataConsumer = GetDataConsumer();
             debugInfo.DataConsumer = ReferenceEquals(dataConsumer, null) 
                 ? null
-                : dataConsumer.GetDebugDescription();
+                : dataConsumer.GetDebugInfo();
 
             debugInfo.DependentComponents = _dependentComponents;
 

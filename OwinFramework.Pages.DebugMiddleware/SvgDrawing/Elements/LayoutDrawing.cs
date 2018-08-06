@@ -25,25 +25,8 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             }
 
             var details = new List<string>();
-
-            if (!ReferenceEquals(debugLayout.Instance, null))
-                details.Add("Implemented by " + debugLayout.Instance.GetType().DisplayName());
-
-            if (debugLayout.DependentComponents != null)
-            {
-                foreach (var component in debugLayout.DependentComponents)
-                    details.Add("Depends on " + (component.Package == null ? string.Empty : component.Package.NamespaceName + ":") + component.Name);
-            }
-
-            if (!ReferenceEquals(debugLayout.DataConsumer, null))
-                details.AddRange(debugLayout.DataConsumer);
-
-            Popup.AddChild(new TextDrawing
-            {
-                CssClass = "details",
-                TextSize = 9f/12f,
-                Text = details.ToArray()
-            });
+            AddDebugInfo(details, debugLayout);
+            AddDetails(details, Popup);
         }
 
         protected override void ArrangeChildren()

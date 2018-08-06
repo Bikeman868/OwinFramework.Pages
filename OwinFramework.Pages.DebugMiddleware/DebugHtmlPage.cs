@@ -113,11 +113,11 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteCloseTag("p");
             }
 
-            if (debugInfo.DataConsumer != null && debugInfo.DataConsumer.Count > 0)
+            if (debugInfo.DataConsumer != null)
             {
                 html.WriteElementLine("p", "Dependent data");
                 html.WriteOpenTag("ul");
-                foreach (var consumer in debugInfo.DataConsumer)
+                foreach (var consumer in debugInfo.DataConsumer.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                     html.WriteElementLine("li", consumer);
                 html.WriteCloseTag("ul");
             }
@@ -168,7 +168,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteElementLine("p", "Dependencies resolved in this scope");
                 html.WriteOpenTag("ul");
                 foreach (var scope in dataScopeProvider.Scopes)
-                    html.WriteElementLine("li", scope);
+                    html.WriteElementLine("li", scope.ToString());
                 html.WriteCloseTag("ul");
             }
 
@@ -177,7 +177,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteElementLine("p", "Data supplied in this scope");
                 html.WriteOpenTag("ul");
                 foreach (var dataSupplier in dataScopeProvider.DataSupplies)
-                    html.WriteElementLine("li", dataSupplier);
+                    html.WriteElementLine("li", dataSupplier.ToString());
                 html.WriteCloseTag("ul");
             }
 

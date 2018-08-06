@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OwinFramework.Pages.Core.Debug;
 
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
 {
@@ -75,8 +76,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         IList<IDataSupply> AddDependenciesToScopeProvider(IDataScopeProvider dataScope);
 
         /// <summary>
-        /// Gets a description used for debugging purposes only
+        /// Gets information used for debugging purposes only
         /// </summary>
-        List<string> GetDebugDescription();
+        DebugDataConsumer GetDebugInfo();
     }
 }

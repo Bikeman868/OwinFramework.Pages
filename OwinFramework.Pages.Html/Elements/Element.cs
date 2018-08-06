@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -167,10 +168,10 @@ namespace OwinFramework.Pages.Html.Elements
             _dataConsumer.HasDependency(dataProvider, dependency);
         }
 
-        List<string> IDataConsumer.GetDebugDescription()
+        DebugDataConsumer IDataConsumer.GetDebugInfo()
         {
             if (_dataConsumer == null) return null;
-            return _dataConsumer.GetDebugDescription();
+            return _dataConsumer.GetDebugInfo();
         }
 
         #endregion

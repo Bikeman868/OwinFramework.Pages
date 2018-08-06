@@ -22,10 +22,10 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 repeat = debugRegion.RepeatType.DisplayName(TypeExtensions.NamespaceOption.None);
 
                 if (!string.IsNullOrEmpty(debugRegion.RepeatScope))
-                    repeat = debugRegion.RepeatScope + " " + repeat;
+                    repeat = "'" + debugRegion.RepeatScope + "' " + repeat;
 
                 if (!string.IsNullOrEmpty(debugRegion.ListScope))
-                    repeat += " from " + debugRegion.ListScope + " scope";
+                    repeat += " from a list in '" + debugRegion.ListScope + "' scope";
 
                 repeat = "Repeat for each " + repeat;
 
@@ -41,27 +41,11 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
             var details = new List<string>();
 
-            if (!ReferenceEquals(debugRegion.Instance, null))
-                details.Add("Implemented by " + debugRegion.Instance.GetType().DisplayName());
-
             if (!string.IsNullOrEmpty(repeat))
                 details.Add(repeat);
 
-            if (debugRegion.DependentComponents != null)
-            {
-                foreach (var component in debugRegion.DependentComponents)
-                    details.Add("Depends on " + (component.Package == null ? string.Empty : component.Package.NamespaceName + ":") + component.Name);
-            }
-
-            if (!ReferenceEquals(debugRegion.DataConsumer, null))
-                details.AddRange(debugRegion.DataConsumer);
-
-            Popup.AddChild(new TextDrawing
-            {
-                CssClass = "details",
-                TextSize = 9f / 12f,
-                Text = details.ToArray()
-            });
+            AddDebugInfo(details, debugRegion);
+            AddDetails(details, Popup);
 
             if (!ReferenceEquals(debugRegion.Scope, null))
             {

@@ -756,9 +756,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataConsumer.HasDependency(dataProvider, dependency);
         }
 
-        List<string> IDataConsumer.GetDebugDescription()
+        DebugDataConsumer IDataConsumer.GetDebugInfo()
         {
-            return _dataConsumer.GetDebugDescription();
+            return _dataConsumer.GetDebugInfo();
         }
 
         #endregion

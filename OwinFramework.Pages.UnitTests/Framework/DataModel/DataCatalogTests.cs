@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Moq.Modules;
 using NUnit.Framework;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -133,6 +134,13 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
                     if (ReferenceEquals(other, null)) return false;
                     return DataType == other.DataType && ScopeName == other.ScopeName;
                 }
+            }
+
+            public DebugDataSupplier GetDebugInfo()
+            {
+                return new DebugDataSupplier 
+                { 
+                };
             }
         }
 

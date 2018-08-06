@@ -66,7 +66,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             lock (_dataScopes)
             {
                 debug.Scopes = _dataScopes
-                    .Select(s => (s.ScopeName ?? "") + " " + (s.DataType == null ? "" : s.DataType.DisplayName(TypeExtensions.NamespaceOption.Ending)))
+                    .Select(s => new DebugDataScope { DataType = s.DataType, ScopeName = s.ScopeName })
                     .ToList();
             }
 
@@ -74,29 +74,25 @@ namespace OwinFramework.Pages.Framework.DataModel
             {
                 debug.DataSupplies = _suppliedDependencies
                     .Select(suppliedDependency =>
+                        new DebugSuppliedDependency
                         {
-                            var supplier = suppliedDependency.Supplier;
-                            if (ReferenceEquals(supplier, null))
-                            {
-                                return ReferenceEquals(suppliedDependency.Supply, null) 
-                                    ? null 
-                                    : suppliedDependency.Supply.ToString();
-                            }
-
-                            var dependencySupplied = suppliedDependency.DependencySupplied;
-                            var result = string.Empty;
-
-                            if (!string.IsNullOrEmpty(dependencySupplied.ScopeName))
-                                result += "'" + dependencySupplied.ScopeName + "' ";
-
-                            result += dependencySupplied.ToString() + " supplied by " + supplier.ToString();
-
-                            if (suppliedDependency.DependentSupplies != null && suppliedDependency.DependentSupplies.Count > 0)
-                                result += " dependent on [" + string.Join(", ", suppliedDependency.DependentSupplies.Select(ds => ds.ToString())) + "]";
-
-                            return result;
+                            Supplier = suppliedDependency.Supplier == null 
+                                ? null 
+                                : suppliedDependency.Supplier.GetDebugInfo(),
+                            Supply = suppliedDependency.Supply == null 
+                                ? null 
+                                : suppliedDependency.Supply.GetDebugInfo(),
+                            DataSupplied = suppliedDependency.DependencySupplied == null 
+                                ? null
+                                : new DebugDataScope
+                                {
+                                    DataType = suppliedDependency.DependencySupplied.DataType,
+                                    ScopeName = suppliedDependency.DependencySupplied.ScopeName
+                                },
+                            DependentSupplies = suppliedDependency.DependentSupplies == null
+                                ? null
+                                : suppliedDependency.DependentSupplies.Select(s => s.GetDebugInfo()).ToList()
                         })
-                    .Where(s => s != null)
                     .ToList();
             }
 

@@ -338,9 +338,12 @@ namespace OwinFramework.Pages.Html.Runtime
             return this;
         }
 
-        string IDataSupplier.ToString()
+        DebugDataSupplier IDataSupplier.GetDebugInfo()
         {
-            return ToString();
+            return new DebugDataSupplier
+            {
+                
+            };
         }
 
         #endregion
@@ -369,9 +372,12 @@ namespace OwinFramework.Pages.Html.Runtime
             lock (_onSupplyActions) _onSupplyActions.Add(dataSupplyAction);
         }
 
-        string IDataSupply.ToString()
+        DebugDataSupply IDataSupply.GetDebugInfo()
         {
-            return ToString();
+            return new DebugDataSupply
+            {
+                Supplier = ((IDataSupplier)this).GetDebugInfo()
+            };
         }
 
         #endregion

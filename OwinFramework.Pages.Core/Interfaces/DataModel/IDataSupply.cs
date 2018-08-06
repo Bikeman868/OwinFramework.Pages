@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
@@ -41,8 +42,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         void AddOnSupplyAction(Action<IRenderContext> onSupplyAction);
 
         /// <summary>
-        /// Returns a description of this data supply
+        /// Returns information that helps to debug 
         /// </summary>
-        string ToString();
+        DebugDataSupply GetDebugInfo();
     }
 }

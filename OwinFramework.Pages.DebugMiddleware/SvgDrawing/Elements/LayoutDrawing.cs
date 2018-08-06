@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 using Svg;
@@ -8,36 +10,25 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     {
         private readonly PopupBoxDrawing _popup;
         private readonly TextDrawing _title;
+        private readonly List<DrawingElement> _layoutRegions = new List<DrawingElement>();
 
         public LayoutDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayout debugLayout)
         {
-            LeftMargin = 5;
-            RightMargin = 5;
-            TopMargin = 5;
-            BottomMargin = 5;
             CssClass = "layout";
 
             _title = new TextDrawing
             {
-                Left = LeftMargin,
-                Top = TopMargin,
                 Text = new[] { "Layout '" + debugLayout.Name + "'" }
             };
             AddChild(_title);
 
             if (debugLayout.Regions != null)
             {
-                var x = LeftMargin;
                 foreach(var debugRegion in debugLayout.Regions)
                 {
-                    var region = new LayoutRegionDrawing(drawing, page, debugRegion)
-                    {
-                        Left = x,
-                        Top = _title.Top + _title.Height + 8
-                    };
-                    AddChild(region);
-
-                    x += region.Width + 5;
+                    var layoutRegion = new LayoutRegionDrawing(drawing, page, debugRegion);
+                    AddChild(layoutRegion);
+                    _layoutRegions.Add(layoutRegion);
                 }
             }
 
@@ -51,14 +42,33 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             page.AddChild(_popup);
         }
 
-        public override void Arrange()
+        protected override void ArrangeChildren()
         {
-            base.Arrange();
+            _title.Left = LeftMargin;
+            _title.Top = TopMargin;
+            _title.Arrange();
 
+            var x = LeftMargin;
+            var y = _title.Top + _title.Height + 8;
+
+            foreach(var layoutRegion in _layoutRegions)
+            {
+                layoutRegion.Left = x;
+                layoutRegion.Top = y;
+                layoutRegion.Arrange();
+
+                x += layoutRegion.Width + 5;
+            }
+        }
+
+        public override void PositionPopups()
+        {
             float absoluteLeft, absoluteTop;
             GetAbsolutePosition(out absoluteLeft, out absoluteTop);
 
             _popup.SetAbsolutePosition(absoluteLeft, absoluteTop);
+
+            base.PositionPopups();
         }
 
         public override SvgElement Draw()

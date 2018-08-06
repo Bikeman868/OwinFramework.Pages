@@ -9,9 +9,9 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
     {
         public string[] Text;
 
-        public override void Arrange()
+        public override void ArrangeMargins()
         {
-            base.Arrange();
+            base.ArrangeMargins();
 
             var minimumHeight = DebugSvgDrawing.SvgTextLineSpacing * Text.Length + TopMargin + BottomMargin;
             var minimumWidth = Text.Max(t => t.Length) * DebugSvgDrawing.SvgTextCharacterSpacing + LeftMargin + RightMargin;

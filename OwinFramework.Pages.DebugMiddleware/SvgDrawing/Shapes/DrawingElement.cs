@@ -28,61 +28,125 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
 
         public void AddChild(DrawingElement element)
         {
-            element.Arrange();
             Children.Add(element);
             element.Parent = this;
         }
 
-        public virtual void Arrange()
+        /// <summary>
+        /// Finalizes the size and position of everything inside this element
+        /// </summary>
+        public void Arrange()
         {
-            if (Children.Count > 0)
+            ArrangeChildren();
+            ArrangeMargins();
+        }
+
+        /// <summary>
+        /// Recursively arranges all descenents of this element
+        /// </summary>
+        protected virtual void ArrangeChildren()
+        {
+            foreach (var child in Children)
+                child.Arrange();
+        }
+
+        /// <summary>
+        /// Arranges children into a horizontal row with a gap between each child
+        /// </summary>
+        /// <param name="gap"></param>
+        protected void ArrangeChildrenHorizontally(SvgUnit gap)
+        {
+            var x = LeftMargin;
+            var y = TopMargin;
+
+            foreach (var child in Children)
             {
-                foreach (var child in Children)
-                    child.Arrange();
+                child.Left = x;
+                child.Top = y;
+                child.Arrange();
 
-                var minChildLeft = Children.Min(c => c.Left);
-                var minChildTop = Children.Min(c => c.Top);
-
-                var childLeftAdjustment = LeftMargin - minChildLeft;
-                var childTopAdjustment = TopMargin - minChildTop;
-
-                foreach (var child in Children)
-                {
-                    child.Left += childLeftAdjustment;
-                    child.Top += childTopAdjustment;
-                }
-
-                Width = Children.Max(c => c.Left + c.Width) + RightMargin;
-                Height = Children.Max(c => c.Top + c.Height) + BottomMargin;
+                x += child.Width + gap;
             }
         }
 
-        protected virtual SvgElement GetContainer()
+        /// <summary>
+        /// Arranges children into a vertical column with a gap between each child
+        /// </summary>
+        /// <param name="gap"></param>
+        protected void ArrangeChildrenVertically(SvgUnit gap)
         {
-            var container = new SvgGroup();
-            container.Transforms.Add(new SvgTranslate(Left, Top));
+            var x = LeftMargin;
+            var y = TopMargin;
 
-            if (!String.IsNullOrEmpty(CssClass))
-                container.CustomAttributes.Add("class", CssClass);
+            foreach (var child in Children)
+            {
+                child.Left = x;
+                child.Top = y;
+                child.Arrange();
 
-            return container;
+                y += child.Height + gap;
+            }
         }
 
-        public virtual SvgElement Draw()
+        /// <summary>
+        /// Moves children to create left and top margins. Sets the size of this element
+        /// to create right and bottom margins
+        /// </summary>
+        public virtual void ArrangeMargins()
         {
-            Container = GetContainer();
-            DrawChildren(Container.Children);
-            return Container;
+            if (Children.Count == 0)
+            {
+                Width = LeftMargin + RightMargin;
+                Height = TopMargin + BottomMargin;
+                return;
+            }
+
+            var minChildLeft = Children.Min(c => c.Left);
+            var minChildTop = Children.Min(c => c.Top);
+
+            var childLeftAdjustment = LeftMargin - minChildLeft;
+            var childTopAdjustment = TopMargin - minChildTop;
+
+            foreach (var child in Children)
+            {
+                child.Left += childLeftAdjustment;
+                child.Top += childTopAdjustment;
+            }
+
+            Width = Children.Max(c => c.Left + c.Width) + RightMargin;
+            Height = Children.Max(c => c.Top + c.Height) + BottomMargin;
         }
 
-        public void SortChildrenByZOrder()
+        /// <summary>
+        /// After the whole drawing has been arranged and the position and size of
+        /// everything has bee determined, this method is called to allow elements
+        /// to position popup boxes to be positioned relative to the final position
+        /// of the element
+        /// </summary>
+        public virtual void PositionPopups()
+        {
+            foreach (var child in Children) 
+                child.PositionPopups();
+        }
+
+        /// <summary>
+        /// Recursively sorts all descendents by ZOrder
+        /// </summary>
+        public void SortDescendentsByZOrder()
         {
             foreach (var child in Children)
-                child.SortChildrenByZOrder();
+                child.SortDescendentsByZOrder();
 
-            Children = Children.OrderBy(c => c.ZOrder).ToList();
+            Children = 
+                Children.Where(c => c.ZOrder == 0)
+                .Concat(Children.Where(c => c.ZOrder > 0).OrderBy(c => c.ZOrder))
+                .ToList();
         }
 
+        /// <summary>
+        /// Gets the position of this element relative to the root 
+        /// element for the whole drawing
+        /// </summary>
         public void GetAbsolutePosition(out float left, out float top)
         {
             left = Left;
@@ -97,6 +161,10 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             }
         }
 
+        /// <summary>
+        /// Sets the position of this element relative to the root 
+        /// element for the whole drawing
+        /// </summary>
         public void SetAbsolutePosition(float left, float top)
         {
             float currentLeft, currentTop;
@@ -105,10 +173,40 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             Top += top - currentTop;
         }
 
-        protected virtual void DrawChildren(SvgElementCollection parent)
+        /// <summary>
+        /// Constructs an SVG element containing this drawing element
+        /// and all of its descendents
+        /// </summary>
+        public virtual SvgElement Draw()
+        {
+            Container = GetContainer();
+            DrawChildren(Container.Children);
+            return Container;
+        }
+
+        /// <summary>
+        /// The children of this element will be added to the
+        /// container returned by this virtual method
+        /// </summary>
+        protected virtual SvgElement GetContainer()
+        {
+            var container = new SvgGroup();
+            container.Transforms.Add(new SvgTranslate(Left, Top));
+
+            if (!String.IsNullOrEmpty(CssClass))
+                container.CustomAttributes.Add("class", CssClass);
+
+            return container;
+        }
+
+        /// <summary>
+        /// Recursively drawss all of the descentents within the container
+        /// of this drawing element
+        /// </summary>
+        protected virtual void DrawChildren(SvgElementCollection container)
         {
             foreach (var child in Children)
-                parent.Add(child.Draw());
+                container.Add(child.Draw());
         }
     }
 }

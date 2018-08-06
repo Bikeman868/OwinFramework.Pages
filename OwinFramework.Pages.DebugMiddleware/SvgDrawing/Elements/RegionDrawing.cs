@@ -5,29 +5,29 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class RegionDrawing : RectangleDrawing
     {
+        private readonly DrawingElement _title;
+        private readonly DrawingElement _content;
+
         public RegionDrawing(IDebugDrawing drawing, DrawingElement page, DebugRegion debugRegion)
         {
-            LeftMargin = 5;
-            RightMargin = 5;
-            TopMargin = 5;
-            BottomMargin = 5;
             CssClass = "region";
 
-            var text = new TextDrawing
+            _title = new TextDrawing
             {
-                Left = LeftMargin,
-                Top = TopMargin,
                 Text = new[] { "Region '" + debugRegion.Name + "'" }
             };
-            AddChild(text);
+            AddChild(_title);
 
             if (debugRegion.Content != null)
             {
                 var content = drawing.DrawDebugInfo(page, debugRegion.Content);
-                content.Left = LeftMargin;
-                content.Top = text.Top + text.Height + 5;
                 AddChild(content);
             }
+        }
+
+        protected override void ArrangeChildren()
+        {
+            ArrangeChildrenVertically(5);
         }
     }
 }

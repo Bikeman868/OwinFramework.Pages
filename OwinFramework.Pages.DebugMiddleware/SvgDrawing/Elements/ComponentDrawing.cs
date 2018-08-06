@@ -7,16 +7,10 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     {
         public ComponentDrawing(IDebugDrawing drawing, DrawingElement page, DebugComponent debugComponent)
         {
-            LeftMargin = 5;
-            RightMargin = 5;
-            TopMargin = 5;
-            BottomMargin = 5;
             CssClass = "component";
 
             AddChild(new TextDrawing
             {
-                Left = LeftMargin,
-                Top = TopMargin,
                 Text = new[] { "Component '" + debugComponent.Name + "'" }
             });
         }

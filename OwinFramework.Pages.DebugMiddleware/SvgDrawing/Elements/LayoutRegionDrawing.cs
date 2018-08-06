@@ -7,28 +7,24 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     {
         public LayoutRegionDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayoutRegion debugLayoutRegion)
         {
-            LeftMargin = 5;
-            RightMargin = 5;
-            TopMargin = 5;
-            BottomMargin = 5;
             CssClass = "layout-region";
 
-            var text = new TextDrawing
+            var title = new TextDrawing
             {
-                Left = LeftMargin,
-                Top = TopMargin,
                 Text = new[] { "'" + debugLayoutRegion.Name + "'" }
             };
-            AddChild(text);
+            AddChild(title);
 
             if (debugLayoutRegion.Region != null)
             {
-                var region = new RegionDrawing(drawing, page, debugLayoutRegion.Region)
-                {
-                    Top = text.Top + text.Height + 5
-                };
+                var region = new RegionDrawing(drawing, page, debugLayoutRegion.Region);
                 AddChild(region);
             }
+        }
+
+        protected override void ArrangeChildren()
+        {
+            ArrangeChildrenVertically(5);
         }
     }
 }

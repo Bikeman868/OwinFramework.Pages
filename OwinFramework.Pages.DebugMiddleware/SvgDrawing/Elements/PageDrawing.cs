@@ -26,21 +26,20 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
             var textDrawing = new TextDrawing
             {
-                Left = LeftMargin,
-                Top = TopMargin,
                 Text = text.ToArray()
             };
             AddChild(textDrawing);
 
             if (debugPage.Layout != null)
             {
-                var layout = new LayoutDrawing(drawing, this, debugPage.Layout)
-                {
-                    Left = LeftMargin,
-                    Top = textDrawing.Top + textDrawing.Height + 8
-                };
+                var layout = new LayoutDrawing(drawing, this, debugPage.Layout);
                 AddChild(layout);
             }
+        }
+
+        protected override void ArrangeChildren()
+        {
+            ArrangeChildrenVertically(8);
         }
     }
 }

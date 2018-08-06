@@ -37,14 +37,16 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
         private SvgDocument GetDrawing(DebugInfo debugInfo)
         {
             var drawing = DrawRunnableDebugInfo(debugInfo);
-            drawing.SortChildrenByZOrder();
+            drawing.SortDescendentsByZOrder();
             drawing.Arrange();
+            drawing.PositionPopups();
+            drawing.ArrangeMargins();
+            var rootElement = drawing.Draw();
 
             var document = CreateSvg();
-            document.Children.Add(drawing.Draw());
+            document.Children.Add(rootElement);
 
             SetSize(document, drawing.Left + drawing.Width, drawing.Top + drawing.Height);
-            Finalize(document);
 
             return document;
         }
@@ -102,23 +104,6 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
             }
 
             return document;
-        }
-
-        private void Finalize(SvgDocument document)
-        {
-            //if (document != null)
-            //{
-            //    var elements = new SvgElement[document.Children.Count];
-            //    document.Children.CopyTo(elements, 0);
-
-            //    document.Children.Clear();
-
-            //    foreach (var element in elements.Where(e => !e.ContainsAttribute("visibility")))
-            //        document.Children.Add(element);
-
-            //    foreach (var element in elements.Where(e => e.ContainsAttribute("visibility")))
-            //        document.Children.Add(element);
-            //}
         }
 
         private void SetSize(SvgDocument document, SvgUnit width, SvgUnit height)

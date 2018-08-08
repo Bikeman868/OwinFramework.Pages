@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
@@ -340,10 +341,24 @@ namespace OwinFramework.Pages.Html.Runtime
 
         DebugDataSupplier IDataSupplier.GetDebugInfo()
         {
-            return new DebugDataSupplier
+            var debugInfo = new DebugDataSupplier
             {
-                
+                Instance = this,
+                Name = Name + " region",
             };
+
+            if (RepeatType != null)
+            {
+                debugInfo.SuppliedTypes = new List<Type> { RepeatType };
+
+                debugInfo.DefaultSupply = new DebugDataScope
+                {
+                    DataType = RepeatType,
+                    ScopeName = RepeatScope
+                };
+            }
+
+            return debugInfo;
         }
 
         #endregion
@@ -376,6 +391,14 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             return new DebugDataSupply
             {
+                Instance = this,
+                IsStatic = false,
+                SubscriberCount = _onSupplyActions.Count,
+                SuppliedData = new DebugDataScope
+                {
+                    DataType = RepeatType,
+                    ScopeName = RepeatScope
+                },
                 Supplier = ((IDataSupplier)this).GetDebugInfo()
             };
         }

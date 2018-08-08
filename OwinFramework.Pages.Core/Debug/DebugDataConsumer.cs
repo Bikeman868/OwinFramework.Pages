@@ -34,15 +34,15 @@ namespace OwinFramework.Pages.Core.Debug
 
             if (DependentProviders != null)
                 foreach (var dataProvider in DependentProviders)
-                    description.Add("Needs " + dataProvider);
+                    description.Add("Consumes " + dataProvider);
 
             if (DependentSupplies != null)
                 foreach (var dataSupply in DependentSupplies)
-                    description.Add("Needs supply " + dataSupply);
+                    description.Add("Consumes " + dataSupply);
 
             if (DependentData != null)
                 foreach (var dependency in DependentData)
-                    description.Add("Needs data " + dependency);
+                    description.Add("Consumes " + dependency);
 
             return string.Join(Environment.NewLine, description);
         }

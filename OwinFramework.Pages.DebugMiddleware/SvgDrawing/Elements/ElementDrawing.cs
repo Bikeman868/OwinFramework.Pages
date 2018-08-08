@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -14,9 +13,11 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
         protected readonly PopupBoxDrawing Popup;
         protected readonly DrawingElement Title;
 
-        public ElementDrawing(DrawingElement page, string title)
+        public ElementDrawing(DrawingElement page, string title, int headingLevel = 2)
         {
-            Title = new TextDrawing { Text = new[] { title } };
+            CornerRadius = 3f;
+
+            Title = new TextDrawing { Text = new[] { title } }.HeadingLevel(headingLevel);
             AddChild(Title);
 
             if (!ReferenceEquals(page, null))
@@ -54,12 +55,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
         {
             if (details.Count > 0)
             {
-                parent.AddChild(new TextDrawing
-                {
-                    CssClass = "details",
-                    TextSize = 9f / 12f,
-                    Text = details.ToArray()
-                });
+                parent.AddChild(new TextDetailsDrawing { Text = details.ToArray() });
             }
         }
 
@@ -76,7 +72,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             if (!ReferenceEquals(dependentComponents, null))
             {
                 foreach (var component in dependentComponents)
-                    text.Add("Depends on component '" + (component.Package == null ? string.Empty : component.Package.NamespaceName + ":") + component.Name + "'");
+                    text.Add("Depends on " + component.GetDebugInfo());
             }
         }
 

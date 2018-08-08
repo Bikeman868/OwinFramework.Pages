@@ -148,6 +148,7 @@
     <Compile Include="Exceptions\RegionBuilderException.cs" />
     <Compile Include="Exceptions\LayoutBuilderException.cs" />
     <Compile Include="Exceptions\ServiceBuilderException.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Interfaces\Builder\IBuildEngine.cs" />

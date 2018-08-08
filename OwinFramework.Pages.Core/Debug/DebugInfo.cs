@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using System.Linq;
 using Newtonsoft.Json;
 using OwinFramework.Pages.Core.Interfaces;
 using System.Collections.Generic;
@@ -37,11 +38,19 @@ namespace OwinFramework.Pages.Core.Debug
         public object Instance { get; set; }
 
         /// <summary>
+        /// Default public constructor
+        /// </summary>
+        public DebugInfo()
+        {
+            Type = GetType().Name.Aggregate(string.Empty, (s, c) => s + (char.IsUpper(c) ? " " + char.ToLower(c) : c.ToString())).Trim();
+        }
+
+        /// <summary>
         /// Returns the default description
         /// </summary>
         public override string ToString()
         {
-            var result = Type;
+            var result = Type.ToLower();
 
             if (!string.IsNullOrEmpty(Name))
                 result += " '" + Name + "'";

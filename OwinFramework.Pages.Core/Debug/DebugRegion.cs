@@ -50,5 +50,16 @@ namespace OwinFramework.Pages.Core.Debug
         {
             Type = "Region";
         }
+
+        /// <summary>
+        /// Returns a default description
+        /// </summary>
+        public override string ToString()
+        {
+            if (ListType != null)
+                return "repeating " + base.ToString();
+
+            return base.ToString();
+        }
     }
 }

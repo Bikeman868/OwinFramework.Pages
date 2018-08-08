@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Svg;
 using Svg.Transforms;
@@ -24,6 +23,18 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             }
         }
 
+        public TextDrawing HeadingLevel(int level)
+        {
+            if (level == 1) TextSize = 20f / 12f;
+            else if (level == 2) TextSize = 16f / 12f;
+            else if (level == 3) TextSize = 13f / 12f;
+            else TextSize = 1f;
+
+            CssClass = "h" + level;
+
+            return this;
+        }
+
         public override SvgElement Draw()
         {
             var container = base.Draw();
@@ -31,7 +42,9 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             for (var lineNumber = 0; lineNumber < Text.Length; lineNumber++)
             {
                 var text = new SvgText(Text[lineNumber]);
-                text.Transforms.Add(new SvgTranslate(LeftMargin, TopMargin + DebugSvgDrawing.SvgTextHeight * TextSize + DebugSvgDrawing.SvgTextLineSpacing * lineNumber * TextSize));
+                text.Transforms.Add(new SvgTranslate(
+                    LeftMargin, 
+                    TopMargin + DebugSvgDrawing.SvgTextHeight * TextSize + DebugSvgDrawing.SvgTextLineSpacing * lineNumber * TextSize));
                 text.Children.Add(new SvgTextSpan());
                 container.Children.Add(text);
             }

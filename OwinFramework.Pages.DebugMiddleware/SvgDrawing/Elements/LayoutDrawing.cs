@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
-using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements

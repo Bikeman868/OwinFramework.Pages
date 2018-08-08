@@ -12,5 +12,13 @@
         {
             Type = "Element";
         }
+
+        /// <summary>
+        /// Returns a default description
+        /// </summary>
+        public override string ToString()
+        {
+            return Type + " '" + (Name ?? string.Empty) + "'";
+        }
     }
 }

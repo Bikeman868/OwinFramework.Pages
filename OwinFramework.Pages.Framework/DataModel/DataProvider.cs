@@ -138,10 +138,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         DebugDataSupplier IDataSupplier.GetDebugInfo()
         {
-            return new DebugDataSupplier
-            {
-                
-            };
+            return DataSupplier.GetDebugInfo();
         }
 
         #endregion

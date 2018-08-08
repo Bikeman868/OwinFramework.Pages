@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace OwinFramework.Pages.Core.Debug
 {
@@ -24,6 +25,17 @@ namespace OwinFramework.Pages.Core.Debug
         public DebugLayout()
         {
             Type = "Layout";
+        }
+
+        /// <summary>
+        /// Returns the default description
+        /// </summary>
+        public override string ToString()
+        {
+            if (Regions == null || Regions.Count == 0)
+                return base.ToString();
+
+            return  Regions.Aggregate("layout with", (s, r) => s + " '" + r.Name + "'") + " regions";
         }
     }
 }

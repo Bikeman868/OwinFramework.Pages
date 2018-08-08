@@ -33,8 +33,12 @@ namespace OwinFramework.Pages.Core.Debug
         /// </summary>
         public override string ToString()
         {
-            if (DataSupplied != null && Supplier != null)
-                return "supply " + DataSupplied + " from " + Supplier;
+            if (DataSupplied != null)
+            {
+                if (Supplier != null)
+                    return "supply " + DataSupplied + " sourced from " + Supplier;
+                return "supply " + DataSupplied;
+            }
 
             if (Supply != null)
                 return Supply.ToString();

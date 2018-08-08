@@ -39,5 +39,13 @@ namespace OwinFramework.Pages.Core.Debug
         {
             Type = "Data scope";
         }
+
+        /// <summary>
+        /// Returns a default description
+        /// </summary>
+        public override string ToString()
+        {
+            return base.ToString() + " #" + Id;
+        }
     }
 }

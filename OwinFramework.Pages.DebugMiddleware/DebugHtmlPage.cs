@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using Microsoft.Owin;
-using Newtonsoft.Json;
-using OwinFramework.Builder;
-using OwinFramework.Interfaces.Builder;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using Svg;
-using Svg.Transforms;
 
 namespace OwinFramework.Pages.DebugMiddleware
 {
@@ -115,17 +107,25 @@ namespace OwinFramework.Pages.DebugMiddleware
 
             if (debugInfo.DataConsumer != null)
             {
-                html.WriteElementLine("p", "Dependent data");
-                html.WriteOpenTag("ul");
-                foreach (var consumer in debugInfo.DataConsumer.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
-                    html.WriteElementLine("li", consumer);
-                html.WriteCloseTag("ul");
+                var consumerDescription = debugInfo.DataConsumer.ToString();
+                var lines = consumerDescription.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                if (lines.Length > 0)
+                {
+                    html.WriteElementLine("p", "Is a data consumer");
+                    html.WriteOpenTag("ul");
+                    foreach (var line in lines)
+                        html.WriteElementLine("li", line.InitialCaps());
+                    html.WriteCloseTag("ul");
+                }
             }
 
             if (debugInfo.DependentComponents != null && debugInfo.DependentComponents.Count > 0)
             {
-                foreach(var component in debugInfo.DependentComponents)
-                    html.WriteElementLine("p", "Needs component " + component.Name);
+                html.WriteElementLine("p", "Dependent components");
+                html.WriteOpenTag("ul");
+                foreach (var component in debugInfo.DependentComponents)
+                    html.WriteElementLine("li", component.GetDebugInfo().ToString().InitialCaps());
+                html.WriteCloseTag("ul");
             }
 
             if (debugInfo is DebugComponent) WriteHtml(html, (DebugComponent)debugInfo, depth);
@@ -177,7 +177,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteElementLine("p", "Data supplied in this scope");
                 html.WriteOpenTag("ul");
                 foreach (var dataSupplier in dataScopeProvider.DataSupplies)
-                    html.WriteElementLine("li", dataSupplier.ToString());
+                    html.WriteElementLine("li", dataSupplier.ToString().InitialCaps());
                 html.WriteCloseTag("ul");
             }
 

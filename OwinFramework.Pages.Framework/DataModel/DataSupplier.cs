@@ -31,7 +31,6 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             _dataSupplies.Add(new RegisteredSupply 
                 { 
-                    DataSupplierId = _dataSupplierId,
                     Dependency = dependency,
                     Action = action
                 });
@@ -77,7 +76,9 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             return new DebugDataSupplier
             {
-                
+                Instance = this,
+                Name = "supplier #" + _dataSupplierId,
+                SuppliedTypes = SuppliedTypes == null ? null : SuppliedTypes.ToList(),
             };
         }
 
@@ -130,6 +131,14 @@ namespace OwinFramework.Pages.Framework.DataModel
             {
                 return new DebugDataSupply
                 {
+                    Instance = this,
+                    IsStatic = IsStatic,
+                    SubscriberCount = _onSupplyActions.Count,
+                    SuppliedData = new DebugDataScope
+                    {
+                        DataType = Dependency.DataType,
+                        ScopeName = Dependency.ScopeName
+                    },
                     Supplier = ((IDataSupplier)DataSupplier).GetDebugInfo()
                 };
             }
@@ -137,7 +146,6 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         private class RegisteredSupply
         {
-            public int DataSupplierId;
             public IDataDependency Dependency;
             public Action<IRenderContext, IDataContext, IDataDependency> Action;
 

@@ -7,7 +7,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     internal class LayoutRegionDrawing : ElementDrawing
     {
         public LayoutRegionDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayoutRegion debugLayoutRegion)
-            : base(page, "'" + debugLayoutRegion.Name + "'")
+            : base(
+            page, 
+            "'" + debugLayoutRegion.Name + "'",
+            2,
+            false,
+            false)
         {
             CssClass = "layout-region";
 
@@ -17,9 +22,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 AddChild(region);
             }
 
-            var details = new List<string>();
-            AddDebugInfo(details, debugLayoutRegion);
-            AddDetails(details, Popup);
+            if (ClassPopup != null)
+            {
+                var details = new List<string>();
+                AddDebugInfo(details, debugLayoutRegion);
+                AddDetails(details, ClassPopup);
+            }
         }
 
         protected override void ArrangeChildren()

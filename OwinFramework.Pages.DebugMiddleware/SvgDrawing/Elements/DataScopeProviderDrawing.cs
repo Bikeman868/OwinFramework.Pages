@@ -9,13 +9,21 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     internal class DataScopeProviderDrawing : ElementDrawing
     {
         public DataScopeProviderDrawing(IDebugDrawing drawing, DrawingElement page, DebugDataScopeProvider debugDataScope)
-            : base(page, "Data scope #" + debugDataScope.Id)
+            : base(
+            page, 
+            "Data scope #" + debugDataScope.Id,
+            2,
+            false,
+            false)
         {
             CssClass = "datascope";
 
-            var details = new List<string>();
-            AddDebugInfo(details, debugDataScope);
-            AddDetails(details, Popup);
+            if (ClassPopup != null)
+            {
+                var details = new List<string>();
+                AddDebugInfo(details, debugDataScope);
+                AddDetails(details, ClassPopup);
+            }
 
             if (!ReferenceEquals(debugDataScope.Scopes, null) && debugDataScope.Scopes.Count > 0)
             {

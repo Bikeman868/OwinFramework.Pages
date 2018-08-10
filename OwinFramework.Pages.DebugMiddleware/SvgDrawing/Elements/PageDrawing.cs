@@ -7,7 +7,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     internal class PageDrawing : ElementDrawing
     {
         public PageDrawing(IDebugDrawing drawing, DebugPage debugPage)
-            : base(null, "Page '" + debugPage.Name + "'")
+            : base(
+            null, 
+            "Page '" + debugPage.Name + "'",
+            1,
+            false,
+            false)
         {
             LeftMargin = 20;
             RightMargin = 20;

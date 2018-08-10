@@ -10,7 +10,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
         private readonly DrawingElement _content;
 
         public RegionDrawing(IDebugDrawing drawing, DrawingElement page, DebugRegion debugRegion)
-            : base(page, "Region '" + debugRegion.Name + "'")
+            : base(
+            page, 
+            "Region '" + debugRegion.Name + "'",
+            2,
+            debugRegion.InstanceOf != null,
+            debugRegion.Scope != null)
         {
             CssClass = "region";
 
@@ -38,17 +43,20 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 AddChild(content);
             }
 
-            var details = new List<string>();
-
-            if (!string.IsNullOrEmpty(repeat))
-                details.Add(repeat);
-
-            AddDebugInfo(details, debugRegion);
-            AddDetails(details, Popup);
-
-            if (!ReferenceEquals(debugRegion.Scope, null))
+            if (ClassPopup != null)
             {
-                Popup.AddChild(new DataScopeProviderDrawing(drawing, page, debugRegion.Scope));
+                var details = new List<string>();
+
+                if (!string.IsNullOrEmpty(repeat))
+                    details.Add(repeat);
+
+                AddDebugInfo(details, debugRegion);
+                AddDetails(details, ClassPopup);
+            }
+
+            if (DataPopup != null && !ReferenceEquals(debugRegion.Scope, null))
+            {
+                DataPopup.AddChild(new DataScopeProviderDrawing(drawing, page, debugRegion.Scope));
             }
         }
 

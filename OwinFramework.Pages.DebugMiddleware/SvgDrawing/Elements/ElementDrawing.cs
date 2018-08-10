@@ -10,32 +10,70 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class ElementDrawing : RectangleDrawing
     {
-        protected readonly PopupBoxDrawing Popup;
+        protected readonly DrawingElement Header;
         protected readonly DrawingElement Title;
 
-        public ElementDrawing(DrawingElement page, string title, int headingLevel = 2)
+        protected readonly DrawingElement ClassButton;
+        protected readonly PopupBoxDrawing ClassPopup;
+
+        protected readonly DrawingElement DataButton;
+        protected readonly PopupBoxDrawing DataPopup;
+
+        public ElementDrawing(
+            DrawingElement page, 
+            string title, 
+            int headingLevel = 2,
+            bool hasClass = true,
+            bool hasData = false)
         {
             CornerRadius = 3f;
 
+            Header = new HorizontalListDrawing();
+            AddChild(Header);
+
             Title = new TextDrawing { Text = new[] { title } }.HeadingLevel(headingLevel);
-            AddChild(Title);
+            Header.AddChild(Title);
 
             if (!ReferenceEquals(page, null))
             {
-                Popup = new PopupBoxDrawing();
-                Popup.AddChild(new TextDrawing { Text = new[] { title } });
-                page.AddChild(Popup);
+                if (hasClass)
+                {
+                    ClassButton = new ButtonDrawing();
+                    ClassButton.AddChild(new TextDrawing { Text = new[] { "Class" }, CssClass = "button" });
+                    Header.AddChild(ClassButton);
+
+                    ClassPopup = new PopupBoxDrawing();
+                    ClassPopup.AddChild(new TextDrawing { Text = new[] { title } });
+                    page.AddChild(ClassPopup);
+                }
+
+                if (hasData)
+                {
+                    DataButton = new ButtonDrawing();
+                    DataButton.AddChild(new TextDrawing { Text = new[] { "Data" }, CssClass = "button" });
+                    Header.AddChild(DataButton);
+
+                    DataPopup = new PopupBoxDrawing();
+                    DataPopup.AddChild(new TextDrawing { Text = new[] { title } });
+                    page.AddChild(ClassPopup);
+                }
             }
         }
 
         public override void PositionPopups()
         {
-            if (!ReferenceEquals(Popup, null))
+            if (!ReferenceEquals(ClassPopup, null))
             {
-                float absoluteLeft, absoluteTop;
-                GetAbsolutePosition(out absoluteLeft, out absoluteTop);
+                float left, top;
+                ClassButton.GetAbsolutePosition(out left, out top);
+                ClassPopup.SetAbsolutePosition(left, top + ClassButton.Height);
+            }
 
-                Popup.SetAbsolutePosition(absoluteLeft, absoluteTop + Title.Top + Title.Height);
+            if (!ReferenceEquals(DataPopup, null))
+            {
+                float left, top;
+                DataButton.GetAbsolutePosition(out left, out top);
+                DataPopup.SetAbsolutePosition(left, top + DataButton.Height);
             }
 
             base.PositionPopups();
@@ -45,8 +83,11 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
         {
             var drawing = base.Draw();
 
-            if (!ReferenceEquals(Popup, null))
-                Popup.Attach(Title);
+            if (!ReferenceEquals(ClassPopup, null))
+                ClassPopup.Attach(ClassButton);
+
+            if (!ReferenceEquals(DataPopup, null))
+                DataPopup.Attach(DataButton);
 
             return drawing;
         }

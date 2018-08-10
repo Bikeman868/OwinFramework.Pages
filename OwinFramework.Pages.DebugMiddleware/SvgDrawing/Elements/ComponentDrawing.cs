@@ -7,13 +7,21 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     internal class ComponentDrawing : ElementDrawing
     {
         public ComponentDrawing(IDebugDrawing drawing, DrawingElement page, DebugComponent debugComponent)
-            : base(page, "Component '" + debugComponent.Name + "'")
+            : base(
+                page, 
+                "Component '" + debugComponent.Name + "'", 
+                2, 
+                debugComponent.Instance != null,
+                false)
         {
             CssClass = "component";
 
-            var details = new List<string>();
-            AddDebugInfo(details, debugComponent);
-            AddDetails(details, Popup);
+            if (ClassPopup != null)
+            {
+                var details = new List<string>();
+                AddDebugInfo(details, debugComponent);
+                AddDetails(details, ClassPopup);
+            }
         }
     }
 }

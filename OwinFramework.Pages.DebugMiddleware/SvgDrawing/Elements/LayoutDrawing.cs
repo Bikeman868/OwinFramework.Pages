@@ -9,7 +9,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
         private readonly List<DrawingElement> _layoutRegions = new List<DrawingElement>();
 
         public LayoutDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayout debugLayout)
-            : base(page, "Layout '" + debugLayout.Name + "'")
+            : base(
+            page, 
+            "Layout '" + debugLayout.Name + "'",
+            2,
+            true,
+            false)
         {
             CssClass = "layout";
 
@@ -23,9 +28,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 }
             }
 
-            var details = new List<string>();
-            AddDebugInfo(details, debugLayout);
-            AddDetails(details, Popup);
+            if (ClassPopup != null)
+            {
+                var details = new List<string>();
+                AddDebugInfo(details, debugLayout);
+                AddDetails(details, ClassPopup);
+            }
         }
 
         protected override void ArrangeChildren()

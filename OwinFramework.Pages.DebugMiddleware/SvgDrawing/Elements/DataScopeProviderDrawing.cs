@@ -16,7 +16,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             false,
             false)
         {
-            CssClass = "datascope";
+            CssClass = "data-scope";
 
             if (ClassPopup != null)
             {

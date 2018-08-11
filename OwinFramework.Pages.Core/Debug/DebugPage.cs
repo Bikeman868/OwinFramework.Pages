@@ -23,6 +23,11 @@ namespace OwinFramework.Pages.Core.Debug
         public DebugDataScopeProvider Scope { get; set; }
 
         /// <summary>
+        /// The name of the permission that the user must have to see this page
+        /// </summary>
+        public string RequiredPermission { get; set; }
+
+        /// <summary>
         /// Default public constructor
         /// </summary>
         public DebugPage()

@@ -619,6 +619,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             debugPage.Layout = Layout == null ? null : (DebugLayout)Layout.GetDebugInfo();
             debugPage.Scope = _dataScopeProvider.GetDebugInfo(0, -1);
+            debugPage.RequiredPermission = RequiredPermission;
 
             return base.PopulateDebugInfo(debugPage);
         }

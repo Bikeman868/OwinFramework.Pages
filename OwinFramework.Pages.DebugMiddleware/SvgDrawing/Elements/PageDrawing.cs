@@ -12,7 +12,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             "Page '" + debugPage.Name + "'",
             1,
             false,
-            false)
+            debugPage.Scope != null)
         {
             LeftMargin = 20;
             RightMargin = 20;
@@ -22,11 +22,8 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
             var text = new List<string>();
 
-            if (debugPage.Routes != null)
-            {
-                foreach (var route in debugPage.Routes)
-                    text.Add(route.Route);
-            }
+            if (!string.IsNullOrEmpty(debugPage.RequiredPermission))
+                text.Add("Requires the '" + debugPage.RequiredPermission + "' permission");
 
             if (text.Count > 0)
             {
@@ -41,10 +38,22 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             AddDebugInfo(details, debugPage);
             AddDetails(details, this);
 
+            if (debugPage.Routes != null)
+            {
+                foreach (var route in debugPage.Routes)
+                    AddChild(new RouteDrawing(route));
+            }
+
             if (debugPage.Layout != null)
             {
                 var layout = new LayoutDrawing(drawing, this, debugPage.Layout);
                 AddChild(layout);
+            }
+
+            if (!ReferenceEquals(debugPage.Scope, null))
+            {
+                var popup = AddDataButton(this);
+                popup.AddChild(new DataScopeProviderDrawing(drawing, this, debugPage.Scope));
             }
         }
 

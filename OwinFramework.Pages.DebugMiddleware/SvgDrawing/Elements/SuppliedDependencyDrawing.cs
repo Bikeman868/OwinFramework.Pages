@@ -11,7 +11,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     {
         public SuppliedDependencyDrawing(DebugSuppliedDependency suppliedDependency)
         {
-            CssClass = "list";
+            CssClass = "supplied-dependency";
 
             if (suppliedDependency.DataSupplied != null)
                 AddChild(new TextDrawing { Text = new[] { "Supply of " + suppliedDependency.DataSupplied } });
@@ -25,7 +25,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 AddChild(new SupplierDrawing(suppliedDependency.Supplier));
             }
 
-            if (suppliedDependency.DependentSupplies != null)
+            if (suppliedDependency.DependentSupplies != null && suppliedDependency.DependentSupplies.Count > 0)
             {
                 var dependencies = suppliedDependency.DependentSupplies.Select(s => "Depends on " + s.ToString());
                 AddChild(new TitledListDrawing(null, dependencies));

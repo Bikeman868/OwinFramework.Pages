@@ -6,18 +6,21 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class PageDrawing : ElementDrawing
     {
-        public PageDrawing(IDebugDrawing drawing, DebugPage debugPage)
+        public PageDrawing(
+                IDebugDrawing drawing, 
+                DebugPage debugPage,
+                int headingLevel,
+                bool showButtons)
             : base(
-            null, 
-            "Page '" + debugPage.Name + "'",
-            1,
-            false,
-            debugPage.Scope != null)
+                null, 
+                "Page '" + debugPage.Name + "'",
+                headingLevel)
         {
             LeftMargin = 20;
             RightMargin = 20;
             TopMargin = 20;
             BottomMargin = 20;
+
             CssClass = "page";
 
             var text = new List<string>();
@@ -46,14 +49,24 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
             if (debugPage.Layout != null)
             {
-                var layout = new LayoutDrawing(drawing, this, debugPage.Layout);
+                var layout = new LayoutDrawing(
+                    drawing, 
+                    this, 
+                    debugPage.Layout, 
+                    headingLevel + 1, 
+                    showButtons);
                 AddChild(layout);
             }
 
             if (!ReferenceEquals(debugPage.Scope, null))
             {
-                var popup = AddDataButton(this);
-                popup.AddChild(new DataScopeProviderDrawing(drawing, this, debugPage.Scope));
+                AddHeaderButton(this, "Data")
+                    .AddChild(new DataScopeProviderDrawing(
+                        drawing, 
+                        this, 
+                        debugPage.Scope, 
+                        headingLevel + 1, 
+                        false));
             }
         }
 

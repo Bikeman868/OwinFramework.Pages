@@ -12,115 +12,33 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     {
         protected readonly DrawingElement Header;
         protected readonly DrawingElement Title;
-
-        protected DrawingElement ClassButton;
-        protected PopupBoxDrawing ClassPopup;
-
-        protected DrawingElement DataButton;
-        protected PopupBoxDrawing DataPopup;
-
-        protected DrawingElement DefinitionButton;
-        protected PopupBoxDrawing DefinitionPopup;
+        protected SvgUnit ChildSpacing;
 
         public ElementDrawing(
             DrawingElement page, 
             string title, 
-            int headingLevel = 2,
-            bool hasClass = true,
-            bool hasData = false,
-            bool hasDefinition = false)
+            int headingLevel = 2)
         {
             CornerRadius = 3f;
+            ChildSpacing = 5f;
 
             Header = new HorizontalListDrawing();
             AddChild(Header);
 
             Title = new TextDrawing { Text = new[] { title } }.HeadingLevel(headingLevel);
             Header.AddChild(Title);
-
-            if (!ReferenceEquals(page, null))
-            {
-                if (hasClass) AddClassButton(page);
-                if (hasData) AddDataButton(page);
-                if (hasDefinition) AddDefinitionButton(page);
-            }
         }
 
-        protected PopupBoxDrawing AddClassButton(DrawingElement page)
+        protected PopupBoxDrawing AddHeaderButton(DrawingElement page, string caption)
         {
-            ClassButton = new ButtonDrawing();
-            ClassButton.AddChild(new TextDrawing { Text = new[] { "Class" }, CssClass = "button" });
-            Header.AddChild(ClassButton);
-
-            ClassPopup = new PopupBoxDrawing();
-            page.AddChild(ClassPopup);
-            return ClassPopup;
-        }
-
-        protected PopupBoxDrawing AddDataButton(DrawingElement page)
-        {
-            DataButton = new ButtonDrawing();
-            DataButton.AddChild(new TextDrawing { Text = new[] { "Data" }, CssClass = "button" });
-            Header.AddChild(DataButton);
-
-            DataPopup = new PopupBoxDrawing();
-            page.AddChild(DataPopup);
-            return DataPopup;
-        }
-
-        protected PopupBoxDrawing AddDefinitionButton(DrawingElement page)
-        {
-            DefinitionButton = new ButtonDrawing();
-            DefinitionButton.AddChild(new TextDrawing { Text = new[] { "Definition" }, CssClass = "button" });
-            Header.AddChild(DefinitionButton);
-
-            DefinitionPopup = new PopupBoxDrawing();
-            page.AddChild(DefinitionPopup);
-            return DefinitionPopup;
+            var button = new PopupButtonDrawing(page, caption);
+            Header.AddChild(button);
+            return button.PopupBox;
         }
 
         protected override void ArrangeChildren()
         {
-            ArrangeChildrenVertically(5);
-        }
-
-        public override void PositionPopups()
-        {
-            if (!ReferenceEquals(ClassPopup, null))
-            {
-                float left, top;
-                ClassButton.GetAbsolutePosition(out left, out top);
-                ClassPopup.SetAbsolutePosition(left, top + ClassButton.Height);
-            }
-
-            if (!ReferenceEquals(DataPopup, null))
-            {
-                float left, top;
-                DataButton.GetAbsolutePosition(out left, out top);
-                DataPopup.SetAbsolutePosition(left, top + DataButton.Height);
-            }
-
-            if (!ReferenceEquals(DefinitionPopup, null))
-            {
-                float left, top;
-                DataButton.GetAbsolutePosition(out left, out top);
-                DataPopup.SetAbsolutePosition(left, top + DataButton.Height);
-            }
-
-            base.PositionPopups();
-        }
-
-        public override SvgElement Draw()
-        {
-            var drawing = base.Draw();
-
-            if (!ReferenceEquals(ClassPopup, null))
-                ClassPopup.Attach(ClassButton);
-
-            if (!ReferenceEquals(DataPopup, null))
-                DataPopup.Attach(DataButton);
-
-            return drawing;
+            ArrangeChildrenVertically(ChildSpacing);
         }
 
         protected void AddDetails(List<string> details, DrawingElement parent)

@@ -16,7 +16,7 @@ g.page > text { stroke:#000000; fill:#000000; }
 g.layout > rect { stroke:#3366ff; fill:#f8ecec; }
 g.layout > text { stroke:#000000; fill:#000000; }
 
-g.layout-region > rect { stroke:#676798; fill:#f8e8e8; }
+g.layout-region > rect { stroke:#676798; fill:#f8d7d7; }
 g.layout-region > text { stroke:#000000; fill:#000000; }
 
 g.region > rect { stroke: #6A5ACD; fill: #e2e2f8; }

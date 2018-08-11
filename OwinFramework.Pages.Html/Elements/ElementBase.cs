@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// </summary>
     public abstract class ElementBase: IElement
     {
-        private List<IComponent> _dependentComponents;
+        public List<IComponent> DependentComponents;
 
         public abstract AssetDeployment AssetDeployment { get; set; }
         public abstract ElementType ElementType { get; }
@@ -42,7 +42,7 @@ namespace OwinFramework.Pages.Html.Elements
                 ? null
                 : dataConsumer.GetDebugInfo();
 
-            debugInfo.DependentComponents = _dependentComponents;
+            debugInfo.DependentComponents = DependentComponents;
 
             return debugInfo;
         }
@@ -51,10 +51,10 @@ namespace OwinFramework.Pages.Html.Elements
 
         public virtual void NeedsComponent(IComponent component)
         {
-            if (_dependentComponents == null)
-                _dependentComponents = new List<IComponent>();
+            if (DependentComponents == null)
+                DependentComponents = new List<IComponent>();
 
-            _dependentComponents.Add(component);
+            DependentComponents.Add(component);
         }
 
         public virtual IEnumerator<IElement> GetChildren()
@@ -234,18 +234,18 @@ namespace OwinFramework.Pages.Html.Elements
 
         protected virtual void InitializeDependants(IInitializationData initializationData)
         {
-            if (_dependentComponents != null)
+            if (DependentComponents != null)
             {
                 var skip = 0;
                 do
                 {
-                    var newComponents = _dependentComponents.Skip(skip).ToList();
+                    var newComponents = DependentComponents.Skip(skip).ToList();
 
                     foreach (var component in newComponents)
                         component.Initialize(initializationData);
 
                     skip += newComponents.Count;
-                } while (_dependentComponents.Count > skip);
+                } while (DependentComponents.Count > skip);
             }
 
             var dataConsumer = GetDataConsumer();

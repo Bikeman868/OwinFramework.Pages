@@ -8,27 +8,34 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class DataScopeProviderDrawing : ElementDrawing
     {
-        public DataScopeProviderDrawing(IDebugDrawing drawing, DrawingElement page, DebugDataScopeProvider debugDataScope)
+        public DataScopeProviderDrawing(
+                IDebugDrawing drawing, 
+                DrawingElement page, 
+                DebugDataScopeProvider debugDataScope,
+                int headingLevel,
+                bool showButtons)
             : base(
-            page, 
-            "Data scope #" + debugDataScope.Id,
-            2,
-            false,
-            false)
+                page, 
+                "Data scope #" + debugDataScope.Id,
+                headingLevel)
         {
             CssClass = "data-scope";
 
-            if (ClassPopup != null)
+            var details = new List<string>();
+            AddDebugInfo(details, debugDataScope);
+
+            if (details.Count > 0)
             {
-                var details = new List<string>();
-                AddDebugInfo(details, debugDataScope);
-                AddDetails(details, ClassPopup);
+                if (showButtons)
+                    AddDetails(details, AddHeaderButton(page, "Detail"));
+                else
+                    AddDetails(details, this);
             }
 
             if (!ReferenceEquals(debugDataScope.Scopes, null) && debugDataScope.Scopes.Count > 0)
             {
                 var scopeList = new TitledListDrawing(
-                    "Provided scopes", 
+                    "Data scopes", 
                     debugDataScope.Scopes.Select(s => s.ToString().InitialCaps()));
                 AddChild(scopeList);
             }

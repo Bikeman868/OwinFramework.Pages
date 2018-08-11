@@ -6,27 +6,44 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class LayoutRegionDrawing : ElementDrawing
     {
-        public LayoutRegionDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayoutRegion debugLayoutRegion)
+        public LayoutRegionDrawing(
+                IDebugDrawing drawing, 
+                DrawingElement page, 
+                DebugLayoutRegion debugLayoutRegion,
+                int headingLevel,
+                bool showButtons)
             : base(
-            page, 
-            "'" + debugLayoutRegion.Name + "'",
-            2,
-            false,
-            false)
+                page, 
+                "'" + debugLayoutRegion.Name + "'",
+                headingLevel)
         {
+            LeftMargin = 3;
+            RightMargin = 3;
+            TopMargin = 3;
+            BottomMargin = 3;
+
             CssClass = "layout-region";
 
             if (debugLayoutRegion.Region != null)
             {
-                var region = new RegionDrawing(drawing, page, debugLayoutRegion.Region);
+                var region = new RegionDrawing(
+                    drawing, 
+                    page, 
+                    debugLayoutRegion.Region, 
+                    headingLevel, 
+                    showButtons);
                 AddChild(region);
             }
 
-            if (ClassPopup != null)
+            var details = new List<string>();
+            AddDebugInfo(details, debugLayoutRegion);
+
+            if (details.Count > 0)
             {
-                var details = new List<string>();
-                AddDebugInfo(details, debugLayoutRegion);
-                AddDetails(details, ClassPopup);
+                if (showButtons)
+                    AddDetails(details, AddHeaderButton(page, "Detail"));
+                else
+                    AddDetails(details, this);
             }
         }
     }

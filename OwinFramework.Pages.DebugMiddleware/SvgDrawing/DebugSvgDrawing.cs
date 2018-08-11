@@ -52,7 +52,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
 
         public DrawingElement DrawRunnableDebugInfo(DebugInfo debugInfo)
         {
-            if (debugInfo is DebugPage) return new PageDrawing(this, (DebugPage)debugInfo);
+            if (debugInfo is DebugPage) return new PageDrawing(this, (DebugPage)debugInfo, 1, true);
 
             return new TextDrawing
             {
@@ -60,11 +60,11 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
             };
         }
 
-        public DrawingElement DrawDebugInfo(DrawingElement page, DebugInfo debugInfo)
+        public DrawingElement DrawDebugInfo(DrawingElement page, DebugInfo debugInfo, int headingLevel, bool showButtons)
         {
-            if (debugInfo is DebugLayout) return new LayoutDrawing(this, page, (DebugLayout)debugInfo);
-            if (debugInfo is DebugRegion) return new RegionDrawing(this, page, (DebugRegion)debugInfo);
-            if (debugInfo is DebugComponent) return new ComponentDrawing(this, page, (DebugComponent)debugInfo);
+            if (debugInfo is DebugLayout) return new LayoutDrawing(this, page, (DebugLayout)debugInfo, headingLevel, showButtons);
+            if (debugInfo is DebugRegion) return new RegionDrawing(this, page, (DebugRegion)debugInfo, headingLevel, showButtons);
+            if (debugInfo is DebugComponent) return new ComponentDrawing(this, page, (DebugComponent)debugInfo, headingLevel, showButtons);
 
             return new TextDrawing 
             { 

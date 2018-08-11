@@ -23,6 +23,10 @@ namespace OwinFramework.Pages.Html.Elements
                 throw new ArgumentNullException("parent");
 
             Parent = parent;
+
+            var elementBase = parent as ElementBase;
+            if (!ReferenceEquals(elementBase, null))
+                DependentComponents = elementBase.DependentComponents;
         }
 
         public override IDataConsumer GetDataConsumer()

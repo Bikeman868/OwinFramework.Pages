@@ -99,6 +99,7 @@
     <Compile Include="SvgDrawing\Elements\SupplierDrawing.cs" />
     <Compile Include="SvgDrawing\Elements\SupplyDrawing.cs" />
     <Compile Include="SvgDrawing\Elements\SuppliedDependencyDrawing.cs" />
+    <Compile Include="SvgDrawing\Shapes\PopupButtonDrawing.cs" />
     <Compile Include="SvgDrawing\Shapes\DrawingElement.cs" />
     <Compile Include="SvgDrawing\IDebugDrawing.cs" />
     <Compile Include="SvgDrawing\Elements\LayoutDrawing.cs" />

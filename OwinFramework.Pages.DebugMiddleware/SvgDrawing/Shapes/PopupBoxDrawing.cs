@@ -16,6 +16,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             RightMargin = 5;
             TopMargin = 5;
             BottomMargin = 5;
+
             CornerRadius = 6f;
             ZOrder = 100;
 

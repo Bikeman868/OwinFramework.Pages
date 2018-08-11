@@ -9,13 +9,16 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
     {
         private readonly DrawingElement _content;
 
-        public RegionDrawing(IDebugDrawing drawing, DrawingElement page, DebugRegion debugRegion)
+        public RegionDrawing(
+                IDebugDrawing drawing, 
+                DrawingElement page, 
+                DebugRegion debugRegion,
+                int headingLevel,
+                bool showButtons)
             : base(
-            page, 
-            "Region '" + debugRegion.Name + "'",
-            2,
-            debugRegion.InstanceOf != null,
-            debugRegion.Scope != null)
+                page, 
+                "Region '" + debugRegion.Name + "'",
+                headingLevel)
         {
             CssClass = "region";
 
@@ -33,30 +36,54 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
                 repeat = "Repeat for each " + repeat;
 
-                AddChild(new TextDrawing { Text = new[] { repeat } });
+                if (showButtons)
+                    AddChild(new TextDrawing { Text = new[] { repeat } });
             }
 
+            var details = new List<string>();
+
+            if (!string.IsNullOrEmpty(repeat))
+                details.Add(repeat);
+            AddDebugInfo(details, debugRegion);
+
+            if (details.Count > 0)
+            {
+                if (showButtons)
+                    AddDetails(details, AddHeaderButton(page, "Detail"));
+                else
+                    AddDetails(details, this);
+            }
+
+            if (!ReferenceEquals(debugRegion.Scope, null))
+            {
+                var dataScopeDrawing = new DataScopeProviderDrawing(
+                    drawing,
+                    page,
+                    debugRegion.Scope,
+                    headingLevel + 1,
+                    false);
+
+                if (showButtons)
+                    AddHeaderButton(page, "Data").AddChild(dataScopeDrawing);
+                else
+                    AddChild(dataScopeDrawing);
+            }
+
+            if (showButtons && !ReferenceEquals(debugRegion.InstanceOf, null))
+            {
+                AddHeaderButton(page, "Definition")
+                    .AddChild(new RegionDrawing(
+                        drawing,
+                        page,
+                        debugRegion.InstanceOf,
+                        headingLevel + 1,
+                        false));
+            }
 
             if (debugRegion.Content != null)
             {
-                var content = drawing.DrawDebugInfo(page, debugRegion.Content);
+                var content = drawing.DrawDebugInfo(page, debugRegion.Content, headingLevel, showButtons);
                 AddChild(content);
-            }
-
-            if (ClassPopup != null)
-            {
-                var details = new List<string>();
-
-                if (!string.IsNullOrEmpty(repeat))
-                    details.Add(repeat);
-
-                AddDebugInfo(details, debugRegion);
-                AddDetails(details, ClassPopup);
-            }
-
-            if (DataPopup != null && !ReferenceEquals(debugRegion.Scope, null))
-            {
-                DataPopup.AddChild(new DataScopeProviderDrawing(drawing, page, debugRegion.Scope));
             }
         }
     }

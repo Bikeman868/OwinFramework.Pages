@@ -6,52 +6,48 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
     internal class LayoutDrawing : ElementDrawing
     {
-        private readonly List<DrawingElement> _layoutRegions = new List<DrawingElement>();
-
-        public LayoutDrawing(IDebugDrawing drawing, DrawingElement page, DebugLayout debugLayout)
+        public LayoutDrawing(
+                IDebugDrawing drawing, 
+                DrawingElement page, 
+                DebugLayout debugLayout,
+                int headingLevel,
+                bool showButtons)
             : base(
-            page, 
-            "Layout '" + debugLayout.Name + "'",
-            2,
-            true,
-            false)
+                page, 
+                "Layout '" + debugLayout.Name + "'",
+                headingLevel)
         {
+            LeftMargin = 15f;
+            RightMargin = 15f;
+            TopMargin = 15f;
+            BottomMargin = 15f;
+
+            ChildSpacing = 15f;
+
             CssClass = "layout";
+
+            var details = new List<string>();
+            AddDebugInfo(details, debugLayout);
+
+            if (details.Count > 0)
+            {
+                if (showButtons)
+                    AddDetails(details, AddHeaderButton(page, "Detail"));
+                else
+                    AddDetails(details, this);
+            }
 
             if (debugLayout.Regions != null)
             {
                 foreach(var debugRegion in debugLayout.Regions)
                 {
-                    var layoutRegion = new LayoutRegionDrawing(drawing, page, debugRegion);
-                    AddChild(layoutRegion);
-                    _layoutRegions.Add(layoutRegion);
+                    AddChild(new LayoutRegionDrawing(
+                        drawing, 
+                        page, 
+                        debugRegion, 
+                        headingLevel, 
+                        showButtons));
                 }
-            }
-
-            if (ClassPopup != null)
-            {
-                var details = new List<string>();
-                AddDebugInfo(details, debugLayout);
-                AddDetails(details, ClassPopup);
-            }
-        }
-
-        protected override void ArrangeChildren()
-        {
-            Header.Left = LeftMargin;
-            Header.Top = TopMargin;
-            Header.Arrange();
-
-            var x = LeftMargin;
-            var y = Header.Top + Header.Height + 8;
-
-            foreach(var layoutRegion in _layoutRegions)
-            {
-                layoutRegion.Left = x;
-                layoutRegion.Top = y;
-                layoutRegion.Arrange();
-
-                x += layoutRegion.Width + 5;
             }
         }
     }

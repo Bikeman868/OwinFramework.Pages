@@ -5,6 +5,6 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing
 {
     internal interface IDebugDrawing
     {
-        DrawingElement DrawDebugInfo(DrawingElement page, DebugInfo debugInfo);
+        DrawingElement DrawDebugInfo(DrawingElement page, DebugInfo debugInfo, int headingLevel, bool showButtons);
     }
 }

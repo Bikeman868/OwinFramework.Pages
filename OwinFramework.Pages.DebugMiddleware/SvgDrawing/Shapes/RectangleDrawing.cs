@@ -12,7 +12,8 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes
             RightMargin = 5;
             TopMargin = 5;
             BottomMargin = 5;
-            CornerRadius = 2f;
+
+            CornerRadius = 1.5f;
         }
 
         protected override SvgElement GetContainer()

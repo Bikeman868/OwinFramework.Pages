@@ -59,10 +59,5 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 DataPopup.AddChild(new DataScopeProviderDrawing(drawing, page, debugRegion.Scope));
             }
         }
-
-        protected override void ArrangeChildren()
-        {
-            ArrangeChildrenVertically(5);
-        }
     }
 }

@@ -55,9 +55,14 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
                     DataPopup = new PopupBoxDrawing();
                     DataPopup.AddChild(new TextDrawing { Text = new[] { title } });
-                    page.AddChild(ClassPopup);
+                    page.AddChild(DataPopup);
                 }
             }
+        }
+
+        protected override void ArrangeChildren()
+        {
+            ArrangeChildrenVertically(5);
         }
 
         public override void PositionPopups()

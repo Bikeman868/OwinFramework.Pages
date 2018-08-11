@@ -38,12 +38,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
         protected override void ArrangeChildren()
         {
-            Title.Left = LeftMargin;
-            Title.Top = TopMargin;
-            Title.Arrange();
+            Header.Left = LeftMargin;
+            Header.Top = TopMargin;
+            Header.Arrange();
 
             var x = LeftMargin;
-            var y = Title.Top + Title.Height + 8;
+            var y = Header.Top + Header.Height + 8;
 
             foreach(var layoutRegion in _layoutRegions)
             {

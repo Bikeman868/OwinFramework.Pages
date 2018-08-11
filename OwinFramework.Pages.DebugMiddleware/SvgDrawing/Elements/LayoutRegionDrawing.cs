@@ -29,10 +29,5 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 AddDetails(details, ClassPopup);
             }
         }
-
-        protected override void ArrangeChildren()
-        {
-            ArrangeChildrenVertically(5);
-        }
     }
 }

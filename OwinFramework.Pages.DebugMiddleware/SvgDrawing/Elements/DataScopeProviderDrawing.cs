@@ -45,10 +45,5 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                     AddChild(new SuppliedDependencyDrawing(supply));
             }
         }
-
-        protected override void ArrangeChildren()
-        {
-            ArrangeChildrenVertically(5);
-        }
     }
 }

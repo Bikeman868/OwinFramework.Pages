@@ -1,6 +1,10 @@
-﻿using OwinFramework.Pages.Core.Debug;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Owin;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Restful.Runtime
 {
@@ -10,82 +14,34 @@ namespace OwinFramework.Pages.Restful.Runtime
     /// </summary>
     public class Service : IService
     {
+        public string Name { get; set; }
+        public IPackage Package { get; set; }
+        public string RequiredPermission { get; set; }
+        public bool AllowAnonymous { get; set; }
+        public Func<IOwinContext, bool> AuthenticationFunc { get { return null; } }
+
         public Service(IServiceDependenciesFactory serviceDependenciesFactory)
         {
-
-        }
-
-        public DebugService GetDebugInfo()
-        {
-            throw new System.NotImplementedException();
         }
 
         public void Initialize()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public string RequiredPermission
+        public Task Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-                throw new System.NotImplementedException();
-            }
+            throw new NotImplementedException();
         }
 
-        public bool AllowAnonymous
+        DebugInfo IRunable.GetDebugInfo()
         {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-                throw new System.NotImplementedException();
-            }
+            throw new NotImplementedException();
         }
 
-        public System.Func<Microsoft.Owin.IOwinContext, bool> AuthenticationFunc
+        public DebugService GetDebugInfo()
         {
-            get { throw new System.NotImplementedException(); }
-        }
-
-        public System.Threading.Tasks.Task Run(Microsoft.Owin.IOwinContext context)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        Core.Debug.DebugInfo Core.Interfaces.Runtime.IRunable.GetDebugInfo()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public string Name
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-                throw new System.NotImplementedException();
-            }
-        }
-
-        public IPackage Package
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-                throw new System.NotImplementedException();
-            }
+            throw new NotImplementedException();
         }
     }
 }

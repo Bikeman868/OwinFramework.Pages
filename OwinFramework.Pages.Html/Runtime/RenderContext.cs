@@ -19,14 +19,23 @@ namespace OwinFramework.Pages.Html.Runtime
         public IDataContext Data { get; set; }
 
         private readonly IAssetManager _assetManager;
+        private readonly IStringBuilderFactory _stringBuilderFactory;
+        private readonly Action<IOwinContext, Func<string>> _trace;
         private readonly IThreadSafeDictionary<int, IDataContext> _dataContexts;
+
+        private bool _traceEnabled;
+        private int _traceIndentiation;
 
         public RenderContext(
             IAssetManager assetManager,
             IHtmlWriter htmlWriter,
-            IDictionaryFactory dictionaryFactory)
+            IDictionaryFactory dictionaryFactory,
+            IStringBuilderFactory stringBuilderFactory,
+            Action<IOwinContext, Func<string>> trace)
         {
             _assetManager = assetManager;
+            _stringBuilderFactory = stringBuilderFactory;
+            _trace = trace;
             _dataContexts = dictionaryFactory.Create<int, IDataContext>();
             Html = htmlWriter;
         }
@@ -34,6 +43,8 @@ namespace OwinFramework.Pages.Html.Runtime
         public IRenderContext Initialize(IOwinContext context)
         {
             OwinContext = context;
+
+            _traceEnabled = !ReferenceEquals(context.Request.Query["trace"], null);
 
             var acceptLanguage = context.Request.Headers["Accept-Language"];
             Language = _assetManager.GetSupportedLanguage(acceptLanguage);
@@ -86,6 +97,46 @@ namespace OwinFramework.Pages.Html.Runtime
             foreach (var context in _dataContexts.Values)
                 context.Dispose();
             _dataContexts.Clear();
+        }
+
+
+        public void Trace(Func<string> messageFunc)
+        {
+            if (!_traceEnabled)
+                return;
+
+            OutputTrace(messageFunc());
+        }
+
+        public void Trace<T>(Func<T, string> messageFunc, T arg)
+        {
+            if (!_traceEnabled)
+                return;
+
+            OutputTrace(messageFunc(arg));
+        }
+
+        public void TraceIndent(int indentationIncrease)
+        {
+            _traceIndentiation += indentationIncrease;
+        }
+
+        private void OutputTrace(string message)
+        {
+            if (string.IsNullOrEmpty(message))
+                return;
+
+            var prefix = "RC:" + new string(' ', 1 + _traceIndentiation * 2);
+
+            var lines = message.Replace('\r', '\n').Split('\n');
+            foreach (var line in lines)
+            {
+                if (!string.IsNullOrEmpty(line))
+                {
+                    var l = prefix + line;
+                    _trace(OwinContext, () => l);
+                }
+            }
         }
     }
 }

@@ -20,8 +20,14 @@ namespace OwinFramework.Pages.Core
     public class PagesMiddleware: 
         IMiddleware<IResponseProducer>,
         IRoutingProcessor,
-        ISelfDocumenting
+        ISelfDocumenting,
+        ITraceable
     {
+        /// <summary>
+        /// Implements ITraceable
+        /// </summary>
+        public Action<IOwinContext, Func<string>> Trace { get; set; }
+
         string IMiddleware.Name { get; set; }
 
         private readonly IList<IDependency> _dependencies = new List<IDependency>();
@@ -80,7 +86,7 @@ namespace OwinFramework.Pages.Core
                 }
             }
 
-            return runable.Run(context);
+            return runable.Run(context, Trace);
         }
 
         #region Self-documenting

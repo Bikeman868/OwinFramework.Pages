@@ -38,7 +38,7 @@ namespace Sample1.SamplePages
             };
         }
 
-        Task IRunable.Run(IOwinContext context)
+        Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
             context.Response.ContentType = "text/html";
             return context.Response.WriteAsync("<html><head><title>Self registered</title></head><body>This is a self registered page with routing defined by attributes</body></html>");

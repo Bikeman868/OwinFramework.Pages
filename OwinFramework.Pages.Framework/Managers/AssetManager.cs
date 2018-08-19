@@ -284,7 +284,7 @@ namespace OwinFramework.Pages.Framework.Managers
         bool IRunable.AllowAnonymous { get { return true; } set { } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
 
-        Task IRunable.Run(IOwinContext context)
+        Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
             if (context.Request.Method != "GET")
                 throw new HttpException((int)HttpStatusCode.MethodNotAllowed, 

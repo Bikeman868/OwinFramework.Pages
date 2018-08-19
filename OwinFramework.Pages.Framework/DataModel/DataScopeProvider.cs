@@ -99,6 +99,14 @@ namespace OwinFramework.Pages.Framework.DataModel
             return debug;
         }
 
+        public override string ToString()
+        {
+            var description = "data scope provider " + (_isInstance ? "instance " : string.Empty) + "#" + Id;
+            if (!string.IsNullOrEmpty(ElementName))
+                description += " (" + ElementName + ")";
+            return description;
+        }
+
         /*******************************************************************
         * These class members can be used to set up the scope provider
         * prior to initialization.

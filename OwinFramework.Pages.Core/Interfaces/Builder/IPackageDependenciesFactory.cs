@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System;
+using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
@@ -14,7 +15,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Constructs and initializes a package dependencies instance
         /// specific to the request
         /// </summary>
-        IPackageDependencies Create(IOwinContext context);
+        IPackageDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace);
 
         /// <summary>
         /// Name manager

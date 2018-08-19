@@ -32,7 +32,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <summary>
         /// Handles the request and returns a response
         /// </summary>
-        Task Run(IOwinContext context);
+        Task Run(IOwinContext context, Action<IOwinContext, Func<string>> trace);
 
         /// <summary>
         /// Returns debug information about the runable

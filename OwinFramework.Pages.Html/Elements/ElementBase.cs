@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// </summary>
     public abstract class ElementBase: IElement
     {
-        public List<IComponent> DependentComponents;
+        private List<IComponent> _dependentComponents;
 
         public abstract AssetDeployment AssetDeployment { get; set; }
         public abstract ElementType ElementType { get; }
@@ -42,7 +42,7 @@ namespace OwinFramework.Pages.Html.Elements
                 ? null
                 : dataConsumer.GetDebugInfo();
 
-            debugInfo.DependentComponents = DependentComponents;
+            debugInfo.DependentComponents = _dependentComponents;
 
             return debugInfo;
         }
@@ -51,10 +51,10 @@ namespace OwinFramework.Pages.Html.Elements
 
         public virtual void NeedsComponent(IComponent component)
         {
-            if (DependentComponents == null)
-                DependentComponents = new List<IComponent>();
+            if (_dependentComponents == null)
+                _dependentComponents = new List<IComponent>();
 
-            DependentComponents.Add(component);
+            _dependentComponents.Add(component);
         }
 
         public virtual IEnumerator<IElement> GetChildren()
@@ -64,7 +64,19 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override string ToString()
         {
-            return GetType().DisplayName(TypeExtensions.NamespaceOption.Ending);
+            var description = ElementType.ToString().ToLower();
+            
+            description +=  " " + GetType().DisplayName(TypeExtensions.NamespaceOption.Ending);
+
+            if (!string.IsNullOrEmpty(Name))
+                description += " '" + Name + "'";
+
+            return description;
+        }
+
+        public IEnumerable<IComponent> GetDependentComponents()
+        {
+            return _dependentComponents;
         }
 
         #region Writing HTML
@@ -234,18 +246,18 @@ namespace OwinFramework.Pages.Html.Elements
 
         protected virtual void InitializeDependants(IInitializationData initializationData)
         {
-            if (DependentComponents != null)
+            if (_dependentComponents != null)
             {
                 var skip = 0;
                 do
                 {
-                    var newComponents = DependentComponents.Skip(skip).ToList();
+                    var newComponents = _dependentComponents.Skip(skip).ToList();
 
                     foreach (var component in newComponents)
                         component.Initialize(initializationData);
 
                     skip += newComponents.Count;
-                } while (DependentComponents.Count > skip);
+                } while (_dependentComponents.Count > skip);
             }
 
             var dataConsumer = GetDataConsumer();

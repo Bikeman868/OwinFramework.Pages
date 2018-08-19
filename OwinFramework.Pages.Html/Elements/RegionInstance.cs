@@ -49,10 +49,12 @@ namespace OwinFramework.Pages.Html.Elements
             _dependenciesFactory = dependenciesFactory;
 
             var parentDataScope = parent as IDataScopeProvider;
+
             _dataScopeProvider = parentDataScope == null 
                 ? dependenciesFactory.DataScopeProviderFactory.Create()
                 : parentDataScope.CreateInstance();
-            _dataScopeProvider.ElementName = "Region instance " + parent.Name;
+
+            _dataScopeProvider.ElementName = "Region instance '" + parent.Name + "'";
 
             content = content ?? parent.Content;
 
@@ -78,7 +80,7 @@ namespace OwinFramework.Pages.Html.Elements
         {
             var parentDebugInfo = Parent == null ? null : (DebugRegion)Parent.GetDebugInfo();
 
-            _dataScopeProvider.ElementName = "Region instance " + Name;
+            _dataScopeProvider.ElementName = "Region instance '" + Name + "'";
 
             var debugRegion = debugInfo as DebugRegion ?? new DebugRegion();
 

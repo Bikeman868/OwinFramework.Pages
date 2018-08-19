@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System;
+using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -16,7 +17,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Constructs and initializes a page dependencies instance
         /// specific to the request
         /// </summary>
-        IPageDependencies Create(IOwinContext context);
+        IPageDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace);
 
         /// <summary>
         /// The name manager is a singleton and therefore alwaya available

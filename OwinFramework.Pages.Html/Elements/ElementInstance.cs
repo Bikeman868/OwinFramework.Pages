@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
@@ -16,8 +17,7 @@ namespace OwinFramework.Pages.Html.Elements
         protected readonly T Parent;
         private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
 
-        protected ElementInstance(
-            T parent)
+        protected ElementInstance(T parent)
         {
             if (parent == null)
                 throw new ArgumentNullException("parent");
@@ -25,8 +25,24 @@ namespace OwinFramework.Pages.Html.Elements
             Parent = parent;
 
             var elementBase = parent as ElementBase;
-            if (!ReferenceEquals(elementBase, null))
-                DependentComponents = elementBase.DependentComponents;
+            if (ReferenceEquals(elementBase, null)) return;
+
+            var parentDependentComponents = elementBase.GetDependentComponents();
+            if (parentDependentComponents != null)
+                foreach (var component in parentDependentComponents)
+                    NeedsComponent(component);
+        }
+
+        public override string ToString()
+        {
+            var description = ElementType.ToString().ToLower() + " instance";
+
+            description += " " + GetType().DisplayName(TypeExtensions.NamespaceOption.Ending);
+
+            if (!string.IsNullOrEmpty(Name))
+                description += " '" + Name + "'";
+
+            return description;
         }
 
         public override IDataConsumer GetDataConsumer()

@@ -294,7 +294,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                     DebugRenderContext debugRenderContext;
                     try
                     {
-                        var renderContext = _renderContextFactory.Create();
+                        var renderContext = _renderContextFactory.Create((c, f) => { });
                         dataScopeProvider.SetupDataContext(renderContext);
                         debugRenderContext = renderContext.GetDebugInfo();
                     }

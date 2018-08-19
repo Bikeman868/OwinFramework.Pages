@@ -60,5 +60,17 @@ namespace OwinFramework.Pages.Mocks.Runtime
         {
             return DataContexts[id];
         }
+
+        public void Trace(Func<string> messageFunc)
+        {
+        }
+
+        public void Trace<T>(Func<T, string> messageFunc, T arg)
+        {
+        }
+
+        public void TraceIndent(int indentationIncrease)
+        {
+        }
     }
 }

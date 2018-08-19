@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System;
+using Microsoft.Owin;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 
@@ -19,6 +20,37 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Retrieved debugging information for this render context
         /// </summary>
         DebugRenderContext GetDebugInfo();
+
+        /// <summary>
+        /// Call this method to output trace information only when tracing
+        /// is enabled for the request. When request tracing is turned off
+        /// the function does nothing.
+        /// </summary>
+        /// <param name="messageFunc">A function that returns a message
+        /// to include in the trace output. If tracing is turned off then
+        /// this function will not be called, so you must not rely on
+        /// any side effects of executing this function</param>
+        void Trace(Func<string> messageFunc);
+
+        /// <summary>
+        /// Call this method to output trace information only when tracing
+        /// is enabled for the request. When request tracing is turned off
+        /// the function does nothing.
+        /// </summary>
+        /// <param name="messageFunc">A function that returns a message
+        /// to include in the trace output. If tracing is turned off then
+        /// this function will not be called, so you must not rely on
+        /// any side effects of executing this function</param>
+        /// <param name="arg">An argument to pass to the message function</param>
+        void Trace<T>(Func<T, string> messageFunc, T arg);
+
+        /// <summary>
+        /// Call this to cause the trace output to be indented
+        /// </summary>
+        /// <param name="indentationIncrease">Pass +1 to increase indentation
+        /// by 1. Be sure to make another call passing -1 to reduce the
+        /// indentiation at the end of your method</param>
+        void TraceIndent(int indentationIncrease);
 
         /// <summary>
         /// Returns the Owin Context. This provides access to the request.

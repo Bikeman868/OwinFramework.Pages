@@ -35,7 +35,7 @@ namespace Sample1.SamplePages
             };
         }
 
-        Task IRunable.Run(IOwinContext context)
+        Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
             context.Response.ContentType = "text/html";
             return context.Response.WriteAsync("<html><head><title>Full custom</title></head><body>This is a fully custom page</body></html>");

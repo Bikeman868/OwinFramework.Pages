@@ -57,5 +57,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
             IElement element, 
             AssetDeployment assetDeployment = AssetDeployment.Inherit, 
             IModule module = null);
+
+        /// <summary>
+        /// Logs an initialization message that can be used to track down
+        /// configuration issues.
+        /// </summary>
+        void Log(string message);
     }
 }

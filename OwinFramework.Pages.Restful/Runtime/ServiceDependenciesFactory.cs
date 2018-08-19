@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System;
+using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -24,10 +25,10 @@ namespace OwinFramework.Pages.Restful.Runtime
             NameManager = nameManager;
         }
 
-        public IServiceDependencies Create(IOwinContext context)
+        public IServiceDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
             return new ServiceDependencies(
-                _renderContextFactory.Create(), 
+                _renderContextFactory.Create(trace), 
                 AssetManager, 
                 NameManager)
                 .Initialize(context);

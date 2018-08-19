@@ -94,10 +94,13 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public override string ToString()
         {
-            if (_repeatType == null) return "region is not repeating";
+            if (_repeatType == null) 
+                return "'" + Name + "' region that does not repeat";
+
             if (string.IsNullOrEmpty(RepeatScope))
-                return "region repeating " + _repeatType.DisplayName(TypeExtensions.NamespaceOption.Ending);
-            return "region repeating '" + RepeatScope + "' " + _repeatType.DisplayName(TypeExtensions.NamespaceOption.Ending);
+                return "'" + Name + "' region repeating " + _repeatType.DisplayName(TypeExtensions.NamespaceOption.Ending);
+
+            return "'" + Name + "' region repeating '" + RepeatScope + "' " + _repeatType.DisplayName(TypeExtensions.NamespaceOption.Ending);
         }
 
         #endregion
@@ -202,7 +205,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
-        #region IDataScopeProvider
+        #region IDataScopeProvider MixIn
 
         private readonly IDataScopeProvider _dataScopeProvider;
 

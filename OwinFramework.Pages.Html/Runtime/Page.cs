@@ -109,7 +109,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var styles = _dependencies.CssWriterFactory.Create();
             var functions = _dependencies.JavascriptWriterFactory.Create();
 
-            System.Diagnostics.Trace.WriteLine("Page " + Name);
+            System.Diagnostics.Trace.WriteLine("Page " + Name + " asset deployment");
             foreach (var element in data.Elements)
             {
                 var name = string.IsNullOrEmpty(element.Element.Name)
@@ -139,7 +139,7 @@ namespace OwinFramework.Pages.Html.Runtime
                         element.Element.WriteStaticJavascript(functions);
                         break;
                     default:
-                        deployment = element.AssetDeployment.ToString();
+                        deployment = element.AssetDeployment.ToString().ToLower();
                         break;
                 }
 
@@ -156,13 +156,15 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 public AssetDeployment AssetDeployment;
                 public IDataScopeProvider ScopeProvider;
+                public string MessagePrefix;
 
                 public State Clone()
                 {
                     return new State
                     {
                         AssetDeployment = AssetDeployment,
-                        ScopeProvider = ScopeProvider
+                        ScopeProvider = ScopeProvider,
+                        MessagePrefix = MessagePrefix + "  "
                     };
                 }
             }
@@ -188,6 +190,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 _page = page;
 
                 _page._dataScopeProvider.Initialize(null);
+                _currentState.MessagePrefix = "Init " + page.Name + ": ";
                 _currentState.ScopeProvider = _page._dataScopeProvider;
             }
 
@@ -204,6 +207,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             public void AddScope(IDataScopeProvider scopeProvider) 
             {
+                Log("Adding " + scopeProvider);
                 scopeProvider.Initialize(_currentState.ScopeProvider);
                 _currentState.ScopeProvider = scopeProvider; 
             }
@@ -222,6 +226,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             public IInitializationData NeedsComponent(IComponent component)
             {
+                Log("Needs " + component);
                 _page.AddComponent(component);
                 return this;
             }
@@ -231,12 +236,19 @@ namespace OwinFramework.Pages.Html.Runtime
                 AssetDeployment assetDeployment, 
                 IModule module)
             {
+                Log("Has " + element);
                 Elements.Add(new ElementRegistration
                     {
                         Element = element,
                         AssetDeployment = assetDeployment,
                         Module = module
                     });
+            }
+
+            public void Log(string message)
+            {
+                if (string.IsNullOrEmpty(message)) return;
+                System.Diagnostics.Trace.WriteLine(_currentState.MessagePrefix + message);
             }
         }
 
@@ -287,29 +299,51 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Override this method to completely takeover how the page is produced
         /// </summary>
-        public virtual Task Run(IOwinContext owinContext)
+        public virtual Task Run(IOwinContext owinContext, Action<IOwinContext, Func<string>> trace)
         {
-            var dependencies = _dependencies.Create(owinContext);
+            var dependencies = _dependencies.Create(owinContext, trace);
             var context = dependencies.RenderContext;
             var html = context.Html;
-
             owinContext.Response.ContentType = "text/html";
 
+            context.Trace(() => "Adding static data to the render context");
+            context.TraceIndent(1);
             _dataScopeProvider.SetupDataContext(context);
+            context.TraceIndent(-1);
 
             var writeResult = WriteResult.Continue();
             try
             {
+                context.Trace(() => "Writing document start");
+                context.TraceIndent(1);
                 html.WriteDocumentStart(context.Language);
+                context.TraceIndent(-1);
 
+                context.Trace(() => "Writing page head");
+                context.TraceIndent(1);
                 WritePageHead(context, html, writeResult);
-                WritePageBody(context, html, writeResult);
-                WriteInitializationScript(context, true);
+                context.TraceIndent(-1);
 
+
+                context.Trace(() => "Writing page body");
+                context.TraceIndent(1);
+                WritePageBody(context, html, writeResult);
+                context.TraceIndent(-1);
+
+                context.Trace(() => "Writing initialization JavaScript");
+                context.TraceIndent(1);
+                WriteInitializationScript(context, true);
+                context.TraceIndent(-1);
+
+                context.Trace(() => "Writing document end");
+                context.TraceIndent(1);
                 html.WriteDocumentEnd();
+                context.TraceIndent(-1);
             }
-            catch
+            catch (Exception ex)
             {
+                context.Trace(e => "Exception thrown " + e.Message, ex);
+
                 writeResult.Wait(true);
                 writeResult.Dispose();
                 dependencies.Dispose();

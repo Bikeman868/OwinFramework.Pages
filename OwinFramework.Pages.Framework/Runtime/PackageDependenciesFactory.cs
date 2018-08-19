@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System;
+using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
@@ -54,9 +55,9 @@ namespace OwinFramework.Pages.Framework.Runtime
             _dataProviderDependenciesFactory = dataProviderDependenciesFactory;
         }
 
-        public IPackageDependencies Create(IOwinContext context)
+        public IPackageDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
-            var renderContext = _renderContextFactory.Create();
+            var renderContext = _renderContextFactory.Create(trace);
             return new PackageDependencies(
                 renderContext,
                 _assetManager,

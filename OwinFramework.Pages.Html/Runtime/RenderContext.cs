@@ -75,11 +75,13 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public void AddDataContext(int id, IDataContext dataContext)
         {
+            Trace(() => "Render context adding data context #" + id);
             _dataContexts.Add(id, dataContext);
         }
 
         public void SelectDataContext(int id)
         {
+            Trace(() => "Render context switching to data context #" + id);
             Data = GetDataContext(id);
         }
 
@@ -93,12 +95,13 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public void DeleteDataContextTree()
         {
+            Trace(() => "Render context deleting data context tree");
+
             Data = null;
             foreach (var context in _dataContexts.Values)
                 context.Dispose();
             _dataContexts.Clear();
         }
-
 
         public void Trace(Func<string> messageFunc)
         {
@@ -116,9 +119,14 @@ namespace OwinFramework.Pages.Html.Runtime
             OutputTrace(messageFunc(arg));
         }
 
-        public void TraceIndent(int indentationIncrease)
+        public void TraceIndent()
         {
-            _traceIndentiation += indentationIncrease;
+            _traceIndentiation++;
+        }
+
+        public void TraceOutdent()
+        {
+            _traceIndentiation--;
         }
 
         private void OutputTrace(string message)
@@ -126,7 +134,7 @@ namespace OwinFramework.Pages.Html.Runtime
             if (string.IsNullOrEmpty(message))
                 return;
 
-            var prefix = "RC:" + new string(' ', 1 + _traceIndentiation * 2);
+            var prefix = "Pages:" + new string(' ', 1 + _traceIndentiation * 2);
 
             var lines = message.Replace('\r', '\n').Split('\n');
             foreach (var line in lines)

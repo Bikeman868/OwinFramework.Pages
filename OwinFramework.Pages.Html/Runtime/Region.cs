@@ -133,6 +133,8 @@ namespace OwinFramework.Pages.Html.Runtime
             IDataScopeProvider scope,
             bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing page head in scope [" + scope + "]" + (includeChildren ? " including children" : ""));
+
             var savedData = scope.SetDataContext(context);
             var result = base.WriteHead(context, includeChildren);
             context.Data = savedData;
@@ -145,6 +147,8 @@ namespace OwinFramework.Pages.Html.Runtime
             IDataScopeProvider scope,
             IElement content)
         {
+            context.Trace(() => ToString() + " writing page head in scope [" + scope + "] with content [" + content + "]");
+
             var result = WriteResult.Continue();
             var savedData = scope.SetDataContext(context);
 
@@ -159,23 +163,36 @@ namespace OwinFramework.Pages.Html.Runtime
                 else
                 {
                     var list = (IEnumerable)context.Data.Get(_listType, ListScope);
-                    if (list != null)
+                    if (ReferenceEquals(list, null))
+                    {
+                        context.Trace(() => ToString() + " will not repeat because there is no list in the data context of the required type");
+                    }
+                    else
                     {
                         foreach (var item in list)
                         {
+                            context.Trace(() => ToString() + " repeating content for next list entry");
+
                             context.Data.Set(_repeatType, item, RepeatScope);
                             ((IDataSupply)this).Supply(context, context.Data);
+
+                            context.TraceIndent();
 
                             WriteChildOpen(context.Html);
                             result.Add(content.WriteHtml(context));
                             WriteChildClose(context.Html);
+
+                            context.TraceOutdent();
                         }
                     }
                 }
             }
 
             WriteClose(context.Html);
+
+            context.Trace(() => ToString() + " restoring saved data context");
             context.Data = savedData;
+
             return result;
         }
 
@@ -184,6 +201,8 @@ namespace OwinFramework.Pages.Html.Runtime
             IDataScopeProvider scope,
             bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing initialization script in scope [" + scope + "]" + (includeChildren ? " including children" : ""));
+
             var savedData = scope.SetDataContext(context);
             var result = base.WriteInitializationScript(context, includeChildren);
             context.Data = savedData;
@@ -196,6 +215,8 @@ namespace OwinFramework.Pages.Html.Runtime
             IDataScopeProvider scope,
             bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing page title in scope [" + scope + "]" + (includeChildren ? " including children" : ""));
+
             var savedData = scope.SetDataContext(context);
             var result = base.WriteTitle(context, includeChildren);
             context.Data = savedData;
@@ -377,11 +398,18 @@ namespace OwinFramework.Pages.Html.Runtime
             int count;
             lock (_onSupplyActions) count = _onSupplyActions.Count;
 
-            for (var i = 0; i < count; i++)
+            if (count > 0)
             {
-                Action<IRenderContext> action;
-                lock (_onSupplyActions) action = _onSupplyActions[i];
-                action(renderContext);
+                renderContext.Trace(() => "region triggering dynamic data supply on " + count + " dependents");
+
+                renderContext.TraceIndent();
+                for (var i = 0; i < count; i++)
+                {
+                    Action<IRenderContext> action;
+                    lock (_onSupplyActions) action = _onSupplyActions[i];
+                    action(renderContext);
+                }
+                renderContext.TraceOutdent();
             }
         }
 

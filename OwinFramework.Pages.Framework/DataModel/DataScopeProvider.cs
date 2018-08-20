@@ -429,9 +429,16 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             if (BuildSupplyList())
             {
-                dataContext = parentDataContext == null
-                    ? _dataContextFactory.Create(renderContext, this)
-                    : parentDataContext.CreateChild(this);
+                if (ReferenceEquals(parentDataContext, null))
+                {
+                    renderContext.Trace(() => "Data scope provider #" + Id + " is building the root data context");
+                    dataContext = _dataContextFactory.Create(renderContext, this);
+                }
+                else
+                {
+                    renderContext.Trace(() => "Data scope provider #" + Id + " is building a child data context");
+                    dataContext = parentDataContext.CreateChild(this);
+                }
 
                 renderContext.AddDataContext(Id, dataContext);
 
@@ -443,26 +450,38 @@ namespace OwinFramework.Pages.Framework.DataModel
                     IDataSupply dataSupply;
                     lock (_dataSupplies) dataSupply = _dataSupplies[i];
                     if (dataSupply.IsStatic)
+                    {
+                        renderContext.Trace(() => "Data scope provider #" + Id + " adding " + dataSupply);
                         dataSupply.Supply(renderContext, dataContext);
+                    }
+                    else
+                    {
+                        renderContext.Trace(() => "Data scope provider #" + Id + " skipping " + dataSupply);
+                    }
                 }
             }
 
             int childCount;
             lock (_children) childCount = _children.Count;
 
+            renderContext.TraceIndent();
             for (var i = 0; i < childCount; i++)
             {
                 IDataScopeProvider child;
                 lock (_children) child = _children[i];
                 child.BuildDataContextTree(renderContext, dataContext);
             }
+            renderContext.TraceOutdent();
         }
 
         IDataContext IDataScopeProvider.SetDataContext(IRenderContext renderContext)
         {
             var result = renderContext.Data;
             if (BuildSupplyList())
+            {
+                renderContext.Trace(() => "Data scope provider #" + Id + " is establishing its data context in the render context");
                 renderContext.SelectDataContext(Id);
+            }
             return result;
         }
 
@@ -483,6 +502,8 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
         {
+            renderContext.Trace(() => "Data scope provider #" + Id + " has been notified of a missing dependency on " + missingDependency);
+
             AddDependency(missingDependency);
             renderContext.DeleteDataContextTree();
 

@@ -307,38 +307,37 @@ namespace OwinFramework.Pages.Html.Runtime
             owinContext.Response.ContentType = "text/html";
 
             context.Trace(() => "Adding static data to the render context");
-            context.TraceIndent(1);
+            context.TraceIndent();
             _dataScopeProvider.SetupDataContext(context);
-            context.TraceIndent(-1);
+            context.TraceOutdent();
 
             var writeResult = WriteResult.Continue();
             try
             {
                 context.Trace(() => "Writing document start");
-                context.TraceIndent(1);
+                context.TraceIndent();
                 html.WriteDocumentStart(context.Language);
-                context.TraceIndent(-1);
+                context.TraceOutdent();
 
                 context.Trace(() => "Writing page head");
-                context.TraceIndent(1);
+                context.TraceIndent();
                 WritePageHead(context, html, writeResult);
-                context.TraceIndent(-1);
-
+                context.TraceOutdent();
 
                 context.Trace(() => "Writing page body");
-                context.TraceIndent(1);
+                context.TraceIndent();
                 WritePageBody(context, html, writeResult);
-                context.TraceIndent(-1);
+                context.TraceOutdent();
 
                 context.Trace(() => "Writing initialization JavaScript");
-                context.TraceIndent(1);
+                context.TraceIndent();
                 WriteInitializationScript(context, true);
-                context.TraceIndent(-1);
+                context.TraceOutdent();
 
                 context.Trace(() => "Writing document end");
-                context.TraceIndent(1);
+                context.TraceIndent();
                 html.WriteDocumentEnd();
-                context.TraceIndent(-1);
+                context.TraceOutdent();
             }
             catch (Exception ex)
             {

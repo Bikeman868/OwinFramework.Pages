@@ -117,21 +117,25 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing page head");
             return Parent.WriteHead(context, _dataScopeProvider, includeChildren);
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing page body");
             return Parent.WriteHtml(context, _dataScopeProvider, includeChildren ? _content : null);
         }
 
         public override IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing initialization script");
             return Parent.WriteInitializationScript(context, _dataScopeProvider, includeChildren);
         }
 
         public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing page title");
             return Parent.WriteTitle(context, _dataScopeProvider, includeChildren);
         }
 
@@ -141,21 +145,25 @@ namespace OwinFramework.Pages.Html.Elements
 
         public IWriteResult WriteHead(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing page head in data scope [" + scope + "]" + (includeChildren ? " including children" : ""));
             return Parent.WriteHead(context, scope, includeChildren);
         }
 
         public IWriteResult WriteHtml(IRenderContext context, IDataScopeProvider scope, IElement content)
         {
+            context.Trace(() => ToString() + " writing page body in data scope [" + scope + "] with content [" + content + "]");
             return Parent.WriteHtml(context, scope, content);
         }
 
         public IWriteResult WriteInitializationScript(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing initialization script in data scope [" + scope + "]" + (includeChildren ? " including children" : ""));
             return Parent.WriteInitializationScript(context, scope, includeChildren);
         }
 
         public IWriteResult WriteTitle(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
         {
+            context.Trace(() => ToString() + " writing page title in data scope [" + scope + "]" + (includeChildren ? " including children" : ""));
             return Parent.WriteTitle(context, scope, includeChildren);
         }
 

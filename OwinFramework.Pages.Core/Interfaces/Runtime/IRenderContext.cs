@@ -45,12 +45,16 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         void Trace<T>(Func<T, string> messageFunc, T arg);
 
         /// <summary>
-        /// Call this to cause the trace output to be indented
+        /// Call this to cause the trace output to be indented. Be sure to
+        /// balance each call with a call to TraceOutdent
         /// </summary>
-        /// <param name="indentationIncrease">Pass +1 to increase indentation
-        /// by 1. Be sure to make another call passing -1 to reduce the
-        /// indentiation at the end of your method</param>
-        void TraceIndent(int indentationIncrease);
+        void TraceIndent();
+
+        /// <summary>
+        /// Call this to cause the trace output to be no longer indented. Call
+        /// this once for each call to TraceIndent();
+        /// </summary>
+        void TraceOutdent();
 
         /// <summary>
         /// Returns the Owin Context. This provides access to the request.

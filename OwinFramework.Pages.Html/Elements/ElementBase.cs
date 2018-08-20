@@ -141,6 +141,7 @@ namespace OwinFramework.Pages.Html.Elements
             var children = GetChildren();
             if (children == null) return writeResult;
 
+            renderContext.TraceIndent();
             try
             {
                 while (!writeResult.IsComplete && children.MoveNext())
@@ -151,6 +152,7 @@ namespace OwinFramework.Pages.Html.Elements
             finally
             {
                 children.Dispose();
+                renderContext.TraceOutdent();
             }
 
             return writeResult;
@@ -163,6 +165,7 @@ namespace OwinFramework.Pages.Html.Elements
             var children = GetChildren();
             if (children == null) return writeResult;
 
+            renderContext.TraceIndent();
             try
             {
                 while (!writeResult.IsComplete && children.MoveNext())
@@ -173,6 +176,7 @@ namespace OwinFramework.Pages.Html.Elements
             finally
             {
                 children.Dispose();
+                renderContext.TraceOutdent();
             }
 
             return writeResult;
@@ -185,6 +189,7 @@ namespace OwinFramework.Pages.Html.Elements
             var children = GetChildren();
             if (children == null) return writeResult;
 
+            renderContext.TraceIndent();
             try
             {
                 while (!writeResult.IsComplete && children.MoveNext())
@@ -195,6 +200,7 @@ namespace OwinFramework.Pages.Html.Elements
             finally
             {
                 children.Dispose();
+                renderContext.TraceOutdent();
             }
 
             return writeResult;
@@ -207,6 +213,7 @@ namespace OwinFramework.Pages.Html.Elements
             var children = GetChildren();
             if (children == null) return writeResult;
 
+            renderContext.TraceIndent();
             try
             {
                 while (!writeResult.IsComplete && children.MoveNext())
@@ -217,6 +224,7 @@ namespace OwinFramework.Pages.Html.Elements
             finally
             {
                 children.Dispose();
+                renderContext.TraceOutdent();
             }
 
             return writeResult;

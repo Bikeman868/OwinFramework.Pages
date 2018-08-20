@@ -69,7 +69,11 @@ namespace OwinFramework.Pages.Mocks.Runtime
         {
         }
 
-        public void TraceIndent(int indentationIncrease)
+        public void TraceIndent()
+        {
+        }
+
+        public void TraceOutdent()
         {
         }
     }

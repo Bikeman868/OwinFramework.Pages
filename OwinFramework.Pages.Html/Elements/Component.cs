@@ -5,9 +5,9 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Elements;
+using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime
+namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
     /// Base implementation of IComponent. Inheriting from this olass will insulate you

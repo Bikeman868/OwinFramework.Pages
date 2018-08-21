@@ -4,6 +4,7 @@ using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Interfaces;
 using OwinFramework.Pages.Html.Runtime;
 

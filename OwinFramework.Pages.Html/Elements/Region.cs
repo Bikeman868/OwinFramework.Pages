@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
@@ -9,9 +8,9 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Elements;
+using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime
+namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
     /// Base implementation of IRegion. Inheriting from this class will insulate you

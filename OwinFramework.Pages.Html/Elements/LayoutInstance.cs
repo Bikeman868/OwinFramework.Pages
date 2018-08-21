@@ -12,7 +12,7 @@ namespace OwinFramework.Pages.Html.Elements
 {
     internal class LayoutInstance: ElementInstance<ILayout>, ILayout
     {
-        public override ElementType ElementType { get { return ElementType.Region; } }
+        public override ElementType ElementType { get { return ElementType.Layout; } }
 
         private readonly ILayoutDependenciesFactory _layoutDependencies;
         private readonly IThreadSafeDictionary<string, IRegion> _regionsByName;
@@ -76,29 +76,23 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IEnumerator<IElement> GetChildren()
         {
-            return _regionsByName.Select(e => e.Value).Where(r => r != null).GetEnumerator();
+            return _regionsByName.Values.GetEnumerator();
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
-            return Parent.WriteHtml(
-                context,
-                includeChildren 
-                    ? GetRegion
-                    : (Func<string, IRegion>)null);
+            var regionLookup = includeChildren ? GetRegion : (Func<string, IRegion>)null;
+            return Parent.WriteHtml(context, regionLookup);
         }
 
         public IWriteResult WriteHtml(IRenderContext context, Func<string, IRegion> regionLookup)
         {
+            if (regionLookup == null)
+                return Parent.WriteHtml(context, regionName => null);
+
             return Parent.WriteHtml(
                 context,
-                regionName =>
-                {
-                    if (regionLookup == null) return null;
-                    var region = regionLookup(regionName);
-                    if (region != null) return region;
-                    return GetRegion(regionName);
-                });
+                regionName => regionLookup(regionName) ?? GetRegion(regionName));
         }
     }
 }

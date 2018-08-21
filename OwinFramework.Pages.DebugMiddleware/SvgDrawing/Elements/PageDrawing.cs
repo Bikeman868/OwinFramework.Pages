@@ -66,7 +66,8 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                         this, 
                         debugPage.Scope, 
                         headingLevel + 1, 
-                        false));
+                        false,
+                        -1));
             }
         }
 

@@ -2,9 +2,9 @@
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Elements;
+using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime
+namespace OwinFramework.Pages.Html.Elements
 {
     public class StaticHtmlElement : Element
     {

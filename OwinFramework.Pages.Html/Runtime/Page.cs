@@ -474,26 +474,32 @@ namespace OwinFramework.Pages.Html.Runtime
             var websiteStylesUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Style);
             if (websiteStylesUrl != null)
             {
+                context.Trace(() => "Writing link to website css " + websiteStylesUrl);
                 context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", websiteStylesUrl.ToString());
                 context.Html.WriteLine();
             }
 
             if (_referencedModules != null)
             {
+                context.Trace(() => "Writing links to css for referenced modules");
+                context.TraceIndent();
                 foreach (var module in _referencedModules)
                 {
                     var moduleStylesUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Style);
                     if (moduleStylesUrl != null)
                     {
+                        context.Trace(() => "Writing link to css for module " + moduleStylesUrl);
                         context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
                         context.Html.WriteLine();
                     }
                 }
+                context.TraceOutdent();
             }
 
             var pageStylesUrl = _dependencies.AssetManager.GetPageAssetUrl(this, AssetType.Style);
             if (pageStylesUrl != null)
             {
+                context.Trace(() => "Writing links to page specific css " + pageStylesUrl);
                 context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", pageStylesUrl.ToString());
                 context.Html.WriteLine();
             }
@@ -501,32 +507,43 @@ namespace OwinFramework.Pages.Html.Runtime
             var websiteScriptUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Script);
             if (websiteScriptUrl != null)
             {
+                context.Trace(() => "Writing link to website JavaScript " + websiteScriptUrl);
                 context.Html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
                 context.Html.WriteLine();
             }
 
-            if (_referencedModules != null)
+            if (_referencedModules != null && _referencedModules.Count > 0)
             {
+                context.Trace(() => "Writing links to JavaScript for referenced modules");
+                context.TraceIndent();
+
                 foreach (var module in _referencedModules)
                 {
                     var moduleScriptUrl = _dependencies.AssetManager.GetModuleAssetUrl(module, AssetType.Script);
                     if (moduleScriptUrl != null)
                     {
+                        context.Trace(() => "Writing link to JavaScript for module " + moduleScriptUrl);
                         context.Html.WriteElement("script", null, "type", "text/javascript", "src", moduleScriptUrl.ToString());
                         context.Html.WriteLine();
                     }
                 }
+
+                context.TraceOutdent();
             }
 
             var pageScriptUrl = _dependencies.AssetManager.GetPageAssetUrl(this, AssetType.Script);
             if (pageScriptUrl != null)
             {
+                context.Trace(() => "Writing link to page specific JavaScript " + pageScriptUrl);
                 context.Html.WriteElement("script", null, "type", "text/javascript", "src", pageScriptUrl.ToString());
                 context.Html.WriteLine();
             }
 
-            if (_components != null)
+            if (_components != null && _components.Count > 0)
             {
+                context.Trace(() => "Allowing components to write into the page head");
+                context.TraceIndent();
+
                 foreach (var component in _components)
                 {
                     writeResult.Add(component.WriteHead(context));
@@ -534,10 +551,19 @@ namespace OwinFramework.Pages.Html.Runtime
                     if (writeResult.IsComplete)
                         return writeResult;
                 }
+
+                context.TraceOutdent();
             }
 
             if (Layout != null)
+            {
+                context.Trace(() => "Allowing layout to write into the page head");
+                context.TraceIndent();
+
                 writeResult.Add(Layout.WriteHead(context));
+
+                context.TraceOutdent();
+            }
 
             return writeResult;
         }
@@ -666,7 +692,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
-        #region IDataScopeProvider
+        #region IDataScopeProvider Mixin
 
         int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
 
@@ -753,7 +779,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
-        #region IDataConsumer
+        #region IDataConsumer Mixin
 
         void IDataConsumer.HasDependency(IDataSupply dataSupply)
         {

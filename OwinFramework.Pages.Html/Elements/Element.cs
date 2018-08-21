@@ -117,7 +117,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         #endregion
 
-        #region IDataConsumer
+        #region IDataConsumer Mixin
 
         void IDataConsumer.HasDependency(IDataSupply dataSupply)
         {

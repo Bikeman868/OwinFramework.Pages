@@ -61,7 +61,8 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                     page,
                     debugRegion.Scope,
                     headingLevel + 1,
-                    false);
+                    false,
+                    0);
 
                 if (showButtons)
                     AddHeaderButton(page, "Data").AddChild(dataScopeDrawing);

@@ -113,7 +113,7 @@ namespace OwinFramework.Pages.Html.Elements
             return _content == null ? null : _content.AsEnumerable().GetEnumerator();
         }
 
-        #region IElement rendering methods
+        #region IElement rendering method overrides
 
         public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
         {
@@ -169,7 +169,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         #endregion
 
-        #region IDataScopeProvider
+        #region IDataScopeProvider Mixin
 
         private readonly IDataScopeProvider _dataScopeProvider;
 

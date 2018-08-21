@@ -13,7 +13,8 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 DrawingElement page, 
                 DebugDataScopeProvider debugDataScope,
                 int headingLevel,
-                bool showButtons)
+                bool showButtons,
+                int depth)
             : base(
                 page, 
                 "Data scope #" + debugDataScope.Id,
@@ -50,6 +51,21 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
                 foreach (var supply in debugDataScope.DataSupplies)
                     AddChild(new SuppliedDependencyDrawing(supply));
+            }
+
+            if (depth != 0 && debugDataScope.Children != null && debugDataScope.Children.Count > 0)
+            {
+                foreach(var child in debugDataScope.Children)
+                {
+                    var childDrawing = new DataScopeProviderDrawing(
+                        drawing,
+                        page,
+                        child,
+                        headingLevel,
+                        showButtons,
+                        depth - 1);
+                    AddChild(childDrawing);
+                }
             }
         }
     }

@@ -10,6 +10,7 @@ using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Runtime;
 
 namespace Sample1.SamplePackages

@@ -184,7 +184,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         }
 
         private DataScopeProvider(
-            DataScopeProvider original,
+            DataScopeProvider parent,
             IIdManager idManager,
             IDataScopeFactory dataScopeFactory,
             IDataCatalog dataCatalog,
@@ -198,8 +198,8 @@ namespace OwinFramework.Pages.Framework.DataModel
             Id = idManager.GetUniqueId();
             _isInstance = true;
 
-            _dataScopes = original._dataScopes.ToList();
-            _suppliedDependencies = original._suppliedDependencies.ToList();
+            _dataScopes = parent._dataScopes.ToList();
+            _suppliedDependencies = parent._suppliedDependencies.ToList();
         }
 
         public IDataScopeProvider CreateInstance()
@@ -420,7 +420,8 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             BuildDataContextTree(renderContext, null);
 
-            renderContext.SelectDataContext(Id);
+            if (_suppliesData)
+                renderContext.SelectDataContext(Id);
         }
 
         public void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)

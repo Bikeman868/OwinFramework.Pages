@@ -7,10 +7,9 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Html.Builders;
-using OwinFramework.Pages.Html.Elements;
+using OwinFramework.Pages.Html.Runtime;
 
-namespace OwinFramework.Pages.Html.Runtime
+namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
     /// Base implementation of ILayout. Inheriting from this olass will insulate you
@@ -99,11 +98,8 @@ namespace OwinFramework.Pages.Html.Runtime
         public void Populate(string regionName, IElement element)
         {
             var region = GetRegion(regionName);
-
-            if (region.IsInstance)
-                region.Populate(element);
-            else
-                SetRegionInstance(regionName, region.CreateInstance(element));
+            var regionInstance = region.CreateInstance(element);
+            SetRegionInstance(regionName, regionInstance);
         }
 
         public ILayout CreateInstance()
@@ -113,7 +109,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public override IEnumerator<IElement> GetChildren()
         {
-            return RegionsByName.Values.Where(r => r != null).GetEnumerator();
+            return RegionsByName.Values.GetEnumerator();
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
@@ -133,6 +129,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
             if (context.IncludeComments)
             {
+                context.Trace(() => ToString() + " writing layout body including comments");
+                context.TraceIndent();
+
                 var layoutName = 
                     (string.IsNullOrEmpty(Name) ? "unnamed layout" : "'" + Name + "' layout") +
                     (Package == null ? string.Empty : " from the '" + Package.Name + "' package");
@@ -156,15 +155,22 @@ namespace OwinFramework.Pages.Html.Runtime
                     if (element != null)
                         result.Add(element.WriteHtml(context));
                 }
+
+                context.TraceOutdent();
             }
             else
             {
+                context.Trace(() => ToString() + " writing layout body without comments");
+                context.TraceIndent();
+
                 foreach (var elementFunction in _visualElements)
                 {
                     var element = elementFunction(regionLookup);
                     if (element != null)
                         result.Add(element.WriteHtml(context));
                 }
+                
+                context.TraceOutdent();
             }
 
             return result;

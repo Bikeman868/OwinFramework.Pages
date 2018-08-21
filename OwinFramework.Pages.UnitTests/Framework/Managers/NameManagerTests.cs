@@ -9,6 +9,7 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Framework.Managers;
+using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.UnitTests.Framework.Managers

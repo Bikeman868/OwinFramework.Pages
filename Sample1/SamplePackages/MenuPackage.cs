@@ -57,6 +57,7 @@ namespace Sample1.SamplePackages
             protected override void Supply(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
             {
                 var parent = dataContext.Get<MenuItem>();
+                renderContext.Trace(() => "supply submenu for menu " + parent.Name + " with " + parent.SubMenu.Count + " sub-menu items");
                 dataContext.Set(parent.SubMenu, "submenu");
             }
         }

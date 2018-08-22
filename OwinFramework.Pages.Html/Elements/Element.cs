@@ -61,12 +61,6 @@ namespace OwinFramework.Pages.Html.Elements
             set { _package = value; }
         }
 
-        public override IModule Module
-        {
-            get { return _module; }
-            set { _module = value; }
-        }
-
         #region Writing HTML
 
         public override IWriteResult WriteStaticCss(ICssWriter writer)

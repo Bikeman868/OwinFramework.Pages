@@ -125,6 +125,9 @@ namespace OwinFramework.Pages.Html.Elements
             IRenderContext context,
             Func<string, IRegion> regionLookup)
         {
+            if (ReferenceEquals(regionLookup, null))
+                regionLookup = regionName => null;
+
             var result = WriteResult.Continue();
 
             if (context.IncludeComments)

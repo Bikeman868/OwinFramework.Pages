@@ -87,7 +87,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual void Initialize()
         {
-            var data = new Initializationdata(AssetDeployment, this);
+            var data = new InitializationData(AssetDeployment, this);
 
             if (AssetDeployment == AssetDeployment.Inherit)
             {
@@ -103,7 +103,7 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             InitializeDependants(data);
-            InitializeChildren(data, AssetDeployment);
+            InitializeChildren(data, AssetDeployment.Inherit);
 
             _referencedModules = new List<IModule>();
             var styles = _dependencies.CssWriterFactory.Create();
@@ -150,7 +150,7 @@ namespace OwinFramework.Pages.Html.Runtime
             _inPageScriptLines = functions.ToLines();
         }
 
-        private class Initializationdata: IInitializationData
+        private class InitializationData: IInitializationData
         {
             private class State
             {
@@ -182,7 +182,7 @@ namespace OwinFramework.Pages.Html.Runtime
             private readonly Page _page;
             private State _currentState = new State();
 
-            public Initializationdata(
+            public InitializationData(
                 AssetDeployment assetDeployment, 
                 Page page)
             {
@@ -191,7 +191,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 _page._dataScopeProvider.Initialize(null);
                 _currentState.MessagePrefix = "Init " + page.Name + ": ";
-                _currentState.ScopeProvider = _page._dataScopeProvider;
+                _currentState.ScopeProvider = page._dataScopeProvider;
             }
 
             public void Push()

@@ -27,6 +27,8 @@ namespace OwinFramework.Pages.Html.Elements
             var elementBase = parent as ElementBase;
             if (ReferenceEquals(elementBase, null)) return;
 
+            Module = elementBase.Module;
+
             var parentDependentComponents = elementBase.GetDependentComponents();
             if (parentDependentComponents != null)
                 foreach (var component in parentDependentComponents)
@@ -68,12 +70,6 @@ namespace OwinFramework.Pages.Html.Elements
             set { throw new InvalidOperationException("You can not set the package for an instance " + typeof(T).DisplayName()); }
         }
 
-        public override IModule Module
-        {
-            get { return Parent.Module; }
-            set { throw new InvalidOperationException("You can not set the module for an instance " + typeof(T).DisplayName()); }
-        }
-
         public override IWriteResult WriteStaticCss(ICssWriter writer)
         {
             return Parent.WriteStaticCss(writer);
@@ -98,18 +94,24 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IWriteResult WriteInitializationScript(IRenderContext renderContext, bool includeChildren)
         {
+            renderContext.Trace(() => ToString() + " writing page initialization script");
+
             var result = Parent.WriteInitializationScript(renderContext, false);
             return includeChildren ? WriteChildrenInitializationScript(result, renderContext) : result;
         }
 
         public override IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
         {
+            renderContext.Trace(() => ToString() + " writing page title");
+
             var result = Parent.WriteTitle(renderContext, false);
             return includeChildren ? WriteChildrenTitle(result, renderContext) : result;
         }
 
         public override IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
         {
+            renderContext.Trace(() => ToString() + " writing page head");
+
             var result = Parent.WriteHead(renderContext, false);
             return includeChildren ? WriteChildrenHead(result, renderContext) : result;
         }

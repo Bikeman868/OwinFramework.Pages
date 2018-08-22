@@ -240,54 +240,59 @@ namespace OwinFramework.Pages.Html.Builders
 
         public IComponent Build()
         {
-            _component.CssRules = _cssDefinitions
-                .Select(d =>
-                {
-                    d.Selector = _htmlHelper.NamespaceCssSelector(d.Selector, _component.Package);
-                    return d;
-                })
-                .Select(d =>
-                {
-                    Action<ICssWriter> writeAction = w => w.WriteRule(d.Selector, d.Style);
-                    return writeAction;
-                })
-                .ToList();
-
-            _component.JavascriptFunctions = _functionDefinitions
-                .Select(d =>
-                {
-                    Action<IJavascriptWriter> writeAction = w => w.WriteFunction(
-                        d.FunctionName, d.Parameters, d.Body, d.ReturnType, _component.Package, d.IsPublic);
-                    return writeAction;
-                })
-                .ToList();
-
-            _component.HtmlWriters = _htmlToRender
-                .Select(d =>
-                    {
-                        Action<IRenderContext> action;
-
-                        if (_component.Package == null)
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveAssetNames,
+                () => 
+                { 
+                    _component.CssRules = _cssDefinitions
+                        .Select(d =>
                         {
-                            action = rc =>
-                            {
-                                var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
-                                localizedText = localizedText.Replace("{ns}_", "");
-                                rc.Html.WriteLine(localizedText);
-                            };
-                        }
-                        else
+                            d.Selector = _htmlHelper.NamespaceCssSelector(d.Selector, _component.Package);
+                            return d;
+                        })
+                        .Select(d =>
                         {
-                            action = rc =>
+                            Action<ICssWriter> writeAction = w => w.WriteRule(d.Selector, d.Style);
+                            return writeAction;
+                        })
+                        .ToList();
+
+                    _component.JavascriptFunctions = _functionDefinitions
+                        .Select(d =>
+                        {
+                            Action<IJavascriptWriter> writeAction = w => w.WriteFunction(
+                                d.FunctionName, d.Parameters, d.Body, d.ReturnType, _component.Package, d.IsPublic);
+                            return writeAction;
+                        })
+                        .ToList();
+
+                    _component.HtmlWriters = _htmlToRender
+                        .Select(d =>
                             {
-                                var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
-                                localizedText = localizedText.Replace("{ns}", _component.Package.NamespaceName);
-                                rc.Html.WriteLine(localizedText);
-                            };
-                        }
-                        return action;
-                    })
-                .ToList();
+                                Action<IRenderContext> action;
+
+                                if (_component.Package == null)
+                                {
+                                    action = rc =>
+                                    {
+                                        var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
+                                        localizedText = localizedText.Replace("{ns}_", "");
+                                        rc.Html.WriteLine(localizedText);
+                                    };
+                                }
+                                else
+                                {
+                                    action = rc =>
+                                    {
+                                        var localizedText = _assetManager.GetLocalizedText(rc, d.AssetName, d.DefaultHtml);
+                                        localizedText = localizedText.Replace("{ns}", _component.Package.NamespaceName);
+                                        rc.Html.WriteLine(localizedText);
+                                    };
+                                }
+                                return action;
+                            })
+                        .ToList();
+                });
 
             _fluentBuilder.Register(_component);
             return _component;

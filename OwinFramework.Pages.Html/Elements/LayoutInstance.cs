@@ -46,7 +46,7 @@ namespace OwinFramework.Pages.Html.Elements
                 .Select(kvp => new DebugLayoutRegion
                     {
                         Name = kvp.Key,
-                        Region = kvp.Value == null ? null : (DebugRegion)kvp.Value.GetDebugInfo()
+                        Region = (DebugRegion)GetRegion(kvp.Key).GetDebugInfo()
                     })
                 .ToList();
 
@@ -56,10 +56,13 @@ namespace OwinFramework.Pages.Html.Elements
         public IRegion GetRegion(string regionName)
         {
             IRegion region;
-            if (_regionsByName.TryGetValue(regionName, out region))
-                return region;
+            if (!_regionsByName.TryGetValue(regionName, out region))
+                throw new Exception("Layout does not have a '" + regionName + "' region");
 
-            throw new Exception("Layout does not have a '" + regionName + "' region");
+            if (ReferenceEquals(region, null))
+                region = Parent.GetRegion(regionName);
+
+            return region;
         }
 
         public void Populate(string regionName, IElement element)
@@ -76,7 +79,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IEnumerator<IElement> GetChildren()
         {
-            return _regionsByName.Values.GetEnumerator();
+            return _regionsByName.Keys.Select(GetRegion).GetEnumerator();
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
@@ -87,12 +90,16 @@ namespace OwinFramework.Pages.Html.Elements
 
         public IWriteResult WriteHtml(IRenderContext context, Func<string, IRegion> regionLookup)
         {
-            if (regionLookup == null)
-                return Parent.WriteHtml(context, regionName => null);
+            context.Trace(() => ToString() + " writing regions to page body");
+            context.TraceIndent();
 
-            return Parent.WriteHtml(
-                context,
-                regionName => regionLookup(regionName) ?? GetRegion(regionName));
+            if (!ReferenceEquals(regionLookup, null))
+                regionLookup = GetRegion;
+
+            var writeResult = Parent.WriteHtml(context, regionLookup);
+
+            context.TraceOutdent();
+            return writeResult;
         }
     }
 }

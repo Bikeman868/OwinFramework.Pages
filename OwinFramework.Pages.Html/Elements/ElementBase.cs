@@ -21,7 +21,8 @@ namespace OwinFramework.Pages.Html.Elements
         public abstract ElementType ElementType { get; }
         public abstract string Name { get; set; }
         public abstract IPackage Package { get; set; }
-        public abstract IModule Module { get; set; }
+
+        public IModule Module { get; set; }
 
         protected ElementBase()
         {
@@ -283,7 +284,7 @@ namespace OwinFramework.Pages.Html.Elements
             if (assetDeployment != AssetDeployment.Inherit)
             {
                 initializationData.Push();
-                initializationData.AssetDeployment = AssetDeployment;
+                initializationData.AssetDeployment = assetDeployment;
             }
             try
             {

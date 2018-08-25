@@ -20,7 +20,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IAssetManager _assetManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
-        private readonly Component _component;
+        private readonly ComponentTemplate _component;
         private readonly List<FunctionDefinition> _functionDefinitions;
         private readonly List<CssDefinition> _cssDefinitions;
         private readonly List<HtmlDefinition> _htmlToRender;
@@ -33,7 +33,7 @@ namespace OwinFramework.Pages.Html.Builders
         }
 
         public ComponentDefinition(
-            Component component,
+            ComponentTemplate component,
             INameManager nameManager,
             IAssetManager assetManager,
             IHtmlHelper htmlHelper,

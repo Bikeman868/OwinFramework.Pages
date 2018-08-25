@@ -13,7 +13,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// Base implementation elements that are constructed and configured
     /// by the fluent builder.
     /// </summary>
-    public abstract class Element : ElementBase, IDataConsumer
+    public abstract class ElementTemplate : ElementBase, IDataConsumer
     {
         private readonly IDataConsumer _dataConsumer;
 
@@ -22,7 +22,7 @@ namespace OwinFramework.Pages.Html.Elements
         private IPackage _package;
         private IModule _module;
 
-        protected Element(IDataConsumerFactory dataConsumerFactory)
+        protected ElementTemplate(IDataConsumerFactory dataConsumerFactory)
         {
             _dataConsumer = dataConsumerFactory == null
                 ? null

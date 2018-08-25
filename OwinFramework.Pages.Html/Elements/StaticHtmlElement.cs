@@ -6,7 +6,7 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    public class StaticHtmlElement : Element
+    public class StaticHtmlElement : ElementTemplate
     {
         public Action<IHtmlWriter> WriteAction;
         public string Comment;

@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// You can also use this class directly but it provides only minimal region 
     /// functionallity
     /// </summary>
-    public class Region : Element, IRegion, IDataScopeProvider, IDataSupplier, IDataSupply
+    public class RegionTemplate : ElementTemplate, IRegion, IDataScopeProvider, IDataSupplier, IDataSupply
     {
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Region; } }
@@ -57,7 +57,7 @@ namespace OwinFramework.Pages.Html.Elements
         /// classes that inherit from this class. Add dependencies to
         /// IRegionDependenciesFactory and IRegionDependencies
         /// </summary>
-        public Region(IRegionDependenciesFactory dependencies)
+        public RegionTemplate(IRegionDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as

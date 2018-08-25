@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// You can also use this class directly but it provides only minimal region 
     /// functionallity
     /// </summary>
-    public class Layout : Element, ILayout
+    public class LayoutTemplate : ElementTemplate, ILayout
     {
         private readonly ILayoutDependenciesFactory _layoutDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Layout; } }
@@ -29,7 +29,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         protected IThreadSafeDictionary<string, IRegion> RegionsByName;
 
-        public Layout(ILayoutDependenciesFactory dependencies)
+        public LayoutTemplate(ILayoutDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as

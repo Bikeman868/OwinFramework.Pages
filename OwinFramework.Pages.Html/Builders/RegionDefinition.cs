@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
         private readonly IDataDependencyFactory _dataDependencyFactory;
-        private readonly Region _region;
+        private readonly RegionTemplate _region;
         private string _tagName = "div";
         private string _style;
         private string[] _classNames;
@@ -27,7 +27,7 @@ namespace OwinFramework.Pages.Html.Builders
         private string[] _childClassNames;
 
         public RegionDefinition(
-            Region region,
+            RegionTemplate region,
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,

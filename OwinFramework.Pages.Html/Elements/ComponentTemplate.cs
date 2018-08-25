@@ -13,7 +13,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// Base implementation of IComponent. Inheriting from this olass will insulate you
     /// from any future additions to the IComponent interface
     /// </summary>
-    public class Component : Element, IComponent
+    public class ComponentTemplate : ElementTemplate, IComponent
     {
         public override ElementType ElementType { get { return ElementType.Component; } }
 
@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Html.Elements
         public List<Action<ICssWriter>> CssRules;
         public List<Action<IJavascriptWriter>> JavascriptFunctions;
 
-        public Component(IComponentDependenciesFactory dependencies)
+        public ComponentTemplate(IComponentDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as

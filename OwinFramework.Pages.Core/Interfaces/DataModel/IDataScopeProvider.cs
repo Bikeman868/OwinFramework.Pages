@@ -149,7 +149,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
 
         /// <summary>
         /// Sets the current Data property of the render context to the 
-        /// date for this scope provider
+        /// data for this scope provider
         /// </summary>
         /// <returns>The previously selected data context so that you can
         /// restore this later</returns>

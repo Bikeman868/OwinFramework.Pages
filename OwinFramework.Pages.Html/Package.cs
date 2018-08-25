@@ -63,9 +63,9 @@ namespace OwinFramework.Pages.Html
                     // later
                     new IocRegistration().Init<IModule, Module>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IPage, Page>(IocLifetime.MultiInstance),
-                    new IocRegistration().Init<ILayout, Layout>(IocLifetime.MultiInstance),
-                    new IocRegistration().Init<IRegion, Region>(IocLifetime.MultiInstance),
-                    new IocRegistration().Init<IComponent, Component>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<ILayout, LayoutTemplate>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IRegion, RegionTemplate>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IComponent, ComponentTemplate>(IocLifetime.MultiInstance),
 
                     // These classes implement the rendering framework. They are thread-safe singletons
                     new IocRegistration().Init<IModuleBuilder, ModuleBuilder>(),

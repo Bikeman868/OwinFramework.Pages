@@ -56,16 +56,7 @@ namespace OwinFramework.Pages.Html.Elements
 
             _dataScopeProvider.ElementName = "Region instance '" + parent.Name + "'";
 
-            content = content ?? parent.Content;
-
-            var layout = content as ILayout;
-            var region = content as IRegion;
-
-            _content = layout == null 
-                ? (region == null 
-                    ? content 
-                    : region.CreateInstance(null)) 
-                : layout.CreateInstance();
+            Populate(content ?? parent.Content);
         }
 
         public override void Initialize(IInitializationData initializationData)
@@ -100,7 +91,14 @@ namespace OwinFramework.Pages.Html.Elements
 
         public void Populate(IElement content)
         {
-            _content = content;
+            var layout = content as ILayout;
+            var region = content as IRegion;
+
+            _content = layout == null
+                ? (region == null
+                    ? content
+                    : region.CreateInstance(null))
+                : layout.CreateInstance();
         }
 
         public IRegion CreateInstance(IElement content)
@@ -117,7 +115,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
         {
-            context.Trace(() => ToString() + " writing page head");
+            context.Trace(() => ToString() + " with scope [" + _dataScopeProvider + "] writing page head");
             return Parent.WriteHead(context, _dataScopeProvider, includeChildren);
         }
 

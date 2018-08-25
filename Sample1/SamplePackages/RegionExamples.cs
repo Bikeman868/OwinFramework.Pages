@@ -59,7 +59,7 @@ namespace Sample1.SamplePackages
         [IsRegion("region2")]
         [Container("ul")]
         [Repeat(typeof(NewsItem), null, "li")]
-        private class RegionExample2 : Region
+        private class RegionExample2 : RegionTemplate
         {
             public RegionExample2(IRegionDependenciesFactory dependencies)
                 : base(dependencies)
@@ -81,7 +81,7 @@ namespace Sample1.SamplePackages
         /// </summary>
         [Container("ul")]
         [Repeat(typeof(NewsItem), null, "li")]
-        private class RegionExample3 : Region
+        private class RegionExample3 : RegionTemplate
         {
             public RegionExample3(IRegionDependenciesFactory dependencies) : base(dependencies)
             {
@@ -98,7 +98,7 @@ namespace Sample1.SamplePackages
         /// name, and you can still use the Region Builder to override the properties using
         /// attributes and fluent syntax.
         /// </summary>
-        private class RegionExample4 : Region
+        private class RegionExample4 : RegionTemplate
         {
             public RegionExample4(IRegionDependenciesFactory dependencies) : base(dependencies)
             {

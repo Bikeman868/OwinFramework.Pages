@@ -59,9 +59,6 @@ namespace OwinFramework.Pages.Html.Elements
             if (!_regionsByName.TryGetValue(regionName, out region))
                 throw new Exception("Layout does not have a '" + regionName + "' region");
 
-            if (ReferenceEquals(region, null))
-                region = Parent.GetRegion(regionName);
-
             return region;
         }
 
@@ -79,22 +76,19 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IEnumerator<IElement> GetChildren()
         {
-            return _regionsByName.Keys.Select(GetRegion).GetEnumerator();
+            return _regionsByName.Values.GetEnumerator();
         }
 
         public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
         {
             var regionLookup = includeChildren ? GetRegion : (Func<string, IRegion>)null;
-            return Parent.WriteHtml(context, regionLookup);
+            return WriteHtml(context, regionLookup);
         }
 
         public IWriteResult WriteHtml(IRenderContext context, Func<string, IRegion> regionLookup)
         {
             context.Trace(() => ToString() + " writing regions to page body");
             context.TraceIndent();
-
-            if (!ReferenceEquals(regionLookup, null))
-                regionLookup = GetRegion;
 
             var writeResult = Parent.WriteHtml(context, regionLookup);
 

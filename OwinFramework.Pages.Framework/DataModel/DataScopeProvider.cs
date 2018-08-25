@@ -79,9 +79,11 @@ namespace OwinFramework.Pages.Framework.DataModel
                             Supplier = suppliedDependency.Supplier == null 
                                 ? null 
                                 : suppliedDependency.Supplier.GetDebugInfo(),
+
                             Supply = suppliedDependency.Supply == null 
                                 ? null 
                                 : suppliedDependency.Supply.GetDebugInfo(),
+
                             DataSupplied = suppliedDependency.DependencySupplied == null 
                                 ? null
                                 : new DebugDataScope
@@ -89,6 +91,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                                     DataType = suppliedDependency.DependencySupplied.DataType,
                                     ScopeName = suppliedDependency.DependencySupplied.ScopeName
                                 },
+
                             DependentSupplies = suppliedDependency.DependentSupplies == null
                                 ? null
                                 : suppliedDependency.DependentSupplies.Select(s => s.GetDebugInfo()).ToList()

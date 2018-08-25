@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// Base implementation of IPage. Inheriting from this olass will insulate you
     /// from any additions to the IPage interface
     /// </summary>
-    public class Page: Element, IPage, IDataScopeProvider, IDataConsumer
+    public class Page: ElementTemplate, IPage, IDataScopeProvider, IDataConsumer
     {
         /// <summary>
         /// Returns the name of the permission that the user must have to view this page

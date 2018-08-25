@@ -33,7 +33,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionBuilder.BuildUpRegion(object regionInstance, Type declaringType, IPackage package)
         {
-            var region = regionInstance as Region ?? new Region(_regionDependenciesFactory);
+            var region = regionInstance as RegionTemplate ?? new RegionTemplate(_regionDependenciesFactory);
             if (declaringType == null) declaringType = (regionInstance ?? region).GetType();
 
             var regionDefinition = new RegionDefinition(region, _nameManager, _htmlHelper, _fluentBuilder, _regionDependenciesFactory.DataDependencyFactory, package);

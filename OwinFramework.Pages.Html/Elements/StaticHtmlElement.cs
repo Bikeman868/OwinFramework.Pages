@@ -6,7 +6,11 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    public class StaticHtmlElement : ElementTemplate
+    /// <summary>
+    /// This element is used internally within the framework to write small
+    /// amounts of html, for example containers around the regions of a layout.
+    /// </summary>
+    public class StaticHtmlElement : Element
     {
         public Action<IHtmlWriter> WriteAction;
         public string Comment;

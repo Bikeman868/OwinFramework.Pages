@@ -10,14 +10,14 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal class LayoutInstance: ElementInstance<ILayout>, ILayout
+    internal class PageLayout: PageElement<ILayout>, ILayout
     {
         public override ElementType ElementType { get { return ElementType.Layout; } }
 
         private readonly ILayoutDependenciesFactory _layoutDependencies;
         private readonly IThreadSafeDictionary<string, IRegion> _regionsByName;
 
-        public LayoutInstance(
+        public PageLayout(
             ILayoutDependenciesFactory layoutDependencies,
             ILayout parent,
             IEnumerable<string> regionNames)
@@ -71,7 +71,7 @@ namespace OwinFramework.Pages.Html.Elements
         public ILayout CreateInstance()
         {
             using (var regionNames = _regionsByName.KeysLocked)
-                return new LayoutInstance(_layoutDependencies, this, regionNames);
+                return new PageLayout(_layoutDependencies, this, regionNames);
         }
 
         public override IEnumerator<IElement> GetChildren()

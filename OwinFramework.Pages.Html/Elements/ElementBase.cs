@@ -11,7 +11,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// Base class for all elements and element instances
+    /// Base class for all elements and page elements
     /// </summary>
     public abstract class ElementBase: IElement
     {

@@ -30,7 +30,7 @@ namespace OwinFramework.Pages.UnitTests.Framework.Managers
         [Test]
         public void Should_resolve_component_names()
         {
-            var component = new ComponentTemplate(SetupMock<IComponentDependenciesFactory>());
+            var component = new Component(SetupMock<IComponentDependenciesFactory>());
             component.Name = "AbcDef";
             _nameManager.Register(component);
 
@@ -52,7 +52,7 @@ namespace OwinFramework.Pages.UnitTests.Framework.Managers
         [Test]
         public void Should_resolve_layout_names()
         {
-            var layout = new LayoutTemplate(SetupMock<ILayoutDependenciesFactory>());
+            var layout = new Layout(SetupMock<ILayoutDependenciesFactory>());
             layout.Name = "AbcDef";
             _nameManager.Register(layout);
 

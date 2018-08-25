@@ -33,7 +33,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         ILayoutDefinition ILayoutBuilder.BuildUpLayout(object layoutInstance, Type declaringType, IPackage package)
         {
-            var layout = layoutInstance as LayoutTemplate ?? new LayoutTemplate(_layoutDependenciesFactory);
+            var layout = layoutInstance as Layout ?? new Layout(_layoutDependenciesFactory);
             if (declaringType == null) declaringType = (layoutInstance ?? layout).GetType();
 
             var layoutDefinition = new LayoutDefinition(layout, _nameManager, _htmlHelper, _fluentBuilder, package);

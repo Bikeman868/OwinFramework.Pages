@@ -10,10 +10,10 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// Base implementation of IComponent. Inheriting from this olass will insulate you
-    /// from any future additions to the IComponent interface
+    /// Base implementation of IComponent. Applications inherit from this olass 
+    /// to insulate their code from any future additions to the IComponent interface
     /// </summary>
-    public class ComponentTemplate : ElementTemplate, IComponent
+    public class Component : Element, IComponent
     {
         public override ElementType ElementType { get { return ElementType.Component; } }
 
@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Html.Elements
         public List<Action<ICssWriter>> CssRules;
         public List<Action<IJavascriptWriter>> JavascriptFunctions;
 
-        public ComponentTemplate(IComponentDependenciesFactory dependencies)
+        public Component(IComponentDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as

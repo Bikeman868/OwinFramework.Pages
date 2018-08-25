@@ -10,14 +10,14 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal abstract class ElementInstance<T> : ElementBase where T : IElement
+    internal abstract class PageElement<T> : ElementBase where T : IElement
     {
         public bool IsInstance { get { return true; } }
 
         protected readonly T Parent;
         private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
 
-        protected ElementInstance(T parent)
+        protected PageElement(T parent)
         {
             if (parent == null)
                 throw new ArgumentNullException("parent");

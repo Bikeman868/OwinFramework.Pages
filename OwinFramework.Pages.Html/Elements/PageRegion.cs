@@ -10,7 +10,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal class RegionInstance : ElementInstance<IRegion>, IRegion, IDataScopeProvider
+    internal class PageRegion : PageElement<IRegion>, IRegion, IDataScopeProvider
     {
         public override ElementType ElementType { get { return ElementType.Region; } }
 
@@ -40,7 +40,7 @@ namespace OwinFramework.Pages.Html.Elements
         private readonly IRegionDependenciesFactory _dependenciesFactory;
         private IElement _content;
 
-        public RegionInstance(
+        public PageRegion(
             IRegionDependenciesFactory dependenciesFactory, 
             IRegion parent, 
             IElement content)
@@ -103,7 +103,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         public IRegion CreateInstance(IElement content)
         {
-            return new RegionInstance(_dependenciesFactory, Parent, content ?? _content);
+            return new PageRegion(_dependenciesFactory, Parent, content ?? _content);
         }
 
         public override IEnumerator<IElement> GetChildren()

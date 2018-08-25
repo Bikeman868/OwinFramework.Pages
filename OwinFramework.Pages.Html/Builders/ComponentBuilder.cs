@@ -38,7 +38,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         IComponentDefinition IComponentBuilder.BuildUpComponent(object componentInstance, Type declaringType, IPackage package)
         {
-            var component = componentInstance as ComponentTemplate ?? new ComponentTemplate(_componentDependenciesFactory);
+            var component = componentInstance as Component ?? new Component(_componentDependenciesFactory);
             if (declaringType == null) declaringType = (componentInstance ?? component).GetType();
 
             var componentDefinition = new ComponentDefinition(component, _nameManager, _assetManager, _htmlHelper, _fluentBuilder, package);

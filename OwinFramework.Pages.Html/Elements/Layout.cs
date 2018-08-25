@@ -12,12 +12,10 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// Base implementation of ILayout. Inheriting from this olass will insulate you
-    /// from any future additions to the ILayout interface
-    /// You can also use this class directly but it provides only minimal region 
-    /// functionallity
+    /// Base implementation of ILayout. Applications inherit from this olass 
+    /// to insulate their code from any future additions to the ILayout interface
     /// </summary>
-    public class LayoutTemplate : ElementTemplate, ILayout
+    public class Layout : Element, ILayout
     {
         private readonly ILayoutDependenciesFactory _layoutDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Layout; } }
@@ -29,7 +27,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         protected IThreadSafeDictionary<string, IRegion> RegionsByName;
 
-        public LayoutTemplate(ILayoutDependenciesFactory dependencies)
+        public Layout(ILayoutDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as
@@ -104,7 +102,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         public ILayout CreateInstance()
         {
-            return new LayoutInstance(_layoutDependenciesFactory, this, _regionNameOrder);
+            return new PageLayout(_layoutDependenciesFactory, this, _regionNameOrder);
         }
 
         public override IEnumerator<IElement> GetChildren()

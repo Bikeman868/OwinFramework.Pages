@@ -84,7 +84,7 @@ namespace Sample1.SamplePackages
         /// This is an example of writing a component that needs a MenuItem to work with and
         /// writes html into the body of the page
         /// </summary>
-        private class MenuItemComponent : ComponentTemplate
+        private class MenuItemComponent : Component
         {
             public MenuItemComponent(IComponentDependenciesFactory dependencies) 
                 : base(dependencies) { }

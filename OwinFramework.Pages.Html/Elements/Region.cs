@@ -13,12 +13,10 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// Base implementation of IRegion. Inheriting from this class will insulate you
-    /// from any future additions to the IRegion interface.
-    /// You can also use this class directly but it provides only minimal region 
-    /// functionallity
+    /// Base implementation of IRegion. Applications inherit from this olass 
+    /// to insulate their code from any future additions to the IRegion interface
     /// </summary>
-    public class RegionTemplate : ElementTemplate, IRegion, IDataScopeProvider, IDataSupplier, IDataSupply
+    public class Region : Element, IRegion, IDataScopeProvider, IDataSupplier, IDataSupply
     {
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Region; } }
@@ -57,7 +55,7 @@ namespace OwinFramework.Pages.Html.Elements
         /// classes that inherit from this class. Add dependencies to
         /// IRegionDependenciesFactory and IRegionDependencies
         /// </summary>
-        public RegionTemplate(IRegionDependenciesFactory dependencies)
+        public Region(IRegionDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
         {
             // DO NOT change the method signature of this constructor as
@@ -113,7 +111,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         public IRegion CreateInstance(IElement content)
         {
-            return new RegionInstance(_regionDependenciesFactory, this, content);
+            return new PageRegion(_regionDependenciesFactory, this, content);
         }
 
         public override IEnumerator<IElement> GetChildren()

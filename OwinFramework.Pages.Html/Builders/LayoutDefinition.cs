@@ -16,7 +16,7 @@ namespace OwinFramework.Pages.Html.Builders
     public class LayoutDefinition : ILayoutDefinition
     {
         private readonly INameManager _nameManager;
-        private readonly LayoutTemplate _layout;
+        private readonly Layout _layout;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
 
@@ -37,7 +37,7 @@ namespace OwinFramework.Pages.Html.Builders
         private string _nestedStyle;
 
         public LayoutDefinition(
-            LayoutTemplate layout,
+            Layout layout,
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,

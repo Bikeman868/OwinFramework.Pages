@@ -109,7 +109,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             return dependentSupplies;
         }
 
-        DebugDataConsumer IDataConsumer.GetDebugInfo()
+        DebugDataConsumer IDataConsumer.GetDataConsumerDebugInfo()
         {
             return new DebugDataConsumer
             {

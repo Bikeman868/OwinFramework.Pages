@@ -1,259 +1,74 @@
 ﻿using System;
-using System.Collections.Generic;
-using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
-using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
-using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal class PageRegion : PageElement<IRegion>, IRegion, IDataScopeProvider
+    internal class PageRegion : PageElement
     {
-        public override ElementType ElementType { get { return ElementType.Region; } }
-
-        public string RepeatScope 
-        { 
-            get { return Parent.RepeatScope; }
-            set { throw new InvalidOperationException("You can not set the repeat scope on a region instance"); }
-         }
-
-        public Type RepeatType
-        {
-            get { return Parent.RepeatType; }
-            set { throw new InvalidOperationException("You can not set the repeat type on region instance"); }
-        }
-
-        public string ListScope
-        {
-            get { return Parent.ListScope; }
-            set { throw new InvalidOperationException("You can not set the list scope on a region instance"); }
-        }
-
-        public Type ListType
-        {
-            get { return Parent.ListType; }
-        }
-
-        private readonly IRegionDependenciesFactory _dependenciesFactory;
-        private IElement _content;
+        private readonly IDataScopeProvider _dataScopeProvider;
+        private readonly Func<IRenderContext, IDataContextBuilder, PageArea, IWriteResult> _writeContent;
 
         public PageRegion(
-            IRegionDependenciesFactory dependenciesFactory, 
-            IRegion parent, 
-            IElement content)
-            : base(parent)
+            PageElementDependencies dependencies,
+            PageElement parent,
+            IRegion region, 
+            IElement content, 
+            IPageData initializationData)
+            : base(dependencies, parent, region, initializationData)
         {
-            _dependenciesFactory = dependenciesFactory;
+            _dataScopeProvider = initializationData.ScopeProvider.CreateInstance();
+            _dataScopeProvider.Initialize(initializationData.ScopeProvider);
 
-            var parentDataScope = parent as IDataScopeProvider;
-
-            _dataScopeProvider = parentDataScope == null 
-                ? dependenciesFactory.DataScopeProviderFactory.Create()
-                : parentDataScope.CreateInstance();
-
-            _dataScopeProvider.ElementName = "Region instance '" + parent.Name + "'";
-
-            Populate(content ?? parent.Content);
-        }
-
-        public override void Initialize(IInitializationData initializationData)
-        {
             initializationData.Push();
-            initializationData.AddScope(_dataScopeProvider);
-            base.Initialize(initializationData);
+            initializationData.ScopeProvider = _dataScopeProvider;
+
+            content = content ?? region.Content;
+            var layout = content as ILayout;
+            var component = content as IComponent;
+
+            if (layout != null)
+            {
+                var pageLayout = new PageLayout(dependencies, this, layout, null, initializationData);
+                _writeContent = pageLayout.WritePageArea;
+                Children = new PageElement[] { pageLayout };
+            }
+            else if (component != null)
+            {
+                var pageLayout = new PageComponent(dependencies, this, component, initializationData);
+                _writeContent = pageLayout.WritePageArea;
+                Children = new PageElement[] { pageLayout };
+            }
+            else
+            {
+                Children = null;
+                _writeContent = (rc, dc, pa) => WriteResult.Continue();
+            }
+
             initializationData.Pop();
         }
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
+        protected override IWriteResult WritePageAreaInternal(IRenderContext renderContext, IDataContextBuilder dataContextBuilder, PageArea pageArea)
         {
-            var parentDebugInfo = Parent == null ? null : (DebugRegion)Parent.GetDebugInfo();
+            var data = renderContext.Data;
+            renderContext.SelectDataContext(_dataScopeProvider.Id);
 
-            _dataScopeProvider.ElementName = "Region instance '" + Name + "'";
+            var result = _writeContent(renderContext, dataContextBuilder, pageArea);
 
-            var debugRegion = debugInfo as DebugRegion ?? new DebugRegion();
-
-            debugRegion.Type = "Instance of region";
-            debugRegion.Content = _content == null ? null : _content.GetDebugInfo();
-            debugRegion.InstanceOf = parentDebugInfo;
-            debugRegion.Scope = _dataScopeProvider.GetDebugInfo(-1, 1);
-            debugRegion.RepeatScope = RepeatScope;
-            debugRegion.RepeatType = RepeatType;
-            debugRegion.ListType = ListType;
-            debugRegion.ListScope = ListScope;
-
-            return base.PopulateDebugInfo(debugRegion);
+            renderContext.Data = data;
+            return result;
         }
 
-        public IElement Content { get { return _content; } }
-
-        public void Populate(IElement content)
+        public override void BuildDataContext(DataContextBuilder dataContextBuilder)
         {
-            var layout = content as ILayout;
-            var region = content as IRegion;
+            dataContextBuilder.Push(_dataScopeProvider);
 
-            _content = layout == null
-                ? (region == null
-                    ? content
-                    : region.CreateInstance(null))
-                : layout.CreateInstance();
+            base.BuildDataContext(dataContextBuilder);
+
+            dataContextBuilder.Pop();
         }
-
-        public IRegion CreateInstance(IElement content)
-        {
-            return new PageRegion(_dependenciesFactory, Parent, content ?? _content);
-        }
-
-        public override IEnumerator<IElement> GetChildren()
-        {
-            return _content == null ? null : _content.AsEnumerable().GetEnumerator();
-        }
-
-        #region IElement rendering method overrides
-
-        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
-        {
-            context.Trace(() => ToString() + " with scope [" + _dataScopeProvider + "] writing page head");
-            return Parent.WriteHead(context, _dataScopeProvider, includeChildren);
-        }
-
-        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
-        {
-            context.Trace(() => ToString() + " writing page body");
-            return Parent.WriteHtml(context, _dataScopeProvider, includeChildren ? _content : null);
-        }
-
-        public override IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
-        {
-            context.Trace(() => ToString() + " writing initialization script");
-            return Parent.WriteInitializationScript(context, _dataScopeProvider, includeChildren);
-        }
-
-        public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
-        {
-            context.Trace(() => ToString() + " writing page title");
-            return Parent.WriteTitle(context, _dataScopeProvider, includeChildren);
-        }
-
-        #endregion
-
-        #region IRegion specific rendering methods
-
-        public IWriteResult WriteHead(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
-        {
-            context.Trace(() => ToString() + " writing page head in data scope [" + scope + "]" + (includeChildren ? " including children" : ""));
-            return Parent.WriteHead(context, scope, includeChildren);
-        }
-
-        public IWriteResult WriteHtml(IRenderContext context, IDataScopeProvider scope, IElement content)
-        {
-            context.Trace(() => ToString() + " writing page body in data scope [" + scope + "] with content [" + content + "]");
-            return Parent.WriteHtml(context, scope, content);
-        }
-
-        public IWriteResult WriteInitializationScript(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
-        {
-            context.Trace(() => ToString() + " writing initialization script in data scope [" + scope + "]" + (includeChildren ? " including children" : ""));
-            return Parent.WriteInitializationScript(context, scope, includeChildren);
-        }
-
-        public IWriteResult WriteTitle(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
-        {
-            context.Trace(() => ToString() + " writing page title in data scope [" + scope + "]" + (includeChildren ? " including children" : ""));
-            return Parent.WriteTitle(context, scope, includeChildren);
-        }
-
-        #endregion
-
-        #region IDataScopeProvider Mixin
-
-        private readonly IDataScopeProvider _dataScopeProvider;
-
-        int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
-
-        string IDataScopeProvider.ElementName
-        {
-            get { return _dataScopeProvider.ElementName; }
-            set { _dataScopeProvider.ElementName = value; }
-        }
-
-        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
-        {
-            return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
-        }
-
-        bool IDataScopeProvider.IsInScope(IDataDependency dependency)
-        {
-            return _dataScopeProvider.IsInScope(dependency);
-        }
-
-        void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
-        {
-            _dataScopeProvider.SetupDataContext(renderContext);
-        }
-
-        IDataScopeProvider IDataScopeProvider.CreateInstance()
-        {
-            return _dataScopeProvider.CreateInstance();
-        }
-
-        void IDataScopeProvider.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
-        {
-            _dataScopeProvider.AddMissingData(renderContext, missingDependency);
-        }
-
-        IDataScopeProvider IDataScopeProvider.Parent
-        {
-            get { return _dataScopeProvider.Parent; }
-        }
-
-        void IDataScopeProvider.AddChild(IDataScopeProvider child)
-        {
-            _dataScopeProvider.AddChild(child);
-        }
-
-        void IDataScopeProvider.Initialize(IDataScopeProvider parent)
-        {
-            _dataScopeProvider.Initialize(parent);
-        }
-
-        void IDataScopeProvider.AddScope(Type type, string scopeName)
-        {
-            _dataScopeProvider.AddScope(type, scopeName);
-        }
-
-        IDataSupply IDataScopeProvider.AddDependency(IDataDependency dependency)
-        {
-            return _dataScopeProvider.AddDependency(dependency);
-        }
-
-        void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
-        {
-            _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
-        }
-
-        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
-        {
-            return _dataScopeProvider.AddSupplier(supplier, dependency);
-        }
-
-        void IDataScopeProvider.AddSupply(IDataSupply supply)
-        {
-            _dataScopeProvider.AddSupply(supply);
-        }
-
-        IList<IDataSupply> IDataScopeProvider.AddConsumer(IDataConsumer consumer)
-        {
-            return _dataScopeProvider.AddConsumer(consumer);
-        }
-
-        IDataContext IDataScopeProvider.SetDataContext(IRenderContext renderContext)
-        {
-            return _dataScopeProvider.SetDataContext(renderContext);
-        }
-
-        #endregion
     }
 }

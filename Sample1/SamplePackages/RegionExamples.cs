@@ -162,7 +162,7 @@ namespace Sample1.SamplePackages
 
             #region You must support at least this much initialization
 
-            void IElement.Initialize(IInitializationData initializationData)
+            void IElement.Initialize(IPageData initializationData)
             {
                 initializationData.HasElement(this);
                 _content.Initialize(initializationData);
@@ -199,7 +199,7 @@ namespace Sample1.SamplePackages
 
             IWriteResult IRegion.WriteInitializationScript(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
             {
-                return includeChildren ? _content.WriteInitializationScript(context) : WriteResult.Continue();
+                return includeChildren ? _content.WritePageArea(context) : WriteResult.Continue();
             }
 
             IWriteResult IRegion.WriteTitle(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
@@ -224,17 +224,17 @@ namespace Sample1.SamplePackages
 
             IWriteResult IElement.WriteDynamicCss(ICssWriter writer, bool includeChildren)
             {
-                return includeChildren ? _content.WriteDynamicCss(writer) : WriteResult.Continue();
+                return includeChildren ? _content.WriteInPageStyles(writer) : WriteResult.Continue();
             }
 
             IWriteResult IElement.WriteDynamicJavascript(IJavascriptWriter writer, bool includeChildren)
             {
-                return includeChildren ? _content.WriteDynamicJavascript(writer) : WriteResult.Continue();
+                return includeChildren ? _content.WriteInPageFunctions(writer) : WriteResult.Continue();
             }
 
             IWriteResult IElement.WriteInitializationScript(IRenderContext context, bool includeChildren)
             {
-                return includeChildren ? _content.WriteInitializationScript(context) : WriteResult.Continue();
+                return includeChildren ? _content.WritePageArea(context) : WriteResult.Continue();
             }
 
             IWriteResult IElement.WriteTitle(IRenderContext context, bool includeChildren)

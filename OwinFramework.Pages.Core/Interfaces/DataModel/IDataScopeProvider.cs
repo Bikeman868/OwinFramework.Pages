@@ -9,7 +9,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// This interface is implemented by elements that can establish a new
     /// data scope during the rendering operation.
     /// </summary>
-    public interface IDataScopeProvider
+    public interface IDataScopeProvider : IDataContextBuilder
     {
 
 /*******************************************************************
@@ -112,20 +112,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
 * to the parent.
 *******************************************************************/
 
-        /// <summary>
-        /// Adds a dependency on data. A suitable provider will be located
-        /// and added to this scope or a parent scope according to where this
-        /// scope is handled.
-        /// This method can only be called after initialization
-        /// </summary>
-        IDataSupply AddDependency(IDataDependency dependency);
-
-        /// <summary>
-        /// Must be called after initialization, adds data suppliers to
-        /// this scope or its ancestors to satisfy the needs of this
-        /// data consumer
-        /// </summary>
-        IList<IDataSupply> AddConsumer(IDataConsumer consumer);
 
     /*******************************************************************
     * These interface members build the data context for a request using
@@ -155,30 +141,5 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// restore this later</returns>
         IDataContext SetDataContext(IRenderContext renderContext);
 
-    /*******************************************************************
-    * These interface members are used to dynamically add new dependencies
-    * discovered at runtime when the application tries to retrieve data
-    * that it did not declare as a data need.
-    *******************************************************************/
-
-        /// <summary>
-        /// Used to determine if the particular type is available from this
-        /// scope provider.
-        /// </summary>
-        /// <param name="dependency">The type of data we are looking for</param>
-        bool IsInScope(IDataDependency dependency);
-
-        /// <summary>
-        /// This is called in the case where dependencies are missing from the 
-        /// data context because the dependencies were not correctly specified
-        /// up front. It adds the new dependency going forward
-        /// </summary>
-        /// <remarks>This is an expensive method that tears down and
-        /// recreates the whole data context, running all of the data supplies
-        /// again. This only happens when the application tries to use data
-        /// that it did not deplare that it needed. The missing dependecny is
-        /// added to the scope provider so that this will not happen again
-        /// on subsequent requests for the same page or service.</remarks>
-        void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency);
     }
 }

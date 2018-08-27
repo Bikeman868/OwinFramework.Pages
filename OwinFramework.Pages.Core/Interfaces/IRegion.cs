@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -13,69 +14,27 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <summary>
         /// Retrieves the contents of this region
         /// </summary>
-        IElement Content { get; }
+        IElement Content { get; set; }
 
         /// <summary>
-        /// Constructs an element that is the result of puttting the
-        /// supplied element inside this region. The supplied element 
-        /// should be either a component or a Layout.
+        /// This is called for each area of the page where this instance wants
+        /// to write content. This method is called if either the GetPageAreas() function
+        /// returns true for the page area, or any of the children retuen true for this.
         /// </summary>
-        void Populate(IElement content);
-
-        /// <summary>
-        /// Constructs a new region instance that has a reference to
-        /// the original region element, but can have different contents.
-        /// The properties of this instance will read/write to the
-        /// original region definition, but the Populate() method will
-        /// only populate the instance.
-        /// This feature is necessary to allow different pages to contain
-        /// the same regions but with different content on each page.
-        /// </summary>
-        /// <param name="content">The content to place inside the region.
-        /// All other properties of the instance will reflect the original
-        /// region</param>
-        IRegion CreateInstance(IElement content);
-
-        /// <summary>
-        /// Returns a flag indicating if this is an instance or the original
-        /// region definition. Calling the Populate() method on the original
-        /// region will change the region contents for all pages that use
-        /// this region and do not override the contents. Calling the 
-        /// Populate() method on an instance only affects that specific instance.
-        /// </summary>
-        bool IsInstance { get; }
-
-        /// <summary>
-        /// Writes the page head with a specific data scope
-        /// </summary>
-        IWriteResult WriteHead(
+        /// <param name="context">The rendering operation in progress</param>
+        /// <param name="dataContextBuilder">The object that built the data context. This
+        /// is required here in case the adat context is missing some data, in this case
+        /// the IDataContextBuilder can add the missing data and remember this for the
+        /// next time this runable is rendered</param>
+        /// <param name="pageArea">The area of the page that is being written to</param>
+        /// <param name="onListItem">This action is invoked for each item in the list
+        /// when the region is configured to repeat</param>
+        /// <param name="contentWriter">A function that writes a contents of the region</param>
+        IWriteResult WritePageArea(
             IRenderContext context,
-            IDataScopeProvider scope,
-            bool includeChildren);
-
-        /// <summary>
-        /// Writes the html with specific content inside and
-        /// a specific data scpoe
-        /// </summary>
-        IWriteResult WriteHtml(
-            IRenderContext context,
-            IDataScopeProvider scope,
-            IElement content);
-
-        /// <summary>
-        /// Writes the page initialization script with a specific data scope
-        /// </summary>
-        IWriteResult WriteInitializationScript(
-            IRenderContext context,
-            IDataScopeProvider scope,
-            bool includeChildren);
-
-        /// <summary>
-        /// Writes the page title with a specific data scope
-        /// </summary>
-        IWriteResult WriteTitle(
-            IRenderContext context,
-            IDataScopeProvider scope,
-            bool includeChildren);
+            IDataContextBuilder dataContextBuilder,
+            PageArea pageArea,
+            Action<object> onListItem,
+            Func<IRenderContext, IDataContextBuilder, PageArea, IWriteResult> contentWriter);
     }
 }

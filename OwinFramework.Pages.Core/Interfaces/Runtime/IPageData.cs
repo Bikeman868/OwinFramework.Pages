@@ -7,7 +7,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     /// An instance of this interface is passed to the Initialize routine
     /// It is used to gather up all the informatrion needed to get the page ready
     /// </summary>
-    public interface IInitializationData
+    public interface IPageData
     {
         /// <summary>
         /// Saves the current state on a stack so that changes can be made
@@ -43,7 +43,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Call this method to indicate that this element has a dependancy on
         /// another component that must be rendered onto the page
         /// </summary>
-        IInitializationData NeedsComponent(IComponent component);
+        IPageData NeedsComponent(IComponent component);
 
         /// <summary>
         /// Tells the page about an element instance on this page.

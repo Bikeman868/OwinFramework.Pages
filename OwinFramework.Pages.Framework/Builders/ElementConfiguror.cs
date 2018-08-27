@@ -628,7 +628,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,
-                        (nm, r, n) => r.Populate(nm.ResolveComponent(n, r.Package)),
+                        (nm, r, n) => r.Content = nm.ResolveComponent(n, r.Package),
                         region,
                         attributes.UsesComponents[0].ComponentName);
                 }
@@ -648,7 +648,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 {
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,
-                        (nm, r, n) => r.Populate(nm.ResolveLayout(n, r.Package)),
+                        (nm, r, n) => r.Content = nm.ResolveLayout(n, r.Package),
                         region,
                         attributes.UsesLayouts[0].LayoutName);
                 }
@@ -671,7 +671,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 {
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,
-                        (nm, l, rc) => l.Populate(rc.Region, nm.ResolveComponent(rc.Component, l.Package)),
+                        (nm, l, rc) => l.PopulateElement(rc.Region, nm.ResolveComponent(rc.Component, l.Package)),
                         layout,
                         regionComponent);
                 }
@@ -683,7 +683,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 {
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,
-                        (nm, l, rl) => l.Populate(rl.Region, nm.ResolveComponent(rl.Layout, l.Package)),
+                        (nm, l, rl) => l.PopulateElement(rl.Region, nm.ResolveComponent(rl.Layout, l.Package)),
                         layout,
                         regionLayout);
                 }

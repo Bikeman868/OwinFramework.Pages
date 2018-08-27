@@ -1,4 +1,5 @@
 ﻿using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 
@@ -11,6 +12,11 @@ namespace OwinFramework.Pages.Framework.Runtime
     /// </summary>
     public class Package: IPackage
     {
+        /// <summary>
+        /// The element type is Package
+        /// </summary>
+        public ElementType ElementType { get { return ElementType.Package; } }
+
         /// <summary>
         /// The unique name of this package
         /// </summary>

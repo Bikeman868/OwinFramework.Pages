@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -11,16 +12,20 @@ namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
     /// Base implementation elements that are constructed and configured
-    /// by the fluent builder.
+    /// by the fluent builder. You can also use this as a base class for
+    /// your custom application elements but this is an advanced use case.
     /// </summary>
-    public abstract class Element : ElementBase, IDataConsumer
+    public abstract class Element : IElement
     {
         private readonly IDataConsumer _dataConsumer;
+        private List<IComponent> _dependentComponents;
 
-        private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
-        private string _name;
-        private IPackage _package;
-        private IModule _module;
+        public abstract ElementType ElementType { get; }
+
+        public virtual AssetDeployment AssetDeployment { get; set; }
+        public virtual string Name { get; set; }
+        public virtual IPackage Package { get; set; }
+        public virtual IModule Module { get; set; }
 
         protected Element(IDataConsumerFactory dataConsumerFactory)
         {
@@ -29,87 +34,78 @@ namespace OwinFramework.Pages.Html.Elements
                 : dataConsumerFactory.Create();
         }
 
-        public override IDataConsumer GetDataConsumer()
+        public DebugInfo GetDebugInfo()
         {
-            return _dataConsumer;
+            return PopulateDebugInfo(new DebugElement());
         }
 
-        public override void Initialize(IInitializationData initializationData)
+        protected virtual DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
         {
-            var assetDeployment = InitializeAssetDeployment(initializationData);
-            initializationData.HasElement(this, assetDeployment, Module);
+            debugInfo.Name = Name;
+            debugInfo.Instance = this;
 
-            InitializeDependants(initializationData);
-            InitializeChildren(initializationData, assetDeployment);
+            debugInfo.DataConsumer = ((IDataConsumer)this).GetDataConsumerDebugInfo();
+
+            debugInfo.DependentComponents = _dependentComponents;
+
+            return debugInfo;
         }
 
-        public override AssetDeployment AssetDeployment
+        public override string ToString()
         {
-            get { return _assetDeployment; }
-            set { _assetDeployment = value; }
+            var description = ElementType.ToString().ToLower();
+
+            description += " " + GetType().DisplayName(TypeExtensions.NamespaceOption.Ending);
+
+            if (!string.IsNullOrEmpty(Name))
+                description += " '" + Name + "'";
+
+            return description;
         }
 
-        public override string Name
+        public virtual void NeedsComponent(IComponent component)
         {
-            get { return _name; }
-            set { _name = value; }
+            if (_dependentComponents == null)
+                _dependentComponents = new List<IComponent>();
+
+            _dependentComponents.Add(component);
         }
 
-        public override IPackage Package
+        public List<IComponent> GetDependentComponents()
         {
-            get { return _package; }
-            set { _package = value; }
+            return _dependentComponents;
         }
 
-        #region Writing HTML
-
-        public override IWriteResult WriteStaticCss(ICssWriter writer)
+        public virtual IWriteResult WriteStaticCss(ICssWriter writer)
         {
             return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
+        public virtual IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
         {
             return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteDynamicCss(ICssWriter writer, bool includeChildren)
+        protected PageArea[] PageAreas = { PageArea.Body };
+
+        public virtual IEnumerable<PageArea> GetPageAreas()
         {
-            var result = WriteResult.Continue();
-            return includeChildren ? WriteChildrenDynamicCss(result, writer) : result;
+            return PageAreas;
         }
 
-        public override IWriteResult WriteDynamicJavascript(IJavascriptWriter writer, bool includeChildren)
+        public virtual IWriteResult WriteInPageStyles(
+            ICssWriter writer,
+            Func<ICssWriter, IWriteResult, IWriteResult> childrenWriter)
         {
-            var result = WriteResult.Continue();
-            return includeChildren ? WriteChildrenDynamicJavascript(result, writer) : result;
+            return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, bool includeChildren)
+        public virtual IWriteResult WriteInPageFunctions(
+            IJavascriptWriter writer,
+            Func<IJavascriptWriter, IWriteResult, IWriteResult> childrenWriter)
         {
-            var result = WriteResult.Continue();
-            return includeChildren ? WriteChildrenInitializationScript(result, renderContext) : result;
+            return WriteResult.Continue();
         }
-
-        public override IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
-        {
-            var result = WriteResult.Continue();
-            return includeChildren ? WriteChildrenTitle(result, renderContext) : result;
-        }
-
-        public override IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
-        {
-            var result = WriteResult.Continue();
-            return includeChildren ? WriteChildrenHead(result, renderContext) : result;
-        }
-
-        public override IWriteResult WriteHtml(IRenderContext renderContext, bool includeChildren)
-        {
-            var result = WriteResult.Continue();
-            return includeChildren ? WriteChildrenHtml(result, renderContext) : result;
-        }
-
-        #endregion
 
         #region IDataConsumer Mixin
 
@@ -162,10 +158,11 @@ namespace OwinFramework.Pages.Html.Elements
             _dataConsumer.HasDependency(dataProvider, dependency);
         }
 
-        DebugDataConsumer IDataConsumer.GetDebugInfo()
+        DebugDataConsumer IDataConsumer.GetDataConsumerDebugInfo()
         {
-            if (_dataConsumer == null) return null;
-            return _dataConsumer.GetDebugInfo();
+            return _dataConsumer == null 
+                ? null 
+                : _dataConsumer.GetDataConsumerDebugInfo();
         }
 
         #endregion

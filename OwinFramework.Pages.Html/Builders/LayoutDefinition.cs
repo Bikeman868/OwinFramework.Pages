@@ -461,7 +461,7 @@ namespace OwinFramework.Pages.Html.Builders
 
                 if (region.Region != null)
                 {
-                    _layout.SetRegionInstance(region.RegionName, region.Region);
+                    _layout.PopulateRegion(region.RegionName, region.Region);
                 }
 
                 if (region.ChildRegions != null)
@@ -507,7 +507,7 @@ namespace OwinFramework.Pages.Html.Builders
                     if (_regionLayouts.ContainsKey(region.RegionName))
                         regionContent = _regionLayouts[region.RegionName] as IElement;
 
-                    _layout.Populate(region.RegionName, regionContent);
+                    _layout.PopulateElement(region.RegionName, regionContent);
                 }
 
                 if (region.ChildRegions != null)

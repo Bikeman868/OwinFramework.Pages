@@ -435,12 +435,16 @@ namespace OwinFramework.Pages.Framework.DataModel
             {
                 if (ReferenceEquals(parentDataContext, null))
                 {
+#if TRACE
                     renderContext.Trace(() => "Data scope provider #" + Id + " is building the root data context");
+#endif
                     dataContext = _dataContextFactory.Create(renderContext, this);
                 }
                 else
                 {
+#if TRACE
                     renderContext.Trace(() => "Data scope provider #" + Id + " is building a child data context");
+#endif
                     dataContext = parentDataContext.CreateChild(this);
                 }
 
@@ -455,13 +459,17 @@ namespace OwinFramework.Pages.Framework.DataModel
                     lock (_dataSupplies) dataSupply = _dataSupplies[i];
                     if (dataSupply.IsStatic)
                     {
+#if TRACE
                         renderContext.Trace(() => "Data scope provider #" + Id + " adding " + dataSupply);
+#endif
                         dataSupply.Supply(renderContext, dataContext);
                     }
-                    else
+                    #if TRACE
+else
                     {
                         renderContext.Trace(() => "Data scope provider #" + Id + " skipping " + dataSupply);
                     }
+#endif
                 }
             }
 
@@ -483,7 +491,9 @@ namespace OwinFramework.Pages.Framework.DataModel
             var result = renderContext.Data;
             if (BuildSupplyList())
             {
+#if TRACE
                 renderContext.Trace(() => "Data scope provider #" + Id + " is establishing its data context in the render context");
+#endif
                 renderContext.SelectDataContext(Id);
             }
             return result;
@@ -506,7 +516,9 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
         {
+#if TRACE
             renderContext.Trace(() => "Data scope provider #" + Id + " has been notified of a missing dependency on " + missingDependency);
+#endif
 
             AddDependency(missingDependency);
             renderContext.DeleteDataContextTree();

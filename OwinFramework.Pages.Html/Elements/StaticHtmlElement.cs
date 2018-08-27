@@ -18,9 +18,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         public StaticHtmlElement() : base(null) { }
 
-        public override IWriteResult WriteHtml(
-            IRenderContext context,
-            bool includeChildren)
+        public IWriteResult WriteHtml(IRenderContext context)
         {
             if (context.IncludeComments && !string.IsNullOrEmpty(Comment))
                 context.Html.WriteComment(Comment);

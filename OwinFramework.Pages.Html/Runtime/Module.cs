@@ -12,6 +12,8 @@ namespace OwinFramework.Pages.Html.Runtime
     /// </summary>
     public class Module : IModule
     {
+        public ElementType ElementType { get { return ElementType.Module; } }
+
         public string Name { get; set; }
 
         private AssetDeployment _assetDeployment = AssetDeployment.PerModule;

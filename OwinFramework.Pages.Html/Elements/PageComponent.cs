@@ -1,52 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using OwinFramework.Pages.Core.Debug;
-using OwinFramework.Pages.Core.Enums;
+﻿using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
-using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// This is an instance of a component that is placed on a page
+    /// This class is responsible for rendering components onto a specific page
+    /// in response to requests for that page
     /// </summary>
-    internal class PageComponent : PageElement<IComponent>, IComponent
+    internal class PageComponent : PageElement
     {
-        public override ElementType ElementType { get { return ElementType.Component; } }
-
-        private readonly IComponentDependenciesFactory _dependenciesFactory;
-
         public PageComponent(
-            IComponentDependenciesFactory dependencies,
-            IComponent parent)
-            : base(parent)
+            PageElementDependencies dependencies,
+            PageElement parent,
+            IComponent component, 
+            IPageData initializationData)
+            : base(dependencies, parent, component, initializationData)
         {
-            _dependenciesFactory = dependencies;
         }
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
+        protected override IWriteResult WritePageAreaInternal(
+            IRenderContext renderContext, 
+            IDataContextBuilder dataContextBuilder, 
+            PageArea pageArea)
         {
-            var parentDebugInfo = Parent == null ? null : (DebugRegion)Parent.GetDebugInfo();
-            var debugComponent = debugInfo as DebugComponent ?? new DebugComponent();
+            var component = Element as IComponent;
+            if (ReferenceEquals(component, null)) return WriteResult.Continue();
 
-            return base.PopulateDebugInfo(debugComponent);
-        }
-
-        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
-        {
-            return Parent.WriteHtml(context, includeChildren);
-        }
-
-        public override IWriteResult WriteStaticCss(ICssWriter writer)
-        {
-            return Parent.WriteStaticCss(writer);
-        }
-
-        public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
-        {
-            return Parent.WriteStaticJavascript(writer);
+            return component.WritePageArea(renderContext, dataContextBuilder, pageArea);
         }
     }
 }

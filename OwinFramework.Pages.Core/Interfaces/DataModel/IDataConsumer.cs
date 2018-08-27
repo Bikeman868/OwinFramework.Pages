@@ -78,6 +78,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <summary>
         /// Gets information used for debugging purposes only
         /// </summary>
-        DebugDataConsumer GetDebugInfo();
+        DebugDataConsumer GetDataConsumerDebugInfo();
     }
 }

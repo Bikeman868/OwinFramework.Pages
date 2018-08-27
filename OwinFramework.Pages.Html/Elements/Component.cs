@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 
@@ -17,9 +17,9 @@ namespace OwinFramework.Pages.Html.Elements
     {
         public override ElementType ElementType { get { return ElementType.Component; } }
 
-        public List<Action<IRenderContext>> HtmlWriters;
-        public List<Action<ICssWriter>> CssRules;
-        public List<Action<IJavascriptWriter>> JavascriptFunctions;
+        public Action<IRenderContext>[] HtmlWriters;
+        public Action<ICssWriter>[] CssRules;
+        public Action<IJavascriptWriter>[] JavascriptFunctions;
 
         public Component(IComponentDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
@@ -43,15 +43,18 @@ namespace OwinFramework.Pages.Html.Elements
                 (Package == null ? string.Empty : " from the '" + Package.Name + "' package");
         }
 
-        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
+        public IWriteResult WritePageArea(
+            IRenderContext context, 
+            IDataContextBuilder dataContextBuilder, 
+            PageArea pageArea)
         {
             if (context.IncludeComments)
                 context.Html.WriteComment(GetCommentName());
 
             if (HtmlWriters != null)
             {
-                foreach (var writer in HtmlWriters)
-                    writer(context);
+                for (var i = 0; i < HtmlWriters.Length; i++)
+                    HtmlWriters[i](context);
             }
 
             return WriteResult.Continue();
@@ -59,13 +62,13 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IWriteResult WriteStaticCss(ICssWriter writer)
         {
-            if (CssRules != null && CssRules.Count > 0)
+            if (CssRules != null && CssRules.Length > 0)
             {
                 if (writer.IncludeComments)
                     writer.WriteComment("css rules for " + GetCommentName());
 
-                foreach (var rule in CssRules)
-                    rule(writer);
+                for (var i = 0; i < CssRules.Length; i++)
+                    CssRules[i](writer);
             }
 
             return WriteResult.Continue();
@@ -73,7 +76,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
         {
-            if (JavascriptFunctions != null && JavascriptFunctions.Count > 0)
+            if (JavascriptFunctions != null && JavascriptFunctions.Length > 0)
             {
                 if (writer.IncludeComments)
                 {
@@ -83,8 +86,8 @@ namespace OwinFramework.Pages.Html.Elements
                         Package);
                 }
 
-                foreach (var javascriptFunction in JavascriptFunctions)
-                    javascriptFunction(writer);
+                for (var i = 0; i < JavascriptFunctions.Length; i++)
+                    JavascriptFunctions[i](writer);
             }
 
             return WriteResult.Continue();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
@@ -15,6 +16,8 @@ namespace OwinFramework.Pages.Framework.DataModel
     /// </summary>
     public class DataProvider: IDataProvider, IDataConsumer
     {
+        public ElementType ElementType { get { return ElementType.DataProvider; } }
+
         public string Name { get; set; }
         public IPackage Package { get; set; }
 
@@ -71,7 +74,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
         }
 
-        #region IDataConsumer
+        #region IDataConsumer  Mixin
 
         void IDataConsumer.HasDependency<T>(string scopeName)
         {
@@ -108,14 +111,14 @@ namespace OwinFramework.Pages.Framework.DataModel
             return DataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
-        DebugDataConsumer IDataConsumer.GetDebugInfo()
+        DebugDataConsumer IDataConsumer.GetDataConsumerDebugInfo()
         {
-            return DataConsumer.GetDebugInfo();
+            return DataConsumer.GetDataConsumerDebugInfo();
         }
 
         #endregion
 
-        #region IDataSupplier
+        #region IDataSupplier Mixin
 
         IDataDependency IDataSupplier.DefaultDependency { get { return DataSupplier.DefaultDependency; } }
         IList<Type> IDataSupplier.SuppliedTypes { get { return DataSupplier.SuppliedTypes; } }

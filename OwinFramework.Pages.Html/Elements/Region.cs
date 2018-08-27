@@ -18,11 +18,9 @@ namespace OwinFramework.Pages.Html.Elements
     /// </summary>
     public class Region : Element, IRegion, IDataScopeProvider, IDataSupplier, IDataSupply
     {
-        private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         public override ElementType ElementType { get { return ElementType.Region; } }
-        public bool IsInstance { get { return false; } }
 
-        public IElement Content { get; protected set; }
+        public IElement Content { get; set; }
 
         public Action<IHtmlWriter> WriteOpen { get; set; }
         public Action<IHtmlWriter> WriteClose { get; set; }
@@ -33,9 +31,7 @@ namespace OwinFramework.Pages.Html.Elements
         private Type _listType;
 
         public string RepeatScope { get; set; }
-
         public string ListScope { get; set; }
-
         public Type ListType { get { return _listType; } }
 
         public Type RepeatType
@@ -47,6 +43,8 @@ namespace OwinFramework.Pages.Html.Elements
                 _listType = typeof(IList<>).MakeGenericType(value);
             }
         }
+
+        private IRegionDependenciesFactory _regionDependenciesFactory;
 
         #region Construction and initialization
 
@@ -102,121 +100,62 @@ namespace OwinFramework.Pages.Html.Elements
 
         #endregion
 
-        #region Setting up and wiring
+        #region Methods called by page regions to render content
 
-        public virtual void Populate(IElement content)
-        {
-            Content = content;
-        }
-
-        public IRegion CreateInstance(IElement content)
-        {
-            return new PageRegion(_regionDependenciesFactory, this, content);
-        }
-
-        public override IEnumerator<IElement> GetChildren()
-        {
-            return Content == null 
-                ? null 
-                : Content.AsEnumerable().GetEnumerator();
-        }
-
-        #endregion
-
-        #region Methods called by region instances to render content
-
-        public virtual IWriteResult WriteHead(
+        public IWriteResult WritePageArea(
             IRenderContext context, 
-            IDataScopeProvider scope,
-            bool includeChildren)
+            IDataContextBuilder dataContextBuilder, 
+            PageArea pageArea, 
+            Action<object> onListItem,
+            Func<IRenderContext, IDataContextBuilder, PageArea, IWriteResult> contentWriter)
         {
-            context.Trace(() => ToString() + " writing page head in scope [" + scope + "]" + (includeChildren ? " including children" : ""));
-
-            var savedData = scope.SetDataContext(context);
-            var result = base.WriteHead(context, includeChildren);
-            context.Data = savedData;
-
-            return result;
-        }
-
-        public virtual IWriteResult WriteHtml(
-            IRenderContext context,
-            IDataScopeProvider scope,
-            IElement content)
-        {
-            context.Trace(() => ToString() + " writing page head in scope [" + scope + "] with content [" + content + "]");
-
-            var result = WriteResult.Continue();
-            var savedData = scope.SetDataContext(context);
+#if TRACE
+            context.Trace(() => ToString() + " writing page " + Enum.GetName(typeof(PageArea), pageArea).ToLower());
+#endif
+            IWriteResult result;
 
             WriteOpen(context.Html);
 
-            if (content != null)
+            if (pageArea == PageArea.Body && !ReferenceEquals(_repeatType, null))
             {
-                if (_repeatType == null)
+                result = WriteResult.Continue();
+
+                var list = context.Data.Get(_listType, ListScope) as IEnumerable;
+                if (!ReferenceEquals(list, null))
                 {
-                    result.Add(content.WriteHtml(context));
+                    foreach (var item in list)
+                    {
+#if TRACE
+                        context.Trace(() => ToString() + " repeating content for next list entry");
+#endif
+
+                        context.Data.Set(_repeatType, item, RepeatScope);
+
+                        if (!ReferenceEquals(onListItem, null))
+                            onListItem(item);
+
+                        context.TraceIndent();
+
+                        WriteChildOpen(context.Html);
+                        result.Add(contentWriter(context, dataContextBuilder, pageArea));
+                        WriteChildClose(context.Html);
+
+                        context.TraceOutdent();
+                    }
                 }
+#if TRACE
                 else
                 {
-                    var list = (IEnumerable)context.Data.Get(_listType, ListScope);
-                    if (ReferenceEquals(list, null))
-                    {
-                        context.Trace(() => ToString() + " will not repeat because there is no list in the data context of the required type");
-                    }
-                    else
-                    {
-                        foreach (var item in list)
-                        {
-                            context.Trace(() => ToString() + " repeating content for next list entry");
-
-                            context.Data.Set(_repeatType, item, RepeatScope);
-                            ((IDataSupply)this).Supply(context, context.Data);
-
-                            context.TraceIndent();
-
-                            WriteChildOpen(context.Html);
-                            result.Add(content.WriteHtml(context));
-                            WriteChildClose(context.Html);
-
-                            context.TraceOutdent();
-                        }
-                    }
+                    context.Trace(() => ToString() + " will not repeat because there is no list in the data context of the required type");
                 }
+#endif
+            }
+            else
+            {
+                result = contentWriter(context, dataContextBuilder, pageArea);
             }
 
             WriteClose(context.Html);
-
-            context.Trace(() => ToString() + " restoring saved data context");
-            context.Data = savedData;
-
-            return result;
-        }
-
-        public virtual IWriteResult WriteInitializationScript(
-            IRenderContext context,
-            IDataScopeProvider scope,
-            bool includeChildren)
-        {
-            context.Trace(() => ToString() + " writing initialization script in scope [" + scope + "]" + (includeChildren ? " including children" : ""));
-
-            var savedData = scope.SetDataContext(context);
-            var result = base.WriteInitializationScript(context, includeChildren);
-            context.Data = savedData;
-
-            return result;
-        }
-
-        public virtual IWriteResult WriteTitle(
-            IRenderContext context,
-            IDataScopeProvider scope,
-            bool includeChildren)
-        {
-            context.Trace(() => ToString() + " writing page title in scope [" + scope + "]" + (includeChildren ? " including children" : ""));
-
-            var savedData = scope.SetDataContext(context);
-            var result = base.WriteTitle(context, includeChildren);
-            context.Data = savedData;
 
             return result;
         }
@@ -240,11 +179,6 @@ namespace OwinFramework.Pages.Html.Elements
             return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
         }
 
-        bool IDataScopeProvider.IsInScope(IDataDependency dependency)
-        {
-            return _dataScopeProvider.IsInScope(dependency);
-        }
-
         void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
         {
             _dataScopeProvider.SetupDataContext(renderContext);
@@ -253,11 +187,6 @@ namespace OwinFramework.Pages.Html.Elements
         IDataScopeProvider IDataScopeProvider.CreateInstance()
         {
             return _dataScopeProvider.CreateInstance();
-        }
-
-        void IDataScopeProvider.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
-        {
-            _dataScopeProvider.AddMissingData(renderContext, missingDependency);
         }
 
         IDataScopeProvider IDataScopeProvider.Parent
@@ -280,11 +209,6 @@ namespace OwinFramework.Pages.Html.Elements
             _dataScopeProvider.AddScope(type, scopeName);
         }
 
-        IDataSupply IDataScopeProvider.AddDependency(IDataDependency dependency)
-        {
-            return _dataScopeProvider.AddDependency(dependency);
-        }
-
         void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
         {
             _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
@@ -300,14 +224,33 @@ namespace OwinFramework.Pages.Html.Elements
             _dataScopeProvider.AddSupply(supply);
         }
 
-        IList<IDataSupply> IDataScopeProvider.AddConsumer(IDataConsumer consumer)
-        {
-            return _dataScopeProvider.AddConsumer(consumer);
-        }
-
         IDataContext IDataScopeProvider.SetDataContext(IRenderContext renderContext)
         {
             return _dataScopeProvider.SetDataContext(renderContext);
+        }
+
+        #endregion
+
+        #region IDataContextBuilder MixIn
+
+        bool IDataContextBuilder.IsInScope(IDataDependency dependency)
+        {
+            return _dataScopeProvider.IsInScope(dependency);
+        }
+
+        void IDataContextBuilder.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
+        {
+            _dataScopeProvider.AddMissingData(renderContext, missingDependency);
+        }
+
+        IDataSupply IDataContextBuilder.AddDependency(IDataDependency dependency)
+        {
+            return _dataScopeProvider.AddDependency(dependency);
+        }
+
+        IList<IDataSupply> IDataContextBuilder.AddConsumer(IDataConsumer consumer)
+        {
+            return _dataScopeProvider.AddConsumer(consumer);
         }
 
         #endregion
@@ -397,8 +340,9 @@ namespace OwinFramework.Pages.Html.Elements
 
             if (count > 0)
             {
+#if TRACE
                 renderContext.Trace(() => "region triggering dynamic data supply on " + count + " dependents");
-
+#endif
                 renderContext.TraceIndent();
                 for (var i = 0; i < count; i++)
                 {

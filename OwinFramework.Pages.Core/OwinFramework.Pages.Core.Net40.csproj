@@ -115,6 +115,7 @@
     <Compile Include="Collections\ThreadSafeQueue.cs" />
     <Compile Include="Debug\DebugDataConsumer.cs" />
     <Compile Include="Debug\DebugDataProviderDependency.cs" />
+    <Compile Include="Debug\DebugPageElement.cs" />
     <Compile Include="Debug\DebugSuppliedDependency.cs" />
     <Compile Include="Debug\DebugDataSupply.cs" />
     <Compile Include="Debug\DebugDataSupplier.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Enums\CommentStyle.cs" />
     <Compile Include="Enums\HtmlFormat.cs" />
     <Compile Include="Enums\NameResolutionPhase.cs" />
+    <Compile Include="Enums\PageArea.cs" />
     <Compile Include="Exceptions\DataProviderBuilderException.cs" />
     <Compile Include="Exceptions\DataCatalogException.cs" />
     <Compile Include="Exceptions\FluentBuilderException.cs" />
@@ -186,6 +188,7 @@
     <Compile Include="Interfaces\DataModel\IDataDependency.cs" />
     <Compile Include="Interfaces\DataModel\IDataConsumerFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataDependencyFactory.cs" />
+    <Compile Include="Interfaces\DataModel\IDataContextBuilder.cs" />
     <Compile Include="Interfaces\DataModel\IDataSupplierFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataScopeFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataScope.cs" />
@@ -199,13 +202,15 @@
     <Compile Include="Interfaces\DataModel\IDataContextFactory.cs" />
     <Compile Include="Interfaces\Runtime\ICssWriter.cs" />
     <Compile Include="Interfaces\Runtime\IDataRepeater.cs" />
+    <Compile Include="Interfaces\Runtime\IDebuggable.cs" />
     <Compile Include="Interfaces\Runtime\IDeployable.cs" />
+    <Compile Include="Interfaces\Runtime\IPageWriter.cs" />
     <Compile Include="Interfaces\Runtime\IJavascriptWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IJavascriptWriter.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriter.cs" />
     <Compile Include="Interfaces\Runtime\ICssWriterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IHtmlWriterFactory.cs" />
-    <Compile Include="Interfaces\Runtime\IInitializationData.cs" />
+    <Compile Include="Interfaces\Runtime\IPageData.cs" />
     <Compile Include="Interfaces\Runtime\INamed.cs" />
     <Compile Include="Interfaces\Runtime\IPackagable.cs" />
     <Compile Include="Interfaces\Runtime\IRenderContextFactory.cs" />

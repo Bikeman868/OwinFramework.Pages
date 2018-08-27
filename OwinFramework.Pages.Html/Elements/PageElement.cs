@@ -1,129 +1,159 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Runtime;
+using OwinFramework.Pages.Core.Debug;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal abstract class PageElement<T> : ElementBase where T : IElement
+    /// <summary>
+    /// Base class for all classes that write content to the page during
+    /// page rendering
+    /// </summary>
+    internal abstract class PageElement
     {
-        public bool IsInstance { get { return true; } }
+        protected readonly IElement Element;
+        protected readonly PageElement Parent;
 
-        protected readonly T Parent;
-        private AssetDeployment _assetDeployment = AssetDeployment.Inherit;
+        private readonly bool[] _hasPageArea = new bool[(int)PageArea.MaxValue];
+        private PageElement[] _children = new PageElement[0];
 
-        protected PageElement(T parent)
+        protected PageElement[] Children
         {
-            if (parent == null)
-                throw new ArgumentNullException("parent");
+            get { return _children; }
+            set 
+            {
+                _children = value ?? new PageElement[0];
 
+                for (var i = 0; i < (int)PageArea.MaxValue; i++)
+                    SetHasPageArea((PageArea)i, _hasPageArea[i]);
+            }
+        }
+
+        public PageElement(
+            PageElementDependencies dependencies,
+            PageElement parent,
+            IElement element,
+            IPageData initializationData)
+        {
+            if (element == null) throw new ArgumentNullException("element");
+
+            Element = element;
             Parent = parent;
 
-            var elementBase = parent as ElementBase;
-            if (ReferenceEquals(elementBase, null)) return;
+            foreach (var pageArea in element.GetPageAreas())
+                if (pageArea >= 0 && pageArea < PageArea.MaxValue)
+                    _hasPageArea[(int)pageArea] = true;
 
-            Module = elementBase.Module;
+            initializationData.HasElement(element, element.AssetDeployment, element.Module);
 
-            var parentDependentComponents = elementBase.GetDependentComponents();
-            if (parentDependentComponents != null)
-                foreach (var component in parentDependentComponents)
-                    NeedsComponent(component);
+            var elementBase = element as Element;
+            if (elementBase != null)
+            {
+                foreach(var component in elementBase.GetDependentComponents())
+                    initializationData.NeedsComponent(component);
+            }
         }
 
         public override string ToString()
         {
-            var description = ElementType.ToString().ToLower() + " instance";
+            var description = GetType().DisplayName(TypeExtensions.NamespaceOption.None);
 
-            description += " " + GetType().DisplayName(TypeExtensions.NamespaceOption.Ending);
-
-            if (!string.IsNullOrEmpty(Name))
-                description += " '" + Name + "'";
+            if (!string.IsNullOrEmpty(Element.Name))
+                description += " '" + Element.Name + "'";
 
             return description;
         }
 
-        public override IDataConsumer GetDataConsumer()
+        public DebugPageElement GetDebugInfo() 
         {
-            return Parent.GetDataConsumer();
+            return PopulateDebugInfo(new DebugPageElement(), 1, 1);
         }
 
-        public override AssetDeployment AssetDeployment
+        protected virtual DebugPageElement PopulateDebugInfo(DebugPageElement debugPageElement, int parentDepth, int childDepth)
         {
-            get { return _assetDeployment == AssetDeployment.Inherit ? Parent.AssetDeployment : _assetDeployment; }
-            set { _assetDeployment = value; }
+            debugPageElement.Element = Element;
+            debugPageElement.Name = Element.Name;
+
+            if (parentDepth != 0)
+                debugPageElement.Parent = Parent.PopulateDebugInfo(new DebugPageElement(), parentDepth - 1, 0);
+
+            if (childDepth != 0)
+                debugPageElement.Children = Children
+                    .Select(child => child.PopulateDebugInfo(new DebugPageElement(), 0, childDepth - 1))
+                    .ToArray();
+
+            return debugPageElement;
         }
 
-        public override string Name
+        public virtual void BuildDataContext(DataContextBuilder dataContextBuilder)
         {
-            get { return Parent.Name; }
-            set { throw new InvalidOperationException("You can not name an instance " + typeof(T).DisplayName()); }
+            for (var i = 0; i < Children.Length; i++)
+                Children[i].BuildDataContext(dataContextBuilder);
         }
 
-        public override IPackage Package
+        protected bool GetHasPageArea(PageArea pageArea)
         {
-            get { return Parent.Package; }
-            set { throw new InvalidOperationException("You can not set the package for an instance " + typeof(T).DisplayName()); }
+            return _hasPageArea[(int)pageArea];
         }
 
-        public override IWriteResult WriteStaticCss(ICssWriter writer)
+        protected void SetHasPageArea(PageArea pageArea, bool value)
         {
-            return Parent.WriteStaticCss(writer);
+            _hasPageArea[(int)pageArea] = value || _children.Any(c => c.GetHasPageArea(pageArea));
         }
 
-        public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
+        public virtual IWriteResult WriteStyles(ICssWriter writer)
         {
-            return Parent.WriteStaticJavascript(writer);
+            if (!_hasPageArea[(int)PageArea.Styles]) return WriteResult.Continue();
+
+            var result = Element.WriteInPageStyles(writer, WriteChildren);
+            return result.IsComplete ? result : WriteChildren(writer, result);
         }
 
-        public override IWriteResult WriteDynamicCss(ICssWriter writer, bool includeChildren)
+        protected virtual IWriteResult WriteChildren(ICssWriter writer, IWriteResult writeResult)
         {
-            var result = Parent.WriteDynamicCss(writer, false);
-            return includeChildren ? WriteChildrenDynamicCss(result, writer) : result;
+            for (var i = 0; !writeResult.IsComplete && i < Children.Length; i++)
+                writeResult.Add(Children[i].WriteStyles(writer));
+            return writeResult;
         }
 
-        public override IWriteResult WriteDynamicJavascript(IJavascriptWriter writer, bool includeChildren)
+        public virtual IWriteResult WriteScripts(IJavascriptWriter writer)
         {
-            var result = Parent.WriteDynamicJavascript(writer, false);
-            return includeChildren ? WriteChildrenDynamicJavascript(result, writer) : result;
+            if (!_hasPageArea[(int)PageArea.Scripts]) return WriteResult.Continue();
+
+            var result = Element.WriteInPageFunctions(writer, WriteChildren);
+            return result.IsComplete ? result : WriteChildren(writer, result);
         }
 
-        public override IWriteResult WriteInitializationScript(IRenderContext renderContext, bool includeChildren)
+        protected virtual IWriteResult WriteChildren(IJavascriptWriter writer, IWriteResult writeResult)
         {
-            renderContext.Trace(() => ToString() + " writing page initialization script");
-
-            var result = Parent.WriteInitializationScript(renderContext, false);
-            return includeChildren ? WriteChildrenInitializationScript(result, renderContext) : result;
+            for (var i = 0; !writeResult.IsComplete && i < Children.Length; i++)
+                writeResult.Add(Children[i].WriteScripts(writer));
+            return writeResult;
         }
 
-        public override IWriteResult WriteTitle(IRenderContext renderContext, bool includeChildren)
+        public virtual IWriteResult WritePageArea(
+            IRenderContext renderContext, 
+            IDataContextBuilder dataContextBuilder, 
+            PageArea pageArea)
         {
-            renderContext.Trace(() => ToString() + " writing page title");
+            if (!_hasPageArea[(int)pageArea]) return WriteResult.Continue();
 
-            var result = Parent.WriteTitle(renderContext, false);
-            return includeChildren ? WriteChildrenTitle(result, renderContext) : result;
+#if TRACE
+            renderContext.Trace(() => ToString() + " writing " + pageArea);
+#endif
+
+            return WritePageAreaInternal(renderContext, dataContextBuilder, pageArea);
         }
 
-        public override IWriteResult WriteHead(IRenderContext renderContext, bool includeChildren)
-        {
-            renderContext.Trace(() => ToString() + " writing page head");
-
-            var result = Parent.WriteHead(renderContext, false);
-            return includeChildren ? WriteChildrenHead(result, renderContext) : result;
-        }
-
-        public override void Initialize(IInitializationData initializationData)
-        {
-            var assetDeployment = InitializeAssetDeployment(initializationData);
-            initializationData.HasElement(Parent, assetDeployment, Parent.Module);
-
-            InitializeDependants(initializationData);
-            InitializeChildren(initializationData, assetDeployment);
-        }
-
+        protected abstract IWriteResult WritePageAreaInternal(
+            IRenderContext renderContext, 
+            IDataContextBuilder dataContextBuilder, 
+            PageArea pageArea);
     }
 }

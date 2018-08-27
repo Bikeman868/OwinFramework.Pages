@@ -1,4 +1,6 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
@@ -15,7 +17,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// </summary>
         /// <param name="regionName">The name of a region on this layout</param>
         /// <param name="element">The element to render in this region</param>
-        void Populate(string regionName, IElement element);
+        void PopulateElement(string regionName, IElement element);
 
         /// <summary>
         /// Gets a region from the layout
@@ -23,34 +25,22 @@ namespace OwinFramework.Pages.Core.Interfaces
         IRegion GetRegion(string regionName);
 
         /// <summary>
-        /// Constructs a new layout instance that has a reference to
-        /// the original layout element, but can have different contents.
-        /// The properties of this instance will read/write to the
-        /// original layout definition, but the Populate() method will
-        /// only populate the instance.
-        /// This feature is necessary to allow different pages to contain
-        /// the same layouts but with different content on each page.
+        /// This is called for each area of the page where this instance wants
+        /// to write content. This method is called if either the GetPageAreas() function
+        /// returns true for the page area, or any of the children retuen true for this.
         /// </summary>
-        ILayout CreateInstance();
-
-        /// <summary>
-        /// Returns a flag indicating if this is a [age instance or the original
-        /// layout definition. Calling the Populate() method on the original
-        /// layout will change the region contents for all pages that use
-        /// this layout and do not override the contents. Calling the 
-        /// Populate() method on an instance only affects that specific instance.
-        /// </summary>
-        bool IsInstance { get; }
-
-        /// <summary>
-        /// Writes the html for this region with specific content inside
-        /// </summary>
-        /// <param name="context">The context to render into</param>
-        /// <param name="contentFunc">A function that will return the region to render
-        /// for each region name. This function should return null to render the default
-        /// region for the layout</param>
-        IWriteResult WriteHtml(
-            IRenderContext context, 
-            Func<string, IRegion> contentFunc);
+        /// <param name="context">The rendering operation in progress</param>
+        /// <param name="dataContextBuilder">The object that built the data context. This
+        /// is required here in case the adat context is missing some data, in this case
+        /// the IDataContextBuilder can add the missing data and remember this for the
+        /// next time this runable is rendered</param>
+        /// <param name="pageArea">The area of the page that is being written to</param>
+        /// <param name="regionWriter">A function that writes a region of the layout. 
+        /// The last string parameter is the name of the region to write</param>
+        IWriteResult WritePageArea(
+            IRenderContext context,
+            IDataContextBuilder dataContextBuilder,
+            PageArea pageArea,
+            Func<IRenderContext, IDataContextBuilder, PageArea, string, IWriteResult> regionWriter);
     }
 }

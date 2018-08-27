@@ -14,9 +14,14 @@
         Unnamed = 0,
 
         /// <summary>
-        /// The element is a page
+        /// The element is a web page
         /// </summary>
         Page,
+
+        /// <summary>
+        /// The element is a web service
+        /// </summary>
+        Service,
 
         /// <summary>
         /// The element is a layout
@@ -31,6 +36,21 @@
         /// <summary>
         /// The element is a component
         /// </summary>
-        Component
+        Component,
+
+        /// <summary>
+        /// This element is a package
+        /// </summary>
+        Package,
+
+        /// <summary>
+        /// This element is a module
+        /// </summary>
+        Module,
+
+        /// <summary>
+        /// This element is a data provider
+        /// </summary>
+        DataProvider
     }
 }

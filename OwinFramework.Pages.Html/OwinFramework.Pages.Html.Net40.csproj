@@ -69,8 +69,9 @@
     <Compile Include="Builders\CssDefinition.cs" />
     <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
+    <Compile Include="Elements\DataContextBuilder.cs" />
     <Compile Include="Elements\PageComponent.cs" />
-    <Compile Include="Elements\ElementBase.cs" />
+    <Compile Include="Elements\PageElementDependencies.cs" />
     <Compile Include="Interfaces\IHtmlHelper.cs" />
     <Compile Include="Builders\LayoutBuilder.cs" />
     <Compile Include="Builders\ModuleBuilder.cs" />

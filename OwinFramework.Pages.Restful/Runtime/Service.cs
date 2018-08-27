@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -14,6 +15,8 @@ namespace OwinFramework.Pages.Restful.Runtime
     /// </summary>
     public class Service : IService
     {
+        public ElementType ElementType { get { return ElementType.Service; } }
+
         public string Name { get; set; }
         public IPackage Package { get; set; }
         public string RequiredPermission { get; set; }
@@ -26,7 +29,6 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         public void Initialize()
         {
-            throw new NotImplementedException();
         }
 
         public Task Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
@@ -43,5 +45,6 @@ namespace OwinFramework.Pages.Restful.Runtime
         {
             throw new NotImplementedException();
         }
+
     }
 }

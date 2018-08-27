@@ -16,8 +16,8 @@ namespace OwinFramework.Pages.Html.Elements
             PageElementDependencies dependencies,
             PageElement parent,
             IComponent component, 
-            IPageData initializationData)
-            : base(dependencies, parent, component, initializationData)
+            IPageData pageData)
+            : base(dependencies, parent, component, pageData)
         {
         }
 

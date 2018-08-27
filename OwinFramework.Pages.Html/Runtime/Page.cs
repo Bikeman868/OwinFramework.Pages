@@ -70,6 +70,8 @@ namespace OwinFramework.Pages.Html.Runtime
         private IList<string> _inPageCssLines;
         private IList<string> _inPageScriptLines;
         private IList<IModule> _referencedModules;
+        private PageLayout _layout;
+        private PageComponent[] _pageComponents; 
 
         public Page(IPageDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
@@ -96,17 +98,37 @@ namespace OwinFramework.Pages.Html.Runtime
                     : Module.AssetDeployment;
             }
 
-            if (_regions != null)
+
+            var elementDependencies = new PageElementDependencies
             {
-                foreach (var region in _regions)
-                    Layout.PopulateElement(region.Key, region.Value);
+                DictionaryFactory = _dependencies.DictionaryFactory
+            };
+
+            if (Layout != null)
+            {
+                var regionElements = new List<Tuple<IRegion, IElement>>();
+                foreach(var regionName in Layout.GetRegionNames())
+                {
+                    var region = Layout.GetRegion(regionName);
+                    var element = _regions.ContainsKey(regionName)
+                        ? _regions[regionName]
+                        : Layout.GetRegion(regionName);
+                    regionElements.Add(new Tuple<IRegion, IElement>(region, element));
+                }
+                _layout = new PageLayout(elementDependencies, null, Layout, regionElements, data);
             }
+
+            _pageComponents = _components == null
+                ? new PageComponent[0]
+                : _components.Select(c => new PageComponent(elementDependencies, null, c, data)).ToArray();
 
             _referencedModules = new List<IModule>();
             var styles = _dependencies.CssWriterFactory.Create();
             var functions = _dependencies.JavascriptWriterFactory.Create();
 
+#if TRACE
             System.Diagnostics.Trace.WriteLine("Page " + Name + " asset deployment");
+#endif
             foreach (var element in data.Elements)
             {
                 var name = string.IsNullOrEmpty(element.Element.Name)
@@ -140,7 +162,9 @@ namespace OwinFramework.Pages.Html.Runtime
                         break;
                 }
 
+#if TRACE
                 System.Diagnostics.Trace.WriteLine("   " + name + " deployed to " + deployment);
+#endif
             }
 
             _inPageCssLines = styles.ToLines();
@@ -251,26 +275,12 @@ namespace OwinFramework.Pages.Html.Runtime
             }
         }
 
-        public override IEnumerator<IElement> GetChildren()
-        {
-            if (_components == null)
-            {
-                return ReferenceEquals(Layout, null) 
-                    ? null 
-                    : Layout.AsEnumerable<IElement>().GetEnumerator();
-            }
-
-            return ReferenceEquals(Layout, null)
-                ? _components.GetEnumerator()
-                : _components.Concat(Layout.AsEnumerable<IElement>()).GetEnumerator();
-        }
-
         #endregion
 
         public void PopulateRegion(string regionName, IElement element)
         {
             if (_regions == null)
-                _regions = new Dictionary<string, IElement>();
+                _regions = new Dictionary<string, IElement>(StringComparer.OrdinalIgnoreCase);
             _regions[regionName] = element;
         }
         
@@ -317,50 +327,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var writeResult = WriteResult.Continue();
             try
             {
-#if TRACE
-                context.Trace(() => "Writing document start");
-                context.TraceIndent();
-#endif
-                html.WriteDocumentStart(context.Language);
-#if TRACE
-                context.TraceOutdent();
-#endif
-
-#if TRACE
-                context.Trace(() => "Writing page head");
-                context.TraceIndent();
-#endif
-                WritePageHead(context, html, writeResult);
-#if TRACE
-                context.TraceOutdent();
-#endif
-
-#if TRACE
-                context.Trace(() => "Writing page body");
-                context.TraceIndent();
-#endif
-                WritePageBody(context, html, writeResult);
-#if TRACE
-                context.TraceOutdent();
-#endif
-
-#if TRACE
-                context.Trace(() => "Writing initialization JavaScript");
-                context.TraceIndent();
-#endif
-                WriteInitializationScript(context, true);
-#if TRACE
-                context.TraceOutdent();
-#endif
-
-#if TRACE
-                context.Trace(() => "Writing document end");
-                context.TraceIndent();
-#endif
-                html.WriteDocumentEnd();
-#if TRACE
-                context.TraceOutdent();
-#endif
+                writeResult.Add(WritePage(context));
             }
             catch (Exception ex)
             {
@@ -383,23 +350,124 @@ namespace OwinFramework.Pages.Html.Runtime
                 });
         }
 
-        #region Outputting Html
+        #region Writing page html structure
+
+        private IWriteResult WritePage(IRenderContext context)
+        {
+            var result = WriteResult.Continue();
+            var html = context.Html;
+
+#if TRACE
+            context.Trace(() => "Writing page HTML");
+            context.TraceIndent();
+#endif
+            html.WriteDocumentStart(context.Language);
+
+            result.Add(WritePageHead(context));
+            result.Add(WritePageBody(context));
+
+            html.WriteDocumentEnd();
+#if TRACE
+            context.TraceOutdent();
+#endif
+
+            return result;
+        }
+
+        private IWriteResult WritePageHead(IRenderContext context)
+        {
+            var result = WriteResult.Continue();
+            var html = context.Html;
+
+            html.WriteOpenTag("head");
+
+            html.Write("<title>");
+            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Title));
+            html.WriteLine("</title>");
+
+            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Head));
+            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Styles));
+            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Scripts));
+
+            html.WriteCloseTag("head");
+
+            return result;
+        }
+
+        private IWriteResult WritePageBody(IRenderContext context)
+        {
+            var result = WriteResult.Continue();
+            var html = context.Html;
+
+            var bodyClassNames = BodyClassNames;
+            if (!string.IsNullOrEmpty(BodyStyle))
+            {
+                _dependencies.NameManager.EnsureAssetName(this, ref _bodyStyleName);
+
+                if (string.IsNullOrEmpty(bodyClassNames))
+                    bodyClassNames = _bodyStyleName;
+                else
+                    bodyClassNames += " " + _bodyStyleName;
+            }
+
+            if (string.IsNullOrEmpty(bodyClassNames))
+                html.WriteOpenTag("body");
+            else
+                html.WriteOpenTag("body", "class", bodyClassNames);
+
+            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Body));
+            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Initialization));
+
+            html.WriteCloseTag("body");
+
+            return result;
+        }
+
+        #endregion
+
+        #region Overriding base class methods for rendering Html
 
         public override IWriteResult WriteStaticCss(ICssWriter writer)
         {
-            var writeResult = WriteResult.Continue();
+            var result = WriteResult.Continue();
 
-            return writeResult;
+            //if (!ReferenceEquals(_pageComponents, null))
+            //{
+            //    for (var i = 0; i < _pageComponents.Length; i++)
+            //    {
+            //        var pageComponent = _pageComponents[i];
+            //        result.Add(pageComponent.Element.WriteStaticCss(writer));
+            //    }
+            //}
+
+            //if (!ReferenceEquals(_layout, null))
+            //    result.Add(_layout.Element.WriteStaticCss(writer));
+
+            return result;
         }
 
         public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
         {
-            var writeResult = WriteResult.Continue();
+            var result = WriteResult.Continue();
 
-            return writeResult;
+            //if (!ReferenceEquals(_pageComponents, null))
+            //{
+            //    for (var i = 0; i < _pageComponents.Length; i++)
+            //    {
+            //        var pageComponent = _pageComponents[i];
+            //        result.Add(pageComponent.Element.WriteStaticJavascript(writer));
+            //    }
+            //}
+
+            //if (!ReferenceEquals(_layout, null))
+            //    result.Add(_layout.Element.WriteStaticJavascript(writer));
+
+            return result;
         }
 
-        public override IWriteResult WriteDynamicCss(ICssWriter writer, bool includeChildren)
+        public override IWriteResult WriteInPageStyles(
+            ICssWriter writer,
+            Func<ICssWriter, IWriteResult, IWriteResult> childrenWriter)
         {
             var writeResult = WriteResult.Continue();
 
@@ -409,91 +477,216 @@ namespace OwinFramework.Pages.Html.Runtime
                 writer.WriteRule("." + _bodyStyleName, BodyStyle);
             }
 
-            if (_components != null)
+            if (!ReferenceEquals(_pageComponents, null))
             {
-                foreach (var component in _components)
+                for (var i = 0; i < _pageComponents.Length; i++)
                 {
-                    if (writeResult.Add(component.WriteInPageStyles(writer)).IsComplete)
+                    var pageComponent = _pageComponents[i];
+                    if (writeResult.Add(pageComponent.WriteStyles(writer)).IsComplete)
                         return writeResult;
                 }
             }
 
-            if (Layout != null)
-                writeResult.Add(Layout.WriteInPageStyles(writer));
+            if (!ReferenceEquals(_layout, null))
+                writeResult.Add(_layout.WriteStyles(writer));
 
             return writeResult;
         }
 
-        public override IWriteResult WriteDynamicJavascript(IJavascriptWriter writer, bool includeChildren)
+        public override IWriteResult WriteInPageFunctions(
+            IJavascriptWriter writer,
+            Func<IJavascriptWriter, IWriteResult, IWriteResult> childrenWriter)
         {
             var writeResult = WriteResult.Continue();
 
-            if (_components != null)
+            if (!ReferenceEquals(_pageComponents, null))
             {
-                foreach (var component in _components)
+                for (var i = 0; i < _pageComponents.Length; i++)
                 {
-                    if (writeResult.Add(component.WriteInPageFunctions(writer)).IsComplete)
+                    var pageComponent = _pageComponents[i];
+                    if (writeResult.Add(pageComponent.WriteScripts(writer)).IsComplete)
                         return writeResult;
                 }
             }
 
-            if (Layout != null)
-                writeResult.Add(Layout.WriteInPageFunctions(writer));
+            if (!ReferenceEquals(_layout, null))
+                writeResult.Add(_layout.WriteScripts(writer));
 
             return writeResult;
         }
 
-        public override IWriteResult WriteInitializationScript(IRenderContext context, bool includeChildren)
+        #endregion
+
+        #region Page specific html rendering methods
+
+        private IWriteResult WritePageArea(
+            IRenderContext renderContext,
+            IDataContextBuilder dataContextBuilder,
+            PageArea pageArea)
         {
             var writeResult = WriteResult.Continue();
 
-            if (_components != null)
-            {
-                foreach (var component in _components)
-                {
-                    writeResult.Add(component.WritePageArea(context));
+#if TRACE
+            renderContext.Trace(() => "Writing the page " + Enum.GetName(typeof(PageArea), pageArea));
+            renderContext.TraceIndent();
 
-                    if (writeResult.IsComplete)
-                        return writeResult;
+            try
+            {
+#endif
+                if (pageArea == PageArea.Title && !ReferenceEquals(TitleFunc, null))
+                {
+                    renderContext.Html.Write(TitleFunc(renderContext));
+                    return writeResult;
+                }
+
+                switch (pageArea)
+                {
+                    case PageArea.Styles:
+                        writeResult.Add(WriteStylesArea(renderContext, dataContextBuilder));
+                        break;
+                    case PageArea.Scripts:
+                        writeResult.Add(WriteScriptsArea(renderContext, dataContextBuilder));
+                        break;
+                    case PageArea.Head:
+                        writeResult.Add(WriteHeadArea(renderContext, dataContextBuilder));
+                        break;
+                    case PageArea.Body:
+                        writeResult.Add(WriteBodyArea(renderContext, dataContextBuilder));
+                        break;
+                    case PageArea.Initialization:
+                        writeResult.Add(WriteInitializationArea(renderContext, dataContextBuilder));
+                        break;
+                }
+
+                if (!ReferenceEquals(_pageComponents, null))
+                {
+                    for (var i = 0; i < _pageComponents.Length; i++)
+                    {
+                        var pageComponent = _pageComponents[i];
+                        if (writeResult.Add(pageComponent.WritePageArea(renderContext, dataContextBuilder, pageArea)).IsComplete)
+                            return writeResult;
+                    }
+                }
+
+                if (!ReferenceEquals(_layout, null))
+                    writeResult.Add(_layout.WritePageArea(renderContext, dataContextBuilder, pageArea));
+#if TRACE
+            }
+            finally
+            {
+                renderContext.TraceOutdent();
+            }
+#endif
+            return writeResult;
+        }
+
+        private IWriteResult WriteStylesArea(
+            IRenderContext renderContext,
+            IDataContextBuilder dataContextBuilder)
+        {
+            var html = renderContext.Html;
+
+            if (_inPageCssLines != null && _inPageCssLines.Count > 0)
+            {
+                if (renderContext.IncludeComments)
+                    html.WriteComment("static in-page styles");
+
+                html.WriteOpenTag("style");
+
+                foreach (var line in _inPageCssLines)
+                    html.WriteLine(line);
+
+                html.WriteCloseTag("style");
+            }
+
+            using (var cssWriter = _dependencies.CssWriterFactory.Create())
+            {
+                var writeResult = WriteResult.Continue();
+
+                if (!ReferenceEquals(_pageComponents, null))
+                {
+                    for (var i = 0; i < _pageComponents.Length; i++)
+                    {
+                        var pageComponent = _pageComponents[i];
+                        writeResult.Add(pageComponent.WriteStyles(cssWriter));
+                    }
+                }
+
+                if (!ReferenceEquals(_layout, null))
+                    writeResult.Add(_layout.WriteStyles(cssWriter));
+
+                writeResult.Wait();
+
+                if (cssWriter.HasContent)
+                {
+                    if (renderContext.IncludeComments)
+                        html.WriteComment("dynamic styles");
+
+                    html.WriteOpenTag("style");
+                    cssWriter.ToHtml(html);
+                    html.WriteCloseTag("style");
                 }
             }
 
-            if (Layout != null)
-                writeResult.Add(Layout.WritePageArea(context));
-
-            return writeResult;
+            return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
+        private IWriteResult WriteScriptsArea(
+            IRenderContext renderContext,
+            IDataContextBuilder dataContextBuilder)
         {
-            var writeResult = WriteResult.Continue();
+            var html = renderContext.Html;
 
-            if (TitleFunc != null)
+            if (_inPageScriptLines != null && _inPageScriptLines.Count > 0)
             {
-                context.Html.Write(TitleFunc(context));
-                return writeResult;
+                if (renderContext.IncludeComments)
+                    html.WriteComment("static in-page javascript");
+
+                html.WriteScriptOpen();
+
+                foreach (var line in _inPageScriptLines)
+                    html.WriteLine(line);
+
+                html.WriteScriptClose();
             }
 
-            if (_components != null)
+            using (var javascriptWriter = _dependencies.JavascriptWriterFactory.Create())
             {
-                foreach (var component in _components)
-                {
-                    writeResult.Add(component.WriteTitle(context));
+                var writeResult = WriteResult.Continue();
 
-                    if (writeResult.IsComplete)
-                        return writeResult;
+                if (!ReferenceEquals(_pageComponents, null))
+                {
+                    for (var i = 0; i < _pageComponents.Length; i++)
+                    {
+                        var pageComponent = _pageComponents[i];
+                        writeResult.Add(pageComponent.WriteScripts(javascriptWriter));
+                    }
+                }
+
+                if (!ReferenceEquals(_layout, null))
+                    writeResult.Add(_layout.WriteScripts(javascriptWriter));
+
+                writeResult.Wait();
+
+                if (javascriptWriter.HasContent)
+                {
+                    if (renderContext.IncludeComments)
+                        html.WriteComment("dynamic javascript");
+
+                    html.WriteScriptOpen();
+                    javascriptWriter.ToHtml(html);
+                    html.WriteScriptClose();
                 }
             }
 
-            if (Layout != null)
-                writeResult.Add(Layout.WriteTitle(context));
-
-            return writeResult;
+            return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
+        private IWriteResult WriteHeadArea(
+            IRenderContext context,
+            IDataContextBuilder dataContextBuilder)
         {
-            var writeResult = WriteResult.Continue();
+            var html = context.Html;
 
             var websiteStylesUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Style);
             if (websiteStylesUrl != null)
@@ -501,8 +694,8 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                 context.Trace(() => "Writing link to website css " + websiteStylesUrl);
 #endif
-                context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", websiteStylesUrl.ToString());
-                context.Html.WriteLine();
+                html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", websiteStylesUrl.ToString());
+                html.WriteLine();
             }
 
             if (_referencedModules != null)
@@ -519,8 +712,8 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                         context.Trace(() => "Writing link to css for module " + moduleStylesUrl);
 #endif
-                        context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
-                        context.Html.WriteLine();
+                        html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
+                        html.WriteLine();
                     }
                 }
                 context.TraceOutdent();
@@ -532,8 +725,8 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                 context.Trace(() => "Writing links to page specific css " + pageStylesUrl);
 #endif
-                context.Html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", pageStylesUrl.ToString());
-                context.Html.WriteLine();
+                html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", pageStylesUrl.ToString());
+                html.WriteLine();
             }
 
             var websiteScriptUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Script);
@@ -542,8 +735,8 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                 context.Trace(() => "Writing link to website JavaScript " + websiteScriptUrl);
 #endif
-                context.Html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
-                context.Html.WriteLine();
+                html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
+                html.WriteLine();
             }
 
             if (_referencedModules != null && _referencedModules.Count > 0)
@@ -561,8 +754,8 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                         context.Trace(() => "Writing link to JavaScript for module " + moduleScriptUrl);
 #endif
-                        context.Html.WriteElement("script", null, "type", "text/javascript", "src", moduleScriptUrl.ToString());
-                        context.Html.WriteLine();
+                        html.WriteElement("script", null, "type", "text/javascript", "src", moduleScriptUrl.ToString());
+                        html.WriteLine();
                     }
                 }
 
@@ -577,143 +770,25 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                 context.Trace(() => "Writing link to page specific JavaScript " + pageScriptUrl);
 #endif
-                context.Html.WriteElement("script", null, "type", "text/javascript", "src", pageScriptUrl.ToString());
-                context.Html.WriteLine();
+                html.WriteElement("script", null, "type", "text/javascript", "src", pageScriptUrl.ToString());
+                html.WriteLine();
             }
 
-            if (_components != null && _components.Count > 0)
-            {
-#if TRACE
-                context.Trace(() => "Allowing components to write into the page head");
-                context.TraceIndent();
-#endif
-
-                foreach (var component in _components)
-                {
-                    writeResult.Add(component.WriteHead(context));
-
-                    if (writeResult.IsComplete)
-                        return writeResult;
-                }
-
-#if TRACE
-                context.TraceOutdent();
-#endif
-            }
-
-            if (Layout != null)
-            {
-#if TRACE
-                context.Trace(() => "Allowing layout to write into the page head");
-                context.TraceIndent();
-#endif
-
-                writeResult.Add(Layout.WriteHead(context));
-
-#if TRACE
-                context.TraceOutdent();
-#endif
-            }
-
-            return writeResult;
+            return WriteResult.Continue();
         }
 
-        public override IWriteResult WriteHtml(IRenderContext context, bool includeChildren)
+        private IWriteResult WriteBodyArea(
+            IRenderContext renderContext,
+            IDataContextBuilder dataContextBuilder)
         {
-            return Layout == null ? WriteResult.Continue() : Layout.WriteHtml(context);
+            return WriteResult.Continue();
         }
 
-        #endregion
-
-        #region Private methods
-
-        private void WritePageHead(IRenderContext context, IHtmlWriter html, IWriteResult writeResult)
+        private IWriteResult WriteInitializationArea(
+            IRenderContext renderContext,
+            IDataContextBuilder dataContextBuilder)
         {
-            html.WriteOpenTag("head");
-
-            html.Write("<title>");
-            writeResult.Add(WriteTitle(context, true));
-            html.WriteLine("</title>");
-
-            writeResult.Add(WriteHead(context, true));
-
-            if (_inPageCssLines != null && _inPageCssLines.Count > 0)
-            {
-                if (context.IncludeComments)
-                    html.WriteComment("static in-page styles");
-
-                html.WriteOpenTag("style");
-
-                foreach(var line in _inPageCssLines)
-                    html.WriteLine(line);
-                
-                html.WriteCloseTag("style");
-            }
-
-            if (_inPageScriptLines != null && _inPageScriptLines.Count > 0)
-            {
-                if (context.IncludeComments)
-                    html.WriteComment("static in-page javascript");
-
-                html.WriteScriptOpen();
-                foreach (var line in _inPageScriptLines)
-                    html.WriteLine(line);
-                html.WriteScriptClose();
-            }
-
-            using (var cssWriter = _dependencies.CssWriterFactory.Create())
-            {
-                var result = WriteDynamicCss(cssWriter, true);
-                result.Wait();
-                if (cssWriter.HasContent)
-                {
-                    if (context.IncludeComments)
-                        html.WriteComment("dynamic styles");
-
-                    html.WriteOpenTag("style");
-                    cssWriter.ToHtml(context.Html);
-                    html.WriteCloseTag("style");
-                }
-            }
-
-            using (var javascriptWriter = _dependencies.JavascriptWriterFactory.Create())
-            {
-                var result = WriteDynamicJavascript(javascriptWriter, true);
-                result.Wait();
-                if (javascriptWriter.HasContent)
-                {
-                    if (context.IncludeComments)
-                        html.WriteComment("dynamic javascript");
-
-                    html.WriteScriptOpen();
-                    javascriptWriter.ToHtml(context.Html);
-                    html.WriteScriptClose();
-                }
-            }
-            
-            html.WriteCloseTag("head");
-        }
-
-        private void WritePageBody(IRenderContext context, IHtmlWriter html, IWriteResult writeResult)
-        {
-            var bodyClassNames = BodyClassNames;
-            if (!string.IsNullOrEmpty(BodyStyle))
-            {
-                _dependencies.NameManager.EnsureAssetName(this, ref _bodyStyleName);
-
-                if (string.IsNullOrEmpty(bodyClassNames))
-                    bodyClassNames = _bodyStyleName;
-                else
-                    bodyClassNames += " " + _bodyStyleName;
-            }
-
-            if (string.IsNullOrEmpty(bodyClassNames))
-                html.WriteOpenTag("body");
-            else
-                html.WriteOpenTag("body", "class", bodyClassNames);
-
-            writeResult.Add(WriteHtml(context, true));
-            html.WriteCloseTag("body");
+            return WriteResult.Continue();
         }
 
         #endregion

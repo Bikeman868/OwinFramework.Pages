@@ -35,11 +35,11 @@ namespace OwinFramework.Pages.Html.Elements
             }
         }
 
-        public PageElement(
+        protected PageElement(
             PageElementDependencies dependencies,
             PageElement parent,
             IElement element,
-            IPageData initializationData)
+            IPageData pageData)
         {
             if (element == null) throw new ArgumentNullException("element");
 
@@ -50,13 +50,13 @@ namespace OwinFramework.Pages.Html.Elements
                 if (pageArea >= 0 && pageArea < PageArea.MaxValue)
                     _hasPageArea[(int)pageArea] = true;
 
-            initializationData.HasElement(element, element.AssetDeployment, element.Module);
+            pageData.HasElement(element, element.AssetDeployment, element.Module);
 
             var elementBase = element as Element;
             if (elementBase != null)
             {
                 foreach(var component in elementBase.GetDependentComponents())
-                    initializationData.NeedsComponent(component);
+                    pageData.NeedsComponent(component);
             }
         }
 

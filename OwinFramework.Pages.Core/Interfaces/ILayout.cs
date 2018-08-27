@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -23,6 +24,17 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Gets a region from the layout
         /// </summary>
         IRegion GetRegion(string regionName);
+
+        /// <summary>
+        /// Gets the element that is within the specified region
+        /// </summary>
+        IElement GetElement(string regionName);
+
+        /// <summary>
+        /// Returns a list of the regions on this layout
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<string> GetRegionNames();
 
         /// <summary>
         /// This is called for each area of the page where this instance wants

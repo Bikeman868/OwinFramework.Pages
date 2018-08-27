@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -48,5 +49,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// A factory for constructing data consumers
         /// </summary>
         IDataConsumerFactory DataConsumerFactory { get; }
+
+        /// <summary>
+        /// A factory for constructing thread-safe dictionaries
+        /// </summary>
+        IDictionaryFactory DictionaryFactory { get; }
     }
 }

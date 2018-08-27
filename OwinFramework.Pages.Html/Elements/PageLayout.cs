@@ -18,8 +18,8 @@ namespace OwinFramework.Pages.Html.Elements
             PageElement parent,
             ILayout layout, 
             IEnumerable<Tuple<IRegion, IElement>> regionElements,
-            IPageData initializationData)
-            : base(dependencies, parent, layout, initializationData)
+            IPageData pageData)
+            : base(dependencies, parent, layout, pageData)
         {
             _regions = dependencies.DictionaryFactory.Create<string, PageRegion>();
 
@@ -30,7 +30,7 @@ namespace OwinFramework.Pages.Html.Elements
                 var region = regionElement.Item1;
                 var element = regionElement.Item2;
 
-                var pageRegion = new PageRegion(dependencies, this, region, element, initializationData);
+                var pageRegion = new PageRegion(dependencies, this, region, element, pageData);
                 _regions[region.Name] = pageRegion;
             }
 

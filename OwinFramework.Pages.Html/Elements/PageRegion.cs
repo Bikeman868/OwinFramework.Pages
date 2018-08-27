@@ -17,14 +17,14 @@ namespace OwinFramework.Pages.Html.Elements
             PageElement parent,
             IRegion region, 
             IElement content, 
-            IPageData initializationData)
-            : base(dependencies, parent, region, initializationData)
+            IPageData pageData)
+            : base(dependencies, parent, region, pageData)
         {
-            _dataScopeProvider = initializationData.ScopeProvider.CreateInstance();
-            _dataScopeProvider.Initialize(initializationData.ScopeProvider);
+            _dataScopeProvider = pageData.ScopeProvider.CreateInstance();
+            _dataScopeProvider.Initialize(pageData.ScopeProvider);
 
-            initializationData.Push();
-            initializationData.ScopeProvider = _dataScopeProvider;
+            pageData.Push();
+            pageData.ScopeProvider = _dataScopeProvider;
 
             content = content ?? region.Content;
             var layout = content as ILayout;
@@ -32,13 +32,13 @@ namespace OwinFramework.Pages.Html.Elements
 
             if (layout != null)
             {
-                var pageLayout = new PageLayout(dependencies, this, layout, null, initializationData);
+                var pageLayout = new PageLayout(dependencies, this, layout, null, pageData);
                 _writeContent = pageLayout.WritePageArea;
                 Children = new PageElement[] { pageLayout };
             }
             else if (component != null)
             {
-                var pageLayout = new PageComponent(dependencies, this, component, initializationData);
+                var pageLayout = new PageComponent(dependencies, this, component, pageData);
                 _writeContent = pageLayout.WritePageArea;
                 Children = new PageElement[] { pageLayout };
             }
@@ -48,7 +48,7 @@ namespace OwinFramework.Pages.Html.Elements
                 _writeContent = (rc, dc, pa) => WriteResult.Continue();
             }
 
-            initializationData.Pop();
+            pageData.Pop();
         }
 
         protected override IWriteResult WritePageAreaInternal(IRenderContext renderContext, IDataContextBuilder dataContextBuilder, PageArea pageArea)

@@ -56,6 +56,11 @@ namespace OwinFramework.Pages.Html.Elements
             PopulateElement(regionName, region.Content);
         }
 
+        public IEnumerable<string> GetRegionNames()
+        {
+            return RegionsByName.Keys;
+        }
+
         public void PopulateElement(string regionName, IElement element)
         {
             ElementsByName[regionName] = element;
@@ -109,7 +114,7 @@ namespace OwinFramework.Pages.Html.Elements
             }
         }
 
-        public IWriteResult WritePageArea(
+        public virtual IWriteResult WritePageArea(
             IRenderContext context, 
             IDataContextBuilder dataContextBuilder, 
             PageArea pageArea, 

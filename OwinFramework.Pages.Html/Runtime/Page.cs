@@ -106,14 +106,14 @@ namespace OwinFramework.Pages.Html.Runtime
 
             if (Layout != null)
             {
-                var regionElements = new List<Tuple<IRegion, IElement>>();
+                var regionElements = new List<Tuple<string, IRegion, IElement>>();
                 foreach(var regionName in Layout.GetRegionNames())
                 {
                     var region = Layout.GetRegion(regionName);
                     var element = _regions.ContainsKey(regionName)
                         ? _regions[regionName]
                         : Layout.GetRegion(regionName);
-                    regionElements.Add(new Tuple<IRegion, IElement>(region, element));
+                    regionElements.Add(new Tuple<string, IRegion, IElement>(regionName, region, element));
                 }
                 _layout = new PageLayout(elementDependencies, null, Layout, regionElements, data);
             }
@@ -519,7 +519,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region Page specific html rendering methods
 
-        private IWriteResult WritePageArea(
+        public virtual IWriteResult WritePageArea(
             IRenderContext renderContext,
             IDataContextBuilder dataContextBuilder,
             PageArea pageArea)
@@ -580,7 +580,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return writeResult;
         }
 
-        private IWriteResult WriteStylesArea(
+        public virtual IWriteResult WriteStylesArea(
             IRenderContext renderContext,
             IDataContextBuilder dataContextBuilder)
         {
@@ -631,7 +631,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return WriteResult.Continue();
         }
 
-        private IWriteResult WriteScriptsArea(
+        public virtual IWriteResult WriteScriptsArea(
             IRenderContext renderContext,
             IDataContextBuilder dataContextBuilder)
         {
@@ -682,7 +682,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return WriteResult.Continue();
         }
 
-        private IWriteResult WriteHeadArea(
+        public virtual IWriteResult WriteHeadArea(
             IRenderContext context,
             IDataContextBuilder dataContextBuilder)
         {
@@ -777,14 +777,14 @@ namespace OwinFramework.Pages.Html.Runtime
             return WriteResult.Continue();
         }
 
-        private IWriteResult WriteBodyArea(
+        public virtual IWriteResult WriteBodyArea(
             IRenderContext renderContext,
             IDataContextBuilder dataContextBuilder)
         {
             return WriteResult.Continue();
         }
 
-        private IWriteResult WriteInitializationArea(
+        public virtual IWriteResult WriteInitializationArea(
             IRenderContext renderContext,
             IDataContextBuilder dataContextBuilder)
         {

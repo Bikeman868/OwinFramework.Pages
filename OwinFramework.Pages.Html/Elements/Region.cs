@@ -100,9 +100,9 @@ namespace OwinFramework.Pages.Html.Elements
 
         #endregion
 
-        #region Methods called by page regions to render content
+        #region Writing html to the page
 
-        public IWriteResult WritePageArea(
+        public virtual IWriteResult WritePageArea(
             IRenderContext context, 
             IDataContextBuilder dataContextBuilder, 
             PageArea pageArea, 

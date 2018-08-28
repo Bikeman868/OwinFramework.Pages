@@ -1,7 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 
@@ -13,39 +15,21 @@ namespace Sample1.SamplePages
     {
         public SemiCustomPage(IPageDependenciesFactory dependenciesFactory)
             : base(dependenciesFactory)
-        {}
-
-        public override IWriteResult WriteTitle(IRenderContext context, bool includeChildren)
         {
-            context.Html.WriteLine("Page title");
-            return WriteResult.ResponseComplete();
+            TitleFunc = context => "Page title";
         }
 
-        public override IWriteResult WriteHead(IRenderContext context, bool includeChildren)
+        public override IWriteResult WriteBodyArea(
+            IRenderContext context, 
+            IDataContextBuilder dataContextBuilder)
         {
-            context.Html.WriteUnclosedElement(
-                "link", "rel", 
-                "stylesheet", "href", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
-            context.Html.WriteLine();
-            return WriteResult.Continue();
-        }
+            var html = context.Html;
 
-        public override IWriteResult WriteDynamicCss(ICssWriter writer, bool includeChildren)
-        {
-            writer.WriteRule(".normal", "background-color: linen; font-size: 12px;");
-            writer.WriteRule(".page-heading", "font-size: 16px;");
-            return WriteResult.Continue();
-        }
-
-        public override IWriteResult WriteHtml(
-            IRenderContext context,
-            bool includeChildren)
-        {
             // Save this location in the output buffer
-            var begining = context.Html.CreateInsertionPoint();
+            var begining = html.CreateInsertionPoint();
 
             // Write a paragraph of text
-            context.Html.WriteElementLine("p", "This is a semi custom page", "class", "normal");
+            html.WriteElementLine("p", "This is a semi custom page", "class", "normal");
 
             // Use the saved buffer location to write the heading before the paragraph
             // and do this in a separate thread
@@ -58,9 +42,31 @@ namespace Sample1.SamplePages
                 });
 
             // Write a second paragraph of text
-            context.Html.WriteElementLine("p", "My second paragraph of text", "class", "normal");
+            html.WriteElementLine("p", "My second paragraph of text", "class", "normal");
 
             return WriteResult.WaitFor(task);
         }
+
+        public override IWriteResult WriteInPageStyles(
+            ICssWriter writer, 
+            Func<ICssWriter, IWriteResult, IWriteResult> childrenWriter)
+        {
+            writer.WriteRule(".normal", "background-color: linen; font-size: 12px;");
+            writer.WriteRule(".page-heading", "font-size: 16px;");
+
+            return base.WriteInPageStyles(writer, childrenWriter);
+        }
+
+        public override IWriteResult WriteHeadArea(IRenderContext context, IDataContextBuilder dataContextBuilder)
+        {
+            var result = base.WriteHeadArea(context, dataContextBuilder);
+
+            context.Html.WriteUnclosedElement(
+                "link", "rel",
+                "stylesheet", "href", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+            context.Html.WriteLine();
+            return result;
+        }
+
     }
 }

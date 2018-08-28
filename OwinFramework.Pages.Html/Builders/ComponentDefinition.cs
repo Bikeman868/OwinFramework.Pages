@@ -255,7 +255,7 @@ namespace OwinFramework.Pages.Html.Builders
                             Action<ICssWriter> writeAction = w => w.WriteRule(d.Selector, d.Style);
                             return writeAction;
                         })
-                        .ToList();
+                        .ToArray();
 
                     _component.JavascriptFunctions = _functionDefinitions
                         .Select(d =>
@@ -264,7 +264,7 @@ namespace OwinFramework.Pages.Html.Builders
                                 d.FunctionName, d.Parameters, d.Body, d.ReturnType, _component.Package, d.IsPublic);
                             return writeAction;
                         })
-                        .ToList();
+                        .ToArray();
 
                     _component.HtmlWriters = _htmlToRender
                         .Select(d =>
@@ -291,7 +291,7 @@ namespace OwinFramework.Pages.Html.Builders
                                 }
                                 return action;
                             })
-                        .ToList();
+                        .ToArray();
                 });
 
             _fluentBuilder.Register(_component);

@@ -108,15 +108,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.Layout(ILayout layout)
         {
-            _nameManager.AddResolutionHandler(
-                NameResolutionPhase.CreateInstances,
-                (nm, p, l) =>
-                {
-                    var layoutInstance = l.CreateInstance();
-                    p.Layout = layoutInstance;
-                },
-                _page,
-                layout);
+            _page.Layout = layout;
             return this;
         }
 
@@ -126,13 +118,8 @@ namespace OwinFramework.Pages.Html.Builders
                 throw new PageBuilderException("The name of the layout to use for the page is required");
 
             _nameManager.AddResolutionHandler(
-                NameResolutionPhase.CreateInstances,
-                (nm, p, n) => 
-                    {
-                        var layout = nm.ResolveLayout(n, p.Package);
-                        var layoutInstance = layout.CreateInstance();
-                        p.Layout = layoutInstance;
-                    },
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, p, n) => { p.Layout = nm.ResolveLayout(n, p.Package); },
                 _page,
                 layoutName);
             return this;

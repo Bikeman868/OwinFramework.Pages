@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -16,6 +17,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly IJavascriptWriterFactory _javascriptWriterFactory;
         private readonly IDataScopeProviderFactory _dataScopeProviderFactory;
         private readonly IDataConsumerFactory _dataConsumerFactory;
+        private readonly IDictionaryFactory _dictionaryFactory;
 
         public PageDependenciesFactory(
             IRenderContextFactory renderContextFactory,
@@ -24,7 +26,8 @@ namespace OwinFramework.Pages.Html.Runtime
             ICssWriterFactory cssWriterFactory,
             IJavascriptWriterFactory javascriptWriterFactory,
             IDataScopeProviderFactory dataScopeProviderFactory, 
-            IDataConsumerFactory dataConsumerFactory)
+            IDataConsumerFactory dataConsumerFactory,
+            IDictionaryFactory dictionaryFactory)
         {
             _renderContextFactory = renderContextFactory;
             _assetManager = assetManager;
@@ -33,6 +36,7 @@ namespace OwinFramework.Pages.Html.Runtime
             _javascriptWriterFactory = javascriptWriterFactory;
             _dataScopeProviderFactory = dataScopeProviderFactory;
             _dataConsumerFactory = dataConsumerFactory;
+            _dictionaryFactory = dictionaryFactory;
         }
 
         public IPageDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace)
@@ -73,6 +77,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public IDataConsumerFactory DataConsumerFactory
         {
             get { return _dataConsumerFactory; }
+        }
+
+        public IDictionaryFactory DictionaryFactory
+        {
+            get { return _dictionaryFactory; }
         }
     }
 }

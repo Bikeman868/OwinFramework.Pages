@@ -125,7 +125,8 @@ namespace Sample1.SamplePackages
         {
             #region These properties do not need to do anything
 
-            IElement IRegion.Content { get { return null; } }
+            public IElement Content { get; set; }
+
             string IDataRepeater.RepeatScope { get; set; }
             Type IDataRepeater.RepeatType { get; set; }
             string IDataRepeater.ListScope { get; set; }
@@ -137,131 +138,120 @@ namespace Sample1.SamplePackages
 
             #endregion
 
+            #region The easy way to implement IDataConsumer is as a Mixin
+
+            private IDataConsumer _dataConsumer = null;
+
+            void IDataConsumer.HasDependency(IDataSupply dataSupply)
+            {
+                if (_dataConsumer == null) return;
+                _dataConsumer.HasDependency(dataSupply);
+            }
+
+            IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
+            {
+                if (_dataConsumer == null) return null;
+                return _dataConsumer.AddDependenciesToScopeProvider(dataScope);
+            }
+
+            void IDataConsumer.HasDependency<T>(string scopeName)
+            {
+                if (_dataConsumer == null) return;
+                _dataConsumer.HasDependency<T>(scopeName);
+            }
+
+            void IDataConsumer.HasDependency(Type dataType, string scopeName)
+            {
+                if (_dataConsumer == null) return;
+                _dataConsumer.HasDependency(dataType, scopeName);
+            }
+
+            void IDataConsumer.CanUseData<T>(string scopeName)
+            {
+                if (_dataConsumer == null) return;
+                _dataConsumer.CanUseData<T>(scopeName);
+            }
+
+            void IDataConsumer.CanUseData(Type dataType, string scopeName)
+            {
+                if (_dataConsumer == null) return;
+                _dataConsumer.CanUseData(dataType, scopeName);
+            }
+
+            void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
+            {
+                if (_dataConsumer == null) return;
+                _dataConsumer.HasDependency(dataProvider, dependency);
+            }
+
+            DebugDataConsumer IDataConsumer.GetDataConsumerDebugInfo()
+            {
+                return _dataConsumer == null
+                    ? null
+                    : _dataConsumer.GetDataConsumerDebugInfo();
+            }
+
+            #endregion
+
             #region You have to specify that this is a region
 
-            ElementType IElement.ElementType { get { return ElementType.Region; } }
+            ElementType INamed.ElementType { get { return ElementType.Region; } }
 
             #endregion
 
-            #region You must support the creation of instances
+            #region This is the part you have to change for your desired behavior
 
-            private bool _isInstance;
-
-            bool IRegion.IsInstance { get { return _isInstance; } }
-
-            IRegion IRegion.CreateInstance(IElement content)
+            IWriteResult IRegion.WritePageArea(
+                IRenderContext context,
+                IDataContextBuilder dataContextBuilder,
+                PageArea pageArea,
+                Action<object> onListItem,
+                Func<IRenderContext, IDataContextBuilder, PageArea, IWriteResult> contentWriter)
             {
-                return new RegionExample5 
-                { 
-                    _content = content,
-                    _isInstance = true
-                };
-            }
-
-            #endregion
-
-            #region You must support at least this much initialization
-
-            void IElement.Initialize(IPageData initializationData)
-            {
-                initializationData.HasElement(this);
-                _content.Initialize(initializationData);
+                // TODO: Add code here to write html onto the page
+                return WriteResult.Continue();
             }
 
             #endregion
 
-            #region This example demonstrates simply wrapping another element and adding no new functionality
+            #region These methods are common to all elements
 
-            private IElement _content;
+            private readonly PageArea[] _pageAreas = { PageArea.Body };
 
-            void IRegion.Populate(IElement content)
+            IEnumerable<PageArea> IPageWriter.GetPageAreas()
             {
-                _content = content;
+                return _pageAreas;
             }
 
-            IWriteResult IRegion.WriteHtml(IRenderContext context, IDataScopeProvider scope, IElement content)
+            IWriteResult IPageWriter.WriteInPageStyles(
+                ICssWriter writer,
+                Func<ICssWriter, IWriteResult, IWriteResult> childrenWriter)
             {
-                if (content == null) return WriteResult.Continue();
-
-                var data = context.Data;
-                context.SelectDataContext(scope.Id);
-
-                var result = content.WriteHtml(context);
-
-                context.Data = data;
-                return result;
+                return WriteResult.Continue();
             }
 
-            IWriteResult IRegion.WriteHead(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
+            IWriteResult IPageWriter.WriteInPageFunctions(
+                IJavascriptWriter writer,
+                Func<IJavascriptWriter, IWriteResult, IWriteResult> childrenWriter)
             {
-                return includeChildren ? _content.WriteHead(context) : WriteResult.Continue();
-            }
-
-            IWriteResult IRegion.WriteInitializationScript(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
-            {
-                return includeChildren ? _content.WritePageArea(context) : WriteResult.Continue();
-            }
-
-            IWriteResult IRegion.WriteTitle(IRenderContext context, IDataScopeProvider scope, bool includeChildren)
-            {
-                return includeChildren ? _content.WriteTitle(context) : WriteResult.Continue();
-            }
-
-            IEnumerator<IElement> IElement.GetChildren()
-            {
-                return _content.AsEnumerable().GetEnumerator();
+                return WriteResult.Continue();
             }
 
             IWriteResult IDeployable.WriteStaticCss(ICssWriter writer)
             {
-                return _content.WriteStaticCss(writer);
+                return WriteResult.Continue();
             }
 
             IWriteResult IDeployable.WriteStaticJavascript(IJavascriptWriter writer)
             {
-                return _content.WriteStaticJavascript(writer);
-            }
-
-            IWriteResult IElement.WriteDynamicCss(ICssWriter writer, bool includeChildren)
-            {
-                return includeChildren ? _content.WriteInPageStyles(writer) : WriteResult.Continue();
-            }
-
-            IWriteResult IElement.WriteDynamicJavascript(IJavascriptWriter writer, bool includeChildren)
-            {
-                return includeChildren ? _content.WriteInPageFunctions(writer) : WriteResult.Continue();
-            }
-
-            IWriteResult IElement.WriteInitializationScript(IRenderContext context, bool includeChildren)
-            {
-                return includeChildren ? _content.WritePageArea(context) : WriteResult.Continue();
-            }
-
-            IWriteResult IElement.WriteTitle(IRenderContext context, bool includeChildren)
-            {
-                return includeChildren ? _content.WriteTitle(context) : WriteResult.Continue();
-            }
-
-            IWriteResult IElement.WriteHead(IRenderContext context, bool includeChildren)
-            {
-                return includeChildren ? _content.WriteHead(context) : WriteResult.Continue();
-            }
-
-            IWriteResult IElement.WriteHtml(IRenderContext context, bool includeChildren)
-            {
-                return includeChildren ? _content.WriteHtml(context) : WriteResult.Continue();
+                return WriteResult.Continue();
             }
 
             #endregion
 
             #region These methods do not need any implementation
 
-            DebugInfo IElement.GetDebugInfo()
-            {
-                return null;
-            }
-
-            IDataConsumer IElement.GetDataConsumer()
+            DebugInfo IDebuggable.GetDebugInfo()
             {
                 return null;
             }

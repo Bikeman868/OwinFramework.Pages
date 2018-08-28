@@ -17,21 +17,27 @@ namespace OwinFramework.Pages.Html.Elements
             PageElementDependencies dependencies,
             PageElement parent,
             ILayout layout, 
-            IEnumerable<Tuple<IRegion, IElement>> regionElements,
+            IEnumerable<Tuple<string, IRegion, IElement>> regionElements,
             IPageData pageData)
             : base(dependencies, parent, layout, pageData)
         {
             _regions = dependencies.DictionaryFactory.Create<string, PageRegion>();
 
-            // TODO: regionElements can be null or incomplete
+            var regionElementList = regionElements == null
+                ? new List<Tuple<string, IRegion, IElement>>() 
+                : regionElements.ToList();
 
-            foreach (var regionElement in regionElements)
+            foreach(var regionName in layout.GetRegionNames())
             {
-                var region = regionElement.Item1;
-                var element = regionElement.Item2;
+                var name = regionName;
+                var regionElement = regionElementList.FirstOrDefault(
+                    re => string.Equals(re.Item1, name, StringComparison.OrdinalIgnoreCase));
+
+                var region = regionElement == null ? layout.GetRegion(name) : regionElement.Item2;
+                var element = regionElement == null ? layout.GetElement(name) : regionElement.Item3;
 
                 var pageRegion = new PageRegion(dependencies, this, region, element, pageData);
-                _regions[region.Name] = pageRegion;
+                _regions[regionName] = pageRegion;
             }
 
             Children = _regions.Values.ToArray();

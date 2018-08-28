@@ -17,6 +17,7 @@ namespace Sample1.SamplePages
     [Example("<a href='/page3'>/page3</a>")]
     internal class SelfRegisteringPage : IPage
     {
+        public ElementType ElementType { get { return ElementType.Page; } }
         public string Name { get; set; }
         public IPackage Package { get; set; }
         string IRunable.RequiredPermission { get { return null; } set { } }

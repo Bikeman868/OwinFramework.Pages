@@ -53,10 +53,14 @@ namespace OwinFramework.Pages.Html.Elements
             pageData.HasElement(element, element.AssetDeployment, element.Module);
 
             var elementBase = element as Element;
-            if (elementBase != null)
+            if (!ReferenceEquals(elementBase, null))
             {
-                foreach(var component in elementBase.GetDependentComponents())
-                    pageData.NeedsComponent(component);
+                var dependentComponents = elementBase.GetDependentComponents();
+                if (!ReferenceEquals(dependentComponents, null))
+                {
+                    foreach (var component in dependentComponents)
+                        pageData.NeedsComponent(component);
+                }
             }
         }
 

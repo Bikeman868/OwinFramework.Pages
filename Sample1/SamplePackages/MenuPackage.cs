@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -87,17 +88,24 @@ namespace Sample1.SamplePackages
         private class MenuItemComponent : Component
         {
             public MenuItemComponent(IComponentDependenciesFactory dependencies) 
-                : base(dependencies) { }
-
-            public override IWriteResult WriteHtml(
-                IRenderContext context, 
-                bool includeChildren)
+                : base(dependencies) 
             {
-                var menuItem = context.Data.Get<MenuItem>();
-                if (menuItem != null)
+                PageAreas = new []{ PageArea.Body };
+            }
+
+            public override IWriteResult WritePageArea(
+                IRenderContext context, 
+                IDataContextBuilder dataContextBuilder, 
+                PageArea pageArea)
+            {
+                if (pageArea == PageArea.Body)
                 {
-                    var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
-                    context.Html.WriteElementLine("a", menuItem.Name, "href", url);
+                    var menuItem = context.Data.Get<MenuItem>();
+                    if (menuItem != null)
+                    {
+                        var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
+                        context.Html.WriteElementLine("a", menuItem.Name, "href", url);
+                    }
                 }
                 return WriteResult.Continue();
             }

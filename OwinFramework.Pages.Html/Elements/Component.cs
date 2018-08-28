@@ -43,7 +43,7 @@ namespace OwinFramework.Pages.Html.Elements
                 (Package == null ? string.Empty : " from the '" + Package.Name + "' package");
         }
 
-        public IWriteResult WritePageArea(
+        public virtual IWriteResult WritePageArea(
             IRenderContext context, 
             IDataContextBuilder dataContextBuilder, 
             PageArea pageArea)

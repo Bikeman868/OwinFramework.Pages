@@ -80,7 +80,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Layout(ILayout layout)
         {
-            _region.Populate(layout);
+            _region.Content = layout;
             return this;
         }
 
@@ -91,7 +91,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, r, n) => r.Populate(nm.ResolveLayout(n, r.Package)),
+                (nm, r, n) => r.Content = nm.ResolveLayout(n, r.Package),
                 _region,
                 layoutName);
 
@@ -100,7 +100,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Component(IComponent component)
         {
-            _region.Populate(component);
+            _region.Content = component;
             return this;
         }
 
@@ -111,7 +111,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, r, n) => r.Populate(nm.ResolveComponent(n, r.Package)),
+                (nm, r, n) => r.Content = nm.ResolveComponent(n, r.Package),
                 _region,
                 componentName);
 

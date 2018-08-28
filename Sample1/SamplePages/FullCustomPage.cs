@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -14,6 +15,7 @@ namespace Sample1.SamplePages
     [Example("<a href='/pages/anything.html'>/pages/anything.html</a>")]
     internal class FullCustomPage : IPage
     {
+        public ElementType ElementType { get { return ElementType.Page; } }
         public string Name { get; set; }
         public IPackage Package { get; set; }
         string IRunable.RequiredPermission { get { return null; } set { } }

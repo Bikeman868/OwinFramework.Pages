@@ -124,7 +124,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteElementLine("p", "Dependent components");
                 html.WriteOpenTag("ul");
                 foreach (var component in debugInfo.DependentComponents)
-                    html.WriteElementLine("li", component.GetDebugInfo().ToString().InitialCaps());
+                    html.WriteElementLine("li", component.GetDebugInfo(0, 0).ToString().InitialCaps());
                 html.WriteCloseTag("ul");
             }
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Core.Debug
@@ -21,11 +23,13 @@ namespace OwinFramework.Pages.Core.Debug
         /// The scope provider that will be used to resolve
         /// requests for data that is missing from the data context
         /// </summary>
+        [JsonProperty, XmlIgnore]
         public IDataScopeProvider Scope { get; set; }
 
         /// <summary>
         /// The properties that are overriden in this context
         /// </summary>
+        [JsonProperty, XmlIgnore]
         public List<Type> Properties { get; set; }
     }
 }

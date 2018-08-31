@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace OwinFramework.Pages.Core.Debug
 {
@@ -20,11 +22,13 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The type of data to repeat inside the region
         /// </summary>
+        [JsonProperty, XmlIgnore]
         public Type RepeatType { get; set; }
 
         /// <summary>
         /// The type of list to get from context for repeating
         /// </summary>
+        [JsonProperty, XmlIgnore]
         public Type ListType { get; set; }
 
         /// <summary>

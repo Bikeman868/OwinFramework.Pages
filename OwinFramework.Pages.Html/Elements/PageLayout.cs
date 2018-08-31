@@ -49,15 +49,18 @@ namespace OwinFramework.Pages.Html.Elements
         {
             var debugLayout = debugInfo as DebugLayout ?? new DebugLayout();
 
-            debugLayout.Regions = _regions
-                .Select(kvp =>
-                    new DebugLayoutRegion
-                    {
-                        Name = kvp.Key,
-                        Instance = kvp.Value,
-                        Region = kvp.Value.GetDebugInfo<DebugRegion>()
-                    })
-                .ToList();
+            if (childDepth != 0)
+            {
+                debugLayout.Regions = _regions
+                    .Select(kvp =>
+                        new DebugLayoutRegion
+                        {
+                            Name = kvp.Key,
+                            Instance = kvp.Value,
+                            Region = kvp.Value.GetDebugInfo<DebugRegion>(0, childDepth - 1)
+                        })
+                    .ToList();
+            }
 
             return base.PopulateDebugInfo(debugLayout, parentDepth, childDepth);
         }

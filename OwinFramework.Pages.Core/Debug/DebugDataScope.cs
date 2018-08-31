@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 using OwinFramework.Pages.Core.Extensions;
 
 namespace OwinFramework.Pages.Core.Debug
@@ -14,6 +16,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The type of data in scope
         /// </summary>
+        [JsonProperty, XmlIgnore]
         public Type DataType { get; set; }
 
         /// <summary>

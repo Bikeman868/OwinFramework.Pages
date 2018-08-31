@@ -55,6 +55,15 @@ namespace OwinFramework.Pages.Html.Elements
         protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             var debugRegion = debugInfo as DebugRegion ?? new DebugRegion();
+
+            if (childDepth != 0)
+            {
+                if (Children != null && Children.Length > 0)
+                {
+                    debugRegion.Content = Children[0].GetDebugInfo(0, childDepth - 1);
+                }
+            }
+
             return base.PopulateDebugInfo(debugRegion, parentDepth, childDepth);
         }
 

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace OwinFramework.Pages.Core.Debug
 {
@@ -19,6 +21,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// Debug information about the data that will be 
         /// used for data binding during this rendering operation
         /// </summary>
+        [JsonProperty, XmlIgnore]
         public IDictionary<int, DebugDataContext> Data { get; set; }
     }
 }

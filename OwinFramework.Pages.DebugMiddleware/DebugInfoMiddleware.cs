@@ -49,7 +49,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                 return context.Response.WriteAsync("No routes match this request");
             }
 
-            var debugInfo = runable.GetDebugInfo();
+            var debugInfo = runable.GetDebugInfo(0, -1);
 
             if (string.Equals("svg", debug))
             {

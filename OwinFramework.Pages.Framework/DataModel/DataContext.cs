@@ -53,8 +53,8 @@ namespace OwinFramework.Pages.Framework.DataModel
             {
                 Instance = this,
                 Scope = _scope,
-                Parent = _parent.GetDebugInfo(),
-                Properties = _properties.Keys.ToList()
+                Properties = _properties.Keys.ToList(),
+                Parent = parentDepth == 0 ? null : _parent.GetDebugInfo(parentDepth - 1, 0)
             };
         }
 

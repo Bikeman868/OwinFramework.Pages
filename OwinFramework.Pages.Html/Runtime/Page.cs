@@ -98,7 +98,6 @@ namespace OwinFramework.Pages.Html.Runtime
                     : Module.AssetDeployment;
             }
 
-
             var elementDependencies = new PageElementDependencies
             {
                 DictionaryFactory = _dependencies.DictionaryFactory
@@ -805,7 +804,7 @@ namespace OwinFramework.Pages.Html.Runtime
             debugPage.Scope = _dataScopeProvider.GetDebugInfo<DebugDataScopeProvider>(0, -1);
 
             if (childDepth != 0)
-                debugPage.Layout = _layout.GetDebugInfo<DebugLayout>();
+                debugPage.Layout = _layout.GetDebugInfo<DebugLayout>(0, childDepth - 1);
 
             return base.PopulateDebugInfo(debugPage, parentDepth, childDepth);
         }

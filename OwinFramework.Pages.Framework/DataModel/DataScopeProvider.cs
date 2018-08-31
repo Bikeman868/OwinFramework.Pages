@@ -48,20 +48,14 @@ namespace OwinFramework.Pages.Framework.DataModel
                 Id = Id
             };
 
-            if (parentDepth != 0 && !ReferenceEquals(_parent, null))
-            {
+            if (parentDepth != 0)
                 debug.Parent = _parent.GetDebugInfo(parentDepth - 1, 0);
-            }
 
             if (childDepth != 0)
             {
-                lock(_children)
-                {
-                    debug.Children = _children
-                        .Select(c => c.GetDebugInfo(0, childDepth - 1))
-                        .Cast<DebugInfo>()
-                        .ToList();
-                }
+                debug.Children = _children
+                    .Select(c => c.GetDebugInfo(0, childDepth - 1))
+                    .ToList();
             }
 
             lock (_dataScopes)

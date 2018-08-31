@@ -29,6 +29,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The components that this element depends on
         /// </summary>
+        [JsonProperty, XmlIgnore]
         public List<IComponent> DependentComponents { get; set; }
 
         /// <summary>
@@ -40,6 +41,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The element that relates to this debug info
         /// </summary>
+        [JsonIgnore, XmlIgnore]
         public IElement Element;
 
         /// <summary>

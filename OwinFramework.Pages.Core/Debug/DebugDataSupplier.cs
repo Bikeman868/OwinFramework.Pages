@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 using OwinFramework.Pages.Core.Extensions;
 
 namespace OwinFramework.Pages.Core.Debug
@@ -13,6 +15,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// Returns a list of the types of data that this supplier can supply
         /// </summary>
+        [JsonProperty, XmlIgnore]
         public List<Type> SuppliedTypes { get; set; }
 
         /// <summary>

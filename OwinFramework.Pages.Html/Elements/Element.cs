@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// by the fluent builder. You can also use this as a base class for
     /// your custom application elements but this is an advanced use case.
     /// </summary>
-    public abstract class Element : IElement
+    public abstract class Element : IElement, IDebuggable
     {
         private readonly IDataConsumer _dataConsumer;
         private List<IComponent> _dependentComponents;
@@ -34,17 +34,17 @@ namespace OwinFramework.Pages.Html.Elements
                 : dataConsumerFactory.Create();
         }
 
-        public DebugInfo GetDebugInfo()
+        public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
         {
-            return PopulateDebugInfo(new DebugElement());
+            return PopulateDebugInfo(new DebugInfo(), parentDepth, childDepth);
         }
 
-        protected virtual DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
+        protected virtual DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             debugInfo.Name = Name;
             debugInfo.Instance = this;
 
-            debugInfo.DataConsumer = ((IDataConsumer)this).GetDataConsumerDebugInfo();
+            debugInfo.DataConsumer = _dataConsumer.GetDebugInfo<DebugDataConsumer>();
 
             debugInfo.DependentComponents = _dependentComponents;
 
@@ -156,13 +156,6 @@ namespace OwinFramework.Pages.Html.Elements
             if (_dataConsumer == null) return;
 
             _dataConsumer.HasDependency(dataProvider, dependency);
-        }
-
-        DebugDataConsumer IDataConsumer.GetDataConsumerDebugInfo()
-        {
-            return _dataConsumer == null 
-                ? null 
-                : _dataConsumer.GetDataConsumerDebugInfo();
         }
 
         #endregion

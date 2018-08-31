@@ -26,9 +26,7 @@ namespace Sample1.SamplePages
         {
         }
 
-        DebugInfo IRunable.GetDebugInfo() { return GetDebugInfo(); }
-
-        public DebugPage GetDebugInfo()
+        public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
         {
             return new DebugPage
             {

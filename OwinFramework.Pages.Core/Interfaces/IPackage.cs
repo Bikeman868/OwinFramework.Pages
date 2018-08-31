@@ -18,11 +18,6 @@ namespace OwinFramework.Pages.Core.Interfaces
         string NamespaceName { get; set; }
 
         /// <summary>
-        /// Gets debugging information from this package
-        /// </summary>
-        DebugPackage GetDebugInfo();
-
-        /// <summary>
         /// Gets and sets the module for this package. Setting the module
         /// sets the default deployment for all assets in this package
         /// </summary>

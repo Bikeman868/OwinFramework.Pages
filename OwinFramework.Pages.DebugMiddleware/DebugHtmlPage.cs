@@ -234,7 +234,8 @@ namespace OwinFramework.Pages.DebugMiddleware
                     if (layoutRegion.Region == null)
                     {
                         html.WriteElementLine("p", "Region '" + layoutRegion.Name + "' has default region for the layout");
-                        var inheritedRegions = layout.InstanceOf == null ? null : layout.InstanceOf.Regions;
+                        var layoutInstance = layout.InstanceOf as DebugLayout;
+                        var inheritedRegions = layoutInstance == null ? null : layoutInstance.Regions;
                         if (inheritedRegions != null)
                         {
                             var inheritedRegion = inheritedRegions.FirstOrDefault(r => r.Name == layoutRegion.Name);
@@ -296,7 +297,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                     {
                         var renderContext = _renderContextFactory.Create((c, f) => { });
                         dataScopeProvider.SetupDataContext(renderContext);
-                        debugRenderContext = renderContext.GetDebugInfo();
+                        debugRenderContext = renderContext.GetDebugInfo<DebugRenderContext>();
                     }
                     catch (Exception ex)
                     {

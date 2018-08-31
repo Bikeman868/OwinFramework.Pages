@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Runtime;
@@ -11,7 +13,7 @@ namespace OwinFramework.Pages.Html.Elements
 {
     internal class PageLayout: PageElement
     {
-        private readonly IDictionary<string, PageRegion> _regions;
+        private readonly IThreadSafeDictionary<string, PageRegion> _regions;
 
         public PageLayout(
             PageElementDependencies dependencies,
@@ -41,6 +43,23 @@ namespace OwinFramework.Pages.Html.Elements
             }
 
             Children = _regions.Values.ToArray();
+        }
+
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
+        {
+            var debugLayout = debugInfo as DebugLayout ?? new DebugLayout();
+
+            debugLayout.Regions = _regions
+                .Select(kvp =>
+                    new DebugLayoutRegion
+                    {
+                        Name = kvp.Key,
+                        Instance = kvp.Value,
+                        Region = kvp.Value.GetDebugInfo<DebugRegion>()
+                    })
+                .ToList();
+
+            return base.PopulateDebugInfo(debugLayout, parentDepth, childDepth);
         }
 
         protected override IWriteResult WritePageAreaInternal(

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Owin;
-using OwinFramework.Pages.Core.Debug;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
@@ -33,10 +32,5 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Handles the request and returns a response
         /// </summary>
         Task Run(IOwinContext context, Action<IOwinContext, Func<string>> trace);
-
-        /// <summary>
-        /// Returns debug information about the runable
-        /// </summary>
-        DebugInfo GetDebugInfo();
     }
 }

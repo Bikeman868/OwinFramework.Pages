@@ -24,12 +24,6 @@ namespace OwinFramework.Pages.Core.Debug
         public IDataScopeProvider Scope { get; set; }
 
         /// <summary>
-        /// The parent data context that this one inherits from and
-        /// overrides
-        /// </summary>
-        public DebugDataContext Parent { get; set; }
-
-        /// <summary>
         /// The properties that are overriden in this context
         /// </summary>
         public List<Type> Properties { get; set; }

@@ -27,10 +27,10 @@ namespace OwinFramework.Pages.Html.Elements
             return WriteResult.Continue();
         }
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             debugInfo.Type = "Static HTML";
-            return base.PopulateDebugInfo(debugInfo);
+            return base.PopulateDebugInfo(debugInfo, parentDepth, childDepth);
         }
     }
 }

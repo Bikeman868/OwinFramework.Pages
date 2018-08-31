@@ -40,10 +40,5 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// repeating type. Like I said this is a very rare and unusual situation.
         /// </summary>
         void AddOnSupplyAction(Action<IRenderContext> onSupplyAction);
-
-        /// <summary>
-        /// Returns information that helps to debug 
-        /// </summary>
-        DebugDataSupply GetDebugInfo();
     }
 }

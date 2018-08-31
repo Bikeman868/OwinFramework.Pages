@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// Base class for all classes that write content to the page during
     /// page rendering
     /// </summary>
-    internal abstract class PageElement
+    internal abstract class PageElement: IDebuggable
     {
         protected readonly IElement Element;
         protected readonly PageElement Parent;
@@ -74,25 +74,31 @@ namespace OwinFramework.Pages.Html.Elements
             return description;
         }
 
-        public DebugPageElement GetDebugInfo() 
+        public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
         {
-            return PopulateDebugInfo(new DebugPageElement(), 1, 1);
+            return PopulateDebugInfo(new DebugInfo(), parentDepth, childDepth);
         }
 
-        protected virtual DebugPageElement PopulateDebugInfo(DebugPageElement debugPageElement, int parentDepth, int childDepth)
+        protected virtual DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
-            debugPageElement.Element = Element;
-            debugPageElement.Name = Element.Name;
+            debugInfo.Instance = this;
+            debugInfo.Element = Element;
+            debugInfo.Name = Element.Name;
+            debugInfo.InstanceOf = Element.GetDebugInfo();
+
+            debugInfo.DataConsumer = new DebugDataConsumer
+            {
+            };
 
             if (parentDepth != 0)
-                debugPageElement.Parent = Parent.PopulateDebugInfo(new DebugPageElement(), parentDepth - 1, 0);
+                debugInfo.Parent = Parent.PopulateDebugInfo(new DebugInfo(), parentDepth - 1, 0);
 
             if (childDepth != 0)
-                debugPageElement.Children = Children
-                    .Select(child => child.PopulateDebugInfo(new DebugPageElement(), 0, childDepth - 1))
-                    .ToArray();
+                debugInfo.Children = Children
+                    .Select(child => child.PopulateDebugInfo(new DebugInfo(), 0, childDepth - 1))
+                    .ToList();
 
-            return debugPageElement;
+            return debugInfo;
         }
 
         public virtual void BuildDataContext(DataContextBuilder dataContextBuilder)

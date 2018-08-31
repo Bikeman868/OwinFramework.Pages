@@ -9,7 +9,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.DataModel
 {
-    internal class DataSupplier: IDataSupplier
+    internal class DataSupplier: IDataSupplier, IDebuggable
     {
         private readonly int _dataSupplierId;
         private readonly List<RegisteredSupply> _dataSupplies;
@@ -72,7 +72,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                     };
         }
 
-        DebugDataSupplier IDataSupplier.GetDebugInfo()
+        DebugInfo IDebuggable.GetDebugInfo(int parentDepth, int childDepth)
         {
             return new DebugDataSupplier
             {
@@ -92,7 +92,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             return result;
         }
 
-        private class DataSupply : IDataSupply
+        private class DataSupply : IDataSupply, IDebuggable
         {
             public DataSupplier DataSupplier;
             public IDataDependency Dependency;
@@ -127,7 +127,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 return (IsStatic ? "static " : "dynamic ") + data + " from supplier #" + DataSupplier._dataSupplierId;
             }
 
-            public DebugDataSupply GetDebugInfo()
+            public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
             {
                 return new DebugDataSupply
                 {
@@ -139,7 +139,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                         DataType = Dependency.DataType,
                         ScopeName = Dependency.ScopeName
                     },
-                    Supplier = ((IDataSupplier)DataSupplier).GetDebugInfo()
+                    Supplier = DataSupplier.GetDebugInfo<DebugDataSupplier>()
                 };
             }
         }

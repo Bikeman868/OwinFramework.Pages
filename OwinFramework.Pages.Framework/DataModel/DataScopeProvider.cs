@@ -59,6 +59,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 {
                     debug.Children = _children
                         .Select(c => c.GetDebugInfo(0, childDepth - 1))
+                        .Cast<DebugInfo>()
                         .ToList();
                 }
             }
@@ -76,13 +77,8 @@ namespace OwinFramework.Pages.Framework.DataModel
                     .Select(suppliedDependency =>
                         new DebugSuppliedDependency
                         {
-                            Supplier = suppliedDependency.Supplier == null 
-                                ? null 
-                                : suppliedDependency.Supplier.GetDebugInfo(),
-
-                            Supply = suppliedDependency.Supply == null 
-                                ? null 
-                                : suppliedDependency.Supply.GetDebugInfo(),
+                            Supplier = suppliedDependency.Supplier.GetDebugInfo<DebugDataSupplier>(),
+                            Supply = suppliedDependency.Supply.GetDebugInfo<DebugDataSupply>(),
 
                             DataSupplied = suppliedDependency.DependencySupplied == null 
                                 ? null
@@ -94,7 +90,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
                             DependentSupplies = suppliedDependency.DependentSupplies == null
                                 ? null
-                                : suppliedDependency.DependentSupplies.Select(s => s.GetDebugInfo()).ToList()
+                                : suppliedDependency.DependentSupplies.Select(s => s.GetDebugInfo<DebugDataSupply>()).ToList()
                         })
                     .ToList();
             }

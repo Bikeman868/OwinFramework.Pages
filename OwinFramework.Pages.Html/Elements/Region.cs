@@ -74,17 +74,50 @@ namespace OwinFramework.Pages.Html.Elements
 
         #region Debug info
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             var debugRegion = debugInfo as DebugRegion ?? new DebugRegion();
 
-            debugRegion.Content = Content == null ? null : Content.GetDebugInfo();
+            if (childDepth != 0)
+            {
+                var content = Content as IDebuggable;
+                debugRegion.Content = content == null ? null : content.GetDebugInfo(0, childDepth - 1);
+            }
+
             debugRegion.RepeatScope = RepeatScope;
             debugRegion.RepeatType = _repeatType;
             debugRegion.ListType = _listType;
             debugRegion.ListScope = ListScope;
 
-            return base.PopulateDebugInfo(debugRegion);
+            debugRegion.DataSupply = new DebugDataSupply
+            {
+                Instance = this,
+                IsStatic = false,
+                SubscriberCount = _onSupplyActions.Count,
+                SuppliedData = new DebugDataScope
+                {
+                    DataType = RepeatType,
+                    ScopeName = RepeatScope
+                },
+                Supplier = new DebugDataSupplier
+                {
+                    Instance = this,
+                    Name = Name + " region",
+                }
+            };
+
+            if (RepeatType != null)
+            {
+                debugRegion.DataSupply.Supplier.SuppliedTypes = new List<Type> { RepeatType };
+
+                debugRegion.DataSupply.Supplier.DefaultSupply = new DebugDataScope
+                {
+                    DataType = RepeatType,
+                    ScopeName = RepeatScope
+                };
+            }
+
+            return base.PopulateDebugInfo(debugRegion, parentDepth, childDepth);
         }
 
         public override string ToString()
@@ -172,11 +205,6 @@ namespace OwinFramework.Pages.Html.Elements
         {
             get { return _dataScopeProvider.ElementName; }
             set { _dataScopeProvider.ElementName = value; }
-        }
-
-        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
-        {
-            return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
         }
 
         void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
@@ -303,28 +331,6 @@ namespace OwinFramework.Pages.Html.Elements
             return this;
         }
 
-        DebugDataSupplier IDataSupplier.GetDebugInfo()
-        {
-            var debugInfo = new DebugDataSupplier
-            {
-                Instance = this,
-                Name = Name + " region",
-            };
-
-            if (RepeatType != null)
-            {
-                debugInfo.SuppliedTypes = new List<Type> { RepeatType };
-
-                debugInfo.DefaultSupply = new DebugDataScope
-                {
-                    DataType = RepeatType,
-                    ScopeName = RepeatScope
-                };
-            }
-
-            return debugInfo;
-        }
-
         #endregion
 
         #region IDataSupply
@@ -357,22 +363,6 @@ namespace OwinFramework.Pages.Html.Elements
         void IDataSupply.AddOnSupplyAction(Action<IRenderContext> dataSupplyAction)
         {
             lock (_onSupplyActions) _onSupplyActions.Add(dataSupplyAction);
-        }
-
-        DebugDataSupply IDataSupply.GetDebugInfo()
-        {
-            return new DebugDataSupply
-            {
-                Instance = this,
-                IsStatic = false,
-                SubscriberCount = _onSupplyActions.Count,
-                SuppliedData = new DebugDataScope
-                {
-                    DataType = RepeatType,
-                    ScopeName = RepeatScope
-                },
-                Supplier = ((IDataSupplier)this).GetDebugInfo()
-            };
         }
 
         #endregion

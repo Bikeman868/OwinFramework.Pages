@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -49,6 +50,12 @@ namespace OwinFramework.Pages.Html.Elements
             }
 
             pageData.Pop();
+        }
+
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
+        {
+            var debugRegion = debugInfo as DebugRegion ?? new DebugRegion();
+            return base.PopulateDebugInfo(debugRegion, parentDepth, childDepth);
         }
 
         protected override IWriteResult WritePageAreaInternal(IRenderContext renderContext, IDataContextBuilder dataContextBuilder, PageArea pageArea)

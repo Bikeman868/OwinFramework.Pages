@@ -3,7 +3,7 @@
     /// <summary>
     /// Debug information about a layout
     /// </summary>
-    public class DebugComponent: DebugElement
+    public class DebugComponent : DebugInfo
     {
         /// <summary>
         /// Default public constructor

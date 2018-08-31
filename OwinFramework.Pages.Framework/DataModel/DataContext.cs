@@ -11,7 +11,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.DataModel
 {
-    internal class DataContext: ReusableObject, IDataContext
+    internal class DataContext: ReusableObject, IDataContext, IDebuggable
     {
         private readonly DataContextFactory _dataContextFactory;
         private readonly IDataDependencyFactory _dataDependencyFactory;
@@ -47,13 +47,13 @@ namespace OwinFramework.Pages.Framework.DataModel
             return this;
         }
 
-        DebugDataContext IDataContext.GetDebugInfo()
+        DebugInfo IDebuggable.GetDebugInfo(int parentDepth, int childDepth)
         {
             return new DebugDataContext
             {
                 Instance = this,
                 Scope = _scope,
-                Parent = _parent == null ? null : _parent.GetDebugInfo(),
+                Parent = _parent.GetDebugInfo(),
                 Properties = _properties.Keys.ToList()
             };
         }

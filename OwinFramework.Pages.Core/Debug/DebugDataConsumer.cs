@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.Core.Debug
     /// <summary>
     /// This is used to communicate debugging information about a data consumer need
     /// </summary>
-    public class DebugDataConsumer
+    public class DebugDataConsumer: DebugInfo
     {
         /// <summary>
         /// Returns a list of the supplies that this consumer needs

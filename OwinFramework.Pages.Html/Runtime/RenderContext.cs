@@ -68,7 +68,7 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 Instance = this,
                 Data = _dataContexts
-                    .Select(kv => new KeyValuePair<int, DebugDataContext>(kv.Key, kv.Value.GetDebugInfo()))
+                    .Select(kv => new KeyValuePair<int, DebugDataContext>(kv.Key, kv.Value.GetDebugInfo<DebugDataContext>()))
                     .ToDictionary(kv => kv.Key, kv => kv.Value)
             };
         }

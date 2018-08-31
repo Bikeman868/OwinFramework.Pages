@@ -6,7 +6,7 @@ namespace OwinFramework.Pages.Core.Debug
     /// This is used to communicate debugging information about the 
     /// data supplied by a data provider
     /// </summary>
-    public class DebugSuppliedDependency
+    public class DebugSuppliedDependency : DebugInfo
     {
         /// <summary>
         /// The supplier that provided this data

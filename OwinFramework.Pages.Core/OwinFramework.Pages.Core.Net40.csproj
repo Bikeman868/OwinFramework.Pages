@@ -115,12 +115,10 @@
     <Compile Include="Collections\ThreadSafeQueue.cs" />
     <Compile Include="Debug\DebugDataConsumer.cs" />
     <Compile Include="Debug\DebugDataProviderDependency.cs" />
-    <Compile Include="Debug\DebugPageElement.cs" />
     <Compile Include="Debug\DebugSuppliedDependency.cs" />
     <Compile Include="Debug\DebugDataSupply.cs" />
     <Compile Include="Debug\DebugDataSupplier.cs" />
     <Compile Include="Debug\DebugDataScope.cs" />
-    <Compile Include="Debug\DebugElement.cs" />
     <Compile Include="Debug\DebugDataContext.cs" />
     <Compile Include="Debug\DebugRenderContext.cs" />
     <Compile Include="Debug\DebugModule.cs" />

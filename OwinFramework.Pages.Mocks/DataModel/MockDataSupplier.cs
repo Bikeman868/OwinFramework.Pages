@@ -58,16 +58,6 @@ namespace OwinFramework.Pages.Mocks.DataModel
                 foreach (var dependent in _dependentSupplies)
                     dependent(renderContext);
             }
-
-            DebugDataSupply IDataSupply.GetDebugInfo()
-            {
-                return new DebugDataSupply();
-            }
-
-            DebugDataSupplier IDataSupplier.GetDebugInfo()
-            {
-                return new DebugDataSupplier();
-            }
         }
     }
 }

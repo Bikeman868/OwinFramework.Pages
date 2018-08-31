@@ -5,18 +5,12 @@ namespace OwinFramework.Pages.Core.Debug
     /// <summary>
     /// Debug information about a layout
     /// </summary>
-    public class DebugRegion : DebugElement
+    public class DebugRegion : DebugInfo
     {
         /// <summary>
         /// The layout's regions
         /// </summary>
         public DebugInfo Content { get; set; }
-
-        /// <summary>
-        /// If this is a page specific instance then this contains debug info
-        /// for the region definition that this is an instance of
-        /// </summary>
-        public DebugRegion InstanceOf { get; set; }
 
         /// <summary>
         /// The data scope provider associated with this region
@@ -42,6 +36,11 @@ namespace OwinFramework.Pages.Core.Debug
         /// The scope name to use for retrieving the list
         /// </summary>
         public string ListScope { get; set; }
+
+        /// <summary>
+        /// Contains debug information about the data this region supplies if any
+        /// </summary>
+        public DebugDataSupply DataSupply { get; set; }
 
         /// <summary>
         /// Default public constructor

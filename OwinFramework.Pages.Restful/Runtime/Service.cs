@@ -13,7 +13,7 @@ namespace OwinFramework.Pages.Restful.Runtime
     /// Base implementation of IComponent. Inheriting from this olass will insulate you
     /// from any future additions to the IComponent interface
     /// </summary>
-    public class Service : IService
+    public class Service : IService, IDebuggable
     {
         public ElementType ElementType { get { return ElementType.Service; } }
 
@@ -36,14 +36,9 @@ namespace OwinFramework.Pages.Restful.Runtime
             throw new NotImplementedException();
         }
 
-        DebugInfo IRunable.GetDebugInfo()
+        public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
         {
-            throw new NotImplementedException();
-        }
-
-        public DebugService GetDebugInfo()
-        {
-            throw new NotImplementedException();
+            return new DebugService();
         }
 
     }

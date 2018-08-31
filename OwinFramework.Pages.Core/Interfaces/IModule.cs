@@ -9,9 +9,5 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// </summary>
     public interface IModule: IDeployable, INamed
     {
-        /// <summary>
-        /// Gets debugging information from this element
-        /// </summary>
-        DebugModule GetDebugInfo();
     }
 }

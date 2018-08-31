@@ -76,7 +76,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                     .AddChild(new RegionDrawing(
                         drawing,
                         page,
-                        debugRegion.InstanceOf,
+                        debugRegion.InstanceOf as DebugRegion,
                         headingLevel + 1,
                         false));
             }

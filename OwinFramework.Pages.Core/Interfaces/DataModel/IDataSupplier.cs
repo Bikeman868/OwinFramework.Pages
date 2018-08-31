@@ -14,11 +14,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     public interface IDataSupplier
     {
         /// <summary>
-        /// Retrieves information from the data supplier to help with debugging
-        /// </summary>
-        DebugDataSupplier GetDebugInfo();
-
-        /// <summary>
         /// Returns a list of the data types that this supplier can supply.
         /// Call the IsSupplierOf() method to discover if it can provide the type
         /// in a specific scope

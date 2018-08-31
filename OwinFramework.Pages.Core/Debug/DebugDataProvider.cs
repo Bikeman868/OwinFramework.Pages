@@ -11,6 +11,11 @@
         public DebugPackage Package { get; set; }
 
         /// <summary>
+        /// Data providers can also be suppliers of the data they provide
+        /// </summary>
+        public DebugDataSupplier DataSupplier { get; set; }
+
+        /// <summary>
         /// Default public constructor
         /// </summary>
         public DebugDataProvider()

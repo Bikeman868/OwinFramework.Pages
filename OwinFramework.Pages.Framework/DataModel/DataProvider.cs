@@ -14,7 +14,7 @@ namespace OwinFramework.Pages.Framework.DataModel
     /// You can inherit from this base class to insulate your implementation from
     /// future additions to the IDataProvider interface
     /// </summary>
-    public class DataProvider: IDataProvider, IDataConsumer
+    public class DataProvider: IDataProvider, IDataConsumer, IDebuggable
     {
         public ElementType ElementType { get { return ElementType.DataProvider; } }
 
@@ -35,13 +35,15 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataSupplier = dependencies.DataSupplierFactory.Create();
         }
 
-        public DebugDataProvider GetDebugInfo()
+        public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
         {
             return new DebugDataProvider
             {
                 Name = Name,
                 Instance = this,
-                Package = Package == null ? null : Package.GetDebugInfo()
+                Package = Package.GetDebugInfo<DebugPackage>(),
+                DataConsumer = DataConsumer.GetDebugInfo<DebugDataConsumer>(),
+                DataSupplier = DataSupplier.GetDebugInfo<DebugDataSupplier>()
             };
         }
 
@@ -111,11 +113,6 @@ namespace OwinFramework.Pages.Framework.DataModel
             return DataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
-        DebugDataConsumer IDataConsumer.GetDataConsumerDebugInfo()
-        {
-            return DataConsumer.GetDataConsumerDebugInfo();
-        }
-
         #endregion
 
         #region IDataSupplier Mixin
@@ -137,11 +134,6 @@ namespace OwinFramework.Pages.Framework.DataModel
         IDataSupply IDataSupplier.GetSupply(IDataDependency dependency)
         {
             return DataSupplier.GetSupply(dependency);
-        }
-
-        DebugDataSupplier IDataSupplier.GetDebugInfo()
-        {
-            return DataSupplier.GetDebugInfo();
         }
 
         #endregion

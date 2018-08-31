@@ -5,6 +5,7 @@ using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.DataModel
 {
@@ -12,7 +13,7 @@ namespace OwinFramework.Pages.Framework.DataModel
     /// This is a mixin that should be added to any object that can
     /// consume data from one or more data suppliers
     /// </summary>
-    public class DataConsumer: IDataConsumer
+    public class DataConsumer: IDataConsumer, IDebuggable
     {
         private readonly IDataDependencyFactory _dataDependencyFactory;
 
@@ -109,7 +110,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             return dependentSupplies;
         }
 
-        DebugDataConsumer IDataConsumer.GetDataConsumerDebugInfo()
+        DebugInfo IDebuggable.GetDebugInfo(int patentDepth, int childDepth)
         {
             return new DebugDataConsumer
             {
@@ -117,7 +118,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                     ? null
                     : _dataProviderDependencies.Select(s => new DebugDataProviderDependency 
                         {
-                            DataProvider = s.DataProvider == null ? null : s.DataProvider.GetDebugInfo(),
+                            DataProvider = s.DataProvider.GetDebugInfo<DebugDataProvider>(),
                             Data = s.Dependency == null ? null : new DebugDataScope
                             {
                                 DataType = s.Dependency.DataType,
@@ -126,7 +127,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                         }).ToList(),
                 DependentSupplies = ReferenceEquals(_dataSupplyDependencies, null)
                     ? null
-                    : _dataSupplyDependencies.Select(s => s.GetDebugInfo()).ToList(),
+                    : _dataSupplyDependencies.Select(s => s.GetDebugInfo<DebugDataSupply>()).ToList(),
                 DependentData = ReferenceEquals(_dataDependencies, null)
                     ? null
                     : _dataDependencies.Select(s => new DebugDataScope

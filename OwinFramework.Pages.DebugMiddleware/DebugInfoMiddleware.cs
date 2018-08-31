@@ -112,16 +112,25 @@ namespace OwinFramework.Pages.DebugMiddleware
                 new []
                 {
                     typeof(DebugComponent),
+                    typeof(DebugDataConsumer),
                     typeof(DebugDataProvider),
-                    typeof(DebugElement),
+                    typeof(DebugDataProviderDependency),
+                    typeof(DebugDataScope),
+                    typeof(DebugDataScopeProvider),
+                    typeof(DebugDataSupplier),
+                    typeof(DebugDataSupply),
+                    typeof(DebugDataScope),
+                    typeof(DebugInfo),
                     typeof(DebugLayout),
                     typeof(DebugLayoutRegion),
                     typeof(DebugModule),
                     typeof(DebugPackage),
                     typeof(DebugPage),
                     typeof(DebugRegion),
+                    typeof(DebugRenderContext),
                     typeof(DebugRoute),
-                    typeof(DebugService)
+                    typeof(DebugService),
+                    typeof(DebugSuppliedDependency)
                 });
             var memoryStream = new MemoryStream();
             var writer = new StreamWriter(memoryStream);

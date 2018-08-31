@@ -2,6 +2,7 @@
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.Runtime
 {
@@ -69,7 +70,7 @@ namespace OwinFramework.Pages.Framework.Runtime
             {
                 Name = Name,
                 Instance = this,
-                Module = Module == null ? null : Module.GetDebugInfo()
+                Module = Module.GetDebugInfo<DebugModule>()
             };
         }
     }

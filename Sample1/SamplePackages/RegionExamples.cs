@@ -184,33 +184,11 @@ namespace Sample1.SamplePackages
                 _dataConsumer.HasDependency(dataProvider, dependency);
             }
 
-            DebugDataConsumer IDataConsumer.GetDataConsumerDebugInfo()
-            {
-                return _dataConsumer == null
-                    ? null
-                    : _dataConsumer.GetDataConsumerDebugInfo();
-            }
-
             #endregion
 
             #region You have to specify that this is a region
 
             ElementType INamed.ElementType { get { return ElementType.Region; } }
-
-            #endregion
-
-            #region This is the part you have to change for your desired behavior
-
-            IWriteResult IRegion.WritePageArea(
-                IRenderContext context,
-                IDataContextBuilder dataContextBuilder,
-                PageArea pageArea,
-                Action<object> onListItem,
-                Func<IRenderContext, IDataContextBuilder, PageArea, IWriteResult> contentWriter)
-            {
-                // TODO: Add code here to write html onto the page
-                return WriteResult.Continue();
-            }
 
             #endregion
 
@@ -249,14 +227,17 @@ namespace Sample1.SamplePackages
 
             #endregion
 
-            #region These methods do not need any implementation
-
-            DebugInfo IDebuggable.GetDebugInfo()
+            IWriteResult IRegion.WritePageArea(
+                IRenderContext context,
+                IDataContextBuilder dataContextBuilder,
+                PageArea pageArea,
+                Action<object> onListItem,
+                Func<IRenderContext, IDataContextBuilder, PageArea, IWriteResult> contentWriter)
             {
-                return null;
+                // TODO: Add code here to write html onto the page
+                return WriteResult.Continue();
             }
 
-            #endregion
         }
         
         public override IPackage Build(IFluentBuilder fluentBuilder)

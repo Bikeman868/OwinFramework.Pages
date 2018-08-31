@@ -16,11 +16,6 @@ namespace OwinFramework.Pages.Core.Interfaces
     public interface IDataProvider : IPackagable, INamed, IDataSupplier
     {
         /// <summary>
-        /// Gets debugging information from this data provider
-        /// </summary>
-        new DebugDataProvider GetDebugInfo();
-
-        /// <summary>
         /// Instructs the data provider to provide the specified type 
         /// in a given scope.
         /// </summary>

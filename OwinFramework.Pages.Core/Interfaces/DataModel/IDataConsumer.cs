@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using OwinFramework.Pages.Core.Debug;
 
 namespace OwinFramework.Pages.Core.Interfaces.DataModel
 {
@@ -74,10 +73,5 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// This is useful when the consumer is also a supplier of data and needs
         /// to be run after all of the supplies that it depends on</returns>
         IList<IDataSupply> AddDependenciesToScopeProvider(IDataScopeProvider dataScope);
-
-        /// <summary>
-        /// Gets information used for debugging purposes only
-        /// </summary>
-        DebugDataConsumer GetDataConsumerDebugInfo();
     }
 }

@@ -17,11 +17,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         IRenderContext Initialize(IOwinContext context);
         
         /// <summary>
-        /// Retrieved debugging information for this render context
-        /// </summary>
-        DebugRenderContext GetDebugInfo();
-
-        /// <summary>
         /// Call this method to output trace information only when tracing
         /// is enabled for the request. When request tracing is turned off
         /// the function does nothing.

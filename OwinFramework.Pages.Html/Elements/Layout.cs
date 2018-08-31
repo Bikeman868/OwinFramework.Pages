@@ -36,18 +36,18 @@ namespace OwinFramework.Pages.Html.Elements
             ElementsByName = dependencies.DictionaryFactory.Create<string, IElement>(StringComparer.InvariantCultureIgnoreCase);
         }
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             var debugLayout = debugInfo as DebugLayout ?? new DebugLayout();
 
-            debugLayout.Regions = RegionsByName.Select(kvp =>
-                new DebugLayoutRegion
+            debugLayout.Regions = RegionsByName.Select(
+                kvp => new DebugLayoutRegion
                 {
                     Name = kvp.Key,
-                    Region = kvp.Value == null ? null : (DebugRegion)kvp.Value.GetDebugInfo()
+                    Region = kvp.Value.GetDebugInfo<DebugRegion>()
                 }).ToList();
 
-            return base.PopulateDebugInfo(debugLayout);
+            return base.PopulateDebugInfo(debugLayout, parentDepth, childDepth);
         }
 
         public void PopulateRegion(string regionName, IRegion region)

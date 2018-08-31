@@ -60,7 +60,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                     var childDrawing = new DataScopeProviderDrawing(
                         drawing,
                         page,
-                        child,
+                        child as DebugDataScopeProvider,
                         headingLevel,
                         showButtons,
                         depth - 1);

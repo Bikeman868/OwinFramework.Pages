@@ -1,30 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
-using Newtonsoft.Json;
 using OwinFramework.Pages.Core.Extensions;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Core.Debug
 {
     /// <summary>
     /// This is used to communicate debugging information about a data supplier
     /// </summary>
-    public class DebugDataSupplier
+    public class DebugDataSupplier : DebugInfo
     {
-        /// <summary>
-        /// The data supplier that this is debug info for
-        /// </summary>
-        [XmlIgnore, JsonIgnore]
-        public IDataSupplier Instance { get; set; }
-
-        /// <summary>
-        /// The name of this data supplier
-        /// </summary>
-        public string Name { get; set; }
-
         /// <summary>
         /// Returns a list of the types of data that this supplier can supply
         /// </summary>

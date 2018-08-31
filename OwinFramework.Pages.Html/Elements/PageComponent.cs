@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Enums;
+﻿using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -19,6 +20,13 @@ namespace OwinFramework.Pages.Html.Elements
             IPageData pageData)
             : base(dependencies, parent, component, pageData)
         {
+        }
+
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
+        {
+            var debugComponent = debugInfo as DebugComponent ?? new DebugComponent();
+
+            return base.PopulateDebugInfo(debugComponent, parentDepth, childDepth);
         }
 
         protected override IWriteResult WritePageAreaInternal(

@@ -32,6 +32,27 @@ namespace OwinFramework.Pages.Core.Debug
         public List<IComponent> DependentComponents { get; set; }
 
         /// <summary>
+        /// If this is a page specific instance then this contains debug info
+        /// for the layout definition that this is an instance of
+        /// </summary>
+        public DebugInfo InstanceOf { get; set; }
+
+        /// <summary>
+        /// The element that relates to this debug info
+        /// </summary>
+        public IElement Element;
+
+        /// <summary>
+        /// The parent of this element or null if this is the page
+        /// </summary>
+        public DebugInfo Parent;
+
+        /// <summary>
+        /// The children of this element if any
+        /// </summary>
+        public List<DebugInfo> Children;
+
+        /// <summary>
         /// The live instance that this is debug info for
         /// </summary>
         [JsonIgnore, XmlIgnore]

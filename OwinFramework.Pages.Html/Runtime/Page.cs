@@ -795,17 +795,19 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region Debug info
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo)
+        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             _dataScopeProvider.ElementName = "Page " + Name;
 
             var debugPage = debugInfo as DebugPage ?? new DebugPage();
 
-            debugPage.Layout = Layout == null ? null : (DebugLayout)Layout.GetDebugInfo();
-            debugPage.Scope = _dataScopeProvider.GetDebugInfo(0, -1);
             debugPage.RequiredPermission = RequiredPermission;
+            debugPage.Scope = _dataScopeProvider.GetDebugInfo<DebugDataScopeProvider>(0, -1);
 
-            return base.PopulateDebugInfo(debugPage);
+            if (childDepth != 0)
+                debugPage.Layout = _layout.GetDebugInfo<DebugLayout>();
+
+            return base.PopulateDebugInfo(debugPage, parentDepth, childDepth);
         }
 
         public override string ToString()
@@ -825,11 +827,6 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             get { return _dataScopeProvider.ElementName; }
             set { _dataScopeProvider.ElementName = value; }
-        }
-
-        DebugDataScopeProvider IDataScopeProvider.GetDebugInfo(int parentDepth, int childDepth)
-        {
-            return _dataScopeProvider.GetDebugInfo(parentDepth, childDepth);
         }
 
         void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
@@ -943,11 +940,6 @@ namespace OwinFramework.Pages.Html.Runtime
         void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
         {
             _dataConsumer.HasDependency(dataProvider, dependency);
-        }
-
-        DebugDataConsumer IDataConsumer.GetDataConsumerDebugInfo()
-        {
-            return _dataConsumer.GetDataConsumerDebugInfo();
         }
 
         #endregion

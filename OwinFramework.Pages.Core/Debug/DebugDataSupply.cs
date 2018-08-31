@@ -11,14 +11,8 @@ namespace OwinFramework.Pages.Core.Debug
     /// <summary>
     /// This is used to communicate debugging information about a data supply
     /// </summary>
-    public class DebugDataSupply
+    public class DebugDataSupply : DebugInfo
     {
-        /// <summary>
-        /// The data supply that this is debug info for
-        /// </summary>
-        [XmlIgnore, JsonIgnore]
-        public IDataSupply Instance { get; set; }
-
         /// <summary>
         /// Static means that the data can be set up once for the request.
         /// Not static means that the data changes during the processing

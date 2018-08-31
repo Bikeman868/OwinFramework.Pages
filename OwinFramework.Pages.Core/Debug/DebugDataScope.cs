@@ -9,7 +9,7 @@ namespace OwinFramework.Pages.Core.Debug
     /// <summary>
     /// This is used to communicate debugging information about a scope
     /// </summary>
-    public class DebugDataScope
+    public class DebugDataScope : DebugInfo
     {
         /// <summary>
         /// The type of data in scope

@@ -13,16 +13,6 @@ namespace OwinFramework.Pages.Core.Debug
         public int Id { get; set; }
 
         /// <summary>
-        /// The parent provider
-        /// </summary>
-        public DebugDataScopeProvider Parent { get; set; }
-
-        /// <summary>
-        /// The children of this provider
-        /// </summary>
-        public List<DebugDataScopeProvider> Children { get; set; }
-
-        /// <summary>
         /// A list of scopes introduced
         /// </summary>
         public List<DebugDataScope> Scopes { get; set; }

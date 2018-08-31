@@ -18,7 +18,7 @@ using OwinFramework.Pages.Framework.Interfaces;
 namespace OwinFramework.Pages.Framework.Managers
 {
     [Description("Serves requests for static assets. These static assets can be deployed site-wide or in modules.")]
-    internal class AssetManager: IAssetManager, IRunable
+    internal class AssetManager: IAssetManager, IRunable, IDebuggable
     {
         private readonly IFrameworkConfiguration _frameworkConfiguration;
         private readonly IHtmlWriterFactory _htmlWriterFactory;
@@ -377,7 +377,7 @@ namespace OwinFramework.Pages.Framework.Managers
             return context.Response.WriteAsync(content ?? string.Empty);
         }
 
-        DebugInfo IRunable.GetDebugInfo() 
+        DebugInfo IDebuggable.GetDebugInfo(int parentDepth, int childDepth) 
         { 
             return new DebugInfo
             {

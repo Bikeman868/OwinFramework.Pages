@@ -11,21 +11,30 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     public interface IDataContextBuilder
     {
         /// <summary>
+        /// Creates a new data context builder as a child of the current one.
+        /// If the child can not resolve data dependencies then it will fall back
+        /// to its parent
+        /// </summary>
+        /// <param name="dataScopeProvider">The dependencies to resolve in 
+        /// the child scope</param>
+        IDataContextBuilder AddChild(IDataScopeProvider dataScopeProvider);
+
+        /// <summary>
         /// Adds a dependency on data. A suitable provider will be located
-        /// and added to this resolver
+        /// and added to this data context builder
         /// </summary>
         IDataSupply AddDependency(IDataDependency dependency);
 
         /// <summary>
-        /// Must be called after initialization, adds data suppliers to
-        /// this scope or its ancestors to satisfy the needs of this
+        /// Adds data suppliers to this data context builder
+        /// or its ancestors to satisfy the needs of this
         /// data consumer
         /// </summary>
         IList<IDataSupply> AddConsumer(IDataConsumer consumer);
 
         /// <summary>
         /// Used to determine if the particular type is available from this
-        /// scope provider.
+        /// data context builder.
         /// </summary>
         /// <param name="dependency">The type of data we are looking for</param>
         bool IsInScope(IDataDependency dependency);
@@ -38,8 +47,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// <remarks>This is an expensive method that tears down and
         /// recreates the whole data context, running all of the data supplies
         /// again. This only happens when the application tries to use data
-        /// that it did not deplare that it needed. The missing dependecny is
-        /// added to the scope provider so that this will not happen again
+        /// that it did not declare that it needed. The missing dependecny is
+        /// added to the data context builder so that this will not happen again
         /// on subsequent requests for the same runnable.</remarks>
         void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency);
     }

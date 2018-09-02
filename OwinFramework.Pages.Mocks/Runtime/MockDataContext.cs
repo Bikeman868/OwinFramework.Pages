@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
 {
     public class MockDataContext : ConcreteImplementationProvider<IDataContext>, IDataContext
     {
-        public IDataScopeProvider Scope { get; set; }
+        public IDataContextBuilder DataContextBuilder { get; set; }
 
         public Dictionary<Type, object> Data = new Dictionary<Type, object>();
 
@@ -56,10 +56,11 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return null;
         }
 
-        public IDataContext CreateChild(IDataScopeProvider scopeProvider = null)
+        public IDataContext CreateChild(IDataContextBuilder dataContextBuilder = null)
         {
             return this;
         }
+
 
     }
 }

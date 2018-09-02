@@ -182,6 +182,7 @@
     <Compile Include="Interfaces\Collections\IQueue.cs" />
     <Compile Include="Interfaces\Collections\IQueueFactory.cs" />
     <Compile Include="Interfaces\Collections\IThreadSafeDictionary.cs" />
+    <Compile Include="Interfaces\DataModel\IDataConsumerNeeds.cs" />
     <Compile Include="Interfaces\DataModel\IDataConsumer.cs" />
     <Compile Include="Interfaces\DataModel\IDataDependency.cs" />
     <Compile Include="Interfaces\DataModel\IDataConsumerFactory.cs" />

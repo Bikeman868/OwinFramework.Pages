@@ -6,7 +6,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// <summary>
     /// This interface is implemented by components that can
     /// request specific data to be available at runtime. The
-    /// DataConsumer class can be used to implement the MixIn pattern
+    /// DataConsumer class can be used to implement the Mixin pattern
     /// for this.
     /// </summary>
     public interface IDataConsumer
@@ -64,14 +64,10 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         void HasDependency(IDataSupply dataSupply);
 
         /// <summary>
-        /// Examines the data providers in scope to see if all of its dependencies have
-        /// been met and adds any missing data supplies so that the scope will satisfy
-        /// all of its dependencies
+        /// Returns information about what this data consumer needs. This information
+        /// is used by the data context builder to resolve dependencies and build the
+        /// data context
         /// </summary>
-        /// <param name="dataScope">The data scope to add missing dependencies to</param>
-        /// <returns>A list of the data supplies that this consumer depends on.
-        /// This is useful when the consumer is also a supplier of data and needs
-        /// to be run after all of the supplies that it depends on</returns>
-        IList<IDataSupply> AddDependenciesToScopeProvider(IDataScopeProvider dataScope);
+        IDataConsumerNeeds Needs { get; }
     }
 }

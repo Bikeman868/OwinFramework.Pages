@@ -9,7 +9,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// This interface is implemented by elements that can establish a new
     /// data scope during the rendering operation.
     /// </summary>
-    public interface IDataScopeProvider : IDataContextBuilder
+    public interface IDataScopeProvider
     {
 
 /*******************************************************************

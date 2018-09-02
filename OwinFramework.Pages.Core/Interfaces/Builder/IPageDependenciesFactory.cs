@@ -54,5 +54,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// A factory for constructing thread-safe dictionaries
         /// </summary>
         IDictionaryFactory DictionaryFactory { get; }
+
+        /// <summary>
+        /// A factory for constructing data contexts
+        /// </summary>
+        IDataContextFactory DataContextFactory { get; }
     }
 }

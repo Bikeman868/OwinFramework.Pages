@@ -1,44 +1,55 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    public class DataContextBuilder
+    public class DataContextBuilder : IDataContextBuilder
     {
         private readonly IDataContextFactory _dataContextFactory;
-        private readonly IRenderContext _renderContext;
 
-        private readonly Stack<IDataContext> _stack = new Stack<IDataContext>();
-        private IDataContext _current;
+        private DataContextBuilder[] _children;
+        private DataContextBuilder _parent;
 
         public DataContextBuilder(
             IDataContextFactory dataContextFactory,
-            IRenderContext renderContext)
+            IDataScopeProvider dataScopeProvider)
         {
             _dataContextFactory = dataContextFactory;
-            _renderContext = renderContext;
         }
 
-        public IDataContext Current { get { return _current; } }
-
-        public void Push(IDataScopeProvider scope)
+        public IDataContextBuilder AddChild(IDataScopeProvider dataScopeProvider)
         {
-            if (_current == null)
+            var child = new DataContextBuilder(_dataContextFactory, dataScopeProvider)
             {
-                _current = _dataContextFactory.Create(_renderContext, scope);
-            }
+                _parent = this
+            };
+
+            if (_children == null)
+                _children = new[] { child };
             else
-            {
-                _stack.Push(_current);
-                _current = _current.CreateChild(scope);
-            }
-            _renderContext.AddDataContext(scope.Id, _current);
+                _children = _children.Concat(new[] { child }).ToArray();
         }
 
-        public void Pop()
+        public IDataSupply AddDependency(IDataDependency dependency)
         {
-            _current = _stack.Count > 0 ? _stack.Pop() : null;
+            throw new System.NotImplementedException();
+        }
+
+        public IList<IDataSupply> AddConsumer(IDataConsumer consumer)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool IsInScope(IDataDependency dependency)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

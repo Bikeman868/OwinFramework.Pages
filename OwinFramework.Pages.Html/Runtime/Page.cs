@@ -89,14 +89,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual void Initialize()
         {
-            var data = new PageData(AssetDeployment, this);
-
-            if (AssetDeployment == AssetDeployment.Inherit)
-            {
-                data.AssetDeployment = Module == null || Module.AssetDeployment == AssetDeployment.Inherit
-                    ? AssetDeployment.PerWebsite 
-                    : Module.AssetDeployment;
-            }
+            var data = new PageData(_dependencies.DataContextFactory, this);
 
             var elementDependencies = new PageElementDependencies
             {
@@ -175,7 +168,8 @@ namespace OwinFramework.Pages.Html.Runtime
             private class State
             {
                 public AssetDeployment AssetDeployment;
-                public IDataScopeProvider ScopeProvider;
+                public IDataContextBuilder DataContextBuilder;
+                public IModule Module;
                 public string MessagePrefix;
 
                 public State Clone()
@@ -183,7 +177,8 @@ namespace OwinFramework.Pages.Html.Runtime
                     return new State
                     {
                         AssetDeployment = AssetDeployment,
-                        ScopeProvider = ScopeProvider,
+                        DataContextBuilder = DataContextBuilder,
+                        Module = Module,
                         MessagePrefix = MessagePrefix + "  "
                     };
                 }
@@ -197,51 +192,81 @@ namespace OwinFramework.Pages.Html.Runtime
             }
 
             public readonly List<ElementRegistration> Elements = new List<ElementRegistration>();
+            public IDataContextBuilder RootDataContextBuilder { get; private set; }
 
             private readonly Stack<State> _stateStack = new Stack<State>();
             private readonly Page _page;
-            private State _currentState = new State();
+            private State _currentState;
 
             public PageData(
-                AssetDeployment assetDeployment, 
+                IDataContextFactory dataContextFactory,
                 Page page)
             {
-                AssetDeployment = assetDeployment;
                 _page = page;
 
-                _page._dataScopeProvider.Initialize(null);
-                _currentState.MessagePrefix = "Init " + page.Name + ": ";
-                _currentState.ScopeProvider = page._dataScopeProvider;
+                var assetDeployment = page.AssetDeployment;
+                if (page.Module != null)
+                    assetDeployment = page.Module.AssetDeployment;
+
+                if (assetDeployment == AssetDeployment.Inherit)
+                    assetDeployment = AssetDeployment.PerModule;
+
+                if (assetDeployment == AssetDeployment.PerModule && page.Module == null)
+                    assetDeployment = AssetDeployment.PerWebsite;
+
+                RootDataContextBuilder = new DataContextBuilder(
+                    dataContextFactory, page);
+
+                _currentState = new State
+                {
+                    MessagePrefix = "Init " + page.Name + ": ",
+                    AssetDeployment = assetDeployment,
+                    DataContextBuilder = RootDataContextBuilder,
+                    Module = page.Module
+                };
             }
 
-            public void Push()
+            public IDataContextBuilder BeginAddElement(IElement element)
             {
+                Log("Has " + element);
+
+                var assetDeployment = element.AssetDeployment;
+
+                if (element.Module != null)
+                    assetDeployment = element.Module.AssetDeployment;
+
+                var module = element.Module ?? _currentState.Module;
+
+                if (assetDeployment == AssetDeployment.Inherit)
+                    assetDeployment = _currentState.AssetDeployment;
+
+                if (assetDeployment == AssetDeployment.PerModule && module == null)
+                    assetDeployment = AssetDeployment.PerWebsite;
+
+                Elements.Add(new ElementRegistration
+                {
+                    Element = element,
+                    AssetDeployment = assetDeployment,
+                    Module = module
+                });
+
+                _currentState.DataContextBuilder.AddConsumer(element);
+
                 _stateStack.Push(_currentState);
                 _currentState = _currentState.Clone();
+
+                var dataScopeProvider = element as IDataScopeProvider;
+                if (dataScopeProvider != null)
+                {
+                    Log("Adding " + dataScopeProvider);
+                    _currentState.DataContextBuilder = _currentState.DataContextBuilder.AddChild(dataScopeProvider);
+                }
+                return _currentState.DataContextBuilder;
             }
 
-            public void Pop()
+            public void EndAddElement(IElement element)
             {
                 _currentState = _stateStack.Pop();
-            }
-
-            public void AddScope(IDataScopeProvider scopeProvider) 
-            {
-                Log("Adding " + scopeProvider);
-                scopeProvider.Initialize(_currentState.ScopeProvider);
-                _currentState.ScopeProvider = scopeProvider; 
-            }
-
-            public AssetDeployment AssetDeployment
-            {
-                get { return _currentState.AssetDeployment; }
-                set { _currentState.AssetDeployment = value; }
-            }
-
-            public IDataScopeProvider ScopeProvider
-            {
-                get { return _currentState.ScopeProvider; }
-                set { _currentState.ScopeProvider = value; }
             }
 
             public IPageData NeedsComponent(IComponent component)
@@ -249,20 +274,6 @@ namespace OwinFramework.Pages.Html.Runtime
                 Log("Needs " + component);
                 _page.AddComponent(component);
                 return this;
-            }
-
-            public void HasElement(
-                IElement element, 
-                AssetDeployment assetDeployment, 
-                IModule module)
-            {
-                Log("Has " + element);
-                Elements.Add(new ElementRegistration
-                    {
-                        Element = element,
-                        AssetDeployment = assetDeployment,
-                        Module = module
-                    });
             }
 
             public void Log(string message)

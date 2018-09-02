@@ -20,11 +20,11 @@ namespace OwinFramework.Pages.Core.Debug
         }
 
         /// <summary>
-        /// The scope provider that will be used to resolve
+        /// The builder that will be used to resolve
         /// requests for data that is missing from the data context
         /// </summary>
         [JsonProperty, XmlIgnore]
-        public IDataScopeProvider Scope { get; set; }
+        public IDataContextBuilder DataContextBuilder { get; set; }
 
         /// <summary>
         /// The properties that are overriden in this context

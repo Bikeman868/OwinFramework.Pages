@@ -23,20 +23,20 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public IDataContext Create(
             IRenderContext renderContext,
-            IDataScopeProvider dataScopeProvider)
+            IDataContextBuilder dataContextBuilder)
         {
-            return Create(renderContext, dataScopeProvider, null);
+            return Create(renderContext, dataContextBuilder, null);
         }
 
         public IDataContext Create(
-            IRenderContext renderContext, 
-            IDataScopeProvider dataScopeProvider,
+            IRenderContext renderContext,
+            IDataContextBuilder dataContextBuilder,
             DataContext parent)
         {
             var dataContext = (DataContext)Queue.DequeueOrDefault()
                 ?? new DataContext(_dictionaryFactory, this, _dataDependencyFactory);
 
-            return dataContext.Initialize(DisposeAction, renderContext, parent, dataScopeProvider);
+            return dataContext.Initialize(DisposeAction, renderContext, parent, dataContextBuilder);
         }
     }
 }

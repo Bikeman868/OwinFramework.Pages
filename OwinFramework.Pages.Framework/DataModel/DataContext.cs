@@ -13,14 +13,14 @@ namespace OwinFramework.Pages.Framework.DataModel
 {
     internal class DataContext: ReusableObject, IDataContext, IDebuggable
     {
+        public IDataContextBuilder DataContextBuilder { get; set; }
+
         private readonly DataContextFactory _dataContextFactory;
         private readonly IDataDependencyFactory _dataDependencyFactory;
         private readonly IThreadSafeDictionary<Type, object> _properties;
-        private readonly List<IDataProvider> _dataProviders = new List<IDataProvider>();
 
         private IRenderContext _renderContext;
         private IDataContext _parent;
-        private IDataScopeProvider _scope;
 
         public DataContext(
             IDictionaryFactory dictionaryFactory,
@@ -36,14 +36,15 @@ namespace OwinFramework.Pages.Framework.DataModel
             Action<IReusable> disposeAction, 
             IRenderContext renderContext, 
             DataContext parent,
-            IDataScopeProvider scope)
+            IDataContextBuilder dataContextBuilder)
         {
             base.Initialize(disposeAction);
+
             _properties.Clear();
-            _dataProviders.Clear();
             _renderContext = renderContext;
             _parent = parent;
-            _scope = scope;
+            DataContextBuilder = dataContextBuilder;
+
             return this;
         }
 
@@ -52,15 +53,15 @@ namespace OwinFramework.Pages.Framework.DataModel
             return new DebugDataContext
             {
                 Instance = this,
-                Scope = _scope,
+                DataContextBuilder = DataContextBuilder,
                 Properties = _properties.Keys.ToList(),
                 Parent = parentDepth == 0 ? null : _parent.GetDebugInfo(parentDepth - 1, 0)
             };
         }
 
-        IDataContext IDataContext.CreateChild(IDataScopeProvider scope)
+        IDataContext IDataContext.CreateChild(IDataContextBuilder dataContextBuilder)
         {
-            return _dataContextFactory.Create(_renderContext, scope, this);
+            return _dataContextFactory.Create(_renderContext, dataContextBuilder, this);
         }
         
         public void Set<T>(T value, string scopeName = null, int level = 0)
@@ -96,10 +97,10 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             var isInScope = string.IsNullOrEmpty(scopeName);
 
-            if (!isInScope && _scope != null)
+            if (!isInScope && DataContextBuilder != null)
             {
                 var dependency = _dataDependencyFactory.Create(type, scopeName);
-                isInScope = _scope.IsInScope(dependency);
+                isInScope = DataContextBuilder.IsInScope(dependency);
             }
 
             if (isInScope)
@@ -123,7 +124,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                             " the dependency could still not be resolved");
                     }
 
-                    if (_scope == null)
+                    if (DataContextBuilder == null)
                     {
                         if (_parent == null)
                             throw new Exception("This data context does not know how to find missing"+
@@ -131,18 +132,12 @@ namespace OwinFramework.Pages.Framework.DataModel
                         return _parent.Get(type, scopeName);
                     }
 
-                    _scope.AddMissingData(_renderContext, _dataDependencyFactory.Create(type, scopeName));
+                    DataContextBuilder.AddMissingData(_renderContext, _dataDependencyFactory.Create(type, scopeName));
                     retry = true;
                 }
             }
             
             return _parent == null ? null : _parent.Get(type, scopeName, isRequired);
-        }
-
-        IDataScopeProvider IDataContext.Scope
-        {
-            get { return _scope ?? (_parent == null ? null : _parent.Scope); }
-            set { _scope = value; }
         }
     }
 }

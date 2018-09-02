@@ -21,11 +21,11 @@ namespace OwinFramework.Pages.Html.Elements
             IPageData pageData)
             : base(dependencies, parent, region, pageData)
         {
-            _dataScopeProvider = pageData.ScopeProvider.CreateInstance();
-            _dataScopeProvider.Initialize(pageData.ScopeProvider);
+            _dataScopeProvider = pageData.DataContextBuilder.CreateInstance();
+            _dataScopeProvider.Initialize(pageData.DataContextBuilder);
 
             pageData.Push();
-            pageData.ScopeProvider = _dataScopeProvider;
+            pageData.DataContextBuilder = _dataScopeProvider;
 
             content = content ?? region.Content;
             var layout = content as ILayout;

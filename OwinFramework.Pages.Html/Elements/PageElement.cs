@@ -42,6 +42,7 @@ namespace OwinFramework.Pages.Html.Elements
             IPageData pageData)
         {
             if (element == null) throw new ArgumentNullException("element");
+            if (pageData == null) throw new ArgumentNullException("pageData");
 
             Element = element;
             Parent = parent;
@@ -98,12 +99,6 @@ namespace OwinFramework.Pages.Html.Elements
                     .ToList();
 
             return debugInfo;
-        }
-
-        public virtual void BuildDataContext(DataContextBuilder dataContextBuilder)
-        {
-            for (var i = 0; i < Children.Length; i++)
-                Children[i].BuildDataContext(dataContextBuilder);
         }
 
         protected bool GetHasPageArea(PageArea pageArea)

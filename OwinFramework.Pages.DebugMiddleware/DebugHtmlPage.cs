@@ -292,7 +292,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                 StartIndent(html, true);
                 WriteDebugInfo(html, page.Scope, depth - 1);
 
-                var dataScopeProvider = page.Scope.Instance as IDataScopeProvider;
+                var dataScopeProvider = page.Scope.Instance as IDataContextBuilder;
                 if (dataScopeProvider != null)
                 {
                     DebugRenderContext debugRenderContext;

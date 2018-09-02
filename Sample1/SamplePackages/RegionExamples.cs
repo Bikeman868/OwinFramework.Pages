@@ -148,10 +148,10 @@ namespace Sample1.SamplePackages
                 _dataConsumer.HasDependency(dataSupply);
             }
 
-            IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
+            IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataContextBuilder dataContextBuilder)
             {
                 if (_dataConsumer == null) return null;
-                return _dataConsumer.AddDependenciesToScopeProvider(dataScope);
+                return _dataConsumer.AddDependenciesToScopeProvider(dataContextBuilder);
             }
 
             void IDataConsumer.HasDependency<T>(string scopeName)

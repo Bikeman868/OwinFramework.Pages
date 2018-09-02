@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// supply this type of data during initialization on future
         /// requests.
         /// </summary>
-        IDataScopeProvider Scope { get; set; }
+        IDataContextBuilder DataContextBuilder { get; set; }
 
         /// <summary>
         /// Stores strongly typed data into the data context
@@ -96,8 +96,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// and the original parent context is not affected.
         /// It is important NOT to dispose the parent before disposing of the child
         /// </summary>
-        /// <param name="scopeProvider">Attaching a scope provider to the new
+        /// <param name="dataContextBuilder">Attaching a scope provider to the new
         /// data context establishes this context as a new data scope</param>
-        IDataContext CreateChild(IDataScopeProvider scopeProvider = null);
+        IDataContext CreateChild(IDataContextBuilder dataContextBuilder = null);
     }
 }

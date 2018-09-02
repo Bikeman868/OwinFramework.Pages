@@ -108,9 +108,9 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataConsumer.HasDependency(dataSupply);
         }
 
-        IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
+        IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataContextBuilder dataContextBuilder)
         {
-            return DataConsumer.AddDependenciesToScopeProvider(dataScope);
+            return DataConsumer.AddDependenciesToScopeProvider(dataContextBuilder);
         }
 
         #endregion

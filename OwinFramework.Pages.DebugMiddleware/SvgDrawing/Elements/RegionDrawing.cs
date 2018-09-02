@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
@@ -70,20 +71,24 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                     AddChild(dataScopeDrawing);
             }
 
-            if (showButtons && !ReferenceEquals(debugRegion.InstanceOf, null))
+            if (showButtons && !ReferenceEquals(debugRegion.Element, null))
             {
+                var elementDebugInfo = debugRegion.Element.GetDebugInfo<DebugRegion>();
+                if (elementDebugInfo != null)
+                {
                 AddHeaderButton(page, "Definition")
                     .AddChild(new RegionDrawing(
                         drawing,
                         page,
-                        debugRegion.InstanceOf as DebugRegion,
+                        elementDebugInfo,
                         headingLevel + 1,
                         false));
+                }
             }
 
-            if (debugRegion.Content != null)
+            if (debugRegion.Children != null && debugRegion.Children.Count > 0)
             {
-                var content = drawing.DrawDebugInfo(page, debugRegion.Content, headingLevel, showButtons);
+                var content = drawing.DrawDebugInfo(page, debugRegion.Children[0], headingLevel, showButtons);
                 AddChild(content);
             }
         }

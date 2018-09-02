@@ -10,11 +10,6 @@ namespace OwinFramework.Pages.Core.Debug
     public class DebugRegion : DebugInfo
     {
         /// <summary>
-        /// The layout's regions
-        /// </summary>
-        public DebugInfo Content { get; set; }
-
-        /// <summary>
         /// The data scope provider associated with this region
         /// </summary>
         public DebugDataScopeProvider Scope { get; set; }

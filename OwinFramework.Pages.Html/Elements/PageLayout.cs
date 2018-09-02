@@ -51,7 +51,7 @@ namespace OwinFramework.Pages.Html.Elements
 
             if (childDepth != 0)
             {
-                debugLayout.Regions = _regions
+                debugLayout.Children = _regions
                     .Select(kvp =>
                         new DebugLayoutRegion
                         {
@@ -59,6 +59,7 @@ namespace OwinFramework.Pages.Html.Elements
                             Instance = kvp.Value,
                             Region = kvp.Value.GetDebugInfo<DebugRegion>(0, childDepth - 1)
                         })
+                    .Cast<DebugInfo>()
                     .ToList();
             }
 

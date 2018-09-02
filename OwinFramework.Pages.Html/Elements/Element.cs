@@ -44,7 +44,8 @@ namespace OwinFramework.Pages.Html.Elements
             debugInfo.Name = Name;
             debugInfo.Instance = this;
 
-            debugInfo.DataConsumer = _dataConsumer.GetDebugInfo<DebugDataConsumer>();
+            if (_dataConsumer != null)
+                debugInfo.DataConsumer = _dataConsumer.GetDebugInfo<DebugDataConsumer>();
 
             debugInfo.DependentComponents = _dependentComponents;
 

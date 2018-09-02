@@ -81,7 +81,8 @@ namespace OwinFramework.Pages.Html.Elements
             if (childDepth != 0)
             {
                 var content = Content as IDebuggable;
-                debugRegion.Content = content == null ? null : content.GetDebugInfo(0, childDepth - 1);
+                if (content != null)
+                    debugRegion.Children = new List<DebugInfo> { content.GetDebugInfo(0, childDepth - 1) };
             }
 
             debugRegion.RepeatScope = RepeatScope;

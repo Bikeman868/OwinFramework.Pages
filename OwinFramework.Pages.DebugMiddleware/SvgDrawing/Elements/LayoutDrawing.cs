@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
@@ -37,14 +38,29 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                     AddDetails(details, this);
             }
 
-            if (debugLayout.Regions != null)
+            if (showButtons && !ReferenceEquals(debugLayout.Element, null))
             {
-                foreach(var debugRegion in debugLayout.Regions)
+                var elementDebugInfo = debugLayout.Element.GetDebugInfo<DebugLayout>();
+                if (elementDebugInfo != null)
+                {
+                    AddHeaderButton(page, "Definition")
+                        .AddChild(new LayoutDrawing(
+                            drawing,
+                            page,
+                            elementDebugInfo,
+                            headingLevel + 1,
+                            false));
+                }
+            }
+
+            if (debugLayout.Children != null)
+            {
+                foreach(var debugRegion in debugLayout.Children)
                 {
                     AddChild(new LayoutRegionDrawing(
                         drawing, 
                         page, 
-                        debugRegion, 
+                        debugRegion as DebugLayoutRegion, 
                         headingLevel, 
                         showButtons));
                 }

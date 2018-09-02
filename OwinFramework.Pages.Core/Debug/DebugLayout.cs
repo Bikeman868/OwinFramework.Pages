@@ -9,11 +9,6 @@ namespace OwinFramework.Pages.Core.Debug
     public class DebugLayout : DebugInfo
     {
         /// <summary>
-        /// The layout's regions
-        /// </summary>
-        public List<DebugLayoutRegion> Regions { get; set; }
-
-        /// <summary>
         /// Default public constructor
         /// </summary>
         public DebugLayout()
@@ -26,10 +21,10 @@ namespace OwinFramework.Pages.Core.Debug
         /// </summary>
         public override string ToString()
         {
-            if (Regions == null || Regions.Count == 0)
+            if (Children == null || Children.Count == 0)
                 return base.ToString();
 
-            return  Regions.Aggregate("layout with", (s, r) => s + " '" + r.Name + "'") + " regions";
+            return  Children.Aggregate("layout with", (s, r) => s + " '" + r.Name + "'") + " regions";
         }
     }
 }

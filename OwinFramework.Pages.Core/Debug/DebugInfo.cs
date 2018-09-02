@@ -22,6 +22,19 @@ namespace OwinFramework.Pages.Core.Debug
         public string Type { get; set; }
 
         /// <summary>
+        /// The object that produced this debug information
+        /// </summary>
+        [JsonIgnore, XmlIgnore]
+        public object Instance { get; set; }
+
+        /// <summary>
+        /// The element that this debug info relates to
+        /// </summary>
+        [JsonIgnore, XmlIgnore]
+        public IElement Element;
+
+
+        /// <summary>
         /// Information about data required by this element
         /// </summary>
         public DebugDataConsumer DataConsumer { get; set; }
@@ -33,18 +46,6 @@ namespace OwinFramework.Pages.Core.Debug
         public List<IComponent> DependentComponents { get; set; }
 
         /// <summary>
-        /// If this is a page specific instance then this contains debug info
-        /// for the layout definition that this is an instance of
-        /// </summary>
-        public DebugInfo InstanceOf { get; set; }
-
-        /// <summary>
-        /// The element that relates to this debug info
-        /// </summary>
-        [JsonIgnore, XmlIgnore]
-        public IElement Element;
-
-        /// <summary>
         /// The parent of this element or null if this is the page
         /// </summary>
         public DebugInfo Parent;
@@ -53,12 +54,6 @@ namespace OwinFramework.Pages.Core.Debug
         /// The children of this element if any
         /// </summary>
         public List<DebugInfo> Children;
-
-        /// <summary>
-        /// The live instance that this is debug info for
-        /// </summary>
-        [JsonIgnore, XmlIgnore]
-        public object Instance { get; set; }
 
         /// <summary>
         /// Default public constructor

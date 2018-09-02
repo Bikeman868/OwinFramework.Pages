@@ -215,35 +215,38 @@ namespace OwinFramework.Pages.DebugMiddleware
 
         private void WriteHtml(IHtmlWriter html, DebugLayout layout, int depth)
         {
-            if (layout.InstanceOf != null)
+            if (layout.Element != null)
             {
-                html.WriteElementLine("p", "Layout inherits from '" + layout.InstanceOf.Name + "' layout");
+                html.WriteElementLine("p", "Layout element '" + layout.Element.Name + "'");
                 if (depth != 1)
                 {
                     StartIndent(html, false);
-                    WriteDebugInfo(html, layout.InstanceOf, 2);
+                    WriteDebugInfo(html, layout.Element.GetDebugInfo(), 2);
                     EndIndent(html);
                 }
             }
-            
-            if (layout.Regions != null && layout.Regions.Count > 0)
+
+            if (layout.Children != null && layout.Children.Count > 0)
             {
-                html.WriteElementLine("p", "Layout has regions " + string.Join(", ", layout.Regions.Select(r => "'" + r.Name + "'")));
-                foreach (var layoutRegion in layout.Regions)
+                html.WriteElementLine("p", "Layout has regions " + string.Join(", ", layout.Children.Select(r => "'" + r.Name + "'")));
+                foreach (var layoutRegion in layout.Children.Cast<DebugLayoutRegion>())
                 {
                     if (layoutRegion.Region == null)
                     {
                         html.WriteElementLine("p", "Region '" + layoutRegion.Name + "' has default region for the layout");
-                        var layoutInstance = layout.InstanceOf as DebugLayout;
-                        var inheritedRegions = layoutInstance == null ? null : layoutInstance.Regions;
-                        if (inheritedRegions != null)
+                        if (layout.Element != null)
                         {
-                            var inheritedRegion = inheritedRegions.FirstOrDefault(r => r.Name == layoutRegion.Name);
-                            if (inheritedRegion != null && depth != 1)
+                            var layoutInstance = layout.Element.GetDebugInfo<DebugLayout>();
+                            var inheritedRegions = layoutInstance == null ? null : layoutInstance.Children;
+                            if (inheritedRegions != null)
                             {
-                                StartIndent(html, true);
-                                WriteDebugInfo(html, inheritedRegion.Region, depth - 1);
-                                EndIndent(html);
+                                var inheritedRegion = inheritedRegions.FirstOrDefault(r => r.Name == layoutRegion.Name) as DebugLayoutRegion;
+                                if (inheritedRegion != null && depth != 1)
+                                {
+                                    StartIndent(html, true);
+                                    WriteDebugInfo(html, inheritedRegion.Region, depth - 1);
+                                    EndIndent(html);
+                                }
                             }
                         }
                     }
@@ -331,13 +334,13 @@ namespace OwinFramework.Pages.DebugMiddleware
 
         private void WriteHtml(IHtmlWriter html, DebugRegion region, int depth)
         {
-            if (region.InstanceOf != null)
+            if (region.Element != null)
             {
-                html.WriteElementLine("p", "Region inherits from '" + region.InstanceOf.Name + "' region");
+                html.WriteElementLine("p", "Region inherits from '" + region.Element.Name + "' region");
                 if (depth != 1)
                 {
                     StartIndent(html, false);
-                    WriteDebugInfo(html, region.InstanceOf, 2);
+                    WriteDebugInfo(html, region.Element.GetDebugInfo(), 2);
                     EndIndent(html);
                 }
             }
@@ -367,13 +370,13 @@ namespace OwinFramework.Pages.DebugMiddleware
                 }
             }
 
-            if (region.Content != null)
+            if (region.Children != null && region.Children.Count > 0)
             {
                 html.WriteElementLine("p", "Region has contents");
                 if (depth != 1)
                 {
                     StartIndent(html, true);
-                    WriteDebugInfo(html, region.Content, depth - 1);
+                    WriteDebugInfo(html, region.Children[0], depth - 1);
                     EndIndent(html);
                 }
             }

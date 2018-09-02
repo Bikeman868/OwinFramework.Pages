@@ -84,16 +84,15 @@ namespace OwinFramework.Pages.Html.Elements
             debugInfo.Instance = this;
             debugInfo.Element = Element;
             debugInfo.Name = Element.Name;
-            debugInfo.InstanceOf = Element.GetDebugInfo();
 
             debugInfo.DataConsumer = new DebugDataConsumer
             {
             };
 
-            if (parentDepth != 0)
+            if (parentDepth != 0 && debugInfo.Parent == null)
                 debugInfo.Parent = Parent.PopulateDebugInfo(new DebugInfo(), parentDepth - 1, 0);
 
-            if (childDepth != 0)
+            if (childDepth != 0 && debugInfo.Children == null)
                 debugInfo.Children = Children
                     .Select(child => child.PopulateDebugInfo(new DebugInfo(), 0, childDepth - 1))
                     .ToList();

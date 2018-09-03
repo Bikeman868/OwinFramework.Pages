@@ -26,22 +26,28 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         IDataContextBuilder AddChild(IDataScopeRules dataScopeRules);
 
         /// <summary>
-        /// Adds a dependency on data. A suitable provider will be located
-        /// and added to this data context builder
-        /// </summary>
-        IDataSupply AddDependency(IDataDependency dependency);
-
-        /// <summary>
         /// Adds data suppliers to this data context builder
         /// or its ancestors to satisfy the needs of this
         /// data consumer
         /// </summary>
-        IList<IDataSupply> AddConsumer(IDataConsumer consumer);
+        void AddConsumer(IDataConsumer consumer);
+
+        /// <summary>
+        /// Call this method after adding all dependencies and all children.
+        /// This method will resolve all data needs into a collection of 
+        /// IDataSupply that will fill the data context during page rendering.
+        /// If you add more dependecnies or children later you can call this
+        /// method again to recalculate the data supply.
+        /// This should only be called on the root, it recursively traverses the
+        /// tree of descendants resolving dependecnies in all descendents.
+        /// </summary>
+        void ResolveSupplies();
 
         /// <summary>
         /// This should only be called on the root, it recursively traverses the
         /// tree of descendants creating a tree of data contexts in the render 
         /// context.
+        /// This can not be called prior to calling ResolveSupplies.
         /// </summary>
         /// <param name="renderContext">A newly instantiated render context to
         /// set the data context for</param>

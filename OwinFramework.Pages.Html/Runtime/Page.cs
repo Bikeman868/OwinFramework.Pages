@@ -94,6 +94,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var data = new PageData(
                 _dependencies.DataContextFactory, 
                 _dependencies.IdManager,
+                _dependencies.DataCatalog,
                 this);
 
             var elementDependencies = new PageElementDependencies
@@ -120,6 +121,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 : _components.Select(c => new PageComponent(elementDependencies, null, c, data)).ToArray();
 
             _dataContextBuilder = data.RootDataContextBuilder;
+            _dataContextBuilder.ResolveSupplies();
 
             _referencedModules = new List<IModule>();
             var styles = _dependencies.CssWriterFactory.Create();
@@ -208,6 +210,7 @@ namespace OwinFramework.Pages.Html.Runtime
             public PageData(
                 IDataContextFactory dataContextFactory,
                 IIdManager idManager,
+                IDataCatalog dataCatalog,
                 Page page)
             {
                 _page = page;
@@ -223,7 +226,7 @@ namespace OwinFramework.Pages.Html.Runtime
                     assetDeployment = AssetDeployment.PerWebsite;
 
                 RootDataContextBuilder = new DataContextBuilder(
-                    dataContextFactory, idManager, page);
+                    dataContextFactory, idManager, dataCatalog, page);
 
                 _currentState = new State
                 {
@@ -891,14 +894,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataContextBuilder.AddMissingData(renderContext, missingDependency);
         }
 
-        IDataSupply IDataContextBuilder.AddDependency(IDataDependency dependency)
+        void IDataContextBuilder.AddConsumer(IDataConsumer consumer)
         {
-            return _dataContextBuilder.AddDependency(dependency);
-        }
-
-        IList<IDataSupply> IDataContextBuilder.AddConsumer(IDataConsumer consumer)
-        {
-            return _dataContextBuilder.AddConsumer(consumer);
+            _dataContextBuilder.AddConsumer(consumer);
         }
 
         IDataContextBuilder IDataContextBuilder.AddChild(IDataScopeRules dataScopeRules)
@@ -914,6 +912,11 @@ namespace OwinFramework.Pages.Html.Runtime
         void IDataContextBuilder.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
         {
             _dataContextBuilder.BuildDataContextTree(renderContext, parentDataContext);
+        }
+
+        void IDataContextBuilder.ResolveSupplies()
+        {
+            _dataContextBuilder.ResolveSupplies();
         }
 
         #endregion

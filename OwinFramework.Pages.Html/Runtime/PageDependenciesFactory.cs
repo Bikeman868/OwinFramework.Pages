@@ -20,6 +20,8 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly IDataConsumerFactory _dataConsumerFactory;
         private readonly IDictionaryFactory _dictionaryFactory;
         private readonly IDataContextFactory _dataContextFactory;
+        private readonly IDataCatalog _dataCatalog;
+
 
         public PageDependenciesFactory(
             IRenderContextFactory renderContextFactory,
@@ -31,7 +33,8 @@ namespace OwinFramework.Pages.Html.Runtime
             IDataScopeProviderFactory dataScopeProviderFactory, 
             IDataConsumerFactory dataConsumerFactory,
             IDictionaryFactory dictionaryFactory,
-            IDataContextFactory dataContextFactory)
+            IDataContextFactory dataContextFactory,
+            IDataCatalog dataCatalog)
         {
             _renderContextFactory = renderContextFactory;
             _idManager = idManager;
@@ -43,6 +46,7 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataConsumerFactory = dataConsumerFactory;
             _dictionaryFactory = dictionaryFactory;
             _dataContextFactory = dataContextFactory;
+            _dataCatalog = dataCatalog;
         }
 
         public IPageDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace)
@@ -98,6 +102,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public IDataContextFactory DataContextFactory
         {
             get { return _dataContextFactory; }
+        }
+
+        public IDataCatalog DataCatalog
+        {
+            get { return _dataCatalog; }
         }
     }
 }

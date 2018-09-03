@@ -36,6 +36,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IAssetManager AssetManager { get; }
 
         /// <summary>
+        /// The data catalog is a singleton and therefore alwaya available
+        /// </summary>
+        IDataCatalog DataCatalog { get; }
+
+        /// <summary>
         /// Factory for constructing CSS writers
         /// </summary>
         ICssWriterFactory CssWriterFactory { get; }

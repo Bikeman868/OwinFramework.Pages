@@ -4,7 +4,6 @@ using System.Linq;
 using OwinFramework.Pages.Core.Collections;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
-using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -35,8 +34,8 @@ namespace OwinFramework.Pages.Framework.DataModel
         public DataContext Initialize(
             Action<IReusable> disposeAction, 
             IRenderContext renderContext, 
-            DataContext parent,
-            IDataContextBuilder dataContextBuilder)
+            IDataContextBuilder dataContextBuilder,
+            DataContext parent)
         {
             base.Initialize(disposeAction);
 

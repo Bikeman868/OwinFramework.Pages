@@ -36,7 +36,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             var dataContext = (DataContext)Queue.DequeueOrDefault()
                 ?? new DataContext(_dictionaryFactory, this, _dataDependencyFactory);
 
-            return dataContext.Initialize(DisposeAction, renderContext, parent, dataContextBuilder);
+            return dataContext.Initialize(DisposeAction, renderContext, dataContextBuilder, parent);
         }
     }
 }

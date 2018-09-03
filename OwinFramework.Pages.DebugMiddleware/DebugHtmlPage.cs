@@ -299,8 +299,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                     try
                     {
                         var renderContext = _renderContextFactory.Create((c, f) => { });
-                        // TODO: setup the render context
-                        //dataContextBuilder.(renderContext);
+                        dataContextBuilder.SetupDataContext(renderContext);
                         debugRenderContext = renderContext.GetDebugInfo<DebugRenderContext>();
                     }
                     catch (Exception ex)

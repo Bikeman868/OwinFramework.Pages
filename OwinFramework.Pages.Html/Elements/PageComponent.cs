@@ -31,13 +31,12 @@ namespace OwinFramework.Pages.Html.Elements
 
         protected override IWriteResult WritePageAreaInternal(
             IRenderContext renderContext, 
-            IDataContextBuilder dataContextBuilder, 
             PageArea pageArea)
         {
             var component = Element as IComponent;
             if (ReferenceEquals(component, null)) return WriteResult.Continue();
 
-            return component.WritePageArea(renderContext, dataContextBuilder, pageArea);
+            return component.WritePageArea(renderContext, pageArea);
         }
     }
 }

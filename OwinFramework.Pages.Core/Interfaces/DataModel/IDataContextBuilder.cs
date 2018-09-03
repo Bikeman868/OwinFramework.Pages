@@ -11,13 +11,19 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     public interface IDataContextBuilder
     {
         /// <summary>
+        /// A unique ID for this context builder. This is used to find the
+        /// corresponding data context during rendering operations.
+        /// </summary>
+        int Id { get; }
+
+        /// <summary>
         /// Creates a new data context builder as a child of the current one.
         /// If the child can not resolve data dependencies then it will fall back
         /// to its parent
         /// </summary>
-        /// <param name="dataScopeProvider">The dependencies to resolve in 
+        /// <param name="dataScopeRules">The dependencies to resolve in 
         /// the child scope</param>
-        IDataContextBuilder AddChild(IDataScopeProvider dataScopeProvider);
+        IDataContextBuilder AddChild(IDataScopeRules dataScopeRules);
 
         /// <summary>
         /// Adds a dependency on data. A suitable provider will be located
@@ -32,6 +38,21 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// </summary>
         IList<IDataSupply> AddConsumer(IDataConsumer consumer);
 
+        /// <summary>
+        /// This should only be called on the root, it recursively traverses the
+        /// tree of descendants creating a tree of data contexts in the render 
+        /// context.
+        /// </summary>
+        /// <param name="renderContext">A newly instantiated render context to
+        /// set the data context for</param>
+        void SetupDataContext(IRenderContext renderContext);
+
+        /// <summary>
+        /// This is called recursively to construct a tree of data contexts
+        /// You should NOT call this method from your application
+        /// </summary>
+        void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext);
+        
         /// <summary>
         /// Used to determine if the particular type is available from this
         /// data context builder.

@@ -13,17 +13,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     public interface IDataContext: IDisposable
     {
         /// <summary>
-        /// Gets and sets the current scope provider. This will only
-        /// be used in the case where a component tries to retrieve
-        /// data from the data context at runtime that it did not declare
-        /// as a dependency. In this case the dependency will be
-        /// learned at runtime and the data scope provider will
-        /// supply this type of data during initialization on future
-        /// requests.
-        /// </summary>
-        IDataContextBuilder DataContextBuilder { get; set; }
-
-        /// <summary>
         /// Stores strongly typed data into the data context
         /// </summary>
         /// <typeparam name="T">The type of data to store</typeparam>
@@ -96,8 +85,9 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// and the original parent context is not affected.
         /// It is important NOT to dispose the parent before disposing of the child
         /// </summary>
-        /// <param name="dataContextBuilder">Attaching a scope provider to the new
-        /// data context establishes this context as a new data scope</param>
-        IDataContext CreateChild(IDataContextBuilder dataContextBuilder = null);
+        /// <param name="dataContextBuilder">The data context builder is provided
+        /// here because the data context needs it in the case where data is
+        /// missing from the data context</param>
+        IDataContext CreateChild(IDataContextBuilder dataContextBuilder);
     }
 }

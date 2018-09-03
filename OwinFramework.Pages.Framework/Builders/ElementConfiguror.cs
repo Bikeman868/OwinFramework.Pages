@@ -534,7 +534,7 @@ namespace OwinFramework.Pages.Framework.Builders
             Configure(attributes, element as IPackage);
             Configure(attributes, element as IDataProvider);
 
-            Configure(attributes, element as IDataScopeProvider);
+            Configure(attributes, element as IDataScopeRules);
             Configure(attributes, element as IDataConsumer);
             Configure(attributes, element as IDataSupplier);
             Configure(attributes, element as IRunable);
@@ -847,14 +847,14 @@ namespace OwinFramework.Pages.Framework.Builders
             }
         }
 
-        private void Configure(AttributeSet attributes, IDataScopeProvider dataScopeProvider)
+        private void Configure(AttributeSet attributes, IDataScopeRules dataScopeRules)
         {
-            if (dataScopeProvider == null) return;
+            if (dataScopeRules == null) return;
 
             if (attributes.DataScopes != null)
             {
                 foreach (var dataScope in attributes.DataScopes)
-                    dataScopeProvider.AddScope(dataScope.DataType, dataScope.Scope);
+                    dataScopeRules.AddScope(dataScope.DataType, dataScope.Scope);
             }
 
             if (attributes.Repeat != null)
@@ -874,8 +874,8 @@ namespace OwinFramework.Pages.Framework.Builders
                 var supplier = _dataSupplierFactory.Create();
                 supplier.Add(dependency, (rc, dc, d) => { });
 
-                dataScopeProvider.AddScope(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
-                dataScopeProvider.AddSupplier(supplier, dependency);
+                dataScopeRules.AddScope(attributes.Repeat.RepeatType, attributes.Repeat.RepeatScope);
+                dataScopeRules.AddSupplier(supplier, dependency);
             }
         }
 

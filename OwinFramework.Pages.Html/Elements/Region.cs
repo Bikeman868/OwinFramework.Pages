@@ -16,7 +16,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// Base implementation of IRegion. Applications inherit from this olass 
     /// to insulate their code from any future additions to the IRegion interface
     /// </summary>
-    public class Region : Element, IRegion, IDataScopeProvider, IDataSupplier, IDataSupply
+    public class Region : Element, IRegion, IDataScopeRules, IDataSupplier, IDataSupply
     {
         public override ElementType ElementType { get { return ElementType.Region; } }
 
@@ -67,7 +67,7 @@ namespace OwinFramework.Pages.Html.Elements
             WriteChildOpen = w => { };
             WriteChildClose = w => { };
 
-            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
+            _dataScopeRules = dependencies.DataScopeProviderFactory.Create();
         }
 
         #endregion
@@ -138,10 +138,9 @@ namespace OwinFramework.Pages.Html.Elements
 
         public virtual IWriteResult WritePageArea(
             IRenderContext context, 
-            IDataContextBuilder dataContextBuilder, 
             PageArea pageArea, 
             Action<object> onListItem,
-            Func<IRenderContext, IDataContextBuilder, PageArea, IWriteResult> contentWriter)
+            Func<IRenderContext, PageArea, IWriteResult> contentWriter)
         {
 #if TRACE
             context.Trace(() => ToString() + " writing page " + Enum.GetName(typeof(PageArea), pageArea).ToLower());
@@ -171,7 +170,7 @@ namespace OwinFramework.Pages.Html.Elements
                         context.TraceIndent();
 
                         WriteChildOpen(context.Html);
-                        result.Add(contentWriter(context, dataContextBuilder, pageArea));
+                        result.Add(contentWriter(context, pageArea));
                         WriteChildClose(context.Html);
 
                         context.TraceOutdent();
@@ -186,7 +185,7 @@ namespace OwinFramework.Pages.Html.Elements
             }
             else
             {
-                result = contentWriter(context, dataContextBuilder, pageArea);
+                result = contentWriter(context, pageArea);
             }
 
             WriteClose(context.Html);
@@ -196,90 +195,44 @@ namespace OwinFramework.Pages.Html.Elements
 
         #endregion
 
-        #region IDataScopeProvider MixIn
+        #region IDataScopeRules Mixin
 
-        private readonly IDataScopeProvider _dataScopeProvider;
+        private readonly IDataScopeRules _dataScopeRules;
 
-        int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
-
-        string IDataScopeProvider.ElementName
+        string IDataScopeRules.ElementName
         {
-            get { return _dataScopeProvider.ElementName; }
-            set { _dataScopeProvider.ElementName = value; }
+            get { return _dataScopeRules.ElementName; }
+            set { _dataScopeRules.ElementName = value; }
         }
 
-        void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
+        void IDataScopeRules.AddScope(Type type, string scopeName)
         {
-            _dataScopeProvider.SetupDataContext(renderContext);
+            _dataScopeRules.AddScope(type, scopeName);
         }
 
-        IDataScopeProvider IDataScopeProvider.CreateInstance()
+        void IDataScopeRules.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            return _dataScopeProvider.CreateInstance();
+            _dataScopeRules.AddSupplier(supplier, dependency);
         }
 
-        IDataScopeProvider IDataScopeProvider.Parent
+        void IDataScopeRules.AddSupply(IDataSupply supply)
         {
-            get { return _dataScopeProvider.Parent; }
+            _dataScopeRules.AddSupply(supply);
         }
 
-        void IDataScopeProvider.AddChild(IDataScopeProvider child)
+        IList<IDataScope> IDataScopeRules.DataScopes
         {
-            _dataScopeProvider.AddChild(child);
+            get { return _dataScopeRules.DataScopes; }
         }
 
-        void IDataScopeProvider.Initialize(IDataScopeProvider parent)
+        IList<Tuple<IDataSupplier, IDataDependency>> IDataScopeRules.SuppliedDependencies
         {
-            _dataScopeProvider.Initialize(parent);
+            get { return _dataScopeRules.SuppliedDependencies; }
         }
 
-        void IDataScopeProvider.AddScope(Type type, string scopeName)
+        IList<IDataSupply> IDataScopeRules.DataSupplies
         {
-            _dataScopeProvider.AddScope(type, scopeName);
-        }
-
-        void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
-        {
-            _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
-        }
-
-        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
-        {
-            return _dataScopeProvider.AddSupplier(supplier, dependency);
-        }
-
-        void IDataScopeProvider.AddSupply(IDataSupply supply)
-        {
-            _dataScopeProvider.AddSupply(supply);
-        }
-
-        IDataContext IDataScopeProvider.SetDataContext(IRenderContext renderContext)
-        {
-            return _dataScopeProvider.SetDataContext(renderContext);
-        }
-
-        #endregion
-
-        #region IDataContextBuilder MixIn
-
-        bool IDataContextBuilder.IsInScope(IDataDependency dependency)
-        {
-            return _dataScopeProvider.IsInScope(dependency);
-        }
-
-        void IDataContextBuilder.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
-        {
-            _dataScopeProvider.AddMissingData(renderContext, missingDependency);
-        }
-
-        IDataSupply IDataContextBuilder.AddDependency(IDataDependency dependency)
-        {
-            return _dataScopeProvider.AddDependency(dependency);
-        }
-
-        IList<IDataSupply> IDataContextBuilder.AddConsumer(IDataConsumer consumer)
-        {
-            return _dataScopeProvider.AddConsumer(consumer);
+            get { return _dataScopeRules.DataSupplies; }
         }
 
         #endregion

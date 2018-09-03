@@ -95,7 +95,6 @@ namespace Sample1.SamplePackages
 
             public override IWriteResult WritePageArea(
                 IRenderContext context, 
-                IDataContextBuilder dataContextBuilder, 
                 PageArea pageArea)
             {
                 if (pageArea == PageArea.Body)

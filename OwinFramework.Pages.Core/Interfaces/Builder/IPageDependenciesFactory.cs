@@ -21,6 +21,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace);
 
         /// <summary>
+        /// The id manager is a singleton and therefore alwaya available
+        /// </summary>
+        IIdManager IdManager { get; }
+
+        /// <summary>
         /// The name manager is a singleton and therefore alwaya available
         /// </summary>
         INameManager NameManager { get; }

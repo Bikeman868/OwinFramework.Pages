@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The data scope provider associated with this service
         /// </summary>
-        public DebugDataScopeProvider Scope { get; set; }
+        public DebugDataScopeRules Scope { get; set; }
 
         /// <summary>
         /// Default public constructor

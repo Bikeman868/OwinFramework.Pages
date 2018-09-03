@@ -10,8 +10,8 @@ namespace OwinFramework.Pages.Html.Elements
 {
     internal class PageRegion : PageElement
     {
-        private readonly IDataScopeProvider _dataScopeProvider;
-        private readonly Func<IRenderContext, IDataContextBuilder, PageArea, IWriteResult> _writeContent;
+        private readonly IDataContextBuilder _dataContextBuilder;
+        private readonly Func<IRenderContext, PageArea, IWriteResult> _writeContent;
 
         public PageRegion(
             PageElementDependencies dependencies,
@@ -21,11 +21,7 @@ namespace OwinFramework.Pages.Html.Elements
             IPageData pageData)
             : base(dependencies, parent, region, pageData)
         {
-            _dataScopeProvider = pageData.DataContextBuilder.CreateInstance();
-            _dataScopeProvider.Initialize(pageData.DataContextBuilder);
-
-            pageData.Push();
-            pageData.DataContextBuilder = _dataScopeProvider;
+            _dataContextBuilder = pageData.BeginAddElement(Element);
 
             content = content ?? region.Content;
             var layout = content as ILayout;
@@ -39,17 +35,17 @@ namespace OwinFramework.Pages.Html.Elements
             }
             else if (component != null)
             {
-                var pageLayout = new PageComponent(dependencies, this, component, pageData);
-                _writeContent = pageLayout.WritePageArea;
-                Children = new PageElement[] { pageLayout };
+                var pageComponent = new PageComponent(dependencies, this, component, pageData);
+                _writeContent = pageComponent.WritePageArea;
+                Children = new PageElement[] { pageComponent };
             }
             else
             {
                 Children = null;
-                _writeContent = (rc, dc, pa) => WriteResult.Continue();
+                _writeContent = (rc, pa) => WriteResult.Continue();
             }
 
-            pageData.Pop();
+            pageData.EndAddElement(Element);
         }
 
         protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
@@ -58,24 +54,15 @@ namespace OwinFramework.Pages.Html.Elements
             return base.PopulateDebugInfo(debugRegion, parentDepth, childDepth);
         }
 
-        protected override IWriteResult WritePageAreaInternal(IRenderContext renderContext, IDataContextBuilder dataContextBuilder, PageArea pageArea)
+        protected override IWriteResult WritePageAreaInternal(IRenderContext renderContext, PageArea pageArea)
         {
             var data = renderContext.Data;
-            renderContext.SelectDataContext(_dataScopeProvider.Id);
+            renderContext.SelectDataContext(_dataContextBuilder.Id);
 
-            var result = _writeContent(renderContext, dataContextBuilder, pageArea);
+            var result = _writeContent(renderContext, pageArea);
 
             renderContext.Data = data;
             return result;
-        }
-
-        public override void BuildDataContext(DataContextBuilder dataContextBuilder)
-        {
-            dataContextBuilder.Push(_dataScopeProvider);
-
-            base.BuildDataContext(dataContextBuilder);
-
-            dataContextBuilder.Pop();
         }
     }
 }

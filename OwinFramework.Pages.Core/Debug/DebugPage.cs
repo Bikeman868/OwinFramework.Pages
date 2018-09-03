@@ -20,7 +20,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The data scope provider associated with this page
         /// </summary>
-        public DebugDataScopeProvider Scope { get; set; }
+        public DebugDataScopeRules Scope { get; set; }
 
         /// <summary>
         /// The name of the permission that the user must have to see this page

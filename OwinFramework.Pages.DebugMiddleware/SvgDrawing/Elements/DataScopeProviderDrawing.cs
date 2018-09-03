@@ -11,13 +11,13 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
         public DataScopeProviderDrawing(
                 IDebugDrawing drawing, 
                 DrawingElement page, 
-                DebugDataScopeProvider debugDataScope,
+                DebugDataScopeRules debugDataScope,
                 int headingLevel,
                 bool showButtons,
                 int depth)
             : base(
                 page, 
-                "Data scope #" + debugDataScope.Id,
+                "Data scope '" + debugDataScope.Name + "'",
                 headingLevel)
         {
             CssClass = "data-scope";
@@ -60,7 +60,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                     var childDrawing = new DataScopeProviderDrawing(
                         drawing,
                         page,
-                        child as DebugDataScopeProvider,
+                        child as DebugDataScopeRules,
                         headingLevel,
                         showButtons,
                         depth - 1);

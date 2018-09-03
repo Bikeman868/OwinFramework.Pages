@@ -116,7 +116,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                     typeof(DebugDataProvider),
                     typeof(DebugDataProviderDependency),
                     typeof(DebugDataScope),
-                    typeof(DebugDataScopeProvider),
+                    typeof(DebugDataScopeRules),
                     typeof(DebugDataSupplier),
                     typeof(DebugDataSupply),
                     typeof(DebugDataScope),

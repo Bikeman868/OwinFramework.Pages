@@ -5,13 +5,8 @@ namespace OwinFramework.Pages.Core.Debug
     /// <summary>
     /// Contains debugging information about a data scope
     /// </summary>
-    public class DebugDataScopeProvider : DebugInfo
+    public class DebugDataScopeRules : DebugInfo
     {
-        /// <summary>
-        /// The unique ID of this data scope provider
-        /// </summary>
-        public int Id { get; set; }
-
         /// <summary>
         /// A list of scopes introduced
         /// </summary>
@@ -25,17 +20,9 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// Default public constructor
         /// </summary>
-        public DebugDataScopeProvider()
+        public DebugDataScopeRules()
         {
-            Type = "Data scope";
-        }
-
-        /// <summary>
-        /// Returns a default description
-        /// </summary>
-        public override string ToString()
-        {
-            return base.ToString() + " #" + Id;
+            Type = "Data scope rules";
         }
     }
 }

@@ -252,7 +252,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (type == null)
                 throw new PageBuilderException("The page data scope type is null");
 
-            var dataScope = _page as IDataScopeProvider;
+            var dataScope = _page as IDataScopeRules;
             if (dataScope == null)
                 throw new PageBuilderException("This page is not a data scope provider");
 

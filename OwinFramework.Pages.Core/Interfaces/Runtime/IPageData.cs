@@ -24,12 +24,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         void EndAddElement(IElement element);
 
         /// <summary>
-        /// Call this method to indicate that this element has a dependancy on
-        /// another component that must be rendered onto the page
-        /// </summary>
-        IPageData NeedsComponent(IComponent component);
-
-        /// <summary>
         /// Logs an initialization message that can be used to track down
         /// configuration issues.
         /// </summary>

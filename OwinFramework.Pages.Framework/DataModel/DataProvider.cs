@@ -78,6 +78,11 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         #region IDataConsumer  Mixin
 
+        IDataConsumerNeeds IDataConsumer.GetConsumerNeeds()
+        { 
+            return DataConsumer.GetConsumerNeeds();
+        }
+
         void IDataConsumer.HasDependency<T>(string scopeName)
         {
             DataConsumer.HasDependency<T>(scopeName);
@@ -106,11 +111,6 @@ namespace OwinFramework.Pages.Framework.DataModel
         void IDataConsumer.HasDependency(IDataSupply dataSupply)
         {
             DataConsumer.HasDependency(dataSupply);
-        }
-
-        IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataContextBuilder dataContextBuilder)
-        {
-            return DataConsumer.AddDependenciesToScopeProvider(dataContextBuilder);
         }
 
         #endregion

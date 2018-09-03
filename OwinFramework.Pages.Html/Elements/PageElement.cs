@@ -50,19 +50,6 @@ namespace OwinFramework.Pages.Html.Elements
             foreach (var pageArea in element.GetPageAreas())
                 if (pageArea >= 0 && pageArea < PageArea.MaxValue)
                     _hasPageArea[(int)pageArea] = true;
-
-            pageData.HasElement(element, element.AssetDeployment, element.Module);
-
-            var elementBase = element as Element;
-            if (!ReferenceEquals(elementBase, null))
-            {
-                var dependentComponents = elementBase.GetDependentComponents();
-                if (!ReferenceEquals(dependentComponents, null))
-                {
-                    foreach (var component in dependentComponents)
-                        pageData.NeedsComponent(component);
-                }
-            }
         }
 
         public override string ToString()
@@ -99,6 +86,16 @@ namespace OwinFramework.Pages.Html.Elements
                     .ToList();
 
             return debugInfo;
+        }
+
+        public virtual IWriteResult WriteStaticCss(ICssWriter writer)
+        {
+            return Element.WriteStaticCss(writer);
+        }
+
+        public virtual IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
+        {
+            return Element.WriteStaticJavascript(writer);
         }
 
         protected bool GetHasPageArea(PageArea pageArea)
@@ -143,7 +140,6 @@ namespace OwinFramework.Pages.Html.Elements
 
         public virtual IWriteResult WritePageArea(
             IRenderContext renderContext, 
-            IDataContextBuilder dataContextBuilder, 
             PageArea pageArea)
         {
             if (!_hasPageArea[(int)pageArea]) return WriteResult.Continue();
@@ -152,12 +148,11 @@ namespace OwinFramework.Pages.Html.Elements
             renderContext.Trace(() => ToString() + " writing " + pageArea);
 #endif
 
-            return WritePageAreaInternal(renderContext, dataContextBuilder, pageArea);
+            return WritePageAreaInternal(renderContext, pageArea);
         }
 
         protected abstract IWriteResult WritePageAreaInternal(
             IRenderContext renderContext, 
-            IDataContextBuilder dataContextBuilder, 
             PageArea pageArea);
     }
 }

@@ -77,7 +77,7 @@
     <Compile Include="DataModel\DataDependency.cs" />
     <Compile Include="DataModel\DataScope.cs" />
     <Compile Include="DataModel\DataScopeFactory.cs" />
-    <Compile Include="DataModel\DataScopeProvider.cs" />
+    <Compile Include="DataModel\DataScopeRules.cs" />
     <Compile Include="DataModel\DataScopeProviderFactory.cs" />
     <Compile Include="DataModel\DataSupplier.cs" />
     <Compile Include="DataModel\DataSupplierFactory.cs" />

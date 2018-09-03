@@ -10,11 +10,11 @@ using OwinFramework.Pages.Mocks.DataModel;
 
 namespace OwinFramework.Pages.Mocks.Runtime
 {
-    public class MockDataScopeProvider: ConcreteImplementationProvider<IDataScopeProvider>, IDataScopeProvider
+    public class MockDataScopeRules: ConcreteImplementationProvider<IDataScopeRules>, IDataScopeRules
     {
         public int Id { get; set; }
         public string ElementName { get; set; }
-        public IDataScopeProvider Parent { get; set; }
+        public IDataScopeRules Parent { get; set; }
         public Type ScopeType { get; set; }
         public string ScopeName { get; set; }
 
@@ -23,34 +23,34 @@ namespace OwinFramework.Pages.Mocks.Runtime
         public List<IDataConsumer> DataConsumers = new List<IDataConsumer>();
         public List<IDataSupply> DataSupplies = new List<IDataSupply>();
 
-        public MockDataScopeProvider()
+        public MockDataScopeRules()
         {
             Id = 1;
         }
 
-        protected override IDataScopeProvider GetImplementation(IMockProducer mockProducer)
+        protected override IDataScopeRules GetImplementation(IMockProducer mockProducer)
         {
             return this;
         }
 
-        public DebugDataScopeProvider GetDebugInfo(int parentDepth, int childDepth)
+        public DebugDataScopeRules GetDebugInfo(int parentDepth, int childDepth)
         {
-            return new DebugDataScopeProvider
+            return new DebugDataScopeRules
             {
                 Name = "Mock data scope provider"
             };
         }
 
-        public IDataScopeProvider Clone()
+        public IDataScopeRules Clone()
         {
             return this;
         }
 
-        public void AddChild(IDataScopeProvider child)
+        public void AddChild(IDataScopeRules child)
         {
         }
 
-        public void Initialize(IDataScopeProvider parent)
+        public void Initialize(IDataScopeRules parent)
         {
             Parent = parent;
         }
@@ -61,9 +61,8 @@ namespace OwinFramework.Pages.Mocks.Runtime
             ScopeName = scopeName;
         }
 
-        public IDataSupply AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        public void AddSupplier(IDataSupplier supplier, IDataDependency dependency)
         {
-            return new MockDataSupplier.DataSupplier();
         }
 
         public void AddSupply(IDataSupply supply)
@@ -91,7 +90,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return string.Equals(dependency.ScopeName, ScopeName, StringComparison.OrdinalIgnoreCase);
         }
 
-        public IDataScopeProvider CreateInstance()
+        public IDataScopeRules CreateInstance()
         {
             return this;
         }
@@ -111,6 +110,21 @@ namespace OwinFramework.Pages.Mocks.Runtime
         public IDataContext SetDataContext(IRenderContext renderContext)
         {
             return renderContext.Data;
+        }
+
+        public IList<IDataScope> DataScopes
+        {
+            get { return new List<IDataScope>(); }
+        }
+
+        public IList<Tuple<IDataSupplier, IDataDependency>> SuppliedDependencies
+        {
+            get { return new List<Tuple<IDataSupplier, IDataDependency>>(); }
+        }
+
+        IList<IDataSupply> IDataScopeRules.DataSupplies
+        {
+            get { return new List<IDataSupply>(); }
         }
     }
 }

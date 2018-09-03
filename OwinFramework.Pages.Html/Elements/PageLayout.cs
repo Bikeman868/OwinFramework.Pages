@@ -5,7 +5,6 @@ using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Runtime;
 
@@ -23,6 +22,8 @@ namespace OwinFramework.Pages.Html.Elements
             IPageData pageData)
             : base(dependencies, parent, layout, pageData)
         {
+            pageData.BeginAddElement(Element);
+
             _regions = dependencies.DictionaryFactory.Create<string, PageRegion>();
 
             var regionElementList = regionElements == null
@@ -43,6 +44,8 @@ namespace OwinFramework.Pages.Html.Elements
             }
 
             Children = _regions.Values.ToArray();
+
+            pageData.EndAddElement(Element);
         }
 
         protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
@@ -68,23 +71,21 @@ namespace OwinFramework.Pages.Html.Elements
 
         protected override IWriteResult WritePageAreaInternal(
             IRenderContext renderContext, 
-            IDataContextBuilder dataContextBuilder, 
             PageArea pageArea)
         {
             var layout = Element as ILayout;
             if (ReferenceEquals(layout, null)) return WriteResult.Continue();
 
-            return layout.WritePageArea(renderContext, dataContextBuilder, pageArea, WriteRegion);
+            return layout.WritePageArea(renderContext, pageArea, WriteRegion);
         }
 
         private IWriteResult WriteRegion(
             IRenderContext renderContext,
-            IDataContextBuilder dataContextBuilder,
             PageArea pageArea,
             string regionName)
         {
             var pageRegion = _regions[regionName];
-            return pageRegion.WritePageArea(renderContext, dataContextBuilder, pageArea);
+            return pageRegion.WritePageArea(renderContext, pageArea);
         }
     }
 }

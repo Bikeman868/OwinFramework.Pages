@@ -28,14 +28,15 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
         [Test]
         public void Should_register_type_dependencies()
         {
-            var dataScopeProvider = SetupMock<IDataScopeProvider>();
+            var dataScopeProvider = SetupMock<IDataScopeRules>();
 
-            var mockDataScopeProvider = GetMock<MockDataScopeProvider, IDataScopeProvider>();
+            var mockDataScopeProvider = GetMock<MockDataScopeRules, IDataScopeRules>();
             mockDataScopeProvider.SupplyAction = dc => dc.Set(new TestType { Value = 99 });
 
             _dataConsumer.HasDependency<TestType>();
-            _dataConsumer.AddDependenciesToScopeProvider(dataScopeProvider);
+            var needs = _dataConsumer.GetConsumerNeeds();
 
+            Assert.IsNotNull(needs);
             Assert.IsTrue(mockDataScopeProvider.DataDependencies.Any(d => d.DataType == typeof(TestType)));
         }
 

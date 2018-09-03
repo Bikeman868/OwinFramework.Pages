@@ -174,7 +174,7 @@ namespace OwinFramework.Pages.Html.Builders
             var dataConsumer = _region as IDataConsumer;
             dataConsumer.HasDependency(_region.ListType, _region.ListScope);
 
-            var dataScope = _region as IDataScopeProvider;
+            var dataScope = _region as IDataScopeRules;
             dataScope.AddSupplier(_region, _dataDependencyFactory.Create(dataType, scopeName));
 
             return this;
@@ -187,7 +187,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         public IRegionDefinition DataScope(Type dataType, string scopeName)
         {
-            var dataScope = _region as IDataScopeProvider;
+            var dataScope = _region as IDataScopeRules;
             if (ReferenceEquals(dataScope, null))
                throw new RegionBuilderException("This region is not a data scope provider");
 

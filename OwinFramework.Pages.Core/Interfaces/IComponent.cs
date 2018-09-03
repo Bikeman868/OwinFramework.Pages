@@ -16,14 +16,9 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// returns true for the page area, or any of the children retuen true for this.
         /// </summary>
         /// <param name="context">The rendering operation in progress</param>
-        /// <param name="dataContextBuilder">The object that built the data context. This
-        /// is required here in case the adat context is missing some data, in this case
-        /// the IDataContextBuilder can add the missing data and remember this for the
-        /// next time this runable is rendered</param>
         /// <param name="pageArea">The area of the page that is being written to</param>
         IWriteResult WritePageArea(
             IRenderContext context,
-            IDataContextBuilder dataContextBuilder,
             PageArea pageArea);
     }
 }

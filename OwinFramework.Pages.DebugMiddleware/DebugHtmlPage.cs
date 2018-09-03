@@ -131,7 +131,7 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (debugInfo is DebugComponent) WriteHtml(html, (DebugComponent)debugInfo, depth);
             if (debugInfo is DebugDataContext) WriteHtml(html, (DebugDataContext)debugInfo, depth);
             if (debugInfo is DebugDataProvider) WriteHtml(html, (DebugDataProvider)debugInfo, depth);
-            if (debugInfo is DebugDataScopeProvider) WriteHtml(html, (DebugDataScopeProvider)debugInfo, depth);
+            if (debugInfo is DebugDataScopeRules) WriteHtml(html, (DebugDataScopeRules)debugInfo, depth);
             if (debugInfo is DebugLayout) WriteHtml(html, (DebugLayout)debugInfo, depth);
             if (debugInfo is DebugModule) WriteHtml(html, (DebugModule)debugInfo, depth);
             if (debugInfo is DebugPackage) WriteHtml(html, (DebugPackage)debugInfo, depth);
@@ -159,7 +159,7 @@ namespace OwinFramework.Pages.DebugMiddleware
         {
         }
 
-        private void WriteHtml(IHtmlWriter html, DebugDataScopeProvider dataScopeProvider, int depth)
+        private void WriteHtml(IHtmlWriter html, DebugDataScopeRules dataScopeProvider, int depth)
         {
             if (depth == 1) return;
 
@@ -292,14 +292,15 @@ namespace OwinFramework.Pages.DebugMiddleware
                 StartIndent(html, true);
                 WriteDebugInfo(html, page.Scope, depth - 1);
 
-                var dataScopeProvider = page.Scope.Instance as IDataContextBuilder;
-                if (dataScopeProvider != null)
+                var dataContextBuilder = page.Scope.Instance as IDataContextBuilder;
+                if (dataContextBuilder != null)
                 {
                     DebugRenderContext debugRenderContext;
                     try
                     {
                         var renderContext = _renderContextFactory.Create((c, f) => { });
-                        dataScopeProvider.SetupDataContext(renderContext);
+                        // TODO: setup the render context
+                        //dataContextBuilder.(renderContext);
                         debugRenderContext = renderContext.GetDebugInfo<DebugRenderContext>();
                     }
                     catch (Exception ex)

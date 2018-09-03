@@ -7,7 +7,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// This interface is implemented by components that can
     /// request specific data to be available at runtime. The
     /// DataConsumer class can be used to implement the Mixin pattern
-    /// for this.
+    /// for this interface.
     /// </summary>
     public interface IDataConsumer
     {
@@ -53,7 +53,8 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
 
         /// <summary>
         /// Call this method to specify a data provider that needs to run
-        /// to provide the data that this control needs. If multiple elements
+        /// to provide the data that this control needs. If multiple elements need the
+        /// same data then the data provider will only execute once
         /// </summary>
         void HasDependency(IDataProvider dataProvider, IDataDependency dependency = null);
 
@@ -68,6 +69,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// is used by the data context builder to resolve dependencies and build the
         /// data context
         /// </summary>
-        IDataConsumerNeeds Needs { get; }
+        IDataConsumerNeeds GetConsumerNeeds();
     }
 }

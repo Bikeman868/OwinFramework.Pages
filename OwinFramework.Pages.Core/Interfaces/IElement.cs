@@ -6,7 +6,7 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// <summary>
     /// All classes that contribute to response rendering inherit from this interface
     /// </summary>
-    public interface IElement : IPageWriter, IDeployable, IPackagable, INamed, IDataConsumer
+    public interface IElement : IPageWriter, IDeployable, IPackagable, INamed
     {
     }
 

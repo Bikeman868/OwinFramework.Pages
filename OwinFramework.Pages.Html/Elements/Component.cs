@@ -45,7 +45,6 @@ namespace OwinFramework.Pages.Html.Elements
 
         public virtual IWriteResult WritePageArea(
             IRenderContext context, 
-            IDataContextBuilder dataContextBuilder, 
             PageArea pageArea)
         {
             if (context.IncludeComments)

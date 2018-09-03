@@ -13,17 +13,11 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
         {
             CssClass = "supplied-dependency";
 
-            if (suppliedDependency.DataSupplied != null)
-                AddChild(new TextDrawing { Text = new[] { "Supply of " + suppliedDependency.DataSupplied } });
+            if (suppliedDependency.DataTypeSupplied != null)
+                AddChild(new TextDrawing { Text = new[] { "Supply of " + suppliedDependency.DataTypeSupplied } });
 
-            if (suppliedDependency.Supply != null)
-            {
-                AddChild(new SupplyDrawing(suppliedDependency.Supply));
-            }
-            else if (suppliedDependency.Supplier != null)
-            {
+            if (suppliedDependency.Supplier != null)
                 AddChild(new SupplierDrawing(suppliedDependency.Supplier));
-            }
 
             if (suppliedDependency.DependentSupplies != null && suppliedDependency.DependentSupplies.Count > 0)
             {

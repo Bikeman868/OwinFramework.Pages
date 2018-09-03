@@ -11,6 +11,7 @@ namespace OwinFramework.Pages.Html.Runtime
     internal class PageDependenciesFactory: IPageDependenciesFactory
     {
         private readonly IRenderContextFactory _renderContextFactory;
+        private readonly IIdManager _idManager;
         private readonly IAssetManager _assetManager;
         private readonly INameManager _nameManager;
         private readonly ICssWriterFactory _cssWriterFactory;
@@ -18,18 +19,22 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly IDataScopeProviderFactory _dataScopeProviderFactory;
         private readonly IDataConsumerFactory _dataConsumerFactory;
         private readonly IDictionaryFactory _dictionaryFactory;
+        private readonly IDataContextFactory _dataContextFactory;
 
         public PageDependenciesFactory(
             IRenderContextFactory renderContextFactory,
+            IIdManager idManager,
             IAssetManager assetManager,
             INameManager nameManager,
             ICssWriterFactory cssWriterFactory,
             IJavascriptWriterFactory javascriptWriterFactory,
             IDataScopeProviderFactory dataScopeProviderFactory, 
             IDataConsumerFactory dataConsumerFactory,
-            IDictionaryFactory dictionaryFactory)
+            IDictionaryFactory dictionaryFactory,
+            IDataContextFactory dataContextFactory)
         {
             _renderContextFactory = renderContextFactory;
+            _idManager = idManager;
             _assetManager = assetManager;
             _nameManager = nameManager;
             _cssWriterFactory = cssWriterFactory;
@@ -37,6 +42,7 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProviderFactory = dataScopeProviderFactory;
             _dataConsumerFactory = dataConsumerFactory;
             _dictionaryFactory = dictionaryFactory;
+            _dataContextFactory = dataContextFactory;
         }
 
         public IPageDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace)
@@ -47,6 +53,11 @@ namespace OwinFramework.Pages.Html.Runtime
                 _assetManager,
                 _nameManager)
                 .Initialize(context);
+        }
+
+        public IIdManager IdManager
+        {
+            get { return _idManager; }
         }
 
         public INameManager NameManager
@@ -82,6 +93,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public IDictionaryFactory DictionaryFactory
         {
             get { return _dictionaryFactory; }
+        }
+
+        public IDataContextFactory DataContextFactory
+        {
+            get { return _dataContextFactory; }
         }
     }
 }

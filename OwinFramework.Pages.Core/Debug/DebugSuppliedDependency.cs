@@ -16,12 +16,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The type of data that will be supplied
         /// </summary>
-        public DebugDataScope DataSupplied { get; set; }
-
-        /// <summary>
-        /// The instancce that will supply this dependency
-        /// </summary>
-        public DebugDataSupply Supply { get; set;}
+        public DebugDataScope DataTypeSupplied { get; set; }
 
         /// <summary>
         /// The supplies that must run before this one
@@ -33,15 +28,12 @@ namespace OwinFramework.Pages.Core.Debug
         /// </summary>
         public override string ToString()
         {
-            if (DataSupplied != null)
+            if (DataTypeSupplied != null)
             {
                 if (Supplier != null)
-                    return "supply " + DataSupplied + " sourced from " + Supplier;
-                return "supply " + DataSupplied;
+                    return "supply " + DataTypeSupplied + " sourced from " + Supplier;
+                return "supply " + DataTypeSupplied;
             }
-
-            if (Supply != null)
-                return Supply.ToString();
 
             return "supplied dependency";
         }

@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// by the fluent builder. You can also use this as a base class for
     /// your custom application elements but this is an advanced use case.
     /// </summary>
-    public abstract class Element : IElement, IDebuggable
+    public abstract class Element : IElement, IDebuggable, IDataConsumer, ILibraryConsumer
     {
         private readonly IDataConsumer _dataConsumer;
         private List<IComponent> _dependentComponents;
@@ -117,13 +117,6 @@ namespace OwinFramework.Pages.Html.Elements
             _dataConsumer.HasDependency(dataSupply);
         }
 
-        IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
-        {
-            if (_dataConsumer == null) return null;
-
-            return _dataConsumer.AddDependenciesToScopeProvider(dataScope);
-        }
-
         void IDataConsumer.HasDependency<T>(string scopeName)
         {
             if (_dataConsumer == null) return;
@@ -157,6 +150,12 @@ namespace OwinFramework.Pages.Html.Elements
             if (_dataConsumer == null) return;
 
             _dataConsumer.HasDependency(dataProvider, dependency);
+        }
+
+        IDataConsumerNeeds IDataConsumer.GetConsumerNeeds()
+        {
+            if (_dataConsumer == null) return null;
+            return _dataConsumer.GetConsumerNeeds();
         }
 
         #endregion

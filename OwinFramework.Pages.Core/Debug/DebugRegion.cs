@@ -12,7 +12,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// <summary>
         /// The data scope provider associated with this region
         /// </summary>
-        public DebugDataScopeProvider Scope { get; set; }
+        public DebugDataScopeRules Scope { get; set; }
 
         /// <summary>
         /// The type of data to repeat inside the region

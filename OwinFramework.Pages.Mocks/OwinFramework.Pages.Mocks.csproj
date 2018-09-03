@@ -72,7 +72,7 @@
     <Compile Include="Managers\MockNameManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\MockDataContext.cs" />
-    <Compile Include="Runtime\MockDataScopeProvider.cs" />
+    <Compile Include="Runtime\MockDataScopeRules.cs" />
     <Compile Include="Runtime\MockRenderContext.cs" />
     <Compile Include="Runtime\MockRequestRouter.cs" />
   </ItemGroup>

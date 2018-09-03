@@ -19,9 +19,7 @@ namespace Sample1.SamplePages
             TitleFunc = context => "Page title";
         }
 
-        public override IWriteResult WriteBodyArea(
-            IRenderContext context, 
-            IDataContextBuilder dataContextBuilder)
+        public override IWriteResult WriteBodyArea(IRenderContext context)
         {
             var html = context.Html;
 
@@ -57,9 +55,9 @@ namespace Sample1.SamplePages
             return base.WriteInPageStyles(writer, childrenWriter);
         }
 
-        public override IWriteResult WriteHeadArea(IRenderContext context, IDataContextBuilder dataContextBuilder)
+        public override IWriteResult WriteHeadArea(IRenderContext context)
         {
-            var result = base.WriteHeadArea(context, dataContextBuilder);
+            var result = base.WriteHeadArea(context);
 
             context.Html.WriteUnclosedElement(
                 "link", "rel",

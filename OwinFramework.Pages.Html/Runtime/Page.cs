@@ -9,6 +9,7 @@ using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Elements;
 
@@ -18,7 +19,7 @@ namespace OwinFramework.Pages.Html.Runtime
     /// Base implementation of IPage. Inheriting from this olass will insulate you
     /// from any additions to the IPage interface
     /// </summary>
-    public class Page: Element, IPage, IDataScopeProvider, IDataConsumer
+    public class Page : Element, IPage, IDataScopeRules, IDataConsumer, IDataContextBuilder
     {
         /// <summary>
         /// Returns the name of the permission that the user must have to view this page
@@ -63,8 +64,9 @@ namespace OwinFramework.Pages.Html.Runtime
         private Dictionary<string, IElement> _regions;
 
         private readonly IPageDependenciesFactory _dependencies;
-        private readonly IDataScopeProvider _dataScopeProvider;
+        private readonly IDataScopeRules _dataScopeRules;
         private readonly IDataConsumer _dataConsumer;
+        private IDataContextBuilder _dataContextBuilder;
         private IList<IComponent> _components;
         private string _bodyStyleName;
         private IList<string> _inPageCssLines;
@@ -81,7 +83,7 @@ namespace OwinFramework.Pages.Html.Runtime
             // this framework!!
 
             _dependencies = dependencies;
-            _dataScopeProvider = dependencies.DataScopeProviderFactory.Create();
+            _dataScopeRules = dependencies.DataScopeProviderFactory.Create();
             _dataConsumer = dependencies.DataConsumerFactory.Create();
         }
 
@@ -89,7 +91,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual void Initialize()
         {
-            var data = new PageData(_dependencies.DataContextFactory, this);
+            var data = new PageData(
+                _dependencies.DataContextFactory, 
+                _dependencies.IdManager,
+                this);
 
             var elementDependencies = new PageElementDependencies
             {
@@ -104,7 +109,7 @@ namespace OwinFramework.Pages.Html.Runtime
                     var region = Layout.GetRegion(regionName);
                     var element = _regions.ContainsKey(regionName)
                         ? _regions[regionName]
-                        : Layout.GetRegion(regionName);
+                        : Layout.GetElement(regionName);
                     regionElements.Add(new Tuple<string, IRegion, IElement>(regionName, region, element));
                 }
                 _layout = new PageLayout(elementDependencies, null, Layout, regionElements, data);
@@ -114,12 +119,14 @@ namespace OwinFramework.Pages.Html.Runtime
                 ? new PageComponent[0]
                 : _components.Select(c => new PageComponent(elementDependencies, null, c, data)).ToArray();
 
+            _dataContextBuilder = data.RootDataContextBuilder;
+
             _referencedModules = new List<IModule>();
             var styles = _dependencies.CssWriterFactory.Create();
             var functions = _dependencies.JavascriptWriterFactory.Create();
 
 #if TRACE
-            System.Diagnostics.Trace.WriteLine("Page " + Name + " asset deployment");
+            System.Diagnostics.Trace.WriteLine("Page '" + Name + "' asset deployment");
 #endif
             foreach (var element in data.Elements)
             {
@@ -200,6 +207,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             public PageData(
                 IDataContextFactory dataContextFactory,
+                IIdManager idManager,
                 Page page)
             {
                 _page = page;
@@ -215,7 +223,7 @@ namespace OwinFramework.Pages.Html.Runtime
                     assetDeployment = AssetDeployment.PerWebsite;
 
                 RootDataContextBuilder = new DataContextBuilder(
-                    dataContextFactory, page);
+                    dataContextFactory, idManager, page);
 
                 _currentState = new State
                 {
@@ -250,12 +258,28 @@ namespace OwinFramework.Pages.Html.Runtime
                     Module = module
                 });
 
-                _currentState.DataContextBuilder.AddConsumer(element);
+                var libraryConsumer = element as ILibraryConsumer;
+                if (!ReferenceEquals(libraryConsumer, null))
+                {
+                    var dependentComponents = libraryConsumer.GetDependentComponents();
+                    if (!ReferenceEquals(dependentComponents, null))
+                    {
+                        foreach (var component in dependentComponents)
+                        {
+                            Log("Needs " + component);
+                            _page.AddComponent(component);
+                        }
+                    }
+                }
+
+                var dataConsumer = element as IDataConsumer;
+                if (dataConsumer != null)
+                    _currentState.DataContextBuilder.AddConsumer(dataConsumer);
 
                 _stateStack.Push(_currentState);
                 _currentState = _currentState.Clone();
 
-                var dataScopeProvider = element as IDataScopeProvider;
+                var dataScopeProvider = element as IDataScopeRules;
                 if (dataScopeProvider != null)
                 {
                     Log("Adding " + dataScopeProvider);
@@ -267,13 +291,6 @@ namespace OwinFramework.Pages.Html.Runtime
             public void EndAddElement(IElement element)
             {
                 _currentState = _stateStack.Pop();
-            }
-
-            public IPageData NeedsComponent(IComponent component)
-            {
-                Log("Needs " + component);
-                _page.AddComponent(component);
-                return this;
             }
 
             public void Log(string message)
@@ -329,7 +346,7 @@ namespace OwinFramework.Pages.Html.Runtime
             context.Trace(() => "Adding static data to the render context");
             context.TraceIndent();
 #endif
-            _dataScopeProvider.SetupDataContext(context);
+            _dataContextBuilder.SetupDataContext(context);
 #if TRACE
             context.TraceOutdent();
 #endif
@@ -392,12 +409,12 @@ namespace OwinFramework.Pages.Html.Runtime
             html.WriteOpenTag("head");
 
             html.Write("<title>");
-            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Title));
+            result.Add(WritePageArea(context, PageArea.Title));
             html.WriteLine("</title>");
 
-            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Head));
-            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Styles));
-            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Scripts));
+            result.Add(WritePageArea(context, PageArea.Head));
+            result.Add(WritePageArea(context, PageArea.Styles));
+            result.Add(WritePageArea(context, PageArea.Scripts));
 
             html.WriteCloseTag("head");
 
@@ -425,8 +442,8 @@ namespace OwinFramework.Pages.Html.Runtime
             else
                 html.WriteOpenTag("body", "class", bodyClassNames);
 
-            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Body));
-            result.Add(WritePageArea(context, _dataScopeProvider, PageArea.Initialization));
+            result.Add(WritePageArea(context, PageArea.Body));
+            result.Add(WritePageArea(context, PageArea.Initialization));
 
             html.WriteCloseTag("body");
 
@@ -439,40 +456,42 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public override IWriteResult WriteStaticCss(ICssWriter writer)
         {
-            var result = WriteResult.Continue();
+            var writeResult = WriteResult.Continue();
 
-            //if (!ReferenceEquals(_pageComponents, null))
-            //{
-            //    for (var i = 0; i < _pageComponents.Length; i++)
-            //    {
-            //        var pageComponent = _pageComponents[i];
-            //        result.Add(pageComponent.Element.WriteStaticCss(writer));
-            //    }
-            //}
+            if (!ReferenceEquals(_pageComponents, null))
+            {
+                for (var i = 0; i < _pageComponents.Length; i++)
+                {
+                    var pageComponent = _pageComponents[i];
+                    if (writeResult.Add(pageComponent.WriteStaticCss(writer)).IsComplete)
+                        return writeResult;
+                }
+            }
 
-            //if (!ReferenceEquals(_layout, null))
-            //    result.Add(_layout.Element.WriteStaticCss(writer));
+            if (!ReferenceEquals(_layout, null))
+                writeResult.Add(_layout.WriteStaticCss(writer));
 
-            return result;
+            return writeResult;
         }
 
         public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
         {
-            var result = WriteResult.Continue();
+            var writeResult = WriteResult.Continue();
 
-            //if (!ReferenceEquals(_pageComponents, null))
-            //{
-            //    for (var i = 0; i < _pageComponents.Length; i++)
-            //    {
-            //        var pageComponent = _pageComponents[i];
-            //        result.Add(pageComponent.Element.WriteStaticJavascript(writer));
-            //    }
-            //}
+            if (!ReferenceEquals(_pageComponents, null))
+            {
+                for (var i = 0; i < _pageComponents.Length; i++)
+                {
+                    var pageComponent = _pageComponents[i];
+                    if (writeResult.Add(pageComponent.WriteStaticJavascript(writer)).IsComplete)
+                        return writeResult;
+                }
+            }
 
-            //if (!ReferenceEquals(_layout, null))
-            //    result.Add(_layout.Element.WriteStaticJavascript(writer));
+            if (!ReferenceEquals(_layout, null))
+                writeResult.Add(_layout.WriteStaticJavascript(writer));
 
-            return result;
+            return writeResult;
         }
 
         public override IWriteResult WriteInPageStyles(
@@ -531,7 +550,6 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual IWriteResult WritePageArea(
             IRenderContext renderContext,
-            IDataContextBuilder dataContextBuilder,
             PageArea pageArea)
         {
             var writeResult = WriteResult.Continue();
@@ -552,19 +570,19 @@ namespace OwinFramework.Pages.Html.Runtime
                 switch (pageArea)
                 {
                     case PageArea.Styles:
-                        writeResult.Add(WriteStylesArea(renderContext, dataContextBuilder));
+                        writeResult.Add(WriteStylesArea(renderContext));
                         break;
                     case PageArea.Scripts:
-                        writeResult.Add(WriteScriptsArea(renderContext, dataContextBuilder));
+                        writeResult.Add(WriteScriptsArea(renderContext));
                         break;
                     case PageArea.Head:
-                        writeResult.Add(WriteHeadArea(renderContext, dataContextBuilder));
+                        writeResult.Add(WriteHeadArea(renderContext));
                         break;
                     case PageArea.Body:
-                        writeResult.Add(WriteBodyArea(renderContext, dataContextBuilder));
+                        writeResult.Add(WriteBodyArea(renderContext));
                         break;
                     case PageArea.Initialization:
-                        writeResult.Add(WriteInitializationArea(renderContext, dataContextBuilder));
+                        writeResult.Add(WriteInitializationArea(renderContext));
                         break;
                 }
 
@@ -573,13 +591,13 @@ namespace OwinFramework.Pages.Html.Runtime
                     for (var i = 0; i < _pageComponents.Length; i++)
                     {
                         var pageComponent = _pageComponents[i];
-                        if (writeResult.Add(pageComponent.WritePageArea(renderContext, dataContextBuilder, pageArea)).IsComplete)
+                        if (writeResult.Add(pageComponent.WritePageArea(renderContext, pageArea)).IsComplete)
                             return writeResult;
                     }
                 }
 
                 if (!ReferenceEquals(_layout, null))
-                    writeResult.Add(_layout.WritePageArea(renderContext, dataContextBuilder, pageArea));
+                    writeResult.Add(_layout.WritePageArea(renderContext, pageArea));
 #if TRACE
             }
             finally
@@ -590,9 +608,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return writeResult;
         }
 
-        public virtual IWriteResult WriteStylesArea(
-            IRenderContext renderContext,
-            IDataContextBuilder dataContextBuilder)
+        public virtual IWriteResult WriteStylesArea(IRenderContext renderContext)
         {
             var html = renderContext.Html;
 
@@ -641,9 +657,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return WriteResult.Continue();
         }
 
-        public virtual IWriteResult WriteScriptsArea(
-            IRenderContext renderContext,
-            IDataContextBuilder dataContextBuilder)
+        public virtual IWriteResult WriteScriptsArea(IRenderContext renderContext)
         {
             var html = renderContext.Html;
 
@@ -692,9 +706,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return WriteResult.Continue();
         }
 
-        public virtual IWriteResult WriteHeadArea(
-            IRenderContext context,
-            IDataContextBuilder dataContextBuilder)
+        public virtual IWriteResult WriteHeadArea(IRenderContext context)
         {
             var html = context.Html;
 
@@ -787,16 +799,12 @@ namespace OwinFramework.Pages.Html.Runtime
             return WriteResult.Continue();
         }
 
-        public virtual IWriteResult WriteBodyArea(
-            IRenderContext renderContext,
-            IDataContextBuilder dataContextBuilder)
+        public virtual IWriteResult WriteBodyArea(IRenderContext renderContext)
         {
             return WriteResult.Continue();
         }
 
-        public virtual IWriteResult WriteInitializationArea(
-            IRenderContext renderContext,
-            IDataContextBuilder dataContextBuilder)
+        public virtual IWriteResult WriteInitializationArea(IRenderContext renderContext)
         {
             return WriteResult.Continue();
         }
@@ -807,12 +815,12 @@ namespace OwinFramework.Pages.Html.Runtime
 
         protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
-            _dataScopeProvider.ElementName = "Page " + Name;
+            _dataScopeRules.ElementName = "Page " + Name;
 
             var debugPage = debugInfo as DebugPage ?? new DebugPage();
 
             debugPage.RequiredPermission = RequiredPermission;
-            debugPage.Scope = _dataScopeProvider.GetDebugInfo<DebugDataScopeProvider>(0, -1);
+            debugPage.Scope = _dataScopeRules.GetDebugInfo<DebugDataScopeRules>(0, -1);
 
             if (childDepth != 0)
                 debugPage.Layout = _layout.GetDebugInfo<DebugLayout>(0, childDepth - 1);
@@ -829,88 +837,83 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
-        #region IDataScopeProvider Mixin
+        #region IDataScopeRules Mixin
 
-        int IDataScopeProvider.Id { get { return _dataScopeProvider.Id; } }
-
-        string IDataScopeProvider.ElementName
+        string IDataScopeRules.ElementName
         {
-            get { return _dataScopeProvider.ElementName; }
-            set { _dataScopeProvider.ElementName = value; }
+            get { return _dataScopeRules.ElementName; }
+            set { _dataScopeRules.ElementName = value; }
         }
 
-        void IDataScopeProvider.SetupDataContext(IRenderContext renderContext)
+        void IDataScopeRules.AddScope(Type type, string scopeName)
         {
-            _dataScopeProvider.SetupDataContext(renderContext);
+            _dataScopeRules.AddScope(type, scopeName);
         }
 
-        IDataScopeProvider IDataScopeProvider.CreateInstance()
+        void IDataScopeRules.AddSupplier(IDataSupplier supplier, IDataDependency dependencyToSupply)
         {
-            return _dataScopeProvider.CreateInstance();
+            _dataScopeRules.AddSupplier(supplier, dependencyToSupply);
         }
 
-        IDataScopeProvider IDataScopeProvider.Parent
+        void IDataScopeRules.AddSupply(IDataSupply supply)
         {
-            get { return _dataScopeProvider.Parent; }
+            _dataScopeRules.AddSupply(supply);
         }
 
-        void IDataScopeProvider.AddChild(IDataScopeProvider child)
+        IList<IDataScope> IDataScopeRules.DataScopes
         {
-            _dataScopeProvider.AddChild(child);
+            get { return _dataScopeRules.DataScopes; }
         }
 
-        void IDataScopeProvider.Initialize(IDataScopeProvider parent)
+        IList<Tuple<IDataSupplier, IDataDependency>> IDataScopeRules.SuppliedDependencies
         {
-            _dataScopeProvider.Initialize(parent);
+            get { return _dataScopeRules.SuppliedDependencies; }
         }
 
-        void IDataScopeProvider.AddScope(Type type, string scopeName)
+        IList<IDataSupply> IDataScopeRules.DataSupplies
         {
-            _dataScopeProvider.AddScope(type, scopeName);
-        }
-
-        void IDataScopeProvider.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
-        {
-            _dataScopeProvider.BuildDataContextTree(renderContext, parentDataContext);
-        }
-
-        IDataSupply IDataScopeProvider.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
-        {
-            return _dataScopeProvider.AddSupplier(supplier, dependency);
-        }
-
-        void IDataScopeProvider.AddSupply(IDataSupply supply)
-        {
-            _dataScopeProvider.AddSupply(supply);
-        }
-
-        IDataContext IDataScopeProvider.SetDataContext(IRenderContext renderContext)
-        {
-            return _dataScopeProvider.SetDataContext(renderContext);
+            get { return _dataScopeRules.DataSupplies; }
         }
 
         #endregion
 
         #region IDataContextBuilder Mixin
 
+        int IDataContextBuilder.Id { get { return _dataContextBuilder.Id; } }
+
         bool IDataContextBuilder.IsInScope(IDataDependency dependency)
         {
-            return _dataScopeProvider.IsInScope(dependency);
+            return _dataContextBuilder.IsInScope(dependency);
         }
 
         void IDataContextBuilder.AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
         {
-            _dataScopeProvider.AddMissingData(renderContext, missingDependency);
+            _dataContextBuilder.AddMissingData(renderContext, missingDependency);
         }
 
         IDataSupply IDataContextBuilder.AddDependency(IDataDependency dependency)
         {
-            return _dataScopeProvider.AddDependency(dependency);
+            return _dataContextBuilder.AddDependency(dependency);
         }
 
         IList<IDataSupply> IDataContextBuilder.AddConsumer(IDataConsumer consumer)
         {
-            return _dataScopeProvider.AddConsumer(consumer);
+            return _dataContextBuilder.AddConsumer(consumer);
+        }
+
+        IDataContextBuilder IDataContextBuilder.AddChild(IDataScopeRules dataScopeRules)
+        {
+            return _dataContextBuilder.AddChild(dataScopeRules);
+        }
+
+        void IDataContextBuilder.SetupDataContext(IRenderContext renderContext)
+        {
+            _dataContextBuilder.SetupDataContext(renderContext);
+        }
+
+        void IDataContextBuilder.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
+        {
+            _dataContextBuilder.BuildDataContextTree(renderContext, parentDataContext);
         }
 
         #endregion
@@ -920,11 +923,6 @@ namespace OwinFramework.Pages.Html.Runtime
         void IDataConsumer.HasDependency(IDataSupply dataSupply)
         {
             _dataConsumer.HasDependency(dataSupply);
-        }
-
-        IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataScopeProvider dataScope)
-        {
-            return _dataConsumer.AddDependenciesToScopeProvider(dataScope);
         }
 
         void IDataConsumer.HasDependency<T>(string scopeName)
@@ -950,6 +948,11 @@ namespace OwinFramework.Pages.Html.Runtime
         void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
         {
             _dataConsumer.HasDependency(dataProvider, dependency);
+        }
+
+        IDataConsumerNeeds IDataConsumer.GetConsumerNeeds()
+        {
+            return _dataConsumer.GetConsumerNeeds();
         }
 
         #endregion

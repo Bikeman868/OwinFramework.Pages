@@ -121,7 +121,7 @@ namespace Sample1.SamplePackages
         /// attributes will not do anything.
         /// This class can
         /// </summary>
-        private class RegionExample5 : IRegion
+        private class RegionExample5 : IRegion, IDataConsumer
         {
             #region These properties do not need to do anything
 
@@ -140,18 +140,15 @@ namespace Sample1.SamplePackages
 
             #region The easy way to implement IDataConsumer is as a Mixin
 
-            private IDataConsumer _dataConsumer = null;
+            // Note that your region does not have to implement IDataConsumer
+            // if it does not consume any data
+
+            private readonly IDataConsumer _dataConsumer = null;
 
             void IDataConsumer.HasDependency(IDataSupply dataSupply)
             {
                 if (_dataConsumer == null) return;
                 _dataConsumer.HasDependency(dataSupply);
-            }
-
-            IList<IDataSupply> IDataConsumer.AddDependenciesToScopeProvider(IDataContextBuilder dataContextBuilder)
-            {
-                if (_dataConsumer == null) return null;
-                return _dataConsumer.AddDependenciesToScopeProvider(dataContextBuilder);
             }
 
             void IDataConsumer.HasDependency<T>(string scopeName)
@@ -182,6 +179,12 @@ namespace Sample1.SamplePackages
             {
                 if (_dataConsumer == null) return;
                 _dataConsumer.HasDependency(dataProvider, dependency);
+            }
+
+            IDataConsumerNeeds IDataConsumer.GetConsumerNeeds()
+            { 
+                if (_dataConsumer == null) return null;
+                return _dataConsumer.GetConsumerNeeds();
             }
 
             #endregion
@@ -229,10 +232,9 @@ namespace Sample1.SamplePackages
 
             IWriteResult IRegion.WritePageArea(
                 IRenderContext context,
-                IDataContextBuilder dataContextBuilder,
                 PageArea pageArea,
                 Action<object> onListItem,
-                Func<IRenderContext, IDataContextBuilder, PageArea, IWriteResult> contentWriter)
+                Func<IRenderContext, PageArea, IWriteResult> contentWriter)
             {
                 // TODO: Add code here to write html onto the page
                 return WriteResult.Continue();

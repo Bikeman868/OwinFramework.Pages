@@ -127,7 +127,7 @@
     <Compile Include="Debug\DebugInfo.cs" />
     <Compile Include="Debug\DebugComponent.cs" />
     <Compile Include="Debug\DebugLayoutRegion.cs" />
-    <Compile Include="Debug\DebugDataScopeProvider.cs" />
+    <Compile Include="Debug\DebugDataScopeRules.cs" />
     <Compile Include="Debug\DebugService.cs" />
     <Compile Include="Debug\DebugRegion.cs" />
     <Compile Include="Debug\DebugLayout.cs" />
@@ -192,9 +192,10 @@
     <Compile Include="Interfaces\DataModel\IDataScopeFactory.cs" />
     <Compile Include="Interfaces\DataModel\IDataScope.cs" />
     <Compile Include="Interfaces\DataModel\IDataScopeProviderFactory.cs" />
-    <Compile Include="Interfaces\DataModel\IDataScopeProvider.cs" />
+    <Compile Include="Interfaces\DataModel\IDataScopeRules.cs" />
     <Compile Include="Interfaces\DataModel\IDataSupply.cs" />
     <Compile Include="Interfaces\DataModel\IDataSupplier.cs" />
+    <Compile Include="Interfaces\DataModel\ILibraryConsumer.cs" />
     <Compile Include="Interfaces\IDataProvider.cs" />
     <Compile Include="Interfaces\DataModel\IDataCatalog.cs" />
     <Compile Include="Interfaces\Managers\IIdManager.cs" />

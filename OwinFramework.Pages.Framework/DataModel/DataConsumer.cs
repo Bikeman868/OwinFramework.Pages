@@ -21,8 +21,6 @@ namespace OwinFramework.Pages.Framework.DataModel
         public List<IDataSupply> DataSupplyDependencies { get; private set; }
         public List<IDataDependency> DataDependencies { get; private set; }
 
-        IDataConsumerNeeds IDataConsumer.Needs { get { return this; } }
-
         public DataConsumer(
             IDataDependencyFactory dataDependencyFactory)
         {
@@ -80,6 +78,11 @@ namespace OwinFramework.Pages.Framework.DataModel
                 DataSupplyDependencies = new List<IDataSupply>();
 
             DataSupplyDependencies.Add(dataSupply);
+        }
+
+        IDataConsumerNeeds IDataConsumer.GetConsumerNeeds()
+        {
+            return this;
         }
 
         DebugInfo IDebuggable.GetDebugInfo(int patentDepth, int childDepth)

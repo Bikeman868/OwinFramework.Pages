@@ -119,9 +119,8 @@ namespace OwinFramework.Pages.Html.Elements
 
         public virtual IWriteResult WritePageArea(
             IRenderContext context, 
-            IDataContextBuilder dataContextBuilder, 
             PageArea pageArea, 
-            Func<IRenderContext, IDataContextBuilder, PageArea, string, IWriteResult> childWriter)
+            Func<IRenderContext, PageArea, string, IWriteResult> childWriter)
         {
 #if TRACE
             context.Trace(() => ToString() + " writing layout body");
@@ -138,7 +137,7 @@ namespace OwinFramework.Pages.Html.Elements
                     visualElement.StaticHtml.WriteAction(context.Html);
 
                 if (!ReferenceEquals(visualElement.RegionName, null))
-                    result.Add(childWriter(context, dataContextBuilder, pageArea, visualElement.RegionName));
+                    result.Add(childWriter(context, pageArea, visualElement.RegionName));
             }
 
 #if TRACE

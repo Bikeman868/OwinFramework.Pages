@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.Framework.DataModel
     {
         private readonly IDataDependencyFactory _dataDependencyFactory;
 
-        public List<Tuple<IDataProvider, IDataDependency>> DataProviderDependencies { get; private set; }
+        public List<Tuple<IDataSupplier, IDataDependency>> DataSupplierDependencies { get; private set; }
         public List<IDataSupply> DataSupplyDependencies { get; private set; }
         public List<IDataDependency> DataDependencies { get; private set; }
 
@@ -66,10 +66,10 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (!dataSupplier.IsSupplierOf(dependency))
                 throw new Exception("Data provider " + dataProvider.Name + " is not a supplier of " + dependency);
 
-            if (DataProviderDependencies == null)
-                DataProviderDependencies = new List<Tuple<IDataProvider, IDataDependency>>();
+            if (DataSupplierDependencies == null)
+                DataSupplierDependencies = new List<Tuple<IDataSupplier, IDataDependency>>();
 
-            DataProviderDependencies.Add(new Tuple<IDataProvider, IDataDependency>(dataProvider, dependency));
+            DataSupplierDependencies.Add(new Tuple<IDataSupplier, IDataDependency>(dataProvider, dependency));
         }
 
         public void HasDependency(IDataSupply dataSupply)
@@ -89,9 +89,9 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             return new DebugDataConsumer
             {
-                DependentProviders = ReferenceEquals(DataProviderDependencies, null)
+                DependentProviders = ReferenceEquals(DataSupplierDependencies, null)
                     ? null
-                    : DataProviderDependencies.Select(s => new DebugDataProviderDependency 
+                    : DataSupplierDependencies.Select(s => new DebugDataProviderDependency 
                         {
                             DataProvider = s.Item1.GetDebugInfo<DebugDataProvider>(),
                             Data = s.Item2 == null ? null : new DebugDataScope

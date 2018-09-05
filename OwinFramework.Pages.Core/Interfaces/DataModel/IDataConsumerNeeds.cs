@@ -13,7 +13,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// these needs are expressed here. If the IDataDependency is null then the
         /// default data for this provider will be requested
         /// </summary>
-        List<Tuple<IDataProvider, IDataDependency>> DataProviderDependencies { get; }
+        List<Tuple<IDataSupplier, IDataDependency>> DataSupplierDependencies { get; }
 
         /// <summary>
         /// When a data consumer depends on a specific data supply these needs are

@@ -909,11 +909,6 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataContextBuilder.SetupDataContext(renderContext);
         }
 
-        void IDataContextBuilder.BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext)
-        {
-            _dataContextBuilder.BuildDataContextTree(renderContext, parentDataContext);
-        }
-
         void IDataContextBuilder.ResolveSupplies()
         {
             _dataContextBuilder.ResolveSupplies();

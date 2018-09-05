@@ -54,12 +54,6 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         void SetupDataContext(IRenderContext renderContext);
 
         /// <summary>
-        /// This is called recursively to construct a tree of data contexts
-        /// You should NOT call this method from your application
-        /// </summary>
-        void BuildDataContextTree(IRenderContext renderContext, IDataContext parentDataContext);
-        
-        /// <summary>
         /// Used to determine if the particular type is available from this
         /// data context builder.
         /// </summary>

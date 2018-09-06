@@ -66,8 +66,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IDictionaryFactory DictionaryFactory { get; }
 
         /// <summary>
-        /// A factory for constructing data contexts
+        /// A factory for constructing data context builders
         /// </summary>
-        IDataContextFactory DataContextFactory { get; }
+        IDataContextBuilderFactory DataContextBuilderFactory { get; }
     }
 }

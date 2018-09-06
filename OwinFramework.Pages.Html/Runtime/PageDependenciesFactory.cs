@@ -19,7 +19,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly IDataScopeProviderFactory _dataScopeProviderFactory;
         private readonly IDataConsumerFactory _dataConsumerFactory;
         private readonly IDictionaryFactory _dictionaryFactory;
-        private readonly IDataContextFactory _dataContextFactory;
+        private readonly IDataContextBuilderFactory _dataContextBuilderFactory;
         private readonly IDataCatalog _dataCatalog;
 
 
@@ -33,7 +33,7 @@ namespace OwinFramework.Pages.Html.Runtime
             IDataScopeProviderFactory dataScopeProviderFactory, 
             IDataConsumerFactory dataConsumerFactory,
             IDictionaryFactory dictionaryFactory,
-            IDataContextFactory dataContextFactory,
+            IDataContextBuilderFactory dataContextBuilderFactory,
             IDataCatalog dataCatalog)
         {
             _renderContextFactory = renderContextFactory;
@@ -45,7 +45,7 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataScopeProviderFactory = dataScopeProviderFactory;
             _dataConsumerFactory = dataConsumerFactory;
             _dictionaryFactory = dictionaryFactory;
-            _dataContextFactory = dataContextFactory;
+            _dataContextBuilderFactory = dataContextBuilderFactory;
             _dataCatalog = dataCatalog;
         }
 
@@ -99,9 +99,9 @@ namespace OwinFramework.Pages.Html.Runtime
             get { return _dictionaryFactory; }
         }
 
-        public IDataContextFactory DataContextFactory
+        public IDataContextBuilderFactory DataContextBuilderFactory
         {
-            get { return _dataContextFactory; }
+            get { return _dataContextBuilderFactory; }
         }
 
         public IDataCatalog DataCatalog

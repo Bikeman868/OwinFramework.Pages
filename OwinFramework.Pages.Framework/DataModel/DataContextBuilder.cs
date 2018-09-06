@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Framework.Utility;
 
-namespace OwinFramework.Pages.Html.Elements
+namespace OwinFramework.Pages.Framework.DataModel
 {
     public class DataContextBuilder : IDataContextBuilder
     {
@@ -20,12 +22,13 @@ namespace OwinFramework.Pages.Html.Elements
 
         private readonly List<IDataScope> _dataScopes;
         private readonly List<IDataSupply> _requiredDataSupplies;
-        private readonly List<Tuple<IDataSupplier, IDataDependency>> _requiredSuppliers;
+        private readonly List<SuppliedDependency> _requiredSuppliedDependencies;
         private readonly List<IDataConsumer> _dataConsumers = new List<IDataConsumer>();
 
+        private List<IDataSupply> _dataSupplies;
+        private List<SuppliedDependency> _suppliedDependencies;
+
         private IDataSupply[] _staticSupplies;
-        private List<IDataSupply> _actualDataSupplies;
-        private List<Tuple<IDataSupplier, IDataDependency>> _actualDataSuppliers;
 
         public DataContextBuilder(
             IDataContextFactory dataContextFactory,
@@ -47,9 +50,9 @@ namespace OwinFramework.Pages.Html.Elements
                 ? new List<IDataSupply>()
                 : dataScopeRules.DataSupplies.ToList();
 
-            _requiredSuppliers = dataScopeRules.SuppliedDependencies == null
-                ? new List<Tuple<IDataSupplier, IDataDependency>>()
-                : dataScopeRules.SuppliedDependencies.ToList();
+            _requiredSuppliedDependencies = dataScopeRules.SuppliedDependencies == null
+                ? new List<SuppliedDependency>()
+                : dataScopeRules.SuppliedDependencies.Select(sd => new SuppliedDependency(sd)).ToList();
         }
 
         public IDataContextBuilder AddChild(IDataScopeRules dataScopeRules)
@@ -78,36 +81,29 @@ namespace OwinFramework.Pages.Html.Elements
 
         public void ResolveSupplies()
         {
-            _actualDataSupplies = new List<IDataSupply>();
-            _actualDataSuppliers = new List<Tuple<IDataSupplier, IDataDependency>>();
+#if TRACE
+            Trace.WriteLine("Data context builder #" + Id + " resolving suppliers");
+#endif
+            _dataSupplies = new List<IDataSupply>();
+            _suppliedDependencies = new List<SuppliedDependency>();
 
             foreach (var supply in _requiredDataSupplies) AddSupply(supply);
-            foreach (var supplier in _requiredSuppliers) AddDataSupplier(supplier);
+            foreach (var supplier in _requiredSuppliedDependencies) AddDataSupplier(supplier);
             foreach (var consumer in _dataConsumers) Resolve(consumer);
 
             if (_children != null)
             {
                 for (var i = 0; i < _children.Length; i++)
                     _children[i].ResolveSupplies();
+
             }
 
-            var sortedSuppliers = GetSuppliedDependenciesOrdered();
+            var sortedList = GetSuppliedDependenciesOrdered();
 
-            // TODO: Wire up dynamic supplies
+            foreach (var sd in sortedList)
+                AddSupply(sd.DataSupply);
 
-            foreach (var dataSupplier in sortedSuppliers)
-            {
-                var supplier = dataSupplier.Item1;
-                var dependency = dataSupplier.Item2;
-
-                if (dependency != null && !supplier.IsSupplierOf(dependency))
-                    throw new Exception("Supplier '" + supplier + "' is not a supplier of '" + dependency + "'");
-
-                var supply = supplier.GetSupply(dependency);
-                AddSupply(supply);
-            }
-
-            _staticSupplies = _actualDataSupplies.Where(s => s.IsStatic).ToArray();
+            _staticSupplies = _dataSupplies.Where(s => s.IsStatic).ToArray();
         }
 
         public void SetupDataContext(IRenderContext renderContext)
@@ -147,9 +143,12 @@ namespace OwinFramework.Pages.Html.Elements
         /// </summary>
         private void AddSupply(IDataSupply supply)
         {
-            if (_actualDataSupplies.All(s => s != supply))
+            if (_dataSupplies.All(s => s != supply))
             {
-                _actualDataSupplies.Add(supply);
+#if TRACE
+                Trace.WriteLine("Data context builder #" + Id + " adding supply '" + "'");
+#endif
+                _dataSupplies.Add(supply);
                 Resolve(supply as IDataConsumer);
             }
         }
@@ -158,12 +157,12 @@ namespace OwinFramework.Pages.Html.Elements
         /// Adds a data supplier and specific type of data to supply to this
         /// context without duplicating data in the same scope
         /// </summary>
-        private void AddDataSupplier(Tuple<IDataSupplier, IDataDependency> dataSupplier)
+        private void AddDataSupplier(SuppliedDependency suppliedDependency)
         {
-            if (_actualDataSuppliers.All(s => !Equals(s.Item2, dataSupplier.Item2)))
+            if (_suppliedDependencies.All(s => !Equals(s.DataDependency, suppliedDependency.DataDependency)))
             {
-                _actualDataSuppliers.Add(dataSupplier);
-                Resolve(dataSupplier.Item1 as IDataConsumer);
+                _suppliedDependencies.Add(suppliedDependency);
+                Resolve(suppliedDependency.DataSupplier as IDataConsumer);
             }
         }
 
@@ -188,7 +187,9 @@ namespace OwinFramework.Pages.Html.Elements
             if (needs.DataSupplierDependencies != null)
             {
                 foreach (var dataSupplier in needs.DataSupplierDependencies)
-                    Resolve(dataSupplier, true);
+                {
+                    Resolve(new SuppliedDependency(dataSupplier), true);
+                }
             }
         }
 
@@ -202,7 +203,7 @@ namespace OwinFramework.Pages.Html.Elements
                 if (supplier == null)
                     throw new Exception("The data catalog does not contain a supplier of '" + dependency + "'");
 
-                AddDataSupplier(new Tuple<IDataSupplier, IDataDependency>(supplier, dependency));
+                AddDataSupplier(new SuppliedDependency(supplier, dependency));
             }
             else
             {
@@ -210,25 +211,25 @@ namespace OwinFramework.Pages.Html.Elements
             }
         }
 
-        private bool Resolve(Tuple<IDataSupplier, IDataDependency> dataSupplier, bool addIfMissing)
+        private bool Resolve(SuppliedDependency suppliedDependency, bool addIfMissing)
         {
-            var dependency = dataSupplier.Item2;
+            if (IsSupplierOf(suppliedDependency.DataDependency)) return true;
 
-            if (IsSupplierOf(dependency)) return true;
-
-            if (_parent != null && _parent.Resolve(dataSupplier, false))
+            if (_parent != null && _parent.Resolve(suppliedDependency, false))
                 return true;
 
             if (addIfMissing)
             {
-                if (IsInScope(dependency))
+                if (IsInScope(suppliedDependency.DataDependency))
                 {
-                    AddDataSupplier(dataSupplier);
-                    var supplier = dataSupplier.Item1;
+                    AddDataSupplier(suppliedDependency);
+
+                    var supplier = suppliedDependency.DataSupplier;
                     Resolve(supplier as IDataConsumer);
+
                     return true;
                 }
-                return _parent.Resolve(dataSupplier, true);
+                return _parent.Resolve(suppliedDependency, true);
             }
             return false;
         }
@@ -238,28 +239,26 @@ namespace OwinFramework.Pages.Html.Elements
         /// </summary>
         private bool IsSupplierOf(IDataDependency dependency)
         {
-            if (_actualDataSuppliers == null) return false;
-            return _actualDataSuppliers.Any(supplier => Equals(supplier.Item2, dependency));
+            if (_suppliedDependencies == null) return false;
+            return _suppliedDependencies.Any(sd => Equals(sd.DataDependency, dependency));
         }
 
-        private List<Tuple<IDataSupplier, IDataDependency>> GetSuppliedDependenciesOrdered()
+        /// <summary>
+        /// Returns a list of the supplied dependencies sorted such that all list entries
+        /// appear after all of the entries that they depend on
+        /// </summary>
+        private List<SuppliedDependency> GetSuppliedDependenciesOrdered()
         {
-            // TODO: Order supplies by their dependency graph
-
-            /*
-            Func<Tuple<IDataSupplier, IDataDependency>, Tuple<IDataSupplier, IDataDependency>, bool> isDependentOn = (d1, d2) =>
+            Func<SuppliedDependency, SuppliedDependency, bool> isDependentOn = (d1, d2) =>
             {
                 if (d1.DependentSupplies == null || d1.DependentSupplies.Count == 0) return false;
-                if (ReferenceEquals(d2.Supply, null)) return false;
-                return d1.DependentSupplies.Any(s => ReferenceEquals(s, d2.Supply));
+                if (ReferenceEquals(d2.DataSupply, null)) return false;
+                return d1.DependentSupplies.Any(s => ReferenceEquals(s, d2.DataSupply));
             };
             var listSorter = new DependencyListSorter<SuppliedDependency>();
 
             lock (_suppliedDependencies)
                 return listSorter.Sort(_suppliedDependencies, isDependentOn);
-             */
-
-            return _actualDataSuppliers;
         }
 
         /// <summary>
@@ -288,6 +287,35 @@ namespace OwinFramework.Pages.Html.Elements
             {
                 foreach (var child in _children)
                     child.BuildDataContextTree(renderContext, dataContext);
+            }
+        }
+
+        #endregion
+
+        #region DataSupplier class
+
+        private class SuppliedDependency
+        {
+            public IDataSupplier DataSupplier;
+            public IDataDependency DataDependency;
+            public IDataSupply DataSupply;
+            public List<IDataSupply> DependentSupplies;
+
+            public SuppliedDependency(IDataSupplier dataSupplier, IDataDependency dataDependency)
+            {
+                DataSupplier = dataSupplier;
+                DataDependency = dataDependency;
+                DependentSupplies = new List<IDataSupply>();
+
+                if (DataDependency != null && !DataSupplier.IsSupplierOf(DataDependency))
+                    throw new Exception("Supplier '" + DataSupplier + "' is not a supplier of '" + DataDependency + "'");
+
+                DataSupply = DataSupplier.GetSupply(DataDependency);
+            }
+
+            public SuppliedDependency(Tuple<IDataSupplier, IDataDependency> tuple)
+                : this(tuple.Item1, tuple.Item2)
+            {
             }
         }
 

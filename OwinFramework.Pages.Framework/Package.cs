@@ -45,6 +45,7 @@ namespace OwinFramework.Pages.Framework
                     new IocRegistration().Init<IDataScopeFactory, DataScopeFactory>(),
                     new IocRegistration().Init<IDataScopeProviderFactory, DataScopeProviderFactory>(),
                     new IocRegistration().Init<IDataConsumerFactory, DataConsumerFactory>(),
+                    new IocRegistration().Init<IDataContextBuilderFactory, DataContextBuilderFactory>(),
 
                     // These classes implement core facilities. They are thread-safe singletons
                     new IocRegistration().Init<IFluentBuilder, FluentBuilder>(),

@@ -91,11 +91,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual void Initialize()
         {
-            var data = new PageData(
-                _dependencies.DataContextFactory, 
-                _dependencies.IdManager,
-                _dependencies.DataCatalog,
-                this);
+            var data = new PageData(_dependencies, this);
 
             var elementDependencies = new PageElementDependencies
             {
@@ -207,11 +203,7 @@ namespace OwinFramework.Pages.Html.Runtime
             private readonly Page _page;
             private State _currentState;
 
-            public PageData(
-                IDataContextFactory dataContextFactory,
-                IIdManager idManager,
-                IDataCatalog dataCatalog,
-                Page page)
+            public PageData(IPageDependenciesFactory dependencies, Page page)
             {
                 _page = page;
 
@@ -225,8 +217,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 if (assetDeployment == AssetDeployment.PerModule && page.Module == null)
                     assetDeployment = AssetDeployment.PerWebsite;
 
-                RootDataContextBuilder = new DataContextBuilder(
-                    dataContextFactory, idManager, dataCatalog, page);
+                RootDataContextBuilder = dependencies.DataContextBuilderFactory.Create(page);
 
                 _currentState = new State
                 {

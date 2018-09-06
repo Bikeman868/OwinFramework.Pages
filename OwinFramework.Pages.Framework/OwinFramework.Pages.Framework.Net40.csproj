@@ -73,6 +73,8 @@
     <Compile Include="Configuration\FrameworkConfiguration.cs" />
     <Compile Include="DataModel\DataConsumerFactory.cs" />
     <Compile Include="DataModel\DataConsumer.cs" />
+    <Compile Include="DataModel\DataContextBuilder.cs" />
+    <Compile Include="DataModel\DataContextBuilderFactory.cs" />
     <Compile Include="DataModel\DataDependencyFactory.cs" />
     <Compile Include="DataModel\DataDependency.cs" />
     <Compile Include="DataModel\DataScope.cs" />

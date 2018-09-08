@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define DETAILED_TRACE
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -53,6 +55,25 @@ namespace OwinFramework.Pages.Framework.DataModel
             _requiredSuppliedDependencies = dataScopeRules.SuppliedDependencies == null
                 ? new List<SuppliedDependency>()
                 : dataScopeRules.SuppliedDependencies.Select(sd => new SuppliedDependency(sd)).ToList();
+
+#if DETAILED_TRACE
+            Trace.WriteLine("DC #" + Id + " constructed from data scope rules");
+            if (_dataScopes.Count > 0)
+            {
+                Trace.WriteLine("DC #" + Id + " scopes:");
+                foreach (var s in _dataScopes) Trace.WriteLine("    " + s);
+            }
+            if (_requiredDataSupplies.Count > 0)
+            {
+                Trace.WriteLine("DC #" + Id + " data supplies:");
+                foreach (var s in _requiredDataSupplies) Trace.WriteLine("    " + s);
+            }
+            if (_requiredSuppliedDependencies.Count > 0)
+            {
+                Trace.WriteLine("DC #" + Id + " supplied dependencies:");
+                foreach (var s in _requiredSuppliedDependencies) Trace.WriteLine("    " + s);
+            }
+#endif
         }
 
         public IDataContextBuilder AddChild(IDataScopeRules dataScopeRules)
@@ -66,6 +87,10 @@ namespace OwinFramework.Pages.Framework.DataModel
                 _parent = this
             };
 
+#if DETAILED_TRACE
+            Trace.WriteLine("DC #" + Id + " is the parent of DC #" + child.Id);
+#endif
+
             if (_children == null)
                 _children = new[] { child };
             else
@@ -76,6 +101,9 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void AddConsumer(IDataConsumer consumer)
         {
+#if DETAILED_TRACE
+            Trace.WriteLine("DC #" + Id + " has consumer " + consumer);
+#endif
             _dataConsumers.Add(consumer);
         }
 
@@ -95,7 +123,6 @@ namespace OwinFramework.Pages.Framework.DataModel
             {
                 for (var i = 0; i < _children.Length; i++)
                     _children[i].ResolveSupplies();
-
             }
 
             var sortedList = GetSuppliedDependenciesOrdered();
@@ -146,7 +173,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (_dataSupplies.All(s => s != supply))
             {
 #if TRACE
-                Trace.WriteLine("Data context builder #" + Id + " adding supply '" + "'");
+                Trace.WriteLine("Data context builder #" + Id + " adding supply '" + supply + "'");
 #endif
                 _dataSupplies.Add(supply);
                 Resolve(supply as IDataConsumer);
@@ -161,6 +188,9 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             if (_suppliedDependencies.All(s => !Equals(s.DataDependency, suppliedDependency.DataDependency)))
             {
+#if TRACE
+                Trace.WriteLine("Data context builder #" + Id + " adding supplied dependency '" + suppliedDependency + "'");
+#endif
                 _suppliedDependencies.Add(suppliedDependency);
                 Resolve(suppliedDependency.DataSupplier as IDataConsumer);
             }
@@ -172,6 +202,9 @@ namespace OwinFramework.Pages.Framework.DataModel
         private void Resolve(IDataConsumer consumer)
         {
             if (consumer == null) return;
+#if DETAILED_TRACE
+            Trace.WriteLine("DC #" + Id + " resolving consumer needs for '" + consumer + "'");
+#endif
             var needs = consumer.GetConsumerNeeds();
 
             if (needs.DataSupplyDependencies != null)
@@ -195,10 +228,16 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         private void Resolve(IDataDependency dependency)
         {
+#if DETAILED_TRACE
+            Trace.WriteLine("DC #" + Id + " resolving dependency '" + dependency + "'");
+#endif
             if (IsSupplierOf(dependency)) return;
 
             if (IsInScope(dependency))
             {
+#if DETAILED_TRACE
+                Trace.WriteLine("DC #" + Id + " dependency '" + dependency + "' is in scope");
+#endif
                 var supplier = _dataCatalog.FindSupplier(dependency);
                 if (supplier == null)
                     throw new Exception("The data catalog does not contain a supplier of '" + dependency + "'");
@@ -207,21 +246,38 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
             else
             {
+#if DETAILED_TRACE
+                Trace.WriteLine("DC #" + Id + " dependency '" + dependency + "' is not in scope, passing to parent to resolve");
+#endif
                 _parent.Resolve(dependency);
             }
         }
 
         private bool Resolve(SuppliedDependency suppliedDependency, bool addIfMissing)
         {
+#if DETAILED_TRACE
+            Trace.WriteLine("DC #" + Id + " supplied dependency '" + suppliedDependency + "'");
+#endif
             if (IsSupplierOf(suppliedDependency.DataDependency)) return true;
 
             if (_parent != null && _parent.Resolve(suppliedDependency, false))
+            {
+#if DETAILED_TRACE
+                Trace.WriteLine("DC #" + Id + " parent was able to resolve supplied dependency '" + suppliedDependency + "'");
+#endif
                 return true;
+            }
 
             if (addIfMissing)
             {
+#if DETAILED_TRACE
+                Trace.WriteLine("DC #" + Id + " supplied dependency '" + suppliedDependency + "' is missing and must be added");
+#endif
                 if (IsInScope(suppliedDependency.DataDependency))
                 {
+#if DETAILED_TRACE
+                    Trace.WriteLine("DC #" + Id + " supplied dependency '" + suppliedDependency + "' is in scope");
+#endif
                     AddDataSupplier(suppliedDependency);
 
                     var supplier = suppliedDependency.DataSupplier;
@@ -229,6 +285,9 @@ namespace OwinFramework.Pages.Framework.DataModel
 
                     return true;
                 }
+#if DETAILED_TRACE
+                Trace.WriteLine("DC #" + Id + " supplied dependency '" + suppliedDependency + "' is not in scope, passing up to parent");
+#endif
                 return _parent.Resolve(suppliedDependency, true);
             }
             return false;
@@ -247,8 +306,11 @@ namespace OwinFramework.Pages.Framework.DataModel
         /// Returns a list of the supplied dependencies sorted such that all list entries
         /// appear after all of the entries that they depend on
         /// </summary>
-        private List<SuppliedDependency> GetSuppliedDependenciesOrdered()
+        private IEnumerable<SuppliedDependency> GetSuppliedDependenciesOrdered()
         {
+            if (_suppliedDependencies == null || _suppliedDependencies.Count == 0)
+                return Enumerable.Empty<SuppliedDependency>();
+
             Func<SuppliedDependency, SuppliedDependency, bool> isDependentOn = (d1, d2) =>
             {
                 if (d1.DependentSupplies == null || d1.DependentSupplies.Count == 0) return false;
@@ -258,7 +320,18 @@ namespace OwinFramework.Pages.Framework.DataModel
             var listSorter = new DependencyListSorter<SuppliedDependency>();
 
             lock (_suppliedDependencies)
-                return listSorter.Sort(_suppliedDependencies, isDependentOn);
+            {
+#if DETAILED_TRACE
+                Trace.WriteLine("DC #" + Id + " sorting dependencies. Original order:");
+                foreach (var d in _suppliedDependencies) Trace.WriteLine("    " + d);
+#endif
+                var sortedList = listSorter.Sort(_suppliedDependencies, isDependentOn);
+#if DETAILED_TRACE
+                Trace.WriteLine("DC #" + Id + " Order after sorting:");
+                foreach (var d in sortedList) Trace.WriteLine("    " + d);
+#endif
+                return sortedList;
+            }
         }
 
         /// <summary>
@@ -316,6 +389,12 @@ namespace OwinFramework.Pages.Framework.DataModel
             public SuppliedDependency(Tuple<IDataSupplier, IDataDependency> tuple)
                 : this(tuple.Item1, tuple.Item2)
             {
+            }
+
+            public override string ToString()
+            {
+                if (DataDependency == null) return DataSupplier.ToString();
+                return DataSupplier + " -> " + DataDependency;
             }
         }
 

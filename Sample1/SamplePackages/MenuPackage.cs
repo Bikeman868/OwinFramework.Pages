@@ -209,7 +209,7 @@ namespace Sample1.SamplePackages
             builder.BuildUpRegion()
                 .Name("menu")
                 .Tag("ul")
-                .NeedsComponent("menuStyle1")
+                .NeedsComponent("menuStyles")
                 .ClassNames("{ns}_menu")
                 .ForEach<MenuItem>()
                 .Layout(menuOptionLayout)

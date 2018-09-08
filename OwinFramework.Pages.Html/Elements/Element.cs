@@ -154,8 +154,54 @@ namespace OwinFramework.Pages.Html.Elements
 
         IDataConsumerNeeds IDataConsumer.GetConsumerNeeds()
         {
-            if (_dataConsumer == null) return null;
-            return _dataConsumer.GetConsumerNeeds();
+            var needs = new DataConsumerNeeds();
+
+            if (_dataConsumer != null)
+                needs.Add(_dataConsumer.GetConsumerNeeds());
+
+            AddDynamicDataNeeds(needs);
+
+            return needs;
+        }
+
+        protected virtual void AddDynamicDataNeeds(DataConsumerNeeds needs)
+        {
+        }
+
+        protected class DataConsumerNeeds: IDataConsumerNeeds
+        {
+            public List<Tuple<IDataSupplier, IDataDependency>> DataSupplierDependencies { get; private set; }
+            public List<IDataSupply> DataSupplyDependencies { get; private set; }
+            public List<IDataDependency> DataDependencies { get; private set; }
+
+            public DataConsumerNeeds()
+            {
+                DataSupplierDependencies = new List<Tuple<IDataSupplier, IDataDependency>>();
+                DataSupplyDependencies = new List<IDataSupply>();
+                DataDependencies = new List<IDataDependency>();
+            }
+
+            public void Add(IDataConsumerNeeds needs)
+            {
+                if (needs.DataSupplierDependencies != null) DataSupplierDependencies.AddRange(needs.DataSupplierDependencies);
+                if (needs.DataSupplyDependencies != null) DataSupplyDependencies.AddRange(needs.DataSupplyDependencies);
+                if (needs.DataDependencies != null) DataDependencies.AddRange(needs.DataDependencies);
+            }
+
+            public void Add(Tuple<IDataSupplier, IDataDependency> supplier)
+            {
+                DataSupplierDependencies.Add(supplier);
+            }
+
+            public void Add(IDataSupply supply)
+            {
+                DataSupplyDependencies.Add(supply);
+            }
+
+            public void Add(IDataDependency dependency)
+            {
+                DataDependencies.Add(dependency);
+            }
         }
 
         #endregion

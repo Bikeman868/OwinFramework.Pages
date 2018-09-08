@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
@@ -44,7 +45,7 @@ namespace OwinFramework.Pages.Html.Elements
             }
         }
 
-        private IRegionDependenciesFactory _regionDependenciesFactory;
+        private readonly IRegionDependenciesFactory _dependencies;
 
         #region Construction and initialization
 
@@ -60,7 +61,7 @@ namespace OwinFramework.Pages.Html.Elements
             // this would break all regions in all applications that use
             // this framework!!
 
-            _regionDependenciesFactory = dependencies;
+            _dependencies = dependencies;
 
             WriteOpen = w => { };
             WriteClose = w => { };
@@ -68,6 +69,16 @@ namespace OwinFramework.Pages.Html.Elements
             WriteChildClose = w => { };
 
             _dataScopeRules = dependencies.DataScopeProviderFactory.Create();
+        }
+
+        #endregion
+
+        #region IDataConsumer
+
+        protected override void AddDynamicDataNeeds(DataConsumerNeeds needs)
+        {
+            if (_listType != null)
+                needs.Add(_dependencies.DataDependencyFactory.Create(_listType, ListScope));
         }
 
         #endregion
@@ -227,7 +238,17 @@ namespace OwinFramework.Pages.Html.Elements
 
         IList<Tuple<IDataSupplier, IDataDependency>> IDataScopeRules.SuppliedDependencies
         {
-            get { return _dataScopeRules.SuppliedDependencies; }
+            get 
+            { 
+                if (_repeatType == null)
+                    return _dataScopeRules.SuppliedDependencies;
+
+                var supplier = new Tuple<IDataSupplier, IDataDependency>(this, _dependencies.DataDependencyFactory.Create(_repeatType, RepeatScope));
+
+                return _dataScopeRules.SuppliedDependencies
+                    .Concat(supplier.AsEnumerable())
+                    .ToList();
+            }
         }
 
         IList<IDataSupply> IDataScopeRules.DataSupplies
@@ -255,7 +276,7 @@ namespace OwinFramework.Pages.Html.Elements
             {
                 return RepeatType == null
                     ? null 
-                    : _regionDependenciesFactory.DataDependencyFactory.Create(RepeatType, RepeatScope);
+                    : _dependencies.DataDependencyFactory.Create(RepeatType, RepeatScope);
             }
         }
 

@@ -254,7 +254,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, r, n) => r.NeedsComponent(nm.ResolveComponent(n)),
+                (nm, r, n) => r.NeedsComponent(nm.ResolveComponent(n, r.Package)),
                 _region,
                 componentName);
 

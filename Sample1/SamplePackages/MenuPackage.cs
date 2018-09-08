@@ -113,8 +113,6 @@ namespace Sample1.SamplePackages
         /// <summary>
         /// This is an example if a component that just deploys static assets
         /// </summary>
-        [IsComponent("menuStyles")]
-        [PartOf("menu")]
         [DeployCss("ul.{ns}_menu", "list-style-type: none; overflow: hidden; white-space: nowrap;")]
         [DeployCss("li.{ns}_option", "display: inline-block;")]
         [DeployCss("li.{ns}_option a, a.{ns}_option", "display: inline-block; text-decoration: none;")]
@@ -125,11 +123,8 @@ namespace Sample1.SamplePackages
         { }
 
         /// <summary>
-        /// This is an example if a component that deploys static assets and depends on othre components
+        /// This is an example if a component that deploys static assets and depends on other components
         /// </summary>
-        [IsComponent("menuStyle1")]
-        [PartOf("menu")]
-        [NeedsComponent("menuStyles")]
         [DeployCss("ul.{ns}_menu", "margin: 0; padding: 0; background-color: #333")]
         [DeployCss("li.{ns}_option a", "color: white; text-align: center; padding: 14px 16px;")]
         [DeployCss("li.{ns}_option a:hover, li.{ns}_menu-option:hover a.{ns}_menu-option", "color: white; text-align: center; padding: 14px 16px")]
@@ -141,6 +136,17 @@ namespace Sample1.SamplePackages
 
         public override IPackage Build(IFluentBuilder builder)
         {
+            // This component outputs CSS that makes the menu work as a menu
+            builder.BuildUpComponent(new MenuStyles())
+                .Name("menuStyles")
+                .Build();
+
+            // This component outputs CSS that defines the menu appearence
+            builder.BuildUpComponent(new MenuStyle1())
+                .Name("menuStyle1")
+                .NeedsComponent("menuStyles")
+                .Build();
+
             // This component displays a main menu item
             var mainMenuItemComponent = builder.BuildUpComponent(
                 new MenuItemComponent(Dependencies.ComponentDependenciesFactory))

@@ -52,7 +52,8 @@ namespace OwinFramework.Pages.Html.Elements
         {
             var debugRegion = debugInfo as DebugRegion ?? new DebugRegion();
 
-            debugRegion.Scope = _dataContextBuilder.GetDebugInfo<DebugDataScopeRules>();
+            debugRegion.Scope = Element.GetDebugInfo<DebugDataScopeRules>(0, 0);
+            debugRegion.DataContext = _dataContextBuilder.GetDebugInfo<DebugDataScopeRules>();
 
             return base.PopulateDebugInfo<T>(debugRegion, parentDepth, childDepth);
         }

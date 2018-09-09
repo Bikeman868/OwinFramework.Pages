@@ -392,7 +392,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             var debugInfo = new DebugDataScopeRules
             {
                 Instance = this,
-                Name = "#" + Id,
+                Name = "Context #" + Id,
                 Type = "Data context builder"
             };
 
@@ -413,6 +413,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                     .Select(ds => new DebugSuppliedDependency
                         {
                             Supplier = ds.DataSupplier.GetDebugInfo<DebugDataSupplier>(),
+                            DataSupply = ds.DataSupply.GetDebugInfo<DebugDataSupply>(),
                             DataTypeSupplied = ds.DataDependency == null ? null : ds.DataDependency.GetDebugInfo<DebugDataScope>()
                         })
                     .ToList();

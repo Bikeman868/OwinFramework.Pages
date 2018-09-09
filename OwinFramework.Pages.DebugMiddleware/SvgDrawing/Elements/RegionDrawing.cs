@@ -66,7 +66,23 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                     0);
 
                 if (showButtons)
-                    AddHeaderButton(page, "Data").AddChild(dataScopeDrawing);
+                    AddHeaderButton(page, "Scope").AddChild(dataScopeDrawing);
+                else
+                    AddChild(dataScopeDrawing);
+            }
+
+            if (!ReferenceEquals(debugRegion.DataContext, null) && debugRegion.DataContext.HasData())
+            {
+                var dataScopeDrawing = new DataScopeRulesDrawing(
+                    drawing,
+                    page,
+                    debugRegion.DataContext,
+                    headingLevel + 1,
+                    false,
+                    0);
+
+                if (showButtons)
+                    AddHeaderButton(page, "Context").AddChild(dataScopeDrawing);
                 else
                     AddChild(dataScopeDrawing);
             }

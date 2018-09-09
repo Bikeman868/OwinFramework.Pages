@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 int depth)
             : base(
                 page, 
-                "Data scope '" + debugDataScope.Name + "'",
+                debugDataScope.Name,
                 headingLevel)
         {
             CssClass = "data-scope";

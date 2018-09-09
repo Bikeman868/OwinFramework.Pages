@@ -13,7 +13,12 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
         public SupplyDrawing(DebugDataSupply supply)
         {
             CssClass = "list";
-            
+
+            var lines = new List<string>();
+
+            if (!string.IsNullOrEmpty(supply.Name))
+                lines.Add("Supply '" + supply.Name + "'");
+
             var description = supply.IsStatic ? "Static" : "Dynamic";
 
             if (supply.SuppliedData != null && supply.SuppliedData.HasData())
@@ -22,10 +27,10 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             if (supply.SubscriberCount > 0)
                 description += " with " + supply.SubscriberCount + " subscribers";
 
-            var lines = new List<string> { description };
+            lines.Add(description);
 
             if (supply.Instance != null)
-                lines.Add(supply.Instance.GetType().DisplayName());
+                lines.Add("Implemented by " + supply.Instance.GetType().DisplayName());
 
             AddChild(new TextDrawing { Text = lines.ToArray() });
 

@@ -1,10 +1,12 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.DataModel
 {
-    internal class DataDependency: IDataDependency
+    internal class DataDependency: IDataDependency, IDebuggable
     {
         public Type DataType { get; set; }
         public string ScopeName { get; set; }
@@ -34,6 +36,17 @@ namespace OwinFramework.Pages.Framework.DataModel
         bool IEquatable<IDataDependency>.Equals(IDataDependency other)
         {
             return Equals(other);
+        }
+
+        T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
+        {
+            return new DebugDataScope
+            {
+                Instance = this,
+                Type = "Data dependency",
+                DataType = DataType,
+                ScopeName = ScopeName
+            } as T;
         }
     }
 }

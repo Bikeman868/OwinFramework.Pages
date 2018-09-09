@@ -291,8 +291,16 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteElementLine("p", "Page has a data scope");
                 StartIndent(html, true);
                 WriteDebugInfo(html, page.Scope, depth - 1);
+                EndIndent(html);
+            }
 
-                var dataContextBuilder = page.Scope.Instance as IDataContextBuilder;
+            if (page.DataContext != null)
+            {
+                html.WriteElementLine("p", "Page has a data context");
+                StartIndent(html, true);
+                WriteDebugInfo(html, page.DataContext, depth - 1);
+
+                var dataContextBuilder = page.DataContext.Instance as IDataContextBuilder;
                 if (dataContextBuilder != null)
                 {
                     DebugRenderContext debugRenderContext;

@@ -16,10 +16,24 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
             var lines = new List<string>();
 
-            if (supplier.Instance != null)
-                lines.Add(supplier.Instance.GetType().DisplayName());
+            if (!string.IsNullOrEmpty(supplier.Name))
+                lines.Add("Supplier '" + supplier.Name + "'");
 
-            lines.Add(supplier.ToString());
+            if (supplier.Instance != null)
+                lines.Add("Implemented by " + supplier.Instance.GetType().DisplayName());
+
+            if (supplier.DefaultSupply != null)
+                lines.Add("Default supply is " + supplier.DefaultSupply);
+
+            if (supplier.SuppliedTypes != null && supplier.SuppliedTypes.Count > 0)
+            {
+                var otherTypes = supplier.SuppliedTypes
+                    .Where(t => (supplier.DefaultSupply == null) || (t != supplier.DefaultSupply.DataType));
+
+                lines.AddRange(
+                    otherTypes.Select(t => 
+                        "Can supply " + t.DisplayName(TypeExtensions.NamespaceOption.None)));
+            }
 
             AddChild(new TextDrawing { Text = lines.ToArray() });
         }

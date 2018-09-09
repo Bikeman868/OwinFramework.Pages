@@ -129,7 +129,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
             {
-                return new DebugDataSupply
+                var result = new DebugDataSupply
                 {
                     Instance = this,
                     IsStatic = IsStatic,
@@ -139,8 +139,12 @@ namespace OwinFramework.Pages.Framework.DataModel
                         DataType = Dependency.DataType,
                         ScopeName = Dependency.ScopeName
                     },
-                    Supplier = DataSupplier.GetDebugInfo<DebugDataSupplier>()
-                } as T;
+                };
+
+                if (parentDepth != 0)
+                    result.Supplier = DataSupplier.GetDebugInfo<DebugDataSupplier>(parentDepth - 1, 0);
+
+                return result as T;
             }
         }
 

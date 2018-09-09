@@ -14,6 +14,11 @@ namespace OwinFramework.Pages.Core.Debug
         public DebugDataSupplier Supplier { get; set; }
 
         /// <summary>
+        /// The supply that will actually add the data to the context
+        /// </summary>
+        public DebugDataSupply DataSupply { get; set; }
+
+        /// <summary>
         /// The type of data that will be supplied
         /// </summary>
         public DebugDataScope DataTypeSupplied { get; set; }

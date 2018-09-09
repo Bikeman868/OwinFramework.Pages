@@ -15,6 +15,11 @@ namespace OwinFramework.Pages.Core.Debug
         public DebugDataScopeRules Scope { get; set; }
 
         /// <summary>
+        /// The data context associated with this region
+        /// </summary>
+        public DebugDataScopeRules DataContext { get; set; }
+
+        /// <summary>
         /// The type of data to repeat inside the region
         /// </summary>
         [JsonProperty, XmlIgnore]

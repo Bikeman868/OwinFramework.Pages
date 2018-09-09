@@ -138,7 +138,55 @@ namespace OwinFramework.Pages.Html.Elements
             }
 
             if (typeof(T).IsAssignableFrom(typeof(DebugDataScopeRules)))
-                return base.PopulateDebugInfo<T>(_dataScopeRules.GetDebugInfo<T>(parentDepth, childDepth), parentDepth, childDepth);
+            {
+                var debugDataScopeRules = _dataScopeRules.GetDebugInfo<DebugDataScopeRules>(parentDepth, childDepth);
+
+                if (RepeatType != null)
+                {
+                    if (debugDataScopeRules.DataSupplies == null)
+                        debugDataScopeRules.DataSupplies = new List<DebugSuppliedDependency>();
+
+                    var repeatDataSupply = new DebugSuppliedDependency
+                    {
+                        DataTypeSupplied = new DebugDataScope 
+                        { 
+                            DataType = RepeatType,
+                            ScopeName = RepeatScope
+                        },
+                        DataSupply = new DebugDataSupply 
+                        {
+                            Instance = this,
+                            IsStatic = false,
+                            SubscriberCount = _onSupplyActions.Count,
+                            SuppliedData = new DebugDataScope
+                            {
+                                DataType = RepeatType,
+                                ScopeName = RepeatScope
+                            },
+                            Supplier = new DebugDataSupplier
+                            {
+                                Instance = this,
+                                Name = Name + " region",
+                            }
+                        },
+                        DataConsumer = new DebugDataConsumer 
+                        {
+                            DependentData = new List<DebugDataScope>
+                            {
+                                new DebugDataScope
+                                {
+                                    DataType = ListType,
+                                    ScopeName = ListScope
+                                }
+                            }
+                        }
+                    };
+
+                    debugDataScopeRules.DataSupplies.Add(repeatDataSupply);
+                }
+
+                return base.PopulateDebugInfo<T>(debugDataScopeRules, parentDepth, childDepth);
+            }
 
             if (typeof(T).IsAssignableFrom(typeof(DebugDataSupplier)))
             {

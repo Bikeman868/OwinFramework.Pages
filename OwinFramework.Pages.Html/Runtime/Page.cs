@@ -816,6 +816,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 var debugPage = debugInfo as DebugPage ?? new DebugPage();
 
                 debugPage.RequiredPermission = RequiredPermission;
+                debugPage.DataContext = _dataContextBuilder.GetDebugInfo<DebugDataScopeRules>(0, -1);
                 debugPage.Scope = _dataScopeRules.GetDebugInfo<DebugDataScopeRules>(0, -1);
 
                 if (childDepth != 0)

@@ -46,5 +46,15 @@ namespace OwinFramework.Pages.Core.Debug
 
             return "data supplier";
         }
+
+        /// <summary>
+        /// Indicates of this debug info is worth displaying
+        /// </summary>
+        public override bool HasData()
+        {
+            return
+                (DefaultSupply != null && DefaultSupply.HasData()) ||
+                (SuppliedTypes != null && SuppliedTypes.Count > 0);
+        }
     }
 }

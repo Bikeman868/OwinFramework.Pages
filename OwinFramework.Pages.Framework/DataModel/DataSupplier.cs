@@ -72,14 +72,14 @@ namespace OwinFramework.Pages.Framework.DataModel
                     };
         }
 
-        DebugInfo IDebuggable.GetDebugInfo(int parentDepth, int childDepth)
+        T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
         {
             return new DebugDataSupplier
             {
                 Instance = this,
                 Name = "supplier #" + _dataSupplierId,
                 SuppliedTypes = SuppliedTypes == null ? null : SuppliedTypes.ToList(),
-            };
+            } as T;
         }
 
         public override string ToString()
@@ -127,7 +127,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 return (IsStatic ? "static " : "dynamic ") + data + " from supplier #" + DataSupplier._dataSupplierId;
             }
 
-            public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
+            T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
             {
                 return new DebugDataSupply
                 {
@@ -140,7 +140,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                         ScopeName = Dependency.ScopeName
                     },
                     Supplier = DataSupplier.GetDebugInfo<DebugDataSupplier>()
-                };
+                } as T;
             }
         }
 

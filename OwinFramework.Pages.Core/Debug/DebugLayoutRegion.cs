@@ -17,5 +17,13 @@
         {
             Type = "Layout region";
         }
+
+        /// <summary>
+        /// Indicates of this debug info is worth displaying
+        /// </summary>
+        public override bool HasData()
+        {
+            return Region != null && Region.HasData();
+        }
     }
 }

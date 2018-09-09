@@ -35,16 +35,31 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataSupplier = dependencies.DataSupplierFactory.Create();
         }
 
-        public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
+        T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
         {
-            return new DebugDataProvider
+            if (typeof(T).IsAssignableFrom(typeof(DebugDataProvider)))
             {
-                Name = Name,
-                Instance = this,
-                Package = Package.GetDebugInfo<DebugPackage>(),
-                DataConsumer = DataConsumer.GetDebugInfo<DebugDataConsumer>(),
-                DataSupplier = DataSupplier.GetDebugInfo<DebugDataSupplier>()
-            };
+                return new DebugDataProvider
+                {
+                    Name = Name,
+                    Instance = this,
+                    Package = Package.GetDebugInfo<DebugPackage>(),
+                    DataConsumer = DataConsumer.GetDebugInfo<DebugDataConsumer>(),
+                    DataSupplier = DataSupplier.GetDebugInfo<DebugDataSupplier>()
+                } as T;
+            }
+
+            if (typeof(T).IsAssignableFrom(typeof(DebugDataConsumer)))
+            {
+                return DataConsumer.GetDebugInfo<T>(parentDepth, childDepth);
+            }
+
+            if (typeof(T).IsAssignableFrom(typeof(DebugDataSupplier)))
+            {
+                return DataSupplier.GetDebugInfo<T>(parentDepth, childDepth);
+            }
+
+            return null;
         }
 
         public override string ToString()

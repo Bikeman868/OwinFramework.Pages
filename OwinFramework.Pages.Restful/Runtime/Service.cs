@@ -36,9 +36,9 @@ namespace OwinFramework.Pages.Restful.Runtime
             throw new NotImplementedException();
         }
 
-        public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
+        T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
         {
-            return new DebugService();
+            return new DebugService() as T;
         }
 
     }

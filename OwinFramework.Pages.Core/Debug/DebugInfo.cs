@@ -33,7 +33,6 @@ namespace OwinFramework.Pages.Core.Debug
         [JsonIgnore, XmlIgnore]
         public IElement Element;
 
-
         /// <summary>
         /// Information about data required by this element
         /// </summary>
@@ -74,6 +73,17 @@ namespace OwinFramework.Pages.Core.Debug
                 result += " '" + Name + "'";
 
             return result;
+        }
+
+        /// <summary>
+        /// Tests whether this debug info has anything worth displaying
+        /// </summary>
+        public virtual bool HasData()
+        {
+            return
+                !ReferenceEquals(Instance, null) ||
+                (Children != null && Children.Count > 0) ||
+                (Parent != null && Parent.HasData());
         }
     }
 }

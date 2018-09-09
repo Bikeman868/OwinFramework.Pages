@@ -24,5 +24,13 @@ namespace OwinFramework.Pages.Core.Debug
         {
             Type = "Service";
         }
+
+        /// <summary>
+        /// Indicates of this debug info is worth displaying
+        /// </summary>
+        public override bool HasData()
+        {
+            return true;
+        }
     }
 }

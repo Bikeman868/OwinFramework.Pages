@@ -36,7 +36,7 @@ namespace OwinFramework.Pages.Html.Elements
             ElementsByName = dependencies.DictionaryFactory.Create<string, IElement>(StringComparer.InvariantCultureIgnoreCase);
         }
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
+        protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             var debugLayout = debugInfo as DebugLayout ?? new DebugLayout();
 
@@ -50,7 +50,7 @@ namespace OwinFramework.Pages.Html.Elements
                 .Cast<DebugInfo>()
                 .ToList();
 
-            return base.PopulateDebugInfo(debugLayout, parentDepth, childDepth);
+            return base.PopulateDebugInfo<T>(debugLayout, parentDepth, childDepth);
         }
 
         public void PopulateRegion(string regionName, IRegion region)

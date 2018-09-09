@@ -7,7 +7,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.DataModel
 {
-    internal class DataScopeRules : IDataScopeRules
+    internal class DataScopeRules : IDataScopeRules, IDebuggable
     {
         public string ElementName { get; set; }
         public IList<IDataScope> DataScopes { get; private set; }
@@ -27,7 +27,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataSupplies = new List<IDataSupply>();
         }
 
-        public DebugDataScopeRules GetDebugInfo(int parentDepth, int childDepth)
+        T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
         {
             var debug = new DebugDataScopeRules
             {
@@ -58,7 +58,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                     .ToList();
             }
 
-            return debug;
+            return debug as T;
         }
 
         public override string ToString()

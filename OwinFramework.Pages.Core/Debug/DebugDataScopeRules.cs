@@ -24,5 +24,15 @@ namespace OwinFramework.Pages.Core.Debug
         {
             Type = "Data scope rules";
         }
+
+        /// <summary>
+        /// Indicates of this debug info is worth displaying
+        /// </summary>
+        public override bool HasData()
+        {
+            return
+                (Scopes != null && Scopes.Count > 0) ||
+                (DataSupplies != null && DataSupplies.Count > 0);
+        }
     }
 }

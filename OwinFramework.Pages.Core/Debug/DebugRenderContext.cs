@@ -23,5 +23,13 @@ namespace OwinFramework.Pages.Core.Debug
         /// </summary>
         [JsonProperty, XmlIgnore]
         public IDictionary<int, DebugDataContext> Data { get; set; }
+
+        /// <summary>
+        /// Indicates of this debug info is worth displaying
+        /// </summary>
+        public override bool HasData()
+        {
+            return true;
+        }
     }
 }

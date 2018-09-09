@@ -29,11 +29,11 @@ namespace OwinFramework.Pages.Html.Elements
             // this framework!!
         }
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
+        protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             var debugComponent = debugInfo as DebugComponent ?? new DebugComponent();
 
-            return base.PopulateDebugInfo(debugComponent, parentDepth, childDepth);
+            return base.PopulateDebugInfo<T>(debugComponent, parentDepth, childDepth);
         }
 
         private string GetCommentName()

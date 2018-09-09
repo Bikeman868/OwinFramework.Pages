@@ -62,30 +62,28 @@ namespace OwinFramework.Pages.Html.Elements
             return description;
         }
 
-        public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
+        T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
         {
-            return PopulateDebugInfo(new DebugInfo(), parentDepth, childDepth);
+            return PopulateDebugInfo<T>(new DebugInfo(), parentDepth, childDepth);
         }
 
-        protected virtual DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
+        protected virtual T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth) where T: DebugInfo
         {
             debugInfo.Instance = this;
             debugInfo.Element = Element;
             debugInfo.Name = Element.Name;
 
-            debugInfo.DataConsumer = new DebugDataConsumer
-            {
-            };
+            debugInfo.DataConsumer = Element.GetDebugInfo<DebugDataConsumer>();
 
             if (parentDepth != 0 && debugInfo.Parent == null)
-                debugInfo.Parent = Parent.PopulateDebugInfo(new DebugInfo(), parentDepth - 1, 0);
+                debugInfo.Parent = Parent.GetDebugInfo<T>(parentDepth - 1, 0);
 
             if (childDepth != 0 && debugInfo.Children == null)
                 debugInfo.Children = Children
-                    .Select(child => child.PopulateDebugInfo(new DebugInfo(), 0, childDepth - 1))
+                    .Select(child => child.GetDebugInfo<DebugInfo>(0, childDepth - 1))
                     .ToList();
 
-            return debugInfo;
+            return debugInfo as T;
         }
 
         public virtual IWriteResult WriteStaticCss(ICssWriter writer)

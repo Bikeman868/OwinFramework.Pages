@@ -61,7 +61,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             if (!ReferenceEquals(debugPage.Scope, null))
             {
                 AddHeaderButton(this, "Data")
-                    .AddChild(new DataScopeProviderDrawing(
+                    .AddChild(new DataScopeRulesDrawing(
                         drawing, 
                         this, 
                         debugPage.Scope, 

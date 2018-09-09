@@ -807,19 +807,36 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region Debug info
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
+        protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             _dataScopeRules.ElementName = "Page " + Name;
 
-            var debugPage = debugInfo as DebugPage ?? new DebugPage();
+            if (typeof(T).IsAssignableFrom(typeof(DebugPage)))
+            {
+                var debugPage = debugInfo as DebugPage ?? new DebugPage();
 
-            debugPage.RequiredPermission = RequiredPermission;
-            debugPage.Scope = _dataScopeRules.GetDebugInfo<DebugDataScopeRules>(0, -1);
+                debugPage.RequiredPermission = RequiredPermission;
+                debugPage.Scope = _dataScopeRules.GetDebugInfo<DebugDataScopeRules>(0, -1);
 
-            if (childDepth != 0)
-                debugPage.Layout = _layout.GetDebugInfo<DebugLayout>(0, childDepth - 1);
+                if (childDepth != 0)
+                    debugPage.Layout = _layout.GetDebugInfo<DebugLayout>(0, childDepth - 1);
 
-            return base.PopulateDebugInfo(debugPage, parentDepth, childDepth);
+                return base.PopulateDebugInfo<T>(debugPage, parentDepth, childDepth);
+            }
+
+            if (typeof(T).IsAssignableFrom(typeof(DebugDataScopeRules)))
+            {
+                var debugDataScopeRules = _dataScopeRules.GetDebugInfo<T>(parentDepth, childDepth);
+                return base.PopulateDebugInfo<T>(debugDataScopeRules, parentDepth, childDepth);
+            }
+
+            if (typeof(T).IsAssignableFrom(typeof(DebugDataConsumer)))
+            {
+                var debugDataConsumer = _dataConsumer.GetDebugInfo<T>(parentDepth, childDepth);
+                return base.PopulateDebugInfo<T>(debugDataConsumer, parentDepth, childDepth);
+            }
+
+            return base.PopulateDebugInfo<T>(debugInfo, parentDepth, childDepth);
         }
 
         public override string ToString()

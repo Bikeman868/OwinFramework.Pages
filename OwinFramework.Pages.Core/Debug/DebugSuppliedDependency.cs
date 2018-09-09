@@ -37,5 +37,16 @@ namespace OwinFramework.Pages.Core.Debug
 
             return "supplied dependency";
         }
+
+        /// <summary>
+        /// Indicates of this debug info is worth displaying
+        /// </summary>
+        public override bool HasData()
+        {
+            return
+                (Supplier != null && Supplier.HasData()) ||
+                (DataTypeSupplied != null && DataTypeSupplied.HasData()) ||
+                (DependentSupplies != null && DependentSupplies.Count > 0);
+        }
     }
 }

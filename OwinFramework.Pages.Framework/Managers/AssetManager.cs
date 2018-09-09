@@ -377,13 +377,13 @@ namespace OwinFramework.Pages.Framework.Managers
             return context.Response.WriteAsync(content ?? string.Empty);
         }
 
-        DebugInfo IDebuggable.GetDebugInfo(int parentDepth, int childDepth) 
+        T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
         { 
             return new DebugInfo
             {
                 Name = "Asset manager",
                 Instance = this
-            };
+            } as T;
         }
 
         #endregion

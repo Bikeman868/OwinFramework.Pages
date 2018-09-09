@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -11,7 +12,7 @@ using OwinFramework.Pages.Framework.Utility;
 
 namespace OwinFramework.Pages.Framework.DataModel
 {
-    public class DataContextBuilder : IDataContextBuilder
+    public class DataContextBuilder : IDataContextBuilder, IDebuggable
     {
         public int Id { get; private set; }
 
@@ -166,7 +167,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             root.SetupDataContext(renderContext);
         }
 
-        #region private implementation details
+        #region Private implementation details
 
         /// <summary>
         /// Adds a data supply to this context without adding the same supply twice
@@ -380,6 +381,57 @@ namespace OwinFramework.Pages.Framework.DataModel
                 foreach (var child in _children)
                     child.BuildDataContextTree(renderContext, dataContext);
             }
+        }
+
+        #endregion
+
+        #region Debug info
+
+        T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
+        {
+            var debugInfo = new DebugDataScopeRules
+            {
+                Instance = this,
+                Name = "#" + Id,
+                Type = "Data context builder"
+            };
+
+            if (_dataScopes != null && _dataScopes.Count > 0)
+            {
+                debugInfo.Scopes = _dataScopes
+                    .Select(s => new DebugDataScope
+                        {
+                            DataType = s.DataType,
+                            ScopeName = s.ScopeName
+                        })
+                    .ToList();
+            }
+
+            if (_suppliedDependencies != null && _suppliedDependencies.Count > 0)
+            {
+                debugInfo.DataSupplies = _suppliedDependencies
+                    .Select(ds => new DebugSuppliedDependency
+                        {
+                            Supplier = ds.DataSupplier.GetDebugInfo<DebugDataSupplier>(),
+                            DataTypeSupplied = ds.DataDependency == null ? null : ds.DataDependency.GetDebugInfo<DebugDataScope>()
+                        })
+                    .ToList();
+            }
+
+            //if (_dataSupplies != null && _dataSupplies.Count > 0)
+            //{
+            //}
+
+            if (_parent != null && parentDepth != 0)
+                debugInfo.Parent = _parent.GetDebugInfo<T>(parentDepth - 1, 0);
+
+            if (_children != null && _children.Length > 0 && childDepth != 0)
+                debugInfo.Children = _children
+                    .Select(c => c.GetDebugInfo<T>())
+                    .Cast<DebugInfo>()
+                    .ToList();
+
+            return debugInfo as T;
         }
 
         #endregion

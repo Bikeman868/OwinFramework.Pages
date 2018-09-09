@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// 2 for grandparents etc. Pass a negative value to include all ancestors</param>
         /// <param name="childDepth">Pass 0 for no children, 1 for immediate children,
         /// 2 for grandchildren etc. Pass a negative value to include all descendents</param>
-        DebugInfo GetDebugInfo(int parentDepth = 0, int childDepth = 1);
+        T GetDebugInfo<T>(int parentDepth = 0, int childDepth = 1) where T: DebugInfo;
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
             var debuggable = o as IDebuggable;
             return ReferenceEquals(debuggable, null) 
                 ? null 
-                : debuggable.GetDebugInfo(parentDepth, childDepth) as T;
+                : debuggable.GetDebugInfo<T>(parentDepth, childDepth);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         public static DebugInfo GetDebugInfo(this object o, int parentDepth = 0, int childDepth = 1)
         {
             var debuggable = o as IDebuggable;
-            return ReferenceEquals(debuggable, null) ? null : debuggable.GetDebugInfo(parentDepth, childDepth);
+            return ReferenceEquals(debuggable, null) ? null : debuggable.GetDebugInfo<DebugInfo>(parentDepth, childDepth);
         }
     }
 }

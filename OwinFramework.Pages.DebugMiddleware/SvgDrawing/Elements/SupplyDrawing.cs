@@ -16,7 +16,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             
             var description = supply.IsStatic ? "Static" : "Dynamic";
 
-            if (supply.SuppliedData != null)
+            if (supply.SuppliedData != null && supply.SuppliedData.HasData())
                 description += " supply of " + supply.SuppliedData;
 
             if (supply.SubscriberCount > 0)
@@ -29,7 +29,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 
             AddChild(new TextDrawing { Text = lines.ToArray() });
 
-            if (supply.Supplier != null)
+            if (supply.Supplier != null && supply.Supplier.HasData())
             {
                 AddChild(new SupplierDrawing(supply.Supplier));
             }

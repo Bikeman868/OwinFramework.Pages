@@ -6,9 +6,9 @@ using OwinFramework.Pages.DebugMiddleware.SvgDrawing.Shapes;
 
 namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
 {
-    internal class DataScopeProviderDrawing : ElementDrawing
+    internal class DataScopeRulesDrawing : ElementDrawing
     {
-        public DataScopeProviderDrawing(
+        public DataScopeRulesDrawing(
                 IDebugDrawing drawing, 
                 DrawingElement page, 
                 DebugDataScopeRules debugDataScope,
@@ -57,14 +57,17 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             {
                 foreach(var child in debugDataScope.Children)
                 {
-                    var childDrawing = new DataScopeProviderDrawing(
-                        drawing,
-                        page,
-                        child as DebugDataScopeRules,
-                        headingLevel,
-                        showButtons,
-                        depth - 1);
-                    AddChild(childDrawing);
+                    if (child.HasData())
+                    {
+                        var childDrawing = new DataScopeRulesDrawing(
+                            drawing,
+                            page,
+                            child as DebugDataScopeRules,
+                            headingLevel,
+                            showButtons,
+                            depth - 1);
+                        AddChild(childDrawing);
+                    }
                 }
             }
         }

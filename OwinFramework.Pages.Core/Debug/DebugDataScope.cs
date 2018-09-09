@@ -36,5 +36,13 @@ namespace OwinFramework.Pages.Core.Debug
 
             return result;
         }
+
+        /// <summary>
+        /// Indicates of this debug info is worth displaying
+        /// </summary>
+        public override bool HasData()
+        {
+            return DataType != null;
+        }
     }
 }

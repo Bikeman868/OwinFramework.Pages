@@ -47,7 +47,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             return this;
         }
 
-        DebugInfo IDebuggable.GetDebugInfo(int parentDepth, int childDepth)
+        T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
         {
             return new DebugDataContext
             {
@@ -55,7 +55,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 DataContextBuilder = DataContextBuilder,
                 Properties = _properties.Keys.ToList(),
                 Parent = parentDepth == 0 ? null : _parent.GetDebugInfo(parentDepth - 1, 0)
-            };
+            } as T;
         }
 
         IDataContext IDataContext.CreateChild(IDataContextBuilder dataContextBuilder)

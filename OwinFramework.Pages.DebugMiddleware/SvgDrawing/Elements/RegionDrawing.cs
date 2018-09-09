@@ -55,9 +55,9 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                     AddDetails(details, this);
             }
 
-            if (!ReferenceEquals(debugRegion.Scope, null))
+            if (!ReferenceEquals(debugRegion.Scope, null) && debugRegion.Scope.HasData())
             {
-                var dataScopeDrawing = new DataScopeProviderDrawing(
+                var dataScopeDrawing = new DataScopeRulesDrawing(
                     drawing,
                     page,
                     debugRegion.Scope,
@@ -74,19 +74,22 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
             if (showButtons && !ReferenceEquals(debugRegion.Element, null))
             {
                 var elementDebugInfo = debugRegion.Element.GetDebugInfo<DebugRegion>();
-                if (elementDebugInfo != null)
+                if (elementDebugInfo != null && elementDebugInfo.HasData())
                 {
-                AddHeaderButton(page, "Definition")
-                    .AddChild(new RegionDrawing(
-                        drawing,
-                        page,
-                        elementDebugInfo,
-                        headingLevel + 1,
-                        false));
+                    AddHeaderButton(page, "Definition")
+                        .AddChild(new RegionDrawing(
+                            drawing,
+                            page,
+                            elementDebugInfo,
+                            headingLevel + 1,
+                            false));
                 }
             }
 
-            if (debugRegion.Children != null && debugRegion.Children.Count > 0)
+            if (debugRegion.Children != null && 
+                debugRegion.Children.Count > 0 &&
+                debugRegion.Children[0] != null &&
+                debugRegion.Children[0].HasData())
             {
                 var content = drawing.DrawDebugInfo(page, debugRegion.Children[0], headingLevel, showButtons);
                 AddChild(content);

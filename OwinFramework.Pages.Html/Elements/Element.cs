@@ -34,22 +34,25 @@ namespace OwinFramework.Pages.Html.Elements
                 : dataConsumerFactory.Create();
         }
 
-        public DebugInfo GetDebugInfo(int parentDepth, int childDepth)
+        public T GetDebugInfo<T>(int parentDepth, int childDepth) where T: DebugInfo 
         {
-            return PopulateDebugInfo(new DebugInfo(), parentDepth, childDepth);
+            return PopulateDebugInfo<T>(new DebugInfo(), parentDepth, childDepth);
         }
 
-        protected virtual DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
+        protected virtual T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth) where T : DebugInfo 
         {
-            debugInfo.Name = Name;
-            debugInfo.Instance = this;
-
             if (_dataConsumer != null)
                 debugInfo.DataConsumer = _dataConsumer.GetDebugInfo<DebugDataConsumer>();
 
+            if (typeof(T) == typeof(DebugDataConsumer))
+                debugInfo = debugInfo.DataConsumer ?? new DebugDataConsumer();
+
+            debugInfo.Name = Name;
+            debugInfo.Instance = this;
+
             debugInfo.DependentComponents = _dependentComponents;
 
-            return debugInfo;
+            return debugInfo as T;
         }
 
         public override string ToString()

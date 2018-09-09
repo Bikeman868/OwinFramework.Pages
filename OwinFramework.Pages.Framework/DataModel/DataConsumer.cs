@@ -85,7 +85,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             return this;
         }
 
-        DebugInfo IDebuggable.GetDebugInfo(int patentDepth, int childDepth)
+        T IDebuggable.GetDebugInfo<T>(int patentDepth, int childDepth)
         {
             return new DebugDataConsumer
             {
@@ -110,7 +110,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                             DataType = s.DataType,
                             ScopeName = s.ScopeName
                         }).ToList()
-            };
+            } as T;
         }
     }
 }

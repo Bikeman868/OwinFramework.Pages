@@ -48,10 +48,13 @@ namespace OwinFramework.Pages.Html.Elements
             pageData.EndAddElement(Element);
         }
 
-        protected override DebugInfo PopulateDebugInfo(DebugInfo debugInfo, int parentDepth, int childDepth)
+        protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             var debugRegion = debugInfo as DebugRegion ?? new DebugRegion();
-            return base.PopulateDebugInfo(debugRegion, parentDepth, childDepth);
+
+            debugRegion.Scope = _dataContextBuilder.GetDebugInfo<DebugDataScopeRules>();
+
+            return base.PopulateDebugInfo<T>(debugRegion, parentDepth, childDepth);
         }
 
         protected override IWriteResult WritePageAreaInternal(IRenderContext renderContext, PageArea pageArea)

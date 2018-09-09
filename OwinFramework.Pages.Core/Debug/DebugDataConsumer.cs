@@ -46,5 +46,16 @@ namespace OwinFramework.Pages.Core.Debug
 
             return string.Join(Environment.NewLine, description);
         }
+
+        /// <summary>
+        /// Indicates of this debug info is worth displaying
+        /// </summary>
+        public override bool HasData()
+        {
+            return
+                (DependentSupplies != null && DependentSupplies.Count > 0) ||
+                (DependentData != null && DependentData.Count > 0) ||
+                (DependentProviders != null && DependentProviders.Count > 0);
+        }
     }
 }

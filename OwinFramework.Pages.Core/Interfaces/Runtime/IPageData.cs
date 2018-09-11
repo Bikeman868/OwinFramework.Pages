@@ -16,7 +16,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// </summary>
         /// <returns>The data context builder that will build the data
         /// context for children of this element</returns>
-        IDataContextBuilder BeginAddElement(IElement element);
+        IDataContextBuilder BeginAddElement(IElement element, IDataScopeRules dataScopeRules = null);
 
         /// <summary>
         /// This must be called exactly once for each call to BeginAddElement

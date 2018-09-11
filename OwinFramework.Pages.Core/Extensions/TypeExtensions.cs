@@ -34,6 +34,9 @@ namespace OwinFramework.Pages.Core.Extensions
         /// </summary>
         public static string DisplayName(this Type t, NamespaceOption namespaceOption = NamespaceOption.Full)
         {
+            if (ReferenceEquals(t, null)) 
+                return "[null]";
+
             var displayName = t.Name;
 
             if (t.IsValueType) return displayName;

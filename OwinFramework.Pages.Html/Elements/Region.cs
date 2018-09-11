@@ -106,17 +106,6 @@ namespace OwinFramework.Pages.Html.Elements
                 if (_dataScopeRules != null)
                     debugRegion.Scope = _dataScopeRules.GetDebugInfo<DebugDataScopeRules>();
 
-                if (RepeatType != null)
-                {
-                    debugRegion.DataSupply.Supplier.SuppliedTypes = new List<Type> { RepeatType };
-
-                    debugRegion.DataSupply.Supplier.DefaultSupply = new DebugDataScope
-                    {
-                        DataType = RepeatType,
-                        ScopeName = RepeatScope
-                    };
-                }
-
                 return base.PopulateDebugInfo<T>(debugRegion, parentDepth, childDepth);
             }
 
@@ -192,8 +181,8 @@ namespace OwinFramework.Pages.Html.Elements
 
         public virtual IWriteResult WritePageArea(
             IRenderContext context, 
-            PageArea pageArea, 
-            Action<object> onListItem,
+            PageArea pageArea,
+            Action<IRenderContext, object> onListItem,
             Func<IRenderContext, PageArea, IWriteResult> contentWriter)
         {
 #if TRACE
@@ -218,11 +207,8 @@ namespace OwinFramework.Pages.Html.Elements
 
                         context.Data.Set(_repeatType, item, RepeatScope);
                         
-                        var dataSupply = (IDataSupply)this;
-                        dataSupply.Supply(context, null);
-
                         if (!ReferenceEquals(onListItem, null))
-                            onListItem(item);
+                            onListItem(context, item);
 
                         context.TraceIndent();
 

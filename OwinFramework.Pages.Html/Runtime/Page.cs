@@ -229,9 +229,11 @@ namespace OwinFramework.Pages.Html.Runtime
                 };
             }
 
-            public IDataContextBuilder BeginAddElement(IElement element)
+            public IDataContextBuilder BeginAddElement(IElement element, IDataScopeRules dataScopeRules)
             {
                 Log("Has " + element);
+
+                dataScopeRules = dataScopeRules ?? element as IDataScopeRules;
 
                 var assetDeployment = element.AssetDeployment;
 
@@ -274,11 +276,10 @@ namespace OwinFramework.Pages.Html.Runtime
                 _stateStack.Push(_currentState);
                 _currentState = _currentState.Clone();
 
-                var dataScopeProvider = element as IDataScopeRules;
-                if (dataScopeProvider != null)
+                if (dataScopeRules != null)
                 {
-                    Log("Adding " + dataScopeProvider);
-                    _currentState.DataContextBuilder = _currentState.DataContextBuilder.AddChild(dataScopeProvider);
+                    Log("Adding " + dataScopeRules);
+                    _currentState.DataContextBuilder = _currentState.DataContextBuilder.AddChild(dataScopeRules);
                 }
                 return _currentState.DataContextBuilder;
             }

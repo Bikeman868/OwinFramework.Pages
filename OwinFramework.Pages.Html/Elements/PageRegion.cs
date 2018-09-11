@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -9,10 +11,13 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal class PageRegion : PageElement, IDataSupplier, IDataSupply
+    internal class PageRegion : PageElement, IDataSupplier, IDataSupply, IDataScopeRules
     {
         private readonly IDataContextBuilder _dataContextBuilder;
         private readonly Func<IRenderContext, PageArea, IWriteResult> _writeContent;
+
+        private IRegion Region { get { return (IRegion)Element; } }
+        private IDataScopeRules ElementDataScopeRules { get { return Element as IDataScopeRules; } }
 
         public PageRegion(
             PageElementDependencies dependencies,
@@ -22,15 +27,7 @@ namespace OwinFramework.Pages.Html.Elements
             IPageData pageData)
             : base(dependencies, parent, region, pageData)
         {
-            // TODO: Element IDataScopeRules does not include the repeating region data
-            /*
-                var supplier = new Tuple<IDataSupplier, IDataDependency>(this, _dependencies.DataDependencyFactory.Create(_repeatType, RepeatScope));
-
-                return _dataScopeRules.SuppliedDependencies
-                    .Concat(supplier.AsEnumerable())
-                    .ToList();
-            */
-            _dataContextBuilder = pageData.BeginAddElement(Element);
+            _dataContextBuilder = pageData.BeginAddElement(Element, this);
 
             content = content ?? region.Content;
             var layout = content as ILayout;
@@ -121,10 +118,15 @@ namespace OwinFramework.Pages.Html.Elements
             var data = renderContext.Data;
             renderContext.SelectDataContext(_dataContextBuilder.Id);
 
-            var result = region.WritePageArea(renderContext, pageArea, null, _writeContent);
+            var result = region.WritePageArea(renderContext, pageArea, OnListItem, _writeContent);
 
             renderContext.Data = data;
             return result;
+        }
+
+        private void OnListItem(IRenderContext renderContext, object listItem)
+        {
+            ((IDataSupply)this).Supply(renderContext, null);
         }
 
         #region IDataSupplier
@@ -169,13 +171,11 @@ namespace OwinFramework.Pages.Html.Elements
 
         bool IDataSupplier.IsSupplierOf(IDataDependency dependency)
         {
-            var region = Element as IRegion;
-            if (region == null) return false;
-            if (region.RepeatType == null) return false;
+            if (Region.RepeatType == null) return false;
             if (dependency.DataType == null) return false;
-            if (region.RepeatType != dependency.DataType) return false;
-            if (string.IsNullOrEmpty(region.RepeatScope)) return string.IsNullOrEmpty(dependency.ScopeName);
-            return string.Equals(region.RepeatScope, dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
+            if (Region.RepeatType != dependency.DataType) return false;
+            if (string.IsNullOrEmpty(Region.RepeatScope)) return string.IsNullOrEmpty(dependency.ScopeName);
+            return string.Equals(Region.RepeatScope, dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
         }
 
         IDataSupply IDataSupplier.GetSupply(IDataDependency dependency)
@@ -213,6 +213,71 @@ namespace OwinFramework.Pages.Html.Elements
         void IDataSupply.AddOnSupplyAction(Action<IRenderContext> dataSupplyAction)
         {
             lock (_onSupplyActions) _onSupplyActions.Add(dataSupplyAction);
+        }
+
+        #endregion
+
+        #region IDataScopeRules
+
+
+        string IDataScopeRules.ElementName
+        {
+            get { return Region.Name; }
+            set { throw new NotImplementedException(); }
+        }
+
+        void IDataScopeRules.AddScope(Type type, string scopeName)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDataScopeRules.AddSupplier(IDataSupplier supplier, IDataDependency dependency)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDataScopeRules.AddSupply(IDataSupply supply)
+        {
+            throw new NotImplementedException();
+        }
+
+        IList<IDataScope> IDataScopeRules.DataScopes
+        {
+            get 
+            { 
+                return ElementDataScopeRules == null 
+                    ? new List<IDataScope>()
+                    : ElementDataScopeRules.DataScopes; 
+            }
+        }
+
+        IList<Tuple<IDataSupplier, IDataDependency>> IDataScopeRules.SuppliedDependencies
+        {
+            get
+            {
+                var suppliedDependencies = new List<Tuple<IDataSupplier, IDataDependency>>();
+
+                if (Region.RepeatType != null)
+                {
+                    var dependency = Dependencies.DataDependencyFactory.Create(Region.RepeatType, Region.RepeatScope);
+                    suppliedDependencies.Add(new Tuple<IDataSupplier, IDataDependency>(this, dependency));
+                }
+
+                if (ElementDataScopeRules != null)
+                    suppliedDependencies.AddRange(ElementDataScopeRules.SuppliedDependencies);
+
+                return suppliedDependencies;
+            }
+        }
+
+        IList<IDataSupply> IDataScopeRules.DataSupplies
+        {
+            get
+            {
+                return ElementDataScopeRules == null
+                    ? new List<IDataSupply>()
+                    : ElementDataScopeRules.DataSupplies;
+            }
         }
 
         #endregion

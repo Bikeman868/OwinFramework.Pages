@@ -233,7 +233,7 @@ namespace Sample1.SamplePackages
             IWriteResult IRegion.WritePageArea(
                 IRenderContext context,
                 PageArea pageArea,
-                Action<object> onListItem,
+                Action<IRenderContext, object> onListItem,
                 Func<IRenderContext, PageArea, IWriteResult> contentWriter)
             {
                 // TODO: Add code here to write html onto the page

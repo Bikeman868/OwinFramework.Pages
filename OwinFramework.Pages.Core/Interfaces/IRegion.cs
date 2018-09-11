@@ -29,7 +29,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         IWriteResult WritePageArea(
             IRenderContext context,
             PageArea pageArea,
-            Action<object> onListItem,
+            Action<IRenderContext, object> onListItem,
             Func<IRenderContext, PageArea, IWriteResult> contentWriter);
     }
 }

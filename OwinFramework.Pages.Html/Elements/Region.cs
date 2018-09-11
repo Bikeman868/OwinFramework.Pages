@@ -265,6 +265,9 @@ namespace OwinFramework.Pages.Html.Elements
 #endif
 
                         context.Data.Set(_repeatType, item, RepeatScope);
+                        
+                        var dataSupply = (IDataSupply)this;
+                        dataSupply.Supply(context, null);
 
                         if (!ReferenceEquals(onListItem, null))
                             onListItem(item);

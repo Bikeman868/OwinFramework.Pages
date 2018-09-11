@@ -58,12 +58,17 @@ namespace OwinFramework.Pages.Html.Elements
             return base.PopulateDebugInfo<T>(debugRegion, parentDepth, childDepth);
         }
 
-        protected override IWriteResult WritePageAreaInternal(IRenderContext renderContext, PageArea pageArea)
+        protected override IWriteResult WritePageAreaInternal(
+            IRenderContext renderContext,
+            PageArea pageArea)
         {
+            var region = Element as IRegion;
+            if (ReferenceEquals(region, null)) return WriteResult.Continue();
+
             var data = renderContext.Data;
             renderContext.SelectDataContext(_dataContextBuilder.Id);
 
-            var result = _writeContent(renderContext, pageArea);
+            var result = region.WritePageArea(renderContext, pageArea, null, _writeContent);
 
             renderContext.Data = data;
             return result;

@@ -196,16 +196,30 @@ namespace OwinFramework.Pages.Framework.DataModel
                 Trace.WriteLine("Data context builder #" + Id + " adding supplied dependency '" + suppliedDependency + "'");
 #endif
                 _suppliedDependencies.Add(suppliedDependency);
-                Resolve(suppliedDependency.DataSupplier as IDataConsumer);
+                suppliedDependency.DependentSupplies = Resolve(suppliedDependency.DataSupplier as IDataConsumer);
+
+                if (suppliedDependency.DependentSupplies != null)
+                {
+                    foreach (var dynamicSupply in suppliedDependency.DependentSupplies.Where(s => !s.IsStatic))
+                    {
+                        suppliedDependency.DataSupply.IsStatic = false;
+                        dynamicSupply.AddOnSupplyAction(rc =>
+                            {
+                                var dc = rc.GetDataContext(Id);
+                                suppliedDependency.DataSupply.Supply(rc, dc);
+                            });
+                    }
+                }
             }
         }
 
         /// <summary>
-        /// Resolves all of the data needs of a data consumer
+        /// Resolves all of the data needs of a data consumer and retruns a list of the data
+        /// supplies that it depends on
         /// </summary>
-        private void Resolve(IDataConsumer consumer)
+        private List<IDataSupply> Resolve(IDataConsumer consumer)
         {
-            if (consumer == null) return;
+            if (consumer == null) return null;
 #if DETAILED_TRACE
             Trace.WriteLine("DC #" + Id + " resolving consumer needs for '" + consumer + "'");
 #endif
@@ -215,7 +229,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             if (needs.DataSupplyDependencies != null && needs.DataSupplyDependencies.Count > 0)
             {
                 Trace.WriteLine("    consumer needs data supplies:");
-                foreach(var supply in needs.DataSupplyDependencies)
+                foreach (var supply in needs.DataSupplyDependencies)
                     Trace.WriteLine("        " + supply);
             }
 
@@ -233,36 +247,54 @@ namespace OwinFramework.Pages.Framework.DataModel
                     Trace.WriteLine("        " + supplierDependency);
             }
 #endif
+
+            var dependentSupplies = new List<IDataSupply>();
+
             if (needs.DataSupplyDependencies != null)
-                foreach (var supply in needs.DataSupplyDependencies) 
+            {
+                foreach (var supply in needs.DataSupplyDependencies)
+                {
                     AddSupply(supply);
+                    dependentSupplies.Add(supply);
+                }
+            }
 
             if (needs.DataSupplierDependencies != null)
             {
                 foreach (var dataSupplier in needs.DataSupplierDependencies)
                 {
-                    Resolve(new SuppliedDependency(dataSupplier), true);
+                    var supplies = Resolve(dataSupplier.Item1, dataSupplier.Item2, true);
+                    if (supplies != null) dependentSupplies.AddRange(supplies);
                 }
             }
 
             if (needs.DataDependencies != null)
             {
                 foreach (var dependency in needs.DataDependencies)
-                    Resolve(dependency);
+                {
+                    var supplies = Resolve(dependency);
+                    if (supplies != null) dependentSupplies.AddRange(supplies);
+                }
             }
+
+            return dependentSupplies;
         }
 
-        private void Resolve(IDataDependency dependency)
+        private List<IDataSupply> Resolve(IDataDependency dependency)
         {
 #if DETAILED_TRACE
             Trace.WriteLine("DC #" + Id + " resolving dependency '" + dependency + "'");
 #endif
-            if (IsSupplierOf(dependency))
+            var suppliedDependency = _suppliedDependencies == null 
+                ? null
+                : _suppliedDependencies.FirstOrDefault(sd => Equals(sd.DataDependency, dependency));
+
+            if (suppliedDependency != null)
             {
 #if DETAILED_TRACE
                 Trace.WriteLine("DC #" + Id + " dependency '" + dependency + "' already has a supplier");
 #endif
-                return;
+                return new List<IDataSupply> { suppliedDependency.DataSupply };
             }
 
             if (IsInScope(dependency))
@@ -274,52 +306,57 @@ namespace OwinFramework.Pages.Framework.DataModel
                 if (supplier == null)
                     throw new Exception("The data catalog does not contain a supplier of '" + dependency + "'");
 
-                AddDataSupplier(new SuppliedDependency(supplier, dependency));
+                suppliedDependency = new SuppliedDependency(supplier, dependency);
+                AddDataSupplier(suppliedDependency);
+                return new List<IDataSupply> { suppliedDependency.DataSupply };
             }
-            else
-            {
+
 #if DETAILED_TRACE
-                Trace.WriteLine("DC #" + Id + " dependency '" + dependency + "' is not in scope, passing to parent to resolve");
+            Trace.WriteLine("DC #" + Id + " dependency '" + dependency + "' is not in scope, passing to parent to resolve");
 #endif
-                _parent.Resolve(dependency);
-            }
+            return _parent.Resolve(dependency);
         }
 
-        private bool Resolve(SuppliedDependency suppliedDependency, bool addIfMissing)
+        private List<IDataSupply> Resolve(IDataSupplier supplier, IDataDependency dataToSupply, bool addIfMissing)
         {
 #if DETAILED_TRACE
-            Trace.WriteLine("DC #" + Id + (addIfMissing ? " adding" : " locating") + " supplied dependency '" + suppliedDependency + "'");
+            Trace.WriteLine("DC #" + Id + (addIfMissing ? " adding '" : " locating '") + dataToSupply + "' from' " + supplier + "'");
 #endif
-            if (IsSupplierOf(suppliedDependency.DataDependency)) return true;
+            var suppliedDependency = _suppliedDependencies == null
+                ? null
+                : _suppliedDependencies.FirstOrDefault(sd => Equals(sd.DataDependency, dataToSupply));
 
-            if (_parent != null && _parent.Resolve(suppliedDependency, false))
+            if (suppliedDependency != null)
             {
 #if DETAILED_TRACE
-                Trace.WriteLine("DC #" + Id + " parent was able to resolve supplied dependency '" + suppliedDependency + "'");
+                Trace.WriteLine("DC #" + Id + " dependency '" + dataToSupply + "' already has a supplier");
 #endif
-                return true;
+                return new List<IDataSupply> { suppliedDependency.DataSupply };
             }
 
-            if (!addIfMissing) return false;
+            if (_parent != null)
+            {
+                var dependentSupplies = _parent.Resolve(supplier, dataToSupply, false);
+                if (dependentSupplies != null)
+                {
+#if DETAILED_TRACE
+                    Trace.WriteLine("DC #" + Id + " parent was able to resolve the dependency");
+#endif
+                    return dependentSupplies;
+                }
+            }
+
+            if (!addIfMissing) return null;
 
 #if DETAILED_TRACE
-            Trace.WriteLine("DC #" + Id + " supplied dependency '" + suppliedDependency + "' is missing and must be added");
+            Trace.WriteLine("DC #" + Id + " dependency on '" + dataToSupply + "' must be added");
 #endif
+            suppliedDependency = new SuppliedDependency(supplier, dataToSupply);
             AddDataSupplier(suppliedDependency);
 
-            var supplier = suppliedDependency.DataSupplier;
             Resolve(supplier as IDataConsumer);
 
-            return true;
-        }
-
-        /// <summary>
-        /// Returns true if this instance is already supplying this type of data
-        /// </summary>
-        private bool IsSupplierOf(IDataDependency dependency)
-        {
-            if (_suppliedDependencies == null) return false;
-            return _suppliedDependencies.Any(sd => Equals(sd.DataDependency, dependency));
+            return new List<IDataSupply> { suppliedDependency.DataSupply };
         }
 
         /// <summary>

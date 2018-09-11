@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// Base implementation of IRegion. Applications inherit from this olass 
     /// to insulate their code from any future additions to the IRegion interface
     /// </summary>
-    public class Region : Element, IRegion, IDataScopeRules, IDataSupplier, IDataSupply
+    public class Region : Element, IRegion, IDataScopeRules
     {
         public override ElementType ElementType { get { return ElementType.Region; } }
 
@@ -106,23 +106,6 @@ namespace OwinFramework.Pages.Html.Elements
                 if (_dataScopeRules != null)
                     debugRegion.Scope = _dataScopeRules.GetDebugInfo<DebugDataScopeRules>();
 
-                debugRegion.DataSupply = new DebugDataSupply
-                {
-                    Instance = this,
-                    IsStatic = false,
-                    SubscriberCount = _onSupplyActions.Count,
-                    SuppliedData = new DebugDataScope
-                    {
-                        DataType = RepeatType,
-                        ScopeName = RepeatScope
-                    },
-                    Supplier = new DebugDataSupplier
-                    {
-                        Instance = this,
-                        Name = Name + " region",
-                    }
-                };
-
                 if (RepeatType != null)
                 {
                     debugRegion.DataSupply.Supplier.SuppliedTypes = new List<Type> { RepeatType };
@@ -152,22 +135,6 @@ namespace OwinFramework.Pages.Html.Elements
                         { 
                             DataType = RepeatType,
                             ScopeName = RepeatScope
-                        },
-                        DataSupply = new DebugDataSupply 
-                        {
-                            Instance = this,
-                            IsStatic = false,
-                            SubscriberCount = _onSupplyActions.Count,
-                            SuppliedData = new DebugDataScope
-                            {
-                                DataType = RepeatType,
-                                ScopeName = RepeatScope
-                            },
-                            Supplier = new DebugDataSupplier
-                            {
-                                Instance = this,
-                                Name = Name + " region",
-                            }
                         },
                         DataConsumer = new DebugDataConsumer 
                         {
@@ -203,21 +170,6 @@ namespace OwinFramework.Pages.Html.Elements
                 }
 
                 return base.PopulateDebugInfo<T>(debugDataSupplier, parentDepth, childDepth);
-            }
-
-            if (typeof(T).IsAssignableFrom(typeof(DebugDataSupply)))
-            {
-                var debugDataSupply = debugInfo as DebugDataSupply ?? new DebugDataSupply();
-
-                lock (_onSupplyActions) debugDataSupply.SubscriberCount = _onSupplyActions.Count;
-                debugDataSupply.IsStatic = false;
-                debugDataSupply.SuppliedData = new DebugDataScope
-                {
-                    DataType = RepeatType,
-                    ScopeName = RepeatScope
-                };
-
-                return base.PopulateDebugInfo<T>(debugDataSupply, parentDepth, childDepth);
             }
 
             return base.PopulateDebugInfo<T>(debugInfo, parentDepth, childDepth);
@@ -332,104 +284,12 @@ namespace OwinFramework.Pages.Html.Elements
 
         IList<Tuple<IDataSupplier, IDataDependency>> IDataScopeRules.SuppliedDependencies
         {
-            get 
-            { 
-                if (_repeatType == null)
-                    return _dataScopeRules.SuppliedDependencies;
-
-                var supplier = new Tuple<IDataSupplier, IDataDependency>(this, _dependencies.DataDependencyFactory.Create(_repeatType, RepeatScope));
-
-                return _dataScopeRules.SuppliedDependencies
-                    .Concat(supplier.AsEnumerable())
-                    .ToList();
-            }
+            get { return _dataScopeRules.SuppliedDependencies; }
         }
 
         IList<IDataSupply> IDataScopeRules.DataSupplies
         {
             get { return _dataScopeRules.DataSupplies; }
-        }
-
-        #endregion
-
-        #region IDataSupplier
-
-        IList<Type> IDataSupplier.SuppliedTypes
-        {
-            get
-            {
-                return _repeatType == null 
-                    ? new List<Type>() 
-                    : new List<Type> { _repeatType };
-            }
-        }
-
-        IDataDependency IDataSupplier.DefaultDependency 
-        { 
-            get
-            {
-                return RepeatType == null
-                    ? null 
-                    : _dependencies.DataDependencyFactory.Create(RepeatType, RepeatScope);
-            }
-        }
-
-        bool IDataSupplier.IsScoped
-        {
-            get { return !string.IsNullOrEmpty(RepeatScope); }
-        }
-
-        void IDataSupplier.Add(
-            IDataDependency dependency, 
-            Action<IRenderContext, IDataContext, IDataDependency> action)
-        {
-            throw new NotImplementedException();
-        }
-
-        bool IDataSupplier.IsSupplierOf(IDataDependency dependency)
-        {
-            if (_repeatType == null) return false;
-            if (dependency.DataType == null) return false;
-            if (_repeatType != dependency.DataType) return false;
-            if (string.IsNullOrEmpty(RepeatScope)) return string.IsNullOrEmpty(dependency.ScopeName);
-            return string.Equals(RepeatScope, dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
-        }
-
-        IDataSupply IDataSupplier.GetSupply(IDataDependency dependency)
-        {
-            return this;
-        }
-
-        #endregion
-
-        #region IDataSupply
-
-        private readonly List<Action<IRenderContext>> _onSupplyActions = new List<Action<IRenderContext>>();
-
-        bool IDataSupply.IsStatic { get { return false; } set { } }
-
-        void IDataSupply.Supply(IRenderContext renderContext, IDataContext dataContext)
-        {
-            int count;
-            lock (_onSupplyActions) count = _onSupplyActions.Count;
-
-            if (count > 0)
-            {
-                renderContext.Trace(() => "region triggering dynamic data supply on " + count + " dependents");
-                renderContext.TraceIndent();
-                for (var i = 0; i < count; i++)
-                {
-                    Action<IRenderContext> action;
-                    lock (_onSupplyActions) action = _onSupplyActions[i];
-                    action(renderContext);
-                }
-                renderContext.TraceOutdent();
-            }
-        }
-
-        void IDataSupply.AddOnSupplyAction(Action<IRenderContext> dataSupplyAction)
-        {
-            lock (_onSupplyActions) _onSupplyActions.Add(dataSupplyAction);
         }
 
         #endregion

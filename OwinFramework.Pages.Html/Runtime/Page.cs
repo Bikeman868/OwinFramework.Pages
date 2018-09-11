@@ -95,7 +95,8 @@ namespace OwinFramework.Pages.Html.Runtime
 
             var elementDependencies = new PageElementDependencies
             {
-                DictionaryFactory = _dependencies.DictionaryFactory
+                DictionaryFactory = _dependencies.DictionaryFactory,
+                DataDependencyFactory = _dependencies.DataDependencyFactory
             };
 
             if (Layout != null)

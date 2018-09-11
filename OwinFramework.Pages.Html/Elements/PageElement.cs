@@ -17,6 +17,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// </summary>
     internal abstract class PageElement: IDebuggable
     {
+        protected readonly PageElementDependencies Dependencies;
         protected readonly IElement Element;
         protected readonly PageElement Parent;
 
@@ -44,6 +45,7 @@ namespace OwinFramework.Pages.Html.Elements
             if (element == null) throw new ArgumentNullException("element");
             if (pageData == null) throw new ArgumentNullException("pageData");
 
+            Dependencies = dependencies;
             Element = element;
             Parent = parent;
 

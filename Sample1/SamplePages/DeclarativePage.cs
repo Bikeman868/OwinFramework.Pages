@@ -285,6 +285,7 @@ namespace Sample1.SamplePages
     [RegionLayout("body", "page1Body")]
     internal class Page1 { }
 
+    /*
     /// <summary>
     /// Defines a page that is rendered in response to requets for '/page2'
     /// Uses the 'main' layout but changes the contents of the 'body' region.
@@ -301,4 +302,5 @@ namespace Sample1.SamplePages
     [UsesLayout("main")]
     [RegionLayout("body", "page2Body")]
     internal class Page2 { }
+     * */
 }

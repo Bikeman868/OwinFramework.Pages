@@ -69,5 +69,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// A factory for constructing data context builders
         /// </summary>
         IDataContextBuilderFactory DataContextBuilderFactory { get; }
+
+        /// <summary>
+        /// A factory for constructing objects that define dependencies on data
+        /// </summary>
+        IDataDependencyFactory DataDependencyFactory { get; }
     }
 }

@@ -196,13 +196,16 @@ namespace OwinFramework.Pages.Html.Elements
             {
                 result = WriteResult.Continue();
 
+#if TRACE
+                context.Trace(() => ToString() + " getting " + (string.IsNullOrEmpty(ListScope) ? "" : ListScope + " ") + _listType.DisplayName(TypeExtensions.NamespaceOption.None) + " from " + context.Data);
+#endif
                 var list = context.Data.Get(_listType, ListScope) as IEnumerable;
                 if (!ReferenceEquals(list, null))
                 {
                     foreach (var item in list)
                     {
 #if TRACE
-                        context.Trace(() => ToString() + " repeating content for next list entry");
+                        context.Trace(() => ToString() + " setting next " + (string.IsNullOrEmpty(RepeatScope) ? "" : RepeatScope + " ") + _repeatType.DisplayName(TypeExtensions.NamespaceOption.None) + " in " + context.Data);
 #endif
 
                         context.Data.Set(_repeatType, item, RepeatScope);

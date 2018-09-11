@@ -54,6 +54,8 @@ namespace OwinFramework.Pages.Html.Elements
             pageData.EndAddElement(Element);
         }
 
+        #region Debug information
+
         protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             if (typeof(T).IsAssignableFrom(typeof(DebugRegion)))
@@ -63,26 +65,94 @@ namespace OwinFramework.Pages.Html.Elements
                 debugRegion.Scope = Element.GetDebugInfo<DebugDataScopeRules>(0, 0);
                 debugRegion.DataContext = _dataContextBuilder.GetDebugInfo<DebugDataScopeRules>();
 
-                var region = Element as IRegion;
-                if (region != null)
+                debugRegion.DataSupply = new DebugDataSupply
                 {
-                    debugRegion.DataSupply = new DebugDataSupply
+                    Instance = this,
+                    IsStatic = false,
+                    SubscriberCount = _onSupplyActions.Count,
+                    SuppliedData = new DebugDataScope
+                    {
+                        DataType = Region.RepeatType,
+                        ScopeName = Region.RepeatScope
+                    },
+                    Supplier = new DebugDataSupplier
                     {
                         Instance = this,
-                        IsStatic = false,
-                        SubscriberCount = _onSupplyActions.Count,
-                        SuppliedData = new DebugDataScope
+                        Name = Region.Name + " page region",
+                    }
+                };
+
+                return base.PopulateDebugInfo<T>(debugRegion, parentDepth, childDepth);
+            }
+
+            if (typeof(T).IsAssignableFrom(typeof(DebugDataScopeRules)))
+            {
+                var debugDataScopeRules = ElementDataScopeRules == null
+                    ? new DebugDataScopeRules()
+                    : ElementDataScopeRules.GetDebugInfo<DebugDataScopeRules>(parentDepth, childDepth);
+
+                if (Region.RepeatType != null)
+                {
+                    if (debugDataScopeRules.DataSupplies == null)
+                        debugDataScopeRules.DataSupplies = new List<DebugSuppliedDependency>();
+
+                    var repeatDataSupply = new DebugSuppliedDependency
+                    {
+                        DataTypeSupplied = new DebugDataScope
                         {
-                            DataType = region.RepeatType,
-                            ScopeName = region.RepeatScope
+                            DataType = Region.RepeatType,
+                            ScopeName = Region.RepeatScope
                         },
-                        Supplier = new DebugDataSupplier
+                        DataSupply = new DebugDataSupply
                         {
                             Instance = this,
-                            Name = region.Name,
+                            IsStatic = false,
+                            SubscriberCount = _onSupplyActions.Count,
+                            SuppliedData = new DebugDataScope
+                            {
+                                DataType = Region.RepeatType,
+                                ScopeName = Region.RepeatScope
+                            },
+                            Supplier = new DebugDataSupplier
+                            {
+                                Instance = this,
+                                Name = Region.Name + " page region",
+                            }
+                        },
+                        DataConsumer = new DebugDataConsumer
+                        {
+                            DependentData = new List<DebugDataScope>
+                            {
+                                new DebugDataScope
+                                {
+                                    DataType = Region.ListType,
+                                    ScopeName = Region.ListScope
+                                }
+                            }
                         }
                     };
+
+                    debugDataScopeRules.DataSupplies.Add(repeatDataSupply);
                 }
+
+                return base.PopulateDebugInfo<T>(debugDataScopeRules, parentDepth, childDepth);
+            }
+            
+            if (typeof(T).IsAssignableFrom(typeof(DebugDataSupplier)))
+            {
+                var debugDataSupplier = debugInfo as DebugDataSupplier ?? new DebugDataSupplier();
+
+                if (Region.RepeatType != null)
+                {
+                    debugDataSupplier.SuppliedTypes = new List<Type> { Region.RepeatType };
+                    debugDataSupplier.DefaultSupply = new DebugDataScope
+                    {
+                        DataType = Region.RepeatType,
+                        ScopeName = Region.RepeatScope
+                    };
+                }
+
+                return base.PopulateDebugInfo<T>(debugDataSupplier, parentDepth, childDepth);
             }
 
             if (typeof(T).IsAssignableFrom(typeof(DebugDataSupply)))
@@ -108,17 +178,16 @@ namespace OwinFramework.Pages.Html.Elements
             return base.PopulateDebugInfo<T>(debugInfo, parentDepth, childDepth);
         }
 
+        #endregion
+
         protected override IWriteResult WritePageAreaInternal(
             IRenderContext renderContext,
             PageArea pageArea)
         {
-            var region = Element as IRegion;
-            if (ReferenceEquals(region, null)) return WriteResult.Continue();
-
             var data = renderContext.Data;
             renderContext.SelectDataContext(_dataContextBuilder.Id);
 
-            var result = region.WritePageArea(renderContext, pageArea, OnListItem, _writeContent);
+            var result = Region.WritePageArea(renderContext, pageArea, OnListItem, _writeContent);
 
             renderContext.Data = data;
             return result;
@@ -218,7 +287,6 @@ namespace OwinFramework.Pages.Html.Elements
         #endregion
 
         #region IDataScopeRules
-
 
         string IDataScopeRules.ElementName
         {

@@ -58,6 +58,13 @@ namespace OwinFramework.Pages.Framework.DataModel
             } as T;
         }
 
+        public override string ToString()
+        {
+            return DataContextBuilder == null
+                ? "data context with " + _properties.Count + " properties"
+                : "data context #" + DataContextBuilder.Id + " with " + _properties.Count + " properties";
+        }
+
         IDataContext IDataContext.CreateChild(IDataContextBuilder dataContextBuilder)
         {
             return _dataContextFactory.Create(_renderContext, dataContextBuilder, this);

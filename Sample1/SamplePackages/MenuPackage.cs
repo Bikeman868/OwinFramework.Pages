@@ -57,8 +57,9 @@ namespace Sample1.SamplePackages
 
             protected override void Supply(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
             {
+                renderContext.Trace(() => "submenu provider getting menu item from " + dataContext);
                 var parent = dataContext.Get<MenuItem>();
-                renderContext.Trace(() => "supply submenu for menu " + parent.Name + " with " + parent.SubMenu.Count + " sub-menu items");
+                renderContext.Trace(() => "supply submenu for menu '" + parent.Name + "' with " + parent.SubMenu.Count + " sub-menu items to " + dataContext);
                 dataContext.Set(parent.SubMenu, "submenu");
             }
         }
@@ -99,12 +100,14 @@ namespace Sample1.SamplePackages
             {
                 if (pageArea == PageArea.Body)
                 {
+                    context.Trace(() => "menu component getting menu item from " + context.Data);
+
                     var menuItem = context.Data.Get<MenuItem>();
-                    if (menuItem != null)
-                    {
-                        var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
-                        context.Html.WriteElementLine("a", menuItem.Name, "href", url);
-                    }
+
+                    context.Trace(() => "rendering menu item '" + menuItem.Name + "'");
+
+                    var url = string.IsNullOrEmpty(menuItem.Url) ? "javascript:void(0);" : menuItem.Url;
+                    context.Html.WriteElementLine("a", menuItem.Name, "href", url);
                 }
                 return WriteResult.Continue();
             }

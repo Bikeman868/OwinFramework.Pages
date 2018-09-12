@@ -276,6 +276,7 @@ namespace OwinFramework.Pages.Html.Elements
                     action(renderContext);
                 }
                 renderContext.TraceOutdent();
+                renderContext.Trace(() => "region dynamic data supply on " + count + " dependents completed");
             }
         }
 

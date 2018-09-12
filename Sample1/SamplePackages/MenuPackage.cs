@@ -40,6 +40,14 @@ namespace Sample1.SamplePackages
             public string Name { get; set; }
             public string Url { get; set; }
             public IList<MenuItem> SubMenu { get; set; }
+
+            public override string ToString()
+            {
+                return 
+                    SubMenu == null 
+                    ? Name
+                    : Name + " with " + SubMenu.Count + " submenus";
+            }
         }
 
         /// <summary>

@@ -205,7 +205,7 @@ namespace OwinFramework.Pages.Html.Elements
                     foreach (var item in list)
                     {
 #if TRACE
-                        context.Trace(() => ToString() + " setting next " + (string.IsNullOrEmpty(RepeatScope) ? "" : RepeatScope + " ") + _repeatType.DisplayName(TypeExtensions.NamespaceOption.None) + " in " + context.Data);
+                        context.Trace(() => ToString() + " setting next " + (string.IsNullOrEmpty(RepeatScope) ? "" : RepeatScope + " ") + _repeatType.DisplayName(TypeExtensions.NamespaceOption.None) + " in " + context.Data + " " + item);
 #endif
 
                         context.Data.Set(_repeatType, item, RepeatScope);

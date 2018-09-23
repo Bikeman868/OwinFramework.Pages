@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using OwinFramework.Pages.Core.Collections;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
@@ -53,6 +54,49 @@ namespace OwinFramework.Pages.Framework.DataModel
             return this;
         }
 
+#if DEBUG
+        /// <summary>
+        /// This exists so that you can inspect it in the debugger. It serves no other purpose
+        /// </summary>
+        private string _debugProperties
+        {
+            get
+            {
+                var result = new StringBuilder();
+
+                Action<DataContext> addProperties = dc =>
+                    {
+                        if (dc.DataContextBuilder != null)
+                            result.AppendLine("Data context builder #" + dc.DataContextBuilder.Id);
+
+                        List<Type> types;
+                        using (var keys = dc._properties.KeysLocked)
+                            types = keys.ToList();
+
+                        foreach(var type in types)
+                        {
+                            var value = _properties[type];
+                            result.AppendFormat("{0} = {1}\n", type.DisplayName(TypeExtensions.NamespaceOption.None), value);
+                        }
+                    };
+
+                result.AppendLine("Properties in this data context");
+                addProperties(this);
+
+                var parent = _parent as DataContext;
+                while (parent != null)
+                {
+                    result.AppendLine();
+                    result.AppendLine("Properties in parent data context");
+                    addProperties(parent);
+                    parent = parent._parent as DataContext;
+                }
+
+                return result.ToString();
+            }
+        }
+#endif
+
         T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)
         {
             return new DebugDataContext
@@ -60,7 +104,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 Instance = this,
                 DataContextBuilder = DataContextBuilder,
                 Properties = _properties.Keys.ToList(),
-                Parent = parentDepth == 0 ? null : _parent.GetDebugInfo(parentDepth - 1, 0)
+                Parent = _parent == null || parentDepth == 0 ? null : _parent.GetDebugInfo(parentDepth - 1, 0)
             } as T;
         }
 

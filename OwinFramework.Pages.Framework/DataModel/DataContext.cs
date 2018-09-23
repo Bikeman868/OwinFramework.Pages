@@ -17,7 +17,6 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         private readonly DataContextFactory _dataContextFactory;
         private readonly IDataDependencyFactory _dataDependencyFactory;
-        private readonly IThreadSafeDictionary<Type, object> _properties;
 
         private IRenderContext _renderContext;
         private IDataContext _parent;
@@ -29,7 +28,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             _dataContextFactory = dataContextFactory;
             _dataDependencyFactory = dataDependencyFactory;
-            _properties = dictionaryFactory.Create<Type, object>();
+            _properties = new LinkedList<PropertyEntry>();
         }
 
         public DataContext Initialize(
@@ -69,14 +68,9 @@ namespace OwinFramework.Pages.Framework.DataModel
                         if (dc.DataContextBuilder != null)
                             result.AppendLine("Data context builder #" + dc.DataContextBuilder.Id);
 
-                        List<Type> types;
-                        using (var keys = dc._properties.KeysLocked)
-                            types = keys.ToList();
-
-                        foreach(var type in types)
+                        foreach(var property in _properties)
                         {
-                            var value = _properties[type];
-                            result.AppendFormat("{0} = {1}\n", type.DisplayName(TypeExtensions.NamespaceOption.None), value);
+                            result.AppendFormat("{0} = {1}\n", property.ToString(), property.Value);
                         }
                     };
 
@@ -103,7 +97,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             {
                 Instance = this,
                 DataContextBuilder = DataContextBuilder,
-                Properties = _properties.Keys.ToList(),
+                Properties = _properties.Select(p => p.Type).ToList(),
                 Parent = _parent == null || parentDepth == 0 ? null : _parent.GetDebugInfo(parentDepth - 1, 0)
             } as T;
         }
@@ -158,48 +152,44 @@ namespace OwinFramework.Pages.Framework.DataModel
             var isInScope = DataContextBuilder.IsInScope(dependency);
 
             if (isInScope || _parent == null)
-            {
-                _properties[type] = value;
-            }
+                SetProperty(type, scopeName, value);
             else
-            {
                 _parent.Set(type, value, scopeName);
-            }
         }
 
         private void SetUnscoped(Type type, object value, int level)
         {
             if (level == 0 || _parent == null)
-                _properties[type] = value;
+                SetProperty(type, value);
             else
             {
                 _parent.Set(type, value, null, level - 1);
-                _properties.Remove(type);
+                DeleteProperty(type);
             }
         }
 
         private object GetScoped(Type type, string scopeName, bool isRequired)
         {
-            var dependency = _dataDependencyFactory.Create(type, scopeName);
-            var isInScope = DataContextBuilder.IsInScope(dependency);
-
-            if (!isInScope)
-            {
-                if (_parent == null)
-                {
-                    if (!isRequired) return null;
-                    throw ScopeSearchFailedException(type, scopeName);
-                }
-
-                return _parent.Get(type, scopeName, isRequired);
-            }
-
             var retry = false;
             while (true)
             {
                 object result;
-                if (_properties.TryGetValue(type, out result))
+                if (TryGetProperty(type, scopeName, out result))
                     return result;
+
+                var dependency = _dataDependencyFactory.Create(type, scopeName);
+                var isInScope = DataContextBuilder.IsInScope(dependency);
+
+                if (!isInScope)
+                {
+                    if (_parent == null)
+                    {
+                        if (!isRequired) return null;
+                        throw ScopeSearchFailedException(type, scopeName);
+                    }
+
+                    return _parent.Get(type, scopeName, isRequired);
+                }
 
                 if (!isRequired) return null;
 
@@ -217,7 +207,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             while (true)
             {
                 object result;
-                if (_properties.TryGetValue(type, out result))
+                if (TryGetProperty(type, out result))
                     return result;
 
                 if (_parent != null)
@@ -246,5 +236,110 @@ namespace OwinFramework.Pages.Framework.DataModel
                 " data of type " + type.DisplayName() + " in '" + scopeName + "' scope because this type is" +
                 " not in scope for any data conetxt in the ancestor path");
         }
+
+        #region Properties
+
+        private readonly LinkedList<PropertyEntry> _properties;
+
+        private bool TryGetProperty(Type type, out object value)
+        {
+            PropertyEntry match = null;
+            foreach(var property in _properties.Where(p => p.Type == type))
+            {
+                if (match == null)
+                    match = property;
+                else
+                {
+                    if (!string.IsNullOrEmpty(match.ScopeName))
+                        match = property;
+                }
+            }
+
+            if (match == null)
+            {
+                value = null;
+                return false;
+            }
+
+            value = match.Value;
+            return true;
+        }
+
+        private bool TryGetProperty(Type type, string scopeName, out object value)
+        {
+            if (string.IsNullOrEmpty(scopeName))
+                return TryGetProperty(type, out value);
+
+            var match = _properties.FirstOrDefault(
+                p => p.Type == type && string.Equals(scopeName, p.ScopeName, StringComparison.OrdinalIgnoreCase));
+
+            if (match == null)
+            {
+                value = null;
+                return false;
+            }
+
+            value = match.Value;
+            return true;
+        }
+
+        private void SetProperty(Type type, string scopeName, object value)
+        {
+            if (string.IsNullOrEmpty(scopeName))
+            {
+                SetProperty(type, value);
+                return;
+            }
+
+            var existing = _properties.FirstOrDefault(
+                p => p.Type == type && string.Equals(scopeName, p.ScopeName, StringComparison.OrdinalIgnoreCase));
+
+            if (existing == null)
+                _properties.AddFirst(new PropertyEntry { Type = type, ScopeName = scopeName, Value = value });
+            else
+                existing.Value = value;
+        }
+
+        private void SetProperty(Type type, object value)
+        {
+            var existing = _properties.FirstOrDefault(
+                p => p.Type == type && string.IsNullOrEmpty(p.ScopeName));
+
+            if (existing == null)
+                _properties.AddFirst(new PropertyEntry { Type = type, Value = value });
+            else
+                existing.Value = value;
+        }
+
+        private void DeleteProperty(Type type, string scopeName)
+        {
+            if (string.IsNullOrEmpty(scopeName))
+                DeleteProperty(type);
+            else
+            {
+                // TODO: No efficient way to remove list elements using the .Net LinkedList class
+            }
+        }
+
+        private void DeleteProperty(Type type)
+        {
+            // TODO: No efficient way to remove list elements using the .Net LinkedList class
+        }
+
+        private class PropertyEntry
+        {
+            public Type Type;
+            public string ScopeName;
+            public object Value;
+
+            public override string ToString()
+            {
+                var result = Type.DisplayName(TypeExtensions.NamespaceOption.None);
+                if (string.IsNullOrEmpty(ScopeName)) return result;
+                return result + " in '" + ScopeName + "' scope";
+            }
+        }
+
+        #endregion
     }
 }

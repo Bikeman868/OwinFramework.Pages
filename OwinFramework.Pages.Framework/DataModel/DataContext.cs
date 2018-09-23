@@ -37,7 +37,13 @@ namespace OwinFramework.Pages.Framework.DataModel
             IDataContextBuilder dataContextBuilder,
             DataContext parent)
         {
-            base.Initialize(disposeAction);
+            if (dataContextBuilder == null)
+                throw new ArgumentNullException("dataContextBuilder");
+
+            if (renderContext == null)
+                throw new ArgumentNullException("renderContext");
+
+            Initialize(disposeAction);
 
             _properties.Clear();
             _renderContext = renderContext;
@@ -70,80 +76,131 @@ namespace OwinFramework.Pages.Framework.DataModel
             return _dataContextFactory.Create(_renderContext, dataContextBuilder, this);
         }
         
-        public void Set<T>(T value, string scopeName = null, int level = 0)
+        public void Set<T>(T value, string scopeName, int level)
         {
-            var type = typeof(T);
-
-            if (level == 0 || _parent == null)
-                _properties[type] = value;
+            if (string.IsNullOrEmpty(scopeName))
+                SetUnscoped(typeof(T), value, level);
             else
-            {
-                _parent.Set(value, scopeName, level - 1);
-                _properties.Remove(type);
-            }
+                SetScoped(typeof(T), value, scopeName);
         }
 
-        void IDataContext.Set(Type type, object value, string scopeName = null, int level = 0)
+        void IDataContext.Set(Type type, object value, string scopeName, int level)
         {
-            if (level == 0 || _parent == null)
-                _properties[type] = value;
+            if (string.IsNullOrEmpty(scopeName))
+                SetUnscoped(type, value, level);
             else
-            {
-                _parent.Set(type, value, scopeName, level - 1);
-                _properties.Remove(type);
-            }
+                SetScoped(type, value, scopeName);
         }
 
         T IDataContext.Get<T>(string scopeName, bool isRequired)
         {
-            return (T)((IDataContext)this).Get(typeof(T), scopeName, isRequired);
+            if (string.IsNullOrEmpty(scopeName))
+                return (T)GetUnscoped(typeof(T), isRequired);
+
+            return (T)GetScoped(typeof(T), scopeName, isRequired);
         }
 
         object IDataContext.Get(Type type, string scopeName, bool isRequired)
         {
-            var isInScope = string.IsNullOrEmpty(scopeName);
+            if (string.IsNullOrEmpty(scopeName)) 
+                return GetUnscoped(type, isRequired);
 
-            if (!isInScope && DataContextBuilder != null)
+            return GetScoped(type, scopeName, isRequired);
+        }
+
+        private void SetScoped(Type type, object value, string scopeName)
+        {
+            var dependency = _dataDependencyFactory.Create(type, scopeName);
+            var isInScope = DataContextBuilder.IsInScope(dependency);
+
+            if (isInScope || _parent == null)
             {
-                var dependency = _dataDependencyFactory.Create(type, scopeName);
-                isInScope = DataContextBuilder.IsInScope(dependency);
+                _properties[type] = value;
             }
-
-            if (isInScope)
+            else
             {
-                var retry = false;
-                while (true)
+                _parent.Set(type, value, scopeName);
+            }
+        }
+
+        private void SetUnscoped(Type type, object value, int level)
+        {
+            if (level == 0 || _parent == null)
+                _properties[type] = value;
+            else
+            {
+                _parent.Set(type, value, null, level - 1);
+                _properties.Remove(type);
+            }
+        }
+
+        private object GetScoped(Type type, string scopeName, bool isRequired)
+        {
+            var dependency = _dataDependencyFactory.Create(type, scopeName);
+            var isInScope = DataContextBuilder.IsInScope(dependency);
+
+            if (!isInScope)
+            {
+                if (_parent == null)
                 {
-                    object result;
-                    if (_properties.TryGetValue(type, out result))
-                        return result;
-
-                    result = _parent == null ? null : _parent.Get(type, null, false);
-
-                    if (result != null || !isRequired)
-                        return result;
-
-                    if (retry)
-                    {
-                        throw new Exception("This data context does not know how to find missing" +
-                            " data of type " + type.DisplayName() + " because after adding it to the scope provider" +
-                            " the dependency could still not be resolved");
-                    }
-
-                    if (DataContextBuilder == null)
-                    {
-                        if (_parent == null)
-                            throw new Exception("This data context does not know how to find missing"+
-                                " data of type " + type.DisplayName() + " because it does not have a scope provider");
-                        return _parent.Get(type, scopeName);
-                    }
-
-                    DataContextBuilder.AddMissingData(_renderContext, _dataDependencyFactory.Create(type, scopeName));
-                    retry = true;
+                    if (!isRequired) return null;
+                    throw ScopeSearchFailedException(type, scopeName);
                 }
+
+                return _parent.Get(type, scopeName, isRequired);
             }
-            
-            return _parent == null ? null : _parent.Get(type, scopeName, isRequired);
+
+            var retry = false;
+            while (true)
+            {
+                object result;
+                if (_properties.TryGetValue(type, out result))
+                    return result;
+
+                if (!isRequired) return null;
+
+                if (retry)
+                    throw RetryFailedException(type);
+
+                DataContextBuilder.AddMissingData(_renderContext, dependency);
+                retry = true;
+            }
+        }
+
+        private object GetUnscoped(Type type, bool isRequired)
+        {
+            var retry = false;
+            while (true)
+            {
+                object result;
+                if (_properties.TryGetValue(type, out result))
+                    return result;
+
+                if (_parent != null)
+                    return _parent.Get(type, null, isRequired);
+
+                if (!isRequired) return null;
+
+                if (retry)
+                    throw RetryFailedException(type);
+
+                DataContextBuilder.AddMissingData(_renderContext, _dataDependencyFactory.Create(type));
+                retry = true;
+            }
+        }
+
+        private Exception RetryFailedException(Type type)
+        {
+            return new Exception("This data context does not know how to find missing" +
+                " data of type " + type.DisplayName() + " because after adding it to the scope provider" +
+                " the dependency could still not be resolved");
+        }
+
+        private Exception ScopeSearchFailedException(Type type, string scopeName)
+        {
+            return new Exception("This data context does not know how to find missing" +
+                " data of type " + type.DisplayName() + " in '" + scopeName + "' scope because this type is" +
+                " not in scope for any data conetxt in the ancestor path");
         }
     }
 }

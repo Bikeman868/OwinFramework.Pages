@@ -66,9 +66,21 @@ namespace OwinFramework.Pages.Framework.DataModel
                 Action<DataContext> addProperties = dc =>
                     {
                         if (dc.DataContextBuilder != null)
+                        {
                             result.AppendLine("Data context builder #" + dc.DataContextBuilder.Id);
+                            var debuggable = dc.DataContextBuilder as IDebuggable;
+                            if (debuggable != null)
+                            {
+                                var rules = debuggable.GetDebugInfo<DebugDataScopeRules>();
+                                if (rules != null && rules.Scopes != null)
+                                {
+                                    foreach (var scope in rules.Scopes)
+                                        result.AppendLine("   " + scope);
+                                }
+                            }
+                        }
 
-                        foreach(var property in _properties)
+                        foreach(var property in dc._properties)
                         {
                             result.AppendFormat("{0} = {1}\n", property.ToString(), property.Value);
                         }

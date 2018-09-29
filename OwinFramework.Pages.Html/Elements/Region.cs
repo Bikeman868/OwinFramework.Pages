@@ -268,7 +268,18 @@ namespace OwinFramework.Pages.Html.Elements
 
         IList<IDataScope> IDataScopeRules.DataScopes
         {
-            get { return _dataScopeRules.DataScopes; }
+            get 
+            {
+                var configuredScopes = _dataScopeRules.DataScopes;
+                
+                if (string.IsNullOrEmpty(ListScope))
+                    return configuredScopes;
+
+                var scopes = configuredScopes.ToList();
+                scopes.Add(_dependencies.DataScopeFactory.Create(RepeatType, RepeatScope));
+
+                return scopes;
+            }
         }
 
         IList<Tuple<IDataSupplier, IDataDependency>> IDataScopeRules.SuppliedDependencies

@@ -44,8 +44,8 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IEnumerable<PageArea> GetPageAreas()
         {
-            //if (AssetDeployment != AssetDeployment.InPage)
-            //    return base.GetPageAreas().ToList();
+            if (AssetDeployment != AssetDeployment.InPage)
+                return base.GetPageAreas().ToList();
 
             var pageAreas = base.GetPageAreas().ToList();
 
@@ -81,7 +81,7 @@ namespace OwinFramework.Pages.Html.Elements
                 }
             }
 
-            //if (AssetDeployment == AssetDeployment.InPage)
+            if (AssetDeployment == AssetDeployment.InPage)
             {
                 if (pageArea == PageArea.Styles)
                 {

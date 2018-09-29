@@ -5,11 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
-using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
-using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Elements;
 
@@ -113,9 +111,20 @@ namespace OwinFramework.Pages.Html.Runtime
                 _layout = new PageLayout(elementDependencies, null, Layout, regionElements, data);
             }
 
-            _pageComponents = _components == null
-                ? new PageComponent[0]
-                : _components.Select(c => new PageComponent(elementDependencies, null, c, data)).ToArray();
+            if (_components == null)
+            {
+                _pageComponents = new PageComponent[0];
+            }
+            else
+            {
+                _pageComponents = _components.Select(c => new PageComponent(elementDependencies, null, c, data)).ToArray();
+
+                foreach (var component in _components)
+                {
+                    data.BeginAddElement(component, null);
+                    data.EndAddElement(component);
+                }
+            }
 
             _dataContextBuilder = data.RootDataContextBuilder;
             _dataContextBuilder.ResolveSupplies();

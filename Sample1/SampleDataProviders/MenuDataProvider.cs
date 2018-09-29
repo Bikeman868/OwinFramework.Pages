@@ -6,7 +6,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Framework.DataModel;
 using Sample1.SamplePackages;
 
-namespace Sample1.DataProviders
+namespace Sample1.SampleDataProviders
 {
     [IsDataProvider("menu", typeof(IList<MenuPackage.MenuItem>))]
     public class MenuDataProvider: DataProvider
@@ -20,20 +20,20 @@ namespace Sample1.DataProviders
 
             var communityMenu = new MenuPackage.MenuItem
             {
-                Name = "Community",
+                Name = "Menu 1",
                 SubMenu = new List<MenuPackage.MenuItem>
                     {
-                        new MenuPackage.MenuItem { Name = "Following", Url = "#" },
-                        new MenuPackage.MenuItem { Name = "Recent posts", Url = "#" },
-                        new MenuPackage.MenuItem { Name = "Most popular", Url = "#" },
-                        new MenuPackage.MenuItem { Name = "Trending", Url = "#" }
+                        new MenuPackage.MenuItem { Name = "Page 1", Url = "/page1" },
+                        new MenuPackage.MenuItem { Name = "Page 2", Url = "/page2" },
+                        new MenuPackage.MenuItem { Name = "Page 3", Url = "/page3" },
+                        new MenuPackage.MenuItem { Name = "Page 4", Url = "/page4" }
                     }
             };
             _mainMenu.Add(communityMenu);
 
             var newsMenu = new MenuPackage.MenuItem
             {
-                Name = "News",
+                Name = "Menu 2",
                 SubMenu = new List<MenuPackage.MenuItem>
                     {
                         new MenuPackage.MenuItem { Name = "Today", Url = "#" },

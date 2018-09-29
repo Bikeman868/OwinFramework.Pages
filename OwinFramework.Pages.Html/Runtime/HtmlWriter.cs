@@ -299,7 +299,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IHtmlWriter WriteComment(string comment, CommentStyle commentStyle)
         {
-            if (IncludeComments)
+            if (IncludeComments && !string.IsNullOrEmpty(comment))
             {
                 if (commentStyle == CommentStyle.Xml)
                 {

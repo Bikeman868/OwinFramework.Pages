@@ -120,7 +120,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataProviders\MenuDataProvider.cs" />
+    <Compile Include="SampleDataProviders\MenuDataProvider.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="SamplePackages\RegionExamples.cs" />
     <Compile Include="SamplePages\DeclarativePage.cs" />

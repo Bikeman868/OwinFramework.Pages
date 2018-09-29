@@ -124,12 +124,12 @@ namespace Sample1.SamplePackages
         /// <summary>
         /// This is an example if a component that just deploys static assets
         /// </summary>
-        [DeployCss("ul.{ns}_menu", "list-style-type: none; overflow: hidden; white-space: nowrap;")]
-        [DeployCss("li.{ns}_option", "display: inline-block;")]
-        [DeployCss("li.{ns}_option a, a.{ns}_option", "display: inline-block; text-decoration: none;")]
-        [DeployCss("div.{ns}_dropdown", "display: none; position: absolute; overflow: hidden; z-index: 1;")]
-        [DeployCss("div.{ns}_dropdown a", "text-decoration: none; display: block; text-align: left")]
-        [DeployCss("li.{ns}_option:hover div.{ns}_dropdown", "display: block;")]
+        [DeployCss("ul.{ns}_menu", "list-style-type: none; overflow: hidden; white-space: nowrap;", 1)]
+        [DeployCss("li.{ns}_option", "display: inline-block;", 2)]
+        [DeployCss("li.{ns}_option a, a.{ns}_option", "display: inline-block; text-decoration: none;", 3)]
+        [DeployCss("div.{ns}_dropdown", "display: none; position: absolute; overflow: hidden; z-index: 1;", 4)]
+        [DeployCss("div.{ns}_dropdown a", "text-decoration: none; display: block; text-align: left", 5)]
+        [DeployCss("li.{ns}_option:hover div.{ns}_dropdown", "display: block;", 6)]
         public class MenuStyles
         { }
 
@@ -204,10 +204,10 @@ namespace Sample1.SamplePackages
             // This region is a container for the drop down menu items. It
             // renders one menu item component for each menu item in the sub-menu
             var dropDownMenuRegion = builder.BuildUpRegion()
-                .Tag("ul")
+                .Tag("div")
                 .ClassNames("{ns}_dropdown")
                 .DataProvider(subMenuDataProvider1)
-                .ForEach<MenuItem>("submenu", "li", null, "submenu", "{ns}_option")
+                .ForEach<MenuItem>("submenu", null, null, "submenu")
                 .Component(subMenuItemComponent)
                 .Build();
 

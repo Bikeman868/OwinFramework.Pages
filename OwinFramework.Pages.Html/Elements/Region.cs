@@ -190,7 +190,11 @@ namespace OwinFramework.Pages.Html.Elements
 #endif
             IWriteResult result;
 
-            WriteOpen(context.Html);
+            if (context.IncludeComments)
+                context.Html.WriteComment("region " + Name);
+
+            if (pageArea == PageArea.Body)
+                WriteOpen(context.Html);
 
             if (pageArea == PageArea.Body && !ReferenceEquals(_repeatType, null))
             {
@@ -234,7 +238,8 @@ namespace OwinFramework.Pages.Html.Elements
                 result = contentWriter(context, pageArea);
             }
 
-            WriteClose(context.Html);
+            if (pageArea == PageArea.Body)
+                WriteClose(context.Html);
 
             return result;
         }

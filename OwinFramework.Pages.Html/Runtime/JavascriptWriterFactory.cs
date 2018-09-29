@@ -13,5 +13,15 @@ namespace OwinFramework.Pages.Html.Runtime
                 IncludeComments = includeComments
             };
         }
+
+        public IJavascriptWriter Create(IRenderContext context)
+        {
+            return new JavascriptWriter
+            {
+                Indented = context.Html.Indented,
+                IncludeComments = context.IncludeComments,
+                IndentLevel = context.Html.IndentLevel
+            };
+        }
     }
 }

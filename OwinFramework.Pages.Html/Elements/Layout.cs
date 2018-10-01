@@ -122,18 +122,21 @@ namespace OwinFramework.Pages.Html.Elements
             PageArea pageArea, 
             Func<IRenderContext, PageArea, string, IWriteResult> childWriter)
         {
+            var result = WriteResult.Continue();
+
 #if TRACE
             context.Trace(() => ToString() + " writing layout body");
             context.TraceIndent();
 #endif
 
-            var result = WriteResult.Continue();
+            if (context.IncludeComments)
+                context.Html.WriteComment("layout " + Name);
 
             for (var i = 0; i < _visualElements.Length; i++)
             {
                 var visualElement = _visualElements[i];
 
-                if (!ReferenceEquals(visualElement.StaticHtml, null))
+                if (pageArea == PageArea.Body && !ReferenceEquals(visualElement.StaticHtml, null))
                     visualElement.StaticHtml.WriteAction(context.Html);
 
                 if (!ReferenceEquals(visualElement.RegionName, null))

@@ -34,5 +34,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Returns a factory that can construct data suppliers
         /// </summary>
         IDataSupplierFactory DataSupplierFactory { get; }
+
+        /// <summary>
+        /// Returns a factory that can construct data scopes
+        /// </summary>
+        IDataScopeFactory DataScopeFactory { get; }
     }
 }

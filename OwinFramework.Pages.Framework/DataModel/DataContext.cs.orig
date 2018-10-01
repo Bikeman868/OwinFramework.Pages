@@ -18,9 +18,13 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         private readonly DataContextFactory _dataContextFactory;
         private readonly IDataDependencyFactory _dataDependencyFactory;
+<<<<<<< HEAD
+        private readonly IThreadSafeDictionary<Type, object> _properties;
 #if DEBUG
         private readonly int _id;
 #endif
+=======
+>>>>>>> 8d5fb227365195a29c145870aa8ced9c9aef155d
 
         private IRenderContext _renderContext;
         private IDataContext _parent;
@@ -33,10 +37,14 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             _dataContextFactory = dataContextFactory;
             _dataDependencyFactory = dataDependencyFactory;
-            _properties = new LinkedList<PropertyEntry>();
+<<<<<<< HEAD
+            _properties = dictionaryFactory.Create<Type, object>();
 #if DEBUG
             _id = idManager.GetUniqueId();
 #endif
+=======
+            _properties = new LinkedList<PropertyEntry>();
+>>>>>>> 8d5fb227365195a29c145870aa8ced9c9aef155d
         }
 
         public DataContext Initialize(
@@ -88,9 +96,17 @@ namespace OwinFramework.Pages.Framework.DataModel
                             }
                         }
 
+<<<<<<< HEAD
+                        foreach(var type in dc._properties.Keys)
+                        {
+                            object value;
+                            if (_properties.TryGetValue(type, out value))
+                                result.AppendFormat("{0} = {1}\n", type.DisplayName(TypeExtensions.NamespaceOption.None), value);
+=======
                         foreach(var property in dc._properties)
                         {
                             result.AppendFormat("{0} = {1}\n", property.ToString(), property.Value);
+>>>>>>> 8d5fb227365195a29c145870aa8ced9c9aef155d
                         }
                     };
 
@@ -188,7 +204,11 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
         }
 
+<<<<<<< HEAD
+        void IDataContext.Set(Type type, object value, string scopeName, int level)
+=======
         private object GetScoped(Type type, string scopeName, bool isRequired)
+>>>>>>> 8d5fb227365195a29c145870aa8ced9c9aef155d
         {
             var retry = false;
             while (true)

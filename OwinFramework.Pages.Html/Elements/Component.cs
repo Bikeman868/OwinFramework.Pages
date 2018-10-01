@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
@@ -17,6 +19,8 @@ namespace OwinFramework.Pages.Html.Elements
     {
         public override ElementType ElementType { get { return ElementType.Component; } }
 
+        private readonly IComponentDependenciesFactory _dependencies;
+
         public Action<IRenderContext>[] HtmlWriters;
         public Action<ICssWriter>[] CssRules;
         public Action<IJavascriptWriter>[] JavascriptFunctions;
@@ -27,6 +31,8 @@ namespace OwinFramework.Pages.Html.Elements
             // DO NOT change the method signature of this constructor as
             // this would break all components in all applications that use
             // this framework!!
+
+            _dependencies = dependencies;
         }
 
         protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
@@ -34,6 +40,22 @@ namespace OwinFramework.Pages.Html.Elements
             var debugComponent = debugInfo as DebugComponent ?? new DebugComponent();
 
             return base.PopulateDebugInfo<T>(debugComponent, parentDepth, childDepth);
+        }
+
+        public override IEnumerable<PageArea> GetPageAreas()
+        {
+            if (AssetDeployment != AssetDeployment.InPage)
+                return base.GetPageAreas().ToList();
+
+            var pageAreas = base.GetPageAreas().ToList();
+
+            if (CssRules != null && CssRules.Length > 0)
+                pageAreas.Add(PageArea.Styles);
+
+            if (JavascriptFunctions != null && JavascriptFunctions.Length > 0)
+                pageAreas.Add(PageArea.Scripts);
+
+            return pageAreas;
         }
 
         private string GetCommentName()
@@ -47,13 +69,54 @@ namespace OwinFramework.Pages.Html.Elements
             IRenderContext context, 
             PageArea pageArea)
         {
-            if (context.IncludeComments)
-                context.Html.WriteComment(GetCommentName());
-
-            if (HtmlWriters != null)
+            if (pageArea == PageArea.Body)
             {
-                for (var i = 0; i < HtmlWriters.Length; i++)
-                    HtmlWriters[i](context);
+                if (context.IncludeComments)
+                    context.Html.WriteComment(GetCommentName());
+
+                if (HtmlWriters != null)
+                {
+                    for (var i = 0; i < HtmlWriters.Length; i++)
+                        HtmlWriters[i](context);
+                }
+            }
+
+            if (AssetDeployment == AssetDeployment.InPage)
+            {
+                if (pageArea == PageArea.Styles)
+                {
+                    if (CssRules != null && CssRules.Length > 0)
+                    {
+                        var writer = _dependencies.CssWriterFactory.Create(context);
+
+                        for (var i = 0; i < CssRules.Length; i++)
+                            CssRules[i](writer);
+
+                        if (context.IncludeComments)
+                            context.Html.WriteComment("css rules for " + GetCommentName());
+
+                        context.Html.WriteOpenTag("style");
+                        writer.ToHtml(context.Html);
+                        context.Html.WriteCloseTag("style");
+                    }
+                }
+                else if (pageArea == PageArea.Scripts)
+                {
+                    if (JavascriptFunctions != null && JavascriptFunctions.Length > 0)
+                    {
+                        var writer = _dependencies.JavascriptWriterFactory.Create(context);
+
+                        for (var i = 0; i < JavascriptFunctions.Length; i++)
+                            JavascriptFunctions[i](writer);
+
+                        if (context.IncludeComments)
+                            context.Html.WriteComment("javascript functions for " + GetCommentName());
+
+                        context.Html.WriteScriptOpen();
+                        writer.ToHtml(context.Html);
+                        context.Html.WriteScriptClose();
+                    }
+                }
             }
 
             return WriteResult.Continue();

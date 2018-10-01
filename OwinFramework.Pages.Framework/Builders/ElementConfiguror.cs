@@ -45,7 +45,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.DeployCsss, null))
             {
-                foreach (var css in attributes.DeployCsss)
+                foreach (var css in attributes.DeployCsss.OrderBy(c => c.Order))
                 {
                     component.DeployCss(css.CssSelector, css.CssStyle);
                 }
@@ -209,7 +209,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.DeployCsss, null))
             {
-                foreach(var css in attributes.DeployCsss)
+                foreach (var css in attributes.DeployCsss.OrderBy(c => c.Order))
                 {
                     layout.DeployCss(css.CssSelector, css.CssStyle);
                 }

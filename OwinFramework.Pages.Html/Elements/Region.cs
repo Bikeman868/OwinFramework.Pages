@@ -190,7 +190,11 @@ namespace OwinFramework.Pages.Html.Elements
 #endif
             IWriteResult result;
 
-            WriteOpen(context.Html);
+            if (context.IncludeComments)
+                context.Html.WriteComment("region " + Name);
+
+            if (pageArea == PageArea.Body)
+                WriteOpen(context.Html);
 
             if (pageArea == PageArea.Body && !ReferenceEquals(_repeatType, null))
             {
@@ -234,7 +238,8 @@ namespace OwinFramework.Pages.Html.Elements
                 result = contentWriter(context, pageArea);
             }
 
-            WriteClose(context.Html);
+            if (pageArea == PageArea.Body)
+                WriteClose(context.Html);
 
             return result;
         }
@@ -268,7 +273,18 @@ namespace OwinFramework.Pages.Html.Elements
 
         IList<IDataScope> IDataScopeRules.DataScopes
         {
-            get { return _dataScopeRules.DataScopes; }
+            get 
+            {
+                var configuredScopes = _dataScopeRules.DataScopes;
+                
+                if (string.IsNullOrEmpty(ListScope))
+                    return configuredScopes;
+
+                var scopes = configuredScopes.ToList();
+                scopes.Add(_dependencies.DataScopeFactory.Create(RepeatType, RepeatScope));
+
+                return scopes;
+            }
         }
 
         IList<Tuple<IDataSupplier, IDataDependency>> IDataScopeRules.SuppliedDependencies

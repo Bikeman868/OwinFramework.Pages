@@ -1,0 +1,5 @@
+﻿Moq
+Moq.Modules
+
+group net40
+  Microsoft.Owin

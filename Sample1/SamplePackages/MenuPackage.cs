@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
@@ -124,25 +123,37 @@ namespace Sample1.SamplePackages
         /// <summary>
         /// This is an example if a component that just deploys static assets
         /// </summary>
-        [DeployCss("ul.{ns}_menu", "list-style-type: none; overflow: hidden; white-space: nowrap;")]
-        [DeployCss("li.{ns}_option", "display: inline-block;")]
-        [DeployCss("li.{ns}_option a, a.{ns}_option", "display: inline-block; text-decoration: none;")]
-        [DeployCss("div.{ns}_dropdown", "display: none; position: absolute; overflow: hidden; z-index: 1;")]
-        [DeployCss("div.{ns}_dropdown a", "text-decoration: none; display: block; text-align: left")]
-        [DeployCss("li.{ns}_option:hover div.{ns}_dropdown", "display: block;")]
+        [DeployCss("ul.{ns}_menu", "list-style-type: none; overflow: hidden; white-space: nowrap;", 1)]
+        [DeployCss("li.{ns}_option", "display: inline-block;", 2)]
+        [DeployCss("li.{ns}_option a, a.{ns}_option", "display: inline-block; text-decoration: none;", 3)]
+        [DeployCss("div.{ns}_dropdown", "display: none; position: absolute; overflow: hidden; z-index: 1;", 4)]
+        [DeployCss("div.{ns}_dropdown a", "text-decoration: none; display: block; text-align: left", 5)]
+        [DeployCss("li.{ns}_option:hover div.{ns}_dropdown", "display: block;", 6)]
         public class MenuStyles
         { }
 
         /// <summary>
         /// This is an example if a component that deploys static assets and depends on other components
         /// </summary>
-        [DeployCss("ul.{ns}_menu", "margin: 0; padding: 0; background-color: #333")]
-        [DeployCss("li.{ns}_option a", "color: white; text-align: center; padding: 14px 16px;")]
-        [DeployCss("li.{ns}_option a:hover, li.{ns}_menu-option:hover a.{ns}_menu-option", "color: white; text-align: center; padding: 14px 16px")]
-        [DeployCss("div.{ns}_dropdown a:hover", "background-color: #f1f1f1;")]
-        [DeployCss("div.{ns}_dropdown", "background-color: #f9f9f9; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);")]
-        [DeployCss("div.{ns}_dropdown a", "color: black; padding: 12px 16px;")]
+        [DeployCss("ul.{ns}_menu", "margin: 0; padding: 0; background-color: #333", 1)]
+        [DeployCss("li.{ns}_option a", "color: white; text-align: center; padding: 14px 16px;", 2)]
+        [DeployCss("li.{ns}_option a:hover, li.{ns}_menu-option:hover a.{ns}_menu-option", "background-color: red", 3)]
+        [DeployCss("div.{ns}_dropdown a:hover", "background-color: #f1f1f1;", 4)]
+        [DeployCss("div.{ns}_dropdown", "background-color: #f9f9f9; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);", 5)]
+        [DeployCss("div.{ns}_dropdown a", "color: black; padding: 12px 16px;", 6)]
         public class MenuStyle1
+        { }
+
+        /// <summary>
+        /// This is an example if a component that deploys static assets and depends on other components
+        /// </summary>
+        [DeployCss("ul.{ns}_menu", "margin: 0; padding: 0; background-color: black", 1)]
+        [DeployCss("li.{ns}_option a", "color: #ddd; text-align: left; padding: 14px 10px;", 2)]
+        [DeployCss("li.{ns}_option a:hover, li.{ns}_menu-option:hover a.{ns}_menu-option", "color: #f8991d", 3)]
+        [DeployCss("div.{ns}_dropdown a:hover", "background-color: #f1f1f1;", 4)]
+        [DeployCss("div.{ns}_dropdown", "background-color: #666699; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);", 5)]
+        [DeployCss("div.{ns}_dropdown a", "color: white; padding: 12px 16px;", 6)]
+        public class MenuStyle2
         { }
 
         public override IPackage Build(IFluentBuilder builder)
@@ -155,6 +166,12 @@ namespace Sample1.SamplePackages
             // This component outputs CSS that defines the menu appearence
             builder.BuildUpComponent(new MenuStyle1())
                 .Name("menuStyle1")
+                .NeedsComponent("menuStyles")
+                .Build();
+
+            // This component outputs CSS that defines the menu appearence
+            builder.BuildUpComponent(new MenuStyle2())
+                .Name("menuStyle2")
                 .NeedsComponent("menuStyles")
                 .Build();
 
@@ -204,10 +221,10 @@ namespace Sample1.SamplePackages
             // This region is a container for the drop down menu items. It
             // renders one menu item component for each menu item in the sub-menu
             var dropDownMenuRegion = builder.BuildUpRegion()
-                .Tag("ul")
+                .Tag("div")
                 .ClassNames("{ns}_dropdown")
                 .DataProvider(subMenuDataProvider1)
-                .ForEach<MenuItem>("submenu", "li", null, "submenu", "{ns}_option")
+                .ForEach<MenuItem>("submenu", null, null, "submenu")
                 .Component(subMenuItemComponent)
                 .Build();
 

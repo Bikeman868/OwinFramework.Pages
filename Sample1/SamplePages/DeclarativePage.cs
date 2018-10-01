@@ -226,7 +226,6 @@ namespace Sample1.SamplePages
     [DeployedAs("navigation")]
     [UsesRegion("title", "title")]
     [UsesRegion("menu", "menus:menu")]
-    [NeedsComponent("menus:menuStyle1")]
     internal class HeaderLayout { }
 
     /// <summary>
@@ -266,6 +265,16 @@ namespace Sample1.SamplePages
      */
 
     /// <summary>
+    /// In this example I made the pages inherit from this base page so that
+    /// I can define some attributes that apply to all of the pages.
+    /// </summary>
+    [PartOf("application")]
+    [NeedsComponent("defaultStyles")]
+    [NeedsComponent("menus:menuStyle1")]
+    [UsesLayout("main")]
+    internal class PageBase { }
+
+    /// <summary>
     /// Defines a page that is rendered in response to requets for '/home.html'
     /// Uses the 'main' layout but changes the contents of the 'body' region.
     /// </summary>
@@ -275,17 +284,13 @@ namespace Sample1.SamplePages
     [Option(OptionType.Header, "Accept", "Must contain text/html, which is only available response format")]
     [Example("<a href='/home.html'>/home.html</a>")]
     [Example("<a href='/page1'>/page1</a>")]
-    [PartOf("application")]
     [Route("/home.html", Methods.Get)]
     [Route("/page1", Methods.Get)]
     [PageTitle("Page 1")]
     [Style("color: darkred;")]
-    [NeedsComponent("defaultStyles")]
-    [UsesLayout("main")]
     [RegionLayout("body", "page1Body")]
-    internal class Page1 { }
+    internal class Page1 : PageBase { }
 
-    /*
     /// <summary>
     /// Defines a page that is rendered in response to requets for '/page2'
     /// Uses the 'main' layout but changes the contents of the 'body' region.
@@ -294,13 +299,9 @@ namespace Sample1.SamplePages
     [Description("<p>This is an example of how to add a page declatively using attributes</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for page 2</p>")]
     [Example("<a href='/page2'>/page2</a>")]
-    [PartOf("application")]
     [Route("/page2", Methods.Get)]
     [PageTitle("Page 2")]
     [Style("color: darkblue;")]
-    [NeedsComponent("defaultStyles")]
-    [UsesLayout("main")]
     [RegionLayout("body", "page2Body")]
-    internal class Page2 { }
-     * */
+    internal class Page2 : PageBase { }
 }

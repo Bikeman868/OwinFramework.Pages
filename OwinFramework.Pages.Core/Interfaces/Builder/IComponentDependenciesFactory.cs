@@ -1,5 +1,6 @@
 ﻿using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
@@ -14,6 +15,16 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Returns a factory that can construct data consumer mixins
         /// </summary>
         IDataConsumerFactory DataConsumerFactory { get; }
+
+        /// <summary>
+        /// Returns a factory that can construct css writers
+        /// </summary>
+        ICssWriterFactory CssWriterFactory { get; }
+
+        /// <summary>
+        /// Returns a factory that can construct css writers
+        /// </summary>
+        IJavascriptWriterFactory JavascriptWriterFactory { get; }
 
         /// <summary>
         /// Constructs and initializes a component dependencies instance

@@ -10,17 +10,20 @@ namespace OwinFramework.Pages.Html.Runtime
         public IDataConsumerFactory DataConsumerFactory { get; private set; }
         public IDataDependencyFactory DataDependencyFactory { get; private set; }
         public IDataSupplierFactory DataSupplierFactory { get; private set; }
+        public IDataScopeFactory DataScopeFactory { get; private set; }
 
         public RegionDependenciesFactory(
             IDataScopeProviderFactory dataScopeProviderFactory,
             IDataConsumerFactory dataConsumerFactory,
             IDataDependencyFactory dataDependencyFactory,
-            IDataSupplierFactory dataSupplierFactory)
+            IDataSupplierFactory dataSupplierFactory,
+            IDataScopeFactory dataScopeFactory)
         {
             DataScopeProviderFactory = dataScopeProviderFactory;
             DataConsumerFactory = dataConsumerFactory;
             DataDependencyFactory = dataDependencyFactory;
             DataSupplierFactory = dataSupplierFactory;
+            DataScopeFactory = dataScopeFactory;
         }
 
         public IRegionDependencies Create(IOwinContext context)

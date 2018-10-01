@@ -7,6 +7,7 @@ using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.DataModel
@@ -18,6 +19,9 @@ namespace OwinFramework.Pages.Framework.DataModel
         private readonly DataContextFactory _dataContextFactory;
         private readonly IDataDependencyFactory _dataDependencyFactory;
         private readonly IThreadSafeDictionary<Type, object> _properties;
+#if DEBUG
+        private readonly int _id;
+#endif
 
         private IRenderContext _renderContext;
         private IDataContext _parent;
@@ -25,11 +29,15 @@ namespace OwinFramework.Pages.Framework.DataModel
         public DataContext(
             IDictionaryFactory dictionaryFactory,
             DataContextFactory dataContextFactory,
-            IDataDependencyFactory dataDependencyFactory)
+            IDataDependencyFactory dataDependencyFactory,
+            IIdManager idManager)
         {
             _dataContextFactory = dataContextFactory;
             _dataDependencyFactory = dataDependencyFactory;
             _properties = dictionaryFactory.Create<Type, object>();
+#if DEBUG
+            _id = idManager.GetUniqueId();
+#endif
         }
 
         public DataContext Initialize(
@@ -63,25 +71,22 @@ namespace OwinFramework.Pages.Framework.DataModel
                         if (dc.DataContextBuilder != null)
                             result.AppendLine("Data context builder #" + dc.DataContextBuilder.Id);
 
-                        List<Type> types;
-                        using (var keys = dc._properties.KeysLocked)
-                            types = keys.ToList();
-
-                        foreach(var type in types)
+                        foreach(var type in dc._properties.Keys)
                         {
-                            var value = _properties[type];
-                            result.AppendFormat("{0} = {1}\n", type.DisplayName(TypeExtensions.NamespaceOption.None), value);
+                            object value;
+                            if (_properties.TryGetValue(type, out value))
+                                result.AppendFormat("{0} = {1}\n", type.DisplayName(TypeExtensions.NamespaceOption.None), value);
                         }
                     };
 
-                result.AppendLine("Properties in this data context");
+                result.AppendLine("Properties in data context #"  + _id);
                 addProperties(this);
 
                 var parent = _parent as DataContext;
                 while (parent != null)
                 {
                     result.AppendLine();
-                    result.AppendLine("Properties in parent data context");
+                    result.AppendLine("Properties in parent data context #" + parent._id);
                     addProperties(parent);
                     parent = parent._parent as DataContext;
                 }
@@ -127,7 +132,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             }
         }
 
-        void IDataContext.Set(Type type, object value, string scopeName = null, int level = 0)
+        void IDataContext.Set(Type type, object value, string scopeName, int level)
         {
             if (level == 0 || _parent == null)
                 _properties[type] = value;

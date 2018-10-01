@@ -85,6 +85,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         public override string ToString()
         {
             var result = "supplier #" + _dataSupplierId;
+
             if (SuppliedTypes != null && SuppliedTypes.Count > 0)
             {
                 result += " of [" + string.Join(", ", SuppliedTypes.Select(t => t.DisplayName(TypeExtensions.NamespaceOption.Ending))) + "]";

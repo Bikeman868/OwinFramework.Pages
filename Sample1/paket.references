@@ -1,0 +1,16 @@
+﻿Owin
+Microsoft.Owin.Host.SystemWeb
+
+Owin.Framework
+Owin.Framework.DefaultDocument
+Owin.Framework.Documenter
+Owin.Framework.ExceptionReporter
+Owin.Framework.NotFound
+Owin.Framework.Urchin
+
+Ioc.Modules
+Ninject
+Ioc.Modules.Ninject
+
+group net40
+  Microsoft.Owin

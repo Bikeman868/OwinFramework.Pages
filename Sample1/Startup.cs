@@ -9,7 +9,6 @@ using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
 using OwinFramework.Interfaces.Utility;
 using OwinFramework.Pages.Core.Enums;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
 using OwinFramework.Pages.DebugMiddleware;
@@ -17,11 +16,10 @@ using Sample1.SamplePackages;
 using Sample1.SamplePages;
 using Urchin.Client.Sources;
 using OwinFramework.Pages.Core;
-using Sample1;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 
-[assembly: OwinStartup(typeof(Startup))]
+[assembly: OwinStartup(typeof(Sample1.Startup))]
 
 namespace Sample1
 {

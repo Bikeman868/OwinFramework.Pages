@@ -1,0 +1,7 @@
+﻿Ioc.Modules
+Newtonsoft.Json
+Owin.Framework
+Svg
+
+group net40
+  Microsoft.Owin

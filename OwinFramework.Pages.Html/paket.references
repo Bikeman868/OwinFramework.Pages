@@ -1,0 +1,5 @@
+﻿Ioc.Modules
+Urchin.Client
+
+group net40
+  Microsoft.Owin

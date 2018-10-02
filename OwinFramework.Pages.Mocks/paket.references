@@ -2,4 +2,9 @@
 Moq.Modules
 
 group net40
+  Owin.Framework
+  Microsoft.Owin
+
+group net45
+  Owin.Framework
   Microsoft.Owin

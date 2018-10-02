@@ -1,7 +1,11 @@
 ﻿Ioc.Modules
 Newtonsoft.Json
-Owin.Framework
 Svg
 
 group net40
-  Microsoft.Owin
+  Owin.Framework
+  Microsoft.Owin framework: net40
+
+group net45
+  Owin.Framework
+  Microsoft.Owin framework: net45

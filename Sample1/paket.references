@@ -1,16 +1,25 @@
-﻿Owin
-Microsoft.Owin.Host.SystemWeb
-
-Owin.Framework
-Owin.Framework.DefaultDocument
-Owin.Framework.Documenter
-Owin.Framework.ExceptionReporter
-Owin.Framework.NotFound
-Owin.Framework.Urchin
-
-Ioc.Modules
+﻿Ioc.Modules
 Ninject
 Ioc.Modules.Ninject
 
 group net40
+  Owin
   Microsoft.Owin
+  Microsoft.Owin.Host.SystemWeb
+  Owin.Framework
+  Owin.Framework.DefaultDocument
+  Owin.Framework.Documenter
+  Owin.Framework.ExceptionReporter
+  Owin.Framework.NotFound
+  Owin.Framework.Urchin
+
+group net45
+  Owin
+  Microsoft.Owin
+  Microsoft.Owin.Host.SystemWeb
+  Owin.Framework
+  Owin.Framework.DefaultDocument
+  Owin.Framework.Documenter
+  Owin.Framework.ExceptionReporter
+  Owin.Framework.NotFound
+  Owin.Framework.Urchin

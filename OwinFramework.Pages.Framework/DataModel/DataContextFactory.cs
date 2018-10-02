@@ -1,6 +1,7 @@
 ﻿using OwinFramework.Pages.Core.Collections;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Framework.DataModel
@@ -9,15 +10,19 @@ namespace OwinFramework.Pages.Framework.DataModel
     {
         private readonly IDictionaryFactory _dictionaryFactory;
         private readonly IDataDependencyFactory _dataDependencyFactory;
+        private readonly IIdManager _idManager;
 
         public DataContextFactory(
             IQueueFactory queueFactory,
             IDictionaryFactory dictionaryFactory,
-            IDataDependencyFactory dataDependencyFactory)
+            IDataDependencyFactory dataDependencyFactory,
+            IIdManager idManager)
             : base(queueFactory)
         {
             _dictionaryFactory = dictionaryFactory;
             _dataDependencyFactory = dataDependencyFactory;
+            _idManager = idManager;
+
             Initialize(100);
         }
 
@@ -34,7 +39,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataContext parent)
         {
             var dataContext = (DataContext)Queue.DequeueOrDefault()
-                ?? new DataContext(_dictionaryFactory, this, _dataDependencyFactory);
+                ?? new DataContext(_dictionaryFactory, this, _dataDependencyFactory, _idManager);
 
             return dataContext.Initialize(DisposeAction, renderContext, dataContextBuilder, parent);
         }

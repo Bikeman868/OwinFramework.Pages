@@ -26,7 +26,8 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
             _dataContextFactory = new DataContextFactory(
                 SetupMock<IQueueFactory>(),
                 SetupMock<IDictionaryFactory>(),
-                SetupMock<IDataDependencyFactory>());
+                SetupMock<IDataDependencyFactory>(),
+                SetupMock<IIdManager>());
         }
 
         [Test]
@@ -206,9 +207,9 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
             var queueFactory = SetupMock<IQueueFactory>();
             var dictionaryFactory = SetupMock<IDictionaryFactory>();
             var dataDependencyFactory = SetupMock<IDataDependencyFactory>();
-            var dataContextFactory = new DataContextFactory(queueFactory, dictionaryFactory, dataDependencyFactory);
-
             var idManager = SetupMock<IIdManager>();
+            var dataContextFactory = new DataContextFactory(queueFactory, dictionaryFactory, dataDependencyFactory, idManager);
+
             var dataCatalog = SetupMock<IDataCatalog>();
             var dataContextBuilderFactory = new DataContextBuilderFactory(dataContextFactory, idManager, dataCatalog);
 

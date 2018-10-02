@@ -1,0 +1,32 @@
+type file
+id Owin.Framework.Pages.Framework
+version 1.0.0-alpha1
+authors Martin Halliday
+copyright Martin Halliday 2018
+description
+  Default implementations of core interfaces that most people will choose to use.
+  You can implement these framework classes yourself if you want to completely define
+  how the this framework works under the hood, but this is a very advanced use case.
+title Owin Framework Pages Framework
+releasenotes
+  This is the first version
+projecturl https://github.com/Bikeman868/OwinFramework.Pages/tree/master/OwinFramework.Pages.Framework
+
+files
+  bin/net40/release/OwinFramework.Pages.Framework.dll ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Framework.dll ==> lib/net45
+
+dependencies
+  Owin.Framework.Pages.Core = 1.0.0-alpha1
+  
+  Ioc.Modules ~> LOCKED:Minor
+  Newtonsoft.Json ~> LOCKED:Minor
+  Urchin.Client ~> LOCKED:Minor
+
+  framework: net40
+    Microsoft.Owin = LOCKED:Build-net40
+    Owin.Framework ~> LOCKED:Minor-net40
+
+  framework: net45
+    Microsoft.Owin = LOCKED:Build-net45
+    Owin.Framework ~> LOCKED:Minor-net45

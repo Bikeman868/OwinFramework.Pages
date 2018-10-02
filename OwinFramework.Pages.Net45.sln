@@ -5,13 +5,9 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample1", "Sample1\Sample1.csproj", "{AB5CD12E-F29A-4767-BD7E-64AAC7D88230}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Core.Net40", "OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj", "{4C9F34B2-19F9-4C14-AD99-12F63273FD5A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Core.Net45", "OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net45.csproj", "{4C9F34B2-19F9-4C14-AD99-12F63273FD5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Restful.Net40", "OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net40.csproj", "{F2707665-3996-47DA-8914-9A4A919A0EBF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Html.Net40", "OwinFramework.Pages.Html\OwinFramework.Pages.Html.Net40.csproj", "{68B65603-BB88-4C0A-8CFC-32B92561B881}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.UnitTests.Net40", "OwinFramework.Pages.UnitTests\OwinFramework.Pages.UnitTests.Net40.csproj", "{CFB544AD-B03B-479F-A866-7B77D4519D46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Html.Net45", "OwinFramework.Pages.Html\OwinFramework.Pages.Html.Net45.csproj", "{68B65603-BB88-4C0A-8CFC-32B92561B881}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8292106B-4898-4672-900C-8DE535FBBBF6}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,13 +22,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Framework.Net40", "OwinFramework.Pages.Framework\OwinFramework.Pages.Framework.Net40.csproj", "{83E44B37-D3AA-4622-A03B-3C976EA58C83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Framework.Net45", "OwinFramework.Pages.Framework\OwinFramework.Pages.Framework.Net45.csproj", "{83E44B37-D3AA-4622-A03B-3C976EA58C83}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample2", "Sample2\Sample2.csproj", "{E796C3AC-256C-4575-8B14-B02A58895BDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Mocks.Net40", "OwinFramework.Pages.Mocks\OwinFramework.Pages.Mocks.Net40.csproj", "{BCC4C479-AB07-4B80-B832-53AAFEFD6089}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.DebugMiddleware.Net40", "OwinFramework.Pages.DebugMiddleware\OwinFramework.Pages.DebugMiddleware.Net40.csproj", "{342B95E5-8B99-40F0-959B-DA59C791D7DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.DebugMiddleware.Net45", "OwinFramework.Pages.DebugMiddleware\OwinFramework.Pages.DebugMiddleware.Net45.csproj", "{342B95E5-8B99-40F0-959B-DA59C791D7DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,18 +42,10 @@ Global
 		{4C9F34B2-19F9-4C14-AD99-12F63273FD5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C9F34B2-19F9-4C14-AD99-12F63273FD5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C9F34B2-19F9-4C14-AD99-12F63273FD5A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F2707665-3996-47DA-8914-9A4A919A0EBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2707665-3996-47DA-8914-9A4A919A0EBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F2707665-3996-47DA-8914-9A4A919A0EBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F2707665-3996-47DA-8914-9A4A919A0EBF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{68B65603-BB88-4C0A-8CFC-32B92561B881}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{68B65603-BB88-4C0A-8CFC-32B92561B881}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68B65603-BB88-4C0A-8CFC-32B92561B881}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68B65603-BB88-4C0A-8CFC-32B92561B881}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CFB544AD-B03B-479F-A866-7B77D4519D46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CFB544AD-B03B-479F-A866-7B77D4519D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CFB544AD-B03B-479F-A866-7B77D4519D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CFB544AD-B03B-479F-A866-7B77D4519D46}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83E44B37-D3AA-4622-A03B-3C976EA58C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{83E44B37-D3AA-4622-A03B-3C976EA58C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83E44B37-D3AA-4622-A03B-3C976EA58C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -68,10 +54,6 @@ Global
 		{E796C3AC-256C-4575-8B14-B02A58895BDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E796C3AC-256C-4575-8B14-B02A58895BDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E796C3AC-256C-4575-8B14-B02A58895BDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Release|Any CPU.Build.0 = Release|Any CPU
 		{342B95E5-8B99-40F0-959B-DA59C791D7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{342B95E5-8B99-40F0-959B-DA59C791D7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{342B95E5-8B99-40F0-959B-DA59C791D7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU

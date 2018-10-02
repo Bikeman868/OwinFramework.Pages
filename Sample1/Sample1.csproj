@@ -87,9 +87,9 @@
       <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
       <Name>OwinFramework.Pages.Core.Net40</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OwinFramework.Pages.DebugMiddleware\OwinFramework.Pages.DebugMiddleware.csproj">
+    <ProjectReference Include="..\OwinFramework.Pages.DebugMiddleware\OwinFramework.Pages.DebugMiddleware.Net40.csproj">
       <Project>{342b95e5-8b99-40f0-959b-da59c791d7dc}</Project>
-      <Name>OwinFramework.Pages.DebugMiddleware</Name>
+      <Name>OwinFramework.Pages.DebugMiddleware.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\OwinFramework.Pages.Framework\OwinFramework.Pages.Framework.Net40.csproj">
       <Project>{83e44b37-d3aa-4622-a03b-3c976ea58c83}</Project>
@@ -98,10 +98,6 @@
     <ProjectReference Include="..\OwinFramework.Pages.Html\OwinFramework.Pages.Html.Net40.csproj">
       <Project>{68b65603-bb88-4c0a-8cfc-32b92561b881}</Project>
       <Name>OwinFramework.Pages.Html.Net40</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net40.csproj">
-      <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>
-      <Name>OwinFramework.Pages.Restful.Net40</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

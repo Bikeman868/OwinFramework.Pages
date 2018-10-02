@@ -84,9 +84,9 @@
       <Project>{68b65603-bb88-4c0a-8cfc-32b92561b881}</Project>
       <Name>OwinFramework.Pages.Html.Net40</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OwinFramework.Pages.Mocks\OwinFramework.Pages.Mocks.csproj">
+    <ProjectReference Include="..\OwinFramework.Pages.Mocks\OwinFramework.Pages.Mocks.Net40.csproj">
       <Project>{bcc4c479-ab07-4b80-b832-53aafefd6089}</Project>
-      <Name>OwinFramework.Pages.Mocks</Name>
+      <Name>OwinFramework.Pages.Mocks.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net40.csproj">
       <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>

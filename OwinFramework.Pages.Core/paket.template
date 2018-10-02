@@ -15,6 +15,12 @@ files
   bin/net40/release/OwinFramework.Pages.Core.dll ==> lib/net40
   bin/net45/release/OwinFramework.Pages.Core.dll ==> lib/net45
 
+  bin/net40/release/OwinFramework.Pages.Core.xml ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Core.xml ==> lib/net45
+
+references
+  OwinFramework.Pages.Core.dll
+
 dependencies
   Ioc.Modules ~> LOCKED:Minor
   Newtonsoft.Json ~> LOCKED:Minor

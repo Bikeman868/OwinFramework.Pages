@@ -15,6 +15,12 @@ files
   bin/net40/release/OwinFramework.Pages.DebugMiddleware.dll ==> lib/net40
   bin/net45/release/OwinFramework.Pages.DebugMiddleware.dll ==> lib/net45
 
+  bin/net40/release/OwinFramework.Pages.DebugMiddleware.xml ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.DebugMiddleware.xml ==> lib/net45
+
+references
+  OwinFramework.Pages.DebugMiddleware.dll
+
 dependencies
   Owin.Framework.Pages.Core = 1.0.0-alpha1
 

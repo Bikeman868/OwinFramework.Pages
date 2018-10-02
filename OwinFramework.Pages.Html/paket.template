@@ -15,6 +15,12 @@ files
   bin/net40/release/OwinFramework.Pages.Html.dll ==> lib/net40
   bin/net45/release/OwinFramework.Pages.Html.dll ==> lib/net45
 
+  bin/net40/release/OwinFramework.Pages.Html.xml ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Html.xml ==> lib/net45
+
+references
+  OwinFramework.Pages.Html.dll
+
 dependencies
   Owin.Framework.Pages.Core = 1.0.0-alpha1
   

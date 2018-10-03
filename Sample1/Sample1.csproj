@@ -99,6 +99,10 @@
       <Project>{68b65603-bb88-4c0a-8cfc-32b92561b881}</Project>
       <Name>OwinFramework.Pages.Html.Net40</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net40.csproj">
+      <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>
+      <Name>OwinFramework.Pages.Restful.Net40</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

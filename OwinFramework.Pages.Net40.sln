@@ -30,9 +30,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Framewo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample2", "Sample2\Sample2.csproj", "{E796C3AC-256C-4575-8B14-B02A58895BDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Mocks.Net40", "OwinFramework.Pages.Mocks\OwinFramework.Pages.Mocks.Net40.csproj", "{BCC4C479-AB07-4B80-B832-53AAFEFD6089}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.DebugMiddleware.Net40", "OwinFramework.Pages.DebugMiddleware\OwinFramework.Pages.DebugMiddleware.Net40.csproj", "{342B95E5-8B99-40F0-959B-DA59C791D7DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Mocks.Net40", "OwinFramework.Pages.Mocks\OwinFramework.Pages.Mocks.Net40.csproj", "{BCC4C479-AB07-4B80-B832-53AAFEFD6089}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,14 +68,14 @@ Global
 		{E796C3AC-256C-4575-8B14-B02A58895BDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E796C3AC-256C-4575-8B14-B02A58895BDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E796C3AC-256C-4575-8B14-B02A58895BDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Release|Any CPU.Build.0 = Release|Any CPU
 		{342B95E5-8B99-40F0-959B-DA59C791D7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{342B95E5-8B99-40F0-959B-DA59C791D7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{342B95E5-8B99-40F0-959B-DA59C791D7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{342B95E5-8B99-40F0-959B-DA59C791D7DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

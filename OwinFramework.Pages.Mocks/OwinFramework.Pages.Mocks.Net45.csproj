@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{83E44B37-D3AA-4622-A03B-3C976EA58C83}</ProjectGuid>
+    <ProjectGuid>{BCC4C479-AB07-4B80-B832-53AAFEFD6089}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OwinFramework.Pages.Framework</RootNamespace>
-    <AssemblyName>OwinFramework.Pages.Framework</AssemblyName>
+    <RootNamespace>OwinFramework.Pages.Mocks</RootNamespace>
+    <AssemblyName>OwinFramework.Pages.Mocks</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseIntermediateOutputPath>obj\Net45\</BaseIntermediateOutputPath>
@@ -37,7 +37,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,43 +44,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuildEngine.cs" />
-    <Compile Include="Builders\ElementConfiguror.cs" />
-    <Compile Include="Builders\DataProviderBuilder.cs" />
-    <Compile Include="Builders\PackageBuilder.cs" />
-    <Compile Include="Builders\DataProviderDefinition.cs" />
-    <Compile Include="Builders\PackageDefinition.cs" />
-    <Compile Include="Configuration\FrameworkConfiguration.cs" />
-    <Compile Include="DataModel\DataConsumerFactory.cs" />
-    <Compile Include="DataModel\DataConsumer.cs" />
-    <Compile Include="DataModel\DataContextBuilder.cs" />
-    <Compile Include="DataModel\DataContextBuilderFactory.cs" />
-    <Compile Include="DataModel\DataDependencyFactory.cs" />
-    <Compile Include="DataModel\DataDependency.cs" />
-    <Compile Include="DataModel\DataScope.cs" />
-    <Compile Include="DataModel\DataScopeFactory.cs" />
-    <Compile Include="DataModel\DataScopeRules.cs" />
-    <Compile Include="DataModel\DataScopeProviderFactory.cs" />
-    <Compile Include="DataModel\DataSupplier.cs" />
-    <Compile Include="DataModel\DataSupplierFactory.cs" />
-    <Compile Include="Interfaces\IFrameworkConfiguration.cs" />
-    <Compile Include="Managers\AssetManager.cs" />
-    <Compile Include="DataModel\DataCatalog.cs" />
-    <Compile Include="Managers\IdManager.cs" />
-    <Compile Include="Managers\NameManager.cs" />
-    <Compile Include="Package.cs" />
+    <Compile Include="Builder\MockComponentDependenciesFactory.cs" />
+    <Compile Include="Builder\MockLayoutDependenciesFactory.cs" />
+    <Compile Include="Collections\MockQueueFactory.cs" />
+    <Compile Include="DataModel\MockDataCatalog.cs" />
+    <Compile Include="DataModel\MockDataContextBuilder.cs" />
+    <Compile Include="DataModel\MockDataSupplier.cs" />
+    <Compile Include="DataModel\MockDataSupplierFactory.cs" />
+    <Compile Include="DataModel\MockDataConsumerFactory.cs" />
+    <Compile Include="Builder\MockDataProviderDependenciesFactory.cs" />
+    <Compile Include="Collections\MockDictionaryFactory.cs" />
+    <Compile Include="DataModel\MockDataDependencyFactory.cs" />
+    <Compile Include="Managers\MockIdManager.cs" />
+    <Compile Include="Managers\MockNameManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Builders\FluentBuilder.cs" />
-    <Compile Include="DataModel\DataContext.cs" />
-    <Compile Include="DataModel\DataContextFactory.cs" />
-    <Compile Include="DataModel\DataProvider.cs" />
-    <Compile Include="Runtime\Package.cs" />
-    <Compile Include="Runtime\DataProviderDependencies.cs" />
-    <Compile Include="Runtime\PackageDependencies.cs" />
-    <Compile Include="Runtime\DataProviderDependenciesFactory.cs" />
-    <Compile Include="Runtime\PackageDependenciesFactory.cs" />
-    <Compile Include="Runtime\RequestRouter.cs" />
-    <Compile Include="Utility\DependencyListSorter.cs" />
+    <Compile Include="Runtime\MockDataContext.cs" />
+    <Compile Include="Runtime\MockDataScopeRules.cs" />
+    <Compile Include="Runtime\MockRenderContext.cs" />
+    <Compile Include="Runtime\MockRequestRouter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />
@@ -92,9 +72,6 @@
       <Name>OwinFramework.Pages.Core.Net45</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="paket.template" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -104,19 +81,21 @@
   </Target>
   -->
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5')">
       <ItemGroup>
-        <Reference Include="Ioc.Modules">
-          <HintPath>..\packages\Ioc.Modules\lib\net40\Ioc.Modules.dll</HintPath>
+        <Reference Include="Moq">
+          <HintPath>..\packages\Moq\lib\net40\Moq.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5')">
       <ItemGroup>
-        <Reference Include="Ioc.Modules">
-          <HintPath>..\packages\Ioc.Modules\lib\net45\Ioc.Modules.dll</HintPath>
+        <Reference Include="Moq.Modules">
+          <HintPath>..\packages\Moq.Modules\lib\Moq.Modules.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -126,37 +105,8 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
       <ItemGroup>
-        <Reference Include="Newtonsoft.Json">
-          <HintPath>..\packages\Newtonsoft.Json\lib\net40\Newtonsoft.Json.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Newtonsoft.Json">
-          <HintPath>..\packages\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
-      <ItemGroup>
-        <Reference Include="Urchin.Client">
-          <HintPath>..\packages\Urchin.Client\lib\net40\Urchin.Client.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Urchin.Client">
-          <HintPath>..\packages\Urchin.Client\lib\net45\Urchin.Client.dll</HintPath>
+        <Reference Include="Ioc.Modules">
+          <HintPath>..\packages\net40\Ioc.Modules\lib\net40\Ioc.Modules.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

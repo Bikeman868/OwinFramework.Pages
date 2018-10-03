@@ -1,0 +1,37 @@
+type file
+id Owin.Framework.Pages.Mocks
+version 1.0.0-alpha1
+authors Martin Halliday
+copyright Martin Halliday 2018
+description
+  Contains Mock implementations of the interfaces defined in the
+  Pages Core. You can use these Mocks with the Moq.Modules package
+  to write unit tests for your application.
+title Owin Framework Pages Mocks
+releasenotes
+  This is the first version
+projecturl https://github.com/Bikeman868/OwinFramework.Pages/tree/master/OwinFramework.Pages.Mocks
+
+files
+  bin/net40/release/OwinFramework.Pages.Mocks.dll ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Mocks.dll ==> lib/net45
+
+  bin/net40/release/OwinFramework.Pages.Mocks.xml ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Mocks.xml ==> lib/net45
+
+references
+  OwinFramework.Pages.Mocks.dll
+
+dependencies
+  Owin.Framework.Pages.Core = 1.0.0-alpha1
+
+  Ioc.Modules ~> LOCKED:Minor
+  Newtonsoft.Json ~> LOCKED:Minor
+
+  framework: net40
+    Microsoft.Owin = LOCKED:Build-net40
+    Owin.Framework ~> LOCKED:Minor-net40
+
+  framework: net45
+    Microsoft.Owin = LOCKED:Build-net45
+    Owin.Framework ~> LOCKED:Minor-net45

@@ -2,9 +2,9 @@
 Newtonsoft.Json
 
 group net40
-  Owin.Framework
+  Owin.Framework framework: net40
   Microsoft.Owin framework: net40
 
 group net45
-  Owin.Framework
+  Owin.Framework framework: net45
   Microsoft.Owin framework: net45

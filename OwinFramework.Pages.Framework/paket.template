@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Framework
-version 1.0.0-alpha1
+version 1.0.0-alpha2
 authors Martin Halliday
 copyright Martin Halliday 2018
 description
@@ -19,11 +19,14 @@ files
   bin/net40/release/OwinFramework.Pages.Framework.xml ==> lib/net40
   bin/net45/release/OwinFramework.Pages.Framework.xml ==> lib/net45
 
+  bin/net40/release/OwinFramework.Pages.Framework.pdb ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Framework.pdb ==> lib/net45
+
 references
   OwinFramework.Pages.Framework.dll
 
 dependencies
-  Owin.Framework.Pages.Core = 1.0.0-alpha1
+  Owin.Framework.Pages.Core = 1.0.0-alpha2
   
   Ioc.Modules ~> LOCKED:Minor
   Newtonsoft.Json ~> LOCKED:Minor

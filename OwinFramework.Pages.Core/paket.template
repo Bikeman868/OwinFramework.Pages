@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Core
-version 1.0.0-alpha1
+version 1.0.0-alpha2
 authors Martin Halliday
 copyright Martin Halliday 2018
 description
@@ -17,6 +17,9 @@ files
 
   bin/net40/release/OwinFramework.Pages.Core.xml ==> lib/net40
   bin/net45/release/OwinFramework.Pages.Core.xml ==> lib/net45
+
+  bin/net40/release/OwinFramework.Pages.Core.pdb ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Core.pdb ==> lib/net45
 
 references
   OwinFramework.Pages.Core.dll

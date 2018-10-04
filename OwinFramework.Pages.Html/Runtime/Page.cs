@@ -103,7 +103,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 foreach(var regionName in Layout.GetRegionNames())
                 {
                     var region = Layout.GetRegion(regionName);
-                    var element = _regions.ContainsKey(regionName)
+                    var element = _regions != null && _regions.ContainsKey(regionName)
                         ? _regions[regionName]
                         : Layout.GetElement(regionName);
                     regionElements.Add(new Tuple<string, IRegion, IElement>(regionName, region, element));

@@ -24,7 +24,8 @@ namespace OwinFramework.Pages.Core.Attributes
         /// clasing html for a region
         /// </summary>
         /// <param name="tag">The tag to use to enclose the contents of this element</param>
-        /// <param name="classNames">Css class names to apply</param>
+        /// <param name="classNames">Css class names to apply. Prefix with {ns}_ to use the
+        /// package namespace</param>
         public ChildContainerAttribute(string tag, params string[] classNames)
         {
             Tag = tag;
@@ -37,7 +38,9 @@ namespace OwinFramework.Pages.Core.Attributes
         public string Tag { get; set; }
 
         /// <summary>
-        /// The name of the component to place in this region
+        /// The name of the css classes to attach to this container. Prefix class
+        /// names with {ns}_ to prepend the namespace for the package that this
+        /// element is part of.
         /// </summary>
         public string[] ClassNames { get; set; }
     }

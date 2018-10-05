@@ -28,6 +28,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDefinition Title(Func<IRenderContext, string> titleFunc);
 
         /// <summary>
+        /// Sets the canonical Url for this page
+        /// </summary>
+        /// <param name="canonicalUrl"></param>
+        IPageDefinition CanonicalUrl(string canonicalUrl);
+
+        /// <summary>
+        /// Sets the title for this page
+        /// </summary>
+        /// <param name="canonicalUrlFunc">A delegate that will calculate the 
+        /// canonical Url for this page</param>
+        IPageDefinition CanonicalUrl(Func<IRenderContext, string> canonicalUrlFunc);
+
+        /// <summary>
         /// Specifies that this page is part of a package and should
         /// generate and reference assets from that packages namespace
         /// </summary>

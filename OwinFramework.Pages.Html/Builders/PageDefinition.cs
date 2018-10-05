@@ -46,6 +46,18 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        IPageDefinition IPageDefinition.CanonicalUrl(string canonicalUrl)
+        {
+            _page.CanonicalUrlFunc = rc => canonicalUrl;
+            return this;
+        }
+
+        IPageDefinition IPageDefinition.CanonicalUrl(Func<IRenderContext, string> canonicalUrlFunc)
+        {
+            _page.CanonicalUrlFunc = canonicalUrlFunc;
+            return this;
+        }
+
         IPageDefinition IPageDefinition.PartOf(IPackage package)
         {
             _page.Package = package;

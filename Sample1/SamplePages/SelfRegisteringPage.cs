@@ -23,6 +23,7 @@ namespace Sample1.SamplePages
         string IRunable.RequiredPermission { get { return null; } set { } }
         bool IRunable.AllowAnonymous { get { return true; } set { } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
+        Func<IRenderContext, string> IPage.CanonicalUrlFunc { get; set; }
 
         public void Initialize()
         {

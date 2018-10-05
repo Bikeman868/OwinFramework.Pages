@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
+﻿using System;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -14,5 +15,10 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// faster.
         /// </summary>
         void Initialize();
+
+        /// <summary>
+        /// A function that will calculate the canonical Url for this page
+        /// </summary>
+        Func<IRenderContext, string>  CanonicalUrlFunc { get; set; }
     }
 }

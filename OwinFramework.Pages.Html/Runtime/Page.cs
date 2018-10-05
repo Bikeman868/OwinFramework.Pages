@@ -40,6 +40,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public Func<IRenderContext, string> TitleFunc { get; set; }
 
         /// <summary>
+        /// Calculates the page canonical Url
+        /// </summary>
+        public virtual Func<IRenderContext, string> CanonicalUrlFunc { get; set; }
+
+        /// <summary>
         /// Defines the layout of this page
         /// </summary>
         public ILayout Layout { get; set; }

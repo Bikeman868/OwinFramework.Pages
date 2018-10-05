@@ -289,6 +289,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (!ReferenceEquals(attributes.IsPage, null))
             {
                 page.Name(attributes.IsPage.Name);
+                page.CanonicalUrl(attributes.IsPage.CanonicalUrl);
             }
 
             if (!ReferenceEquals(attributes.NeedsDatas, null))
@@ -411,11 +412,6 @@ namespace OwinFramework.Pages.Framework.Builders
                 {
                     region.NeedsComponent(need.ComponentName);
                 }
-            }
-
-            if (!ReferenceEquals(attributes.Style, null))
-            {
-                region.Style(attributes.Style.CssStyle);
             }
 
             if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
@@ -698,6 +694,9 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 if (!string.IsNullOrEmpty(attributes.IsPage.Name))
                     page.Name = attributes.IsPage.Name;
+
+                if (!string.IsNullOrEmpty(attributes.IsPage.CanonicalUrl))
+                    page.CanonicalUrlFunc = c => attributes.IsPage.CanonicalUrl;
             }
         }
 

@@ -14,9 +14,17 @@ namespace OwinFramework.Pages.Core.Attributes
         /// Constructs an attribute that defines a class to be a page
         /// </summary>
         /// <param name="name">The name of the page. Must be unique within a package or null</param>
-        public IsPageAttribute(string name = null)
+        /// <param name="canonicalUrl">The canonical URL for this page. Defaults to the route
+        /// if no canonical URL is specified</param>
+        public IsPageAttribute(string name = null, string canonicalUrl = null)
             : base(name)
         {
         }
+
+        /// <summary>
+        /// If there are multiple routes to this page then you should set this property
+        /// to indicate which URL should be indexed by search engines
+        /// </summary>
+        public string CanonicalUrl { get; set; }
     }
 }

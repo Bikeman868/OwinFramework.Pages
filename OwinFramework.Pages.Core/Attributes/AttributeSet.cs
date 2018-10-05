@@ -189,6 +189,7 @@ namespace OwinFramework.Pages.Core.Attributes
                 IsService = Set(IsService, attribute);
                 IsDataProvider = Set(IsDataProvider, attribute);
 
+                Container = Set(Container, attribute);
                 ChildContainer = Set(ChildContainer, attribute);
                 ChildStyle = Set(ChildStyle, attribute);
                 DeployedAs = Set(DeployedAs, attribute);

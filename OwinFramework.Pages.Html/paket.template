@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Html
-version 1.0.0-alpha3
+version 1.0.0-alpha4
 authors Martin Halliday
 copyright Martin Halliday 2018
 description
@@ -25,7 +25,7 @@ references
   OwinFramework.Pages.Html.dll
 
 dependencies
-  Owin.Framework.Pages.Core = 1.0.0-alpha3
+  Owin.Framework.Pages.Core = 1.0.0-alpha4
   
   Ioc.Modules ~> LOCKED:Minor
   Urchin.Client ~> LOCKED:Minor

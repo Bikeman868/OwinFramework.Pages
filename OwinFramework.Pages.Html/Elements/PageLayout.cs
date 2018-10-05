@@ -84,8 +84,11 @@ namespace OwinFramework.Pages.Html.Elements
             PageArea pageArea,
             string regionName)
         {
-            var pageRegion = _regions[regionName];
-            return pageRegion.WritePageArea(renderContext, pageArea);
+            PageRegion pageRegion;
+            if (_regions.TryGetValue(regionName, out pageRegion))
+                return pageRegion.WritePageArea(renderContext, pageArea);
+
+            return WriteResult.Continue();
         }
     }
 }

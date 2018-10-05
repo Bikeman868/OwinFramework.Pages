@@ -1,6 +1,7 @@
 ﻿Ioc.Modules
 Ninject
 Ioc.Modules.Ninject
+Newtonsoft.Json
 
 group net40
   Owin

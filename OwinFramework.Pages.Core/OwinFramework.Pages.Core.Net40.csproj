@@ -124,9 +124,11 @@
     <Compile Include="Exceptions\DataCatalogException.cs" />
     <Compile Include="Exceptions\FluentBuilderException.cs" />
     <Compile Include="Exceptions\InvalidNameException.cs" />
+    <Compile Include="Exceptions\PackageBuilderException.cs" />
     <Compile Include="Exceptions\NameResolutionFailureException.cs" />
     <Compile Include="Exceptions\NameManagerException.cs" />
     <Compile Include="Exceptions\ComponentBuilderException.cs" />
+    <Compile Include="Exceptions\ModuleBuilderException.cs" />
     <Compile Include="Exceptions\RegionBuilderException.cs" />
     <Compile Include="Exceptions\LayoutBuilderException.cs" />
     <Compile Include="Exceptions\ServiceBuilderException.cs" />
@@ -245,7 +247,7 @@
     <Compile Include="RequestFilters\FilterByPath.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="paket.template" />
+    <None Include="paket.template" />
     <None Include="paket.references" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

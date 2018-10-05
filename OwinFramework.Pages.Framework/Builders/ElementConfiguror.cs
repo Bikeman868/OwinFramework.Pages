@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Activities.Statements;
 using System.Linq;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
@@ -19,6 +20,7 @@ namespace OwinFramework.Pages.Framework.Builders
         private readonly IDataDependencyFactory _dataDependencyFactory;
         private readonly INameManager _nameManager;
         private readonly IRequestRouter _requestRouter;
+        private readonly AttributeMatrix _attributeMatrix = new AttributeMatrix();
 
         public ElementConfiguror(
             IDataSupplierFactory dataSupplierFactory, 
@@ -37,6 +39,20 @@ namespace OwinFramework.Pages.Framework.Builders
         public void Configure(IComponentDefinition component, AttributeSet attributes)
         {
             if (ReferenceEquals(component, null)) return;
+
+            var validationErrros = _attributeMatrix.Validate<IComponentDefinition>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on component of type " + component.GetType().DisplayName();
+            
+                if (attributes.IsComponent != null && string.IsNullOrEmpty(attributes.IsComponent.Name))
+                    message += " called '" + attributes.IsComponent.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new ComponentBuilderException(message);
+            }
 
             if (!ReferenceEquals(attributes.IsComponent, null))
             {
@@ -108,6 +124,20 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             if (ReferenceEquals(dataProvider, null)) return;
 
+            var validationErrros = _attributeMatrix.Validate<IDataProviderDefinition>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on data provider of type " + dataProvider.GetType().DisplayName();
+
+                if (attributes.IsDataProvider != null && string.IsNullOrEmpty(attributes.IsDataProvider.Name))
+                    message += " called '" + attributes.IsDataProvider.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new DataProviderBuilderException(message);
+            }
+
             if (!ReferenceEquals(attributes.IsDataProvider, null))
             {
                 dataProvider.Name(attributes.IsDataProvider.Name);
@@ -143,6 +173,20 @@ namespace OwinFramework.Pages.Framework.Builders
         public void Configure(ILayoutDefinition layout, AttributeSet attributes)
         {
             if (ReferenceEquals(layout, null)) return;
+
+            var validationErrros = _attributeMatrix.Validate<ILayoutDefinition>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on layout of type " + layout.GetType().DisplayName();
+
+                if (attributes.IsLayout != null && string.IsNullOrEmpty(attributes.IsLayout.Name))
+                    message += " called '" + attributes.IsLayout.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new LayoutBuilderException(message);
+            }
 
             if (!ReferenceEquals(attributes.IsLayout, null))
             {
@@ -257,6 +301,20 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             if (ReferenceEquals(module, null)) return;
 
+            var validationErrros = _attributeMatrix.Validate<IModuleDefinition>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on module of type " + module.GetType().DisplayName();
+
+                if (attributes.IsModule != null && string.IsNullOrEmpty(attributes.IsModule.Name))
+                    message += " called '" + attributes.IsModule.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new ModuleBuilderException(message);
+            }
+
             if (!ReferenceEquals(attributes.IsModule, null))
             {
                 module
@@ -268,6 +326,20 @@ namespace OwinFramework.Pages.Framework.Builders
         public void Configure(IPackageDefinition package, AttributeSet attributes)
         {
             if (ReferenceEquals(package, null)) return;
+
+            var validationErrros = _attributeMatrix.Validate<IPackageDefinition>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on package of type " + package.GetType().DisplayName();
+
+                if (attributes.IsPackage != null && string.IsNullOrEmpty(attributes.IsPackage.Name))
+                    message += " called '" + attributes.IsPackage.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new PackageBuilderException(message);
+            }
 
             if (!ReferenceEquals(attributes.IsPackage, null))
             {
@@ -285,6 +357,20 @@ namespace OwinFramework.Pages.Framework.Builders
         public void Configure(IPageDefinition page, AttributeSet attributes)
         {
             if (ReferenceEquals(page, null)) return;
+
+            var validationErrros = _attributeMatrix.Validate<IPageDefinition>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on page of type " + page.GetType().DisplayName();
+
+                if (attributes.IsPage != null && string.IsNullOrEmpty(attributes.IsPage.Name))
+                    message += " called '" + attributes.IsPage.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new PageBuilderException(message);
+            }
 
             if (!ReferenceEquals(attributes.IsPage, null))
             {
@@ -378,6 +464,20 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             if (ReferenceEquals(region, null)) return;
 
+            var validationErrros = _attributeMatrix.Validate<IRegionDefinition>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on region of type " + region.GetType().DisplayName();
+
+                if (attributes.IsRegion != null && string.IsNullOrEmpty(attributes.IsRegion.Name))
+                    message += " called '" + attributes.IsRegion.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new RegionBuilderException(message);
+            }
+
             if (!ReferenceEquals(attributes.IsRegion, null))
             {
                 region.Name(attributes.IsRegion.Name);
@@ -469,6 +569,20 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             if (ReferenceEquals(service, null)) return;
 
+            var validationErrros = _attributeMatrix.Validate<IServiceDefinition>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on service of type " + service.GetType().DisplayName();
+
+                if (attributes.IsService != null && string.IsNullOrEmpty(attributes.IsService.Name))
+                    message += " called '" + attributes.IsService.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new ServiceBuilderException(message);
+            }
+
             if (!ReferenceEquals(attributes.IsService, null))
             {
                 service.Name(attributes.IsService.Name);
@@ -541,41 +655,153 @@ namespace OwinFramework.Pages.Framework.Builders
 
         public void Configure(IComponent component, AttributeSet attributes)
         {
+            var validationErrros = _attributeMatrix.Validate<IComponent>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on component of type " + component.GetType().DisplayName();
+
+                if (attributes.IsComponent != null && string.IsNullOrEmpty(attributes.IsComponent.Name))
+                    message += " called '" + attributes.IsComponent.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new ComponentBuilderException(message);
+            }
+
             Configure((object)component, attributes);
         }
 
         public void Configure(IDataProvider dataProvider, AttributeSet attributes)
         {
+            var validationErrros = _attributeMatrix.Validate<IDataProvider>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on data provider of type " + dataProvider.GetType().DisplayName();
+
+                if (attributes.IsDataProvider != null && string.IsNullOrEmpty(attributes.IsDataProvider.Name))
+                    message += " called '" + attributes.IsDataProvider.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new DataProviderBuilderException(message);
+            }
+
             Configure((object)dataProvider, attributes);
         }
 
         public void Configure(ILayout layout, AttributeSet attributes)
         {
+            var validationErrros = _attributeMatrix.Validate<ILayout>(attributes);
+            if (validationErrros != null)
+            {
+                var message = "There are invalid attributes on layout of type " + layout.GetType().DisplayName();
+
+                if (attributes.IsLayout != null && string.IsNullOrEmpty(attributes.IsLayout.Name))
+                    message += " called '" + attributes.IsLayout.Name + "'.";
+
+                foreach (var error in validationErrros)
+                    message += Environment.NewLine + error;
+
+                throw new LayoutBuilderException(message);
+            }
+
             Configure((object)layout, attributes);
         }
 
         public void Configure(IModule module, AttributeSet attributes)
         {
+            var validationErrors = _attributeMatrix.Validate<IModule>(attributes);
+            if (validationErrors != null)
+            {
+                var message = "There are invalid attributes on module of type " + module.GetType().DisplayName();
+
+                if (attributes.IsModule != null && string.IsNullOrEmpty(attributes.IsModule.Name))
+                    message += " called '" + attributes.IsModule.Name + "'.";
+
+                foreach (var error in validationErrors)
+                    message += Environment.NewLine + error;
+
+                throw new LayoutBuilderException(message);
+            }
+
             Configure((object)module, attributes);
         }
 
         public void Configure(IPackage package, AttributeSet attributes)
         {
+            var validationErrors = _attributeMatrix.Validate<IPackage>(attributes);
+            if (validationErrors != null)
+            {
+                var message = "There are invalid attributes on package of type " + package.GetType().DisplayName();
+
+                if (attributes.IsPackage != null && string.IsNullOrEmpty(attributes.IsPackage.Name))
+                    message += " called '" + attributes.IsPackage.Name + "'.";
+
+                foreach (var error in validationErrors)
+                    message += Environment.NewLine + error;
+
+                throw new PackageBuilderException(message);
+            }
+
             Configure((object)package, attributes);
         }
 
         public void Configure(IPage page, AttributeSet attributes)
         {
+            var validationErrors = _attributeMatrix.Validate<IPage>(attributes);
+            if (validationErrors != null)
+            {
+                var message = "There are invalid attributes on page of type " + page.GetType().DisplayName();
+
+                if (attributes.IsPage != null && string.IsNullOrEmpty(attributes.IsPage.Name))
+                    message += " called '" + attributes.IsPage.Name + "'.";
+
+                foreach (var error in validationErrors)
+                    message += Environment.NewLine + error;
+
+                throw new PageBuilderException(message);
+            }
+
             Configure((object)page, attributes);
         }
 
         public void Configure(IRegion region, AttributeSet attributes)
         {
+            var validationErrors = _attributeMatrix.Validate<IRegion>(attributes);
+            if (validationErrors != null)
+            {
+                var message = "There are invalid attributes on region of type " + region.GetType().DisplayName();
+
+                if (attributes.IsRegion != null && string.IsNullOrEmpty(attributes.IsRegion.Name))
+                    message += " called '" + attributes.IsRegion.Name + "'.";
+
+                foreach (var error in validationErrors)
+                    message += Environment.NewLine + error;
+
+                throw new RegionBuilderException(message);
+            }
+
             Configure((object)region, attributes);
         }
 
         public void Configure(IService service, AttributeSet attributes)
         {
+            var validationErrors = _attributeMatrix.Validate<IService>(attributes);
+            if (validationErrors != null)
+            {
+                var message = "There are invalid attributes on service of type " + service.GetType().DisplayName();
+
+                if (attributes.IsService != null && string.IsNullOrEmpty(attributes.IsService.Name))
+                    message += " called '" + attributes.IsService.Name + "'.";
+
+                foreach (var error in validationErrors)
+                    message += Environment.NewLine + error;
+
+                throw new ServiceBuilderException(message);
+            }
+
             Configure((object)service, attributes);
         }
         

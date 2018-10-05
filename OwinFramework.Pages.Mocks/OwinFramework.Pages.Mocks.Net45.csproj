@@ -34,9 +34,6 @@
     <DocumentationFile>bin\net45\Release\OwinFramework.Pages.Mocks.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OwinFramework">
-      <HintPath>..\packages\net45\Owin.Framework\lib\net45\OwinFramework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

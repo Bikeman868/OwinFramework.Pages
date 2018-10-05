@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Activities" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -45,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildEngine.cs" />
+    <Compile Include="Builders\AttributeMatrix.cs" />
     <Compile Include="Builders\ElementConfiguror.cs" />
     <Compile Include="Builders\DataProviderBuilder.cs" />
     <Compile Include="Builders\PackageBuilder.cs" />
@@ -92,7 +94,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="paket.template" />
+    <None Include="paket.template" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

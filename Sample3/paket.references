@@ -1,0 +1,18 @@
+﻿Ioc.Modules
+Ninject
+Ioc.Modules.Ninject
+Newtonsoft.Json
+
+group net40
+  Owin
+  Microsoft.Owin
+  Microsoft.Owin.Host.SystemWeb
+  Owin.Framework
+  Owin.Framework.Urchin
+
+group net45
+  Owin
+  Microsoft.Owin
+  Microsoft.Owin.Host.SystemWeb
+  Owin.Framework
+  Owin.Framework.Urchin

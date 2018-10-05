@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.DebugMi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Mocks.Net40", "OwinFramework.Pages.Mocks\OwinFramework.Pages.Mocks.Net40.csproj", "{BCC4C479-AB07-4B80-B832-53AAFEFD6089}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample3", "Sample3\Sample3.csproj", "{B2BB1B4D-B3A0-4657-9A4C-9F9A7FC08E2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCC4C479-AB07-4B80-B832-53AAFEFD6089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2BB1B4D-B3A0-4657-9A4C-9F9A7FC08E2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2BB1B4D-B3A0-4657-9A4C-9F9A7FC08E2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2BB1B4D-B3A0-4657-9A4C-9F9A7FC08E2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2BB1B4D-B3A0-4657-9A4C-9F9A7FC08E2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -65,7 +65,10 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolvePackageNames,
-                (nm, r, n) => r.Package = nm.ResolvePackage(n),
+                (nm, r, n) =>
+                {
+                    r.Package = nm.ResolvePackage(n);
+                },
                 _region,
                 packageName);
 
@@ -286,19 +289,24 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegion IRegionDefinition.Build()
         {
-            if (!string.IsNullOrEmpty(_tagName))
-            {
-                var attributes = _htmlHelper.StyleAttributes(_style, _classNames, _region.Package);
-                _region.WriteOpen = w => w.WriteOpenTag(_tagName, attributes);
-                _region.WriteClose = w => w.WriteCloseTag(_tagName);
-            }
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                nm =>
+                {
+                    if (!string.IsNullOrEmpty(_tagName))
+                    {
+                        var attributes = _htmlHelper.StyleAttributes(_style, _classNames, _region.Package);
+                        _region.WriteOpen = w => w.WriteOpenTag(_tagName, attributes);
+                        _region.WriteClose = w => w.WriteCloseTag(_tagName);
+                    }
 
-            if (!string.IsNullOrEmpty(_childTagName))
-            {
-                var attributes = _htmlHelper.StyleAttributes(_childStyle, _childClassNames, _region.Package);
-                _region.WriteChildOpen = w => w.WriteOpenTag(_childTagName, attributes);
-                _region.WriteChildClose = w => w.WriteCloseTag(_childTagName);
-            }
+                    if (!string.IsNullOrEmpty(_childTagName))
+                    {
+                        var attributes = _htmlHelper.StyleAttributes(_childStyle, _childClassNames, _region.Package);
+                        _region.WriteChildOpen = w => w.WriteOpenTag(_childTagName, attributes);
+                        _region.WriteChildClose = w => w.WriteCloseTag(_childTagName);
+                    }
+                });
 
             _fluentBuilder.Register(_region);
             return _region;

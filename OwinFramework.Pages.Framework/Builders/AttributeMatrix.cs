@@ -212,7 +212,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             Add<UsesRegionAttribute>()
                 .Valid<ILayoutDefinition>()
-                .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the regions of the layout using [RegionLayout] and [RegionComponent] attributes.");
+                .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [RegionLayout] and [RegionComponent] attributes.");
         }
 
         private AttributeDefinition Add<T>()

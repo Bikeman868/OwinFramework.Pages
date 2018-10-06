@@ -41,6 +41,7 @@ namespace Sample3
             var fluentBuilder = ninject.Get<IFluentBuilder>();
 
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
+            ninject.Get<OwinFramework.Pages.Framework.BuildEngine>().Install(fluentBuilder);
             
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
 
@@ -61,11 +62,12 @@ namespace Sample3
     internal class Page1 : PageBase { }
 
     [IsRegion("body")]
-    internal class BodyRegion { }
+    [Container("div", "{ns}_body-region")]
+    internal class BodyRegion : ApplicationElement { }
 
     [IsComponent("body")]
     [RenderHtml("body", "<p>Body</p>")]
-    internal class BodyComponent { }
+    internal class BodyComponent : ApplicationElement { }
 
     /*
      * PageBase defines the elements that are common to all pages
@@ -80,20 +82,31 @@ namespace Sample3
     [UsesRegion("footer", "footer")]
     [RegionComponent("header", "header")]
     [RegionComponent("footer", "footer")]
-    internal class MyPageLayout { }
+    internal class BasePageLayout : ApplicationElement { }
 
     [IsRegion("header")]
-    internal class HeaderRegion { }
+    [Container("div", "{ns}_header-region")]
+    internal class HeaderRegion : ApplicationElement { }
 
     [IsRegion("footer")]
-    internal class FooterRegion { }
+    [Container("div", "{ns}_footer-region")]
+    internal class FooterRegion : ApplicationElement { }
 
     [IsComponent("header")]
     [RenderHtml("header", "<p>Header</p>")]
-    internal class HeaderComponent { }
+    internal class HeaderComponent : ApplicationElement { }
 
     [IsComponent("footer")]
     [RenderHtml("footer", "<p>Footer</p>")]
-    internal class FooterComponent { }
+    internal class FooterComponent : ApplicationElement { }
 
+    /*
+     * Defined the Sample3 package
+     */
+
+    [IsPackage("sample3", "app")]
+    internal class ApplicationPackage { }
+
+    [PartOf("sample3")]
+    internal class ApplicationElement { }
 }

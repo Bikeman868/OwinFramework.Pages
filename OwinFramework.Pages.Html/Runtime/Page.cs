@@ -183,152 +183,6 @@ namespace OwinFramework.Pages.Html.Runtime
             _inPageScriptLines = functions.ToLines();
         }
 
-        private class PageData: IPageData
-        {
-            private class State
-            {
-                public AssetDeployment AssetDeployment;
-                public IDataContextBuilder DataContextBuilder;
-                public IModule Module;
-                public string MessagePrefix;
-
-                public State Clone()
-                {
-                    return new State
-                    {
-                        AssetDeployment = AssetDeployment,
-                        DataContextBuilder = DataContextBuilder,
-                        Module = Module,
-                        MessagePrefix = MessagePrefix + "  "
-                    };
-                }
-            }
-
-            public class ElementRegistration
-            {
-                public IElement Element;
-                public AssetDeployment AssetDeployment;
-                public IModule Module;
-            }
-
-            public readonly List<ElementRegistration> Elements = new List<ElementRegistration>();
-            public IDataContextBuilder RootDataContextBuilder { get; private set; }
-
-            private readonly Stack<State> _stateStack = new Stack<State>();
-            private readonly Page _page;
-            private State _currentState;
-
-            public PageData(IPageDependenciesFactory dependencies, Page page)
-            {
-                _page = page;
-
-                var assetDeployment = page.AssetDeployment;
-                if (page.Module != null)
-                    assetDeployment = page.Module.AssetDeployment;
-
-                if (assetDeployment == AssetDeployment.Inherit)
-                    assetDeployment = AssetDeployment.PerModule;
-
-                if (assetDeployment == AssetDeployment.PerModule && page.Module == null)
-                    assetDeployment = AssetDeployment.PerWebsite;
-
-                RootDataContextBuilder = dependencies.DataContextBuilderFactory.Create(page);
-
-                _currentState = new State
-                {
-                    MessagePrefix = page.Name + ": ",
-                    AssetDeployment = assetDeployment,
-                    DataContextBuilder = RootDataContextBuilder,
-                    Module = page.Module
-                };
-            }
-
-            public IDataContextBuilder BeginAddElement(IElement element, IDataScopeRules dataScopeRules)
-            {
-                dataScopeRules = dataScopeRules ?? element as IDataScopeRules;
-
-                Log("Adding element '" + element + "' to page" + 
-                    (dataScopeRules == null ? ""  : " using data scope rules from '" + dataScopeRules + "'"));
-
-                var assetDeployment = element.AssetDeployment;
-
-                if (element.Module != null)
-                    assetDeployment = element.Module.AssetDeployment;
-
-                var module = element.Module ?? _currentState.Module;
-
-                if (assetDeployment == AssetDeployment.Inherit)
-                    assetDeployment = _currentState.AssetDeployment;
-
-                if (assetDeployment == AssetDeployment.PerModule && module == null)
-                    assetDeployment = AssetDeployment.PerWebsite;
-
-                Log(element + " asset deployment resolved to '" + assetDeployment + 
-                    (assetDeployment == AssetDeployment.PerModule ? "' in module '" + module + "'" : "'"));
-
-                Elements.Add(new ElementRegistration
-                {
-                    Element = element,
-                    AssetDeployment = assetDeployment,
-                    Module = module
-                });
-
-                var libraryConsumer = element as ILibraryConsumer;
-                if (!ReferenceEquals(libraryConsumer, null))
-                {
-                    var dependentComponents = libraryConsumer.GetDependentComponents();
-                    if (!ReferenceEquals(dependentComponents, null))
-                    {
-                        foreach (var component in dependentComponents)
-                        {
-                            Log(element + " element needs " + component);
-                            _page.AddComponent(component);
-                        }
-                    }
-                }
-
-                var dataConsumer = element as IDataConsumer;
-                if (dataConsumer != null)
-                {
-                    Log(element + " element is a data consumer, adding its needs");
-                    _currentState.DataContextBuilder.AddConsumerNeeds(dataConsumer);
-                }
-
-                Log("Pushing new state onto stack");
-                _stateStack.Push(_currentState);
-                _currentState = _currentState.Clone();
-
-                if (dataScopeRules != null)
-                {
-                    Log("Adding data context builder based on " + dataScopeRules);
-                    _currentState.DataContextBuilder = _currentState.DataContextBuilder.AddChild(dataScopeRules);
-                }
-
-                if (dataConsumer != null)
-                {
-                    Log(element + " element is a data consumer, adding required suppliers");
-                    _currentState.DataContextBuilder.AddConsumerSupplies(dataConsumer);
-                }
-
-                return _currentState.DataContextBuilder;
-            }
-
-            public void EndAddElement(IElement element)
-            {
-                Log("Added element " + element + " to " + _page.Name);
-                Log("Poping state off the stack");
-                _currentState = _stateStack.Pop();
-            }
-
-            public void Log(string message)
-            {
-#if TRACE
-                if (string.IsNullOrEmpty(message)) return;
-                System.Diagnostics.Trace.WriteLine(_currentState.MessagePrefix + message);
-#endif
-            }
-        }
-
         #endregion
 
         public void PopulateRegion(string regionName, IElement element)
@@ -936,14 +790,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataContextBuilder.AddMissingData(renderContext, missingDependency);
         }
 
-        void IDataContextBuilder.AddConsumerNeeds(IDataConsumer consumer)
+        void IDataContextBuilder.AddConsumer(IDataConsumer consumer)
         {
-            _dataContextBuilder.AddConsumerNeeds(consumer);
-        }
-
-        void IDataContextBuilder.AddConsumerSupplies(IDataConsumer consumer)
-        {
-            _dataContextBuilder.AddConsumerSupplies(consumer);
+            _dataContextBuilder.AddConsumer(consumer);
         }
 
         IDataContextBuilder IDataContextBuilder.AddChild(IDataScopeRules dataScopeRules)

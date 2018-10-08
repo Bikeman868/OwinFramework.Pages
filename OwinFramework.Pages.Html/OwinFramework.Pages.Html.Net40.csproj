@@ -80,6 +80,7 @@
     <Compile Include="Builders\RegionDefinition.cs" />
     <Compile Include="Runtime\ComponentDependencies.cs" />
     <Compile Include="Runtime\ComponentDependenciesFactory.cs" />
+    <Compile Include="Runtime\PageData.cs" />
     <Compile Include="Runtime\RegionDependenciesFactory.cs" />
     <Compile Include="Runtime\RegionDependencies.cs" />
     <Compile Include="Runtime\LayoutDependencies.cs" />

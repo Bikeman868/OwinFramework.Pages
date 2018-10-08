@@ -30,13 +30,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         /// or its ancestors to satisfy the needs of this
         /// data consumer
         /// </summary>
-        void AddConsumerNeeds(IDataConsumer consumer);
-
-        /// <summary>
-        /// Adds data suppliers to this data context builder
-        /// that are specified as mandatory for this consumer
-        /// </summary>
-        void AddConsumerSupplies(IDataConsumer consumer);
+        void AddConsumer(IDataConsumer consumer);
 
         /// <summary>
         /// Call this method after adding all dependencies and all children.

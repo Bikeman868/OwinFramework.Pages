@@ -86,7 +86,7 @@ namespace Sample3
 
     [IsLayout("page2_body", "main")]
     [UsesRegion("main", "page2_body")]
-    [RegionComponent("main", "person")]
+    [RegionComponent("main", "address")]
     internal class Page2BodyLayout : ApplicationElement { }
 
     [IsRegion("page2_body")]

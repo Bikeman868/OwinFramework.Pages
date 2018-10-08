@@ -276,8 +276,8 @@ namespace OwinFramework.Pages.Html.Elements
             get 
             {
                 var configuredScopes = _dataScopeRules.DataScopes;
-                
-                if (string.IsNullOrEmpty(ListScope))
+
+                if (string.IsNullOrEmpty(RepeatScope))
                     return configuredScopes;
 
                 var scopes = configuredScopes.ToList();

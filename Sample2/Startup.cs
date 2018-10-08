@@ -11,9 +11,8 @@ using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
-using Sample2;
 
-[assembly: OwinStartup(typeof(Startup))]
+[assembly: OwinStartup(typeof(Sample2.Startup))]
 
 namespace Sample2
 {

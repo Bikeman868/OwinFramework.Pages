@@ -11,10 +11,13 @@ namespace OwinFramework.Pages.Core.Exceptions
         /// Constructs a builder exception
         /// </summary>
         public InvalidNameException(string name, IPackage package) 
-            : base("Invalid name specified '" + name + "' in " + 
+            : base(
+                "Element names can only contain numbers, letters and underscore" +
+                " because they are used as a base for JavaScript function and css" +
+                " class names. Invalid name '" + name + "' in " + 
                 (package == null 
                     ? "global namespace" 
-                    : package.Name + " package with namespace '" + package.NamespaceName+"'"))
+                    : package.Name + " package with namespace '" + package.NamespaceName + "'"))
         { }
     }
 }

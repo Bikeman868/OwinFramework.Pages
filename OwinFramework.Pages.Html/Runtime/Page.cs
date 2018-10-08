@@ -236,7 +236,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 _currentState = new State
                 {
-                    MessagePrefix = "Init " + page.Name + ": ",
+                    MessagePrefix = page.Name + ": ",
                     AssetDeployment = assetDeployment,
                     DataContextBuilder = RootDataContextBuilder,
                     Module = page.Module
@@ -245,9 +245,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
             public IDataContextBuilder BeginAddElement(IElement element, IDataScopeRules dataScopeRules)
             {
-                Log("Has " + element);
-
                 dataScopeRules = dataScopeRules ?? element as IDataScopeRules;
+
+                Log("Adding element '" + element + "' to page" + 
+                    (dataScopeRules == null ? ""  : " using data scope rules from '" + dataScopeRules + "'"));
 
                 var assetDeployment = element.AssetDeployment;
 
@@ -261,6 +262,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 if (assetDeployment == AssetDeployment.PerModule && module == null)
                     assetDeployment = AssetDeployment.PerWebsite;
+
+                Log(element + " asset deployment resolved to '" + assetDeployment + 
+                    (assetDeployment == AssetDeployment.PerModule ? "' in module '" + module + "'" : "'"));
 
                 Elements.Add(new ElementRegistration
                 {
@@ -277,7 +281,7 @@ namespace OwinFramework.Pages.Html.Runtime
                     {
                         foreach (var component in dependentComponents)
                         {
-                            Log("Needs " + component);
+                            Log(element + " element needs " + component);
                             _page.AddComponent(component);
                         }
                     }
@@ -285,21 +289,34 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 var dataConsumer = element as IDataConsumer;
                 if (dataConsumer != null)
-                    _currentState.DataContextBuilder.AddConsumer(dataConsumer);
+                {
+                    Log(element + " element is a data consumer, adding its needs");
+                    _currentState.DataContextBuilder.AddConsumerNeeds(dataConsumer);
+                }
 
+                Log("Pushing new state onto stack");
                 _stateStack.Push(_currentState);
                 _currentState = _currentState.Clone();
 
                 if (dataScopeRules != null)
                 {
-                    Log("Adding " + dataScopeRules);
+                    Log("Adding data context builder based on " + dataScopeRules);
                     _currentState.DataContextBuilder = _currentState.DataContextBuilder.AddChild(dataScopeRules);
                 }
+
+                if (dataConsumer != null)
+                {
+                    Log(element + " element is a data consumer, adding required suppliers");
+                    _currentState.DataContextBuilder.AddConsumerSupplies(dataConsumer);
+                }
+
                 return _currentState.DataContextBuilder;
             }
 
             public void EndAddElement(IElement element)
             {
+                Log("Added element " + element + " to " + _page.Name);
+                Log("Poping state off the stack");
                 _currentState = _stateStack.Pop();
             }
 
@@ -919,9 +936,14 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataContextBuilder.AddMissingData(renderContext, missingDependency);
         }
 
-        void IDataContextBuilder.AddConsumer(IDataConsumer consumer)
+        void IDataContextBuilder.AddConsumerNeeds(IDataConsumer consumer)
         {
-            _dataContextBuilder.AddConsumer(consumer);
+            _dataContextBuilder.AddConsumerNeeds(consumer);
+        }
+
+        void IDataContextBuilder.AddConsumerSupplies(IDataConsumer consumer)
+        {
+            _dataContextBuilder.AddConsumerSupplies(consumer);
         }
 
         IDataContextBuilder IDataContextBuilder.AddChild(IDataScopeRules dataScopeRules)

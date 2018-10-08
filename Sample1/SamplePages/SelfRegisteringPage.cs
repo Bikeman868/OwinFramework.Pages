@@ -10,7 +10,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 namespace Sample1.SamplePages
 {
     [IsPage]
-    [RequiresPermission("administrator")]
+    //[RequiresPermission("administrator")]
     [Route("/page3", Methods.Get)]
     [Description("<p>This is an example of how to add a full custom page that is discovered and registered automatically by the fluent builder</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for this self registering page</p>")]

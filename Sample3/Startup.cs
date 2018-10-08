@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Ioc.Modules;
 using Microsoft.Owin;
@@ -10,7 +11,13 @@ using OwinFramework.Pages.Core;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.DebugMiddleware;
+using OwinFramework.Pages.Framework.DataModel;
+using OwinFramework.Pages.Html.Elements;
+using OwinFramework.Pages.Html.Runtime;
 
 [assembly: OwinStartup(typeof(Sample3.Startup))]
 
@@ -32,6 +39,7 @@ namespace Sample3
             var pipelineBuilder = ninject.Get<IBuilder>().EnableTracing();
 
             pipelineBuilder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/sample3/pages");
+            pipelineBuilder.Register(ninject.Get<DebugInfoMiddleware>()).ConfigureWith(config, "/sample3/debugInfo");
             app.UseBuilder(pipelineBuilder);
 
             #endregion
@@ -52,26 +60,41 @@ namespace Sample3
     }
 
     /*
-     * Page 1 is an example of a website page that uses the stanndard
-     * layout but defines custom content
+     * Page 1 uses the standard page layout but defines content
+     * that is specific to page 1
      */
 
-    [IsPage]
+    [IsPage("page1")]
+    [Route("/page1", Methods.Get)]
     [Route("/", Methods.Get)]
-    [RegionComponent("body", "body")]
+    [RegionComponent("body", "page1_body")]
     internal class Page1 : PageBase { }
 
-    [IsRegion("body")]
-    [Container("div", "{ns}_body-region")]
-    internal class BodyRegion : ApplicationElement { }
-
-    [IsComponent("body")]
-    [RenderHtml("body", "<p>Body</p>")]
-    internal class BodyComponent : ApplicationElement { }
+    [IsComponent("page1_body")]
+    [RenderHtml("page1.body", "<p>This is page 1</p>")]
+    internal class Page1BodyComponent : ApplicationElement { }
 
     /*
-     * PageBase defines the elements that are common to all pages
+     * Page 2 uses the standard page layout but defines content
+     * that is specific to page 2
      */
+
+    [IsPage("page2")]
+    [Route("/page2", Methods.Get)]
+    [RegionLayout("body", "page2_body")]
+    internal class Page2 : PageBase { }
+
+    [IsLayout("page2_body", "main")]
+    [UsesRegion("main", "page2_body")]
+    [RegionComponent("main", "person")]
+    internal class Page2BodyLayout : ApplicationElement { }
+
+    [IsRegion("page2_body")]
+    [Repeat(typeof(Person))]
+    [NeedsData("person_address")]
+    internal class Page2BodyRegion : ApplicationElement { }
+
+    #region Define page layout that is shared by all pages
 
     [UsesLayout("layout")]
     internal class PageBase { }
@@ -88,6 +111,10 @@ namespace Sample3
     [Container("div", "{ns}_header-region")]
     internal class HeaderRegion : ApplicationElement { }
 
+    [IsRegion("body")]
+    [Container("div", "{ns}_body-region")]
+    internal class BodyRegion : ApplicationElement { }
+
     [IsRegion("footer")]
     [Container("div", "{ns}_footer-region")]
     internal class FooterRegion : ApplicationElement { }
@@ -96,17 +123,122 @@ namespace Sample3
     [RenderHtml("header", "<p>Header</p>")]
     internal class HeaderComponent : ApplicationElement { }
 
+    // Note that we do not define a body component here because
+    // every page has a different one.
+
     [IsComponent("footer")]
     [RenderHtml("footer", "<p>Footer</p>")]
     internal class FooterComponent : ApplicationElement { }
 
-    /*
-     * Defined the Sample3 package
-     */
+    #endregion
+
+    #region Define an application namespace
 
     [IsPackage("sample3", "app")]
     internal class ApplicationPackage { }
 
     [PartOf("sample3")]
     internal class ApplicationElement { }
+
+    #endregion
+
+    #region Define some test data to work with
+
+    internal class Person
+    {
+        public string Name { get; set; }
+        public Address Address { get; set; }
+    }
+
+    internal class Address
+    {
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string ZipCode { get; set; }
+    }
+
+    [IsDataProvider("people", typeof(IList<Person>))]
+    [PartOf("sample3")]
+    internal class PersonListProvider : DataProvider
+    {
+        public PersonListProvider(IDataProviderDependenciesFactory dependencies)
+            : base(dependencies) { }
+
+        protected override void Supply(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
+        {
+            var people = new[]
+            {
+                new Person { Name = "Person 1", Address = new Address { Street = "1 Main St", City = "City", ZipCode = "12345" }},
+                new Person { Name = "Person 2", Address = new Address { Street = "2 Main St", City = "City", ZipCode = "54321" }},
+                new Person { Name = "Person 3", Address = new Address { Street = "3 Main St", City = "City", ZipCode = "99999" }},
+            };
+            dataContext.Set<IList<Person>>(people);
+        }
+    }
+
+    [IsDataProvider("person_address")]
+    [PartOf("sample3")]
+    [SuppliesData(typeof(Address))]
+    [NeedsData(typeof(Person))]
+    internal class PersonAddressProvider : DataProvider
+    {
+        public PersonAddressProvider(IDataProviderDependenciesFactory dependencies)
+            : base(dependencies) { }
+
+        protected override void Supply(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
+        {
+            var person = dataContext.Get<Person>();
+            dataContext.Set(person.Address);
+        }
+    }
+
+    [IsComponent("person")]
+    [PartOf("sample3")]
+    [NeedsData(typeof(Person))]
+    internal class PersonComponent : Component
+    {
+        public PersonComponent(IComponentDependenciesFactory dependencies)
+            : base(dependencies)
+        {
+        }
+
+        public override IWriteResult WritePageArea(IRenderContext context, PageArea pageArea)
+        {
+            if (pageArea == PageArea.Body)
+            {
+                var person = context.Data.Get<Person>();
+                context.Html.WriteElementLine("p", person.Name);
+                context.Html.WriteOpenTag("hr", true);
+                context.Html.WriteLine();
+            }
+            return WriteResult.Continue();
+        }
+    }
+
+    [IsComponent("address")]
+    [PartOf("sample3")]
+    [NeedsData(typeof(Address))]
+    internal class AddressComponent : Component
+    {
+        public AddressComponent(IComponentDependenciesFactory dependencies)
+            : base(dependencies)
+        {
+        }
+
+        public override IWriteResult WritePageArea(IRenderContext context, PageArea pageArea)
+        {
+            if (pageArea == PageArea.Body)
+            {
+                var address = context.Data.Get<Address>();
+                context.Html.WriteElementLine("p", address.Street);
+                context.Html.WriteElementLine("p", address.City);
+                context.Html.WriteElementLine("p", address.ZipCode);
+                context.Html.WriteOpenTag("hr", true);
+                context.Html.WriteLine();
+            }
+            return WriteResult.Continue();
+        }
+    }
+
+    #endregion
 }

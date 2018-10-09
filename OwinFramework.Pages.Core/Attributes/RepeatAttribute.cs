@@ -13,16 +13,16 @@ namespace OwinFramework.Pages.Core.Attributes
         /// </summary>
         /// <param name="repeatType">The type of data to repeat</param>
         /// <param name="repeatScope">Scope name used when setting repeated data in the data context</param>
-        /// <param name="tag">The tag to use to enclose the contents of this element</param>
-        /// <param name="style">Custom css style to apply</param>
-        /// <param name="classNames">Css class names to apply</param>
-        public RepeatAttribute(Type repeatType, string repeatScope, string tag, string style, params string[] classNames)
+        /// <param name="childTag">The tag to use to enclose each repeated child element</param>
+        /// <param name="childStyle">Custom css style to apply to all child elements</param>
+        /// <param name="childClassNames">Css class names to apply to all child elements. Use {ns}_ prefix to prepend package namespace</param>
+        public RepeatAttribute(Type repeatType, string repeatScope, string childTag, string childStyle, params string[] childClassNames)
         {
             RepeatType = repeatType;
             RepeatScope = repeatScope;
-            Tag = tag;
-            Style = style;
-            ClassNames = classNames;
+            ChildTag = childTag;
+            ChildStyle = childStyle;
+            ChildClassNames = childClassNames;
         }
 
         /// <summary>
@@ -30,9 +30,9 @@ namespace OwinFramework.Pages.Core.Attributes
         /// </summary>
         /// <param name="repeatType">The type of data to repeat</param>
         /// <param name="repeatScope">Scope name used when setting repeated data in the data context</param>
-        /// <param name="tag">The tag to use to enclose the contents of this element</param>
-        public RepeatAttribute(Type repeatType, string repeatScope, string tag)
-            : this(repeatType, repeatScope, tag, string.Empty, new string[0])
+        /// <param name="childTag">The tag to use to enclose each repeated child element</param>
+        public RepeatAttribute(Type repeatType, string repeatScope, string childTag)
+            : this(repeatType, repeatScope, childTag, string.Empty, new string[0])
         {
         }
 
@@ -56,24 +56,24 @@ namespace OwinFramework.Pages.Core.Attributes
         }
 
         /// <summary>
-        /// The name of the region to populate
+        /// The type of data that should be repeated for each child element
         /// </summary>
         public Type RepeatType { get; set; }
 
         /// <summary>
-        /// The name of the region to populate
+        /// The tag to use to enclose each repeated child element
         /// </summary>
-        public string Tag { get; set; }
+        public string ChildTag { get; set; }
 
         /// <summary>
-        /// The name of the component to place in this region
+        /// Custom css style to apply to all child elements
         /// </summary>
-        public string Style { get; set; }
+        public string ChildStyle { get; set; }
 
         /// <summary>
-        /// The name of the component to place in this region
+        /// Css class names to apply to all child elements. Use {ns}_ prefix to prepend package namespace
         /// </summary>
-        public string[] ClassNames { get; set; }
+        public string[] ChildClassNames { get; set; }
 
         /// <summary>
         /// Optional scope name to use when setting the repeating data into

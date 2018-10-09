@@ -66,7 +66,10 @@ namespace Sample1.SamplePackages
             {
                 renderContext.Trace(() => "submenu provider getting menu item from " + dataContext);
                 var parent = dataContext.Get<MenuItem>();
-                renderContext.Trace(() => "supply submenu for menu '" + parent.Name + "' with " + parent.SubMenu.Count + " sub-menu items to " + dataContext);
+                if (parent.SubMenu == null)
+                    renderContext.Trace(() => "supply submenu for menu '" + parent.Name + "' with no submenu to " + dataContext);
+                else
+                    renderContext.Trace(() => "supply submenu for menu '" + parent.Name + "' with " + parent.SubMenu.Count + " sub-menu items to " + dataContext);
                 dataContext.Set(parent.SubMenu, "submenu");
             }
         }
@@ -223,7 +226,6 @@ namespace Sample1.SamplePackages
             var dropDownMenuRegion = builder.BuildUpRegion()
                 .Tag("div")
                 .ClassNames("{ns}_dropdown")
-                .DataProvider(subMenuDataProvider1)
                 .ForEach<MenuItem>("submenu", null, null, "submenu")
                 .Component(subMenuItemComponent)
                 .Build();
@@ -236,6 +238,7 @@ namespace Sample1.SamplePackages
                 .RegionNesting("head,submenu")
                 .Region("head", mainMenuItemRegion)
                 .Region("submenu", dropDownMenuRegion)
+                .DataProvider(subMenuDataProvider1)
                 .Build();
 
             // This region is the whole menu structure with top level menu 

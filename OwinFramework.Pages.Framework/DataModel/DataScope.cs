@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Framework.DataModel
@@ -19,6 +20,11 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             return (DataType == dependency.DataType) &&
                 string.Equals(ScopeName, dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public override string ToString()
+        {
+            return "Data scope " + (string.IsNullOrEmpty(ScopeName) ? "" : "'" + ScopeName + "' ") + DataType.DisplayName();
         }
     }
 }

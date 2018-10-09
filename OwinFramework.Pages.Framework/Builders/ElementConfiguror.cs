@@ -557,10 +557,10 @@ namespace OwinFramework.Pages.Framework.Builders
                 region.ForEach(
                     attributes.Repeat.RepeatType,
                     attributes.Repeat.RepeatScope,
-                    attributes.Repeat.Tag,
-                    attributes.Repeat.Style,
+                    attributes.Repeat.ChildTag,
+                    attributes.Repeat.ChildStyle,
                     attributes.Repeat.ListScope,
-                    attributes.Repeat.ClassNames);
+                    attributes.Repeat.ChildClassNames);
             }
         }
 

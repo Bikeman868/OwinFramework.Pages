@@ -141,27 +141,27 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.ForEach<T>(
             string scopeName, 
-            string tag, 
-            string style, 
+            string childTag, 
+            string childStyle, 
             string listScope, 
-            params string[] classes)
+            params string[] childClassNames)
         {
             return ((IRegionDefinition)this).ForEach(
                 typeof(T),
                 scopeName,
-                tag,
-                style,
+                childTag,
+                childStyle,
                 listScope,
-                classes);
+                childClassNames);
         }
 
         IRegionDefinition IRegionDefinition.ForEach(
             Type dataType, 
             string scopeName, 
-            string tag, 
-            string style, 
+            string childTag, 
+            string childStyle, 
             string listScope, 
-            params string[] classes)
+            params string[] childClassNames)
         {
             if (dataType == null)
                 throw new RegionBuilderException("When configuring a region to repeat the data type to repeat must be specified");
@@ -170,9 +170,9 @@ namespace OwinFramework.Pages.Html.Builders
             _region.RepeatScope = scopeName;
             _region.ListScope = listScope;
 
-            _childTagName = tag;
-            _childStyle = style;
-            _childClassNames = classes;
+            _childTagName = childTag;
+            _childStyle = childStyle;
+            _childClassNames = childClassNames;
 
             return this;
         }

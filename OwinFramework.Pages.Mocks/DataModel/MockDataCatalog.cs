@@ -54,9 +54,9 @@ namespace OwinFramework.Pages.Mocks.DataModel
 
             IDataSupplier supplier;
             if (string.IsNullOrEmpty(dependency.ScopeName))
-                supplier = suppliers.FirstOrDefault(s => !s.IsScoped(dependency.DataType) && s.IsSupplierOf(dependency));
+                supplier = suppliers.FirstOrDefault(s => s.CanSupplyUnscoped(dependency.DataType) && s.IsSupplierOf(dependency));
             else
-                supplier = suppliers.FirstOrDefault(s => s.IsScoped(dependency.DataType) && s.IsSupplierOf(dependency));
+                supplier = suppliers.FirstOrDefault(s => s.CanSupplyScoped(dependency.DataType) && s.IsSupplierOf(dependency));
 
             if (supplier == null)
                 supplier = suppliers.FirstOrDefault(s => s.IsSupplierOf(dependency));

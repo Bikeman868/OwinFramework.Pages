@@ -241,14 +241,25 @@ namespace Sample1.SamplePackages
                 .DataProvider(subMenuDataProvider1)
                 .Build();
 
-            // This region is the whole menu structure with top level menu 
+            // This region is the whole desktop menu structure with top level menu 
             // options and sub-menus beneath each option
             builder.BuildUpRegion()
-                .Name("menu")
+                .Name("desktop_menu")
                 .Tag("ul")
                 .NeedsComponent("menuStyles")
                 .ClassNames("{ns}_menu")
-                .ForEach<MenuItem>()
+                .ForEach<MenuItem>("", "", "", "desktop")
+                .Layout(menuOptionLayout)
+                .Build();
+
+            // This region is the whole mobile menu structure with top level menu 
+            // options and sub-menus beneath each option
+            builder.BuildUpRegion()
+                .Name("mobile_menu")
+                .Tag("ul")
+                .NeedsComponent("menuStyles")
+                .ClassNames("{ns}_menu")
+                .ForEach<MenuItem>("", "", "", "mobile")
                 .Layout(menuOptionLayout)
                 .Build();
 

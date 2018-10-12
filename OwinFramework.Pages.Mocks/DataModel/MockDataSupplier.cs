@@ -35,9 +35,14 @@ namespace OwinFramework.Pages.Mocks.DataModel
                 SuppliedTypes = new List<Type> { dependency.DataType };
             }
 
-            bool IDataSupplier.IsScoped(Type type)
+            bool IDataSupplier.CanSupplyScoped(Type type)
             {
                 return !string.IsNullOrEmpty(_dependency.ScopeName);
+            }
+
+            bool IDataSupplier.CanSupplyUnscoped(Type type)
+            {
+                return string.IsNullOrEmpty(_dependency.ScopeName);
             }
 
             public bool IsSupplierOf(IDataDependency dependency)

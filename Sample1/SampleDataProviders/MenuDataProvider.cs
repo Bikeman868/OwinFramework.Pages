@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -13,12 +14,12 @@ namespace Sample1.SampleDataProviders
     [SuppliesData(typeof(IList<MenuPackage.MenuItem>), "desktop")]
     public class MenuDataProvider : DataProvider
     {
-        private readonly IList<MenuPackage.MenuItem> _mainMenu;
+        private readonly IList<MenuPackage.MenuItem> _desktopMenu;
+        private readonly IList<MenuPackage.MenuItem> _mobileMenu;
 
         public MenuDataProvider(IDataProviderDependenciesFactory dependencies) 
             : base(dependencies) 
         {
-            _mainMenu = new List<MenuPackage.MenuItem>();
 
             var communityMenu = new MenuPackage.MenuItem
             {
@@ -31,7 +32,6 @@ namespace Sample1.SampleDataProviders
                         new MenuPackage.MenuItem { Name = "Page 4", Url = "/page4" }
                     }
             };
-            _mainMenu.Add(communityMenu);
 
             var newsMenu = new MenuPackage.MenuItem
             {
@@ -43,7 +43,17 @@ namespace Sample1.SampleDataProviders
                         new MenuPackage.MenuItem { Name = "Trending", Url = "#" }
                     }
             };
-            _mainMenu.Add(newsMenu);
+
+            _desktopMenu = new List<MenuPackage.MenuItem> 
+            { 
+                communityMenu,
+                newsMenu
+            };
+
+            _mobileMenu = new List<MenuPackage.MenuItem> 
+            { 
+                newsMenu
+            };
         }
 
         protected override void Supply(
@@ -51,7 +61,17 @@ namespace Sample1.SampleDataProviders
             IDataContext dataContext,
             IDataDependency dependency)
         {
-            dataContext.Set(_mainMenu);
+            if (string.IsNullOrEmpty(dependency.ScopeName))
+            {
+                dataContext.Set(_desktopMenu);
+            }
+            else
+            {
+                if (string.Equals(dependency.ScopeName, "desktop", StringComparison.OrdinalIgnoreCase))
+                    dataContext.Set(_desktopMenu, "desktop");
+                if (string.Equals(dependency.ScopeName, "mobile", StringComparison.OrdinalIgnoreCase))
+                    dataContext.Set(_mobileMenu, "mobile");
+            }
         }
     }
 

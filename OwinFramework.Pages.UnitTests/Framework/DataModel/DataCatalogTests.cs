@@ -97,11 +97,16 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
                 throw new NotImplementedException();
             }
 
-            public bool IsScoped(Type type)
+            public bool CanSupplyScoped(Type type)
             {
                 return !string.IsNullOrEmpty(ScopeName);
             }
-            
+
+            public bool CanSupplyUnscoped(Type type)
+            {
+                return string.IsNullOrEmpty(ScopeName);
+            }
+
             public bool IsSupplierOf(IDataDependency dependency)
             {
                 if (dependency == null) return false;
@@ -138,13 +143,6 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
                     if (ReferenceEquals(other, null)) return false;
                     return DataType == other.DataType && ScopeName == other.ScopeName;
                 }
-            }
-
-            public DebugDataSupplier GetDebugInfo()
-            {
-                return new DebugDataSupplier 
-                { 
-                };
             }
         }
 

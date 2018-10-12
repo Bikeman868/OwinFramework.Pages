@@ -66,8 +66,8 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
             _dataSupplier.Add(registeredDependency, action);
 
             Assert.IsTrue(_dataSupplier.IsSupplierOf(registeredDependency));
-            Assert.IsTrue(_dataSupplier.IsSupplierOf(dependencyFactory.Create(typeof(int), "test-scope")));
-            Assert.IsTrue(_dataSupplier.IsSupplierOf(dependencyFactory.Create(typeof(int), "other-scope")));
+            Assert.IsFalse(_dataSupplier.IsSupplierOf(dependencyFactory.Create(typeof(int), "test-scope")));
+            Assert.IsFalse(_dataSupplier.IsSupplierOf(dependencyFactory.Create(typeof(int), "other-scope")));
             Assert.IsTrue(_dataSupplier.IsSupplierOf(dependencyFactory.Create(typeof(int))));
 
             Assert.IsFalse(_dataSupplier.IsSupplierOf(dependencyFactory.Create(typeof(long))));

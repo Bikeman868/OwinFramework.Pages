@@ -225,7 +225,7 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("navigation")]
     [UsesRegion("title", "title")]
-    [UsesRegion("menu", "menus:menu")]
+    [UsesRegion("menu", "menus:desktop_menu")]
     internal class HeaderLayout { }
 
     /// <summary>

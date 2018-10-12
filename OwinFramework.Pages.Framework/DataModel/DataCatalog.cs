@@ -131,12 +131,12 @@ namespace OwinFramework.Pages.Framework.DataModel
                 var supplier = registration.Supplier;
                 if (supplier.IsSupplierOf(dependency))
                 {
-                    if (registration.IsScoped)
+                    if (registration.CanSupplyScoped)
                     {
                         if (scopedRegistration == null || scopedRegistration.DependencyScore > registration.DependencyScore)
                             scopedRegistration = registration;
                     }
-                    else
+                    if (registration.CanSupplyUnscoped)
                     {
                         if (unscopedRegistration == null || unscopedRegistration.DependencyScore > registration.DependencyScore)
                             unscopedRegistration = registration;
@@ -159,13 +159,15 @@ namespace OwinFramework.Pages.Framework.DataModel
         private class SupplierRegistration
         {
             public readonly IDataSupplier Supplier;
-            public readonly bool IsScoped;
+            public readonly bool CanSupplyScoped;
+            public readonly bool CanSupplyUnscoped;
             public readonly int DependencyScore;
 
             public SupplierRegistration(IDataSupplier supplier, Type type)
             {
                 Supplier = supplier;
-                IsScoped = supplier.IsScoped(type);
+                CanSupplyScoped = supplier.CanSupplyScoped(type);
+                CanSupplyUnscoped = supplier.CanSupplyUnscoped(type);
 
                 var consumer = supplier as IDataConsumer;
                 if (consumer != null)
@@ -183,6 +185,9 @@ namespace OwinFramework.Pages.Framework.DataModel
                             DependencyScore += needs.DataDependencies.Count * 3;
                     }
                 }
+
+                if (CanSupplyScoped && CanSupplyUnscoped)
+                    DependencyScore += 1;
             }
         }
     }

@@ -220,11 +220,18 @@ namespace OwinFramework.Pages.Html.Elements
             }
         }
 
-        bool IDataSupplier.IsScoped(Type type)
+        bool IDataSupplier.CanSupplyScoped(Type type)
         {
             var region = Element as IRegion;
             if (region == null || region.RepeatType != type) return false;
             return !string.IsNullOrEmpty(region.RepeatScope); 
+        }
+
+        bool IDataSupplier.CanSupplyUnscoped(Type type)
+        {
+            var region = Element as IRegion;
+            if (region == null || region.RepeatType != type) return false;
+            return string.IsNullOrEmpty(region.RepeatScope);
         }
 
         void IDataSupplier.Add(

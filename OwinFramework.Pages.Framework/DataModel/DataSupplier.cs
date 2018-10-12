@@ -38,11 +38,18 @@ namespace OwinFramework.Pages.Framework.DataModel
                 SuppliedTypes.Add(dependency.DataType);
         }
 
-        bool IDataSupplier.IsScoped(Type type)
+        bool IDataSupplier.CanSupplyScoped(Type type)
         {
             return _dataSupplies.Any(s => 
                 s.Dependency.DataType == type && 
                 !string.IsNullOrEmpty(s.Dependency.ScopeName));
+        }
+
+        bool IDataSupplier.CanSupplyUnscoped(Type type)
+        {
+            return _dataSupplies.Any(s =>
+                s.Dependency.DataType == type &&
+                string.IsNullOrEmpty(s.Dependency.ScopeName));
         }
 
         bool IDataSupplier.IsSupplierOf(IDataDependency dependency)
@@ -162,8 +169,8 @@ namespace OwinFramework.Pages.Framework.DataModel
                 if (dependency == null) return false;
                 if (dependency.DataType != Dependency.DataType) return false;
                 if (string.IsNullOrEmpty(dependency.ScopeName)) return true;
-                if (string.IsNullOrEmpty(Dependency.ScopeName)) return true;
-                return String.Equals(Dependency.ScopeName, dependency.ScopeName);
+                if (string.IsNullOrEmpty(Dependency.ScopeName) && string.IsNullOrEmpty(dependency.ScopeName)) return true;
+                return String.Equals(Dependency.ScopeName, dependency.ScopeName, StringComparison.OrdinalIgnoreCase);
             }
         }
     }

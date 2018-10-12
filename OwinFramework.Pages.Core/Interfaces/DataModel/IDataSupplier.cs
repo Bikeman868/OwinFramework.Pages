@@ -28,20 +28,25 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         IDataDependency DefaultDependency { get; }
 
         /// <summary>
-        /// Indicates whether this supplier supplies a particular type of data with scope
+        /// Indicates whether this supplier can supply a particular type of data with scope
         /// </summary>
-        bool IsScoped(Type type);
+        bool CanSupplyScoped(Type type);
+
+        /// <summary>
+        /// Indicates whether this supplier can supply a particular type of data with no scope
+        /// </summary>
+        bool CanSupplyUnscoped(Type type);
+
+        /// <summary>
+        /// Tests whether this supplier can supply this type of data with a specific scope
+        /// </summary>
+        bool IsSupplierOf(IDataDependency dependency);
 
         /// <summary>
         /// Adds a lambda expresson that will add a specific type of data to 
         /// the data context.
         /// </summary>
         void Add(IDataDependency dependency, Action<IRenderContext, IDataContext, IDataDependency> action);
-
-        /// <summary>
-        /// Tests whether this supplier can supply this type of data
-        /// </summary>
-        bool IsSupplierOf(IDataDependency dependency);
 
         /// <summary>
         /// Gets an instance that will add a specific type of data to the render context

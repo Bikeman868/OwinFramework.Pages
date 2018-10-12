@@ -28,9 +28,9 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         IDataDependency DefaultDependency { get; }
 
         /// <summary>
-        /// Indicates whether this supplier supplies data for a specific scope
+        /// Indicates whether this supplier supplies a particular type of data with scope
         /// </summary>
-        bool IsScoped { get; }
+        bool IsScoped(Type type);
 
         /// <summary>
         /// Adds a lambda expresson that will add a specific type of data to 

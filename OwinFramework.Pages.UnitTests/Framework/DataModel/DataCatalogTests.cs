@@ -85,7 +85,6 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
 
         private class DataSupplier<T>: IDataSupplier
         {
-            public bool IsScoped { get { return !string.IsNullOrEmpty(ScopeName); } }
             public string ScopeName { get; set; }
 
             public IList<Type> SuppliedTypes
@@ -98,11 +97,16 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
                 throw new NotImplementedException();
             }
 
+            public bool IsScoped(Type type)
+            {
+                return !string.IsNullOrEmpty(ScopeName);
+            }
+            
             public bool IsSupplierOf(IDataDependency dependency)
             {
                 if (dependency == null) return false;
                 if (dependency.DataType != typeof(T)) return false;
-                if (!IsScoped || string.IsNullOrEmpty(dependency.ScopeName)) return true;
+                if (string.IsNullOrEmpty(ScopeName) || string.IsNullOrEmpty(dependency.ScopeName)) return true;
                 return string.Equals(dependency.ScopeName, ScopeName, StringComparison.OrdinalIgnoreCase);
             }
 

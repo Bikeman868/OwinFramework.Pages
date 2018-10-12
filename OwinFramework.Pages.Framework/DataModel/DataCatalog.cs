@@ -15,14 +15,14 @@ namespace OwinFramework.Pages.Framework.DataModel
     {
         private readonly HashSet<string> _assemblies;
         private readonly HashSet<Type> _types;
-        private readonly IThreadSafeDictionary<Type, List<IDataSupplier>> _suppliers;
+        private readonly IThreadSafeDictionary<Type, SupplierRegistration[]> _registrations;
 
         public DataCatalog(
             IDictionaryFactory dictionaryFactory)
         {
             _assemblies = new HashSet<string>();
             _types = new HashSet<Type>();
-            _suppliers = dictionaryFactory.Create<Type, List<IDataSupplier>>();
+            _registrations = dictionaryFactory.Create<Type, SupplierRegistration[]>();
         }
 
         public IDataCatalog Register(IDataSupplier dataSupplier)
@@ -35,8 +35,21 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             foreach (var type in dataSupplier.SuppliedTypes)
             {
-                var suppliers = _suppliers.GetOrAdd(type, t => new List<IDataSupplier>(), null);
-                lock(suppliers) suppliers.Add(dataSupplier);
+                lock(_registrations)
+                {
+                    SupplierRegistration[] registrations;
+                    if (_registrations.TryGetValue(type, out registrations))
+                    {
+                        var newArray = new SupplierRegistration[registrations.Length + 1];
+                        registrations.CopyTo(newArray, 0);
+                        newArray[newArray.Length - 1] = new SupplierRegistration(dataSupplier, type);
+                        _registrations[type] = newArray;
+                    }
+                    else
+                    {
+                        _registrations.Add(type, new[] { new SupplierRegistration(dataSupplier, type) });
+                    }
+                }
             }
 
             return this;
@@ -100,29 +113,77 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public IDataSupplier FindSupplier(IDataDependency dependency)
         {
-            if (dependency.DataType == null)
+            var type = dependency.DataType;
+
+            if (type == null)
                 throw new Exception("Data dependencies must include the data type thay are dependent on");
 
-            List<IDataSupplier> suppliers;
-            if (!_suppliers.TryGetValue(dependency.DataType, out suppliers))
+            SupplierRegistration[] registrations;
+            if (!_registrations.TryGetValue(type, out registrations))
                 return null;
 
-            IDataSupplier supplier = null;
+            SupplierRegistration unscopedRegistration = null;
+            SupplierRegistration scopedRegistration = null;
+
+            for (var i = 0; i < registrations.Length; i++)
+            {
+                var registration = registrations[i];
+                var supplier = registration.Supplier;
+                if (supplier.IsSupplierOf(dependency))
+                {
+                    if (registration.IsScoped)
+                    {
+                        if (scopedRegistration == null || scopedRegistration.DependencyScore > registration.DependencyScore)
+                            scopedRegistration = registration;
+                    }
+                    else
+                    {
+                        if (unscopedRegistration == null || unscopedRegistration.DependencyScore > registration.DependencyScore)
+                            unscopedRegistration = registration;
+                    }
+                }
+            }
+
             if (string.IsNullOrEmpty(dependency.ScopeName))
             {
-                lock (suppliers) supplier = suppliers.FirstOrDefault(s => !s.IsScoped && s.IsSupplierOf(dependency));
-            }
-            else
-            {
-                lock (suppliers) supplier = suppliers.FirstOrDefault(s => s.IsScoped && s.IsSupplierOf(dependency));
+                return unscopedRegistration == null
+                    ? (scopedRegistration == null ? null : scopedRegistration.Supplier)
+                    : unscopedRegistration.Supplier;
             }
 
-            if (supplier == null)
-            {
-                lock (suppliers) supplier = suppliers.FirstOrDefault(s => s.IsSupplierOf(dependency));
-            }
+            return scopedRegistration == null
+                ? (unscopedRegistration == null ? null : unscopedRegistration.Supplier)
+                : scopedRegistration.Supplier;
+        }
 
-            return supplier;
+        private class SupplierRegistration
+        {
+            public readonly IDataSupplier Supplier;
+            public readonly bool IsScoped;
+            public readonly int DependencyScore;
+
+            public SupplierRegistration(IDataSupplier supplier, Type type)
+            {
+                Supplier = supplier;
+                IsScoped = supplier.IsScoped(type);
+
+                var consumer = supplier as IDataConsumer;
+                if (consumer != null)
+                {
+                    var needs = consumer.GetConsumerNeeds();
+                    if (needs != null)
+                    {
+                        if (needs.DataSupplyDependencies != null)
+                            DependencyScore += needs.DataSupplyDependencies.Count;
+
+                        if (needs.DataSupplierDependencies != null)
+                            DependencyScore += needs.DataSupplierDependencies.Count * 2;
+
+                        if (needs.DataDependencies != null)
+                            DependencyScore += needs.DataDependencies.Count * 3;
+                    }
+                }
+            }
         }
     }
 }

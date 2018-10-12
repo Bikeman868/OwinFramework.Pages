@@ -9,7 +9,9 @@ using Sample1.SamplePackages;
 namespace Sample1.SampleDataProviders
 {
     [IsDataProvider("menu", typeof(IList<MenuPackage.MenuItem>))]
-    public class MenuDataProvider: DataProvider
+    [SuppliesData(typeof(IList<MenuPackage.MenuItem>), "mobile")]
+    [SuppliesData(typeof(IList<MenuPackage.MenuItem>), "desktop")]
+    public class MenuDataProvider : DataProvider
     {
         private readonly IList<MenuPackage.MenuItem> _mainMenu;
 

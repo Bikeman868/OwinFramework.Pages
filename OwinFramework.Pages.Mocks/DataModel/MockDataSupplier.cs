@@ -19,7 +19,6 @@ namespace OwinFramework.Pages.Mocks.DataModel
         public class DataSupplier : IDataSupplier, IDataSupply
         {
             public IList<Type> SuppliedTypes { get; private set; }
-            public bool IsScoped { get; private set; }
             public IDataDependency DefaultDependency { get { return _dependency; } }
             public bool IsStatic { get { return true; } set { } }
             private readonly List<Action<IRenderContext>> _dependentSupplies = new List<Action<IRenderContext>>();
@@ -34,7 +33,11 @@ namespace OwinFramework.Pages.Mocks.DataModel
                 _dependency = dependency;
                 _action = action;
                 SuppliedTypes = new List<Type> { dependency.DataType };
-                IsScoped = !string.IsNullOrEmpty(dependency.ScopeName);
+            }
+
+            bool IDataSupplier.IsScoped(Type type)
+            {
+                return !string.IsNullOrEmpty(_dependency.ScopeName);
             }
 
             public bool IsSupplierOf(IDataDependency dependency)

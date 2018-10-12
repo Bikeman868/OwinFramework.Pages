@@ -134,7 +134,11 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         IDataDependency IDataSupplier.DefaultDependency { get { return DataSupplier.DefaultDependency; } }
         IList<Type> IDataSupplier.SuppliedTypes { get { return DataSupplier.SuppliedTypes; } }
-        bool IDataSupplier.IsScoped { get { return DataSupplier.IsScoped; } }
+
+        bool IDataSupplier.IsScoped(Type type)
+        { 
+            return DataSupplier.IsScoped(type); 
+        }
 
         void IDataSupplier.Add(IDataDependency dependency, Action<IRenderContext, IDataContext, IDataDependency> action)
         {

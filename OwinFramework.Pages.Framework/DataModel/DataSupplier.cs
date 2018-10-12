@@ -15,7 +15,6 @@ namespace OwinFramework.Pages.Framework.DataModel
         private readonly List<RegisteredSupply> _dataSupplies;
 
         public IList<Type> SuppliedTypes { get; private set; }
-        public bool IsScoped { get; private set; }
 
         public DataSupplier(IIdManager idManager)
         {
@@ -37,9 +36,13 @@ namespace OwinFramework.Pages.Framework.DataModel
 
             if (!SuppliedTypes.Contains(dependency.DataType))
                 SuppliedTypes.Add(dependency.DataType);
+        }
 
-            if (!string.IsNullOrEmpty(dependency.ScopeName))
-                IsScoped = true;
+        bool IDataSupplier.IsScoped(Type type)
+        {
+            return _dataSupplies.Any(s => 
+                s.Dependency.DataType == type && 
+                !string.IsNullOrEmpty(s.Dependency.ScopeName));
         }
 
         bool IDataSupplier.IsSupplierOf(IDataDependency dependency)

@@ -1,0 +1,43 @@
+type file
+id Owin.Framework.Pages.Standard
+version 1.0.0-alpha-007
+authors Martin Halliday
+copyright Martin Halliday 2018
+description
+  Contains packages that can be plugged into your application to 
+  provide commonly required functionallity like menus, tabs, login,
+  data entry, text editing etc.
+title Owin Framework Pages Standard Packages
+releasenotes
+  This is the first version
+projecturl http://owinframework.com/project/owinframework.pages.standard/landing
+
+files
+  bin/net40/release/OwinFramework.Pages.Standard.dll ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Standard.dll ==> lib/net45
+
+  bin/net40/release/OwinFramework.Pages.Standard.xml ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Standard.xml ==> lib/net45
+
+  bin/net40/release/OwinFramework.Pages.Standard.pdb ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.Standard.pdb ==> lib/net45
+
+references
+  OwinFramework.Pages.Standard.dll
+
+dependencies
+  Owin.Framework.Pages.Core = 1.0.0-alpha-007
+  Owin.Framework.Pages.Framework = 1.0.0-alpha-007
+  Owin.Framework.Pages.Html = 1.0.0-alpha-007
+  Owin.Framework.Pages.Restful = 1.0.0-alpha-007
+  
+  Ioc.Modules ~> LOCKED:Minor
+  Urchin.Client ~> LOCKED:Minor
+
+  framework: net40
+    Microsoft.Owin = LOCKED:Build-net40
+    Owin.Framework ~> LOCKED:Minor-net40
+
+  framework: net45
+    Microsoft.Owin = LOCKED:Build-net45
+    Owin.Framework ~> LOCKED:Minor-net45

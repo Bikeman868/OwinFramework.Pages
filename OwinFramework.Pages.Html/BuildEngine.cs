@@ -7,6 +7,10 @@ using OwinFramework.Pages.Html.Interfaces;
 
 namespace OwinFramework.Pages.Html
 {
+    /// <summary>
+    /// This build engine provides builders for modules, pages, layouts,
+    /// regions and components
+    /// </summary>
     public class BuildEngine: IBuildEngine
     {
         private readonly IRequestRouter _requestRouter;

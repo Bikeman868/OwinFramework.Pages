@@ -5,7 +5,7 @@ using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Framework.DataModel;
-using Sample1.SamplePackages;
+using OwinFramework.Pages.Standard;
 
 namespace Sample1.SampleDataProviders
 {
@@ -24,7 +24,7 @@ namespace Sample1.SampleDataProviders
             var communityMenu = new MenuPackage.MenuItem
             {
                 Name = "Menu 1",
-                SubMenu = new List<MenuPackage.MenuItem>
+                SubMenu = new []
                     {
                         new MenuPackage.MenuItem { Name = "Page 1", Url = "/page1" },
                         new MenuPackage.MenuItem { Name = "Page 2", Url = "/page2" },
@@ -36,7 +36,7 @@ namespace Sample1.SampleDataProviders
             var newsMenu = new MenuPackage.MenuItem
             {
                 Name = "Menu 2",
-                SubMenu = new List<MenuPackage.MenuItem>
+                SubMenu = new []
                     {
                         new MenuPackage.MenuItem { Name = "Today", Url = "#" },
                         new MenuPackage.MenuItem { Name = "Popular", Url = "#" },

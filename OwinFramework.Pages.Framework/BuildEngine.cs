@@ -4,6 +4,9 @@ using OwinFramework.Pages.Framework.Builders;
 
 namespace OwinFramework.Pages.Framework
 {
+    /// <summary>
+    /// This build engine provides builders for Packages and Data Providers
+    /// </summary>
     public class BuildEngine: IBuildEngine
     {
         private readonly IPackageDependenciesFactory _packageDependenciesFactory;

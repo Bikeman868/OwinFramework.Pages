@@ -5,6 +5,9 @@ using OwinFramework.Pages.Restful.Builders;
 
 namespace OwinFramework.Pages.Restful
 {
+    /// <summary>
+    /// This build engine provides builders for services
+    /// </summary>
     public class BuildEngine: IBuildEngine
     {
         private readonly IServiceDependenciesFactory _serviceDependenciesFactory;

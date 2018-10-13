@@ -12,6 +12,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
 using OwinFramework.Pages.DebugMiddleware;
+using OwinFramework.Pages.Standard;
 using Sample1.SamplePackages;
 using Sample1.SamplePages;
 using Urchin.Client.Sources;
@@ -63,16 +64,17 @@ namespace Sample1
             var pageRequestRouter = ninject.Get<IRequestRouter>();
 
             // This is an example of registering an implementation of IPage with a 
-            // wildcard request filter and low priority
+            // wildcard request filter and below normal priority
             pageRequestRouter.Register(
                 new FullCustomPage(),
                 new FilterAllFilters(
                     new FilterByMethod(Methods.Head, Methods.Get), 
                     new FilterByPath("/pages/*.html")),
-                    10);
+                    -10);
 
             // This is an example of routing requests to a class that inherits from the
-            // base Page class with an exact match request filter and high priority
+            // base Page class with an exact match request filter and higher than normal
+            // priority
             pageRequestRouter.Register(
                 ninject.Get<SemiCustomPage>(), 
                 new FilterAllFilters(
@@ -80,8 +82,9 @@ namespace Sample1
                     new FilterByPath("/pages/semiCustom.html")),
                     100);
 
-            // The IFluentBuilder provides a mechanism for building elements without
-            // writing code that implements the various interfaces like IPage, IComponent etc
+            // The IFluentBuilder provides a mechanism for building elements (pages,
+            // regions, layouts, components, data providers etc) without writing code 
+            // that implements the various interfaces like IPage, IComponent etc
             var fluentBuilder = ninject.Get<IFluentBuilder>();
 
             // You must install build engines before trying to build elements using the
@@ -92,10 +95,14 @@ namespace Sample1
             ninject.Get<OwinFramework.Pages.Restful.BuildEngine>().Install(fluentBuilder);
 
             // This is an example of registering a package containing components, layouts etc
-            // that can be referenced by name from other elements. When you register a package
-            // like this all of the element in the package are contained in a namespace
-            // to avoid naming conflicts. This allows you to install packages from third
-            // parties.
+            // that can be referenced by name from other elements.
+            // When you register a package like this all of the element in the package are 
+            // contained in a namespace to avoid naming conflicts. The namespace will be used 
+            // as a prefix on all css class names and JavaScript function names.
+            // The package namespace can also be used to reference the elements within the
+            // package by putting the namespace name and a colon in front of the element
+            // name. For example after loading the menu package into the "menus" namespace
+            // your application can refer to the desktop menu region as "menus:desktop_menu"
             fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus");
 
             // This is an example of registering all of the elements defined in an assembly

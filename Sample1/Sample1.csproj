@@ -65,7 +65,6 @@
     <Compile Include="Package.cs" />
     <Compile Include="SamplePackages\RegionExamples.cs" />
     <Compile Include="SamplePages\DeclarativePage.cs" />
-    <Compile Include="SamplePackages\MenuPackage.cs" />
     <Compile Include="SamplePages\SelfRegisteringPage.cs" />
     <Compile Include="SamplePages\SemiCustomPage.cs" />
     <Compile Include="SamplePages\FullCustomPage.cs" />
@@ -103,6 +102,10 @@
     <ProjectReference Include="..\OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net40.csproj">
       <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>
       <Name>OwinFramework.Pages.Restful.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Standard\OwinFramework.Pages.Standard.csproj">
+      <Project>{2b3cfcab-67eb-4d62-a49a-971e92dbc7e6}</Project>
+      <Name>OwinFramework.Pages.Standard</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

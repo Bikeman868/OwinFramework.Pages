@@ -85,7 +85,7 @@ namespace Sample3
     internal class Page2 : PageBase { }
 
     [IsLayout("page2_body", "main")]
-    [UsesRegion("main", "page2_body")]
+    [LayoutRegion("main", "page2_body")]
     [RegionComponent("main", "address")]
     internal class Page2BodyLayout : ApplicationElement { }
 
@@ -100,9 +100,9 @@ namespace Sample3
     internal class PageBase { }
 
     [IsLayout("layout", "header,body,footer")]
-    [UsesRegion("header", "header")]
-    [UsesRegion("body", "body")]
-    [UsesRegion("footer", "footer")]
+    [LayoutRegion("header", "header")]
+    [LayoutRegion("body", "body")]
+    [LayoutRegion("footer", "footer")]
     [RegionComponent("header", "header")]
     [RegionComponent("footer", "footer")]
     internal class BasePageLayout : ApplicationElement { }

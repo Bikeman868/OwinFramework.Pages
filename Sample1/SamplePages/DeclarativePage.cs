@@ -211,9 +211,9 @@ namespace Sample1.SamplePages
     [IsLayout("main", "header(body,footer)")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [UsesRegion("header", "header")]
-    [UsesRegion("body", "body")]
-    [UsesRegion("footer", "footer")]
+    [LayoutRegion("header", "header")]
+    [LayoutRegion("body", "body")]
+    [LayoutRegion("footer", "footer")]
     [RegionLayout("header", "header")]
     [RegionComponent("footer", "footer")]
     internal class MainLayout { }
@@ -224,8 +224,8 @@ namespace Sample1.SamplePages
     [IsLayout("header", "title,menu")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [UsesRegion("title", "title")]
-    [UsesRegion("menu", "menus:desktop_menu")]
+    [LayoutRegion("title", "title")]
+    [LayoutRegion("menu", "menus:desktop_menu")]
     internal class HeaderLayout { }
 
     /// <summary>
@@ -235,8 +235,8 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("content")]
     [Container("div", "2col.vertical.fixed")]
-    [UsesRegion("left", "leftColumn")]
-    [UsesRegion("main", "rightColumn")]
+    [LayoutRegion("left", "leftColumn")]
+    [LayoutRegion("main", "rightColumn")]
     [RegionComponent("left", "sidebar1")]
     [RegionComponent("main", "page1Body")]
     internal class Page1Layout { }
@@ -248,8 +248,8 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("content")]
     [Container("div", "2col.vertical.fixed")]
-    [UsesRegion("left", "leftColumn")]
-    [UsesRegion("main", "rightColumn")]
+    [LayoutRegion("left", "leftColumn")]
+    [LayoutRegion("main", "rightColumn")]
     [RegionComponent("left", "sidebar2")]
     [RegionComponent("main", "page2Body")]
     internal class Page2Layout { }

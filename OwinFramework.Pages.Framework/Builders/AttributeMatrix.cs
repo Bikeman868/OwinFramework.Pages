@@ -210,7 +210,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<IRegion>()
                 .Invalid<ILayoutDefinition>("Please use the [RegionLayout] attribute instead so that the region can be specified.");
 
-            Add<UsesRegionAttribute>()
+            Add<LayoutRegionAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [RegionLayout] and [RegionComponent] attributes.");
         }
@@ -248,7 +248,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.SuppliesDatas != null) CheckAttribute<T, SuppliesDataAttribute>(result);
             if (attributes.UsesComponents != null) CheckAttribute<T, UsesComponentAttribute>(result);
             if (attributes.UsesLayouts != null) CheckAttribute<T, UsesLayoutAttribute>(result);
-            if (attributes.UsesRegions != null) CheckAttribute<T, UsesRegionAttribute>(result);
+            if (attributes.UsesRegions != null) CheckAttribute<T, LayoutRegionAttribute>(result);
 
             return result.Count > 0 ? result : null;
         }

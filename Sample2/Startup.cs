@@ -69,7 +69,7 @@ namespace Sample2
     internal class HomePage { }
 
     [IsLayout("homePageLayout", "region1")]                    // The 'homePageLayout' has 1 region called 'region1'
-    [UsesRegion("region1", "defaultRegion")]                   // Region 1 is implemented by the 'defaultRegion'
+    [LayoutRegion("region1", "defaultRegion")]                   // Region 1 is implemented by the 'defaultRegion'
     [RegionComponent("region1", "helloWorld")]                 // Region 1 contains the 'helloWorld' component
     internal class HomePageLayout { }
 

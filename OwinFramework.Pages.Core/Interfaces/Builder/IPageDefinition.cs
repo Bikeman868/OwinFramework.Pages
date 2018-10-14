@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -98,6 +99,33 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDefinition Route(IRequestFilter filter, int priority = 0);
 
         /// <summary>
+        /// Tells the authentication middleware that the caller must have a permission
+        /// assigned to them to be allowed to access this page. When you set this
+        /// property you must have some Authorization middleware installed and configured
+        /// to run before the Pages middleware in the Owin pipeline.
+        /// </summary>
+        /// <param name="permissionName">The name of the permission that must be assigned
+        /// to the user in the Authentication middleware</param>
+        /// <param name="assetName">Optional additional information used to test the users
+        /// permission. Asset restictions can be set up in the Authorization middleware.</param>
+        IPageDefinition RequiresPermission(string permissionName, string assetName = null);
+
+        /// <summary>
+        /// Defines information that can be used by the Output Cache middleware to cache
+        /// this page. The output cache can cache the generated Html for a period of time
+        /// and can also instruct the browser, CDN and proxy services to cache the page.
+        /// By default the page will not be cached anywhere on the assuption that pages
+        /// contain dynamic data that changes with every request.
+        /// </summary>
+        /// <param name="cacheCategory">This category name if passed to the output
+        /// cache middleware. This type of middleware typically has rules defined based
+        /// on category and priority that define what to cache, how long for and what
+        /// to retain in cache when there is memory pressure.</param>
+        /// <param name="cachePriority">Defines how expensive it is to produce this
+        /// page and therefore how much benefit there is to caching it.</param>
+        IPageDefinition Cache(string cacheCategory, CachePriority cachePriority);
+
+        /// <summary>
         /// Defaines the layout of this page. If no layout is specified
         /// then the page will have the default layout which has one unanmed
         /// region
@@ -134,6 +162,28 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// layout with a named layout
         /// </summary>
         IPageDefinition RegionLayout(string regionName, string layoutName);
+
+        /// <summary>
+        /// Populates a region of the layout with static Html avoiding the need
+        /// to define a region and a component for very simple use cases. A region 
+        /// and a component will be generated internally with default properties.
+        /// </summary>
+        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="textAssetName">The name of the text asset to localize</param>
+        /// <param name="defaultHtml">The default Html for all unsupported locales.
+        /// Note that if you did not setup localization then this will be the html
+        /// for all locales.</param>
+        IPageDefinition RegionHtml(string regionName, string textAssetName, string defaultHtml);
+
+        /// <summary>
+        /// Populates a region of the layout with a template avoiding the need
+        /// to define a region and a component. A region and a component will be
+        /// generated internally with default properties.
+        /// </summary>
+        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="templatePath">A / separated path to the template to load
+        /// into this region of the layout</param>
+        IPageDefinition RegionTemplate(string regionName, string templatePath);
 
         /// <summary>
         /// Adds metadata to the page that can be queried to establish

@@ -18,6 +18,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
         private readonly IPageDependenciesFactory _pageDependenciesFactory;
+        private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly IElementConfiguror _elementConfiguror;
         private readonly IFluentBuilder _fluentBuilder;
 
@@ -25,12 +26,14 @@ namespace OwinFramework.Pages.Html.Builders
             IRequestRouter requestRouter,
             INameManager nameManager,
             IPageDependenciesFactory pageDependenciesFactory,
+            IComponentDependenciesFactory componentDependenciesFactory,
             IElementConfiguror elementConfiguror,
             IFluentBuilder fluentBuilder)
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
             _pageDependenciesFactory = pageDependenciesFactory;
+            _componentDependenciesFactory = componentDependenciesFactory;
             _elementConfiguror = elementConfiguror;
             _fluentBuilder = fluentBuilder;
         }
@@ -40,7 +43,14 @@ namespace OwinFramework.Pages.Html.Builders
             var page = pageInstance as Page ?? new Page(_pageDependenciesFactory);
             if (declaringType == null) declaringType = (pageInstance ?? page).GetType();
 
-            var pageDefinition = new PageDefinition(page, _requestRouter, _nameManager, _fluentBuilder, package, declaringType);
+            var pageDefinition = new PageDefinition(
+                page, 
+                _requestRouter, 
+                _nameManager, 
+                _fluentBuilder,
+                _componentDependenciesFactory,
+                package, 
+                declaringType);
 
             var attributes = new AttributeSet(declaringType);
             _elementConfiguror.Configure(pageDefinition, attributes);

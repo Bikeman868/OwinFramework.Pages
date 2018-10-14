@@ -7,6 +7,7 @@ using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
+using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
@@ -16,6 +17,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
         private readonly IFluentBuilder _fluentBuilder;
+        private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly Type _declaringType;
         private readonly Page _page;
 
@@ -24,12 +26,14 @@ namespace OwinFramework.Pages.Html.Builders
             IRequestRouter requestRouter,
             INameManager nameManager,
             IFluentBuilder fluentBuilder,
+            IComponentDependenciesFactory componentDependenciesFactory,
             IPackage package,
             Type declaringType)
         {
             _requestRouter = requestRouter;
             _nameManager = nameManager;
             _fluentBuilder = fluentBuilder;
+            _componentDependenciesFactory = componentDependenciesFactory;
             _declaringType = declaringType;
             _page = page;
 
@@ -118,6 +122,16 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        IPageDefinition IPageDefinition.RequiresPermission(string permissionName, string assetName)
+        {
+            throw new NotImplementedException("Required permissions are not implemented yet");
+        }
+
+        IPageDefinition IPageDefinition.Cache(string cacheCategory, InterfacesV1.Middleware.CachePriority cachePriority)
+        {
+            throw new NotImplementedException("Output caching is not implemented yet");
+        }
+
         IPageDefinition IPageDefinition.Layout(ILayout layout)
         {
             _page.Layout = layout;
@@ -185,6 +199,24 @@ namespace OwinFramework.Pages.Html.Builders
                 _page,
                 layoutName);
             return this;
+        }
+
+        IPageDefinition IPageDefinition.RegionHtml(string regionName, string textAssetName, string defaultHtml)
+        {
+            if (string.IsNullOrEmpty(regionName))
+                throw new PageBuilderException("You must provide a region name when configuring page regions");
+
+            var component = new HtmlComponent(_componentDependenciesFactory);
+            component.Html(textAssetName, defaultHtml);
+
+            _page.PopulateRegion(regionName, component);
+
+            return this;
+        }
+
+        IPageDefinition IPageDefinition.RegionTemplate(string regionName, string templatePath)
+        {
+            throw new NotImplementedException("Templates are not implemented yet");
         }
 
         IPageDefinition IPageDefinition.Title(string title)
@@ -322,5 +354,6 @@ namespace OwinFramework.Pages.Html.Builders
             _nameManager.AddResolutionHandler(NameResolutionPhase.InitializeRunables, () => _page.Initialize());
             return _page;
         }
+
     }
 }

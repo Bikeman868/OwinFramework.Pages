@@ -19,7 +19,7 @@ namespace OwinFramework.Pages.Html.Elements
     {
         public override ElementType ElementType { get { return ElementType.Component; } }
 
-        private readonly IComponentDependenciesFactory _dependencies;
+        protected readonly IComponentDependenciesFactory Dependencies;
 
         public Action<IRenderContext>[] HtmlWriters;
         public Action<ICssWriter>[] CssRules;
@@ -32,7 +32,7 @@ namespace OwinFramework.Pages.Html.Elements
             // this would break all components in all applications that use
             // this framework!!
 
-            _dependencies = dependencies;
+            Dependencies = dependencies;
         }
 
         protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
@@ -58,7 +58,7 @@ namespace OwinFramework.Pages.Html.Elements
             return pageAreas;
         }
 
-        private string GetCommentName()
+        protected virtual string GetCommentName()
         {
             return 
                 (string.IsNullOrEmpty(Name) ? "unnamed component" : "'" + Name + "' component") +
@@ -87,7 +87,7 @@ namespace OwinFramework.Pages.Html.Elements
                 {
                     if (CssRules != null && CssRules.Length > 0)
                     {
-                        var writer = _dependencies.CssWriterFactory.Create(context);
+                        var writer = Dependencies.CssWriterFactory.Create(context);
 
                         for (var i = 0; i < CssRules.Length; i++)
                             CssRules[i](writer);
@@ -104,7 +104,7 @@ namespace OwinFramework.Pages.Html.Elements
                 {
                     if (JavascriptFunctions != null && JavascriptFunctions.Length > 0)
                     {
-                        var writer = _dependencies.JavascriptWriterFactory.Create(context);
+                        var writer = Dependencies.JavascriptWriterFactory.Create(context);
 
                         for (var i = 0; i < JavascriptFunctions.Length; i++)
                             JavascriptFunctions[i](writer);

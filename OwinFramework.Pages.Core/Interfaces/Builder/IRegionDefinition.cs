@@ -82,6 +82,25 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition Component(string componentName);
 
         /// <summary>
+        /// Populates the region with static Html avoiding the need to define a 
+        /// component for very simple use cases. A component will be generated 
+        /// internally with default properties.
+        /// </summary>
+        /// <param name="textAssetName">The name of the text asset to localize</param>
+        /// <param name="defaultHtml">The default Html for all unsupported locales.
+        /// Note that if you did not setup localization then this will be the html
+        /// for all locales.</param>
+        IRegionDefinition Html(string textAssetName, string defaultHtml);
+
+        /// <summary>
+        /// Populates the region with a template avoiding the need to define a 
+        /// component. A component will be generated internally with default properties.
+        /// </summary>
+        /// <param name="templatePath">A / separated path to the template to load
+        /// into this region of the layout</param>
+        IRegionDefinition Template(string templatePath);
+
+        /// <summary>
         /// Specifies the html tag to render around the contents of
         /// this region. The default is 'div' if this method is not called
         /// </summary>

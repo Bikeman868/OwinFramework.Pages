@@ -1,5 +1,4 @@
 ﻿using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Builders;
@@ -59,11 +58,14 @@ namespace OwinFramework.Pages.Html
                 _requestRouter,
                 _nameManager,
                 _pageDependenciesFactory,
+                _componentDependenciesFactory,
                 _elementConfiguror,
                 builder);
 
             builder.LayoutBuilder = new LayoutBuilder(
                 _layoutDependenciesFactory,
+                _regionDependenciesFactory,
+                _componentDependenciesFactory,
                 _nameManager,
                 _htmlHelper,
                 _elementConfiguror,
@@ -73,6 +75,7 @@ namespace OwinFramework.Pages.Html
                 _nameManager,
                 _htmlHelper,
                 _regionDependenciesFactory,
+                _componentDependenciesFactory,
                 _elementConfiguror,
                 builder);
 

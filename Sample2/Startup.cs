@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define VERSION1
+
+using System;
 using System.Reflection;
 using Ioc.Modules;
 using Microsoft.Owin;
@@ -62,6 +64,8 @@ namespace Sample2
         }
     }
 
+
+#if VERSION1
     [IsPage]                                                   // This is a webpage
     [Route("/", Methods.Get)]                                  // This page is served for GET requets for the website root
     [PageTitle("Getting started with Owin Framework Pages")]   // Specifies the page title
@@ -69,7 +73,7 @@ namespace Sample2
     internal class HomePage { }
 
     [IsLayout("homePageLayout", "region1")]                    // The 'homePageLayout' has 1 region called 'region1'
-    [LayoutRegion("region1", "defaultRegion")]                   // Region 1 is implemented by the 'defaultRegion'
+    [LayoutRegion("region1", "defaultRegion")]                 // Region 1 is implemented by the 'defaultRegion'
     [RegionComponent("region1", "helloWorld")]                 // Region 1 contains the 'helloWorld' component
     internal class HomePageLayout { }
 
@@ -79,4 +83,34 @@ namespace Sample2
     [IsComponent("helloWorld")]                                // A components called 'helloWorld'
     [RenderHtml("hello-world", "Hello, world")]                // Writes out a paragraph of text. The ID 'hello-world' can be used to provide translations into other locales
     internal class HelloWorldComponent { }
+#endif
+
+#if VERSION2
+    [IsPage]                                                   // This is a webpage
+    [Route("/", Methods.Get)]                                  // This page is served for GET requets for the website root
+    [PageTitle("Getting started with Owin Framework Pages")]   // Specifies the page title
+    [UsesLayout("homePageLayout")]                             // The layout of this page is 'homePageLayout'
+    internal class HomePage { }
+
+    [IsLayout("homePageLayout", "region1")]                    // The 'homePageLayout' has 1 region called 'region1'
+    [LayoutRegion("region1", "defaultRegion")]                 // Region 1 is implemented by the 'defaultRegion'
+    internal class HomePageLayout { }
+
+    [IsRegion("defaultRegion")]                                // Defines the 'defaultRegion'
+    [RenderHtml("hello-world", "Hello, world")]                // The default region contains static Html
+    internal class DefaultRegion { }
+#endif
+
+#if VERSION3
+    [IsPage]                                                   // This is a webpage
+    [Route("/", Methods.Get)]                                  // This page is served for GET requets for the website root
+    [PageTitle("Getting started with Owin Framework Pages")]   // Specifies the page title
+    [UsesLayout("homePageLayout")]                             // The layout of this page is 'homePageLayout'
+    internal class HomePage { }
+
+    [IsLayout("homePageLayout", "region1")]                    // The 'homePageLayout' has 1 region called 'region1'
+    [RegionHtml("region1", "hello-world", "Hello, world")]     // Region 1 contains static Html
+    internal class HomePageLayout { }
+#endif
+
 }

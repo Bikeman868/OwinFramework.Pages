@@ -1,5 +1,6 @@
 ﻿using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
@@ -25,6 +26,16 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Returns a factory that can construct css writers
         /// </summary>
         IJavascriptWriterFactory JavascriptWriterFactory { get; }
+
+        /// <summary>
+        /// Returns a singleton that manages localized assets
+        /// </summary>
+        IAssetManager AssetManager { get; }
+
+        /// <summary>
+        /// Returns a singleton that manages name resolution within packages
+        /// </summary>
+        INameManager NameManager { get; }
 
         /// <summary>
         /// Constructs and initializes a component dependencies instance

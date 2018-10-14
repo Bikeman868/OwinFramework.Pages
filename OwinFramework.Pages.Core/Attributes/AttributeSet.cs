@@ -136,7 +136,17 @@ namespace OwinFramework.Pages.Core.Attributes
         public IList<RegionLayoutAttribute> RegionLayouts;
 
         /// <summary>
-        /// Defines some static html to render into the page
+        /// For a layout, specifies html to place in one of the regions of the layout
+        /// </summary>
+        public IList<RegionHtmlAttribute> RegionHtmls;
+
+        /// <summary>
+        /// For a layout, specifies html to place in one of the regions of the layout
+        /// </summary>
+        public IList<RegionTemplateAttribute> RegionTemplates;
+
+        /// <summary>
+        /// Defines some static html to render into the component or region
         /// </summary>
         public IList<RenderHtmlAttribute> RenderHtmls;
 
@@ -158,7 +168,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// For a layout, defines the region component to use for each region of the layout
         /// </summary>
-        public IList<LayoutRegionAttribute> UsesRegions;
+        public IList<LayoutRegionAttribute> LayoutRegions;
 
         /// <summary>
         /// For a region, defines a type of data that will be resolved within this region
@@ -205,11 +215,13 @@ namespace OwinFramework.Pages.Core.Attributes
                 NeedsDatas = Add(NeedsDatas, attribute);
                 RegionComponents = Add(RegionComponents, attribute);
                 RegionLayouts = Add(RegionLayouts, attribute);
+                RegionHtmls = Add(RegionHtmls, attribute);
+                RegionTemplates = Add(RegionTemplates, attribute);
                 RenderHtmls = Add(RenderHtmls, attribute);
                 Routes = Add(Routes, attribute);
                 UsesComponents = Add(UsesComponents, attribute);
                 UsesLayouts = Add(UsesLayouts, attribute);
-                UsesRegions = Add(UsesRegions, attribute);
+                LayoutRegions = Add(LayoutRegions, attribute);
                 DataScopes = Add(DataScopes, attribute);
                 SuppliesDatas = Add(SuppliesDatas, attribute);
             }

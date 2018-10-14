@@ -271,9 +271,9 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
-            if (!ReferenceEquals(attributes.UsesRegions, null))
+            if (!ReferenceEquals(attributes.LayoutRegions, null))
             {
-                foreach (var usesRegion in attributes.UsesRegions)
+                foreach (var usesRegion in attributes.LayoutRegions)
                 {
                     layout.Region(usesRegion.RegionName, usesRegion.RegionElement);
                 }
@@ -292,6 +292,14 @@ namespace OwinFramework.Pages.Framework.Builders
                 foreach (var regionLayout in attributes.RegionLayouts)
                 {
                     layout.Layout(regionLayout.Region, regionLayout.Layout);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.RegionHtmls, null))
+            {
+                foreach (var regionHtml in attributes.RegionHtmls)
+                {
+                    layout.Html(regionHtml.Region, regionHtml.LocalizationId, regionHtml.Html);
                 }
             }
         }
@@ -513,23 +521,47 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
+            var contentSpecified = false;
+
             if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
             {
                 if (attributes.UsesLayouts.Count > 1)
                     throw new FluentBuilderException("A region can not have more than one layout");
 
                 region.Layout(attributes.UsesLayouts[0].LayoutName);
+                contentSpecified = true;
             }
 
             if (!ReferenceEquals(attributes.UsesComponents, null) && attributes.UsesComponents.Count > 0)
             {
-                if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
-                    throw new FluentBuilderException("A region can contain a layout or a component, but not both");
+                if (contentSpecified)
+                    throw new FluentBuilderException(
+                        "A region can contain either a layout, a component, static Html or a template. "+
+                        "You can not have more than one of these things on region " + attributes.Type.DisplayName());
 
                 if (attributes.UsesComponents.Count > 1)
-                    throw new FluentBuilderException("A region can not have more than one component");
+                    throw new FluentBuilderException(
+                        "The " + attributes.Type.DisplayName() + " region can not have more than one component." +
+                        "To have multiple content areas within a region, define a Layout and put it into the region.");
 
                 region.Component(attributes.UsesComponents[0].ComponentName);
+                contentSpecified = true;
+            }
+
+            if (attributes.RenderHtmls != null && attributes.RenderHtmls.Count > 0)
+            {
+                if (contentSpecified)
+                    throw new FluentBuilderException(
+                        "A region can contain either a layout, a component, static Html or a template. " +
+                        "You can not have more than one of these things on region " + attributes.Type.DisplayName());
+
+                if (attributes.RenderHtmls.Count > 1)
+                    throw new RegionBuilderException("You can only attach one [RenderHtml] attribute to region. For " +
+                    "more complex use cases please define a Component and attach it to the region. There are multiple " +
+                    "[RenderHtml] attributes on " + attributes.Type.DisplayName());
+
+                var attribute = attributes.RenderHtmls[0];
+                region.Html(attribute.TextName, attribute.Html);
             }
 
             if (!ReferenceEquals(attributes.DataScopes, null))

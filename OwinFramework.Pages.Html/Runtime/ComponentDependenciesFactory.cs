@@ -1,6 +1,7 @@
 ﻿using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
@@ -10,15 +11,21 @@ namespace OwinFramework.Pages.Html.Runtime
         public IDataConsumerFactory DataConsumerFactory { get; private set; }
         public ICssWriterFactory CssWriterFactory { get; private set; }
         public IJavascriptWriterFactory JavascriptWriterFactory { get; private set; }
+        public IAssetManager AssetManager { get; private set; }
+        public INameManager NameManager { get; private set; }
 
         public ComponentDependenciesFactory(
             IDataConsumerFactory dataConsumerFactory,
             ICssWriterFactory cssWriterFactory,
-            IJavascriptWriterFactory javascriptWriterFactory)
+            IJavascriptWriterFactory javascriptWriterFactory,
+            IAssetManager assetManager,
+            INameManager nameManager)
         {
             DataConsumerFactory = dataConsumerFactory;
             CssWriterFactory = cssWriterFactory;
             JavascriptWriterFactory = javascriptWriterFactory;
+            AssetManager = assetManager;
+            NameManager = nameManager;
         }
 
         public IComponentDependencies Create(IOwinContext context)

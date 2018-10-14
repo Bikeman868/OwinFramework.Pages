@@ -16,7 +16,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly INameManager _nameManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
-        private readonly IDataDependencyFactory _dataDependencyFactory;
+        private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly Region _region;
         private string _tagName = "div";
         private string _style;
@@ -31,14 +31,14 @@ namespace OwinFramework.Pages.Html.Builders
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,
-            IDataDependencyFactory dataDependencyFactory,
+            IComponentDependenciesFactory componentDependenciesFactory,
             IPackage package)
         {
             _region = region;
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
-            _dataDependencyFactory = dataDependencyFactory;
+            _componentDependenciesFactory = componentDependenciesFactory;
 
             if (package != null)
                 _region.Package = package;
@@ -119,6 +119,20 @@ namespace OwinFramework.Pages.Html.Builders
                 componentName);
 
             return this;
+        }
+
+        IRegionDefinition IRegionDefinition.Html(string textAssetName, string defaultHtml)
+        {
+            var htmlComponent = new HtmlComponent(_componentDependenciesFactory);
+            htmlComponent.Html(textAssetName, defaultHtml);
+            _region.Content = htmlComponent;
+
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.Template(string templatePath)
+        {
+            throw new NotImplementedException("Templates are not implemented yet");
         }
 
         IRegionDefinition IRegionDefinition.Tag(string tagName)

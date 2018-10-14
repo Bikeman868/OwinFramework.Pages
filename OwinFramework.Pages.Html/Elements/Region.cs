@@ -14,7 +14,7 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// Base implementation of IRegion. Applications inherit from this olass 
+    /// Base implementation of IRegion. Applications inherit from this class 
     /// to insulate their code from any future additions to the IRegion interface
     /// </summary>
     public class Region : Element, IRegion, IDataScopeRules

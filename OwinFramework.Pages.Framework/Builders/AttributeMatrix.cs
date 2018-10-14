@@ -36,10 +36,12 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             private readonly Type _attributeType;
             private readonly List<AttributeUsage> _usage;
+            private readonly string _usageMessage;
 
-            public AttributeDefinition(Type attributeType)
+            public AttributeDefinition(Type attributeType, string usageMessage = null)
             {
                 _attributeType = attributeType;
+                _usageMessage = usageMessage ?? string.Empty;
                 _usage = new List<AttributeUsage>();
             }
 
@@ -74,6 +76,8 @@ namespace OwinFramework.Pages.Framework.Builders
 
                 if (usage != null && !String.IsNullOrEmpty(usage.Message))
                     result += " " + usage.Message;
+                else if (!string.IsNullOrEmpty(_usageMessage))
+                    result += " " + _usageMessage;
 
                 return result;
             }
@@ -83,25 +87,23 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             _attributeDefinitions = new Dictionary<Type, AttributeDefinition>();
 
-            Add<ChildContainerAttribute>()
+            Add<ChildContainerAttribute>("The [ChildContainerAttribute] only applies to elements that have other elements within them. To change the html element for this element add the [Container] attribute.")
                 .Valid<ILayoutDefinition>()
                 .Valid<ILayout>()
-                .Invalid<IComponentDefinition>("Components can not have children, they are the leaves of the visual tree.")
-                .Invalid<IRegionDefinition>("Use the [Container] attribute instead.")
                 .Invalid<IPageDefinition>("Pages have a layout that defines the container.");
 
-            Add<ChildStyleAttribute>()
+            Add<ChildStyleAttribute>("The [ChildStyleAttribute] only applies to elements that have other elements within them.")
                 .Valid<ILayoutDefinition>()
-                .Invalid<IComponentDefinition>("Components can not have children, they are the leaves of the visual tree.")
                 .Invalid<IRegionDefinition>("Regions can not style their contents because any component or layout can reside in the region.")
                 .Invalid<IPageDefinition>("Pages have a layout that defines the style of the content.");
 
-            Add<ContainerAttribute>()
+            Add<ContainerAttribute>("Only layouts and regions wrap their children in HTML container elements.")
                 .Valid<ILayoutDefinition>()
                 .Valid<IRegionDefinition>()
-                .Invalid<IComponentDefinition>("Components do not have containers, the component is responsible for rendering its Html");
+                .Invalid<IComponentDefinition>("Components do not have containers, the component is responsible for rendering its Html")
+                .Invalid<IPageDefinition>("The container for a page is always the <body> tag, changing to some other tag would break the html.");
 
-            Add<DataScopeAttribute>()
+            Add<DataScopeAttribute>("")
                 .Valid<IPageDefinition>()
                 .Valid<IRegionDefinition>()
                 .Valid<IServiceDefinition>()
@@ -142,11 +144,8 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<IPageDefinition>()
                 .Valid<IRegionDefinition>();
 
-            Add<PageTitleAttribute>()
-                .Valid<IPageDefinition>()
-                .Invalid<IComponentDefinition>("The [PageTitle] attribute can only be applied to pages.")
-                .Invalid<ILayoutDefinition>("The [PageTitle] attribute can only be applied to pages.")
-                .Invalid<IRegionDefinition>("The [PageTitle] attribute can only be applied to pages.");
+            Add<PageTitleAttribute>("The [PageTitle] attribute can only be applied to pages.")
+                .Valid<IPageDefinition>();
 
             Add<PartOfAttribute>()
                 .Valid<IComponentDefinition>()
@@ -162,18 +161,28 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
                 .Valid<ILayout>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element which can be either a layout or a component");
+                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
+            
+            Add<RegionHtmlAttribute>()
+                .Valid<ILayoutDefinition>()
+                .Valid<IPageDefinition>()
+                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
+
+            Add<RegionTemplateAttribute>()
+                .Valid<ILayoutDefinition>()
+                .Valid<IPageDefinition>()
+                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
 
             Add<RegionLayoutAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
                 .Valid<ILayout>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element which can be either a layout or a component");
+                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
 
             Add<RenderHtmlAttribute>()
                 .Valid<IComponentDefinition>()
-                .Invalid<ILayoutDefinition>("Components render Html, layouts are used to define the structure of the page.")
-                .Invalid<IRegionDefinition>("Components render Html, regions are used to define the structure of the page, define data scopes and repeat content.");
+                .Valid<IRegionDefinition>()
+                .Invalid<ILayoutDefinition>("Components render Html, layouts are used to define the structure of the page.");
 
             Add<RepeatAttribute>()
                 .Valid<IRegionDefinition>()
@@ -182,13 +191,11 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Invalid<IPageDefinition>("Use a region to repeat the content for each item on a data-bound list.");
 
             Add<RequiresPermissionAttribute>()
-                .Invalid<IPageDefinition>("This feature is not implemented yet."); // TODO: Implement page based permissions
+                .Valid<IPageDefinition>();
 
-            Add<RouteAttribute>()
+            Add<RouteAttribute>("Only pages and services can handle Http requests and return responses. Elements like regions, layouts and components produce fragments of Html.")
                 .Valid<IPageDefinition>()
-                .Valid<IServiceDefinition>()
-                .Invalid<ILayoutDefinition>("Http requests can only be routed to pages and services. You must put the layout onto a page to route traffic to it.")
-                .Invalid<IRegionDefinition>("Http requests can only be routed to pages and services.");
+                .Valid<IServiceDefinition>();
 
             Add<StyleAttribute>()
                 .Valid<ILayoutDefinition>()
@@ -202,23 +209,23 @@ namespace OwinFramework.Pages.Framework.Builders
             Add<UsesComponentAttribute>()
                 .Valid<IRegionDefinition>()
                 .Valid<IRegion>()
-                .Invalid<ILayoutDefinition>("Please use the [RegionComponent] attribute instead so that the region can be specified.");
+                .Invalid<ILayoutDefinition>("Please use the [RegionComponent] attribute instead so that the region name can be specified.");
 
             Add<UsesLayoutAttribute>()
                 .Valid<IPageDefinition>()
                 .Valid<IRegionDefinition>()
                 .Valid<IRegion>()
-                .Invalid<ILayoutDefinition>("Please use the [RegionLayout] attribute instead so that the region can be specified.");
+                .Invalid<ILayoutDefinition>("Please use the [RegionLayout] attribute instead so that the region name can be specified.");
 
             Add<LayoutRegionAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [RegionLayout] and [RegionComponent] attributes.");
         }
 
-        private AttributeDefinition Add<T>()
+        private AttributeDefinition Add<T>(string usageMessage = null)
         {
             var type = typeof(T);
-            var definition = new AttributeDefinition(type);
+            var definition = new AttributeDefinition(type, usageMessage);
             _attributeDefinitions[type] = definition;
             return definition;
         }
@@ -240,6 +247,8 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.PartOf != null) CheckAttribute<T, PartOfAttribute>(result);
             if (attributes.RegionComponents != null) CheckAttribute<T, RegionComponentAttribute>(result);
             if (attributes.RegionLayouts != null) CheckAttribute<T, RegionLayoutAttribute>(result);
+            if (attributes.RegionHtmls != null) CheckAttribute<T, RegionHtmlAttribute>(result);
+            if (attributes.RegionTemplates != null) CheckAttribute<T, RegionTemplateAttribute>(result);
             if (attributes.RenderHtmls != null) CheckAttribute<T, RenderHtmlAttribute>(result);
             if (attributes.Repeat != null) CheckAttribute<T, RepeatAttribute>(result);
             if (attributes.RequiresPermission != null) CheckAttribute<T, RequiresPermissionAttribute>(result);
@@ -248,7 +257,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.SuppliesDatas != null) CheckAttribute<T, SuppliesDataAttribute>(result);
             if (attributes.UsesComponents != null) CheckAttribute<T, UsesComponentAttribute>(result);
             if (attributes.UsesLayouts != null) CheckAttribute<T, UsesLayoutAttribute>(result);
-            if (attributes.UsesRegions != null) CheckAttribute<T, LayoutRegionAttribute>(result);
+            if (attributes.LayoutRegions != null) CheckAttribute<T, LayoutRegionAttribute>(result);
 
             return result.Count > 0 ? result : null;
         }

@@ -118,6 +118,28 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition Layout(string regionName, string layoutName);
 
         /// <summary>
+        /// Populates a region of the layout with static Html avoiding the need
+        /// to define a region and a component for very simple use cases. A region 
+        /// and a component will be generated internally with default properties.
+        /// </summary>
+        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="textAssetName">The name of the text asset to localize</param>
+        /// <param name="defaultHtml">The default Html for all unsupported locales.
+        /// Note that if you did not setup localization then this will be the html
+        /// for all locales.</param>
+        ILayoutDefinition Html(string regionName, string textAssetName, string defaultHtml);
+
+        /// <summary>
+        /// Populates a region of the layout with a template avoiding the need
+        /// to define a region and a component. A region and a component will be
+        /// generated internally with default properties.
+        /// </summary>
+        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="templatePath">A / separated path to the template to load
+        /// into this region of the layout</param>
+        ILayoutDefinition Template(string regionName, string templatePath);
+
+        /// <summary>
         /// Specifies the html tag to render around the regions of
         /// this layout. The default is 'div', which means that the whole
         /// layout will be wrapped in a div. You can pass an empty string 

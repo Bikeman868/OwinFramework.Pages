@@ -27,9 +27,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// Returns a localized version of some text
         /// </summary>
         /// <param name="renderContext">The context of the request that this is being rendered for</param>
-        /// <param name="assetname">The name of the text asset to localize</param>
+        /// <param name="assetName">The name of the text asset to localize</param>
         /// <param name="defaultText">The html to return for all unsupported languages</param>
-        string GetLocalizedText(IRenderContext renderContext, string assetname, string defaultText);
+        string GetLocalizedText(IRenderContext renderContext, string assetName, string defaultText);
 
         /// <summary>
         /// Gets static assets from an element and adds them to the global

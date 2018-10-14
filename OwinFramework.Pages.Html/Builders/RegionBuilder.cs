@@ -14,6 +14,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly INameManager _nameManager;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
+        private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly IFluentBuilder _fluentBuilder;
         private readonly IElementConfiguror _elementConfiguror;
 
@@ -21,12 +22,14 @@ namespace OwinFramework.Pages.Html.Builders
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IRegionDependenciesFactory regionDependenciesFactory,
+            IComponentDependenciesFactory componentDependenciesFactory,
             IElementConfiguror elementConfiguror,
             IFluentBuilder fluentBuilder)
         {
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _regionDependenciesFactory = regionDependenciesFactory;
+            _componentDependenciesFactory = componentDependenciesFactory;
             _elementConfiguror = elementConfiguror;
             _fluentBuilder = fluentBuilder;
         }
@@ -36,7 +39,13 @@ namespace OwinFramework.Pages.Html.Builders
             var region = regionInstance as Region ?? new Region(_regionDependenciesFactory);
             if (declaringType == null) declaringType = (regionInstance ?? region).GetType();
 
-            var regionDefinition = new RegionDefinition(region, _nameManager, _htmlHelper, _fluentBuilder, _regionDependenciesFactory.DataDependencyFactory, package);
+            var regionDefinition = new RegionDefinition(
+                region, 
+                _nameManager, 
+                _htmlHelper, 
+                _fluentBuilder, 
+                _componentDependenciesFactory,
+                package);
 
             var attributes = new AttributeSet(declaringType);
             _elementConfiguror.Configure(regionDefinition, attributes);

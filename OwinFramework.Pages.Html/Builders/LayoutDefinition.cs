@@ -19,6 +19,8 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly Layout _layout;
         private readonly IHtmlHelper _htmlHelper;
         private readonly IFluentBuilder _fluentBuilder;
+        private readonly IRegionDependenciesFactory _regionDependenciesFactory;
+        private readonly IComponentDependenciesFactory _componentDependenciesFactory;
 
         private RegionSet _regionSet;
         private readonly Dictionary<string, object> _regionElements;
@@ -41,12 +43,16 @@ namespace OwinFramework.Pages.Html.Builders
             INameManager nameManager,
             IHtmlHelper htmlHelper,
             IFluentBuilder fluentBuilder,
+            IRegionDependenciesFactory regionDependenciesFactory,
+            IComponentDependenciesFactory componentDependenciesFactory,
             IPackage package)
         {
             _layout = layout;
             _nameManager = nameManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
+            _regionDependenciesFactory = regionDependenciesFactory;
+            _componentDependenciesFactory = componentDependenciesFactory;
 
             _regionElements = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             _regionLayouts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
@@ -59,7 +65,7 @@ namespace OwinFramework.Pages.Html.Builders
                 _layout.Package = package;
         }
 
-        public ILayoutDefinition Name(string name)
+        ILayoutDefinition ILayoutDefinition.Name(string name)
         {
             if (string.IsNullOrEmpty(name)) return this;
 
@@ -68,13 +74,13 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public ILayoutDefinition PartOf(IPackage package)
+        ILayoutDefinition ILayoutDefinition.PartOf(IPackage package)
         {
             _layout.Package = package;
             return this;
         }
 
-        public ILayoutDefinition PartOf(string packageName)
+        ILayoutDefinition ILayoutDefinition.PartOf(string packageName)
         {
             if (string.IsNullOrEmpty(packageName)) return this;
 
@@ -87,26 +93,26 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public ILayoutDefinition RegionNesting(string regionNesting)
+        ILayoutDefinition ILayoutDefinition.RegionNesting(string regionNesting)
         {
             var position = 0;
             _regionSet = RegionSet.Parse(regionNesting, ref position);
             return this;
         }
 
-        public ILayoutDefinition AssetDeployment(AssetDeployment assetDeployment)
+        ILayoutDefinition ILayoutDefinition.AssetDeployment(AssetDeployment assetDeployment)
         {
             _layout.AssetDeployment = assetDeployment;
             return this;
         }
 
-        public ILayoutDefinition Region(string regionName, IRegion region)
+        ILayoutDefinition ILayoutDefinition.Region(string regionName, IRegion region)
         {
             _regionElements[regionName] = region;
             return this;
         }
 
-        public ILayoutDefinition Region(string regionName, string name)
+        ILayoutDefinition ILayoutDefinition.Region(string regionName, string name)
         {
             if (string.IsNullOrEmpty(regionName))
                 throw new LayoutBuilderException("You must provide a region name when configuring layout regions");
@@ -118,7 +124,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public ILayoutDefinition Component(string regionName, IComponent component)
+        ILayoutDefinition ILayoutDefinition.Component(string regionName, IComponent component)
         {
             if (string.IsNullOrEmpty(regionName))
                 throw new LayoutBuilderException("You must provide a region name when defining which component to place into a layout region");
@@ -127,7 +133,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public ILayoutDefinition Component(string regionName, string componentName)
+        ILayoutDefinition ILayoutDefinition.Component(string regionName, string componentName)
         {
             if (string.IsNullOrEmpty(regionName))
                 throw new LayoutBuilderException("You must provide a region name when defining which component to place into a layout region");
@@ -139,7 +145,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public ILayoutDefinition Layout(string regionName, ILayout layout)
+        ILayoutDefinition ILayoutDefinition.Layout(string regionName, ILayout layout)
         {
             if (string.IsNullOrEmpty(regionName))
                 throw new LayoutBuilderException("You must provide a region name when defining which layout to place into a layout region");
@@ -149,7 +155,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public ILayoutDefinition Layout(string regionName, string layoutName)
+        ILayoutDefinition ILayoutDefinition.Layout(string regionName, string layoutName)
         {
             if (string.IsNullOrEmpty(regionName))
                 throw new LayoutBuilderException("You must provide a region name when defining which layout to place into a layout region");
@@ -161,37 +167,51 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public ILayoutDefinition Tag(string tagName)
+        ILayoutDefinition ILayoutDefinition.Html(string regionName, string textAssetName, string defaultHtml)
+        {
+            var htmlComponent = new HtmlComponent(_componentDependenciesFactory);
+            htmlComponent.Html(textAssetName, defaultHtml);
+            _regionComponents[regionName] = htmlComponent;
+
+            return this;
+        }
+
+        ILayoutDefinition ILayoutDefinition.Template(string regionName, string templatePath)
+        {
+            throw new NotImplementedException("Templates are not implemented yet");
+        }
+
+        ILayoutDefinition ILayoutDefinition.Tag(string tagName)
         {
             _tag = tagName;
             return this;
         }
 
-        public ILayoutDefinition ClassNames(params string[] classNames)
+        ILayoutDefinition ILayoutDefinition.ClassNames(params string[] classNames)
         {
             _classNames = classNames;
             return this;
         }
 
-        public ILayoutDefinition Style(string style)
+        ILayoutDefinition ILayoutDefinition.Style(string style)
         {
             _style = style;
             return this;
         }
 
-        public ILayoutDefinition NestingTag(string tagName)
+        ILayoutDefinition ILayoutDefinition.NestingTag(string tagName)
         {
             _nestingTag = tagName;
             return this;
         }
 
-        public ILayoutDefinition NestedClassNames(params string[] classNames)
+        ILayoutDefinition ILayoutDefinition.NestedClassNames(params string[] classNames)
         {
             _nestedClassNames = classNames;
             return this;
         }
 
-        public ILayoutDefinition NestedStyle(string style)
+        ILayoutDefinition ILayoutDefinition.NestedStyle(string style)
         {
             _nestedStyle = style;
             return this;
@@ -329,7 +349,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public ILayout Build()
+        ILayout ILayoutDefinition.Build()
         {
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
@@ -459,7 +479,12 @@ namespace OwinFramework.Pages.Html.Builders
                     }
                 }
 
-                if (region.Region != null)
+                if (region.Region == null && region.RegionName != null)
+                {
+                    region.Region = new RegionComponent(_regionDependenciesFactory);
+                }
+
+                if (region.RegionName != null)
                 {
                     _layout.PopulateRegion(region.RegionName, region.Region);
                 }
@@ -548,5 +573,6 @@ namespace OwinFramework.Pages.Html.Builders
             if (!string.IsNullOrEmpty(_nestingTag))
                 _layout.AddVisualElement(w => w.WriteCloseTag(_nestingTag), null);
         }
+
     }
 }

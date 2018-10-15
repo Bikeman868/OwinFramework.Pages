@@ -9,14 +9,16 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OwinFramework.Pages.Standard</RootNamespace>
     <AssemblyName>OwinFramework.Pages.Standard</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <BaseIntermediateOutputPath>obj\Net45\</BaseIntermediateOutputPath>
+    <BuildInParallel>false</BuildInParallel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Net45\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Net45\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,17 +46,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">
+    <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net45.csproj">
       <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
-      <Name>OwinFramework.Pages.Core.Net40</Name>
+      <Name>OwinFramework.Pages.Core.Net45</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OwinFramework.Pages.Framework\OwinFramework.Pages.Framework.Net40.csproj">
+    <ProjectReference Include="..\OwinFramework.Pages.Framework\OwinFramework.Pages.Framework.Net45.csproj">
       <Project>{83e44b37-d3aa-4622-a03b-3c976ea58c83}</Project>
-      <Name>OwinFramework.Pages.Framework.Net40</Name>
+      <Name>OwinFramework.Pages.Framework.Net45</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OwinFramework.Pages.Html\OwinFramework.Pages.Html.Net40.csproj">
+    <ProjectReference Include="..\OwinFramework.Pages.Html\OwinFramework.Pages.Html.Net45.csproj">
       <Project>{68b65603-bb88-4c0a-8cfc-32b92561b881}</Project>
-      <Name>OwinFramework.Pages.Html.Net40</Name>
+      <Name>OwinFramework.Pages.Html.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

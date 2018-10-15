@@ -1159,6 +1159,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.RequiresPermission != null)
             {
                 runable.RequiredPermission = attributes.RequiresPermission.PermissionName;
+                runable.SecureResource = attributes.RequiresPermission.ResourcePath;
             }
 
             if (attributes.CacheOutput != null)

@@ -21,7 +21,8 @@ namespace Sample1.SamplePages
         public ElementType ElementType { get { return ElementType.Page; } }
         public string Name { get; set; }
         public IPackage Package { get; set; }
-        string IRunable.RequiredPermission { get { return null; } set { } }
+        public string RequiredPermission { get; set; }
+        public string SecureResource { get; set; }
         bool IRunable.AllowAnonymous { get { return true; } set { } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
         Func<IRenderContext, string> IPage.CanonicalUrlFunc { get; set; }

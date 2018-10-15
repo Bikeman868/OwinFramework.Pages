@@ -21,14 +21,20 @@ namespace OwinFramework.Pages.Html.Runtime
     public class Page : Element, IPage, IDataScopeRules, IDataConsumer, IDataContextBuilder
     {
         /// <summary>
-        /// Returns the name of the permission that the user must have to view this page
+        /// Gets and sets the name of the permission that the user must have to view this page
         /// </summary>
-        public virtual string RequiredPermission { get { return null; } set { } }
+        public virtual string RequiredPermission { get; set; }
+
+        /// <summary>
+        /// Gets and sets the optional path to a protected resource that is used to 
+        /// further qualify the RequiredPermission
+        /// </summary>
+        public virtual string SecureResource { get; set; }
 
         /// <summary>
         /// Return false if anonymouse users are not permitted to view this page
         /// </summary>
-        public virtual bool AllowAnonymous { get { return true; } set { } }
+        public virtual bool AllowAnonymous { get; set; }
 
         /// <summary>
         /// Return a custom authentication check

@@ -36,7 +36,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Mocks.N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample3", "Sample3\Sample3.csproj", "{B2BB1B4D-B3A0-4657-9A4C-9F9A7FC08E2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Standard", "OwinFramework.Pages.Standard\OwinFramework.Pages.Standard.csproj", "{2B3CFCAB-67EB-4D62-A49A-971E92DBC7E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Standard.Net40", "OwinFramework.Pages.Standard\OwinFramework.Pages.Standard.Net40.csproj", "{2B3CFCAB-67EB-4D62-A49A-971E92DBC7E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

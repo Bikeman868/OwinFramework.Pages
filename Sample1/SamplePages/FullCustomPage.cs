@@ -20,6 +20,7 @@ namespace Sample1.SamplePages
         public string Name { get; set; }
         public IPackage Package { get; set; }
         string IRunable.RequiredPermission { get { return null; } set { } }
+        string IRunable.SecureResource { get { return null; } set { } }
         bool IRunable.AllowAnonymous { get { return true; } set { } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
         Func<IRenderContext, string> IPage.CanonicalUrlFunc { get; set; }

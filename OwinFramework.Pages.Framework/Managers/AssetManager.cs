@@ -88,7 +88,7 @@ namespace OwinFramework.Pages.Framework.Managers
             requestRouter.Register(this, 
                 new FilterAllFilters(
                     new FilterByMethod(Methods.Get),
-                    new FilterByPath(_rootPath.Value + "/**")), 10);
+                    new FilterByPath(_rootPath.Value + "/**")), -10);
         }
 
         string IAssetManager.GetSupportedLanguage(string acceptLanguageHeader)
@@ -282,6 +282,7 @@ namespace OwinFramework.Pages.Framework.Managers
         #region IRunable - serves assets
 
         string IRunable.RequiredPermission { get { return null; } set { } }
+        string IRunable.SecureResource { get { return null; } set { } }
         bool IRunable.AllowAnonymous { get { return true; } set { } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
         string IRunable.CacheCategory { get; set; }

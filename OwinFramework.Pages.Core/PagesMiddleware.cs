@@ -59,7 +59,8 @@ namespace OwinFramework.Pages.Core
 
             context.SetFeature(runable);
 
-            if (!string.IsNullOrEmpty(runable.RequiredPermission))
+            if (!string.IsNullOrEmpty(runable.RequiredPermission) && 
+                string.IsNullOrEmpty(runable.SecureResource))
             {
                 var upstreamAuthorization = context.GetFeature<IUpstreamAuthorization>();
                 if (upstreamAuthorization != null)
@@ -93,6 +94,20 @@ namespace OwinFramework.Pages.Core
             
             if (runable == null)
                 return next();
+
+            if (!string.IsNullOrEmpty(runable.RequiredPermission) &&
+                !string.IsNullOrEmpty(runable.SecureResource))
+            {
+                var authorization = context.GetFeature<IAuthorization>();
+                if (authorization != null)
+                {
+                    if (!authorization.HasPermission(runable.RequiredPermission, runable.SecureResource))
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                        return context.Response.WriteAsync(string.Empty);
+                    }
+                }
+            }
 
             if (runable.AuthenticationFunc != null)
             {

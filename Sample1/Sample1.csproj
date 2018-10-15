@@ -103,9 +103,9 @@
       <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>
       <Name>OwinFramework.Pages.Restful.Net40</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OwinFramework.Pages.Standard\OwinFramework.Pages.Standard.csproj">
+    <ProjectReference Include="..\OwinFramework.Pages.Standard\OwinFramework.Pages.Standard.Net40.csproj">
       <Project>{2b3cfcab-67eb-4d62-a49a-971e92dbc7e6}</Project>
-      <Name>OwinFramework.Pages.Standard</Name>
+      <Name>OwinFramework.Pages.Standard.Net40</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

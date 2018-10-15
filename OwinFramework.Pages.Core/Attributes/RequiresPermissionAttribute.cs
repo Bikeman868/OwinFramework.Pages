@@ -13,14 +13,21 @@ namespace OwinFramework.Pages.Core.Attributes
         /// this element belongs to
         /// </summary>
         /// <param name="permissionName">The name of the required permission</param>
-        public RequiresPermissionAttribute(string permissionName)
+        /// <param name="resourcePath">Optional path to the protected resource</param>
+        public RequiresPermissionAttribute(string permissionName, string resourcePath = null)
         {
             PermissionName = permissionName;
+            ResourcePath = resourcePath;
         }
 
         /// <summary>
         /// The name of the permission
         /// </summary>
         public string PermissionName { get; set; }
+
+        /// <summary>
+        /// Optional path to the protected resource
+        /// </summary>
+        public string ResourcePath { get; set; }
     }
 }

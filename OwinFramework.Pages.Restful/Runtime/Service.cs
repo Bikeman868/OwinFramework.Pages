@@ -21,10 +21,11 @@ namespace OwinFramework.Pages.Restful.Runtime
         public string Name { get; set; }
         public IPackage Package { get; set; }
         public string RequiredPermission { get; set; }
+        public string SecureResource { get; set; }
         public bool AllowAnonymous { get; set; }
         public Func<IOwinContext, bool> AuthenticationFunc { get { return null; } }
-        string IRunable.CacheCategory { get; set; }
-        CachePriority IRunable.CachePriority { get; set; }
+        public string CacheCategory { get; set; }
+        public CachePriority CachePriority { get; set; }
 
         public Service(IServiceDependenciesFactory serviceDependenciesFactory)
         {

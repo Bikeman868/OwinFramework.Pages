@@ -17,6 +17,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         string RequiredPermission { get; set; }
 
         /// <summary>
+        /// Optional resource name to supply when checking the required permission. See
+        /// authorization middleware documentation for more details.
+        /// </summary>
+        string SecureResource { get; set; }
+
+        /// <summary>
         /// Returns a flag indicating if anonymous users are allowed to request this
         /// resource
         /// </summary>

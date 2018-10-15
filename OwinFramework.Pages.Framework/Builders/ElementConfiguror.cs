@@ -302,6 +302,14 @@ namespace OwinFramework.Pages.Framework.Builders
                     layout.Html(regionHtml.Region, regionHtml.LocalizationId, regionHtml.Html);
                 }
             }
+
+            if (!ReferenceEquals(attributes.RegionTemplates, null))
+            {
+                foreach (var regionTemplate in attributes.RegionTemplates)
+                {
+                    layout.Template(regionTemplate.Region, regionTemplate.TemplatePath);
+                }
+            }
         }
 
         public void Configure(IModuleDefinition module, AttributeSet attributes)
@@ -442,12 +450,9 @@ namespace OwinFramework.Pages.Framework.Builders
                 page.BodyStyle(attributes.Style.CssStyle);
             }
 
-            if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
+            if (!ReferenceEquals(attributes.UsesLayout, null))
             {
-                if (attributes.UsesLayouts.Count > 1)
-                    throw new FluentBuilderException("A page can not have more than one layout");
-
-                page.Layout(attributes.UsesLayouts[0].LayoutName);
+                page.Layout(attributes.UsesLayout.LayoutName);
             }
 
             if (!ReferenceEquals(attributes.Routes, null))
@@ -523,12 +528,20 @@ namespace OwinFramework.Pages.Framework.Builders
 
             var contentSpecified = false;
 
-            if (!ReferenceEquals(attributes.UsesLayouts, null) && attributes.UsesLayouts.Count > 0)
+            if (!ReferenceEquals(attributes.UsesLayout, null))
             {
-                if (attributes.UsesLayouts.Count > 1)
-                    throw new FluentBuilderException("A region can not have more than one layout");
+                region.Layout(attributes.UsesLayout.LayoutName);
+                contentSpecified = true;
+            }
 
-                region.Layout(attributes.UsesLayouts[0].LayoutName);
+            if (!ReferenceEquals(attributes.UsesTemplate, null))
+            {
+                if (contentSpecified)
+                    throw new FluentBuilderException(
+                        "A region can contain either a layout, a component, static Html or a template. " +
+                        "You can not have more than one of these things on region " + attributes.Type.DisplayName());
+
+                region.Template(attributes.UsesTemplate.TemplatePath);
                 contentSpecified = true;
             }
 
@@ -887,25 +900,29 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
-            if (attributes.UsesLayouts != null)
+            if (attributes.UsesLayout != null)
             {
                 if (hasComponent)
-                    throw new RegionBuilderException("Regions can only host one element but you " +
-                        "have both [UsesComponent] and [UsesLayout] attributes on " + attributes.Type.DisplayName());
+                    throw new RegionBuilderException("Regions can only host one element, you " +
+                        "can not have more than one [UseXxxx] attributes on region " + attributes.Type.DisplayName());
 
-                if (attributes.UsesLayouts.Count > 1)
-                    throw new RegionBuilderException("Regions can only host one layout but you " +
-                        "have more than one [UsesLayout] attribute on " + attributes.Type.DisplayName());
-
-                if (attributes.UsesLayouts.Count == 1)
-                {
-                    _nameManager.AddResolutionHandler(
-                        NameResolutionPhase.ResolveElementReferences,
-                        (nm, r, n) => r.Content = nm.ResolveLayout(n, r.Package),
-                        region,
-                        attributes.UsesLayouts[0].LayoutName);
-                }
+                _nameManager.AddResolutionHandler(
+                    NameResolutionPhase.ResolveElementReferences,
+                    (nm, r, n) => r.Content = nm.ResolveLayout(n, r.Package),
+                    region,
+                    attributes.UsesLayout.LayoutName);
             }
+
+            //if (attributes.UsesTemplate != null)
+            //{
+            //    if (hasComponent)
+            //        throw new RegionBuilderException("Regions can only host one element, you " +
+            //            "can not have more than one [UseXxxx] attributes on region " + attributes.Type.DisplayName());
+
+            //    var component = new TemplateComponent();
+            //    component.Template(attributes.UsesTemplate.TemplatePath);
+            //    region.Content = component;
+            //}
         }
 
         private void Configure(AttributeSet attributes, ILayout layout)

@@ -77,12 +77,6 @@ namespace Sample1.SamplePages
     [RenderHtml("menu.main", "<p class='{ns}_menu-item'>This is where the main menu html goes</p>")]
     internal class MainMenuComponent { }
 
-    [IsComponent("title")]
-    [PartOf("application")]
-    [DeployedAs("navigation")]
-    [RenderHtml("heading.main", "<h1>An example of fully declatative pages</h1>")]
-    internal class HeadingComponent { }
-
     [IsComponent("footer")]
     [PartOf("application")]
     [DeployedAs("navigation")]
@@ -115,13 +109,6 @@ namespace Sample1.SamplePages
     [RenderHtml("menu.left", "<p class='{ns}_sidebar'>Side bar nav for page 2</p>")]
     internal class SideBar2Component { }
 
-    [IsComponent("page2Body")]
-    [PartOf("application")]
-    [DeployedAs("content")]
-    [DeployCss("p.{ns}_body", "font-family: arial; font-size:9pt;")]
-    [RenderHtml("content.body.2.1", "<p class='{ns}_body'>Hello, page 2</p>")]
-    internal class PageBody2Component { }
-
     /*
      * A region is a container for a single component or layout. The container can 
      * use html, JavaScript and css to define its behaviour, for example the size, 
@@ -144,7 +131,7 @@ namespace Sample1.SamplePages
     [IsRegion("title")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [UsesComponent("title")]
+    [UsesTemplate("/common/pageTitle")]
     internal class TitleRegion { }
 
     /// <summary>
@@ -251,7 +238,7 @@ namespace Sample1.SamplePages
     [LayoutRegion("left", "leftColumn")]
     [LayoutRegion("main", "rightColumn")]
     [RegionComponent("left", "sidebar2")]
-    [RegionComponent("main", "page2Body")]
+    [RegionTemplate("main", "/page2/body")]
     internal class Page2Layout { }
 
     /*

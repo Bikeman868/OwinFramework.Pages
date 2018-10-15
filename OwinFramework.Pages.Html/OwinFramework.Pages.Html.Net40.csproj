@@ -49,6 +49,8 @@
     <Compile Include="Builders\CssDefinition.cs" />
     <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
+    <Compile Include="Elements\TemplateComponent.cs" />
+    <Compile Include="Elements\Template.cs" />
     <Compile Include="Elements\HtmlComponent.cs" />
     <Compile Include="Elements\PageComponent.cs" />
     <Compile Include="Elements\PageElementDependencies.cs" />

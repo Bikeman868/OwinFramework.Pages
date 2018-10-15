@@ -13,19 +13,22 @@ namespace OwinFramework.Pages.Html.Runtime
         public IJavascriptWriterFactory JavascriptWriterFactory { get; private set; }
         public IAssetManager AssetManager { get; private set; }
         public INameManager NameManager { get; private set; }
+        public ITemplateManager TemplateManager { get; private set; }
 
         public ComponentDependenciesFactory(
             IDataConsumerFactory dataConsumerFactory,
             ICssWriterFactory cssWriterFactory,
             IJavascriptWriterFactory javascriptWriterFactory,
             IAssetManager assetManager,
-            INameManager nameManager)
+            INameManager nameManager,
+            ITemplateManager templateManager)
         {
             DataConsumerFactory = dataConsumerFactory;
             CssWriterFactory = cssWriterFactory;
             JavascriptWriterFactory = javascriptWriterFactory;
             AssetManager = assetManager;
             NameManager = nameManager;
+            TemplateManager = templateManager;
         }
 
         public IComponentDependencies Create(IOwinContext context)

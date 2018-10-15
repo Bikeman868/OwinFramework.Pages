@@ -38,6 +38,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         INameManager NameManager { get; }
 
         /// <summary>
+        /// Returns a singleton that manages templates
+        /// </summary>
+        ITemplateManager TemplateManager { get; }
+
+        /// <summary>
         /// Constructs and initializes a component dependencies instance
         /// specific to the request
         /// </summary>

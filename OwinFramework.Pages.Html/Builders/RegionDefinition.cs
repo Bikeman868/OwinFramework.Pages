@@ -132,7 +132,11 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegionDefinition IRegionDefinition.Template(string templatePath)
         {
-            throw new NotImplementedException("Templates are not implemented yet");
+            var templateComponent = new TemplateComponent(_componentDependenciesFactory);
+            templateComponent.Template(templatePath);
+            _region.Content = templateComponent;
+
+            return this;
         }
 
         IRegionDefinition IRegionDefinition.Tag(string tagName)

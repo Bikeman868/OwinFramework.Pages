@@ -216,7 +216,15 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.RegionTemplate(string regionName, string templatePath)
         {
-            throw new NotImplementedException("Templates are not implemented yet");
+            if (string.IsNullOrEmpty(regionName))
+                throw new PageBuilderException("You must provide a region name when configuring page regions");
+
+            var component = new TemplateComponent(_componentDependenciesFactory);
+            component.Template(templatePath);
+
+            _page.PopulateRegion(regionName, component);
+
+            return this;
         }
 
         IPageDefinition IPageDefinition.Title(string title)

@@ -67,6 +67,7 @@
     <Compile Include="Attributes\PartOfAttribute.cs" />
     <Compile Include="Attributes\UsesComponentAttribute.cs" />
     <Compile Include="Attributes\NeedsDataAttribute.cs" />
+    <Compile Include="Attributes\UsesTemplateAttribute.cs" />
     <Compile Include="Attributes\UsesLayoutAttribute.cs" />
     <Compile Include="Attributes\LayoutRegionAttribute.cs" />
     <Compile Include="Attributes\ContainerAttribute.cs" />
@@ -184,10 +185,12 @@
     <Compile Include="Interfaces\DataModel\IDataSupply.cs" />
     <Compile Include="Interfaces\DataModel\IDataSupplier.cs" />
     <Compile Include="Interfaces\DataModel\ILibraryConsumer.cs" />
+    <Compile Include="Interfaces\ITemplate.cs" />
     <Compile Include="Interfaces\IDataProvider.cs" />
     <Compile Include="Interfaces\DataModel\IDataCatalog.cs" />
     <Compile Include="Interfaces\Managers\IIdManager.cs" />
     <Compile Include="Interfaces\DataModel\IDataContextFactory.cs" />
+    <Compile Include="Interfaces\Managers\ITemplateManager.cs" />
     <Compile Include="Interfaces\Runtime\ICssWriter.cs" />
     <Compile Include="Interfaces\Runtime\IDataRepeater.cs" />
     <Compile Include="Interfaces\Runtime\IDebuggable.cs" />

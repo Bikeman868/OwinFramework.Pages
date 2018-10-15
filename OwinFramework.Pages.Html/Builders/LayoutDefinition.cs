@@ -178,7 +178,11 @@ namespace OwinFramework.Pages.Html.Builders
 
         ILayoutDefinition ILayoutDefinition.Template(string regionName, string templatePath)
         {
-            throw new NotImplementedException("Templates are not implemented yet");
+            var templateComponent = new TemplateComponent(_componentDependenciesFactory);
+            templateComponent.Template(templatePath);
+            _regionComponents[regionName] = templateComponent;
+
+            return this;
         }
 
         ILayoutDefinition ILayoutDefinition.Tag(string tagName)

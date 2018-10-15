@@ -111,6 +111,16 @@ namespace OwinFramework.Pages.Core.Attributes
         public CacheOutputAttribute CacheOutput;
 
         /// <summary>
+        /// For a region, specifies the layout to render inside the region
+        /// </summary>
+        public UsesLayoutAttribute UsesLayout;
+
+        /// <summary>
+        /// For a region, specifies the template to render inside the region
+        /// </summary>
+        public UsesTemplateAttribute UsesTemplate;
+
+        /// <summary>
         /// Defines a static css asset to deploy on any page that includes this element
         /// </summary>
         public IList<DeployCssAttribute> DeployCsss;
@@ -166,11 +176,6 @@ namespace OwinFramework.Pages.Core.Attributes
         public IList<UsesComponentAttribute> UsesComponents;
 
         /// <summary>
-        /// For a region, specifies the layout to render inside the region
-        /// </summary>
-        public IList<UsesLayoutAttribute> UsesLayouts;
-
-        /// <summary>
         /// For a layout, defines the region component to use for each region of the layout
         /// </summary>
         public IList<LayoutRegionAttribute> LayoutRegions;
@@ -214,6 +219,8 @@ namespace OwinFramework.Pages.Core.Attributes
                 RequiresPermission = Set(RequiresPermission, attribute);
                 Style = Set(Style, attribute);
                 CacheOutput = Set(CacheOutput, attribute);
+                UsesLayout = Set(UsesLayout, attribute);
+                UsesTemplate = Set(UsesTemplate, attribute);
 
                 DeployCsss = Add(DeployCsss, attribute);
                 DeployFunctions = Add(DeployFunctions, attribute);
@@ -226,7 +233,6 @@ namespace OwinFramework.Pages.Core.Attributes
                 RenderHtmls = Add(RenderHtmls, attribute);
                 Routes = Add(Routes, attribute);
                 UsesComponents = Add(UsesComponents, attribute);
-                UsesLayouts = Add(UsesLayouts, attribute);
                 LayoutRegions = Add(LayoutRegions, attribute);
                 DataScopes = Add(DataScopes, attribute);
                 SuppliesDatas = Add(SuppliesDatas, attribute);

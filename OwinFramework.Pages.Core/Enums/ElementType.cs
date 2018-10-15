@@ -51,6 +51,11 @@
         /// <summary>
         /// This element is a data provider
         /// </summary>
-        DataProvider
+        DataProvider,
+
+        /// <summary>
+        /// This element is the result of parsing a template
+        /// </summary>
+        Template
     }
 }

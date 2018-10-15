@@ -191,7 +191,10 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Invalid<IPageDefinition>("Use a region to repeat the content for each item on a data-bound list.");
 
             Add<RequiresPermissionAttribute>()
-                .Valid<IPageDefinition>();
+                .Valid<IPageDefinition>()
+                .Valid<IServiceDefinition>()
+                .Valid<IPage>()
+                .Valid<IService>();
 
             Add<RouteAttribute>("Only pages and services can handle Http requests and return responses. Elements like regions, layouts and components produce fragments of Html.")
                 .Valid<IPageDefinition>()
@@ -202,6 +205,12 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<IPageDefinition>()
                 .Valid<IRegionDefinition>()
                 .Invalid<IComponentDefinition>("Components do not render any Html elements that this style could be applied to. Specify the style within the Html that is rendered by the component.");
+
+            Add<CacheOutputAttribute>("You can only define caching for elements that produce complete responses to Http requests.")
+                .Valid<IPageDefinition>()
+                .Valid<IServiceDefinition>()
+                .Valid<IPage>()
+                .Valid<IService>();
 
             Add<SuppliesDataAttribute>()
                 .Valid<IDataProviderDefinition>();

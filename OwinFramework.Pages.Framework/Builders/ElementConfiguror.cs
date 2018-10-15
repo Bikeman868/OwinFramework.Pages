@@ -1144,6 +1144,12 @@ namespace OwinFramework.Pages.Framework.Builders
                 runable.RequiredPermission = attributes.RequiresPermission.PermissionName;
             }
 
+            if (attributes.CacheOutput != null)
+            {
+                runable.CacheCategory = attributes.CacheOutput.CacheCategory;
+                runable.CachePriority = attributes.CacheOutput.CachePriority;
+            }
+
             if (attributes.Routes != null)
             {
                 foreach (var route in attributes.Routes)

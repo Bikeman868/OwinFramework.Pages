@@ -19,6 +19,7 @@ namespace OwinFramework.Pages.Core.Attributes
         public IsPageAttribute(string name = null, string canonicalUrl = null)
             : base(name)
         {
+            CanonicalUrl = canonicalUrl;
         }
 
         /// <summary>

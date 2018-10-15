@@ -106,6 +106,11 @@ namespace OwinFramework.Pages.Core.Attributes
         public StyleAttribute Style;
 
         /// <summary>
+        /// Defines rules for caching the output from this runable
+        /// </summary>
+        public CacheOutputAttribute CacheOutput;
+
+        /// <summary>
         /// Defines a static css asset to deploy on any page that includes this element
         /// </summary>
         public IList<DeployCssAttribute> DeployCsss;
@@ -208,6 +213,7 @@ namespace OwinFramework.Pages.Core.Attributes
                 Repeat = Set(Repeat, attribute);
                 RequiresPermission = Set(RequiresPermission, attribute);
                 Style = Set(Style, attribute);
+                CacheOutput = Set(CacheOutput, attribute);
 
                 DeployCsss = Add(DeployCsss, attribute);
                 DeployFunctions = Add(DeployFunctions, attribute);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
@@ -58,6 +59,16 @@ namespace OwinFramework.Pages.Html.Runtime
         /// The names of the css class to attach to the body element
         /// </summary>
         public string BodyStyle { get; set; }
+
+        /// <summary>
+        /// The category name to pass to the output cache to define the caching rules for this page
+        /// </summary>
+        public string CacheCategory { get; set; }
+
+        /// <summary>
+        /// The importance of caching this page, inverse of the cost of producing it
+        /// </summary>
+        public CachePriority CachePriority { get; set; }
 
         /// <summary>
         /// Sets the element type to Page

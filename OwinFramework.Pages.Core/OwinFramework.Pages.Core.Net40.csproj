@@ -47,8 +47,9 @@
   <ItemGroup>
     <Compile Include="Attributes\AttributeSet.cs" />
     <Compile Include="Attributes\ChildContainerAttribute.cs" />
+    <Compile Include="Attributes\CacheOutputAttribute.cs" />
     <Compile Include="Attributes\IsDataProviderAttribute.cs" />
-    <Compile Include="Attributes\DeployCss.cs" />
+    <Compile Include="Attributes\DeployCssAttribute.cs" />
     <Compile Include="Attributes\DeployFunctionAttribute.cs" />
     <Compile Include="Attributes\NeedsComponentAttribute.cs" />
     <Compile Include="Attributes\DataScopeAttribute.cs" />

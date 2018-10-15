@@ -34,6 +34,7 @@ namespace OwinFramework.Pages.Core
         IList<IDependency> IMiddleware.Dependencies { get { return _dependencies; } }
 
         private readonly IRequestRouter _requestRouter;
+        private readonly TimeSpan _maximumCacheTime = TimeSpan.FromHours(1);
 
         /// <summary>
         /// Constructor for IoC dependency injection
@@ -42,6 +43,11 @@ namespace OwinFramework.Pages.Core
             IRequestRouter requestRouter)
         {
             _requestRouter = requestRouter;
+
+            this.RunAfter<IOutputCache>(null, false);
+            this.RunAfter<IRequestRewriter>(null, false);
+            this.RunAfter<IResponseRewriter>(null, false);
+            this.RunAfter<IAuthorization>(null, false);
         }
 
         Task IRoutingProcessor.RouteRequest(IOwinContext context, Func<Task> next)
@@ -67,6 +73,17 @@ namespace OwinFramework.Pages.Core
                     upstreamIdentification.AllowAnonymous = false;
             }
 
+            if (!string.IsNullOrEmpty(runable.CacheCategory))
+            {
+                var upstreamOutputCache = context.GetFeature<IUpstreamOutputCache>();
+                if (upstreamOutputCache.CachedContentIsAvailable)
+                {
+                    var timeInCache = upstreamOutputCache.TimeInCache;
+                    if (timeInCache.HasValue && timeInCache.Value > _maximumCacheTime)
+                        upstreamOutputCache.UseCachedContent = false;
+                }
+            }
+
             return null;
         }
 
@@ -83,6 +100,18 @@ namespace OwinFramework.Pages.Core
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                     return context.Response.WriteAsync(string.Empty);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(runable.CacheCategory))
+            {
+                var outputCache = context.GetFeature<IOutputCache>();
+                if (outputCache != null)
+                {
+                    outputCache.Category = runable.CacheCategory;
+                    outputCache.MaximumCacheTime = _maximumCacheTime;
+                    outputCache.Priority = runable.CachePriority;
+                    Trace(context, () => GetType().Name + " configured output cache " + outputCache.Category + " " + outputCache.Priority + " " + outputCache.MaximumCacheTime);
                 }
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
@@ -24,6 +25,8 @@ namespace Sample1.SamplePages
         bool IRunable.AllowAnonymous { get { return true; } set { } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
         Func<IRenderContext, string> IPage.CanonicalUrlFunc { get; set; }
+        string IRunable.CacheCategory { get; set; }
+        CachePriority IRunable.CachePriority { get; set; }
 
         public void Initialize()
         {

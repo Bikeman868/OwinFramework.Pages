@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.InterfacesV1.Middleware;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
@@ -20,6 +21,16 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// resource
         /// </summary>
         bool AllowAnonymous { get; set; }
+
+        /// <summary>
+        /// The category name to use with the output cache
+        /// </summary>
+        string CacheCategory { get; set; }
+
+        /// <summary>
+        /// The priority to use with the output cache
+        /// </summary>
+        CachePriority CachePriority { get; set; }
 
         /// <summary>
         /// Optional authentication function. If this is not null then it will be called

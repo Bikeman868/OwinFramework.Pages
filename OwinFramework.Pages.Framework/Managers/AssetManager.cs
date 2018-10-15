@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
@@ -283,6 +284,8 @@ namespace OwinFramework.Pages.Framework.Managers
         string IRunable.RequiredPermission { get { return null; } set { } }
         bool IRunable.AllowAnonymous { get { return true; } set { } }
         Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
+        string IRunable.CacheCategory { get; set; }
+        CachePriority IRunable.CachePriority { get; set; }
 
         Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {

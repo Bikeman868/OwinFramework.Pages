@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
@@ -22,6 +23,8 @@ namespace OwinFramework.Pages.Restful.Runtime
         public string RequiredPermission { get; set; }
         public bool AllowAnonymous { get; set; }
         public Func<IOwinContext, bool> AuthenticationFunc { get { return null; } }
+        string IRunable.CacheCategory { get; set; }
+        CachePriority IRunable.CachePriority { get; set; }
 
         public Service(IServiceDependenciesFactory serviceDependenciesFactory)
         {

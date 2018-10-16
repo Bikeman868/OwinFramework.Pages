@@ -99,7 +99,7 @@ namespace Sample1.SamplePages
     [DeployCss("p.{ns}_body", "font-family: arial; font-size:9pt;")]
     [RenderHtml("content.body.1.1", 1, "<p class='{ns}_body'>Hello, page 1</p>")]
     [RenderHtml("content.body.1.2", 2, "<p class='{ns}_body'>This is the second parapgraph</p>")]
-    [RenderHtml("content.body.1.2", 3, "<p class='{ns}_body'>This is the third parapgraph</p>")]
+    [RenderHtml("content.body.1.3", 3, "<p class='{ns}_body'>This is the third parapgraph</p>")]
     internal class PageBody1Component { }
 
     [IsComponent("sidebar2")]

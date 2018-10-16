@@ -50,7 +50,7 @@
     <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
     <Compile Include="Elements\TemplateComponent.cs" />
-    <Compile Include="Elements\Template.cs" />
+    <Compile Include="Templates\Template.cs" />
     <Compile Include="Elements\HtmlComponent.cs" />
     <Compile Include="Elements\PageComponent.cs" />
     <Compile Include="Elements\PageElementDependencies.cs" />
@@ -98,6 +98,8 @@
     <Compile Include="Runtime\RenderContext.cs" />
     <Compile Include="Runtime\RenderContextFactory.cs" />
     <Compile Include="Runtime\WriteResult.cs" />
+    <Compile Include="Templates\TemplateDefinition.cs" />
+    <Compile Include="Templates\TemplateFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

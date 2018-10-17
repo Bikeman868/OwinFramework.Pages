@@ -124,6 +124,7 @@
     <Compile Include="Enums\HtmlFormat.cs" />
     <Compile Include="Enums\NameResolutionPhase.cs" />
     <Compile Include="Enums\PageArea.cs" />
+    <Compile Include="Exceptions\TemplateBuilderException.cs" />
     <Compile Include="Exceptions\DataProviderBuilderException.cs" />
     <Compile Include="Exceptions\DataCatalogException.cs" />
     <Compile Include="Exceptions\FluentBuilderException.cs" />

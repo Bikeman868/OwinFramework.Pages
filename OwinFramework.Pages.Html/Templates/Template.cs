@@ -21,9 +21,9 @@ namespace OwinFramework.Pages.Html.Templates
 
         private readonly PageArea[] _pageAreas = { PageArea.Body };
 
-        private Func<IRenderContext, IWriteResult>[] _visualElements;
+        private Action<IRenderContext>[] _visualElements;
 
-        public void Add(IEnumerable<Func<IRenderContext, IWriteResult>> visualElements)
+        public void Add(IEnumerable<Action<IRenderContext>> visualElements)
         {
             if (_visualElements == null)
                 _visualElements = visualElements.ToArray();
@@ -33,17 +33,15 @@ namespace OwinFramework.Pages.Html.Templates
 
         IWriteResult ITemplate.WritePageArea(IRenderContext context, PageArea pageArea)
         {
-            var result = WriteResult.Continue();
-
             if (pageArea == PageArea.Body && _visualElements != null)
             {
                 for (var i = 0; i < _visualElements.Length; i++)
                 {
-                    result = result.Add(_visualElements[i](context));
+                    _visualElements[i](context);
                 }
             }
 
-            return result;
+            return WriteResult.Continue();
         }
 
         IEnumerable<PageArea> IPageWriter.GetPageAreas()

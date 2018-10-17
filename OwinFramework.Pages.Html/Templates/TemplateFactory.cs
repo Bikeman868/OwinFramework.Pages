@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using OwinFramework.Pages.Core.Interfaces.Managers;
+﻿using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 
 namespace OwinFramework.Pages.Html.Templates

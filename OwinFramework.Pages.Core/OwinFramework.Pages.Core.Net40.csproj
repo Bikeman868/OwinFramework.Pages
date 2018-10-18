@@ -124,6 +124,7 @@
     <Compile Include="Enums\HtmlFormat.cs" />
     <Compile Include="Enums\NameResolutionPhase.cs" />
     <Compile Include="Enums\PageArea.cs" />
+    <Compile Include="Exceptions\InvalidPathException.cs" />
     <Compile Include="Exceptions\TemplateBuilderException.cs" />
     <Compile Include="Exceptions\DataProviderBuilderException.cs" />
     <Compile Include="Exceptions\DataCatalogException.cs" />
@@ -191,7 +192,6 @@
     <Compile Include="Interfaces\DataModel\IDataCatalog.cs" />
     <Compile Include="Interfaces\Managers\IIdManager.cs" />
     <Compile Include="Interfaces\DataModel\IDataContextFactory.cs" />
-    <Compile Include="Interfaces\Managers\ITemplateManager.cs" />
     <Compile Include="Interfaces\Runtime\ICssWriter.cs" />
     <Compile Include="Interfaces\Runtime\IDataRepeater.cs" />
     <Compile Include="Interfaces\Runtime\IDebuggable.cs" />

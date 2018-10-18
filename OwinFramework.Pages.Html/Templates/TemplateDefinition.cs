@@ -18,7 +18,6 @@ namespace OwinFramework.Pages.Html.Templates
     {
         private readonly INameManager _nameManager;
         private readonly IAssetManager _assetManager;
-        private readonly ITemplateManager _templateManager;
         private readonly Template _template;
         private readonly List<Action<IRenderContext>> _renderActions;
         private readonly Stack<Element> _elementStack;
@@ -35,12 +34,10 @@ namespace OwinFramework.Pages.Html.Templates
         public TemplateDefinition(
             INameManager nameManager,
             IAssetManager assetManager,
-            ITemplateManager templateManager,
             IDataConsumerFactory dataConsumerFactory)
         {
             _nameManager = nameManager;
             _assetManager = assetManager;
-            _templateManager = templateManager;
 
             _renderActions = new List<Action<IRenderContext>>();
             _elementStack = new Stack<Element>();
@@ -206,9 +203,11 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddTemplate(string templatePath)
         {
+            // TODO: resolve template here with name manager binding handler
+
             _renderActions.Add(r =>
                 {
-                    var template = _templateManager.Get(r, templatePath);
+                    var template = _nameManager.ResolveTemplate(templatePath);
                     if (template != null)
                         template.WritePageArea(r, PageArea.Body);
                 });

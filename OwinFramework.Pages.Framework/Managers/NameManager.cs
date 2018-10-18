@@ -19,6 +19,7 @@ namespace OwinFramework.Pages.Framework.Managers
         private readonly IDictionary<string, IModule> _modules;
         private readonly IDictionary<string, IPackage> _packages;
         private readonly IDictionary<string, IDataProvider> _dataProviders;
+        private readonly IDictionary<string, ITemplate> _templates;
 
         private readonly List<PendingActionBase> _pendingActions;
 
@@ -37,6 +38,7 @@ namespace OwinFramework.Pages.Framework.Managers
             _modules = new Dictionary<string, IModule>(StringComparer.InvariantCultureIgnoreCase);
             _packages = new Dictionary<string, IPackage>(StringComparer.InvariantCultureIgnoreCase);
             _dataProviders = new Dictionary<string, IDataProvider>(StringComparer.InvariantCultureIgnoreCase);
+            _templates = new Dictionary<string, ITemplate>(StringComparer.InvariantCultureIgnoreCase);
 
             _assetNames = new Dictionary<string, HashSet<string>>(StringComparer.InvariantCultureIgnoreCase);
             _random = new Random();
@@ -111,6 +113,13 @@ namespace OwinFramework.Pages.Framework.Managers
             lock(_packages) _packages[package.Name] = package;
         }
 
+        public void Register(ITemplate template, string path)
+        {
+            ValidatePath(path);
+
+            lock (_templates) _templates[path] = template;
+        }
+
         public void Register(IDataProvider dataProvider)
         {
             if (string.IsNullOrEmpty(dataProvider.Name))
@@ -133,6 +142,15 @@ namespace OwinFramework.Pages.Framework.Managers
             if (char.IsDigit(name[0]) ||
                 !name.All(c => char.IsDigit(c) || char.IsLetter(c) || c == '_'))
                 throw new InvalidNameException(name, package);
+        }
+
+        private void ValidatePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new InvalidPathException(path);
+
+            if (!path.All(c => char.IsDigit(c) || char.IsLetter(c) || c == '_' || c == '/'))
+                throw new InvalidPathException(path);
         }
 
         #endregion
@@ -365,6 +383,17 @@ namespace OwinFramework.Pages.Framework.Managers
         public IDataProvider ResolveDataProvider(string name, IPackage package = null)
         {
             return Resolve(name, package, _dataProviders);
+        }
+
+        public ITemplate ResolveTemplate(string path)
+        {
+            lock (_templates)
+            {
+                ITemplate template;
+                if (_templates.TryGetValue(path, out template))
+                    return template;
+            }
+            throw new NameResolutionFailureException(typeof(ITemplate), null, path);
         }
 
         public IModule ResolveModule(string name)

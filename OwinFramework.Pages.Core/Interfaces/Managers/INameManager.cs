@@ -48,6 +48,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         void Register(IDataProvider dataProvider);
 
         /// <summary>
+        /// Registers the name of a data provider
+        /// </summary>
+        /// <param name="template">The template to register</param>
+        /// <param name="path">The path that the template was loaded from, e.g. '/templates/common/profile'</param>
+        void Register(ITemplate template, string path);
+
+        /// <summary>
         /// Adds a callback function to execute after all components have been
         /// registered. This can be used to resolve name references between elements
         /// </summary>
@@ -155,6 +162,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// </summary>
         /// <param name="name">The name of the package to find</param>
         IPackage ResolvePackage(string name);
+
+        /// <summary>
+        /// Finds the template that was loaded from the specified path
+        /// </summary>
+        /// <param name="path">The path that the template was loaded from. e.g. '/templates/customer/order'</param>
+        ITemplate ResolveTemplate(string path);
 
         /// <summary>
         /// Makes up a random namespace qualified name that is unique and in the same 

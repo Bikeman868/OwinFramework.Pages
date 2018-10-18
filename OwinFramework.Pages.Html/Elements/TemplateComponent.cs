@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -13,6 +14,7 @@ namespace OwinFramework.Pages.Html.Elements
     public class TemplateComponent : Component
     {
         private string _templatePath;
+        private ITemplate _template;
 
         public TemplateComponent(IComponentDependenciesFactory dependencies)
             : base(dependencies)
@@ -35,13 +37,19 @@ namespace OwinFramework.Pages.Html.Elements
         public void Template(string templatePath)
         {
             _templatePath = templatePath;
+
+            Dependencies.NameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, 
+                nm =>
+                {
+                    _template = nm.ResolveTemplate(_templatePath);
+                });
+
             HtmlWriters = new Action<IRenderContext>[] { RenderTemplate };
         }
 
         private void RenderTemplate(IRenderContext renderContext)
         {
-            var template = Dependencies.TemplateManager.Get(renderContext, _templatePath);
-            template.WritePageArea(renderContext, PageArea.Body);
+            _template.WritePageArea(renderContext, PageArea.Body);
         }
     }
 }

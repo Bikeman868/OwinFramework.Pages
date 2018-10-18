@@ -65,6 +65,15 @@ namespace Sample1
             // The IRequestRouter is the entry point to the Pages middleware
             var pageRequestRouter = ninject.Get<IRequestRouter>();
 
+            // The name manager allows elements that reference each other by name
+            // to be registered in any order
+            var nameManager = ninject.Get<INameManager>();
+
+            // The Fluent Builder provides a mechanism for building elements (pages,
+            // regions, layouts, components, data providers etc) without writing code 
+            // that implements the various interfaces like IPage, IComponent etc
+            var fluentBuilder = ninject.Get<IFluentBuilder>();
+
             // This is an example of registering an implementation of IPage with a 
             // wildcard request filter and below normal priority
             pageRequestRouter.Register(
@@ -83,11 +92,6 @@ namespace Sample1
                     new FilterByMethod(Methods.Get, Methods.Post, Methods.Put),
                     new FilterByPath("/pages/semiCustom.html")),
                     100);
-
-            // The IFluentBuilder provides a mechanism for building elements (pages,
-            // regions, layouts, components, data providers etc) without writing code 
-            // that implements the various interfaces like IPage, IComponent etc
-            var fluentBuilder = ninject.Get<IFluentBuilder>();
 
             // You must install build engines before trying to build elements using the
             // fluent builder. You can use the built-in engines, install NuGet packages
@@ -111,19 +115,23 @@ namespace Sample1
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
 
             // This is an example of building and registering a custom template
-            var templateManager = ninject.Get<ITemplateManager>();
             var templateBuilder = ninject.Get<ITemplateBuilder>();
-            var testTemplate = templateBuilder.BuildUpTemplate()
+            var template1 = templateBuilder.BuildUpTemplate()
                 .AddElementOpen("p", "class", "dummy")
                 .AddText("dummy-text", "This is a dummy")
                 //.AddDataField(typeof(ApplicationInfo), "Name")
                 .AddElementClose()
                 .Build();
-            templateManager.Register(testTemplate, "/test");
+            var template2 = templateBuilder.BuildUpTemplate()
+                .AddElementOpen("p", "class", "test")
+                .AddText("dummy-text", "Page 2 body")
+                .AddElementClose()
+                .Build();
+            nameManager.Register(template1, "/common/pageTitle");
+            nameManager.Register(template2, "/page2/body");
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements
-            var nameManager = ninject.Get<INameManager>();
             nameManager.Bind();
         }
     }

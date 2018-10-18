@@ -8,18 +8,15 @@ namespace OwinFramework.Pages.Html.Templates
     {
         private readonly INameManager _nameManager;
         private readonly IAssetManager _assetManager;
-        private readonly ITemplateManager _templateManager;
         private readonly IDataConsumerFactory _dataConsumerFactory;
 
         public TemplateBuilder(
             INameManager nameManager,
             IAssetManager assetManager,
-            ITemplateManager templateManager,
             IDataConsumerFactory dataConsumerFactory)
         {
             _nameManager = nameManager;
             _assetManager = assetManager;
-            _templateManager = templateManager;
             _dataConsumerFactory = dataConsumerFactory;
         }
 
@@ -28,7 +25,6 @@ namespace OwinFramework.Pages.Html.Templates
             return new TemplateDefinition(
                 _nameManager,
                 _assetManager,
-                _templateManager,
                 _dataConsumerFactory);
         }
     }

@@ -22,6 +22,7 @@ namespace OwinFramework.Pages.Mocks.Managers
         public readonly IDictionary<string, IModule> Modules = new Dictionary<string, IModule>();
         public readonly IDictionary<string, IPackage> Packages = new Dictionary<string, IPackage>();
         public readonly IDictionary<string, IDataProvider> DataProviders = new Dictionary<string, IDataProvider>();
+        public readonly IDictionary<string, ITemplate> Templates = new Dictionary<string, ITemplate>();
 
         private readonly List<PendingActionBase> _pendingActions = new List<PendingActionBase>();
 
@@ -107,6 +108,11 @@ namespace OwinFramework.Pages.Mocks.Managers
             DataProviders[name] = dataProvider;
         }
 
+        public void Register(ITemplate template, string path)
+        {
+            Templates[path] = template;
+        }
+
         public void AddResolutionHandler(
             NameResolutionPhase phase, 
             Action resolutionAction)
@@ -166,6 +172,11 @@ namespace OwinFramework.Pages.Mocks.Managers
         public IDataProvider ResolveDataProvider(string name, IPackage package = null)
         {
             return Resolve(name, package, DataProviders);
+        }
+
+        public ITemplate ResolveTemplate(string path)
+        {
+            return Templates[path];
         }
 
         public IModule ResolveModule(string name)

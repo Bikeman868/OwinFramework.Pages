@@ -171,10 +171,10 @@ namespace Sample1.SamplePackages
                 _dataConsumer.CanUseData(dataType, scopeName);
             }
 
-            void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
+            void IDataConsumer.HasDependency(IDataSupplier dataSupplier, IDataDependency dependency)
             {
                 if (_dataConsumer == null) return;
-                _dataConsumer.HasDependency(dataProvider, dependency);
+                _dataConsumer.HasDependency(dataSupplier, dependency);
             }
 
             IDataConsumerNeeds IDataConsumer.GetConsumerNeeds()

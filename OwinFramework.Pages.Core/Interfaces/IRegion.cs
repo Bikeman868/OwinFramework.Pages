@@ -19,7 +19,7 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <summary>
         /// This is called for each area of the page where this instance wants
         /// to write content. This method is called if either the GetPageAreas() function
-        /// returns true for the page area, or any of the children retuen true for this.
+        /// returns true for the page area, or any of the children return true for this.
         /// </summary>
         /// <param name="context">The rendering operation in progress</param>
         /// <param name="pageArea">The area of the page that is being written to</param>

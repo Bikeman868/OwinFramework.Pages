@@ -246,7 +246,7 @@
     <Compile Include="Interfaces\Runtime\IWriteResult.cs" />
     <Compile Include="Interfaces\Templates\IDataFieldFormatter.cs" />
     <Compile Include="Interfaces\Templates\ITemplateDefinition.cs" />
-    <Compile Include="Interfaces\Templates\ITemplateFactory.cs" />
+    <Compile Include="Interfaces\Templates\ITemplateBuilder.cs" />
     <Compile Include="Interfaces\Templates\ITemplateLoader.cs" />
     <Compile Include="Interfaces\Templates\ITemplateParser.cs" />
     <Compile Include="Package.cs" />

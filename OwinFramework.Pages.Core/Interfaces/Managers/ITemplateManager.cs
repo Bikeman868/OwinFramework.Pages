@@ -34,7 +34,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// template, and it should be used for all locales. When registering multiple
         /// templates with the same path and different locales (different language
         /// versions of the same template) there must be no overlap between the locales.</param>
-        void Register(ITemplate template, string templatePath, params string[] locales);
+        ITemplateManager Register(ITemplate template, string templatePath, params string[] locales);
 
         /// <summary>
         /// Finds a template to display

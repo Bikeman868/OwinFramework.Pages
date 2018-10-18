@@ -118,9 +118,9 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataConsumer.CanUseData(dataType, scopeName);
         }
 
-        void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
+        void IDataConsumer.HasDependency(IDataSupplier dataSupplier, IDataDependency dependency)
         {
-            DataConsumer.HasDependency(dataProvider, dependency);
+            DataConsumer.HasDependency(dataSupplier, dependency);
         }
 
         void IDataConsumer.HasDependency(IDataSupply dataSupply)

@@ -5,11 +5,13 @@ using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces.Templates;
 using OwinFramework.Pages.Html.Builders;
 using OwinFramework.Pages.Html.Configuration;
 using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Interfaces;
 using OwinFramework.Pages.Html.Runtime;
+using OwinFramework.Pages.Html.Templates;
 using IPackage = Ioc.Modules.IPackage;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 
@@ -66,6 +68,7 @@ namespace OwinFramework.Pages.Html
                     new IocRegistration().Init<ILayout, Layout>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IRegion, Region>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IComponent, Component>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<ITemplate, Template>(IocLifetime.MultiInstance),
 
                     // These classes implement the rendering framework. They are thread-safe singletons
                     new IocRegistration().Init<IModuleBuilder, ModuleBuilder>(),
@@ -73,6 +76,7 @@ namespace OwinFramework.Pages.Html
                     new IocRegistration().Init<ILayoutBuilder, LayoutBuilder>(),
                     new IocRegistration().Init<IRegionBuilder, RegionBuilder>(),
                     new IocRegistration().Init<IComponentBuilder, ComponentBuilder>(),
+                    new IocRegistration().Init<ITemplateBuilder, TemplateBuilder>(),
 
                     // These are the external dependencies
                     new IocRegistration().Init<IDictionaryFactory>(),

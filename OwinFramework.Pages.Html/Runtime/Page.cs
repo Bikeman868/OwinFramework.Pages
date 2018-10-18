@@ -856,9 +856,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataConsumer.CanUseData(dataType, scopeName);
         }
 
-        void IDataConsumer.HasDependency(IDataProvider dataProvider, IDataDependency dependency)
+        void IDataConsumer.HasDependency(IDataSupplier dataSupplier, IDataDependency dependency)
         {
-            _dataConsumer.HasDependency(dataProvider, dependency);
+            _dataConsumer.HasDependency(dataSupplier, dependency);
         }
 
         IDataConsumerNeeds IDataConsumer.GetConsumerNeeds()

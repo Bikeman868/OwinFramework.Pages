@@ -10,9 +10,11 @@ using OwinFramework.Interfaces.Builder;
 using OwinFramework.Interfaces.Utility;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces.Templates;
 using OwinFramework.Pages.Core.RequestFilters;
 using OwinFramework.Pages.DebugMiddleware;
 using OwinFramework.Pages.Standard;
+using Sample1.SampleDataProviders;
 using Sample1.SamplePackages;
 using Sample1.SamplePages;
 using Urchin.Client.Sources;
@@ -107,6 +109,17 @@ namespace Sample1
 
             // This is an example of registering all of the elements defined in an assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
+
+            // This is an example of building and registering a custom template
+            var templateManager = ninject.Get<ITemplateManager>();
+            var templateBuilder = ninject.Get<ITemplateBuilder>();
+            var testTemplate = templateBuilder.BuildUpTemplate()
+                .AddElementOpen("p", "class", "dummy")
+                .AddText("dummy-text", "This is a dummy")
+                //.AddDataField(typeof(ApplicationInfo), "Name")
+                .AddElementClose()
+                .Build();
+            templateManager.Register(testTemplate, "/test");
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements

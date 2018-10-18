@@ -52,11 +52,11 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
         void CanUseData(Type dataType, string scopeName = null);
 
         /// <summary>
-        /// Call this method to specify a data provider that needs to run
+        /// Call this method to specify a data supplier that needs to run
         /// to provide the data that this control needs. If multiple elements need the
-        /// same data then the data provider will only execute once
+        /// same data then the data supplier will only execute once
         /// </summary>
-        void HasDependency(IDataProvider dataProvider, IDataDependency dependency = null);
+        void HasDependency(IDataSupplier dataProvider, IDataDependency dependency = null);
 
         /// <summary>
         /// Call this method to specify a data supply that needs to run

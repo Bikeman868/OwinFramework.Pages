@@ -99,7 +99,7 @@
     <Compile Include="Runtime\RenderContextFactory.cs" />
     <Compile Include="Runtime\WriteResult.cs" />
     <Compile Include="Templates\TemplateDefinition.cs" />
-    <Compile Include="Templates\TemplateFactory.cs" />
+    <Compile Include="Templates\TemplateBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

@@ -98,7 +98,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <summary>
         /// Starts a section that will repeat
         /// </summary>
-        ITemplateDefinition RepeatStart(Type dataTypeToRepeat);
+        ITemplateDefinition RepeatStart(Type dataTypeToRepeat, string scopeName = null, string listScopeName = null);
 
         /// <summary>
         /// Closes off a repeating section

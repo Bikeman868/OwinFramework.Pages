@@ -51,25 +51,23 @@ namespace OwinFramework.Pages.Framework.DataModel
             // discovered in response to requests for data
         }
 
-        public void HasDependency(IDataProvider dataProvider, IDataDependency dependency)
+        public void HasDependency(IDataSupplier dataSupplier, IDataDependency dependency)
         {
-            if (ReferenceEquals(dataProvider, null)) throw new ArgumentNullException("dataProvider");
-
-            var dataSupplier = dataProvider as IDataSupplier;
+            if (ReferenceEquals(dataSupplier, null)) throw new ArgumentNullException("dataSupplier");
 
             if (dataSupplier == null)
-                throw new Exception("Data provider " + dataProvider.Name + " is not a supplier of data");
+                throw new Exception("Data provider " + dataSupplier + " is not a supplier of data");
 
             if (ReferenceEquals(dependency, null))
                 dependency = dataSupplier.DefaultDependency;
 
             if (!dataSupplier.IsSupplierOf(dependency))
-                throw new Exception("Data provider " + dataProvider.Name + " is not a supplier of " + dependency);
+                throw new Exception("Data provider " + dataSupplier + " is not a supplier of " + dependency);
 
             if (DataSupplierDependencies == null)
                 DataSupplierDependencies = new List<Tuple<IDataSupplier, IDataDependency>>();
 
-            DataSupplierDependencies.Add(new Tuple<IDataSupplier, IDataDependency>(dataProvider, dependency));
+            DataSupplierDependencies.Add(new Tuple<IDataSupplier, IDataDependency>(dataSupplier, dependency));
         }
 
         public void HasDependency(IDataSupply dataSupply)

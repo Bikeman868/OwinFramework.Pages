@@ -90,7 +90,7 @@
     <Compile Include="SvgDrawing\Shapes\TextDrawing.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="paket.references" />
+    <None Include="OwinFramework.Pages.DebugMiddleware.Net40.paket.references" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">

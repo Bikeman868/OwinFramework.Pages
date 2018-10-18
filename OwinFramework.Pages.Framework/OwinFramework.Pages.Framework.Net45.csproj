@@ -89,9 +89,6 @@
     <Compile Include="Utility\DependencyListSorter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="paket.references" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net45.csproj">
       <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
       <Name>OwinFramework.Pages.Core.Net45</Name>
@@ -99,6 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="paket.template" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OwinFramework.Pages.Framework.Net45.paket.references" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

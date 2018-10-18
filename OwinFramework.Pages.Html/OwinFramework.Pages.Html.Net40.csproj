@@ -102,7 +102,7 @@
     <Compile Include="Templates\TemplateBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="paket.references" />
+    <None Include="OwinFramework.Pages.Html.Net40.paket.references" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">

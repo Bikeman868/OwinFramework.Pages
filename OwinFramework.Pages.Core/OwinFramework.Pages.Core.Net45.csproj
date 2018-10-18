@@ -36,10 +36,6 @@
     <DocumentationFile>bin\net45\Release\OwinFramework.Pages.Core.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OwinFramework, Version=2.6.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\net45\Owin.Framework\lib\net45\OwinFramework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -140,6 +136,7 @@
     <Compile Include="Exceptions\RegionBuilderException.cs" />
     <Compile Include="Exceptions\LayoutBuilderException.cs" />
     <Compile Include="Exceptions\ServiceBuilderException.cs" />
+    <Compile Include="Exceptions\TemplateBuilderException.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
@@ -247,6 +244,11 @@
     <Compile Include="Interfaces\Runtime\IRequestRouter.cs" />
     <Compile Include="Interfaces\Runtime\IRunable.cs" />
     <Compile Include="Interfaces\Runtime\IWriteResult.cs" />
+    <Compile Include="Interfaces\Templates\IDataFieldFormatter.cs" />
+    <Compile Include="Interfaces\Templates\ITemplateBuilder.cs" />
+    <Compile Include="Interfaces\Templates\ITemplateDefinition.cs" />
+    <Compile Include="Interfaces\Templates\ITemplateLoader.cs" />
+    <Compile Include="Interfaces\Templates\ITemplateParser.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="PagesMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -258,7 +260,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="paket.template" />
-    <None Include="paket.references" />
+    <None Include="OwinFramework.Pages.Core.Net45.csproj.paket.references" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

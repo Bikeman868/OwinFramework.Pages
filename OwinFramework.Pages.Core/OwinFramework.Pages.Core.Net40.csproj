@@ -259,10 +259,8 @@
     <Compile Include="RequestFilters\FilterByPath.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="OwinFramework.Pages.Core.Net40.csproj.paket.references" />
     <None Include="paket.template" />
-    <None Include="paket.references">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

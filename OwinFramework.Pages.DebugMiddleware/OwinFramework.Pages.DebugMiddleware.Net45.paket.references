@@ -1,0 +1,7 @@
+﻿Ioc.Modules
+Newtonsoft.Json
+Svg
+
+group net45
+  Owin.Framework framework: net45
+  Microsoft.Owin framework: net45

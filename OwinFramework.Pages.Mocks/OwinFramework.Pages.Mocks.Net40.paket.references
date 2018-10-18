@@ -1,0 +1,6 @@
+﻿Moq
+Moq.Modules
+
+group net40
+  Owin.Framework framework: net40
+  Microsoft.Owin framework: net40

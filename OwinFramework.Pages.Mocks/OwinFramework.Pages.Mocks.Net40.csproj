@@ -63,7 +63,7 @@
     <Compile Include="Runtime\MockRequestRouter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="paket.references" />
+    <None Include="OwinFramework.Pages.Mocks.Net40.paket.references" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">

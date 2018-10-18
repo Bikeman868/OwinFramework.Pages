@@ -94,9 +94,6 @@
     <Compile Include="SvgDrawing\Shapes\TextDrawing.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="paket.references" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net45.csproj">
       <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
       <Name>OwinFramework.Pages.Core.Net45</Name>
@@ -105,6 +102,9 @@
   <ItemGroup>
     <Content Include="paket.template" />
     <Content Include="readme.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OwinFramework.Pages.DebugMiddleware.Net45.paket.references" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

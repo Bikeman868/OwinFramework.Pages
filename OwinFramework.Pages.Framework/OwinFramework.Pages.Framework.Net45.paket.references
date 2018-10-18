@@ -1,9 +1,6 @@
 ﻿Ioc.Modules
 Newtonsoft.Json
-
-group net40
-  Owin.Framework framework: net40
-  Microsoft.Owin framework: net40
+Urchin.Client
 
 group net45
   Owin.Framework framework: net45

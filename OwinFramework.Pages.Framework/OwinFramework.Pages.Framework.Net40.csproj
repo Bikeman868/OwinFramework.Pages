@@ -86,7 +86,7 @@
     <Compile Include="Utility\DependencyListSorter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="paket.references" />
+    <None Include="OwinFramework.Pages.Framework.Net40.paket.references" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">

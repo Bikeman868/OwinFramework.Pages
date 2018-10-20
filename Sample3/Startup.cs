@@ -2,5 +2,5 @@
 
 // Uncomment only one of the lines below to test that particular use case
 
-[assembly: OwinStartup(typeof(Sample3.UseCase1.Startup))]
-//[assembly: OwinStartup(typeof(Sample3.UseCase2.Startup))]
+//[assembly: OwinStartup(typeof(Sample3.UseCase1.Startup))]
+[assembly: OwinStartup(typeof(Sample3.UseCase2.Startup))]

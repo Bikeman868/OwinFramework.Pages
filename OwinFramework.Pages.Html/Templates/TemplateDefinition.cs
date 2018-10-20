@@ -286,8 +286,8 @@ namespace OwinFramework.Pages.Html.Templates
             var element = _element;
             _renderActions.Add(r =>
                 {
+                    // ReSharper disable once ConvertToLambdaExpression - allows break point to be set
                     r.Html.WriteOpenTag(element.Tag, element.Attributes.ToArray());
-                    r.Html.WriteLine();
                 });
         }
 

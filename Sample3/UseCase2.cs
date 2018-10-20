@@ -93,6 +93,7 @@ namespace Sample3.UseCase2
     internal class BasePageLayout : ApplicationElement { }
 
     [IsRegion("body")]
+    //[NeedsData(typeof(ApplicationInfo))]
     internal class BodyRegion : ApplicationElement { }
 
     [IsPackage("usecase2", "uc2")]

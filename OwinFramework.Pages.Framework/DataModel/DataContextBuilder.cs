@@ -138,6 +138,8 @@ namespace OwinFramework.Pages.Framework.DataModel
             while (!ReferenceEquals(root._parent, null))
                 root = root._parent;
 
+            ResolveSupplies();
+
             renderContext.DeleteDataContextTree();
             root.SetupDataContext(renderContext);
         }

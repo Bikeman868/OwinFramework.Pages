@@ -128,6 +128,7 @@
     <Compile Include="Exceptions\DataCatalogException.cs" />
     <Compile Include="Exceptions\FluentBuilderException.cs" />
     <Compile Include="Exceptions\InvalidNameException.cs" />
+    <Compile Include="Exceptions\InvalidPathException.cs" />
     <Compile Include="Exceptions\ModuleBuilderException.cs" />
     <Compile Include="Exceptions\NameResolutionFailureException.cs" />
     <Compile Include="Exceptions\NameManagerException.cs" />
@@ -191,7 +192,6 @@
     <Compile Include="Interfaces\ITemplate.cs" />
     <Compile Include="Interfaces\Managers\IIdManager.cs" />
     <Compile Include="Interfaces\DataModel\IDataContextFactory.cs" />
-    <Compile Include="Interfaces\Managers\ITemplateManager.cs" />
     <Compile Include="Interfaces\Runtime\ICssWriter.cs" />
     <Compile Include="Interfaces\Runtime\IDataRepeater.cs" />
     <Compile Include="Interfaces\Runtime\IDebuggable.cs" />

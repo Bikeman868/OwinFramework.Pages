@@ -116,18 +116,21 @@ namespace Sample1
 
             // This is an example of building and registering a custom template
             var templateBuilder = ninject.Get<ITemplateBuilder>();
+
             var template1 = templateBuilder.BuildUpTemplate()
                 .AddElementOpen("p", "class", "dummy")
-                .AddText("dummy-text", "This is a dummy")
-                //.AddDataField(typeof(ApplicationInfo), "Name")
-                .AddElementClose()
-                .Build();
-            var template2 = templateBuilder.BuildUpTemplate()
-                .AddElementOpen("p", "class", "test")
-                .AddText("dummy-text", "Page 2 body")
+                .AddText("this-is-the", "This is the ")
+                .AddDataField(typeof(ApplicationInfo), "Name")
+                .AddText("application", " application")
                 .AddElementClose()
                 .Build();
             nameManager.Register(template1, "/common/pageTitle");
+
+            var template2 = templateBuilder.BuildUpTemplate()
+                .AddElementOpen("p", "class", "test")
+                .AddText("page-2-body", "Page 2 body")
+                .AddElementClose()
+                .Build();
             nameManager.Register(template2, "/page2/body");
 
             // Now that all of the elements are loaded an registered we can resolve name

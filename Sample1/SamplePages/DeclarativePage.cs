@@ -1,5 +1,6 @@
 ﻿using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
+using Sample1.SampleDataProviders;
 
 /* 
  * This page demonstrates how to define page elements declaratively. Notice how the
@@ -132,6 +133,7 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("navigation")]
     [UsesTemplate("/common/pageTitle")]
+    [NeedsData(typeof(ApplicationInfo))] //TODO: This should not be required, the template already knows its data needs
     internal class TitleRegion { }
 
     /// <summary>

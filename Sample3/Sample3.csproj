@@ -63,6 +63,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="UseCase2.cs" />
+    <Compile Include="UseCase1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="paket.references" />

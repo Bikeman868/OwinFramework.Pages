@@ -391,5 +391,18 @@ namespace OwinFramework.Pages.Framework.Managers
         }
 
         #endregion
+
+        #region INamed and IPackagable
+
+        public ElementType ElementType
+        {
+            get { return ElementType.Unnamed; }
+        }
+
+        public string Name { get { return null; } set { } }
+
+        public IPackage Package { get { return null; } set { } }
+
+        #endregion
     }
 }

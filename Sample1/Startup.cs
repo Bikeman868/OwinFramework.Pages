@@ -63,7 +63,7 @@ namespace Sample1
             app.UseBuilder(pipelineBuilder);
 
             // The IRequestRouter is the entry point to the Pages middleware
-            var pageRequestRouter = ninject.Get<IRequestRouter>();
+            var requestRouter = ninject.Get<IRequestRouter>();
 
             // The name manager allows elements that reference each other by name
             // to be registered in any order
@@ -76,7 +76,7 @@ namespace Sample1
 
             // This is an example of registering an implementation of IPage with a 
             // wildcard request filter and below normal priority
-            pageRequestRouter.Register(
+            requestRouter.Register(
                 new FullCustomPage(),
                 new FilterAllFilters(
                     new FilterByMethod(Methods.Head, Methods.Get), 
@@ -86,7 +86,7 @@ namespace Sample1
             // This is an example of routing requests to a class that inherits from the
             // base Page class with an exact match request filter and higher than normal
             // priority
-            pageRequestRouter.Register(
+            requestRouter.Register(
                 ninject.Get<SemiCustomPage>(), 
                 new FilterAllFilters(
                     new FilterByMethod(Methods.Get, Methods.Post, Methods.Put),

@@ -23,6 +23,10 @@ namespace OwinFramework.Pages.Framework.Managers
 
         private readonly List<PendingActionBase> _pendingActions;
 
+        private readonly List<IElement> _pendingElementRegistrations;
+        private readonly List<IDataProvider> _pendingDataProviderRegistrations;
+        private readonly List<IRunable> _pendingRunableRegistrations;
+
         private readonly IDictionary<string, HashSet<string>> _assetNames;
         private readonly Random _random;
 
@@ -41,6 +45,11 @@ namespace OwinFramework.Pages.Framework.Managers
             _templates = new Dictionary<string, ITemplate>(StringComparer.InvariantCultureIgnoreCase);
 
             _assetNames = new Dictionary<string, HashSet<string>>(StringComparer.InvariantCultureIgnoreCase);
+
+            _pendingElementRegistrations = new List<IElement>();
+            _pendingDataProviderRegistrations = new List<IDataProvider>();
+            _pendingRunableRegistrations = new List<IRunable>();
+
             _random = new Random();
         }
 
@@ -51,45 +60,25 @@ namespace OwinFramework.Pages.Framework.Managers
             if (string.IsNullOrEmpty(element.Name))
                 element.Name = GenerateElementName(element.Package);
             else
-                ValidateName(element.Name, element.Package);
+                ValidateElementName(element.Name, element.Package);
 
-            var name = element.Package == null 
-                ? element.Name 
-                : element.Package.NamespaceName + ":" + element.Name;
-
-            var component = element as IComponent;
-            if (component != null) lock (_components) _components.Add(name, component);
-
-            var region = element as IRegion;
-            if (region != null) lock (_regions) _regions.Add(name, region);
-
-            var layout = element as ILayout;
-            if (layout != null) lock (_layouts) _layouts.Add(name, layout);
+            if (element.Package == null)
+                _pendingElementRegistrations.Add(element);
+            else
+                RegisterElement(element);
         }
 
         public void Register(IRunable runable)
         {
-            var page = runable as IPage;
-            if (page != null)
-            {
-                if (string.IsNullOrEmpty(page.Name))
-                    page.Name = GenerateElementName(page.Package);
-                else
-                    ValidateName(page.Name, page.Package);
+            if (string.IsNullOrEmpty(runable.Name))
+                runable.Name = GenerateElementName(runable.Package);
+            else
+                ValidateElementName(runable.Name, runable.Package);
 
-                lock (_pages) _pages.Add(page.Name, page);
-            }
-
-            var service = runable as IService;
-            if (service != null)
-            {
-                if (string.IsNullOrEmpty(service.Name))
-                    service.Name = GenerateElementName(service.Package);
-                else
-                    ValidateName(service.Name, service.Package);
-
-                lock (_services) _services.Add(service.Name, service);
-            }
+            if (runable.Package == null)
+                _pendingRunableRegistrations.Add(runable);
+            else
+                RegisterRunable(runable);
         }
 
         public void Register(IModule module)
@@ -105,7 +94,7 @@ namespace OwinFramework.Pages.Framework.Managers
             if (string.IsNullOrEmpty(package.NamespaceName))
                 package.NamespaceName = GenerateNamespaceName(String.Empty);
             else
-                ValidateName(package.NamespaceName, null);
+                ValidateElementName(package.NamespaceName, null);
 
             if (string.IsNullOrEmpty(package.Name))
                 package.Name = package.NamespaceName;
@@ -125,16 +114,15 @@ namespace OwinFramework.Pages.Framework.Managers
             if (string.IsNullOrEmpty(dataProvider.Name))
                 dataProvider.Name = GenerateElementName(dataProvider.Package);
             else
-                ValidateName(dataProvider.Name, dataProvider.Package);
+                ValidateElementName(dataProvider.Name, dataProvider.Package);
 
-            var name = dataProvider.Package == null
-                ? dataProvider.Name
-                : dataProvider.Package.NamespaceName + ":" + dataProvider.Name;
-
-            lock (_dataProviders) _dataProviders[name] = dataProvider;
+            if (dataProvider.Package == null)
+                _pendingDataProviderRegistrations.Add(dataProvider);
+            else
+                RegisterDataProvider(dataProvider);
         }
 
-        private void ValidateName(string name, IPackage package)
+        private void ValidateElementName(string name, IPackage package)
         {
             if (string.IsNullOrEmpty(name))
                 return;
@@ -153,6 +141,46 @@ namespace OwinFramework.Pages.Framework.Managers
                 throw new InvalidPathException(path);
         }
 
+        private void RegisterElement(IElement element)
+        {
+            var name = element.Package == null
+                ? element.Name
+                : element.Package.NamespaceName + ":" + element.Name;
+
+            var component = element as IComponent;
+            if (component != null) lock (_components) _components.Add(name, component);
+
+            var region = element as IRegion;
+            if (region != null) lock (_regions) _regions.Add(name, region);
+
+            var layout = element as ILayout;
+            if (layout != null) lock (_layouts) _layouts.Add(name, layout);
+        }
+
+        public void RegisterDataProvider(IDataProvider dataProvider)
+        {
+            var name = dataProvider.Package == null
+                ? dataProvider.Name
+                : dataProvider.Package.NamespaceName + ":" + dataProvider.Name;
+
+            lock (_dataProviders) _dataProviders[name] = dataProvider;
+        }
+
+        public void RegisterRunable(IRunable runable)
+        {
+            var name = runable.Package == null
+                ? runable.Name
+                : runable.Package.NamespaceName + ":" + runable.Name;
+
+            var page = runable as IPage;
+            if (page != null)
+                lock (_pages) _pages.Add(name, page);
+
+            var service = runable as IService;
+            if (service != null)
+                lock (_services) _services.Add(name, service);
+        }
+
         #endregion
 
         #region Resolution handlers
@@ -160,6 +188,39 @@ namespace OwinFramework.Pages.Framework.Managers
         public void Bind()
         {
             List<Exception> exceptions = null;
+
+            if (_pendingElementRegistrations.Count > 0)
+            {
+                AddResolutionHandler(NameResolutionPhase.RegisterPackagedElements, 
+                    () =>
+                    {
+                        foreach(var element in _pendingElementRegistrations)
+                            RegisterElement(element);
+                        _pendingElementRegistrations.Clear();
+                    });
+            }
+
+            if (_pendingDataProviderRegistrations.Count > 0)
+            {
+                AddResolutionHandler(NameResolutionPhase.RegisterPackagedElements,
+                    () =>
+                    {
+                        foreach (var dataProvider in _pendingDataProviderRegistrations)
+                            RegisterDataProvider(dataProvider);
+                        _pendingDataProviderRegistrations.Clear();
+                    });
+            }
+
+            if (_pendingRunableRegistrations.Count > 0)
+            {
+                AddResolutionHandler(NameResolutionPhase.RegisterPackagedElements,
+                    () =>
+                    {
+                        foreach (var runable in _pendingRunableRegistrations)
+                            RegisterRunable(runable);
+                        _pendingRunableRegistrations.Clear();
+                    });
+            }
 
             lock (_pendingActions)
             {
@@ -393,7 +454,7 @@ namespace OwinFramework.Pages.Framework.Managers
                 if (_templates.TryGetValue(path, out template))
                     return template;
             }
-            throw new NameResolutionFailureException(typeof(ITemplate), null, path);
+            return null;
         }
 
         public IModule ResolveModule(string name)

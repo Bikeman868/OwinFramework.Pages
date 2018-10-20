@@ -10,7 +10,7 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// are discovered at startup which makes all of their
     /// elements available to the website builder
     /// </summary>
-    public interface IPackage: INamed
+    public interface IPackage : INamed
     {
         /// <summary>
         /// The unique namespace for everything in this package

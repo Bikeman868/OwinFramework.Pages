@@ -163,6 +163,10 @@ namespace OwinFramework.Pages.Framework.Builders
             if (module != null)
                 _nameManager.Register(module);
 
+            var runable = obj as IRunable;
+            if (runable != null)
+                _nameManager.Register(runable);
+
             var element = obj as IElement;
             if (element != null)
                 _nameManager.Register(element);

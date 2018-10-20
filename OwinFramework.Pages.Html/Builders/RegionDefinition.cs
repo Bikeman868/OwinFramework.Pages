@@ -244,8 +244,8 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, c, n) => c.HasDependency(nm.ResolveDataProvider(n)),
-                dataConsumer,
+                (nm, r, n) => ((IDataConsumer)r).HasDependency(nm.ResolveDataProvider(n, r.Package)),
+                _region,
                 dataProviderName);
 
             return this;

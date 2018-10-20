@@ -7,7 +7,7 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// A service responds to browser requests by executing business logic
     /// and returning data in response. The response data can be any mime type.
     /// </summary>
-    public interface IService : IRunable, INamed, IPackagable
+    public interface IService : IRunable
     {
         /// <summary>
         /// This method is called after all names have been resolved and all

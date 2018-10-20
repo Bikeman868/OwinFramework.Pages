@@ -6,6 +6,7 @@ using Moq.Modules;
 using NUnit.Framework;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
+using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Framework.Managers;
@@ -33,6 +34,7 @@ namespace OwinFramework.Pages.UnitTests.Framework.Managers
             var component = new Component(SetupMock<IComponentDependenciesFactory>());
             component.Name = "AbcDef";
             _nameManager.Register(component);
+            _nameManager.Bind();
 
             Assert.AreEqual(component, _nameManager.ResolveComponent("AbcDef"));
             Assert.AreEqual(component, _nameManager.ResolveComponent("abcdef"));
@@ -55,6 +57,7 @@ namespace OwinFramework.Pages.UnitTests.Framework.Managers
             var layout = new Layout(SetupMock<ILayoutDependenciesFactory>());
             layout.Name = "AbcDef";
             _nameManager.Register(layout);
+            _nameManager.Bind();
 
             Assert.AreEqual(layout, _nameManager.ResolveLayout("AbcDef"));
             Assert.AreEqual(layout, _nameManager.ResolveLayout("abcdef"));
@@ -77,6 +80,7 @@ namespace OwinFramework.Pages.UnitTests.Framework.Managers
             var module = new Module(SetupMock<IModuleDependenciesFactory>());
             module.Name = "AbcDef";
             _nameManager.Register(module);
+            _nameManager.Bind();
 
             Assert.AreEqual(module, _nameManager.ResolveModule("AbcDef"));
             Assert.AreEqual(module, _nameManager.ResolveModule("abcdef"));
@@ -115,6 +119,83 @@ namespace OwinFramework.Pages.UnitTests.Framework.Managers
             _nameManager.Bind();
 
             Assert.AreEqual(1000, handlerCount);
+        }
+
+        [Test]
+        public void Should_separete_package_namespaces()
+        {
+            var package1 = new TestPackage { NamespaceName = "package1" };
+            var package2 = new TestPackage { NamespaceName = "package2" };
+
+            var layout1 = new Layout(SetupMock<ILayoutDependenciesFactory>());
+            layout1.Name = "layout";
+            layout1.Package = package1;
+            _nameManager.Register(layout1);
+
+            var layout2 = new Layout(SetupMock<ILayoutDependenciesFactory>());
+            layout2.Name = "layout";
+            layout2.Package = package2;
+            _nameManager.Register(layout2);
+
+            _nameManager.Bind();
+
+            Assert.AreEqual(layout1, _nameManager.ResolveLayout("layout", package1));
+            Assert.AreEqual(layout2, _nameManager.ResolveLayout("layout", package2));
+
+            Assert.AreEqual(layout1, _nameManager.ResolveLayout("package1:layout"));
+            Assert.AreEqual(layout1, _nameManager.ResolveLayout("package1:layout", package1));
+            Assert.AreEqual(layout1, _nameManager.ResolveLayout("package1:layout", package2));
+
+            Assert.AreEqual(layout2, _nameManager.ResolveLayout("package2:layout"));
+            Assert.AreEqual(layout2, _nameManager.ResolveLayout("package2:layout", package1));
+            Assert.AreEqual(layout2, _nameManager.ResolveLayout("package2:layout", package2));
+        }
+
+        [Test]
+        public void Should_separete_package_namespaces_with_defered_package_resolution()
+        {
+            var package1 = new TestPackage { NamespaceName = "package1" };
+            var package2 = new TestPackage { NamespaceName = "package2" };
+
+            var layout1 = new Layout(SetupMock<ILayoutDependenciesFactory>());
+            layout1.Name = "layout";
+            _nameManager.Register(layout1);
+
+            var layout2 = new Layout(SetupMock<ILayoutDependenciesFactory>());
+            layout2.Name = "layout";
+            _nameManager.Register(layout2);
+
+            _nameManager.AddResolutionHandler(NameResolutionPhase.ResolvePackageNames, nm =>
+                {
+                    layout1.Package = package1;
+                    layout2.Package = package2;
+                });
+
+            _nameManager.Bind();
+
+            Assert.AreEqual(layout1, _nameManager.ResolveLayout("layout", package1));
+            Assert.AreEqual(layout2, _nameManager.ResolveLayout("layout", package2));
+
+            Assert.AreEqual(layout1, _nameManager.ResolveLayout("package1:layout"));
+            Assert.AreEqual(layout1, _nameManager.ResolveLayout("package1:layout", package1));
+            Assert.AreEqual(layout1, _nameManager.ResolveLayout("package1:layout", package2));
+
+            Assert.AreEqual(layout2, _nameManager.ResolveLayout("package2:layout"));
+            Assert.AreEqual(layout2, _nameManager.ResolveLayout("package2:layout", package1));
+            Assert.AreEqual(layout2, _nameManager.ResolveLayout("package2:layout", package2));
+        }
+
+        private class TestPackage : IPackage
+        {
+            public ElementType ElementType { get { return ElementType.Package; } }
+            public string Name { get; set; }
+            public string NamespaceName { get; set; }
+            public IModule Module { get; set; }
+
+            public IPackage Build(IFluentBuilder fluentBuilder)
+            {
+                return this;
+            }
         }
 
     }

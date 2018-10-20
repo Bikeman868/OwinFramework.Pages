@@ -46,8 +46,11 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition PartOf(string packageName)
         {
-            _package = _nameManager.ResolvePackage(packageName);
-            ((ITemplate)_template).Package = _package;
+            _nameManager.AddResolutionHandler(NameResolutionPhase.ResolvePackageNames, nm =>
+                {
+                    _package = nm.ResolvePackage(packageName);
+                    ((ITemplate)_template).Package = _package;
+                });
             return this;
         }
 
@@ -110,23 +113,15 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddLayout(string layoutName)
         {
-            var layout = _nameManager.ResolveLayout(layoutName, _package);
+            var index = _renderActions.Count;
+            _renderActions.Add(null);
 
-            if (layout == null)
+            _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
             {
-                var index = _renderActions.Count;
-                _renderActions.Add(null);
-                _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
-                {
-                    var e = nm.ResolveLayout(layoutName, _package);
-                    _renderActions[index] = r => e.WritePageArea(r, PageArea.Body, (rc, pa, rn) => WriteResult.Continue()); // TODO: Write layout regions
-                    AddConsumerNeeds(e as IDataConsumer);
-                });
-            }
-            else
-            {
-                AddLayout(layout);
-            }
+                var e = nm.ResolveLayout(layoutName, _package);
+                _renderActions[index] = r => e.WritePageArea(r, PageArea.Body, (rc, pa, rn) => WriteResult.Continue()); // TODO: Write layout regions
+                AddConsumerNeeds(e as IDataConsumer);
+            });
 
             return this;
         }
@@ -141,23 +136,15 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddRegion(string regionName)
         {
-            var region = _nameManager.ResolveRegion(regionName, _package);
+            var index = _renderActions.Count;
+            _renderActions.Add(null);
 
-            if (region == null)
+            _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
             {
-                var index = _renderActions.Count;
-                _renderActions.Add(null);
-                _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
-                {
-                    var e = nm.ResolveRegion(regionName, _package);
-                    _renderActions[index] = r => e.WritePageArea(r, PageArea.Body, null, (rc, pa) => WriteResult.Continue()); // TODO: Write region
-                    AddConsumerNeeds(e as IDataConsumer);
-                });
-            }
-            else
-            {
-                AddRegion(region);
-            }
+                var e = nm.ResolveRegion(regionName, _package);
+                _renderActions[index] = r => e.WritePageArea(r, PageArea.Body, null, (rc, pa) => WriteResult.Continue()); // TODO: Write region
+                AddConsumerNeeds(e as IDataConsumer);
+            });
 
             return this;
         }
@@ -172,23 +159,14 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddComponent(string componentName)
         {
-            var component = _nameManager.ResolveComponent(componentName, _package);
-
-            if (component == null)
-            {
-                var index = _renderActions.Count;
-                _renderActions.Add(null);
-                _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
-                    {
-                        var e = nm.ResolveComponent(componentName, _package);
-                        _renderActions[index] = r => e.WritePageArea(r, PageArea.Body);
-                        AddConsumerNeeds(e as IDataConsumer);
-                    });
-            }
-            else
-            {
-                AddComponent(component);
-            }
+            var index = _renderActions.Count;
+            _renderActions.Add(null);
+            _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
+                {
+                    var e = nm.ResolveComponent(componentName, _package);
+                    _renderActions[index] = r => e.WritePageArea(r, PageArea.Body);
+                    AddConsumerNeeds(e as IDataConsumer);
+                });
 
             return this;
         }

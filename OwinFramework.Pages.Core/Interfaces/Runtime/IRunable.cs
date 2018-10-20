@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     /// <summary>
     /// This is implemented by elements that can hndle requests and return responses
     /// </summary>
-    public interface IRunable
+    public interface IRunable : INamed, IPackagable
     {
         /// <summary>
         /// Returns the name of a permission that the caller must have, or null 

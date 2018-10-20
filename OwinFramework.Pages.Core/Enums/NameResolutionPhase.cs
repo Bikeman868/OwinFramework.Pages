@@ -19,20 +19,26 @@ namespace OwinFramework.Pages.Core.Enums
         ResolvePackageNames = 0,
 
         /// <summary>
-        /// The second step is where elements refer to each other by name.
+        /// This step is where elements that are part of a package have their
+        /// fully qualified name registered with the name manager
+        /// </summary>
+        RegisterPackagedElements = 1,
+
+        /// <summary>
+        /// The next step is where elements refer to each other by name.
         /// The name can be qualified by a namespace. An example of this is
         /// where a region is configured to contain a named component. During
         /// this phase the name will be translated into a reference to the
         /// actual component
         /// </summary>
-        ResolveElementReferences = 1,
+        ResolveElementReferences = 2,
 
         /// <summary>
         /// In this phase names of css classes and javascript functions are
         /// resolved by replacing the namespace placeholder with the actual
         /// namespace of the element that defines the asset
         /// </summary>
-        ResolveAssetNames = 2,
+        ResolveAssetNames = 3,
 
         /// <summary>
         /// This final phase does not actually resolve any names but rather
@@ -42,7 +48,7 @@ namespace OwinFramework.Pages.Core.Enums
         /// instances for each regin in the layout so that each layout can
         /// have different content in the same region.
         /// </summary>
-        CreateInstances = 3,
+        CreateInstances = 4,
 
         /// <summary>
         /// During this phase the pages and services perform initialization 
@@ -52,6 +58,6 @@ namespace OwinFramework.Pages.Core.Enums
         /// a list od data suppliers that are needed to supply the data for this
         /// page
         /// </summary>
-        InitializeRunables = 4
+        InitializeRunables = 5
     }
 }

@@ -66,9 +66,11 @@ namespace Sample3.UseCase2
 
             nameManager.Register(
                 templateBuilder.BuildUpTemplate()
-                    .AddElementOpen("p").AddDataField<Address>(p => p.Street).AddElementClose()
-                    .AddElementOpen("p").AddDataField<Address>(p => p.City).AddElementClose()
-                    .AddElementOpen("p").AddDataField<Address>(p => p.ZipCode).AddElementClose()
+                    .AddElementOpen("p")
+                    .AddDataField<Address>(p => p.Street).AddHtml("<br>")
+                    .AddDataField<Address>(p => p.City).AddHtml("<br>")
+                    .AddDataField<Address>(p => p.ZipCode)
+                    .AddElementClose()
                     .Build(),
                 "/address");
 

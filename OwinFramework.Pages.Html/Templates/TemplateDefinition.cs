@@ -390,6 +390,22 @@ namespace OwinFramework.Pages.Html.Templates
             return AddDataField(typeof(T), property, dataFormatter, scopeName);
         }
 
+        public ITemplateDefinition AddDataField<T>(Func<T, string> formatFunc, string scopeName = null)
+        {
+            Actions.Add(r =>
+            {
+                var data = r.Data.Get<T>(scopeName);
+                var formattedValue = formatFunc(data);
+                r.Html.Write(formattedValue);
+            });
+
+            var dataConsumer = _template as IDataConsumer;
+            if (dataConsumer != null)
+                dataConsumer.HasDependency(typeof(T), scopeName);
+
+            return this;
+        }
+
         public ITemplateDefinition AddDataField(Type dataType, string propertyName, IDataFieldFormatter dataFormatter = null, string scopeName = null)
         {
             var property = dataType.GetProperties().FirstOrDefault(p => string.Equals(p.Name, propertyName, StringComparison.OrdinalIgnoreCase));

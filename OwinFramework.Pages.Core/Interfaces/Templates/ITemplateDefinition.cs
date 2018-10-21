@@ -190,6 +190,16 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
             string scopeName = null);
 
         /// <summary>
+        /// Adds data from a property of a data bound object to the Html output
+        /// by the template when it is rendered.
+        /// </summary>
+        /// <param name="formatFunc">A lambda expression that formats the data
+        /// into Html</param>
+        /// <param name="scopeName">Optional scope name to use when resolving
+        /// data from the data context</param>
+        ITemplateDefinition AddDataField<T>(Func<T, string> formatFunc, string scopeName = null);
+
+        /// <summary>
         /// Adds a paragraph of static text that can be localized
         /// </summary>
         /// <param name="assetName">A unique name for this localizable asset. See

@@ -10,15 +10,15 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Standard
 {
     /// <summary>
-    /// This package defines regiosn that will render a menu. You can have
-    /// a horizontal menu bar with drop-down sub-menus, or you can have a
-    /// hamburger icon with a menu that slides out from the side of the screen.
+    /// This package defines two region that will render either a horizontal menu 
+    /// bar with drop-down sub-menus, or a hamburger icon with a menu that slides 
+    /// out from the side of the screen.
     /// You can also display both menus on the same page and use media queries
     /// to show one oo the other depending on screen size. This is a pure CSS 
     /// imlementation with no JavaScript and uses Html semantically, i.e lists
     /// are lists, links are anchors etc.
     /// The menu skins are separate optional components that you can add to 
-    /// your page, or you can style the menu your way.
+    /// your page, or you can style the menu in your own way.
     /// </summary>
     public class MenuPackage : Framework.Runtime.Package
     {

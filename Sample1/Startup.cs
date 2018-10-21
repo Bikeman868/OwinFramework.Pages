@@ -13,6 +13,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 using OwinFramework.Pages.Core.RequestFilters;
 using OwinFramework.Pages.DebugMiddleware;
+using OwinFramework.Pages.Html.Templates;
 using OwinFramework.Pages.Standard;
 using Sample1.SampleDataProviders;
 using Sample1.SamplePackages;
@@ -100,7 +101,7 @@ namespace Sample1
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
             ninject.Get<OwinFramework.Pages.Restful.BuildEngine>().Install(fluentBuilder);
 
-            // This is an example of registering a package containing components, layouts etc
+            // This is an example of registering packages containing components, layouts etc
             // that can be referenced by name from other elements.
             // When you register a package like this all of the element in the package are 
             // contained in a namespace to avoid naming conflicts. The namespace will be used 
@@ -110,6 +111,7 @@ namespace Sample1
             // name. For example after loading the menu package into the "menus" namespace
             // your application can refer to the desktop menu region as "menus:desktop_menu"
             fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus");
+            fluentBuilder.Register(ninject.Get<LayoutsPackage>(), "layouts");
 
             // This is an example of registering all of the elements defined in an assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
@@ -120,7 +122,7 @@ namespace Sample1
             var template1 = templateBuilder.BuildUpTemplate()
                 .AddElementOpen("p", "class", "dummy")
                 .AddText("this-is-the", "This is the ")
-                .AddDataField(typeof(ApplicationInfo), "Name")
+                .AddDataField<ApplicationInfo>(a => a.Name)
                 .AddText("application", " application")
                 .AddElementClose()
                 .Build();
@@ -132,6 +134,15 @@ namespace Sample1
                 .AddElementClose()
                 .Build();
             nameManager.Register(template2, "/page2/body");
+
+            // This is an example of loading and parsing template files using different
+            // parsers for different file formats
+            var fileSystemLoader = ninject.Get<FileSystemLoader>();
+            var asIsTemplateParser = ninject.Get<AsIsParser>();
+            var markdownTemplateParser = ninject.Get<MarkdownParser>();
+            fileSystemLoader.RootPath = new PathString("/loaded");
+            fileSystemLoader.Load(asIsTemplateParser, p => p.Value.EndsWith(".html"));
+            fileSystemLoader.Load(markdownTemplateParser, p => p.Value.EndsWith(".md"));
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements

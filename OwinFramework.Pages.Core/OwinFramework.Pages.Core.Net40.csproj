@@ -125,6 +125,7 @@
     <Compile Include="Enums\NameResolutionPhase.cs" />
     <Compile Include="Enums\PageArea.cs" />
     <Compile Include="Exceptions\InvalidPathException.cs" />
+    <Compile Include="Exceptions\TemplateLoaderException.cs" />
     <Compile Include="Exceptions\TemplateBuilderException.cs" />
     <Compile Include="Exceptions\DataProviderBuilderException.cs" />
     <Compile Include="Exceptions\DataCatalogException.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace OwinFramework.Pages.Core.Interfaces.Templates
 {
@@ -21,6 +22,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// Adds a block of HTML to the template definition
         /// </summary>
         ITemplateDefinition AddHtml(string html);
+
+        /// <summary>
+        /// Adds an html element with attributes and content
+        /// </summary>
+        ITemplateDefinition AddElement(string tag, string content, params string[] attributePairs);
 
         /// <summary>
         /// Adds an opening Html element
@@ -101,9 +107,52 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         ITemplateDefinition RepeatStart(Type dataTypeToRepeat, string scopeName = null, string listScopeName = null);
 
         /// <summary>
+        /// Starts a section that will repeat
+        /// </summary>
+        ITemplateDefinition RepeatStart<T>(string scopeName = null, string listScopeName = null);
+
+        /// <summary>
         /// Closes off a repeating section
         /// </summary>
         ITemplateDefinition RepeatEnd();
+
+        /// <summary>
+        /// Finds a supplier of the specified type of data and adds it to the
+        /// render context for the purpose of data binding
+        /// </summary>
+        /// <param name="dataType">The type of data to add</param>
+        /// <param name="scopeName">Optional scope qualifier</param>
+        /// <returns></returns>
+        ITemplateDefinition AddData(Type dataType, string scopeName = null);
+
+        /// <summary>
+        /// Finds a supplier of the specified type of data and adds it to the
+        /// render context for the purpose of data binding
+        /// </summary>
+        /// <param name="scopeName">Optional scope qualifier</param>
+        /// <returns></returns>
+        ITemplateDefinition AddData<T>(string scopeName = null);
+
+        /// <summary>
+        /// Finds a supplier of the specified type of data and adds it to the
+        /// render context for the purpose of data binding
+        /// </summary>
+        /// <param name="dataType">The type of data to add</param>
+        /// <param name="propertyName">The name of the property to extract</param>
+        /// <param name="scopeName">Optional scope to put the extracted data into</param>
+        /// <param name="propertyScopeName">Optional scope to get the data from</param>
+        /// <returns></returns>
+        ITemplateDefinition ExtractProperty(Type dataType, string propertyName, string scopeName = null, string propertyScopeName = null);
+
+        /// <summary>
+        /// Finds a supplier of the specified type of data and adds it to the
+        /// render context for the purpose of data binding
+        /// </summary>
+        /// <param name="propertyExpression">A lambda function identifying the property to extract</param>
+        /// <param name="scopeName">Optional scope to put the extracted data into</param>
+        /// <param name="propertyScopeName">Optional scope to get the data from</param>
+        /// <returns></returns>
+        ITemplateDefinition ExtractProperty<T>(Expression<Func<T, object>> propertyExpression, string scopeName = null, string propertyScopeName = null);
 
         /// <summary>
         /// Adds data from a property of a data bound object to the Html output
@@ -112,7 +161,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <param name="dataType">The type of data to bind to. This will typically 
         /// be an object with public properties</param>
         /// <param name="propertyName">The name of the public property to read from 
-        /// the data obkect</param>
+        /// the data object</param>
         /// <param name="dataFormatter">Optional data formatter that will take the 
         /// property value and convert it to text. If you do do not pass a formatter 
         /// then the ToString() method will be called on the property value</param>
@@ -122,6 +171,22 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
             Type dataType, 
             string propertyName, 
             IDataFieldFormatter dataFormatter = null, 
+            string scopeName = null);
+
+        /// <summary>
+        /// Adds data from a property of a data bound object to the Html output
+        /// by the template when it is rendered.
+        /// </summary>
+        /// <param name="propertyExpression">A lambda expression that refers to the property
+        /// to read from the bound data</param>
+        /// <param name="dataFormatter">Optional data formatter that will take the 
+        /// property value and convert it to text. If you do do not pass a formatter 
+        /// then the ToString() method will be called on the property value</param>
+        /// <param name="scopeName">Optional scope name to use when resolving
+        /// data from the data context</param>
+        ITemplateDefinition AddDataField<T>(
+            Expression<Func<T, object>> propertyExpression,
+            IDataFieldFormatter dataFormatter = null,
             string scopeName = null);
 
         /// <summary>

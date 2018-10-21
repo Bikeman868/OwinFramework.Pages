@@ -58,11 +58,37 @@ namespace Sample3.UseCase2
                 templateBuilder.BuildUpTemplate()
                     .AddElementOpen("p", "class", "dummy")
                     .AddText("this-is-the", "This is the ")
-                    .AddDataField(typeof(ApplicationInfo), "Name")
-                    .AddText("application", " application")
+                    .AddDataField<ApplicationInfo>(a => a.Name)
+                    .AddText("application", " application\n")
                     .AddElementClose()
                     .Build(), 
-                "/common/pageTitle");
+                "/title");
+
+            nameManager.Register(
+                templateBuilder.BuildUpTemplate()
+                    .AddElementOpen("p").AddDataField<Address>(p => p.Street).AddElementClose()
+                    .AddElementOpen("p").AddDataField<Address>(p => p.City).AddElementClose()
+                    .AddElementOpen("p").AddDataField<Address>(p => p.ZipCode).AddElementClose()
+                    .Build(),
+                "/address");
+
+            nameManager.Register(
+                templateBuilder.BuildUpTemplate()
+                    .AddElementOpen("h3")
+                    .AddDataField<Person>(p => p.Name)
+                    .AddElementClose()
+                    .ExtractProperty<Person>(p => p.Address)
+                    .AddTemplate("/address")
+                    .Build(),
+                "/person");
+
+            nameManager.Register(
+                templateBuilder.BuildUpTemplate()
+                    .RepeatStart<Person>()
+                    .AddTemplate("/person")
+                    .RepeatEnd()
+                    .Build(),
+                "/people");
 
             nameManager.Bind();
 
@@ -87,47 +113,19 @@ namespace Sample3.UseCase2
     [UsesLayout("layout")]
     internal class Page1 : ApplicationElement { }
 
-    [IsLayout("layout", "body")]
-    [LayoutRegion("body", "body")]
-    [RegionTemplate("body", "/common/pageTitle")]
+    [IsLayout("layout", "head,body")]
+    [LayoutRegion("head", "div")]
+    [LayoutRegion("body", "div")]
+    [RegionTemplate("head", "/title")]
+    [RegionTemplate("body", "/people")]
     internal class BasePageLayout : ApplicationElement { }
 
-    [IsRegion("body")]
-    //[NeedsData(typeof(ApplicationInfo))]
-    internal class BodyRegion : ApplicationElement { }
+    [IsRegion("div")]
+    internal class DivRegion : ApplicationElement { }
 
     [IsPackage("usecase2", "uc2")]
     internal class ApplicationPackage { }
 
     [PartOf("usecase2")]
     internal class ApplicationElement { }
-
-    #region Define some test data to work with
-
-    internal class ApplicationInfo
-    {
-        public string Name { get { return "My Application"; } }
-    }
-
-    [IsDataProvider("application", typeof(ApplicationInfo))]
-    internal class ApplicationInfoDataProvider : DataProvider
-    {
-        private readonly ApplicationInfo _applicationInfo;
-
-        public ApplicationInfoDataProvider(IDataProviderDependenciesFactory dependencies)
-            : base(dependencies)
-        {
-            _applicationInfo = new ApplicationInfo();
-        }
-
-        protected override void Supply(
-            IRenderContext renderContext,
-            IDataContext dataContext,
-            IDataDependency dependency)
-        {
-            dataContext.Set(_applicationInfo);
-        }
-    }
-
-    #endregion
 }

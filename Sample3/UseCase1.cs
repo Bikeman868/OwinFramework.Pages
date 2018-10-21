@@ -155,55 +155,7 @@ namespace Sample3.UseCase1
 
     #endregion
 
-    #region Define some test data to work with
-
-    internal class Person
-    {
-        public string Name { get; set; }
-        public Address Address { get; set; }
-    }
-
-    internal class Address
-    {
-        public string Street { get; set; }
-        public string City { get; set; }
-        public string ZipCode { get; set; }
-    }
-
-    [IsDataProvider("people", typeof(IList<Person>))]
-    [PartOf("usecase1")]
-    internal class PersonListProvider : DataProvider
-    {
-        public PersonListProvider(IDataProviderDependenciesFactory dependencies)
-            : base(dependencies) { }
-
-        protected override void Supply(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
-        {
-            var people = new[]
-            {
-                new Person { Name = "Person 1", Address = new Address { Street = "1 Main St", City = "City", ZipCode = "12345" }},
-                new Person { Name = "Person 2", Address = new Address { Street = "2 Main St", City = "City", ZipCode = "54321" }},
-                new Person { Name = "Person 3", Address = new Address { Street = "3 Main St", City = "City", ZipCode = "99999" }},
-            };
-            dataContext.Set<IList<Person>>(people);
-        }
-    }
-
-    [IsDataProvider("person_address")]
-    [PartOf("usecase1")]
-    [SuppliesData(typeof(Address))]
-    [NeedsData(typeof(Person))]
-    internal class PersonAddressProvider : DataProvider
-    {
-        public PersonAddressProvider(IDataProviderDependenciesFactory dependencies)
-            : base(dependencies) { }
-
-        protected override void Supply(IRenderContext renderContext, IDataContext dataContext, IDataDependency dependency)
-        {
-            var person = dataContext.Get<Person>();
-            dataContext.Set(person.Address);
-        }
-    }
+    #region Components to display test data
 
     [IsComponent("person")]
     [PartOf("usecase1")]

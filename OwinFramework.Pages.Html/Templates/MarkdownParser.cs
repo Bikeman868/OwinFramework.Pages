@@ -6,6 +6,7 @@ using System.Text;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Templates;
+using OwinFramework.Pages.Html.Templates.Text;
 
 namespace OwinFramework.Pages.Html.Templates
 {
@@ -47,15 +48,95 @@ namespace OwinFramework.Pages.Html.Templates
             return templateDefinition.Build();
         }
 
-        private bool BeginElement(ITemplateDefinition template, Text.IDocumentElement element)
+        private bool BeginElement(ITemplateDefinition template, IDocumentElement element)
         {
-            template.AddText(null, "Begin " + element.ElementType);
+            var breakElement = element as IBreakElement;
+            var textElement = element as ITextElement;
+            var nestedElement = element as INestedElement;
+            var containerElement = element as IContainerElement;
+            var styleElement = element as IStyleElement;
+            var configurableElement = element as IConfigurableElement;
+            var linkElement = element as ILinkElement;
+
+            Action close = null;
+
+            switch (element.ElementType)
+            {
+                case ElementTypes.Heading:
+                    {
+                        var headingLevel = 1;
+                        if (nestedElement != null)
+                            headingLevel = nestedElement.Level;
+
+                        template.AddElementOpen("h" + headingLevel);
+                        close = () => template.AddElementClose();
+                    }
+                    break;
+            }
+
+            /*
+            if (styleElement != null)
+            {
+                if (!string.IsNullOrEmpty(styleElement.ClassNames))
+                {
+                    _characterStream.State = HtmlStates.AttributeName;
+                    _textWriter.Write(" class=");
+                    _characterStream.State = HtmlStates.BeforeAttributeValue;
+                    _textWriter.WriteQuotedString(styleElement.ClassNames);
+                }
+                if (styleElement.Styles != null && styleElement.Styles.Count > 0)
+                {
+                    var styles = styleElement.Styles.Aggregate(string.Empty, (s, kvp) => s + (s.Length > 0 ? " " : "") + kvp.Key + ":" + kvp.Value + ";");
+
+                    _characterStream.State = HtmlStates.AttributeName;
+                    _textWriter.Write(" style=");
+                    _characterStream.State = HtmlStates.BeforeAttributeValue;
+                    _textWriter.WriteQuotedString(styles);
+                }
+            }
+
+            if (configurableElement != null)
+            {
+                if (configurableElement.Attributes != null)
+                {
+                    foreach (var attribute in configurableElement.Attributes)
+                    {
+                        _characterStream.State = HtmlStates.AttributeName;
+                        _textWriter.Write(' ');
+                        _textWriter.Write(attribute.Key);
+                        _textWriter.Write("=");
+                        _characterStream.State = HtmlStates.BeforeAttributeValue;
+                        _textWriter.WriteQuotedString(attribute.Value);
+                    }
+                }
+            }
+            
+             */
+
+            if (close != null) close();
+
+            if (textElement != null && !string.IsNullOrEmpty(textElement.Text))
+            {
+                template.AddText(null, textElement.Text);
+            }
+
             return true;
         }
 
         private bool EndElement(ITemplateDefinition template, Text.IDocumentElement element)
         {
-            template.AddText(null, "End " + element.ElementType);
+            var breakElement = element as IBreakElement;
+            var textElement = element as ITextElement;
+            var nestedElement = element as INestedElement;
+            var containerElement = element as IContainerElement;
+            var styleElement = element as IStyleElement;
+            var configurableElement = element as IConfigurableElement;
+            var linkElement = element as ILinkElement;
+
+            switch (element.ElementType)
+            {
+            }
+
             return true;
         }
     }

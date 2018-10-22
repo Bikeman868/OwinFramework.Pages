@@ -36,16 +36,24 @@ namespace OwinFramework.Pages.Html.Templates
             var templateDefinition = _templateBuilder.BuildUpTemplate()
                 .PartOf(package);
 
-            var parser = new Text.MarkdownParser(_stringBuilderFactory);
-            using (var textReader = new StringReader(markdown))
-            {
-                parser.Parse(
-                    textReader,
-                    e => BeginElement(templateDefinition, e),
-                    e => EndElement(templateDefinition, e));
-            }
+            var documentTransformer = new DocumentTransformer(_stringBuilderFactory);
+            var document = documentTransformer.ParseDocument("text/x-markdown", markdown);
+            documentTransformer.CleanDocument(document, DocumentCleaning.MakeParagraphs | DocumentCleaning.RemoveBlankLines);
+
+            Write(templateDefinition, document);
 
             return templateDefinition.Build();
+        }
+
+        private void Write(ITemplateDefinition template, IDocumentElement element)
+        {
+            BeginElement(template, element);
+
+            if (element.Children != null)
+                foreach (var child in element.Children)
+                    Write(template, child);
+
+            EndElement(template, element);
         }
 
         private bool BeginElement(ITemplateDefinition template, IDocumentElement element)
@@ -58,21 +66,7 @@ namespace OwinFramework.Pages.Html.Templates
             var configurableElement = element as IConfigurableElement;
             var linkElement = element as ILinkElement;
 
-            Action close = null;
-
-            switch (element.ElementType)
-            {
-                case ElementTypes.Heading:
-                    {
-                        var headingLevel = 1;
-                        if (nestedElement != null)
-                            headingLevel = nestedElement.Level;
-
-                        template.AddElementOpen("h" + headingLevel);
-                        close = () => template.AddElementClose();
-                    }
-                    break;
-            }
+            List<string> attributes = null;
 
             /*
             if (styleElement != null)
@@ -113,7 +107,19 @@ namespace OwinFramework.Pages.Html.Templates
             
              */
 
-            if (close != null) close();
+            var attributeParams = attributes == null ? null : attributes.ToArray();
+
+            switch (element.ElementType)
+            {
+                case ElementTypes.Heading:
+                    {
+                        var headingLevel = 1;
+                        if (nestedElement != null)
+                            headingLevel = nestedElement.Level;
+                        template.AddElementOpen("h" + headingLevel, attributeParams);
+                    }
+                    break;
+            }
 
             if (textElement != null && !string.IsNullOrEmpty(textElement.Text))
             {
@@ -123,7 +129,7 @@ namespace OwinFramework.Pages.Html.Templates
             return true;
         }
 
-        private bool EndElement(ITemplateDefinition template, Text.IDocumentElement element)
+        private bool EndElement(ITemplateDefinition template, IDocumentElement element)
         {
             var breakElement = element as IBreakElement;
             var textElement = element as ITextElement;
@@ -135,6 +141,9 @@ namespace OwinFramework.Pages.Html.Templates
 
             switch (element.ElementType)
             {
+                case ElementTypes.Heading:
+                    template.AddElementClose();
+                    break;
             }
 
             return true;

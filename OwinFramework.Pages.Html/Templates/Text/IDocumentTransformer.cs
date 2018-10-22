@@ -5,17 +5,6 @@ namespace OwinFramework.Pages.Html.Templates.Text
     public interface IDocumentTransformer
     {
         /// <summary>
-        /// Analyses textual content and tries to figure out what format it is in.
-        /// This method only does very basic checks to determine the document format,
-        /// the better method is to pass the document through each format parser and
-        /// see which one found the best conformance to the format specification.
-        /// </summary>
-        /// <param name="content">The content to analyse</param>
-        /// <returns>The mime type of the content or null if the format can't
-        /// easily be determined</returns>
-        string DetermineMimeType(string content);
-
-        /// <summary>
         /// Parses a document with a known Mime type and makes a callback for each element
         /// of the document. Note that headings will only be adjusted after the whole document
         /// is parsed. The adjusted headings are therefore only available in the onEndProcessElement

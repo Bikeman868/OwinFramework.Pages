@@ -64,6 +64,7 @@
     <Compile Include="Templates\Text\DocumentElement.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Templates\Text\DocumentTransformer.cs" />
     <Compile Include="Templates\Text\Element.cs">
       <SubType>Code</SubType>
     </Compile>

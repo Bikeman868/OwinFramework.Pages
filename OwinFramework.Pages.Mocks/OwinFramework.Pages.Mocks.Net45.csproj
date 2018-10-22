@@ -50,6 +50,7 @@
     <Compile Include="Builder\MockComponentDependenciesFactory.cs" />
     <Compile Include="Builder\MockLayoutDependenciesFactory.cs" />
     <Compile Include="Collections\MockQueueFactory.cs" />
+    <Compile Include="Collections\MockStringBuilderFactory.cs" />
     <Compile Include="DataModel\MockDataCatalog.cs" />
     <Compile Include="DataModel\MockDataContextBuilder.cs" />
     <Compile Include="DataModel\MockDataSupplier.cs" />

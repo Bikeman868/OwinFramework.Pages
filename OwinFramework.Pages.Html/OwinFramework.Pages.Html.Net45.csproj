@@ -101,9 +101,60 @@
     <Compile Include="Runtime\RenderContext.cs" />
     <Compile Include="Runtime\RenderContextFactory.cs" />
     <Compile Include="Runtime\WriteResult.cs" />
+    <Compile Include="Templates\AsIsParser.cs" />
+    <Compile Include="Templates\FileSystemLoader.cs" />
+    <Compile Include="Templates\MarkdownParser.cs" />
     <Compile Include="Templates\Template.cs" />
     <Compile Include="Templates\TemplateBuilder.cs" />
     <Compile Include="Templates\TemplateDefinition.cs" />
+    <Compile Include="Templates\Text\AnchorElement.cs" />
+    <Compile Include="Templates\Text\BreakElement.cs" />
+    <Compile Include="Templates\Text\BreakTypes.cs" />
+    <Compile Include="Templates\Text\ContainerElement.cs" />
+    <Compile Include="Templates\Text\ContainerTypes.cs" />
+    <Compile Include="Templates\Text\DocumentElement.cs" />
+    <Compile Include="Templates\Text\DocumentParser.cs" />
+    <Compile Include="Templates\Text\DocumentTransformer.cs" />
+    <Compile Include="Templates\Text\Element.cs" />
+    <Compile Include="Templates\Text\ElementTypes.cs" />
+    <Compile Include="Templates\Text\FormattedElement.cs" />
+    <Compile Include="Templates\Text\HeadingElement.cs" />
+    <Compile Include="Templates\Text\HtmlCharacterStream.cs" />
+    <Compile Include="Templates\Text\HtmlParser.cs" />
+    <Compile Include="Templates\Text\HtmlStates.cs" />
+    <Compile Include="Templates\Text\HtmlWriter.cs" />
+    <Compile Include="Templates\Text\IBreakElement.cs" />
+    <Compile Include="Templates\Text\ICharacterStreamReader.cs" />
+    <Compile Include="Templates\Text\ICharacterStreamWriter.cs" />
+    <Compile Include="Templates\Text\IConfigurableElement.cs" />
+    <Compile Include="Templates\Text\IContainerElement.cs" />
+    <Compile Include="Templates\Text\IDocument.cs" />
+    <Compile Include="Templates\Text\IDocumentElement.cs" />
+    <Compile Include="Templates\Text\IDocumentProcessor.cs" />
+    <Compile Include="Templates\Text\IDocumentTransformer.cs" />
+    <Compile Include="Templates\Text\IFrameElement.cs" />
+    <Compile Include="Templates\Text\ILinkElement.cs" />
+    <Compile Include="Templates\Text\ImageElement.cs" />
+    <Compile Include="Templates\Text\INestedElement.cs" />
+    <Compile Include="Templates\Text\IStyleElement.cs" />
+    <Compile Include="Templates\Text\ITextElement.cs" />
+    <Compile Include="Templates\Text\ITextFormatter.cs" />
+    <Compile Include="Templates\Text\LinkTypes.cs" />
+    <Compile Include="Templates\Text\MarkdownCharacterStream.cs" />
+    <Compile Include="Templates\Text\MarkdownParser.cs" />
+    <Compile Include="Templates\Text\MarkdownStates.cs" />
+    <Compile Include="Templates\Text\MarkdownWriter.cs" />
+    <Compile Include="Templates\Text\ParagraphElement.cs" />
+    <Compile Include="Templates\Text\PlainTextCaracterStream.cs" />
+    <Compile Include="Templates\Text\PlainTextWriter.cs" />
+    <Compile Include="Templates\Text\RawTextElement.cs" />
+    <Compile Include="Templates\Text\SearchMethod.cs" />
+    <Compile Include="Templates\Text\SpanElement.cs" />
+    <Compile Include="Templates\Text\TextFormatter.cs" />
+    <Compile Include="Templates\Text\TextParser.cs" />
+    <Compile Include="Templates\Text\TextWriter.cs" />
+    <Compile Include="Templates\Text\UnsupportedElement.cs" />
+    <Compile Include="Templates\UriLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="paket.template" />
@@ -116,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="OwinFramework.Pages.Html.Net45.paket.references" />
+    <EmbeddedResource Include="Templates\Text\html-entities.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

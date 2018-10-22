@@ -88,6 +88,7 @@
     <Compile Include="Collections\DictionaryFactory.cs" />
     <Compile Include="Collections\Disposable.cs" />
     <Compile Include="Collections\EnumerableLocked.cs" />
+    <Compile Include="Collections\LinkedList.cs" />
     <Compile Include="Collections\MemoryStreamFactory.cs" />
     <Compile Include="Collections\QueueFactory.cs" />
     <Compile Include="Collections\ReusableArray.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Enums\HtmlFormat.cs" />
     <Compile Include="Enums\NameResolutionPhase.cs" />
     <Compile Include="Enums\PageArea.cs" />
+    <Compile Include="Exceptions\NotFoundException.cs" />
     <Compile Include="Exceptions\InvalidPathException.cs" />
     <Compile Include="Exceptions\TemplateLoaderException.cs" />
     <Compile Include="Exceptions\TemplateBuilderException.cs" />

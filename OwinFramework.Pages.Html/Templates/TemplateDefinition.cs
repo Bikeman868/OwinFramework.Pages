@@ -163,6 +163,12 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
+        public ITemplateDefinition AddSelfClosingElement(string tag, params string[] attributePairs)
+        {
+            Actions.Add(r => r.Html.WriteOpenTag(tag, true, attributePairs));
+            return this;
+        }
+
         public ITemplateDefinition AddElementOpen(string tag, params string[] attributePairs)
         {
             WriteElementOpenTag(tag, attributePairs);
@@ -536,6 +542,5 @@ namespace OwinFramework.Pages.Html.Templates
         }
 
         #endregion
-
     }
 }

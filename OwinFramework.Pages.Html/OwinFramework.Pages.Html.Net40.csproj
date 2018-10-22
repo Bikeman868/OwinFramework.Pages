@@ -50,6 +50,7 @@
     <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
     <Compile Include="Elements\TemplateComponent.cs" />
+    <Compile Include="Templates\Text\DocumentParser.cs" />
     <Compile Include="Templates\Text\AnchorElement.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -209,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="OwinFramework.Pages.Html.Net40.paket.references" />
+    <EmbeddedResource Include="Templates\Text\html-entities.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">

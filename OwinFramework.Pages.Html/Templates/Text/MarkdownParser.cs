@@ -20,7 +20,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
         private Func<IDocumentElement, bool> _onBeginProcessElement;
         private Func<IDocumentElement, bool> _onEndProcessElement;
 
-        private Stack<StackedElement> _elementStack;
+        private Core.Collections.LinkedList<StackedElement> _elementStack;
         private Dictionary<string, string> _references;
         private List<AnchorElement> _anchorsToFixup;
         private DocumentElement _document;
@@ -41,7 +41,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
 
             _characterStream = new MarkdownCharacterStream(reader){State = MarkdownStates.ParagraphBreak};
             _stringParser = new TextParser(_stringBuilderFactory, _characterStream);
-            _elementStack = new Stack<StackedElement>();
+            _elementStack = new Core.Collections.LinkedList<StackedElement>();
             _references = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             _anchorsToFixup = new List<AnchorElement>();
 
@@ -410,7 +410,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
                 return t != null && predicate(t);
             });
 
-            return listElement == null ? null : (T)listElement.Element;
+            return listElement == null ? null : (T)listElement.Data.Element;
         }
 
         private void AddParagraph(string trimmedLine)
@@ -650,19 +650,19 @@ namespace OwinFramework.Pages.Html.Templates.Text
             }
             set
             {
-                _elementStack.Pop();
+                _elementStack.PopLast();
                 PushElement(value);
             }
         }
 
         private void PushElement(Element element)
         {
-            _elementStack.Push(new StackedElement { Element = element });
+            _elementStack.Append(new StackedElement { Element = element });
         }
 
         private bool PopElement()
         {
-            if (_elementStack.Count == 0) return true;
+            if (_elementStack.IsEmpty) return true;
 
             foreach (var stackedElement in _elementStack)
             {
@@ -674,7 +674,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
                 }
             }
 
-            var leaf = _elementStack.Pop();
+            var leaf = _elementStack.PopLast();
 
             var parent = _elementStack.LastOrDefault();
             if (parent != null)

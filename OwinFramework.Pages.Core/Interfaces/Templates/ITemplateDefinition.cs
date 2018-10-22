@@ -29,6 +29,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         ITemplateDefinition AddElement(string tag, string content, params string[] attributePairs);
 
         /// <summary>
+        /// Adds an html element with attributes and content
+        /// </summary>
+        ITemplateDefinition AddSelfClosingElement(string tag, params string[] attributePairs);
+
+        /// <summary>
         /// Adds an opening Html element
         /// </summary>
         ITemplateDefinition AddElementOpen(string tag, params string[] attributePairs);

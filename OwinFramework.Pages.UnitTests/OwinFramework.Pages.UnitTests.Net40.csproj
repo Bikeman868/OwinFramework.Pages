@@ -62,6 +62,7 @@
     <Compile Include="Framework\Managers\IdManagerTests.cs" />
     <Compile Include="Framework\Utility\DependencySorterTests.cs" />
     <Compile Include="Html\Runtime\FluentBuilderTests.cs" />
+    <Compile Include="Html\Templates\DocumentTransformerMarkdownTests.cs" />
     <Compile Include="SpikeTests\MixinExample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

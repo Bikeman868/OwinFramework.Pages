@@ -55,7 +55,8 @@ namespace OwinFramework.Pages.Html.Templates.Text
             ParseDocument(mimeType, documentContent, null,
                 e =>
                 {
-                    if (e.ElementType == ElementTypes.Document) root = e as IDocument;
+                    if (e.ElementType == ElementTypes.Document) 
+                        root = e as IDocument;
                     return true;
                 });
             return root;

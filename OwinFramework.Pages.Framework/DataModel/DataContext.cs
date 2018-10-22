@@ -33,7 +33,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             _dataContextFactory = dataContextFactory;
             _dataDependencyFactory = dataDependencyFactory;
-            _properties = new LinkedList<PropertyEntry>();
+            _properties = new System.Collections.Generic.LinkedList<PropertyEntry>();
 #if DEBUG
             _id = idManager.GetUniqueId();
 #endif
@@ -259,7 +259,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         #region Properties
 
-        private readonly LinkedList<PropertyEntry> _properties;
+        private readonly System.Collections.Generic.LinkedList<PropertyEntry> _properties;
 
         private bool TryGetProperty(Type type, out object value)
         {

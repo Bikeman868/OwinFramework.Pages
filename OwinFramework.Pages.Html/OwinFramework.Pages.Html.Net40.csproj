@@ -50,6 +50,7 @@
     <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
     <Compile Include="Elements\TemplateComponent.cs" />
+    <Compile Include="Templates\UriLoader.cs" />
     <Compile Include="Templates\MarkdownParser.cs" />
     <Compile Include="Templates\AsIsParser.cs" />
     <Compile Include="Templates\FileSystemLoader.cs" />

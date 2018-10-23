@@ -137,7 +137,7 @@ namespace OwinFramework.Pages.Framework.Managers
             if (string.IsNullOrEmpty(path))
                 throw new InvalidPathException(path);
 
-            if (!path.All(c => char.IsDigit(c) || char.IsLetter(c) || c == '_' || c == '/'))
+            if (!path.All(c => char.IsDigit(c) || char.IsLetter(c) || c == '_' || c == '/' || c == '.'))
                 throw new InvalidPathException(path);
         }
 

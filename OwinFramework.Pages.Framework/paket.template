@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Framework
-version 1.0.0-alpha-008
+version 1.0.0-alpha-009
 authors Martin Halliday
 copyright Martin Halliday 2018
 description
@@ -26,7 +26,7 @@ references
   OwinFramework.Pages.Framework.dll
 
 dependencies
-  Owin.Framework.Pages.Core = 1.0.0-alpha-008
+  Owin.Framework.Pages.Core = 1.0.0-alpha-009
   
   Ioc.Modules ~> LOCKED:Minor
   Newtonsoft.Json ~> LOCKED:Minor

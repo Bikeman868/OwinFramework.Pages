@@ -78,6 +78,10 @@ namespace OwinFramework.Pages.Html
                     new IocRegistration().Init<IComponentBuilder, ComponentBuilder>(),
                     new IocRegistration().Init<ITemplateBuilder, TemplateBuilder>(),
 
+                    // These template loaders are singletons so that they can run in the background reloading templates
+                    new IocRegistration().Init<FileSystemLoader, FileSystemLoader>(),
+                    new IocRegistration().Init<UriLoader, UriLoader>(),
+
                     // These are the external dependencies
                     new IocRegistration().Init<IDictionaryFactory>(),
                     new IocRegistration().Init<IRequestRouter>(),

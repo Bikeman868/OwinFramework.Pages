@@ -96,6 +96,24 @@ namespace OwinFramework.Pages.UnitTests.Html.Templates
         }
 
         [Test]
+        public void ShouldParseCodeTicks()
+        {
+            const string originalMarkdown =
+                "# Level 1 heading\n" +
+                "Some `source code` here";
+
+            const string expectedHtml =
+                "<h1>Level 1 heading</h1>\n" +
+                "<p>Some <span class='code'>source code</span> here</p>\n";
+
+            var document = _documentTransformer.ParseDocument("text/x-markdown", originalMarkdown);
+
+            var html = RenderHtml(document);
+
+            Assert.AreEqual(expectedHtml, html);
+        }
+
+        [Test]
         [TestCase("Test _italic", "<p>Test <i>italic</i></p>\n")]
         [TestCase("Test *italic", "<p>Test <i>italic</i></p>\n")]
         [TestCase("Test __bold", "<p>Test <b>bold</b></p>\n")]

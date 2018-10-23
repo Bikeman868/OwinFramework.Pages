@@ -441,6 +441,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
         {
             var isBold = false;
             var isItalic = false;
+            var isCode = false;
 
             using (var buffer = _stringBuilderFactory.Create())
             {
@@ -506,6 +507,26 @@ namespace OwinFramework.Pages.Html.Templates.Text
                     {
                         // When we see the first asterix or underscore, we don't know yet if this
                         // is going to be bold or italic unless this is the last character in the string
+                    }
+                    else if (current == '`')
+                    {
+                        // Backticks turn on/off code formatting
+                        flush(buffer);
+                        if (isCode)
+                        {
+                            PopElement();
+                            isCode = false;
+                        }
+                        else
+                        {
+                            PushElement(new FormattedElement
+                            {
+                                Name = new String(current, 2),
+                                ElementType = ElementTypes.InlineText,
+                                ClassNames = "code"
+                            });
+                            isCode = true;
+                        }
                     }
                     else if (current == '!')
                     {

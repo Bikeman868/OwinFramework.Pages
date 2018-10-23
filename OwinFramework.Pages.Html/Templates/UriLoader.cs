@@ -19,13 +19,9 @@ namespace OwinFramework.Pages.Html.Templates
     /// Implements ITemplateLoader by loading and parsing templates 
     /// retrieved from the Internet
     /// </summary>
-    public class UriLoader: ITemplateLoader
+    public class UriLoader: TemplateLoader
     {
         private readonly INameManager _nameManager;
-
-        public PathString RootPath { get; set; }
-        public IPackage Package { get; set; }
-        public TimeSpan? ReloadInterval { get; set; }
 
         public Uri BaseUri { get; set; }
 
@@ -45,14 +41,14 @@ namespace OwinFramework.Pages.Html.Templates
             _nameManager = nameManager;
         }
 
-        public void Load(
+        public override void Load(
             ITemplateParser parser, 
             Func<PathString, bool> predicate = null, 
             Func<PathString, string> mapPath = null,
             bool includeSubPaths = true)
         {
             throw new NotImplementedException(
-                "Enumerating files from a URI is not implemented yet. "+
+                "Enumerating templates from a URI is not implemented yet. "+
                 "Please use the LoadUri() method instead.");
         }
 
@@ -100,7 +96,10 @@ namespace OwinFramework.Pages.Html.Templates
                 templateData = webClient.DownloadData(uri);
             }
 
-            return parser.Parse(templateData, null, Package);
+            Encoding encoding;
+            templateData = RemovePreamble(templateData, out encoding);
+
+            return parser.Parse(templateData, encoding, Package);
         }
 
         private void Reload(TemplateInfo info)

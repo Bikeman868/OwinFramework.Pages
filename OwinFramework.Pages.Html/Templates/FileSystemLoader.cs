@@ -18,15 +18,10 @@ namespace OwinFramework.Pages.Html.Templates
     /// Implements ITemplateLoader by loading and parsing templates 
     /// stored in the file system
     /// </summary>
-    public class FileSystemLoader: ITemplateLoader
+    public class FileSystemLoader: TemplateLoader
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly INameManager _nameManager;
-        private readonly Encoding[] _detectableEncodings;
-
-        public PathString RootPath { get; set; }
-        public IPackage Package { get; set; }
-        public TimeSpan? ReloadInterval { get; set; }
 
         public DirectoryInfo TemplateDirectory { get; set; }
 
@@ -46,18 +41,9 @@ namespace OwinFramework.Pages.Html.Templates
         {
             _hostingEnvironment = hostingEnvironment;
             _nameManager = nameManager;
-            _detectableEncodings = 
-                Encoding.GetEncodings()
-                .Where(e => 
-                    {
-                        var preamble = e.GetEncoding().GetPreamble();
-                        return preamble != null && preamble.Length > 0;
-                    })
-                .Select(e => e.GetEncoding())
-                .ToArray();
         }
 
-        public void Load(
+        public override void Load(
             ITemplateParser parser, 
             Func<PathString, bool> predicate = null, 
             Func<PathString, string> mapPath = null,
@@ -131,41 +117,8 @@ namespace OwinFramework.Pages.Html.Templates
                     offset += stream.Read(buffer, offset, buffer.Length - offset);
             }
 
-            Encoding encoding = null;
-            var preambleLength = 0;
-
-            for (var encodingIndex = 0; encodingIndex < _detectableEncodings.Length; encodingIndex++)
-            {
-                encoding = _detectableEncodings[encodingIndex];
-                var preamble = encoding.GetPreamble();
-                preambleLength = preamble.Length;
-
-                if (buffer.Length < preambleLength)
-                {
-                    encoding = null;
-                }
-                else
-                {
-                    for (var i = 0; i < preambleLength; i++)
-                    {
-                        if (buffer[i] != preamble[i])
-                        {
-                            encoding = null;
-                            break;
-                        }
-                    }
-                }
-
-                if (encoding != null)
-                    break;
-            }
-
-            if (encoding != null)
-            {
-                var tempBuffer = new byte[buffer.Length - preambleLength];
-                Buffer.BlockCopy(buffer, preambleLength, tempBuffer, 0, tempBuffer.Length);
-                buffer = tempBuffer;
-            }
+            Encoding encoding;
+            buffer = RemovePreamble(buffer, out encoding);
 
             return parser.Parse(buffer, encoding, Package);
         }

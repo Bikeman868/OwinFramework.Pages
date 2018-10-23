@@ -438,14 +438,14 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
-        public ITemplateDefinition AddText(string assetName, string defaultText)
+        public ITemplateDefinition AddText(string assetName, string defaultText, bool isPreFormatted)
         {
             Actions.Add(r =>
             {
                 var html = r.Html;
 
                 var localizedString = _assetManager.GetLocalizedText(r, assetName, defaultText);
-                if (html.IncludeComments)
+                if (html.IncludeComments && !isPreFormatted)
                 {
                     localizedString = localizedString.Replace('\r', '\n');
                     var endsWithLineBreak = localizedString.EndsWith("\n");

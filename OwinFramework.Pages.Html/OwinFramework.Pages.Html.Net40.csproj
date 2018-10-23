@@ -50,6 +50,7 @@
     <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
     <Compile Include="Elements\TemplateComponent.cs" />
+    <Compile Include="Templates\TemplateLoader.cs" />
     <Compile Include="Templates\Text\DocumentParser.cs" />
     <Compile Include="Templates\Text\AnchorElement.cs">
       <SubType>Code</SubType>

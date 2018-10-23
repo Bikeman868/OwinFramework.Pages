@@ -212,7 +212,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <param name="defaultText">The default text to use for all unsupported
         /// localizations. Note that if you have not set up localization then this
         /// is the text that will always be used</param>
-        ITemplateDefinition AddText(string assetName, string defaultText);
+        /// <param name="isPreFormatted">Pass true to output text exactly as is 
+        /// without indenting</param>
+        ITemplateDefinition AddText(string assetName, string defaultText, bool isPreFormatted = false);
 
         /// <summary>
         /// Constructs and returns the template that was defined

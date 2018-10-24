@@ -98,11 +98,29 @@ namespace Sample1.SamplePackages
         {
             public RegionExample4(IRegionDependenciesFactory dependencies) : base(dependencies)
             {
-                WriteOpen = w => w.WriteOpenTag("ul");
-                WriteClose = w => w.WriteCloseTag("ul");
+                WriteOpen = w =>
+                    {
+                        w.WriteOpenTag("ul");
+                        w.WriteLine();
+                    };
 
-                WriteChildOpen = w => w.WriteOpenTag("li");
-                WriteChildClose = w => w.WriteCloseTag("li");
+                WriteClose = w => 
+                    {
+                        w.WriteCloseTag("ul");
+                        w.WriteLine();
+                    };
+
+                WriteChildOpen = w => 
+                    {
+                        w.WriteOpenTag("li");
+                        w.WriteLine();
+                    };
+
+                WriteChildClose = w =>
+                    {
+                        w.WriteCloseTag("li");
+                        w.WriteLine();
+                    };
 
                 RepeatType = typeof(NewsItem);
             }

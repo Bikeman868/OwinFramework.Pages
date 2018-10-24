@@ -96,8 +96,10 @@ namespace OwinFramework.Pages.Html.Elements
                             context.Html.WriteComment("css rules for " + GetCommentName());
 
                         context.Html.WriteOpenTag("style");
+                        context.Html.WriteLine();
                         writer.ToHtml(context.Html);
                         context.Html.WriteCloseTag("style");
+                        context.Html.WriteLine();
                     }
                 }
                 else if (pageArea == PageArea.Scripts)

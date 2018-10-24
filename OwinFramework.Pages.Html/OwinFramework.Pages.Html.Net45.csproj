@@ -72,6 +72,7 @@
     <Compile Include="Elements\Component.cs" />
     <Compile Include="Runtime\CssWriter.cs" />
     <Compile Include="Runtime\CssWriterFactory.cs" />
+    <Compile Include="Runtime\HtmlCharacterStream.cs" />
     <Compile Include="Runtime\JavascriptWriter.cs" />
     <Compile Include="Runtime\JavascriptWriterFactory.cs" />
     <Compile Include="Runtime\ModuleDependencies.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Templates\Template.cs" />
     <Compile Include="Templates\TemplateBuilder.cs" />
     <Compile Include="Templates\TemplateDefinition.cs" />
+    <Compile Include="Templates\TemplateLoader.cs" />
     <Compile Include="Templates\Text\AnchorElement.cs" />
     <Compile Include="Templates\Text\BreakElement.cs" />
     <Compile Include="Templates\Text\BreakTypes.cs" />
@@ -168,6 +170,7 @@
   <ItemGroup>
     <None Include="OwinFramework.Pages.Html.Net45.paket.references" />
     <EmbeddedResource Include="Templates\Text\html-entities.json" />
+    <EmbeddedResource Include="Runtime\html-entities.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

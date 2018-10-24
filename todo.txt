@@ -1,0 +1,16 @@
+* Bugs
+  - Standard package Html has missing line breaks
+
+* Template parsers
+  - Markdown with Mustache data binding
+  - Plain static Html
+  - Html with custom tags for data binding and repeating
+
+* Standard packages
+  - Commonly used layouts
+  - Tab bar
+  - Collapsible sections
+  - Accordion
+  - Forms authentication
+
+* REST Services

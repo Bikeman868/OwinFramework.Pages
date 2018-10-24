@@ -48,10 +48,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
         private readonly IStringBuilderFactory _stringBuilderFactory;
         private readonly bool _isBufferOwner;
+        private readonly HtmlCharacterStream _characterStream;
         private BufferListElement _bufferListHead;
         private BufferListElement _bufferListTail;
         private bool _startOfLine;
-        private HtmlCharacterStream _characterStream;
 
         /// <summary>
         /// Constructs a new HTML Writer
@@ -184,7 +184,6 @@ namespace OwinFramework.Pages.Html.Runtime
         }
 
         #endregion
-
 
         #region Buffer list
 
@@ -351,11 +350,13 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
                 ((IHtmlWriter)this).WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", language, "xmlns", "http://www.w3.org/1999/xhtml");
+                WriteLine();
             }
             else
             {
                 WriteLine("<!DOCTYPE html>");
                 ((IHtmlWriter)this).WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", language);
+                WriteLine();
             }
 
             return this;
@@ -380,7 +381,6 @@ namespace OwinFramework.Pages.Html.Runtime
             else
             {
                 WriteOpenEnd();
-                WriteLine();
                 IndentLevel++;
                 _characterStream.State = HtmlStates.PlainText;
             }
@@ -393,7 +393,6 @@ namespace OwinFramework.Pages.Html.Runtime
             WriteOpenStart(tag);
             WriteOpenAttributes(attributePairs);
             WriteOpenEnd();
-            WriteLine();
 
             IndentLevel++;
 
@@ -406,7 +405,6 @@ namespace OwinFramework.Pages.Html.Runtime
             IndentLevel--;
 
             WriteClose(tag);
-            WriteLine();
 
             _characterStream.State = HtmlStates.Data;
             return this;

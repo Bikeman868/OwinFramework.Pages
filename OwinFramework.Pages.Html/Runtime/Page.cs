@@ -305,16 +305,19 @@ namespace OwinFramework.Pages.Html.Runtime
             var html = context.Html;
 
             html.WriteOpenTag("head");
+            html.WriteLine();
 
-            html.Write("<title>");
+            html.WriteOpenTag("title");
             result.Add(WritePageArea(context, PageArea.Title));
-            html.WriteLine("</title>");
+            html.WriteCloseTag("title");
+            html.WriteLine();
 
             result.Add(WritePageArea(context, PageArea.Head));
             result.Add(WritePageArea(context, PageArea.Styles));
             result.Add(WritePageArea(context, PageArea.Scripts));
 
             html.WriteCloseTag("head");
+            html.WriteLine();
 
             return result;
         }
@@ -339,11 +342,13 @@ namespace OwinFramework.Pages.Html.Runtime
                 html.WriteOpenTag("body");
             else
                 html.WriteOpenTag("body", "class", bodyClassNames);
+            html.WriteLine();
 
             result.Add(WritePageArea(context, PageArea.Body));
             result.Add(WritePageArea(context, PageArea.Initialization));
 
             html.WriteCloseTag("body");
+            html.WriteLine();
 
             return result;
         }
@@ -516,11 +521,13 @@ namespace OwinFramework.Pages.Html.Runtime
                     html.WriteComment("static in-page styles");
 
                 html.WriteOpenTag("style");
+                html.WriteLine();
 
                 foreach (var line in _inPageCssLines)
                     html.WriteLine(line);
 
                 html.WriteCloseTag("style");
+                html.WriteLine();
             }
 
             using (var cssWriter = _dependencies.CssWriterFactory.Create())
@@ -547,8 +554,12 @@ namespace OwinFramework.Pages.Html.Runtime
                         html.WriteComment("dynamic styles");
 
                     html.WriteOpenTag("style");
+                    html.WriteLine();
+
                     cssWriter.ToHtml(html);
+
                     html.WriteCloseTag("style");
+                    html.WriteLine();
                 }
             }
 

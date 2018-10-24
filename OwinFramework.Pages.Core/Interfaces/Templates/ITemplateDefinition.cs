@@ -67,6 +67,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         ITemplateDefinition AddElementClose();
 
         /// <summary>
+        /// Starts a new line in the Html
+        /// </summary>
+        ITemplateDefinition AddLineBreak();
+
+        /// <summary>
         /// Adds a reference to a layout
         /// </summary>
         ITemplateDefinition AddLayout(string layoutName);
@@ -213,7 +218,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// localizations. Note that if you have not set up localization then this
         /// is the text that will always be used</param>
         /// <param name="isPreFormatted">Pass true to output text exactly as is 
-        /// without indenting</param>
+        /// without adding indentation or collapsing multiple spaces</param>
         ITemplateDefinition AddText(string assetName, string defaultText, bool isPreFormatted = false);
 
         /// <summary>

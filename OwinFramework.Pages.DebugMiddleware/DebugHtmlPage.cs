@@ -41,22 +41,28 @@ namespace OwinFramework.Pages.DebugMiddleware
                 if (styles != null)
                 {
                     html.WriteOpenTag("style");
+                    html.WriteLine();
                     foreach (var style in styles.Replace("\r", "").Split('\n'))
                         html.WriteLine(style);
                     html.WriteCloseTag("style");
+                    html.WriteLine();
                 }
 
                 var script = GetTextResource("html.js");
                 if (!string.IsNullOrEmpty(script))
                 {
                     html.WriteScriptOpen();
+                    html.WriteLine();
                     foreach (var scriptLine in script.Replace("\r", "").Split('\n'))
                         html.WriteLine(scriptLine);
                     html.WriteScriptClose();
+                    html.WriteLine();
                 }
 
                 html.WriteCloseTag("head");
+                html.WriteLine();
                 html.WriteOpenTag("body");
+                html.WriteLine();
 
                 html.WriteElementLine("h1", "Debug information for " + context.Request.Path);
                 WriteDebugInfo(html, debugInfo, -1);
@@ -83,14 +89,18 @@ namespace OwinFramework.Pages.DebugMiddleware
         private void StartIndent(IHtmlWriter html, bool expanded)
         {
             html.WriteOpenTag("div", "class", "section");
+            html.WriteLine();
             html.WriteElementLine("button", "+", "class", expanded ? "indent active": "indent");
             html.WriteOpenTag("span", "class", "indented");
+            html.WriteLine();
         }
 
         private void EndIndent(IHtmlWriter html)
         {
             html.WriteCloseTag("span");
+            html.WriteLine();
             html.WriteCloseTag("div");
+            html.WriteLine();
         }
 
         private void WriteDebugInfo(IHtmlWriter html, DebugInfo debugInfo, int depth)
@@ -103,6 +113,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                 html.WriteOpenTag("p");
                 html.WriteElementLine("i", debugInfo.Instance.GetType().DisplayName());
                 html.WriteCloseTag("p");
+                html.WriteLine();
             }
 
             if (debugInfo.DataConsumer != null)
@@ -113,9 +124,11 @@ namespace OwinFramework.Pages.DebugMiddleware
                 {
                     html.WriteElementLine("p", "Is a data consumer");
                     html.WriteOpenTag("ul");
+                    html.WriteLine();
                     foreach (var line in lines)
                         html.WriteElementLine("li", line.InitialCaps());
                     html.WriteCloseTag("ul");
+                    html.WriteLine();
                 }
             }
 
@@ -123,9 +136,11 @@ namespace OwinFramework.Pages.DebugMiddleware
             {
                 html.WriteElementLine("p", "Dependent components");
                 html.WriteOpenTag("ul");
+                html.WriteLine();
                 foreach (var component in debugInfo.DependentComponents)
                     html.WriteElementLine("li", component.GetDebugInfo(0, 0).ToString().InitialCaps());
                 html.WriteCloseTag("ul");
+                html.WriteLine();
             }
 
             if (debugInfo is DebugComponent) WriteHtml(html, (DebugComponent)debugInfo, depth);
@@ -167,18 +182,22 @@ namespace OwinFramework.Pages.DebugMiddleware
             {
                 html.WriteElementLine("p", "Dependencies resolved in this scope");
                 html.WriteOpenTag("ul");
+                html.WriteLine();
                 foreach (var scope in dataScopeProvider.Scopes)
                     html.WriteElementLine("li", scope.ToString());
                 html.WriteCloseTag("ul");
+                html.WriteLine();
             }
 
             if (dataScopeProvider.DataSupplies != null && dataScopeProvider.DataSupplies.Count > 0)
             {
                 html.WriteElementLine("p", "Data supplied in this scope");
                 html.WriteOpenTag("ul");
+                html.WriteLine();
                 foreach (var dataSupplier in dataScopeProvider.DataSupplies)
                     html.WriteElementLine("li", dataSupplier.ToString().InitialCaps());
                 html.WriteCloseTag("ul");
+                html.WriteLine();
             }
 
             if (dataScopeProvider.Parent != null)
@@ -317,8 +336,11 @@ namespace OwinFramework.Pages.DebugMiddleware
                         if (!string.IsNullOrEmpty(ex.StackTrace))
                         {
                             html.WriteOpenTag("pre");
-                            html.WriteLine(ex.StackTrace);
+                            html.WriteLine();
+                            html.WritePrefotmatted(ex.StackTrace);
+                            html.WriteLine();
                             html.WriteCloseTag("pre");
+                            html.WriteLine();
                         }
                     }
 
@@ -356,15 +378,16 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (region.RepeatType != null)
             {
                 html.WriteOpenTag("p");
-                html.Write("Repeat region for each ");
+                html.WriteText("Repeat region for each ");
                 html.WriteElement("i", region.RepeatType.DisplayName());
                 if (!string.IsNullOrEmpty(region.RepeatScope))
-                    html.Write(" in '" + region.RepeatScope + "' scope");
-                html.Write(" from ");
+                    html.WriteText(" in '" + region.RepeatScope + "' scope");
+                html.WriteText(" from ");
                 html.WriteElement("i", region.ListType.DisplayName());
                 if (!string.IsNullOrEmpty(region.ListScope))
-                    html.Write(" in '" + region.ListScope + "' scope");
+                    html.WriteText(" in '" + region.ListScope + "' scope");
                 html.WriteCloseTag("p");
+                html.WriteLine();
             }
 
             if (region.Scope != null)

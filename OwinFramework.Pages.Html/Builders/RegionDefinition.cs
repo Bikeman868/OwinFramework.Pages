@@ -314,15 +314,15 @@ namespace OwinFramework.Pages.Html.Builders
                     if (!string.IsNullOrEmpty(_tagName))
                     {
                         var attributes = _htmlHelper.StyleAttributes(_style, _classNames, _region.Package);
-                        _region.WriteOpen = w => w.WriteOpenTag(_tagName, attributes);
-                        _region.WriteClose = w => w.WriteCloseTag(_tagName);
+                        _region.WriteOpen = w => {w.WriteOpenTag(_tagName, attributes); w.WriteLine();};
+                        _region.WriteClose = w => { w.WriteCloseTag(_tagName); w.WriteLine(); };
                     }
 
                     if (!string.IsNullOrEmpty(_childTagName))
                     {
                         var attributes = _htmlHelper.StyleAttributes(_childStyle, _childClassNames, _region.Package);
-                        _region.WriteChildOpen = w => w.WriteOpenTag(_childTagName, attributes);
-                        _region.WriteChildClose = w => w.WriteCloseTag(_childTagName);
+                        _region.WriteChildOpen = w => { w.WriteOpenTag(_childTagName, attributes); w.WriteLine(); };
+                        _region.WriteChildClose = w => { w.WriteCloseTag(_childTagName); w.WriteLine(); };
                     }
                 });
 

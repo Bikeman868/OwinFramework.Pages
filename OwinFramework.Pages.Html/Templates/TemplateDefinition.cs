@@ -212,6 +212,12 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
+        public ITemplateDefinition AddLineBreak()
+        {
+            Actions.Add(r => r.Html.WriteLine());
+            return this;
+        }
+
         public ITemplateDefinition AddLayout(string layoutName)
         {
             var placeholder = Actions.AddPlaceholder();
@@ -402,7 +408,7 @@ namespace OwinFramework.Pages.Html.Templates
             {
                 var data = r.Data.Get<T>(scopeName);
                 var formattedValue = formatFunc(data);
-                r.Html.Write(formattedValue);
+                r.Html.WriteText(formattedValue);
             });
 
             var dataConsumer = _template as IDataConsumer;
@@ -428,7 +434,7 @@ namespace OwinFramework.Pages.Html.Templates
                 var data = r.Data.Get(dataType, scopeName);
                 var propertyValue = property.GetValue(data, null);
                 var formattedValue = dataFormatter == null ? propertyValue.ToString() : dataFormatter.Format(property, propertyValue);
-                r.Html.Write(formattedValue);
+                r.Html.WriteText(formattedValue);
             });
 
             var dataConsumer = _template as IDataConsumer;
@@ -499,11 +505,7 @@ namespace OwinFramework.Pages.Html.Templates
             }
 
             var element = _element;
-            Actions.Add(r =>
-                {
-                    // ReSharper disable once ConvertToLambdaExpression - allows break point to be set
-                    r.Html.WriteOpenTag(element.Tag, element.Attributes.ToArray());
-                });
+            Actions.Add(r => r.Html.WriteOpenTag(element.Tag, element.Attributes.ToArray()));
         }
 
         private void WriteElementCloseTag()

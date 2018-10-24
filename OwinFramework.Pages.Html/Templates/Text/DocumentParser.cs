@@ -123,12 +123,17 @@ namespace OwinFramework.Pages.Html.Templates.Text
                 case ElementTypes.Container:
                     context.IsPreFormatted = false;
                     context.Template.AddElementClose();
+                    context.Template.AddLineBreak();
                     break;
 
                 case ElementTypes.InlineText:
+                    context.Template.AddElementClose();
+                    break;
+
                 case ElementTypes.Heading:
                 case ElementTypes.Paragraph:
                     context.Template.AddElementClose();
+                    context.Template.AddLineBreak();
                     break;
 
                 case ElementTypes.Link:

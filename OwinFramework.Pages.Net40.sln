@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		paket-update.cmd = paket-update.cmd
 		paket.dependencies = paket.dependencies
 		paket.lock = paket.lock
-		README.md = README.md
+		readme.md = readme.md
 		todo.txt = todo.txt
 	EndProjectSection
 EndProject

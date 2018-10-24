@@ -553,14 +553,14 @@ namespace OwinFramework.Pages.Html.Builders
             if (!string.IsNullOrEmpty(_tag))
             {
                 var attributes = _htmlHelper.StyleAttributes(_style, _classNames, _layout.Package);
-                _layout.AddVisualElement(w => w.WriteOpenTag(_tag, attributes), "layout container element");
+                _layout.AddVisualElement(w => { w.WriteOpenTag(_tag, attributes); w.WriteLine(); }, "layout container element");
             }
         }
 
         private void WriteClosingTag()
         {
             if (!string.IsNullOrEmpty(_tag))
-                _layout.AddVisualElement(w => w.WriteCloseTag(_tag), null);
+                _layout.AddVisualElement(w => { w.WriteCloseTag(_tag); w.WriteLine(); }, null);
         }
 
         private void WriteNestingOpeningTag()
@@ -568,14 +568,14 @@ namespace OwinFramework.Pages.Html.Builders
             if (!string.IsNullOrEmpty(_nestingTag))
             {
                 var attributes = _htmlHelper.StyleAttributes(_nestedStyle, _nestedClassNames, _layout.Package);
-                _layout.AddVisualElement(w => w.WriteOpenTag(_nestingTag, attributes), "layout region grouping");
+                _layout.AddVisualElement(w => { w.WriteOpenTag(_nestingTag, attributes); w.WriteLine(); }, "layout region grouping");
             }
         }
 
         private void WriteNestingClosingTag()
         {
             if (!string.IsNullOrEmpty(_nestingTag))
-                _layout.AddVisualElement(w => w.WriteCloseTag(_nestingTag), null);
+                _layout.AddVisualElement(w => { w.WriteCloseTag(_nestingTag); w.WriteLine(); }, null);
         }
 
     }

@@ -129,6 +129,7 @@ namespace OwinFramework.Pages.Standard
                     context.Html.WriteElementLine("div", null, "class", ns + "_mb_hamburger_icon " + ns + "_mb_hamburger_icon_2");
                     context.Html.WriteElementLine("div", null, "class", ns + "_mb_hamburger_icon " + ns + "_mb_hamburger_icon_3");
                     context.Html.WriteCloseTag("label");
+                    context.Html.WriteLine();
                 }
                 return WriteResult.Continue();
             }

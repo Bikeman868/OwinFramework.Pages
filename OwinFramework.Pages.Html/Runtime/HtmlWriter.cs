@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +6,8 @@ using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Templates.Text;
+using TextWriter = System.IO.TextWriter;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
@@ -50,6 +51,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private BufferListElement _bufferListHead;
         private BufferListElement _bufferListTail;
         private bool _startOfLine;
+        private HtmlCharacterStream _characterStream;
 
         /// <summary>
         /// Constructs a new HTML Writer
@@ -66,6 +68,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             _bufferListHead = new BufferListElement(stringBuilderFactory);
             _bufferListTail = _bufferListHead;
+            _characterStream = new HtmlCharacterStream(this);
         }
 
         private HtmlWriter(HtmlWriter parent)
@@ -80,366 +83,108 @@ namespace OwinFramework.Pages.Html.Runtime
             _bufferListTail = _bufferListHead;
         }
 
-        /// <summary>
-        /// Constructs and returns an HtmlWriter that will insert into the
-        /// output buffer at the current spot. You can use this to start
-        /// an async process that will insert text into the output when it
-        /// completes.
-        /// </summary>
-        public IHtmlWriter CreateInsertionPoint()
+        #region Writing directly to the output buffer
+
+        private void WriteRaw(char c)
         {
-            var result = new HtmlWriter(this);
-
-            _bufferListTail = _bufferListTail.InsertAfter();
-
-            return result;
+            _bufferListTail.Write(c);
         }
 
-        /// <summary>
-        /// Writes the buffered text to the response. Make sure all threads
-        /// have finished writing before calling this method
-        /// </summary>
-        /// <param name="context">The owin context of the response to write</param>
-        public void ToResponse(IOwinContext context)
+        private void WriteRaw(string s)
         {
-            var buffer = _bufferListHead;
-            while (buffer != null)
-            {
-                context.Response.Write(buffer.ToString());
-                buffer = buffer.Next;
-            }
-
-            if (_isBufferOwner && _bufferListHead != null)
-                _bufferListHead.Dispose();
-
-            _bufferListHead = null;
-            _bufferListTail = null;
+            _bufferListTail.Write(s);
         }
 
-        /// <summary>
-        /// Returns a task that will asynchronously write the response
-        /// </summary>
-        /// <param name="context">The owin context of the response to write</param>
-        public Task ToResponseAsync(IOwinContext context)
-        {
-            return Task.Factory.StartNew(() => ToResponse(context));
-        }
+        #endregion
 
-        /// <summary>
-        /// Writes the buffered text to the response. Make sure all threads
-        /// have finished writing before calling this method
-        /// </summary>
-        /// <param name="stringBuilder">The string builder to write the html to</param>
-        public void ToStringBuilder(IStringBuilder stringBuilder)
-        {
-            var buffer = _bufferListHead;
-            while (buffer != null)
-            {
-                stringBuilder.Append(buffer.ToString());
-                buffer = buffer.Next;
-            }
+        #region Overriding TextWriter with indentation
 
-            if (_isBufferOwner && _bufferListHead != null)
-                _bufferListHead.Dispose();
-
-            _bufferListHead = null;
-            _bufferListTail = null;
-        }
-
-        /// <summary>
-        /// Writes a single character to the response buffer
-        /// </summary>
-        public override void Write(char c)
+        private void WriteIndent()
         {
             if (_startOfLine)
             {
                 if (Indented && IndentLevel > 0)
                 {
                     for (var i = 0; i < IndentLevel; i++)
-                    {
-                        _bufferListTail.Write(' ');
-                        _bufferListTail.Write(' ');
-                        _bufferListTail.Write(' ');
-                    }
+                        WriteRaw("   ");
                 }
                 _startOfLine = false;
             }
-            _bufferListTail.Write(c);
+        }
+
+        public override void Write(char c)
+        {
+            if (_startOfLine) WriteIndent();
+            WriteRaw(c);
         }
 
         public override void WriteLine()
         {
-            base.WriteLine();
+            WriteRaw('\n');
             _startOfLine = true;
         }
 
         public override void WriteLine(string s)
         {
-            base.WriteLine(s);
+            if (_startOfLine) WriteIndent();
+            WriteRaw(s);
+            WriteRaw('\n');
             _startOfLine = true;
         }
 
-        /// <summary>
-        /// Writes the openinf tag of an html element
-        /// </summary>
-        /// <param name="tag">The html tag to write</param>
-        /// <param name="selfClosing">Pass true to self close the element</param>
-        /// <param name="attributePairs">Name value pairs of the element attributes</param>
-        public IHtmlWriter WriteOpenTag(string tag, bool selfClosing, params string[] attributePairs)
+        #endregion
+
+        #region Low level methods to write bits of the Html syntax
+
+        private void WriteOpenStart(string tag)
         {
             Write('<');
-            Write(tag);
 
-            WriteAttributes(attributePairs);
-
-            if (selfClosing)
-            {
-                Write(" />");
-            }
-            else
-            {
-                WriteLine('>');
-                IndentLevel++;
-            }
-
-            return this;
+            _characterStream.State = HtmlStates.TagName;
+            _characterStream.Write(tag);
         }
 
-        private void WriteAttributes(string[] attributePairs)
+        private void WriteOpenAttributes(params string[] attributePairs)
         {
             if (attributePairs != null)
             {
                 for (var i = 0; i < attributePairs.Length; i += 2)
                 {
                     Write(' ');
-                    Write(attributePairs[i]);
-                    Write("=\"");
-                    Write(attributePairs[i + 1]);
-                    Write('"');
+
+                    _characterStream.State = HtmlStates.AttributeName;
+                    _characterStream.Write(attributePairs[i]);
+
+                    Write('=');
+
+                    _characterStream.WriteQuotedString(attributePairs[i + 1]);
+                    _characterStream.State = HtmlStates.AfterAttributeValueQuoted;
                 }
             }
         }
 
-        /// <summary>
-        /// Writes the opening tag of an html element that contains other elements
-        /// You must close this element after writing the contents
-        /// </summary>
-        /// <param name="tag">The html tag to write</param>
-        /// <param name="attributePairs">Name value pairs of the element attributes</param>
-        public IHtmlWriter WriteOpenTag(string tag, params string[] attributePairs)
+        private void WriteOpenSelfClose()
         {
-            return WriteOpenTag(tag, false, attributePairs);
+            Write(" />");
         }
 
-        /// <summary>
-        /// Writes the closing tag of an element
-        /// </summary>
-        /// <param name="tag">The element tag to close</param>
-        public IHtmlWriter WriteCloseTag(string tag)
+        private void WriteOpenEnd()
         {
-            IndentLevel--;
+            Write('>');
+        }
+
+        private void WriteClose(string tag)
+        {
             Write("</");
-            Write(tag);
-            Write('>');
-            WriteLine();
 
-            return this;
-        }
+            _characterStream.State = HtmlStates.TagName;
+            _characterStream.Write(tag);
 
-        /// <summary>
-        /// Writes a simple html element with an opening and closing tag and some
-        /// content in between
-        /// </summary>
-        /// <param name="tag">The tag to write</param>
-        /// <param name="content">The content inside the element</param>
-        /// <param name="attributePairs">Attributes to apply to the opening tag</param>
-        public IHtmlWriter WriteElement(string tag, string content, params string[] attributePairs)
-        {
-            Write('<');
-            Write(tag);
-            WriteAttributes(attributePairs);
-            Write('>');
-
-            if (!string.IsNullOrEmpty(content))
-                Write(Escape(content));
-
-            Write("</");
-            Write(tag);
-            Write('>');
-
-            return this;
-        }
-
-        /// <summary>
-        /// Writes a simple html element with an opening and closing tag and some
-        /// content in between then writes a line break
-        /// </summary>
-        /// <param name="tag">The tag to write</param>
-        /// <param name="content">The content inside the element</param>
-        /// <param name="attributePairs">Attributes to apply to the opening tag</param>
-        public IHtmlWriter WriteElementLine(string tag, string content, params string[] attributePairs)
-        {
-            WriteElement(tag, content, attributePairs);
-            WriteLine();
-            return this;
-        }
-
-        public IHtmlWriter WriteUnclosedElement(string tag, params string[] attributePairs)
-        {
-            if (Format == HtmlFormat.XHtml) 
-                return WriteElement(tag, null, attributePairs);
-
-            Write('<');
-            Write(tag);
-            WriteAttributes(attributePairs);
-            Write('>');
-
-            return this;
-        }
-
-        public IHtmlWriter WriteComment(string comment, CommentStyle commentStyle)
-        {
-            if (IncludeComments && !string.IsNullOrEmpty(comment))
-            {
-                if (commentStyle == CommentStyle.Xml)
-                {
-                    Write("<!-- ");
-                    Write(comment);
-                    WriteLine(" -->");
-                }
-                else if (commentStyle == CommentStyle.SingleLineC)
-                {
-                    Write("// ");
-                    WriteLine(comment);
-                }
-                else if (commentStyle == CommentStyle.MultiLineC)
-                {
-                    Write("/* ");
-                    Write(comment);
-                    WriteLine(" */");
-                }
-            }
-
-            return this;
-        }
-
-        public IHtmlWriter WriteDocumentStart(string language)
-        {
-            if (Format == HtmlFormat.XHtml)
-            {
-                WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
-                WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", language, "xmlns", "http://www.w3.org/1999/xhtml");
-            }
-            else
-            {
-                WriteLine("<!DOCTYPE html>");
-                WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", language);
-            }
-
-            return this;
-        }
-
-        public IHtmlWriter WriteDocumentEnd()
-        {
-            WriteCloseTag("html");
-            return this;
-        }
-
-        public IHtmlWriter WriteScriptOpen(string type)
-        {
-            WriteOpenTag("script", "type", type);
-
-            if (Format == HtmlFormat.XHtml)
-            {
-                WriteLine("//<![CDATA[");
-                IndentLevel++;
-            }
-
-            return this;
-        }
-
-        public IHtmlWriter WriteScriptClose()
-        {
-            if (Format == HtmlFormat.XHtml)
-            {
-                IndentLevel--;
-                WriteLine("//]]>");
-            }
-
-            WriteCloseTag("script");
-
-            return this;
-        }
-
-        #region Private helpers
-
-        private string Escape(string text)
-        {
-            const string invalid = "<>&";
-            var replacement = new[] { "&lt;", "&gt;", "&amp;" };
-
-            if (!text.Any(invalid.Contains)) return text;
-
-            using (var sb = _stringBuilderFactory.Create())
-            {
-                foreach (var c in text)
-                {
-                    var pos = invalid.IndexOf(c);
-                    if (pos < 0)
-                        sb.Append(c);
-                    else
-                        sb.Append(replacement[pos]);
-                }
-                return sb.ToString();
-            }
+            Write(">");
         }
 
         #endregion
 
-        #region IHtmlWriter
-
-        IHtmlWriter IHtmlWriter.Write(char c)
-        {
-            Write(c);
-            return this;
-        }
-
-        public TextWriter GetTextWriter()
-        {
-            return this;
-        }
-
-        IHtmlWriter IHtmlWriter.Write(string s)
-        {
-            Write(s);
-            return this;
-        }
-
-        IHtmlWriter IHtmlWriter.Write<T>(T o)
-        {
-            Write(o.ToString());
-            return this;
-        }
-
-        IHtmlWriter IHtmlWriter.WriteLine()
-        {
-            WriteLine();
-            return this;
-        }
-
-        IHtmlWriter IHtmlWriter.WriteLine(string s)
-        {
-            WriteLine(s);
-            return this;
-        }
-
-        IHtmlWriter IHtmlWriter.WriteLine<T>(T o)
-        {
-            WriteLine(o.ToString());
-            return this;
-        }
-
-        #endregion
 
         #region Buffer list
 
@@ -485,10 +230,287 @@ namespace OwinFramework.Pages.Html.Runtime
                 _buffer.Append(c);
             }
 
+            public void Write(string s)
+            {
+                _buffer.Append(s);
+            }
+
             public override string ToString()
             {
                 return _buffer.ToString();
             }
+        }
+
+        #endregion
+
+        #region IHtmlWriter
+
+        void IHtmlWriter.ToResponse(IOwinContext context)
+        {
+            var buffer = _bufferListHead;
+            while (buffer != null)
+            {
+                context.Response.Write(buffer.ToString());
+                buffer = buffer.Next;
+            }
+
+            if (_isBufferOwner && _bufferListHead != null)
+                _bufferListHead.Dispose();
+
+            _bufferListHead = null;
+            _bufferListTail = null;
+        }
+
+        Task IHtmlWriter.ToResponseAsync(IOwinContext context)
+        {
+            return Task.Factory.StartNew(() => ((IHtmlWriter)this).ToResponse(context));
+        }
+
+        void IHtmlWriter.ToStringBuilder(IStringBuilder stringBuilder)
+        {
+            var buffer = _bufferListHead;
+            while (buffer != null)
+            {
+                stringBuilder.Append(buffer.ToString());
+                buffer = buffer.Next;
+            }
+
+            if (_isBufferOwner && _bufferListHead != null)
+                _bufferListHead.Dispose();
+
+            _bufferListHead = null;
+            _bufferListTail = null;
+        }
+
+        TextWriter IHtmlWriter.GetTextWriter()
+        {
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.CreateInsertionPoint()
+        {
+            var result = new HtmlWriter(this);
+
+            _bufferListTail = _bufferListTail.InsertAfter();
+
+            return result;
+        }
+
+        IHtmlWriter IHtmlWriter.Write(char c)
+        {
+            Write(c);
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.Write(string s)
+        {
+            Write(s);
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteLine()
+        {
+            WriteLine();
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteLine(string s)
+        {
+            WriteLine(s);
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteText(char c)
+        {
+            _characterStream.Write(c);
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteText(string s)
+        {
+            _characterStream.Write(s);
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteText<T>(T o)
+        {
+            _characterStream.Write(o.ToString());
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteTextLine<T>(T o)
+        {
+            _characterStream.Write(o.ToString());
+            _characterStream.WriteLineBreak();
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteDocumentStart(string language)
+        {
+            if (Format == HtmlFormat.XHtml)
+            {
+                WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
+                ((IHtmlWriter)this).WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", language, "xmlns", "http://www.w3.org/1999/xhtml");
+            }
+            else
+            {
+                WriteLine("<!DOCTYPE html>");
+                ((IHtmlWriter)this).WriteOpenTag("html", "itemtype", "http://schema.org/WebPage", "lang", language);
+            }
+
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteDocumentEnd()
+        {
+            ((IHtmlWriter)this).WriteCloseTag("html");
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteOpenTag(string tag, bool selfClosing, params string[] attributePairs)
+        {
+            WriteOpenStart(tag);
+            WriteOpenAttributes(attributePairs);
+
+            if (selfClosing)
+            {
+                WriteOpenSelfClose();
+                _characterStream.State = HtmlStates.Data;
+            }
+            else
+            {
+                WriteOpenEnd();
+                WriteLine();
+                IndentLevel++;
+                _characterStream.State = HtmlStates.PlainText;
+            }
+
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteOpenTag(string tag, params string[] attributePairs)
+        {
+            WriteOpenStart(tag);
+            WriteOpenAttributes(attributePairs);
+            WriteOpenEnd();
+            WriteLine();
+
+            IndentLevel++;
+
+            _characterStream.State = HtmlStates.PlainText;
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteCloseTag(string tag)
+        {
+            IndentLevel--;
+
+            WriteClose(tag);
+            WriteLine();
+
+            _characterStream.State = HtmlStates.Data;
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteElement(string tag, string content, params string[] attributePairs)
+        {
+            WriteOpenStart(tag);
+            WriteOpenAttributes(attributePairs);
+            WriteOpenEnd();
+
+            if (!string.IsNullOrEmpty(content))
+            {
+                _characterStream.State = HtmlStates.PlainText;
+                _characterStream.Write(content);
+            }
+
+            WriteClose(tag);
+
+            _characterStream.State = HtmlStates.Data;
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteElementLine(string tag, string content, params string[] attributePairs)
+        {
+            ((IHtmlWriter)this).WriteElement(tag, content, attributePairs);
+            WriteLine();
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteUnclosedElement(string tag, params string[] attributePairs)
+        {
+            if (Format == HtmlFormat.XHtml)
+                return ((IHtmlWriter)this).WriteElement(tag, null, attributePairs);
+
+            WriteOpenStart(tag);
+            WriteOpenAttributes(attributePairs);
+            WriteOpenEnd();
+
+            _characterStream.State = HtmlStates.Data;
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteComment(string comment, CommentStyle commentStyle)
+        {
+            if (IncludeComments && !string.IsNullOrEmpty(comment))
+            {
+                if (commentStyle == CommentStyle.Xml)
+                {
+                    _characterStream.WriteBlockComment(comment);
+                    WriteLine();
+                }
+                else if (commentStyle == CommentStyle.SingleLineC)
+                {
+                    Write("// ");
+                    WriteLine(comment);
+                }
+                else if (commentStyle == CommentStyle.MultiLineC)
+                {
+                    Write("/* ");
+                    Write(comment);
+                    WriteLine(" */");
+                }
+            }
+
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteScriptOpen(string type)
+        {
+            ((IHtmlWriter)this).WriteOpenTag("script", "type", type);
+
+            if (Format == HtmlFormat.XHtml)
+            {
+                WriteLine("//<![CDATA[");
+                IndentLevel++;
+            }
+
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WriteScriptClose()
+        {
+            if (Format == HtmlFormat.XHtml)
+            {
+                IndentLevel--;
+                WriteLine("//]]>");
+            }
+
+            ((IHtmlWriter)this).WriteCloseTag("script");
+
+            return this;
+        }
+
+        IHtmlWriter IHtmlWriter.WritePrefotmatted(string text)
+        {
+            var wasIndented = Indented;
+            Indented = false;
+
+            _characterStream.Write(text);
+
+            Indented = wasIndented;
+
+            return this;
         }
 
         #endregion

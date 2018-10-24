@@ -5,45 +5,18 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using OwinFramework.Pages.Html.Templates.Text;
 
-namespace OwinFramework.Pages.Html.Templates.Text
+namespace OwinFramework.Pages.Html.Runtime
 {
     // https://www.w3.org/TR/html/syntax.html#parsing-html-documents
 
     internal class HtmlCharacterStream: ICharacterStreamReader, ICharacterStreamWriter
     {
-        private readonly string _buffer;
-        private readonly System.IO.TextWriter _writer;
+        private static readonly Dictionary<string, char> _entityCodes;
+        private static readonly Dictionary<char, string> _entityNames;
 
-        private Dictionary<string, char> _entityCodes;
-        private Dictionary<char, string> _entityNames;
-
-        private int _currentPosition;
-        private int _currentInputLength;
-        private char _currentCharacter;
-
-        public HtmlStates State = HtmlStates.Data;
-
-        public HtmlCharacterStream(TextReader reader)
-        {
-            _buffer = reader.ReadToEnd();
-            LoadHtmlEntities();
-            Reset();
-        }
-
-        public HtmlCharacterStream(System.IO.TextWriter writer)
-        {
-            _writer = writer;
-            LoadHtmlEntities();
-        }
-
-        void IDisposable.Dispose()
-        {
-        }
-
-        #region Entity lookup tables
-
-        private void LoadHtmlEntities()
+        static HtmlCharacterStream()
         {
             var entityCodes = new Dictionary<string, char>();
             var entityNames = new Dictionary<char, string>();
@@ -80,7 +53,29 @@ namespace OwinFramework.Pages.Html.Templates.Text
             _entityNames = entityNames;
         }
 
-        #endregion
+        private readonly string _buffer;
+        private readonly System.IO.TextWriter _writer;
+
+        private int _currentPosition;
+        private int _currentInputLength;
+        private char _currentCharacter;
+
+        public HtmlStates State = HtmlStates.Data;
+
+        public HtmlCharacterStream(TextReader reader)
+        {
+            _buffer = reader.ReadToEnd();
+            Reset();
+        }
+
+        public HtmlCharacterStream(System.IO.TextWriter writer)
+        {
+            _writer = writer;
+        }
+
+        void IDisposable.Dispose()
+        {
+        }
 
         #region ICharacterStreamReader
 
@@ -254,15 +249,18 @@ namespace OwinFramework.Pages.Html.Templates.Text
             else if (_characterReferenceStates.Contains(State))
             {
                 string entityName;
-                if (_entityNames.TryGetValue(c, out entityName))
+                lock (_entityNames)
                 {
-                    _writer.Write(entityName);
-                }
-                else
-                {
-                    _writer.Write("&#");
-                    _writer.Write((int)c);
-                    _writer.Write(';');
+                    if (_entityNames.TryGetValue(c, out entityName))
+                    {
+                        _writer.Write(entityName);
+                    }
+                    else
+                    {
+                        _writer.Write("&#");
+                        _writer.Write((int)c);
+                        _writer.Write(';');
+                    }
                 }
             }
             else

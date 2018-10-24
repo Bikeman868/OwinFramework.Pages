@@ -458,14 +458,17 @@ namespace OwinFramework.Pages.Html.Templates
                     {
                         var line = lines[i];
                         if (i < lines.Count - 1 || endsWithLineBreak)
-                            html.WriteLine(line);
+                            html.WriteTextLine(line);
                         else
-                            html.Write(line);
+                            html.WriteText(line);
                     }
                 }
                 else
                 {
-                    html.Write(localizedString);
+                    if (isPreFormatted)
+                        html.WritePrefotmatted(localizedString);
+                    else
+                        html.WriteText(localizedString);
                 }
             });
             return this;

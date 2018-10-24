@@ -77,7 +77,7 @@
     <Compile Include="Templates\Text\HeadingElement.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Templates\Text\HtmlCharacterStream.cs">
+    <Compile Include="Runtime\HtmlCharacterStream.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Templates\Text\HtmlParser.cs">
@@ -211,7 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="OwinFramework.Pages.Html.Net40.paket.references" />
-    <EmbeddedResource Include="Templates\Text\html-entities.json" />
+    <EmbeddedResource Include="Runtime\html-entities.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">

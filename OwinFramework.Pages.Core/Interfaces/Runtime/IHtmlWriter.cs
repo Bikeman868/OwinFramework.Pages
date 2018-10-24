@@ -66,35 +66,52 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// </summary>
         int IndentLevel { get; set; }
 
+
         /// <summary>
-        /// Writes a single character to the response buffer
+        /// Writes a single character directly to the response buffer without
+        /// escaping special characters
         /// </summary>
         IHtmlWriter Write(char c);
 
         /// <summary>
-        /// Writes a string to the response buffer
+        /// Writes a string directly to the response buffer without
+        /// escaping special characters
         /// </summary>
         IHtmlWriter Write(string s);
 
         /// <summary>
-        /// Writes an object to the response buffer by calling its ToString method
-        /// </summary>
-        IHtmlWriter Write<T>(T s);
-
-        /// <summary>
-        /// Writes a string to the response buffer
-        /// </summary>
-        IHtmlWriter WriteLine();
-
-        /// <summary>
-        /// Writes a string to the response buffer
+        /// Writes an escaped string to the response buffer followed by a new line
         /// </summary>
         IHtmlWriter WriteLine(string s);
 
         /// <summary>
-        /// Writes an object to the response buffer by calling its ToString method
+        /// Ensures that the next thing written will be written to a new line
         /// </summary>
-        IHtmlWriter WriteLine<T>(T s);
+        IHtmlWriter WriteLine();
+
+
+        /// <summary>
+        /// Writes a single character to the response buffer. Writes an entity
+        /// reference for characters that are not valid in Html text
+        /// </summary>
+        IHtmlWriter WriteText(char c);
+
+        /// <summary>
+        /// Writes a string to the response buffer escaping invalid characters
+        /// </summary>
+        IHtmlWriter WriteText(string s);
+
+        /// <summary>
+        /// Writes an object to the response buffer by calling its ToString method
+        /// then escaping special characters
+        /// </summary>
+        IHtmlWriter WriteText<T>(T s);
+
+        /// <summary>
+        /// Writes an object to the response buffer by calling its ToString method
+        /// escaping the resulting string then appends a new line
+        /// </summary>
+        IHtmlWriter WriteTextLine<T>(T s);
 
         /// <summary>
         /// Writes the opening lines of the Html document
@@ -168,5 +185,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// </summary>
         /// <returns></returns>
         IHtmlWriter WriteScriptClose();
+
+        /// <summary>
+        /// Writes a block of text that is already pre-formatted. Will not write
+        /// indentation or add/remove line breaks, but will escape special characters
+        /// </summary>
+        /// <param name="text">The preformatted text</param>
+        IHtmlWriter WritePrefotmatted(string text);
     }
 }

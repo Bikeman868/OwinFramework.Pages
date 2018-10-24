@@ -103,7 +103,6 @@ way the two Regions know how to do the pop-up vs inline use cases but know
 nothing about when the Compoennt does, and the Component knows nothing about
 whether it is displayed inline or in a popup. This is good separation of
 concerns that leads to better reuse and easier maintenance.
-
 2. The Region can be bound to a list from the data layer and will repeat the
 Component or Layout that it contains. It is a more modular design to have this
 repeating functionallity outside of the Component which can focus on doing one

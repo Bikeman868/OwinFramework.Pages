@@ -7,10 +7,11 @@
   - Css supports usual deployment options - packages, global or in-page
   - Html parser for the content defined by the template class
 
-  [IsTemplate()]
-  [TemplateStyle("~/assets/style/my-template.css")]
-  [TemplateContent("~/assets/style/my-template.md")]
+  [IsTemplate("/templates/product")]
+  [TemplateStyle("~/assets/template/product/product-component.css")]
+  [TemplateContent("~/assets/template/product/product-component.md")]
   [TemplateParser("markdown-with-mustache")]
+  [NeedsData(typeof(Product))]
   public class MyTemplate { }
 
 * Template parsers

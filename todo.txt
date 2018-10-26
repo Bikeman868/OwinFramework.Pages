@@ -1,10 +1,24 @@
 * Bugs
   - Standard package Html has missing line breaks
 
+* Template classes
+  - Define a style and content file that is specific to the template - like Angular
+  - Files deployed with the application and loaded at startup
+  - Css supports usual deployment options - packages, global or in-page
+  - Html parser for the content defined by the template class
+
+  [IsTemplate()]
+  [TemplateStyle("~/assets/style/my-template.css")]
+  [TemplateContent("~/assets/style/my-template.md")]
+  [TemplateParser("markdown-with-mustache")]
+  public class MyTemplate { }
+
 * Template parsers
   - Markdown with Mustache data binding
   - Plain static Html
   - Html with custom tags for data binding and repeating
+  - Html with mustache
+  - Angular subset
 
 * Standard packages
   - Commonly used layouts

@@ -1,5 +1,6 @@
 * Bugs
   - Standard package Html has missing line breaks
+  - Markdown parser has problems with unnumbered lists. Numbered lists seem to work.
 
 * Template classes
   - Define a style and content file that is specific to the template - like Angular

@@ -58,10 +58,12 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Templates\Template3.svg" />
     <Content Include="Templates\Template1.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SampleDataProviders\VerticalTextDataProvider.cs" />
     <Compile Include="SampleDataProviders\ApplicationInfoDataProvider.cs" />
     <Compile Include="SampleDataProviders\MenuDataProvider.cs" />
     <Compile Include="Package.cs" />

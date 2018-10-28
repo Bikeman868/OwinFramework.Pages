@@ -21,9 +21,8 @@ namespace OwinFramework.Pages.Html.Templates
     /// You can also access properties of contained objects by adding
     /// periods like this {{Person:Address.City}}
     /// 
-    /// You can also use the standard Mustache # and / syntax to conditionally
-    /// render output or repeat output for each element ona list. For example
-    /// {{#Person:Addresses}}<p>{{Street}},{{City}},{{Zip}}</p>{{/Person:Addresses}}
+    /// You can also use the standard Mustache # and / syntax to repeat 
+    /// output for each element in a list.
     /// </summary>
     /// <example>
     ///   {{Person=MyApp.DataModels.IPerson}}
@@ -37,11 +36,15 @@ namespace OwinFramework.Pages.Html.Templates
     ///   <p>Welcome to my wonderful app</p>
     /// </example>
     /// <example>
-    ///   <svg>
-    ///     <g transform="translate(-640,-640) rotate(-90)">
+    ///   <svg width="50" height="200">
+    ///     <g transform="translate(40,200) rotate(-90)">
     ///       <text class="title">{{Person:Title}} {{Person:LastName}}</text>
     ///     </g>
     ///   </svg>
+    /// </example>
+    /// <example>
+    ///   {{Address=MyApp.DataModels.IAddress}}
+    ///   {{#Address}}<p>{{Street}},{{City}},{{Zip}}</p>{{/Address}}
     /// </example>
     public class MustacheParser : ITemplateParser
     {
@@ -53,7 +56,7 @@ namespace OwinFramework.Pages.Html.Templates
         {
             _templateBuilder = templateBuilder;
             _mustacheRegex = new Regex(
-                @"{{([a-zA-Z0-9=:.#/]+)}}", 
+                @"{{([a-zA-Z0-9=+:.#/]+)}}", 
                 RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
         }
 
@@ -89,6 +92,8 @@ namespace OwinFramework.Pages.Html.Templates
                 var mustache = match.Groups[1].Value;
 
                 if (TryParseAlias(mustache, types)) continue;
+                if (TryParseStartRepeat(mustache, template, types)) continue;
+                if (TryParseEndRepeat(mustache, template, types)) continue;
                 if (TryParseField(mustache, template, types)) continue;
             }
 
@@ -109,6 +114,33 @@ namespace OwinFramework.Pages.Html.Templates
             var typeName = mustache.Substring(equalsPos + 1);
             var type = ResolveTypeName(typeName);
             types[alias] = type;
+            return true;
+        }
+
+        private bool TryParseStartRepeat(string mustache, ITemplateDefinition template, Dictionary<string, Type> types)
+        {
+            if (mustache.Length == 0 || mustache[0] != '#') return false;
+
+            var indexOfColon = mustache.IndexOf(':');
+
+            var typeName = indexOfColon < 0 ? mustache.Substring(1) : mustache.Substring(1, indexOfColon - 1);
+            var scopeName = indexOfColon < 0 ? null : mustache.Substring(indexOfColon + 1);
+
+            var type = types.ContainsKey(typeName)
+                ? types[typeName]
+                : ResolveTypeName(typeName);
+
+            template.RepeatStart(type, scopeName);
+
+            return true;
+        }
+
+        private bool TryParseEndRepeat(string mustache, ITemplateDefinition template, Dictionary<string, Type> types)
+        {
+            if (mustache.Length == 0 || mustache[0] != '/') return false;
+
+            template.RepeatEnd();
+
             return true;
         }
 

@@ -241,9 +241,10 @@ namespace Sample1.SamplePages
     [LayoutRegion("main", "rightColumn")]
     [RegionComponent("left", "sidebar2")]
     //[RegionTemplate("main", "/page2/body")]
-    //[RegionTemplate("main", "/loaded/template1")]
-    //[RegionTemplate("main", "/loaded/template2")]
-    [RegionTemplate("main", "/loaded/template3")]
+    //[RegionTemplate("main", "/file/template1")]
+    //[RegionTemplate("main", "/file/template2")]
+    [RegionTemplate("main", "/file/template3")]
+    //[RegionTemplate("main", "/file/template4")]
     internal class Page2Layout { }
 
     /*
@@ -298,12 +299,12 @@ namespace Sample1.SamplePages
     internal class Page2 : PageBase { }
 
     /// <summary>
-    /// Defines a page that is rendered in response to requets for '/page2'
+    /// Defines a page that is rendered in response to requets for '/page3'
     /// Uses the 'main' layout but changes the contents of the 'body' region.
     /// </summary>
     [IsPage("page3")]
     [Route("/page3", Methods.Get)]
     [PageTitle("Page 3")]
-    [RegionTemplate("body", "/loaded/template2")]
+    [RegionTemplate("body", "/url/template1")]
     internal class Page3 : PageBase { }
 }

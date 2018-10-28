@@ -1,0 +1,7 @@
+﻿{{Menu=OwinFramework.Pages.Standard.MenuPackage+MenuItem}}
+{{#Menu}}
+	<svg width="200" height="30">
+	  <style>text { font: 20px serif; fill: black; }</style>
+      <text x="0" y="25">{{Menu:Name}}</text>
+	</svg>
+{{/Menu}}

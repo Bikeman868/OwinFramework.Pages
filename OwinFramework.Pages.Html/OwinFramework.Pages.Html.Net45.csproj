@@ -105,6 +105,7 @@
     <Compile Include="Templates\AsIsParser.cs" />
     <Compile Include="Templates\FileSystemLoader.cs" />
     <Compile Include="Templates\MarkdownParser.cs" />
+    <Compile Include="Templates\MustacheParser.cs" />
     <Compile Include="Templates\Template.cs" />
     <Compile Include="Templates\TemplateBuilder.cs" />
     <Compile Include="Templates\TemplateDefinition.cs" />
@@ -121,7 +122,6 @@
     <Compile Include="Templates\Text\ElementTypes.cs" />
     <Compile Include="Templates\Text\FormattedElement.cs" />
     <Compile Include="Templates\Text\HeadingElement.cs" />
-    <Compile Include="Templates\Text\HtmlCharacterStream.cs" />
     <Compile Include="Templates\Text\HtmlParser.cs" />
     <Compile Include="Templates\Text\HtmlStates.cs" />
     <Compile Include="Templates\Text\HtmlWriter.cs" />
@@ -169,7 +169,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="OwinFramework.Pages.Html.Net45.paket.references" />
-    <EmbeddedResource Include="Templates\Text\html-entities.json" />
     <EmbeddedResource Include="Runtime\html-entities.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

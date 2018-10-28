@@ -12,10 +12,10 @@ namespace Sample1.SamplePages
 {
     [IsPage]
     //[RequiresPermission("administrator")]
-    [Route("/page3", Methods.Get)]
+    [Route("/page4", Methods.Get)]
     [Description("<p>This is an example of how to add a full custom page that is discovered and registered automatically by the fluent builder</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for this self registering page</p>")]
-    [Example("<a href='/page3'>/page3</a>")]
+    [Example("<a href='/page4'>/page4</a>")]
     internal class SelfRegisteringPage : IPage
     {
         public ElementType ElementType { get { return ElementType.Page; } }

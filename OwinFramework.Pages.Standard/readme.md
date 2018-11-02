@@ -1,4 +1,3 @@
-# Owin Framework Pages Standard Packages
 This NuGet provides a number of packages for standard UI elements such as
 menus, accordions, tab strips etc. When you inclide this assembly into your
 application this makes the packages available, but you still have to load

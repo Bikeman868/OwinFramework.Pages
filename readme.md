@@ -1,5 +1,3 @@
-# OwinFramework.Pages
-
 This NuGet package is designed to work with the Owin Framework and adds the
 ability to design web pages and serve them in an extremely scaleable way. It
 also serves Ajax requests providing both the front-end JavaScript and the

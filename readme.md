@@ -1,11 +1,10 @@
-# OwinFramework.Pages
-
 This NuGet package is designed to work with the Owin Framework and adds the
 ability to design web pages and serve them in an extremely scaleable way. It
 also serves Ajax requests providing both the front-end JavaScript and the
 back-end Restful endpoints.
 
 Key features:
+
 * Very flexible, powerful, decoupled and extensible architecture
 * Scales to tens of thousands of pages per second per server
 * Designed from the ground up for maximum efficiency and minimal CPU cycles
@@ -298,7 +297,7 @@ attributes. You can mix this style of declaration with any of the other options,
 for example you can define Layouts using this technique but define Pages using some
 other method.
 
-[TemlatedComponent.html](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/TemlatedComponent.cs)
+[TemplatedComponent.html](https://github.com/Bikeman868/OwinFramework.Pages/blob/master/Sample1/SamplePages/TemplatedComponent.cs)
 is an example of creating a component by directly writing html into a file that contains
 extentions to html making it a templating language instead of plain html. Note that these
 templates can be written as complete html page so that you can preview then in a browser

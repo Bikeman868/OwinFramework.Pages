@@ -436,9 +436,9 @@ namespace OwinFramework.Pages.Html.Templates
 
                 string formattedValue;
                 if (dataFormatter == null)
-                    var formattedValue = propertyValue == null ? null : propertyValue.ToString();
+                    formattedValue = propertyValue == null ? null : propertyValue.ToString();
                 else
-                    var formattedValue = dataFormatter.Format(property, propertyValue);
+                    formattedValue = dataFormatter.Format(property, propertyValue);
 
                 if (!string.IsNullOrEmpty(formattedValue))
                     r.Html.WriteText(formattedValue);

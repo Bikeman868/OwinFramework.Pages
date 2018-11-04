@@ -56,7 +56,7 @@ namespace OwinFramework.Pages.Html.Templates
         {
             _templateBuilder = templateBuilder;
             _mustacheRegex = new Regex(
-                @"{{([a-zA-Z0-9=+:.#/]+)}}", 
+                @"{{([a-zA-Z0-9=+:.#/ ]+)}}", 
                 RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
         }
 
@@ -82,14 +82,30 @@ namespace OwinFramework.Pages.Html.Templates
             var types = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
             
             var pos = 0;
+            var startOfContent = false;
+            var matchIndex = 0;
+            while (!startOfContent)
+            {
+                if (char.IsWhiteSpace(text[pos]))
+                    pos++;
+                else if (matches.Count > matchIndex && pos == matches[matchIndex].Index)
+                {
+                    pos = matches[matchIndex].Index + matches[matchIndex].Length;
+                    matchIndex++;
+                }
+                else
+                    startOfContent = true;
+            }
+
             foreach(Match match in matches)
             {
                 if (match.Index > pos)
                     template.AddHtml(text.Substring(pos, match.Index - pos));
 
-                pos = match.Index + match.Length;
+                if (pos <= match.Index) 
+                    pos = match.Index + match.Length;
 
-                var mustache = match.Groups[1].Value;
+                var mustache = match.Groups[1].Value.Replace(" ", "");
 
                 if (TryParseAlias(mustache, types)) continue;
                 if (TryParseStartRepeat(mustache, template, types)) continue;

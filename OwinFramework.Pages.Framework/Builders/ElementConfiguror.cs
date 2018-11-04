@@ -440,6 +440,14 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
+            if (!ReferenceEquals(attributes.RegionTemplates, null))
+            {
+                foreach (var regionTemplate in attributes.RegionTemplates)
+                {
+                    page.RegionTemplate(regionTemplate.Region, regionTemplate.TemplatePath);
+                }
+            }
+
             if (!ReferenceEquals(attributes.PageTitle, null))
             {
                 page.Title(attributes.PageTitle.Title);

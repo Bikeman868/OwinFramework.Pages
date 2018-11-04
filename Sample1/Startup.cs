@@ -152,7 +152,7 @@ namespace Sample1
 
             // This is an example of loading and parsing template from a URL
             var uriLoader = ninject.Get<UriLoader>();
-            uriLoader.LoadUri(new Uri("https://raw.githubusercontent.com/Bikeman868/OwinFramework.Middleware/master/OwinFramework.Dart/readme.md"), markdownTemplateParser, "/url/template1");
+            uriLoader.LoadUri(new Uri("https://raw.githubusercontent.com/Bikeman868/OwinFramework.Middleware/master/OwinFramework.FormIdentification/readme.md"), markdownTemplateParser, "/url/template1");
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements

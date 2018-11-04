@@ -40,7 +40,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
 
         /// <summary>
         /// Optional authentication function. If this is not null then it will be called
-        /// to verrify the user has permission before invoking the runable. If this function
+        /// to verify the user has permission before invoking the runable. If this function
         /// returns false then a 403 response is returned to the caller
         /// </summary>
         Func<IOwinContext, bool> AuthenticationFunc { get; }

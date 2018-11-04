@@ -1,4 +1,6 @@
 ﻿using System;
+using OwinFramework.Builder;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -124,12 +126,24 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.RequiresPermission(string permissionName, string assetName)
         {
-            throw new NotImplementedException("Required permissions are not implemented yet");
+            _page.AuthenticationFunc = c =>
+                {
+                    var authorization = c.GetFeature<IAuthorization>();
+                    if (authorization == null)
+                        throw new Exception(
+                            "Page '" + _page.Name + "' requires permission '" + permissionName + 
+                            "' but there is no Authorization middleware in the Owin pipeline");
+                    return authorization.HasPermission(permissionName, assetName);
+                };
+            return this;
         }
 
-        IPageDefinition IPageDefinition.Cache(string cacheCategory, InterfacesV1.Middleware.CachePriority cachePriority)
+        IPageDefinition IPageDefinition.Cache(string cacheCategory, CachePriority cachePriority)
         {
-            throw new NotImplementedException("Output caching is not implemented yet");
+            _page.CacheCategory = cacheCategory;
+            _page.CachePriority = cachePriority;
+
+            return this;
         }
 
         IPageDefinition IPageDefinition.Layout(ILayout layout)

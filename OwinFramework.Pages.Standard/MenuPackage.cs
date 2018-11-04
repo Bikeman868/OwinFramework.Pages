@@ -125,6 +125,7 @@ namespace OwinFramework.Pages.Standard
                     context.Html.WriteOpenTag("input", true, "type", "checkbox", "class", ns + "_mb_hamburger_button", "id", ns + "_mb_hamburger_button");
                     context.Html.WriteLine();
                     context.Html.WriteOpenTag("label", "for", ns + "_mb_hamburger_button", "class", ns + "_mb_hamburger_icon");
+                    context.Html.WriteLine();
                     context.Html.WriteElementLine("div", null, "class", ns + "_mb_hamburger_icon " + ns + "_mb_hamburger_icon_1");
                     context.Html.WriteElementLine("div", null, "class", ns + "_mb_hamburger_icon " + ns + "_mb_hamburger_icon_2");
                     context.Html.WriteElementLine("div", null, "class", ns + "_mb_hamburger_icon " + ns + "_mb_hamburger_icon_3");

@@ -39,7 +39,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// <summary>
         /// Return a custom authentication check
         /// </summary>
-        public virtual Func<IOwinContext, bool> AuthenticationFunc { get { return null; } }
+        public virtual Func<IOwinContext, bool> AuthenticationFunc { get; set; }
 
         /// <summary>
         /// Calculates the page page title

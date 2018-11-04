@@ -179,46 +179,58 @@ namespace OwinFramework.Pages.Html.Templates.Text
             var text = trimmedLine.Substring(firstWhitespace + 1);
 
             var unorderedList = firstToken == "*" || firstToken == "+" || firstToken == "-";
+            var numberedList = false;
 
             if (!unorderedList)
             {
                 int i;
-                if (!int.TryParse(firstToken.Substring(0, firstToken.Length - 1), out i))
+                numberedList = int.TryParse(firstToken.Substring(0, firstToken.Length - 1), out i);
+            }
+
+            if (!unorderedList && !numberedList)
+            {
+                if (_characterStream.State != MarkdownStates.UnorderedList && _characterStream.State != MarkdownStates.NumberedList)
                     return false;
             }
-
-            _characterStream.State = unorderedList ? MarkdownStates.UnorderedList : MarkdownStates.NumberedList;
-
-            var isSubList = rawLline[0] == ' ';
-            var containerType = unorderedList ? ContainerTypes.BulletList : ContainerTypes.NumberedList;
-            var containerName = isSubList ? "SubList" : "List";
-
-            var container = CurrentElement as ContainerElement;
-            if (container == null || container.ContainerType != containerType || container.Name != containerName)
+            else
             {
-                if (container == null || (isSubList && container.Name != containerName))
-                {
-                    // Start new sub-list
-                    PushElement(new ContainerElement { ContainerType = containerType, Name = containerName });
-                }
-                else if (isSubList)
-                {
-                    // End current sub-list
+                if (CurrentElement is ParagraphElement)
                     PopElement();
 
-                    // Start a new sub-list
-                    PushElement(new ContainerElement { ContainerType = containerType, Name = containerName });
-                }
-                else
+                _characterStream.State = unorderedList ? MarkdownStates.UnorderedList : MarkdownStates.NumberedList;
+
+                var isSubList = rawLline[0] == ' ';
+                var containerType = unorderedList ? ContainerTypes.BulletList : ContainerTypes.NumberedList;
+                var containerName = isSubList ? "SubList" : "List";
+
+                var container = CurrentElement as ContainerElement;
+                if (container == null || container.ContainerType != containerType || container.Name != containerName)
                 {
-                    // Close sub-list and return to outer list
-                    PopElement();
+                    if (container == null || (isSubList && container.Name != containerName))
+                    {
+                        // Start new sub-list
+                        PushElement(new ContainerElement { ContainerType = containerType, Name = containerName });
+                    }
+                    else if (isSubList)
+                    {
+                        // End current sub-list
+                        PopElement();
+
+                        // Start a new sub-list
+                        PushElement(new ContainerElement { ContainerType = containerType, Name = containerName });
+                    }
+                    else
+                    {
+                        // Close sub-list and return to outer list
+                        PopElement();
+                    }
                 }
             }
 
-            PushElement(new ParagraphElement { Name = "p" });
+            if (!(CurrentElement is ParagraphElement))
+                PushElement(new ParagraphElement { Name = "p" });
+
             ParseText(text);
-            PopElement();
 
             return true;
         }

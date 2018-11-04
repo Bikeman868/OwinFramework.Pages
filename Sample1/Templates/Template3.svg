@@ -1,9 +1,11 @@
-﻿{{VerticalText=Sample1.SampleDataProviders.VerticalText}}<svg width="{{VerticalText:Width}}" height="{{VerticalText:Height}}">
+﻿{{VerticalText = Sample1.SampleDataProviders.VerticalText}}
+
+<svg width="{{VerticalText: Width}}" height="{{VerticalText: Height}}">
   <style>
-    text { {{VerticalText:TextStyle}} }
+    text { {{VerticalText: TextStyle}} }
   </style>
-  <rect width="100%" height="100%" fill="{{VerticalText:Background}}" />
-  <g transform="translate({{VerticalText:X}},{{VerticalText:Y}}) rotate(-90)">
-    <text class="title" textLength="{{VerticalText:TextHeight}}" lengthAdjust="spacingAndGlyphs">{{VerticalText:Caption}}</text>
+  <rect width="100%" height="100%" fill="{{VerticalText: Background}}" />
+  <g transform="translate({{VerticalText: X}},{{VerticalText: Y}}) rotate(-90)">
+    <text class="title" textLength="{{VerticalText: TextHeight}}" lengthAdjust="spacingAndGlyphs">{{VerticalText: Caption}}</text>
   </g>
 </svg>

@@ -67,6 +67,11 @@ namespace OwinFramework.Pages.Standard
             public string TextStyle { get; set; }
 
             /// <summary>
+            /// Defines how to stretch the text to fir the box
+            /// </summary>
+            public string LengthAdjust { get; set; }
+
+            /// <summary>
             /// Initializes the vertical text data with default values
             /// </summary>
             /// <param name="caption">The text to render</param>
@@ -82,6 +87,7 @@ namespace OwinFramework.Pages.Standard
                 Y = height * 0.9f;
                 Background = "blue";
                 TextStyle = "font: 30px serif; fill: white;";
+                LengthAdjust = "spacingAndGlyphs";
             }
         }
 
@@ -105,16 +111,23 @@ namespace OwinFramework.Pages.Standard
                     var data = context.Data.Get<VerticalText>();
 
                     context.Html.WriteOpenTag("svg", "width", data.Width.ToString(), "height", data.Height.ToString());
+                    context.Html.WriteLine();
+
                     context.Html.WriteElementLine("style", "text { " + data.TextStyle + " }");
 
                     if (!string.IsNullOrEmpty(data.Background))
                         context.Html.WriteOpenTag("rect", true, "width", "100%", "height", "100%", "fill", data.Background);
 
                     context.Html.WriteOpenTag("g", "transform", "translate(" + data.X + "," + data.Y + ") rotate(-90)");
-                    context.Html.WriteElementLine("text", data.Caption, "textLength", data.TextHeight.ToString(), "lengthAdjust", "spacingAndGlyphs");
+                    context.Html.WriteLine();
+
+                    context.Html.WriteElementLine("text", data.Caption, "textLength", data.TextHeight.ToString(), "lengthAdjust", data.LengthAdjust);
+
                     context.Html.WriteCloseTag("g");
+                    context.Html.WriteLine();
 
                     context.Html.WriteCloseTag("svg");
+                    context.Html.WriteLine();
                 }
                 return WriteResult.Continue();
             }

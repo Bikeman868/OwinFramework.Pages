@@ -1,10 +1,4 @@
 * Bugs
-  - Standard package Html has missing line breaks
-  - Markdown parser has problems with unnumbered lists. Numbered lists seem to work.
-  - Mustache parser should not emit blank lines for class definitions.
-
-* Improvements
-  - Mustache parser allows whitespace around colons and equals.
 
 * Template classes
   - Define a style and content file that is specific to the template - like Angular
@@ -20,8 +14,6 @@
   public class MyTemplate { }
 
 * Template parsers
-  - Markdown with Mustache data binding
-  - Plain static Html
   - Html with custom tags for data binding and repeating
   - Html with mustache
   - Angular subset

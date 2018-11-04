@@ -433,8 +433,15 @@ namespace OwinFramework.Pages.Html.Templates
             {
                 var data = r.Data.Get(dataType, scopeName);
                 var propertyValue = property.GetValue(data, null);
-                var formattedValue = dataFormatter == null ? propertyValue.ToString() : dataFormatter.Format(property, propertyValue);
-                r.Html.WriteText(formattedValue);
+
+                string formattedValue;
+                if (dataFormatter == null)
+                    var formattedValue = propertyValue == null ? null : propertyValue.ToString();
+                else
+                    var formattedValue = dataFormatter.Format(property, propertyValue);
+
+                if (!string.IsNullOrEmpty(formattedValue))
+                    r.Html.WriteText(formattedValue);
             });
 
             var dataConsumer = _template as IDataConsumer;

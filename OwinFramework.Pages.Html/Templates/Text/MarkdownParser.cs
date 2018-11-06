@@ -95,11 +95,11 @@ namespace OwinFramework.Pages.Html.Templates.Text
     
         private void AddLine(string line)
         {
+            if (CheckPreFormatted(line)) return;
             if (CheckBlankLine(line)) return;
             if (CheckDoubleUnderline(line)) return;
             if (CheckSingleUnderline(line)) return;
             if (CheckHorizontalRule(line)) return;
-            if (CheckPreFormatted(line)) return;
 
             var trimmedLine = line.Trim();
 
@@ -187,12 +187,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
                 numberedList = int.TryParse(firstToken.Substring(0, firstToken.Length - 1), out i);
             }
 
-            if (!unorderedList && !numberedList)
-            {
-                if (_characterStream.State != MarkdownStates.UnorderedList && _characterStream.State != MarkdownStates.NumberedList)
-                    return false;
-            }
-            else
+            if (unorderedList || numberedList)
             {
                 if (CurrentElement is ParagraphElement)
                     PopElement();
@@ -226,9 +221,18 @@ namespace OwinFramework.Pages.Html.Templates.Text
                     }
                 }
             }
+            else
+            {
+                if (_characterStream.State != MarkdownStates.UnorderedList && _characterStream.State != MarkdownStates.NumberedList)
+                    return false;
+                text = trimmedLine;
+            }
 
-            if (!(CurrentElement is ParagraphElement))
+            if (CurrentElement is ParagraphElement)
+                text = ' ' + text;
+            else
                 PushElement(new ParagraphElement { Name = "p" });
+
 
             ParseText(text);
 

@@ -1,5 +1,7 @@
 * Bugs
-
+ - When parsing markdown with blocks of source code the special characters in the
+   source code need to be turned into html entities.
+   
 * Template classes
   - Define a style and content file that is specific to the template - like Angular
   - Files deployed with the application and loaded at startup

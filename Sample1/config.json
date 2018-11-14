@@ -1,4 +1,12 @@
 ﻿{
+    "owinFramework": {
+        "pages": {
+            "html": {
+                "includeComments": false,
+                "indented": false
+            }
+        }
+    },
     "sample1": {
         "pages": {
 
@@ -6,10 +14,10 @@
         "notFound": {
 
         },
-        "documenter": { 
+        "documenter": {
 
         },
-        "defaultDocument": { 
+        "defaultDocument": {
             "defaultPage": "/owin/endpoints"
         }
     }

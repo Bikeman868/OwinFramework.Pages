@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Html.Interfaces;
 using Urchin.Client.Interfaces;
@@ -10,9 +11,14 @@ namespace OwinFramework.Pages.Html.Configuration
     /// </summary>
     internal class HtmlConfiguration : IHtmlConfiguration
     {
-        public HtmlFormat HtmlFormat { get; private set; }
-        public bool IncludeComments { get; private set; }
-        public bool Indented { get; private set; }
+        [JsonProperty("htmlFormat")]
+        public HtmlFormat HtmlFormat { get; set; }
+
+        [JsonProperty("includeComments")]
+        public bool IncludeComments { get; set; }
+
+        [JsonProperty("indented")]
+        public bool Indented { get; set; }
 
         #region Implementation details
 

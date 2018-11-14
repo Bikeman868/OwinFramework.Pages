@@ -3,6 +3,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Html.Interfaces;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
@@ -13,6 +14,13 @@ namespace OwinFramework.Pages.Html.Runtime
         public bool HasContent { get { return _elements.Count > 0; } }
 
         private readonly List<CssElement> _elements = new List<CssElement>();
+
+        public CssWriter(
+            IHtmlConfiguration htmlConfiguration)
+        {
+            Indented = htmlConfiguration.Indented;
+            IncludeComments = htmlConfiguration.IncludeComments;
+        }
 
         public void Dispose()
         {

@@ -8,16 +8,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     public interface ICssWriterFactory
     {
         /// <summary>
-        /// Creates and initializes an instance that can write CSS
-        /// </summary>
-        /// <param name="format">The Html standards to apply</param>
-        /// <param name="indented">Choose readable vs compact</param>
-        /// <param name="includeComments">Pass false here to surpress output of comments</param>
-        ICssWriter Create(HtmlFormat format = HtmlFormat.Html, bool indented = true, bool includeComments = true);
-
-        /// <summary>
-        /// Creates and initializes an instance that can write CSS
+        /// Creates and initializes an instance that can write CSS using the configuration
+        /// of a render context
         /// </summary>
         ICssWriter Create(IRenderContext context);
+
+        /// <summary>
+        /// Creates and initializes an instance that can write CSS using
+        /// the default configuration
+        /// </summary>
+        ICssWriter Create();
     }
 }

@@ -1,6 +1,4 @@
 * Bugs
- - When parsing markdown with blocks of source code the special characters in the
-   source code need to be turned into html entities.
    
 * Template classes
   - Define a style and content file that is specific to the template - like Angular
@@ -17,7 +15,6 @@
 
 * Template parsers
   - Html with custom tags for data binding and repeating
-  - Html with mustache
   - Angular subset
 
 * Standard packages

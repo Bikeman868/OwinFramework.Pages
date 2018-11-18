@@ -7,9 +7,12 @@ using OwinFramework.Pages.Core.Interfaces.Templates;
 namespace OwinFramework.Pages.Html.Templates.Text
 {
     /// <summary>
-    /// This is a template parser that converts Markdown format into
-    /// Html. This is suitable for static content that is written in
-    /// the Markdown file format.
+    /// This is abase class for parsers that produce templates from
+    /// parsed documents. Parsers that inherit from this base class
+    /// should call the protected Write() method to add any IDocument
+    /// implementation to a template. Multiple documents can be written
+    /// to a template this way along with any other template rendering
+    /// methods.
     /// </summary>
     public class DocumentParser
     {

@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Core
-version 1.0.0-alpha-013
+version 1.0.0-alpha-014
 authors Martin Halliday
 copyright Martin Halliday 2018
 description
@@ -9,7 +9,7 @@ description
 title Owin Framework Pages Core
 releasenotes
   This is the first version
-projecturl https://github.com/Bikeman868/OwinFramework.Pages/tree/master/OwinFramework.Pages.Core
+projecturl http://owinframework.com/content/project/owinframework.pages.core/landing
 
 files
   bin/net40/release/OwinFramework.Pages.Core.dll ==> lib/net40

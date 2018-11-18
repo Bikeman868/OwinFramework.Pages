@@ -502,11 +502,15 @@ namespace OwinFramework.Pages.Html.Runtime
         IHtmlWriter IHtmlWriter.WritePrefotmatted(string text)
         {
             var wasIndented = Indented;
+            var originalState = _characterStream.State;
+
             Indented = false;
+            _characterStream.State = HtmlStates.Data;
 
             _characterStream.Write(text);
 
             Indented = wasIndented;
+            _characterStream.State = originalState;
 
             return this;
         }

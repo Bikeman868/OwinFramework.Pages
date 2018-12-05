@@ -48,9 +48,11 @@
     <Compile Include="Attributes\AttributeSet.cs" />
     <Compile Include="Attributes\ChildContainerAttribute.cs" />
     <Compile Include="Attributes\CacheOutputAttribute.cs" />
+    <Compile Include="Attributes\EndpointParameterAttribute.cs" />
     <Compile Include="Attributes\IsDataProviderAttribute.cs" />
     <Compile Include="Attributes\DeployCssAttribute.cs" />
     <Compile Include="Attributes\DeployFunctionAttribute.cs" />
+    <Compile Include="Attributes\EndpointAttribute.cs" />
     <Compile Include="Attributes\NeedsComponentAttribute.cs" />
     <Compile Include="Attributes\DataScopeAttribute.cs" />
     <Compile Include="Attributes\RegionTemplateAttribute.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="Debug\DebugRoute.cs" />
     <Compile Include="Enums\ElementType.cs" />
     <Compile Include="Enums\CommentStyle.cs" />
+    <Compile Include="Enums\EndpointParameterType.cs" />
     <Compile Include="Enums\HtmlFormat.cs" />
     <Compile Include="Enums\NameResolutionPhase.cs" />
     <Compile Include="Enums\PageArea.cs" />

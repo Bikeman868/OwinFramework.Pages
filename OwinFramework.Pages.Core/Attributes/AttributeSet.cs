@@ -303,7 +303,6 @@ namespace OwinFramework.Pages.Core.Attributes
             if (IsLayout != null) throw new FluentBuilderException("A class can not be a page and a layout. " + Type.DisplayName());
             if (IsRegion != null) throw new FluentBuilderException("A class can not be a page and a region. " + Type.DisplayName());
             if (IsComponent != null) throw new FluentBuilderException("A class can not be a page and a component. " + Type.DisplayName());
-            if (IsService != null) throw new FluentBuilderException("A class can not be a page and a service. " + Type.DisplayName());
             if (IsDataProvider != null) throw new FluentBuilderException("A class can not be a page and a data provider. " + Type.DisplayName());
         }
 
@@ -344,7 +343,6 @@ namespace OwinFramework.Pages.Core.Attributes
         {
             if (IsPackage != null) throw new FluentBuilderException("A class can not be a service and a package. " + Type.DisplayName());
             if (IsModule != null) throw new FluentBuilderException("A class can not be a service and a module. " + Type.DisplayName());
-            if (IsPage != null) throw new FluentBuilderException("A class can not be a service and a page. " + Type.DisplayName());
             if (IsLayout != null) throw new FluentBuilderException("A class can not be a service and a layout. " + Type.DisplayName());
             if (IsRegion != null) throw new FluentBuilderException("A class can not be a service and a region. " + Type.DisplayName());
             if (IsComponent != null) throw new FluentBuilderException("A class can not be a service and a component. " + Type.DisplayName());

@@ -2,6 +2,7 @@
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
@@ -27,6 +28,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// The asset manager is a singleton and therefore alwaya available
         /// </summary>
         IAssetManager AssetManager { get; }
+
+        /// <summary>
+        /// The request router is a singelton and is therefore always available
+        /// </summary>
+        IRequestRouter RequestRouter { get; }
 
         /// <summary>
         /// A factory for constructing data consumers

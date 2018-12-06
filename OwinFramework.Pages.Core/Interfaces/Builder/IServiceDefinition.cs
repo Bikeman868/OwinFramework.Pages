@@ -1,4 +1,5 @@
 ﻿using System;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -45,62 +46,36 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IServiceDefinition DeployIn(string moduleName);
 
         /// <summary>
-        /// Overrides the default asset deployment scheme for this service
+        /// Defines the permission needed to call this service
         /// </summary>
-        IServiceDefinition AssetDeployment(AssetDeployment assetDeployment);
+        /// <param name="requiredPermission">The name of a required permission or null</param>
+        /// <param name="endpointSpecificPermission">True if the service/endpoint should be 
+        /// used as an asset path when checking permissions</param>
+        /// <returns></returns>
+        IServiceDefinition RequiredPermission(string requiredPermission, bool endpointSpecificPermission);
 
         /// <summary>
-        /// Specifies the relative path to this page on the website
+        /// Defines the default serialization for endpoints in this service
         /// </summary>
-        /// <param name="path">The URL path to this page</param>
-        /// <param name="priority">The priority is used to sort request filters.
-        /// Higher priority filters execute before lower priority ones</param>
-        /// <param name="methods">The http methods to route to this page</param>
-        IPageDefinition Route(string path, int priority, params Methods[] methods);
+        /// <param name="requestDeserializer">The type that deserializes the request body</param>
+        /// <param name="responseSerializer">The type that serializes the response body</param>
+        /// <returns></returns>
+        IServiceDefinition Serialization(Type requestDeserializer, Type responseSerializer);
 
         /// <summary>
-        /// Specifies how to filter out requests to this page on the website
+        /// Instructs the output cache how to cache output from this service
         /// </summary>
-        /// <param name="filter">Serve this page for requests that match this filter</param>
-        /// <param name="priority">Filters are evaluated from highest to lowest priority</param>
-        IPageDefinition Route(IRequestFilter filter, int priority = 0);
+        /// <param name="category">Cache category name</param>
+        /// <param name="priority">Cache priority name</param>
+        IServiceDefinition Cache(string category, CachePriority priority);
 
         /// <summary>
-        /// Adds metadata to the component that can be queried to establish
-        /// its data needs. You can call this more than once to add more than
-        /// one type of required data.
+        /// Sets the route to the endpoints in this service
         /// </summary>
-        /// <typeparam name="T">The type of data that this component binds to.
-        /// Provides context for data binding expressions within the component</typeparam>
-        IServiceDefinition BindTo<T>(string scope = null) where T : class;
-
-        /// <summary>
-        /// Adds metadata to the component that can be queried to establish
-        /// its data needs. You can call this more than once to add more than
-        /// one type of required data.
-        /// </summary>
-        IServiceDefinition BindTo(Type dataType, string scope = null);
-
-        /// <summary>
-        /// Specifies the data scope. This will be used to identify the appropriate
-        /// data providers
-        /// </summary>
-        IServiceDefinition DataScope(Type dataType, string scopeName);
-
-        /// <summary>
-        /// Specifies the name of a data provider. This is used as the first step in
-        /// resolving data provision. If these providers do not provide all of the required
-        /// data then there is a second step of finding data providers using the scope.
-        /// </summary>
-        /// <param name="providerName">The name of a specific data provider</param>
-        IServiceDefinition DataProvider(string providerName);
-
-        /// <summary>
-        /// Specifies a data provider that is required to establish the data context for
-        /// this page
-        /// </summary>
-        /// <param name="dataProvider">The data provider that is required for this page</param>
-        IPageDefinition DataProvider(IDataProvider dataProvider);
+        /// <param name="basePath">The base path of endpoints in this service</param>
+        /// <param name="methods">The http methods to route to this service</param>
+        /// <param name="priority">Routes are matched to the request in order of priority</param>
+        IServiceDefinition Route(string basePath, Methods[] methods, int priority);
 
         /// <summary>
         /// Builds the service

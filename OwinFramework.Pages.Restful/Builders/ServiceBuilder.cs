@@ -35,7 +35,7 @@ namespace OwinFramework.Pages.Restful.Builders
             var service = serviceInstance as Service ?? new Service(_serviceDependenciesFactory);
             if (declaringType == null) declaringType = (serviceInstance ?? service).GetType();
 
-            var serviceDefinition = new ServiceDefinition(service, _requestRouter, _nameManager, _fluentBuilder, package, declaringType);
+            var serviceDefinition = new ServiceDefinition(service, _nameManager, package, declaringType);
 
             var attributes = new AttributeSet(declaringType);
             _elementConfiguror.Configure(serviceDefinition, attributes);

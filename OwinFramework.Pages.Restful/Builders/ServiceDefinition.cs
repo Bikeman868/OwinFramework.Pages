@@ -1,120 +1,116 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Runtime;
 
 namespace OwinFramework.Pages.Restful.Builders
 {
     internal class ServiceDefinition : IServiceDefinition
     {
-        private readonly IRequestRouter _requestRouter;
         private readonly INameManager _nameManager;
-        private readonly IFluentBuilder _fluentBuilder;
-        private readonly Type _declaringType;
         private readonly Service _service;
 
         public ServiceDefinition(
             Service service,
-            IRequestRouter requestRouter,
             INameManager nameManager,
-            IFluentBuilder fluentBuilder,
             IPackage package,
             Type declaringType)
         {
-            _requestRouter = requestRouter;
             _nameManager = nameManager;
-            _fluentBuilder = fluentBuilder;
-            _declaringType = declaringType;
             _service = service;
 
             if (package != null)
                 _service.Package = package;
+
+            _service.DeclaringType = declaringType;
         }
 
         public IServiceDefinition Name(string name)
         {
-            throw new NotImplementedException();
+            _service.Name = name;
+            return this;
         }
 
         public IServiceDefinition PartOf(IPackage package)
         {
-            throw new NotImplementedException();
+            _service.Package = package;
+            return this;
         }
 
         public IServiceDefinition PartOf(string packageName)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(packageName)) return this;
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolvePackageNames,
+                (nm, s, n) => s.Package = nm.ResolvePackage(n),
+                _service,
+                packageName);
+
+            return this;
         }
 
         public IServiceDefinition DeployIn(IModule module)
         {
-            throw new NotImplementedException();
+            _service.Module = module;
+            return this;
         }
 
         public IServiceDefinition DeployIn(string moduleName)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(moduleName)) return this;
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, s, n) => s.Module = nm.ResolveModule(n),
+                _service,
+                moduleName);
+
+            return this;
         }
 
-        public IServiceDefinition AssetDeployment(AssetDeployment assetDeployment)
+        public IServiceDefinition RequiredPermission(string requiredPermission, bool endpointSpecificPermission)
         {
-            throw new NotImplementedException();
+            _service.RequiredPermission = requiredPermission;
+            _service.EndpointSpecificPermission = endpointSpecificPermission;
+            return this;
         }
 
-        public IServiceDefinition BindTo<T>() where T : class
+        public IServiceDefinition Serialization(Type requestDeserializer, Type responseSerializer)
         {
-            throw new NotImplementedException();
+            return this;
         }
 
-        public IServiceDefinition BindTo(Type dataType)
+        public IServiceDefinition Cache(string category, CachePriority priority)
         {
-            throw new NotImplementedException();
+            _service.CacheCategory = category;
+            _service.CachePriority = priority;
+            return this;
         }
 
-        public IServiceDefinition DataScope(string scopeName)
+        public IServiceDefinition Route(string basePath, Methods[] methods, int priority)
         {
-            throw new NotImplementedException();
-        }
+            if (string.IsNullOrEmpty(basePath))
+            {
+                basePath = "/";
+            }
+            else
+            {
+                if (!basePath.EndsWith("/"))
+                    basePath += "/";
 
-        public IServiceDefinition DataProvider(string providerName)
-        {
-            throw new NotImplementedException();
-        }
+                if (!basePath.StartsWith("/"))
+                    basePath = "/" + basePath;
+            }
 
-        public IPageDefinition Route(string path, int priority, params Methods[] methods)
-        {
-            throw new NotImplementedException();
-        }
+            _service.BasePath = basePath;
+            _service.Methods = methods;
+            _service.RoutingPriority = priority;
 
-        public IPageDefinition Route(IRequestFilter filter, int priority = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IServiceDefinition BindTo<T>(string scope) where T : class
-        {
-            throw new NotImplementedException();
-        }
-
-        public IServiceDefinition BindTo(Type dataType, string scope)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IServiceDefinition DataScope(Type dataType, string scopeName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IPageDefinition DataProvider(IDataProvider dataProvider)
-        {
-            throw new NotImplementedException();
+            return this;
         }
 
         public IService Build()
@@ -122,6 +118,5 @@ namespace OwinFramework.Pages.Restful.Builders
             _nameManager.AddResolutionHandler(NameResolutionPhase.InitializeRunables, () => _service.Initialize());
             return _service;
         }
-
     }
 }

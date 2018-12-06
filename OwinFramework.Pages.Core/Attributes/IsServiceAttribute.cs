@@ -39,6 +39,12 @@ namespace OwinFramework.Pages.Core.Attributes
         public Methods[] MethodsToRoute { get; set; }
 
         /// <summary>
+        /// The router sorts runables by priority and finds the first one that matches the
+        /// request.
+        /// </summary>
+        public int Priority { get; set; }
+
+        /// <summary>
         /// Specifies the class to use to deserialize the body of the request. If you do not
         /// provide this value then the default deserializer for the service build engine will
         /// be used. This property defaines the default for all endpoints in the service,

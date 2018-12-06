@@ -635,20 +635,9 @@ namespace OwinFramework.Pages.Framework.Builders
                 throw new ServiceBuilderException(message);
             }
 
-            if (!ReferenceEquals(attributes.IsService, null))
+            if (attributes.RequiresPermission != null)
             {
-                service.Name(attributes.IsService.Name);
-            }
-
-            if (!ReferenceEquals(attributes.NeedsDatas, null))
-            {
-                foreach (var dataNeed in attributes.NeedsDatas)
-                {
-                    if (!string.IsNullOrEmpty(dataNeed.DataProviderName))
-                        service.DataProvider(dataNeed.DataProviderName);
-                    if (dataNeed.DataType != null)
-                        service.BindTo(dataNeed.DataType, dataNeed.Scope);
-                }
+                service.RequiredPermission(attributes.RequiresPermission.PermissionName, false);
             }
 
             if (!ReferenceEquals(attributes.PartOf, null))
@@ -658,25 +647,23 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.DeployedAs, null))
             {
-                service
-                    .DeployIn(attributes.DeployedAs.ModuleName)
-                    .AssetDeployment(attributes.DeployedAs.Deployment);
+                service.DeployIn(attributes.DeployedAs.ModuleName);
             }
 
-            if (!ReferenceEquals(attributes.Routes, null))
+            if (attributes.CacheOutput != null)
             {
-                foreach (var route in attributes.Routes)
-                {
-                    service.Route(route.Path, route.Priority, route.Methods);
-                }
+                service.Cache(attributes.CacheOutput.CacheCategory, attributes.CacheOutput.CachePriority);
             }
 
-            if (!ReferenceEquals(attributes.DataScopes, null))
+            if (!ReferenceEquals(attributes.IsService, null))
             {
-                foreach (var dataScope in attributes.DataScopes)
-                {
-                    service.DataScope(dataScope.DataType, dataScope.Scope);
-                }
+                service.Name(attributes.IsService.Name);
+                service.Route(attributes.IsService.BasePath, attributes.IsService.MethodsToRoute, attributes.IsService.Priority);
+
+                if (!string.IsNullOrEmpty(attributes.IsService.RequiredPermission))
+                    service.RequiredPermission(attributes.IsService.RequiredPermission, attributes.IsService.EndpointSpecificPermission);
+
+                service.Serialization(attributes.IsService.RequestDeserializer, attributes.IsService.ResponseSerializer);
             }
         }
 
@@ -988,8 +975,6 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (attributes.IsService != null)
             {
-                if (!string.IsNullOrEmpty(attributes.IsService.Name))
-                    service.Name = attributes.IsService.Name;
             }
         }
 

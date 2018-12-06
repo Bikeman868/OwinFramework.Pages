@@ -106,7 +106,6 @@ namespace OwinFramework.Pages.Framework.Builders
             Add<DataScopeAttribute>("")
                 .Valid<IPageDefinition>()
                 .Valid<IRegionDefinition>()
-                .Valid<IServiceDefinition>()
                 .Invalid<IComponentDefinition>("You can only introduce a data scope for a region, page or service.")
                 .Invalid<ILayoutDefinition>("You can only introduce a data scope for a region, page or service.");
 
@@ -123,6 +122,7 @@ namespace OwinFramework.Pages.Framework.Builders
             Add<DeployedAsAttribute>()
                 .Valid<IComponentDefinition>()
                 .Valid<ILayoutDefinition>()
+                .Valid<IServiceDefinition>()
                 .Valid<IPackageDefinition>()
                 .Valid<IPageDefinition>()
                 .Valid<IRegionDefinition>()

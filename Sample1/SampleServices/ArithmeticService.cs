@@ -4,7 +4,7 @@ using OwinFramework.Pages.Restful.Interfaces;
 
 namespace Sample1.SampleServices
 {
-    [IsService("arithmetic", "/math/", new[] { Methods.Post | Methods.Get })]
+    [IsService("arithmetic", "/math/", new[] { Methods.Post, Methods.Get })]
     public class ArithmeticService
     {
         [Endpoint]

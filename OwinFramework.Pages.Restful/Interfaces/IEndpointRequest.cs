@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.Restful.Interfaces
 {
@@ -48,7 +50,8 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// to report.
         /// </summary>
         /// <param name="statusCode"></param>
-        void HttpStatus(HttpStatusCode statusCode);
+        /// <param name="message">The message to include in the http response header</param>
+        void HttpStatus(HttpStatusCode statusCode, string message);
 
         /// <summary>
         /// Returns a 404 (not found) response to the caller
@@ -64,5 +67,20 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// Returns a 400 (bad request) response to the caller
         /// </summary>
         void BadRequest();
+
+        /// <summary>
+        /// Returns a response to the caller indicating that the user agent
+        /// should retry the request at a different URL
+        /// </summary>
+        /// <param name="url">The Url to redirect to</param>
+        /// <param name="permenant">Pass true for permenant redirection</param>
+        void Redirect(Uri url, bool permenant = false);
+
+        /// <summary>
+        /// Renders 
+        /// </summary>
+        /// <param name="url">The URL of the page to render as the response</param>
+        /// <param name="httpMethod">The HTTP method to use in routing the request</param>
+        void Rewrite(Uri url, Methods httpMethod = Methods.Get);
     }
 }

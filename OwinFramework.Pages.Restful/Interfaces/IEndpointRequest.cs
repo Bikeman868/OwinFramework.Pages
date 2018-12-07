@@ -56,17 +56,17 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// <summary>
         /// Returns a 404 (not found) response to the caller
         /// </summary>
-        void NotFound();
+        void NotFound(string message = null);
 
         /// <summary>
         /// Returns a 204 (no content) response to the caller
         /// </summary>
-        void NoContent();
+        void NoContent(string message = null);
 
         /// <summary>
         /// Returns a 400 (bad request) response to the caller
         /// </summary>
-        void BadRequest();
+        void BadRequest(string message = null);
 
         /// <summary>
         /// Returns a response to the caller indicating that the user agent

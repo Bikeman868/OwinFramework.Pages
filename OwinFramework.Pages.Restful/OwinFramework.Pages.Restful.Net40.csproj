@@ -53,6 +53,7 @@
     <Compile Include="Parameters\PositiveNumber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Builders\ServiceBuilder.cs" />
+    <Compile Include="Runtime\EndpointRequest.cs" />
     <Compile Include="Runtime\Service.cs" />
     <Compile Include="Runtime\ServiceDependenciesFactory.cs" />
     <Compile Include="Runtime\ServiceDependencies.cs" />

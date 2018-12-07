@@ -74,6 +74,8 @@ namespace OwinFramework.Pages.Restful.Runtime
             var defaultDeserialzer = GetRequestDeserializer(DefaultDeserializerType);
 
             var methods = DeclaringType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var serviceInstance = DeclaringType.GetConstructor(Type.EmptyTypes).Invoke(null);
+
             foreach (var method in methods)
             {
                 EndpointAttribute endpointAttribute = null;
@@ -89,6 +91,24 @@ namespace OwinFramework.Pages.Restful.Runtime
 
                 if (endpointAttribute != null)
                 {
+                    if (method.ReturnType != typeof(void))
+                        throw new ServiceBuilderException(
+                            "The '" + method.Name + "' endpoint of the '" + Name +
+                            "' service has a return type, but it should have a return type of 'void'");
+
+                    var methodParameters = method.GetParameters();
+                    if (methodParameters == null || methodParameters.Length != 1)
+                        throw new ServiceBuilderException(
+                            "The '" + method.Name + "' endpoint of the '" + Name +
+                            "' service has the wrong parameter list, it must only take one parameter " +
+                            "of type '" + typeof(IEndpointRequest).DisplayName() + "'");
+
+                    if (methodParameters[0].ParameterType != typeof(IEndpointRequest))
+                        throw new ServiceBuilderException(
+                            "The parameter of the '" + method.Name + "' endpoint in the '" + Name +
+                            "' service has the wrong type. The parameter must be " +
+                            "of type '" + typeof(IEndpointRequest).DisplayName() + "'");
+
                     var path = method.Name.ToLower();
                     if (!string.IsNullOrEmpty(endpointAttribute.UrlPath))
                         path = endpointAttribute.UrlPath;
@@ -96,7 +116,8 @@ namespace OwinFramework.Pages.Restful.Runtime
                     var relativePath = !path.StartsWith("/");
                     if (relativePath) path = BasePath + path;
 
-                    var endpoint = new ServiceEndpoint(path)
+                    var m = method;
+                    var endpoint = new ServiceEndpoint(path, r => m.Invoke(serviceInstance, new[] { r }))
                     {
                         RequestDeserializer = endpointAttribute.RequestDeserializer == null 
                             ? defaultDeserialzer 

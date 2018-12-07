@@ -31,15 +31,22 @@ namespace OwinFramework.Pages.Restful.Runtime
         public IResponseSerializer ResponseSerializer { get; set; }
 
         private EndpointParameter[] _parameters;
+        private readonly Action<IEndpointRequest> _method;
 
-        public ServiceEndpoint(string path)
+        public ServiceEndpoint(string path, Action<IEndpointRequest> method)
         {
             Path = path;
+            _method = method;
         }
 
-        public void AddParameter(string name, EndpointParameterType type, IParameterValidator validator)
+        public void AddParameter(string name, EndpointParameterType parameterType, IParameterValidator validator)
         {
-            var parameter = new EndpointParameter { Name = name, Type = type, Validator = validator };
+            var parameter = new EndpointParameter 
+            { 
+                Name = name, 
+                ParameterType = parameterType, 
+                Validator = validator 
+            };
 
             if (_parameters == null)
             {
@@ -57,14 +64,25 @@ namespace OwinFramework.Pages.Restful.Runtime
         {
             trace(context, () => "Executing service endpoint " + Path);
 
-            context.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
-            return context.Response.WriteAsync("Not implemented yet");
+            using (var request = new EndpointRequest(context))
+            {
+                try
+                {
+                    _method(request);
+                }
+                catch (NotImplementedException e)
+                {
+                    request.HttpStatus(HttpStatusCode.NotImplemented, "Not implemented yet");
+                    return context.Response.WriteAsync(e.Message);
+                }
+                return request.WriteResponse();
+            }
         }
 
         private class EndpointParameter
         {
             public string Name { get; set; }
-            public EndpointParameterType Type { get; set;}
+            public EndpointParameterType ParameterType { get; set;}
             public IParameterValidator Validator { get; set; }
         }
     }

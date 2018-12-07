@@ -18,6 +18,14 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         IRunable Route(IOwinContext context);
 
         /// <summary>
+        /// Adds a branch to the routing tree. This is more efficient
+        /// than having a single router with a long list of filters
+        /// </summary>
+        /// <param name="filter">The filter that matches the request</param>
+        /// <param name="priority">Filters are run in ascending order of priority</param>
+        IRequestRouter Add(IRequestFilter filter, int priority = 0);
+
+        /// <summary>
         /// Registers a handler for requests that match a filter
         /// </summary>
         /// <param name="runable">The handler to run when the filter is matched</param>

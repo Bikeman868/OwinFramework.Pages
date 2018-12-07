@@ -47,5 +47,10 @@ namespace OwinFramework.Pages.Mocks.Runtime
         {
             return null;
         }
+
+        public IRequestRouter Add(IRequestFilter filter, int priority)
+        {
+            return this;
+        }
     }
 }

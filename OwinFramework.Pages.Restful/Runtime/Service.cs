@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.Owin;
-using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.InterfacesV1.Middleware;
-using OwinFramework.MiddlewareHelpers.SelfDocumenting;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
@@ -16,10 +11,10 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
 using OwinFramework.Pages.Restful.Interfaces;
+using OwinFramework.Pages.Restful.Parameters;
 using OwinFramework.Pages.Restful.Serializers;
 
 namespace OwinFramework.Pages.Restful.Runtime
@@ -28,7 +23,7 @@ namespace OwinFramework.Pages.Restful.Runtime
     /// Base implementation of IComponent. Inheriting from this olass will insulate you
     /// from any future additions to the IComponent interface
     /// </summary>
-    public class Service : IService, IDebuggable, IRequestRouter
+    public class Service : IService, IDebuggable
     {
         private readonly IServiceDependenciesFactory _serviceDependenciesFactory;
         public ElementType ElementType { get { return ElementType.Service; } }
@@ -52,12 +47,19 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         private readonly Regex _paramRegex = new Regex("{[^}]*}", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        private readonly List<Registration> _registrations = new List<Registration>();
-        private bool _isServiceRegistered;
+        private IRequestRouter _router;
 
         private static readonly IDictionary<Type, IRequestDeserializer> RequestDeserializers = new Dictionary<Type, IRequestDeserializer>();
         private static readonly IDictionary<Type, IResponseSerializer> ResponseSerializers = new Dictionary<Type, IResponseSerializer>();
+        private static readonly IDictionary<Type, IParameterValidator> ParameterValidators = new Dictionary<Type, IParameterValidator>();
 
+        /// <summary>
+        /// Constructs a new service that can 
+        /// - route requests to service endpoints
+        /// - deserialize request bodies
+        /// - extract, parse and validate endpoint parameters
+        /// - serialize the response
+        /// </summary>
         public Service(IServiceDependenciesFactory serviceDependenciesFactory)
         {
             _serviceDependenciesFactory = serviceDependenciesFactory;
@@ -94,7 +96,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     var relativePath = !path.StartsWith("/");
                     if (relativePath) path = BasePath + path;
 
-                    var endpoint = new Endpoint(path)
+                    var endpoint = new ServiceEndpoint(path)
                     {
                         RequestDeserializer = endpointAttribute.RequestDeserializer == null 
                             ? defaultDeserialzer 
@@ -106,6 +108,10 @@ namespace OwinFramework.Pages.Restful.Runtime
 
                     var runable = (IRunable)endpoint;
                     runable.Name = method.Name;
+                    runable.AllowAnonymous = AllowAnonymous;
+                    runable.CacheCategory = CacheCategory;
+                    runable.CachePriority = CachePriority;
+                    runable.Package = Package;
 
                     if (endpointAttribute.RequiredPermission == null)
                     {
@@ -119,6 +125,12 @@ namespace OwinFramework.Pages.Restful.Runtime
                     else
                     {
                         runable.RequiredPermission = endpointAttribute.RequiredPermission;
+                    }
+
+                    foreach(var parameter in parameterAttributes)
+                    {
+                        var validator = GetParameterValidator(parameter.Validation);
+                        endpoint.AddParameter(parameter.ParameterName, parameter.ParameterType, validator);
                     }
 
                     Register(endpoint, endpointAttribute.MethodsToRoute ?? Methods, relativePath);
@@ -201,27 +213,60 @@ namespace OwinFramework.Pages.Restful.Runtime
             }
         }
 
-        private void Register(Endpoint endpoint, Methods[] methods, bool relativePath)
+        private IParameterValidator GetParameterValidator(Type type)
+        {
+            lock (ParameterValidators)
+            {
+                IParameterValidator validator;
+                if (ParameterValidators.TryGetValue(type, out validator))
+                    return validator;
+
+                if (typeof(IParameterValidator).IsAssignableFrom(type))
+                {
+                    var constructor = type.GetConstructor(Type.EmptyTypes);
+                    if (constructor == null)
+                        throw new ServiceBuilderException(
+                            "Type " + type.DisplayName() + " was configured as a service endpoint parameter validator in " +
+                            "the '" + Name + "' service, but it does not have a default public constructor");
+
+                    try
+                    {
+                        validator = constructor.Invoke(null) as IParameterValidator;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ServiceBuilderException(
+                            "The default public constructor for response serializer " +
+                            type.DisplayName() + " threw exception " + ex.Message, ex);
+                    }
+                }
+                else
+                {
+                    validator = new ParameterValidator(type);
+                }
+
+                ParameterValidators[type] = validator;
+                return validator;
+            }
+        }
+
+        private void Register(ServiceEndpoint endpoint, Methods[] methods, bool relativePath)
         {
             var requestRouter = _serviceDependenciesFactory.RequestRouter;
 
             if (relativePath)
             {
-                if (!_isServiceRegistered)
+                if (_router == null)
                 {
-                    _isServiceRegistered = true;
-
                     if (Methods == null || Methods.Length == 0)
                     {
-                        _serviceDependenciesFactory.RequestRouter.Register(
-                            this,
+                        _router = _serviceDependenciesFactory.RequestRouter.Add(
                             new FilterByPath(BasePath + "**"),
                             RoutingPriority);
                     }
                     else
                     {
-                        _serviceDependenciesFactory.RequestRouter.Register(
-                            this,
+                        _router = _serviceDependenciesFactory.RequestRouter.Add(
                             new FilterAllFilters(
                                 new FilterByMethod(Methods),
                                 new FilterByPath(BasePath + "**")),
@@ -229,7 +274,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     }
                 }
 
-                requestRouter = this;
+                requestRouter = _router;
             }
 
             var pathFilter = _paramRegex.Replace(endpoint.Path, "*");
@@ -251,192 +296,6 @@ namespace OwinFramework.Pages.Restful.Runtime
                         new FilterByPath(pathFilter)),
                     RoutingPriority,
                     DeclaringType);
-            }
-        }
-
-        IRunable IRequestRouter.Route(IOwinContext context)
-        {
-            Registration registration;
-
-            lock (_registrations)
-            {
-                registration = _registrations.FirstOrDefault(r => r.Filter.IsMatch(context));
-            }
-
-            if (registration == null)
-                return null;
-
-            return registration.Router == null
-                ? registration.Runable
-                : registration.Router.Route(context);
-        }
-
-        IDisposable IRequestRouter.Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType)
-        {
-            var registration = new Registration
-            {
-                Priority = priority,
-                Filter = filter,
-                Runable = runable,
-                DeclaringType = declaringType ?? runable.GetType()
-            };
-
-            lock (_registrations)
-            {
-                _registrations.Add(registration);
-                _registrations.Sort();
-            }
-
-            return registration;
-        }
-
-        IDisposable IRequestRouter.Register(IRequestRouter router, IRequestFilter filter, int priority)
-        {
-            var registration = new Registration
-            {
-                Priority = priority,
-                Filter = filter,
-                Router = router
-            };
-
-            lock (_registrations)
-            {
-                _registrations.Add(registration);
-                _registrations.Sort();
-            }
-
-            return registration;
-        }
-
-        IList<IEndpointDocumentation> IRequestRouter.GetEndpointDocumentation()
-        {
-            List<Registration> registrations;
-            lock (_registrations)
-                registrations = _registrations.ToList();
-
-            var endpoints = new List<IEndpointDocumentation>();
-
-            foreach (var registration in registrations)
-            {
-                var endpoint = new EndpointDocumentation
-                {
-                    RelativePath = registration.Filter.Description
-                };
-
-                if (registration.Router != null)
-                {
-                    var routerEndpoints = registration.Router.GetEndpointDocumentation();
-                    endpoints.AddRange(routerEndpoints);
-                    continue;
-                }
-
-                if (registration.Runable != null)
-                {
-                    var documented = registration.Runable as IDocumented;
-                    if (documented != null)
-                    {
-                        endpoint.Description = documented.Description;
-                        endpoint.Examples = documented.Examples;
-                        endpoint.Attributes = documented.Attributes;
-                    }
-                }
-
-                if (registration.DeclaringType != null)
-                {
-                    foreach (var attribute in registration.DeclaringType.GetCustomAttributes(true))
-                    {
-                        var description = attribute as DescriptionAttribute;
-                        if (description != null)
-                        {
-                            endpoint.Description = endpoint.Description == null
-                                ? description.Html
-                                : (endpoint.Description + "<br>" + description.Html);
-                        }
-
-                        var example = attribute as ExampleAttribute;
-                        if (example != null)
-                        {
-                            endpoint.Examples = endpoint.Examples == null
-                                ? example.Html
-                                : (endpoint.Examples + "<br>" + example.Html);
-                        }
-
-                        var option = attribute as OptionAttribute;
-                        if (option != null)
-                        {
-                            if (endpoint.Attributes == null)
-                                endpoint.Attributes = new List<IEndpointAttributeDocumentation>();
-
-                            endpoint.Attributes.Add(new EndpointAttributeDocumentation
-                            {
-                                Type = option.OptionType.ToString(),
-                                Name = option.Name,
-                                Description = option.Html
-                            });
-                        }
-                    }
-                }
-
-                endpoints.Add(endpoint);
-            }
-
-            return endpoints;
-        }
-
-        private class Registration : IComparable, IDisposable
-        {
-            public int Priority;
-            public IRequestFilter Filter;
-            public IRunable Runable;
-            public Type DeclaringType;
-            public IRequestRouter Router;
-
-            int IComparable.CompareTo(object obj)
-            {
-                var other = obj as Registration;
-                if (other == null) return 1;
-
-                if (Priority == other.Priority) return 0;
-
-                return Priority > other.Priority ? -1 : 1;
-            }
-
-            public void Dispose()
-            {
-                //TODO: De-register on dispose
-            }
-        }
-
-        private class Endpoint : IRunable
-        {
-            public string Path;
-
-            ElementType INamed.ElementType { get { return ElementType.Service; } }
-            string INamed.Name { get; set; }
-
-            IPackage IPackagable.Package { get; set; }
-
-            string IRunable.RequiredPermission { get; set; }
-            string IRunable.SecureResource { get; set; }
-            bool IRunable.AllowAnonymous { get; set; }
-            string IRunable.CacheCategory { get; set; }
-            Func<IOwinContext, bool> IRunable.AuthenticationFunc { get { return null; } }
-            CachePriority IRunable.CachePriority { get; set; }
-
-            public IRequestDeserializer RequestDeserializer { get; set; }
-            public IResponseSerializer ResponseSerializer { get; set; }
-
-            public Endpoint(string path)
-            {
-                Path = path;
-            }
-
-            Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
-            {
-                trace(context, () => "Executing service endpoint " + Path);
-
-                context.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
-                return context.Response.WriteAsync("Not implemented yet");
             }
         }
     }

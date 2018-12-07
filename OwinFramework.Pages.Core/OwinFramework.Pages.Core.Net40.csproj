@@ -212,6 +212,7 @@
     <Compile Include="Interfaces\Runtime\INamed.cs" />
     <Compile Include="Interfaces\Runtime\IPackagable.cs" />
     <Compile Include="Interfaces\Runtime\IRenderContextFactory.cs" />
+    <Compile Include="Interfaces\Runtime\IRequestRouterFactory.cs" />
     <Compile Include="Interfaces\Runtime\IReusable.cs" />
     <Compile Include="Interfaces\Collections\IStringBuilder.cs" />
     <Compile Include="Interfaces\Collections\IStringBuilderFactory.cs" />

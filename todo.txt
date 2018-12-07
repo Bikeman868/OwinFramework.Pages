@@ -1,4 +1,5 @@
 * Bugs
+  - No support for multiple instances of pages middleware on different Owin routes
    
 * Template classes
   - Define a style and content file that is specific to the template - like Angular

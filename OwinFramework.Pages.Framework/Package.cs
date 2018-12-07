@@ -57,6 +57,7 @@ namespace OwinFramework.Pages.Framework
                     // The request router is the top level entry point and the only
                     // interface that the middleware depends on
                     new IocRegistration().Init<IRequestRouter, RequestRouter>(),
+                    new IocRegistration().Init<IRequestRouterFactory, RequestRouterFactory>(),
 
                     // These are the external dependencies for this package
                     new IocRegistration().Init<IHtmlWriterFactory>(),

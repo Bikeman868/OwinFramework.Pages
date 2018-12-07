@@ -31,6 +31,13 @@ namespace OwinFramework.Pages.Framework.Runtime
                 : registration.Router.Route(context);
         }
 
+        IRequestRouter IRequestRouter.Add(IRequestFilter filter, int priority)
+        {
+            var router = new RequestRouter();
+            ((IRequestRouter)this).Register(router, filter, priority);
+            return router;
+        }
+
         IDisposable IRequestRouter.Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType)
         {
             var registration = new Registration

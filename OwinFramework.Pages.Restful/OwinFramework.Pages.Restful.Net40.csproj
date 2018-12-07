@@ -44,12 +44,15 @@
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Builders\ServiceDefinition.cs" />
     <Compile Include="Interfaces\IEndpointRequest.cs" />
+    <Compile Include="Interfaces\IResponseSerializer.cs" />
+    <Compile Include="Interfaces\IRequestDeserializer.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Builders\ServiceBuilder.cs" />
     <Compile Include="Runtime\Service.cs" />
     <Compile Include="Runtime\ServiceDependenciesFactory.cs" />
     <Compile Include="Runtime\ServiceDependencies.cs" />
+    <Compile Include="Serializers\Json.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OwinFramework.Pages.Restful.Net40.paket.references" />

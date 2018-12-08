@@ -76,31 +76,33 @@ namespace OwinFramework.Pages.Restful.Runtime
                     }
                     catch (TargetInvocationException e)
                     {
-                        trace(context, () => "Service endpoint threw an exception exception");
+                        trace(context, () => "Service endpoint threw an exception");
                         throw e.InnerException;
                     }
                 }
                 catch (NotImplementedException e)
                 {
                     trace(context, () => 
-                        "Service endpoint threw Not Implemented exception: " + 
-                        e.Message + "\n" + e.StackTrace);
+                        "Not Implemented exception: " + 
+                        e.Message + (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
                     request.HttpStatus(HttpStatusCode.NotImplemented, "Not implemented yet");
                 }
                 catch (AggregateException ex)
                 {
-                    trace(context, () => "Service endpoint threw multiple exceptions");
+                    trace(context, () => "Multiple exceptions...");
                     foreach(var e in ex.InnerExceptions)
                     {
-                        trace(context, () => e.GetType().DisplayName() + " exception: " + e.Message + "\n" + e.StackTrace);
+                        trace(context, () => 
+                            e.GetType().DisplayName() + " exception: " + e.Message + 
+                            (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
                     }
                     request.HttpStatus(HttpStatusCode.InternalServerError, "Multiple exceptions");
                 }
                 catch (Exception e)
                 {
                     trace(context, () => 
-                        "Service endpoint threw " + e.GetType().DisplayName() + " exception: " + 
-                        e.Message + "\n" + e.StackTrace);
+                        e.GetType().DisplayName() + " exception: " + e.Message + 
+                        (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
                     request.HttpStatus(HttpStatusCode.InternalServerError, "Unhandled exception");
                 }
                 return request.WriteResponse();

@@ -10,10 +10,21 @@ namespace OwinFramework.Pages.Restful.Runtime
     internal class EndpointRequest: IEndpointRequest, IDisposable
     {
         private readonly IOwinContext _context;
+        private readonly IRequestDeserializer _deserializer;
+        private readonly IResponseSerializer _serializer;
 
-        public EndpointRequest(IOwinContext context)
+        private Func<Task> _writeResponse;
+
+        public EndpointRequest(
+            IOwinContext context,
+            IRequestDeserializer deserializer,
+            IResponseSerializer serializer)
         {
             _context = context;
+            _deserializer = deserializer;
+            _serializer = serializer;
+
+            Success();
         }
 
         public void Dispose()
@@ -21,7 +32,7 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         public Task WriteResponse()
         {
-            return _context.Response.WriteAsync("TBD");
+            return _writeResponse();
         }
 
         public IOwinContext OwinContext
@@ -36,18 +47,17 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         public void Success()
         {
-            throw new NotImplementedException();
+            _writeResponse = () => _serializer.Success(_context);
         }
 
         public void Success<T>(T valueToSerialize)
         {
-            throw new NotImplementedException();
+            _writeResponse = () => _serializer.Success(_context, valueToSerialize);
         }
 
         public void HttpStatus(HttpStatusCode statusCode, string message)
         {
-            _context.Response.StatusCode = (int)statusCode;
-            _context.Response.ReasonPhrase = message;
+            _writeResponse = () => _serializer.HttpStatus(_context, statusCode, message);
         }
 
         public void NotFound(string message)
@@ -67,7 +77,7 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         public void Redirect(Uri url, bool permenant = false)
         {
-            throw new NotImplementedException();
+            _writeResponse = () => _serializer.Redirect(_context, url, permenant);
         }
 
         public void Rewrite(Uri url, Methods httpMethod = Methods.Get)

@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Interfaces;
@@ -64,16 +66,42 @@ namespace OwinFramework.Pages.Restful.Runtime
         {
             trace(context, () => "Executing service endpoint " + Path);
 
-            using (var request = new EndpointRequest(context))
+            using (var request = new EndpointRequest(context, RequestDeserializer, ResponseSerializer))
             {
                 try
                 {
-                    _method(request);
+                    try
+                    {
+                        _method(request);
+                    }
+                    catch (TargetInvocationException e)
+                    {
+                        trace(context, () => "Service endpoint threw an exception exception");
+                        throw e.InnerException;
+                    }
                 }
                 catch (NotImplementedException e)
                 {
+                    trace(context, () => 
+                        "Service endpoint threw Not Implemented exception: " + 
+                        e.Message + "\n" + e.StackTrace);
                     request.HttpStatus(HttpStatusCode.NotImplemented, "Not implemented yet");
-                    return context.Response.WriteAsync(e.Message);
+                }
+                catch (AggregateException ex)
+                {
+                    trace(context, () => "Service endpoint threw multiple exceptions");
+                    foreach(var e in ex.InnerExceptions)
+                    {
+                        trace(context, () => e.GetType().DisplayName() + " exception: " + e.Message + "\n" + e.StackTrace);
+                    }
+                    request.HttpStatus(HttpStatusCode.InternalServerError, "Multiple exceptions");
+                }
+                catch (Exception e)
+                {
+                    trace(context, () => 
+                        "Service endpoint threw " + e.GetType().DisplayName() + " exception: " + 
+                        e.Message + "\n" + e.StackTrace);
+                    request.HttpStatus(HttpStatusCode.InternalServerError, "Unhandled exception");
                 }
                 return request.WriteResponse();
             }

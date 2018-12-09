@@ -16,6 +16,21 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// </summary>
         IOwinContext OwinContext { get; }
 
+        /********************************************************************
+         * 
+         * This section provides methods for reading the request.
+         * 
+         *******************************************************************/
+
+        /// <summary>
+        /// Retrieves data from a data provider. For efficiency you should
+        /// attach attributes to your endpoint that identify the data needs
+        /// </summary>
+        /// <typeparam name="T">The type of data to get</typeparam>
+        /// <param name="scopeName">Optional scope name will be used to
+        /// identify the data provider</param>
+        T Data<T>(string scopeName = null);
+
         /// <summary>
         /// Retrieves the value of a parameter passed to the service.
         /// You must declare these parameters by attaching EndpointParamater
@@ -26,6 +41,20 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// <param name="name">Case insensitive name of the parameter</param>
         /// <returns>The value of the parameter</returns>
         T Parameter<T>(string name);
+
+        /// <summary>
+        /// Deserializes the body of the request as the specified type. You
+        /// can specify the deserializer to use for your service or each endpoint.
+        /// This framework contains some useful deserializers or you can
+        /// supply an application specific one.
+        /// </summary>
+        T Body<T>();
+
+        /********************************************************************
+         * 
+         * This section provides methods for sending a reply
+         * 
+         *******************************************************************/
 
         /// <summary>
         /// Indicates a sucessfull completion of the request. Calling this method
@@ -42,12 +71,12 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// default serialization is JSON.
         /// </summary>
         /// <typeparam name="T">Tye type of data to serialize</typeparam>
-        /// <param name="valueToSerialize">The value to serialize</param>
+        /// <param name="valueToSerialize">The value to serialize into the 
+        /// body of the response</param>
         void Success<T>(T valueToSerialize);
 
         /// <summary>
-        /// Indicates that the endpoint completed with a specific http status
-        /// to report.
+        /// Indicates that the endpoint completed with a specific http status result.
         /// </summary>
         /// <param name="statusCode"></param>
         /// <param name="message">The message to include in the http response header</param>
@@ -73,14 +102,19 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// should retry the request at a different URL
         /// </summary>
         /// <param name="url">The Url to redirect to</param>
-        /// <param name="permenant">Pass true for permenant redirection</param>
+        /// <param name="permenant">Pass true for permenant redirection. Note that browsers
+        /// will cache this for a long time so there is no way to undo this action</param>
         void Redirect(Uri url, bool permenant = false);
 
         /// <summary>
-        /// Renders 
+        /// Passes this request back to the request router. The request router will
+        /// resolve the URL to a page or service that will provide the response
         /// </summary>
-        /// <param name="url">The URL of the page to render as the response</param>
+        /// <param name="url">The URL of the page to render as the response. If you do
+        /// not pass this parameter then the request will be rewritten into a GET
+        /// requet at the same url. This is a useful behavior when you have a submit
+        /// button on a form and want to render the same page again in response.</param>
         /// <param name="httpMethod">The HTTP method to use in routing the request</param>
-        void Rewrite(Uri url, Methods httpMethod = Methods.Get);
+        void Rewrite(Uri url = null, Methods httpMethod = Methods.Get);
     }
 }

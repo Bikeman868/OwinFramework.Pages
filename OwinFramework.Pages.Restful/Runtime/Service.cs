@@ -117,7 +117,11 @@ namespace OwinFramework.Pages.Restful.Runtime
                     if (relativePath) path = BasePath + path;
 
                     var m = method;
-                    var endpoint = new ServiceEndpoint(path, r => m.Invoke(serviceInstance, new[] { r }))
+                    var endpoint = new ServiceEndpoint(
+                        path, 
+                        r => m.Invoke(serviceInstance, new[] { r }),
+                        _serviceDependenciesFactory.DataCatalog,
+                        _serviceDependenciesFactory.DataDependencyFactory)
                     {
                         RequestDeserializer = endpointAttribute.RequestDeserializer == null 
                             ? defaultDeserialzer 

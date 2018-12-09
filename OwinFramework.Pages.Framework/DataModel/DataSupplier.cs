@@ -110,26 +110,29 @@ namespace OwinFramework.Pages.Framework.DataModel
             public Action<IRenderContext, IDataContext, IDataDependency> Action;
             public bool IsStatic { get; set; }
 
-            private readonly List<Action<IRenderContext>> _onSupplyActions = new List<Action<IRenderContext>>();
+            private Action<IRenderContext>[] _onSupplyActions = null;
 
             public void Supply(IRenderContext renderContext, IDataContext dataContext)
             {
                 Action(renderContext, dataContext, Dependency);
 
-                int count;
-                lock (_onSupplyActions) count = _onSupplyActions.Count;
-
-                for (var i = 0; i < count; i++)
+                if (_onSupplyActions != null)
                 {
-                    Action<IRenderContext> action;
-                    lock (_onSupplyActions) action = _onSupplyActions[i];
-                    action(renderContext);
+                    for (var i = 0; i < _onSupplyActions.Length; i++)
+                        _onSupplyActions[i](renderContext);
                 }
             }
 
             void IDataSupply.AddOnSupplyAction(Action<IRenderContext> onSupplyAction)
             {
-                lock (_onSupplyActions) _onSupplyActions.Add(onSupplyAction);
+                if (_onSupplyActions == null)
+                    _onSupplyActions = new[] { onSupplyAction };
+                else
+                {
+                    var list = _onSupplyActions.ToList();
+                    list.Add(onSupplyAction);
+                    _onSupplyActions = list.ToArray();
+                }
             }
 
             public override string ToString()
@@ -144,7 +147,7 @@ namespace OwinFramework.Pages.Framework.DataModel
                 {
                     Instance = this,
                     IsStatic = IsStatic,
-                    SubscriberCount = _onSupplyActions.Count,
+                    SubscriberCount = _onSupplyActions == null ? 0 : _onSupplyActions.Length,
                     SuppliedData = new DebugDataScope
                     {
                         DataType = Dependency.DataType,

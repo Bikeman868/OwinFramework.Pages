@@ -8,6 +8,7 @@ using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Interfaces;
 
@@ -34,11 +35,19 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         private EndpointParameter[] _parameters;
         private readonly Action<IEndpointRequest> _method;
+        private readonly IDataCatalog _dataCatalog;
+        private readonly IDataDependencyFactory _dataDependencyFactory;
 
-        public ServiceEndpoint(string path, Action<IEndpointRequest> method)
+        public ServiceEndpoint(
+            string path, 
+            Action<IEndpointRequest> method,
+            IDataCatalog dataCatalog,
+            IDataDependencyFactory dataDependencyFactory)
         {
             Path = path;
             _method = method;
+            _dataCatalog = dataCatalog;
+            _dataDependencyFactory = dataDependencyFactory;
         }
 
         public void AddParameter(string name, EndpointParameterType parameterType, IParameterValidator validator)
@@ -66,10 +75,17 @@ namespace OwinFramework.Pages.Restful.Runtime
         {
             trace(context, () => "Executing service endpoint " + Path);
 
-            using (var request = new EndpointRequest(context, RequestDeserializer, ResponseSerializer))
+            using (var request = new EndpointRequest(
+                context, 
+                _dataCatalog,
+                _dataDependencyFactory,
+                RequestDeserializer, 
+                ResponseSerializer))
             {
                 try
                 {
+                    // TODO: Extract parameters from request
+                    // TODO: Deserialize body of request
                     try
                     {
                         _method(request);

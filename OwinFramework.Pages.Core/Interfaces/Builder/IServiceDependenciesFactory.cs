@@ -38,5 +38,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// A factory for constructing data consumers
         /// </summary>
         IDataConsumerFactory DataConsumerFactory { get; }
+
+        /// <summary>
+        /// A singelton that can find data suppliers
+        /// </summary>
+        IDataCatalog DataCatalog { get; }
+
+        /// <summary>
+        /// A factory for creating instances that capture a dependency on data
+        /// </summary>
+        IDataDependencyFactory DataDependencyFactory { get; }
     }
 }

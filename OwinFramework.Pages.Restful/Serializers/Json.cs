@@ -11,6 +11,11 @@ namespace OwinFramework.Pages.Restful.Serializers
 {
     public class Json: IRequestDeserializer, IResponseSerializer
     {
+        public T Body<T>(IOwinContext context)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task Success(IOwinContext context)
         {
             return context.Response.WriteAsync("{\"success\":true}");

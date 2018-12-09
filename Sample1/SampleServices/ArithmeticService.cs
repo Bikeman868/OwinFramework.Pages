@@ -44,8 +44,8 @@ namespace Sample1.SampleServices
         [EndpointParameter("b", typeof(double))]
         public void Divide(IEndpointRequest request)
         {
-            var a = request.Parameter<int>("a");
-            var b = request.Parameter<int>("b");
+            var a = request.Parameter<double>("a");
+            var b = request.Parameter<double>("b");
             request.Success(a / b);
         }
 

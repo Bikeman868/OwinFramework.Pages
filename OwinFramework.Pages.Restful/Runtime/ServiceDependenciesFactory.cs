@@ -15,17 +15,23 @@ namespace OwinFramework.Pages.Restful.Runtime
         public INameManager NameManager { get; private set; }
         public IRequestRouter RequestRouter { get; private set; }
         public IDataConsumerFactory DataConsumerFactory { get; private set; }
+        public IDataCatalog DataCatalog { get; private set; }
+        public IDataDependencyFactory DataDependencyFactory { get; private set; }
 
         public ServiceDependenciesFactory(
             IRenderContextFactory renderContextFactory,
             IAssetManager assetManager,
             INameManager nameManager,
-            IRequestRouter requestRouter)
+            IRequestRouter requestRouter,
+            IDataCatalog dataCatalog,
+            IDataDependencyFactory dataDependencyFactory)
         {
             _renderContextFactory = renderContextFactory;
             AssetManager = assetManager;
             NameManager = nameManager;
             RequestRouter = requestRouter;
+            DataCatalog = dataCatalog;
+            DataDependencyFactory = dataDependencyFactory;
         }
 
         public IServiceDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace)

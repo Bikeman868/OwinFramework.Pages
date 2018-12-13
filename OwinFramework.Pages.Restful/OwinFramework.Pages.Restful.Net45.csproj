@@ -49,12 +49,23 @@
   <ItemGroup>
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Builders\ServiceDefinition.cs" />
+    <Compile Include="Interfaces\IEndpointRequest.cs" />
+    <Compile Include="Interfaces\IParameterValidationResult.cs" />
+    <Compile Include="Interfaces\IParameterValidator.cs" />
+    <Compile Include="Interfaces\IRequestDeserializer.cs" />
+    <Compile Include="Interfaces\IResponseSerializer.cs" />
     <Compile Include="Package.cs" />
+    <Compile Include="Parameters\ParameterValidator.cs" />
+    <Compile Include="Parameters\PositiveNumber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Builders\ServiceBuilder.cs" />
+    <Compile Include="Runtime\EndpointParameter.cs" />
+    <Compile Include="Runtime\EndpointRequest.cs" />
     <Compile Include="Runtime\Service.cs" />
     <Compile Include="Runtime\ServiceDependenciesFactory.cs" />
     <Compile Include="Runtime\ServiceDependencies.cs" />
+    <Compile Include="Runtime\ServiceEndpoint.cs" />
+    <Compile Include="Serializers\Json.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net45.csproj">

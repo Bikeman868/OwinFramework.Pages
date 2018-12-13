@@ -64,7 +64,7 @@ NUGET
       Newtonsoft.Json (>= 7.0.1)
       Owin.Framework (>= 2.6.8)
       Urchin.Client (>= 1.2.1)
-    Urchin.Client (1.2.1)
+    Urchin.Client (1.2.4)
       Ioc.Modules (>= 1.2.1)
       Newtonsoft.Json (>= 7.0.1)
 
@@ -112,6 +112,6 @@ NUGET
       Newtonsoft.Json (>= 7.0.1)
       Owin.Framework (>= 2.6.8)
       Urchin.Client (>= 1.2.1)
-    Urchin.Client (1.2.1)
+    Urchin.Client (1.2.4)
       Ioc.Modules (>= 1.2.1)
       Newtonsoft.Json (>= 7.0.1)

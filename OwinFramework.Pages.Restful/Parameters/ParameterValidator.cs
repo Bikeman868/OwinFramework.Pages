@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Restful.Interfaces;
 
 namespace OwinFramework.Pages.Restful.Parameters
@@ -13,6 +14,11 @@ namespace OwinFramework.Pages.Restful.Parameters
     public class ParameterValidator: IParameterValidator
     {
         private readonly Type _type;
+
+        /// <summary>
+        /// Returns a description of what is valid for this parameter
+        /// </summary>
+        public virtual string Description { get { return "A " + _type.DisplayName() + " value."; } }
 
         /// <summary>
         /// This is a base class for parameter validators that validate

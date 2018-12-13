@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Restful.Interfaces;
@@ -17,24 +19,29 @@ namespace OwinFramework.Pages.Restful.Runtime
         private readonly IDataDependencyFactory _dataDependencyFactory;
         private readonly IRequestDeserializer _deserializer;
         private readonly IResponseSerializer _serializer;
+        private readonly EndpointParameter[] _parameters;
 
         private Func<Task> _writeResponse;
 
         private bool _bodyDeserialized;
         private object _body;
+        private IDictionary<string, string> _form;
+        private IDictionary<string, object> _parameterValues;
 
         public EndpointRequest(
             IOwinContext context,
             IDataCatalog dataCatalog,
             IDataDependencyFactory dataDependencyFactory,
             IRequestDeserializer deserializer,
-            IResponseSerializer serializer)
+            IResponseSerializer serializer,
+            EndpointParameter[] parameters)
         {
             _context = context;
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;
             _deserializer = deserializer;
             _serializer = serializer;
+            _parameters = parameters;
 
             Success();
         }
@@ -71,9 +78,60 @@ namespace OwinFramework.Pages.Restful.Runtime
             return (T)_body;
         }
 
+        public IDictionary<string, string> Form 
+        { 
+            get 
+            {
+                if (_bodyDeserialized)
+                {
+                    _bodyDeserialized = true;
+                    _form = _context.Request.ReadFormAsync().Result;
+                }
+                return _form;
+            } 
+        }
+
         public T Parameter<T>(string name)
         {
-            return default(T);
+            if (_parameterValues == null)
+            {
+                _parameterValues = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
+                for (var i = 0; i < _parameters.Length; i++)
+                {
+                    var parameter = _parameters[i];
+                    for(var j = 0; j < parameter.Functions.Length; j++)
+                    {
+                        var function = parameter.Functions[j];
+                        var stringValue = function(this, parameter.Name);
+                        if (stringValue != null)
+                        {
+                            var validationResult = parameter.Validator.Check(stringValue);
+                            if (!validationResult.Success)
+                                throw new EndpointParameterException(
+                                    parameter.Name, 
+                                    typeof(T),
+                                    parameter.Validator.Description,
+                                    validationResult.ErrorMessage);
+
+                            _parameterValues.Add(parameter.Name, validationResult.Value);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            object value;
+            if (!_parameterValues.TryGetValue(name, out value))
+                return default(T);
+
+            if (value == null)
+                return default(T);
+
+            if (value is T) return (T)value;
+
+            throw new Exception(
+                "Parameter '" + name + "' is of type '" + value.GetType().DisplayName() + 
+                "' but the application retieved it as '" + typeof(T).DisplayName() + "'");
         }
 
         #endregion

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Interfaces;
+using OwinFramework.Pages.Restful.Parameters;
 
 namespace OwinFramework.Pages.Restful.Runtime
 {
@@ -56,7 +58,8 @@ namespace OwinFramework.Pages.Restful.Runtime
             { 
                 Name = name, 
                 ParameterType = parameterType, 
-                Validator = validator 
+                Validator = validator,
+                Functions = new Func<IEndpointRequest, string, string>[] { ParamFunc }
             };
 
             if (_parameters == null)
@@ -71,6 +74,11 @@ namespace OwinFramework.Pages.Restful.Runtime
             }
         }
 
+        private string ParamFunc(IEndpointRequest request, string parameterName)
+        {
+            return "1";
+        }
+
         Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
             trace(context, () => "Executing service endpoint " + Path);
@@ -80,12 +88,11 @@ namespace OwinFramework.Pages.Restful.Runtime
                 _dataCatalog,
                 _dataDependencyFactory,
                 RequestDeserializer, 
-                ResponseSerializer))
+                ResponseSerializer,
+                _parameters))
             {
                 try
                 {
-                    // TODO: Extract parameters from request
-                    // TODO: Deserialize body of request
                     try
                     {
                         _method(request);
@@ -114,6 +121,13 @@ namespace OwinFramework.Pages.Restful.Runtime
                     }
                     request.HttpStatus(HttpStatusCode.InternalServerError, "Multiple exceptions");
                 }
+                catch (EndpointParameterException e)
+                {
+                    trace(context, () =>
+                        "Invalid parameter '" + e.ParameterName + "' " + e.ValidationError +
+                        (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
+                    request.HttpStatus(HttpStatusCode.BadRequest, "Parameter '" + e.ParameterName + "' is invalid. " + e.Description);
+                }
                 catch (Exception e)
                 {
                     trace(context, () => 
@@ -123,13 +137,6 @@ namespace OwinFramework.Pages.Restful.Runtime
                 }
                 return request.WriteResponse();
             }
-        }
-
-        private class EndpointParameter
-        {
-            public string Name { get; set; }
-            public EndpointParameterType ParameterType { get; set;}
-            public IParameterValidator Validator { get; set; }
         }
     }
 }

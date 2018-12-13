@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
@@ -49,6 +50,13 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// supply an application specific one.
         /// </summary>
         T Body<T>();
+
+        /// <summary>
+        /// Parses the body of the request as a POSTed form and returns the
+        /// form fields as a dictionary. If you get this property multiple
+        /// times the dictionary will only be constructed once.
+        /// </summary>
+        IDictionary<string, string> Form { get; }
 
         /********************************************************************
          * 

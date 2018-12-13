@@ -13,7 +13,9 @@ namespace OwinFramework.Pages.Restful.Parameters
     public class PositiveNumber<T>: ParameterValidator
     {
         private readonly Func<object, bool> _check;
-        private const string ErrorMessage = "The value must be greter than zero";
+        private const string ErrorMessage = "The value must be a number greter than zero";
+
+        public override string Description { get { return "A number greater than zero."; } }
 
         /// <summary>
         /// Checks service endpoint parameters to ensure that they are

@@ -9,10 +9,20 @@ namespace Sample1.SampleServices
     [IsService("arithmetic", "/math/", new[] { Methods.Post, Methods.Get })]
     public class ArithmeticService
     {
-        [Endpoint]
+        [Endpoint(UrlPath = "add/{a}/{b}")]
+        [EndpointParameter("a", typeof(double), EndpointParameterType.PathSegment)]
+        [EndpointParameter("b", typeof(double), EndpointParameterType.PathSegment)]
+        public void Add1(IEndpointRequest request)
+        {
+            var a = request.Parameter<double>("a");
+            var b = request.Parameter<double>("b");
+            request.Success(a + b);
+        }
+
+        [Endpoint(UrlPath = "add")]
         [EndpointParameter("a", typeof(double))]
         [EndpointParameter("b", typeof(double))]
-        public void Add(IEndpointRequest request)
+        public void Add2(IEndpointRequest request)
         {
             var a = request.Parameter<double>("a");
             var b = request.Parameter<double>("b");

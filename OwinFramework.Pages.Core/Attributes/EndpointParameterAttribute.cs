@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Core.Attributes
         public EndpointParameterAttribute(
             string parameterName, 
             Type validation,
-            EndpointParameterType parameterType = EndpointParameterType.FormField | EndpointParameterType.QueryString)
+            EndpointParameterType parameterType = EndpointParameterType.QueryString)
         {
             ParameterName = parameterName;
             ParameterType = parameterType;

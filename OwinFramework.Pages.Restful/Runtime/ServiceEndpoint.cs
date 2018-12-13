@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -12,7 +13,6 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Interfaces;
-using OwinFramework.Pages.Restful.Parameters;
 
 namespace OwinFramework.Pages.Restful.Runtime
 {
@@ -36,9 +36,11 @@ namespace OwinFramework.Pages.Restful.Runtime
         public IResponseSerializer ResponseSerializer { get; set; }
 
         private EndpointParameter[] _parameters;
+
         private readonly Action<IEndpointRequest> _method;
         private readonly IDataCatalog _dataCatalog;
         private readonly IDataDependencyFactory _dataDependencyFactory;
+        private readonly string[] _pathElements;
 
         public ServiceEndpoint(
             string path, 
@@ -50,16 +52,45 @@ namespace OwinFramework.Pages.Restful.Runtime
             _method = method;
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;
+            _pathElements = path
+                .Split('/')
+                .Where(p => !string.IsNullOrEmpty(p))
+                .ToArray();
         }
 
         public void AddParameter(string name, EndpointParameterType parameterType, IParameterValidator validator)
         {
+            var functions = new List<Func<IEndpointRequest, string, string>>();
+
+            if (parameterType.HasFlag(EndpointParameterType.QueryString))
+                functions.Add(QueryStringParam);
+
+            if (parameterType.HasFlag(EndpointParameterType.Header))
+                functions.Add(HeaderParam);
+
+            if (parameterType.HasFlag(EndpointParameterType.PathSegment))
+            {
+                var placeholder = "{" + name + "}";
+                for (var i = 0; i < _pathElements.Length; i++)
+                {
+                    var index = i;
+                    if (string.Equals(placeholder, _pathElements[i], StringComparison.OrdinalIgnoreCase))
+                    {
+                        functions.Add((r, n) => PathSegmentParam(r, index));
+                        break;
+                    }
+                }
+            }
+
+            if (parameterType.HasFlag(EndpointParameterType.FormField))
+                functions.Add(FormFieldParam);
+
             var parameter = new EndpointParameter 
             { 
                 Name = name, 
                 ParameterType = parameterType, 
                 Validator = validator,
-                Functions = new Func<IEndpointRequest, string, string>[] { ParamFunc }
+                Functions = functions.ToArray()
             };
 
             if (_parameters == null)
@@ -74,9 +105,27 @@ namespace OwinFramework.Pages.Restful.Runtime
             }
         }
 
-        private string ParamFunc(IEndpointRequest request, string parameterName)
+        private string QueryStringParam(IEndpointRequest request, string parameterName)
         {
-            return "1";
+            return request.OwinContext.Request.Query[parameterName];
+        }
+
+        private string HeaderParam(IEndpointRequest request, string parameterName)
+        {
+            return request.OwinContext.Request.Headers[parameterName];
+        }
+
+        private string PathSegmentParam(IEndpointRequest request, int pathIndex)
+        {
+            return request.PathSegment(pathIndex);
+        }
+
+        private string FormFieldParam(IEndpointRequest request, string parameterName)
+        {
+            string value;
+            if (request.Form != null && request.Form.TryGetValue(parameterName, out value))
+                return value;
+            return null;
         }
 
         Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)

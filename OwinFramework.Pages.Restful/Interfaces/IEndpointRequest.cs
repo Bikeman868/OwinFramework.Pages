@@ -44,6 +44,14 @@ namespace OwinFramework.Pages.Restful.Interfaces
         T Parameter<T>(string name);
 
         /// <summary>
+        /// Returns a segment from the URL path only parsing the URL on the
+        /// first request.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        string PathSegment(int index);
+
+        /// <summary>
         /// Deserializes the body of the request as the specified type. You
         /// can specify the deserializer to use for your service or each endpoint.
         /// This framework contains some useful deserializers or you can

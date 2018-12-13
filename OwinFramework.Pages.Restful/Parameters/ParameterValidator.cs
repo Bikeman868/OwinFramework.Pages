@@ -14,6 +14,8 @@ namespace OwinFramework.Pages.Restful.Parameters
     public class ParameterValidator: IParameterValidator
     {
         private readonly Type _type;
+        private readonly Action<string, Result> _parser;
+        private readonly bool _optional;
 
         /// <summary>
         /// Returns a description of what is valid for this parameter
@@ -29,16 +31,239 @@ namespace OwinFramework.Pages.Restful.Parameters
         public ParameterValidator(Type type)
         {
             _type = type;
+
+            if (type == typeof(string))
+            {
+                _parser = (param, result) =>
+                    {
+                        result.Success = true;
+                        result.Value = param;
+                    };
+            }
+
+            if (type == typeof(byte))
+            {
+                _parser = (param, result) =>
+                {
+                    byte value;
+                    result.Success = byte.TryParse(param, out value);
+                    result.Value = value;
+                };
+            }
+
+            if (type == typeof(int))
+            {
+                _parser = (param, result) =>
+                {
+                    int value;
+                    result.Success = int.TryParse(param, out value);
+                    result.Value = value;
+                };
+            }
+
+            if (type == typeof(long))
+            {
+                _parser = (param, result) =>
+                {
+                    long value;
+                    result.Success = long.TryParse(param, out value);
+                    result.Value = value;
+                };
+            }
+
+            if (type == typeof(float))
+            {
+                _parser = (param, result) =>
+                {
+                    float value;
+                    result.Success = float.TryParse(param, out value);
+                    result.Value = value;
+                };
+            }
+
+            if (type == typeof(double))
+            {
+                _parser = (param, result) =>
+                {
+                    double value;
+                    result.Success = double.TryParse(param, out value);
+                    result.Value = value;
+                };
+            }
+
+            if (type == typeof(bool))
+            {
+                _parser = (param, result) =>
+                {
+                    bool value;
+                    result.Success = bool.TryParse(param, out value);
+                    result.Value = value;
+                };
+            }
+
+            if (type == typeof(DateTime))
+            {
+                _parser = (param, result) =>
+                {
+                    DateTime value;
+                    result.Success = DateTime.TryParse(param, out value);
+                    result.Value = value;
+                };
+            }
+
+            if (type == typeof(byte?))
+            {
+                _optional = true;
+                _parser = (param, result) =>
+                {
+                    if (string.IsNullOrEmpty(param))
+                    {
+                        result.Success = true;
+                        result.Value = null;
+                    }
+                    else
+                    {
+                        byte value;
+                        result.Success = byte.TryParse(param, out value);
+                        result.Value = result.Success ? (byte?)(value) : null;
+                    }
+                };
+            }
+
+            if (type == typeof(int?))
+            {
+                _optional = true;
+                _parser = (param, result) =>
+                {
+                    if (string.IsNullOrEmpty(param))
+                    {
+                        result.Success = true;
+                        result.Value = null;
+                    }
+                    else
+                    {
+                        int value;
+                        result.Success = int.TryParse(param, out value);
+                        result.Value = result.Success ? (int?)(value) : null;
+                    }
+                };
+            }
+
+            if (type == typeof(long?))
+            {
+                _optional = true;
+                _parser = (param, result) =>
+                {
+                    if (string.IsNullOrEmpty(param))
+                    {
+                        result.Success = true;
+                        result.Value = null;
+                    }
+                    else
+                    {
+                        long value;
+                        result.Success = long.TryParse(param, out value);
+                        result.Value = result.Success ? (long?)(value) : null;
+                    }
+                };
+            }
+
+            if (type == typeof(float?))
+            {
+                _optional = true;
+                _parser = (param, result) =>
+                {
+                    if (string.IsNullOrEmpty(param))
+                    {
+                        result.Success = true;
+                        result.Value = null;
+                    }
+                    else
+                    {
+                        float value;
+                        result.Success = float.TryParse(param, out value);
+                        result.Value = result.Success ? (float?)(value) : null;
+                    }
+                };
+            }
+
+            if (type == typeof(double?))
+            {
+                _optional = true;
+                _parser = (param, result) =>
+                {
+                    if (string.IsNullOrEmpty(param))
+                    {
+                        result.Success = true;
+                        result.Value = null;
+                    }
+                    else
+                    {
+                        double value;
+                        result.Success = double.TryParse(param, out value);
+                        result.Value = result.Success ? (double?)(value) : null;
+                    }
+                };
+            }
+
+            if (type == typeof(bool?))
+            {
+                _optional = true;
+                _parser = (param, result) =>
+                {
+                    if (string.IsNullOrEmpty(param))
+                    {
+                        result.Success = true;
+                        result.Value = null;
+                    }
+                    else
+                    {
+                        bool value;
+                        result.Success = bool.TryParse(param, out value);
+                        result.Value = result.Success ? (bool?)(value) : null;
+                    }
+                };
+            }
+
+            if (type == typeof(DateTime?))
+            {
+                _optional = true;
+                _parser = (param, result) =>
+                {
+                    if (string.IsNullOrEmpty(param))
+                    {
+                        result.Success = true;
+                        result.Value = null;
+                    }
+                    else
+                    {
+                        DateTime value;
+                        result.Success = DateTime.TryParse(param, out value);
+                        result.Value = result.Success ? (DateTime?)(value) : null;
+                    }
+                };
+            }
         }
 
         public virtual IParameterValidationResult Check(string parameter)
         {
-            return new Result
+            var result = new Result
             {
                 Type = _type,
-                Success = true,
-                Value = null
+                Optional = _optional
             };
+
+            if (_parser == null)
+            {
+                result.Success = false;
+                result.ErrorMessage = "The paramater validator does not know how to parse '" + _type.DisplayName() + "'";
+            }
+            else
+            {
+                _parser(parameter, result);
+            }
+
+            return result;
         }
 
         private class Result: IParameterValidationResult

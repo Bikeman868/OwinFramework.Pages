@@ -27,6 +27,7 @@ namespace OwinFramework.Pages.Restful.Runtime
         private object _body;
         private IDictionary<string, string> _form;
         private IDictionary<string, object> _parameterValues;
+        private string[] _pathSegments;
 
         public EndpointRequest(
             IOwinContext context,
@@ -91,6 +92,20 @@ namespace OwinFramework.Pages.Restful.Runtime
             } 
         }
 
+        public string PathSegment(int index)
+        {
+            if (_pathSegments == null)
+                _pathSegments = _context.Request.Path.Value
+                    .Split('/')
+                    .Where(p => !string.IsNullOrEmpty(p))
+                    .ToArray();
+
+            if (index >= 0 && index < _pathSegments.Length)
+                return _pathSegments[index];
+
+            return null;
+        }
+
         public T Parameter<T>(string name)
         {
             if (_parameterValues == null)
@@ -131,7 +146,7 @@ namespace OwinFramework.Pages.Restful.Runtime
 
             throw new Exception(
                 "Parameter '" + name + "' is of type '" + value.GetType().DisplayName() + 
-                "' but the application retieved it as '" + typeof(T).DisplayName() + "'");
+                "' but the application tried to get '" + typeof(T).DisplayName() + "'");
         }
 
         #endregion

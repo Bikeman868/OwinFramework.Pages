@@ -1,5 +1,9 @@
 * Bugs
   - No support for multiple instances of pages middleware on different Owin routes
+  
+* Forms
+  - Routing POST requests to component that rendered the form tag
+  - Re-rendering the page after POST
    
 * Template classes
   - Define a style and content file that is specific to the template - like Angular
@@ -23,6 +27,8 @@
   - Tab bar
   - Collapsible sections
   - Accordion
-  - Forms authentication
+  - Forms authentication and account management
 
 * REST Services
+  - Add analytics to service endpoints
+  - Implementing ISelfDocumenting for REST services

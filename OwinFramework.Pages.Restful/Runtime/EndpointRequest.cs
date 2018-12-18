@@ -25,7 +25,7 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         private bool _bodyDeserialized;
         private object _body;
-        private IDictionary<string, string> _form;
+        private IFormCollection _form;
         private IDictionary<string, object> _parameterValues;
         private string[] _pathSegments;
 
@@ -79,7 +79,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             return (T)_body;
         }
 
-        public IDictionary<string, string> Form 
+        public IFormCollection Form 
         { 
             get 
             {

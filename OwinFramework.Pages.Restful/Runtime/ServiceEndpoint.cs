@@ -125,10 +125,13 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         private string FormFieldParam(IEndpointRequest request, string parameterName)
         {
-            string value;
-            if (request.Form != null && request.Form.TryGetValue(parameterName, out value))
-                return value;
-            return null;
+            var form = request.Form;
+
+            var values = form.GetValues(parameterName);
+            if (values == null || values.Count == 0)
+                return null;
+
+            return values[0];
         }
 
         Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)

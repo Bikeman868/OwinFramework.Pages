@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.Core.Extensions
         /// <summary>
         /// Decodes the body of a request as a form that was SUBMITted by the browser.
         /// </summary>
-        public static Task<IDictionary<string, string>> ReadFormAsync(this IOwinRequest request)
+        public static Task<IFormCollection> ReadFormAsync(this IOwinRequest request)
         {
             if (request.ContentType.StartsWith("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase))
                 return Task.Factory.StartNew(() => DecodeFormUrlEncoded(request.Body, Encoding.UTF8));
@@ -29,7 +29,7 @@ namespace OwinFramework.Pages.Core.Extensions
             throw new NotImplementedException("Unsupported content type " + request.ContentType);
         }
 
-        private static IDictionary<string, string> DecodeFormUrlEncoded(Stream stream, Encoding encoding)
+        private static IFormCollection DecodeFormUrlEncoded(Stream stream, Encoding encoding)
         {
             var reader = new StreamReader(stream, encoding);
             var content = reader.ReadToEnd();
@@ -58,7 +58,7 @@ namespace OwinFramework.Pages.Core.Extensions
                 });
             };
 
-            return content
+            var dictionary = content
                 .Split('&')
                 .Select(p =>
                 {
@@ -69,7 +69,8 @@ namespace OwinFramework.Pages.Core.Extensions
                         value = decode(e[1])
                     };
                 })
-                .ToDictionary(e => e.name, e => e.value);
+                .ToDictionary(e => e.name, e => new []{e.value});
+            return new FormCollection(dictionary);
         }
 
         private static byte[] DecodeMultipartMimeEncoded(Stream stream, Encoding encoding)

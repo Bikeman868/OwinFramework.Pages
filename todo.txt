@@ -26,3 +26,4 @@
   - Forms authentication
 
 * REST Services
+  - Required parameters that are not supplied should result in "Bad Request" response

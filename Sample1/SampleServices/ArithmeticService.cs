@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Restful.Interfaces;
+using OwinFramework.Pages.Restful.Parameters;
 
 namespace Sample1.SampleServices
 {
@@ -20,8 +21,10 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint(UrlPath = "add")]
-        [EndpointParameter("a", typeof(double))]
+        [EndpointParameter("a", typeof(double), EndpointParameterType.FormField | EndpointParameterType.QueryString)]
         [EndpointParameter("b", typeof(double))]
+        [Description("Adds two numbers and returns the sum")]
+        [Example("http://myservice.com/add?a=12&b=6")]
         public void Add2(IEndpointRequest request)
         {
             var a = request.Parameter<double>("a");
@@ -51,7 +54,7 @@ namespace Sample1.SampleServices
 
         [Endpoint]
         [EndpointParameter("a", typeof(double))]
-        [EndpointParameter("b", typeof(double))]
+        [EndpointParameter("b", typeof(PositiveNumber<double>))]
         public void Divide(IEndpointRequest request)
         {
             var a = request.Parameter<double>("a");

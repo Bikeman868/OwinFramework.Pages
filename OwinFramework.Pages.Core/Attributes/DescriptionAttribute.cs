@@ -5,7 +5,7 @@ namespace OwinFramework.Pages.Core.Attributes
     /// <summary>
     /// Provides an html description of the page or service
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class DescriptionAttribute: Attribute
     {
         /// <summary>

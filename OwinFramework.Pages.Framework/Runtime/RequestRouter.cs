@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Owin;
 using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.MiddlewareHelpers.SelfDocumenting;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -57,6 +59,26 @@ namespace OwinFramework.Pages.Framework.Runtime
             return registration;
         }
 
+        IDisposable IRequestRouter.Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo)
+        {
+            var registration = new Registration
+            {
+                Priority = priority,
+                Filter = filter,
+                Runable = runable,
+                DeclaringType = runable.GetType(),
+                Method = methodInfo
+            };
+
+            lock (_registrations)
+            {
+                _registrations.Add(registration);
+                _registrations.Sort();
+            }
+
+            return registration;
+        }
+
         IDisposable IRequestRouter.Register(IRequestRouter router, IRequestFilter filter, int priority)
         {
             var registration = new Registration
@@ -97,20 +119,23 @@ namespace OwinFramework.Pages.Framework.Runtime
                     continue;
                 }
 
-                if (registration.Runable != null)
+                var documented = registration.Runable as IDocumented;
+                if (documented != null)
                 {
-                    var documented = registration.Runable as IDocumented;
-                    if (documented != null)
-                    {
-                        endpoint.Description = documented.Description;
-                        endpoint.Examples = documented.Examples;
-                        endpoint.Attributes = documented.Attributes;
-                    }
+                    endpoint.Description = documented.Description;
+                    endpoint.Examples = documented.Examples;
+                    endpoint.Attributes = documented.Attributes;
                 }
 
-                if (registration.DeclaringType != null)
+                object[] customAttributes = null;
+                if(registration.Method != null)
+                    customAttributes = registration.Method.GetCustomAttributes(true);
+                else if (registration.DeclaringType != null)
+                    customAttributes = registration.DeclaringType.GetCustomAttributes(true);
+
+                if (customAttributes != null)
                 {
-                    foreach (var attribute in registration.DeclaringType.GetCustomAttributes(true))
+                    foreach (var attribute in customAttributes)
                     {
                         var description = attribute as DescriptionAttribute;
                         if (description != null)
@@ -141,6 +166,32 @@ namespace OwinFramework.Pages.Framework.Runtime
                                     Description = option.Html
                                 });
                         }
+
+                        var endpointParameter = attribute as EndpointParameterAttribute;
+                        if (endpointParameter != null)
+                        {
+                            if (endpoint.Attributes == null)
+                                endpoint.Attributes = new List<IEndpointAttributeDocumentation>();
+
+                            var parameterDescription = endpointParameter.Validation.DisplayName();
+                            if (typeof(IDocumented).IsAssignableFrom(endpointParameter.Validation))
+                            {
+                                var constructor = endpointParameter.Validation.GetConstructor(Type.EmptyTypes);
+                                if (constructor != null)
+                                {
+                                    var validator = constructor.Invoke(null) as IDocumented;
+                                    if (validator != null)
+                                        parameterDescription = validator.Description;
+                                }
+                            }
+
+                            endpoint.Attributes.Add(new EndpointAttributeDocumentation
+                            {
+                                Type = endpointParameter.ParameterType.ToString(),
+                                Name = endpointParameter.ParameterName,
+                                Description = parameterDescription
+                            });
+                        }
                     }
                 }
 
@@ -156,6 +207,7 @@ namespace OwinFramework.Pages.Framework.Runtime
             public IRequestFilter Filter;
             public IRunable Runable;
             public Type DeclaringType;
+            public MethodInfo Method;
             public IRequestRouter Router;
 
             int IComparable.CompareTo(object obj)

@@ -19,6 +19,7 @@ namespace OwinFramework.Pages.Restful.Runtime
     internal class ServiceEndpoint : IRunable
     {
         public readonly string Path;
+        public readonly MethodInfo MethodInfo;
 
         ElementType INamed.ElementType { get { return ElementType.Service; } }
         string INamed.Name { get; set; }
@@ -45,10 +46,12 @@ namespace OwinFramework.Pages.Restful.Runtime
         public ServiceEndpoint(
             string path, 
             Action<IEndpointRequest> method,
+            MethodInfo methodInfo,
             IDataCatalog dataCatalog,
             IDataDependencyFactory dataDependencyFactory)
         {
             Path = path;
+            MethodInfo = methodInfo;
             _method = method;
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;

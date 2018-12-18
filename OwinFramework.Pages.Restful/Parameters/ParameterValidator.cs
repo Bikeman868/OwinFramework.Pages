@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.Pages.Core.Extensions;
+using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Restful.Interfaces;
 
 namespace OwinFramework.Pages.Restful.Parameters
@@ -11,7 +13,7 @@ namespace OwinFramework.Pages.Restful.Parameters
     /// Validates a service endpoint parameter ensuring that it is
     /// parsable from a specific value type
     /// </summary>
-    public class ParameterValidator: IParameterValidator
+    public class ParameterValidator: IParameterValidator, IDocumented
     {
         private readonly Type _type;
         private readonly Action<string, Result> _parser;
@@ -21,6 +23,16 @@ namespace OwinFramework.Pages.Restful.Parameters
         /// Returns a description of what is valid for this parameter
         /// </summary>
         public virtual string Description { get { return "A " + _type.DisplayName() + " value."; } }
+
+        /// <summary>
+        /// Returns examples of valid parameter values in HTML format
+        /// </summary>
+        public virtual string Examples { get { return null; } }
+
+        /// <summary>
+        /// This member of IDocumented is not used
+        /// </summary>
+        public IList<IEndpointAttributeDocumentation> Attributes { get { return null; } }
 
         /// <summary>
         /// This is a base class for parameter validators that validate
@@ -274,5 +286,8 @@ namespace OwinFramework.Pages.Restful.Parameters
             public Type Type { get; set; }
             public string ErrorMessage { get; set; }
         }
+
+
+
     }
 }

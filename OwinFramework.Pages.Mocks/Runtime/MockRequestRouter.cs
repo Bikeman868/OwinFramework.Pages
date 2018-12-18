@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Microsoft.Owin;
 using Moq.Modules;
@@ -15,6 +16,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
         public IRunable Runable;
         public int Priority;
         public Type DeclaringType;
+        public MethodInfo MethodInfo;
 
         protected override IRequestRouter GetImplementation(IMockProducer mockProducer)
         {
@@ -38,6 +40,15 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return this;
         }
 
+        public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo)
+        {
+            Runable = runable;
+            Filter = filter;
+            Priority = priority;
+            MethodInfo = methodInfo;
+            return this;
+        }
+
         public IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority = 0)
         {
             return this;
@@ -52,5 +63,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
         {
             return this;
         }
+
+
     }
 }

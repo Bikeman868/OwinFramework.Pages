@@ -18,6 +18,7 @@ namespace OwinFramework.Pages.Restful.Serializers
 
         public Task Success(IOwinContext context)
         {
+            context.Response.ContentType = "application/json";
             return context.Response.WriteAsync("{\"success\":true}");
         }
 
@@ -40,6 +41,7 @@ namespace OwinFramework.Pages.Restful.Serializers
             {
                 json = JsonConvert.SerializeObject(data);
             }
+            context.Response.ContentType = "application/json";
             return context.Response.WriteAsync(json);
         }
 

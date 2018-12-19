@@ -33,7 +33,7 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint]
-        [EndpointParameter("a", typeof(double))]
+        [EndpointParameter("a", typeof(IsType<double>))]
         [EndpointParameter("b", typeof(double))]
         public void Subtract(IEndpointRequest request)
         {
@@ -43,7 +43,7 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint]
-        [EndpointParameter("a", typeof(double))]
+        [EndpointParameter("a", typeof(IsType<double>))]
         [EndpointParameter("b", typeof(double))]
         public void Multiply(IEndpointRequest request)
         {
@@ -53,7 +53,7 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint]
-        [EndpointParameter("a", typeof(double))]
+        [EndpointParameter("a", typeof(IsType<double>))]
         [EndpointParameter("b", typeof(PositiveNumber<double>))]
         public void Divide(IEndpointRequest request)
         {

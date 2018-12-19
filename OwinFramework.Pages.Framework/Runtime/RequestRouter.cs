@@ -174,14 +174,20 @@ namespace OwinFramework.Pages.Framework.Runtime
                                 endpoint.Attributes = new List<IEndpointAttributeDocumentation>();
 
                             var parameterDescription = endpointParameter.Validation.DisplayName();
-                            if (typeof(IDocumented).IsAssignableFrom(endpointParameter.Validation))
+                            if (typeof(IDocumented).IsAssignableFrom(endpointParameter.Validation) || 
+                                typeof(IParameterValidator).IsAssignableFrom(endpointParameter.Validation))
                             {
                                 var constructor = endpointParameter.Validation.GetConstructor(Type.EmptyTypes);
                                 if (constructor != null)
                                 {
-                                    var validator = constructor.Invoke(null) as IDocumented;
-                                    if (validator != null)
-                                        parameterDescription = validator.Description;
+                                    var validator = constructor.Invoke(null);
+                                    var parameterDocumented = validator as IDocumented;
+                                    var parameterValidator = validator as IParameterValidator;
+
+                                    if (parameterDocumented != null)
+                                        parameterDescription = parameterDocumented.Description;
+                                    else if (parameterValidator != null)
+                                        parameterDescription = parameterValidator.Description;
                                 }
                             }
 

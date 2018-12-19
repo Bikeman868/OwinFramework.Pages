@@ -15,19 +15,31 @@ namespace OwinFramework.Pages.Restful.Parameters
     /// </summary>
     public class ParameterValidator: IParameterValidator, IDocumented
     {
-        private readonly Type _type;
         private readonly Action<string, Result> _parser;
         private readonly bool _optional;
+        private readonly string _description;
+        private readonly Type _type;
 
+        /// <summary>
+        /// The type of object that will be returned by this validator
+        /// </summary>
+        public virtual Type ParameterType { get { return _type; } }
+        
         /// <summary>
         /// Returns a description of what is valid for this parameter
         /// </summary>
-        public virtual string Description { get { return "A " + _type.DisplayName() + " value."; } }
+        public virtual string Description { get { return _description; } }
 
         /// <summary>
         /// Returns examples of valid parameter values in HTML format
         /// </summary>
         public virtual string Examples { get { return null; } }
+
+        /// <summary>
+        /// If required parameters are not provided in the request then a
+        /// 'Bad Request' response is sent back to the caller
+        /// </summary>
+        public virtual bool IsRequired { get { return !_optional; } }
 
         /// <summary>
         /// This member of IDocumented is not used
@@ -38,231 +50,358 @@ namespace OwinFramework.Pages.Restful.Parameters
         /// This is a base class for parameter validators that validate
         /// standard .Net framework types.
         /// </summary>
-        /// <param name="type">A value type or nullable value type.
-        /// Passing a nullable type here makes the parameter optional</param>
         public ParameterValidator(Type type)
         {
             _type = type;
 
-            if (type == typeof(string))
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
-                _parser = (param, result) =>
+                _optional = true;
+                type = Nullable.GetUnderlyingType(type);
+
+                if (type == typeof(byte))
+                {
+                    _parser = (param, result) =>
+                    {
+                        if (string.IsNullOrEmpty(param))
+                        {
+                            result.Success = true;
+                            result.Value = null;
+                        }
+                        else
+                        {
+                            byte value;
+                            if (byte.TryParse(param, out value))
+                            {
+                                result.Success = true;
+                                result.Value = (byte?)value;
+                            }
+                            else
+                            {
+                                result.ErrorMessage = "Failed to parse as a byte";
+                            }
+                        }
+                    };
+                }
+                else if (type == typeof(int))
+                {
+                    _parser = (param, result) =>
+                    {
+                        if (string.IsNullOrEmpty(param))
+                        {
+                            result.Success = true;
+                            result.Value = null;
+                        }
+                        else
+                        {
+                            int value;
+                            if (int.TryParse(param, out value))
+                            {
+                                result.Success = true;
+                                result.Value = (int?)value;
+                            }
+                            else
+                            {
+                                result.ErrorMessage = "Failed to parse as an integer";
+                            }
+                        }
+                    };
+                }
+                else if (type == typeof(long))
+                {
+                    _parser = (param, result) =>
+                    {
+                        if (string.IsNullOrEmpty(param))
+                        {
+                            result.Success = true;
+                            result.Value = null;
+                        }
+                        else
+                        {
+                            long value;
+                            if (long.TryParse(param, out value))
+                            {
+                                result.Success = true;
+                                result.Value = (long?)value;
+                            }
+                            else
+                            {
+                                result.ErrorMessage = "Failed to parse as an integer";
+                            }
+                        }
+                    };
+                }
+                else if (type == typeof(float))
+                {
+                    _parser = (param, result) =>
+                    {
+                        if (string.IsNullOrEmpty(param))
+                        {
+                            result.Success = true;
+                            result.Value = null;
+                        }
+                        else
+                        {
+                            float value;
+                            if (float.TryParse(param, out value))
+                            {
+                                result.Success = true;
+                                result.Value = (float?)value;
+                            }
+                            else
+                            {
+                                result.ErrorMessage = "Failed to parse as a float";
+                            }
+                        }
+                    };
+                }
+                else if (type == typeof(double))
+                {
+                    _parser = (param, result) =>
+                    {
+                        if (string.IsNullOrEmpty(param))
+                        {
+                            result.Success = true;
+                            result.Value = null;
+                        }
+                        else
+                        {
+                            double value;
+                            if (double.TryParse(param, out value))
+                            {
+                                result.Success = true;
+                                result.Value = (double?)value;
+                            }
+                            else
+                            {
+                                result.ErrorMessage = "Failed to parse as a double";
+                            }
+                        }
+                    };
+                }
+                else if (type == typeof(bool))
+                {
+                    _parser = (param, result) =>
+                    {
+                        if (string.IsNullOrEmpty(param))
+                        {
+                            result.Success = true;
+                            result.Value = null;
+                        }
+                        else
+                        {
+                            bool value;
+                            if (bool.TryParse(param, out value))
+                            {
+                                result.Success = true;
+                                result.Value = (bool?)value;
+                            }
+                            else
+                            {
+                                result.ErrorMessage = "Failed to parse as a bool";
+                            }
+                        }
+                    };
+                }
+                else if (type == typeof(DateTime))
+                {
+                    _parser = (param, result) =>
+                    {
+                        if (string.IsNullOrEmpty(param))
+                        {
+                            result.Success = true;
+                            result.Value = null;
+                        }
+                        else
+                        {
+                            DateTime value;
+                            if (DateTime.TryParse(param, out value))
+                            {
+                                result.Success = true;
+                                result.Value = (DateTime?)value;
+                            }
+                            else
+                            {
+                                result.ErrorMessage = "Failed to parse as a DateTime";
+                            }
+                        }
+                    };
+                }
+                else if (type.IsEnum)
+                {
+                    _parser = (param, result) =>
+                    {
+                        if (string.IsNullOrEmpty(param))
+                        {
+                            result.Success = true;
+                            result.Value = null;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                result.Value = Enum.Parse(type, param, true);
+                                result.Success = true;
+                            }
+                            catch (Exception e)
+                            {
+                                result.ErrorMessage = e.Message;
+                            }
+                        }
+                    };
+                    _description = "Optional, can be one of: " + string.Join(", ", Enum.GetValues(type));
+                }
+            }
+            else
+            {
+                if (type == typeof(string))
+                {
+                    _parser = (param, result) =>
                     {
                         result.Success = true;
                         result.Value = param;
                     };
-            }
-
-            if (type == typeof(byte))
-            {
-                _parser = (param, result) =>
+                }
+                else if (type == typeof(byte))
                 {
-                    byte value;
-                    result.Success = byte.TryParse(param, out value);
-                    result.Value = value;
-                };
-            }
-
-            if (type == typeof(int))
-            {
-                _parser = (param, result) =>
-                {
-                    int value;
-                    result.Success = int.TryParse(param, out value);
-                    result.Value = value;
-                };
-            }
-
-            if (type == typeof(long))
-            {
-                _parser = (param, result) =>
-                {
-                    long value;
-                    result.Success = long.TryParse(param, out value);
-                    result.Value = value;
-                };
-            }
-
-            if (type == typeof(float))
-            {
-                _parser = (param, result) =>
-                {
-                    float value;
-                    result.Success = float.TryParse(param, out value);
-                    result.Value = value;
-                };
-            }
-
-            if (type == typeof(double))
-            {
-                _parser = (param, result) =>
-                {
-                    double value;
-                    result.Success = double.TryParse(param, out value);
-                    result.Value = value;
-                };
-            }
-
-            if (type == typeof(bool))
-            {
-                _parser = (param, result) =>
-                {
-                    bool value;
-                    result.Success = bool.TryParse(param, out value);
-                    result.Value = value;
-                };
-            }
-
-            if (type == typeof(DateTime))
-            {
-                _parser = (param, result) =>
-                {
-                    DateTime value;
-                    result.Success = DateTime.TryParse(param, out value);
-                    result.Value = value;
-                };
-            }
-
-            if (type == typeof(byte?))
-            {
-                _optional = true;
-                _parser = (param, result) =>
-                {
-                    if (string.IsNullOrEmpty(param))
-                    {
-                        result.Success = true;
-                        result.Value = null;
-                    }
-                    else
+                    _parser = (param, result) =>
                     {
                         byte value;
-                        result.Success = byte.TryParse(param, out value);
-                        result.Value = result.Success ? (byte?)(value) : null;
-                    }
-                };
-            }
-
-            if (type == typeof(int?))
-            {
-                _optional = true;
-                _parser = (param, result) =>
+                        if (byte.TryParse(param, out value))
+                        {
+                            result.Success = true;
+                            result.Value = value;
+                        }
+                        else
+                        {
+                            result.ErrorMessage = "Failed to parse as a bool";
+                        }
+                    };
+                }
+                else if (type == typeof(int))
                 {
-                    if (string.IsNullOrEmpty(param))
-                    {
-                        result.Success = true;
-                        result.Value = null;
-                    }
-                    else
+                    _parser = (param, result) =>
                     {
                         int value;
-                        result.Success = int.TryParse(param, out value);
-                        result.Value = result.Success ? (int?)(value) : null;
-                    }
-                };
-            }
-
-            if (type == typeof(long?))
-            {
-                _optional = true;
-                _parser = (param, result) =>
+                        if (int.TryParse(param, out value))
+                        {
+                            result.Success = true;
+                            result.Value = value;
+                        }
+                        else
+                        {
+                            result.ErrorMessage = "Failed to parse as a int";
+                        }
+                    };
+                }
+                else if (type == typeof(long))
                 {
-                    if (string.IsNullOrEmpty(param))
-                    {
-                        result.Success = true;
-                        result.Value = null;
-                    }
-                    else
+                    _parser = (param, result) =>
                     {
                         long value;
-                        result.Success = long.TryParse(param, out value);
-                        result.Value = result.Success ? (long?)(value) : null;
-                    }
-                };
-            }
-
-            if (type == typeof(float?))
-            {
-                _optional = true;
-                _parser = (param, result) =>
+                        if (long.TryParse(param, out value))
+                        {
+                            result.Success = true;
+                            result.Value = value;
+                        }
+                        else
+                        {
+                            result.ErrorMessage = "Failed to parse as a long";
+                        }
+                    };
+                }
+                else if (type == typeof(float))
                 {
-                    if (string.IsNullOrEmpty(param))
-                    {
-                        result.Success = true;
-                        result.Value = null;
-                    }
-                    else
+                    _parser = (param, result) =>
                     {
                         float value;
-                        result.Success = float.TryParse(param, out value);
-                        result.Value = result.Success ? (float?)(value) : null;
-                    }
-                };
-            }
-
-            if (type == typeof(double?))
-            {
-                _optional = true;
-                _parser = (param, result) =>
+                        if (float.TryParse(param, out value))
+                        {
+                            result.Success = true;
+                            result.Value = value;
+                        }
+                        else
+                        {
+                            result.ErrorMessage = "Failed to parse as a float";
+                        }
+                    };
+                }
+                else if (type == typeof(double))
                 {
-                    if (string.IsNullOrEmpty(param))
-                    {
-                        result.Success = true;
-                        result.Value = null;
-                    }
-                    else
+                    _parser = (param, result) =>
                     {
                         double value;
-                        result.Success = double.TryParse(param, out value);
-                        result.Value = result.Success ? (double?)(value) : null;
-                    }
-                };
-            }
-
-            if (type == typeof(bool?))
-            {
-                _optional = true;
-                _parser = (param, result) =>
+                        if (double.TryParse(param, out value))
+                        {
+                            result.Success = true;
+                            result.Value = value;
+                        }
+                        else
+                        {
+                            result.ErrorMessage = "Failed to parse as a double";
+                        }
+                    };
+                }
+                else if (type == typeof(bool))
                 {
-                    if (string.IsNullOrEmpty(param))
-                    {
-                        result.Success = true;
-                        result.Value = null;
-                    }
-                    else
+                    _parser = (param, result) =>
                     {
                         bool value;
-                        result.Success = bool.TryParse(param, out value);
-                        result.Value = result.Success ? (bool?)(value) : null;
-                    }
-                };
-            }
-
-            if (type == typeof(DateTime?))
-            {
-                _optional = true;
-                _parser = (param, result) =>
+                        if (bool.TryParse(param, out value))
+                        {
+                            result.Success = true;
+                            result.Value = value;
+                        }
+                        else
+                        {
+                            result.ErrorMessage = "Failed to parse as a bool";
+                        }
+                    };
+                }
+                else if (type == typeof(DateTime))
                 {
-                    if (string.IsNullOrEmpty(param))
-                    {
-                        result.Success = true;
-                        result.Value = null;
-                    }
-                    else
+                    _parser = (param, result) =>
                     {
                         DateTime value;
-                        result.Success = DateTime.TryParse(param, out value);
-                        result.Value = result.Success ? (DateTime?)(value) : null;
-                    }
-                };
+                        if (DateTime.TryParse(param, out value))
+                        {
+                            result.Success = true;
+                            result.Value = value;
+                        }
+                        else
+                        {
+                            result.ErrorMessage = "Failed to parse as a DateTime";
+                        }
+                    };
+                }
+                else if (type.IsEnum)
+                {
+                    _parser = (param, result) =>
+                    {
+                        try
+                        {
+                            result.Value = Enum.Parse(type, param, true);
+                            result.Success = true;
+                        }
+                        catch (Exception e)
+                        {
+                            result.ErrorMessage = e.Message;
+                        }
+                    };
+
+                    _description = "Must be one of: " + string.Join(", ", Enum.GetValues(type));
+                }
             }
+
+            if (_description == null)
+                _description = (_optional ? "Optional " : "Required ") + " '" + type.DisplayName() + "' value";
         }
 
         public virtual IParameterValidationResult Check(string parameter)
         {
             var result = new Result
             {
-                Type = _type,
-                Optional = _optional
+                Type = _type
             };
 
             if (_parser == null)
@@ -281,13 +420,9 @@ namespace OwinFramework.Pages.Restful.Parameters
         private class Result: IParameterValidationResult
         {
             public bool Success { get; set; }
-            public bool Optional { get; set; }
             public object Value { get; set; }
             public Type Type { get; set; }
             public string ErrorMessage { get; set; }
         }
-
-
-
     }
 }

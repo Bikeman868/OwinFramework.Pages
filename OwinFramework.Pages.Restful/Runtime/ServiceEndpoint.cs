@@ -10,6 +10,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Interfaces;
@@ -126,6 +127,7 @@ namespace OwinFramework.Pages.Restful.Runtime
         private string FormFieldParam(IEndpointRequest request, string parameterName)
         {
             var form = request.Form;
+            if (form == null) return null;
 
             var values = form.GetValues(parameterName);
             if (values == null || values.Count == 0)
@@ -181,7 +183,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     trace(context, () =>
                         "Invalid parameter '" + e.ParameterName + "' " + e.ValidationError +
                         (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
-                    request.HttpStatus(HttpStatusCode.BadRequest, "Parameter '" + e.ParameterName + "' is invalid. " + e.Description);
+                    request.HttpStatus(HttpStatusCode.BadRequest, "Parameter '" + e.ParameterName + "' is invalid. " + e.ValidationError);
                 }
                 catch (Exception e)
                 {

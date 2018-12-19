@@ -44,13 +44,13 @@
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Builders\ServiceDefinition.cs" />
     <Compile Include="Interfaces\IEndpointRequest.cs" />
-    <Compile Include="Interfaces\IParameterValidationResult.cs" />
-    <Compile Include="Interfaces\IParameterValidator.cs" />
     <Compile Include="Interfaces\IResponseSerializer.cs" />
     <Compile Include="Interfaces\IRequestDeserializer.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Parameters\ParameterValidator.cs" />
+    <Compile Include="Parameters\NonZeroValue.cs" />
     <Compile Include="Parameters\PositiveNumber.cs" />
+    <Compile Include="Parameters\IsType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Builders\ServiceBuilder.cs" />
     <Compile Include="Runtime\EndpointParameter.cs" />

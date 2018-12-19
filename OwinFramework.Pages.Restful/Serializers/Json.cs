@@ -1,22 +1,60 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OwinFramework.Pages.Core.Exceptions;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Restful.Interfaces;
 
 namespace OwinFramework.Pages.Restful.Serializers
 {
     /// <summary>
-    /// This is the default serializer, it send the response in Json format
+    /// This is the default serializer, it sends the response in Json format
     /// </summary>
     public class Json: IRequestDeserializer, IResponseSerializer
     {
+        protected JsonSerializerSettings Settings;
+
+        public Json()
+        {
+            Settings = new JsonSerializerSettings();
+            Settings.DefaultValueHandling = DefaultValueHandling.Ignore;
+            Settings.Formatting = Formatting.None;
+            Settings.MissingMemberHandling = MissingMemberHandling.Ignore;
+            Settings.NullValueHandling = NullValueHandling.Ignore;
+        }
+
         public T Body<T>(IOwinContext context)
         {
-            throw new NotImplementedException();
+            using (var reader = new StreamReader(context.Request.Body))
+            {
+                var content = reader.ReadToEnd();
+
+                T result;
+                try
+                {
+                    result = JsonConvert.DeserializeObject<T>(content, Settings);
+                }
+                catch(Exception e)
+                {
+                    throw new BodyDeserializationException(
+                        typeof(T), 
+                        "A JSON serialization of object type " + typeof(T).DisplayName(),
+                        e.Message);
+                }
+
+                if (result == null)
+                    throw new BodyDeserializationException(
+                        typeof(T), 
+                        "A JSON serialization of object type " + typeof(T).DisplayName(),
+                        "The Newtonsoft deserializer returned null");
+
+                return result;
+            }
         }
 
         public Task Success(IOwinContext context)
@@ -42,7 +80,7 @@ namespace OwinFramework.Pages.Restful.Serializers
             }
             else
             {
-                json = JsonConvert.SerializeObject(data);
+                json = JsonConvert.SerializeObject(data, Settings);
             }
             context.Response.ContentType = "application/json";
             return context.Response.WriteAsync(json);

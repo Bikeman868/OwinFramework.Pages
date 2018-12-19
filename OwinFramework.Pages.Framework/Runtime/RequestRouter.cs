@@ -6,6 +6,7 @@ using Microsoft.Owin;
 using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.MiddlewareHelpers.SelfDocumenting;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -107,7 +108,7 @@ namespace OwinFramework.Pages.Framework.Runtime
 
             foreach (var registration in registrations)
             {
-                var endpoint = new EndpointDocumentation
+                var endpointDocumentation = new EndpointDocumentation
                 {
                     RelativePath = registration.Filter.Description
                 };
@@ -122,9 +123,9 @@ namespace OwinFramework.Pages.Framework.Runtime
                 var documented = registration.Runable as IDocumented;
                 if (documented != null)
                 {
-                    endpoint.Description = documented.Description;
-                    endpoint.Examples = documented.Examples;
-                    endpoint.Attributes = documented.Attributes;
+                    endpointDocumentation.Description = documented.Description;
+                    endpointDocumentation.Examples = documented.Examples;
+                    endpointDocumentation.Attributes = documented.Attributes;
                 }
 
                 object[] customAttributes = null;
@@ -133,6 +134,9 @@ namespace OwinFramework.Pages.Framework.Runtime
                 else if (registration.DeclaringType != null)
                     customAttributes = registration.DeclaringType.GetCustomAttributes(true);
 
+                string endpointPath = null;
+                string queryStringExample = null;
+
                 if (customAttributes != null)
                 {
                     foreach (var attribute in customAttributes)
@@ -140,26 +144,26 @@ namespace OwinFramework.Pages.Framework.Runtime
                         var description = attribute as DescriptionAttribute;
                         if (description != null)
                         {
-                            endpoint.Description = endpoint.Description == null
+                            endpointDocumentation.Description = endpointDocumentation.Description == null
                                 ? description.Html
-                                : (endpoint.Description + "<br>" + description.Html);
+                                : (endpointDocumentation.Description + "<br>" + description.Html);
                         }
 
                         var example = attribute as ExampleAttribute;
                         if (example != null)
                         {
-                            endpoint.Examples = endpoint.Examples == null
+                            endpointDocumentation.Examples = endpointDocumentation.Examples == null
                                 ? example.Html
-                                : (endpoint.Examples + "<br>" + example.Html);
+                                : (endpointDocumentation.Examples + "<br>" + example.Html);
                         }
 
                         var option = attribute as OptionAttribute;
                         if (option != null)
                         {
-                            if (endpoint.Attributes == null)
-                                endpoint.Attributes = new List<IEndpointAttributeDocumentation>();
+                            if (endpointDocumentation.Attributes == null)
+                                endpointDocumentation.Attributes = new List<IEndpointAttributeDocumentation>();
 
-                            endpoint.Attributes.Add(new EndpointAttributeDocumentation
+                            endpointDocumentation.Attributes.Add(new EndpointAttributeDocumentation
                                 {
                                     Type = option.OptionType.ToString(),
                                     Name = option.Name,
@@ -167,31 +171,50 @@ namespace OwinFramework.Pages.Framework.Runtime
                                 });
                         }
 
+                        var endpoint = attribute as EndpointAttribute;
+                        if (endpoint != null)
+                        {
+                            endpointPath = endpoint.UrlPath;
+                        }
+
                         var endpointParameter = attribute as EndpointParameterAttribute;
                         if (endpointParameter != null)
                         {
-                            if (endpoint.Attributes == null)
-                                endpoint.Attributes = new List<IEndpointAttributeDocumentation>();
+                            if (endpointDocumentation.Attributes == null)
+                                endpointDocumentation.Attributes = new List<IEndpointAttributeDocumentation>();
 
-                            var parameterDescription = endpointParameter.Validation.DisplayName();
-                            if (typeof(IDocumented).IsAssignableFrom(endpointParameter.Validation) || 
-                                typeof(IParameterValidator).IsAssignableFrom(endpointParameter.Validation))
+                            var parameterValue = "{" + endpointParameter.ParameterName + "}";
+                            var parameterDescription = endpointParameter.ParserType.DisplayName();
+
+                            if (typeof(IDocumented).IsAssignableFrom(endpointParameter.ParserType) || 
+                                typeof(IParameterParser).IsAssignableFrom(endpointParameter.ParserType))
                             {
-                                var constructor = endpointParameter.Validation.GetConstructor(Type.EmptyTypes);
+                                var constructor = endpointParameter.ParserType.GetConstructor(Type.EmptyTypes);
                                 if (constructor != null)
                                 {
-                                    var validator = constructor.Invoke(null);
-                                    var parameterDocumented = validator as IDocumented;
-                                    var parameterValidator = validator as IParameterValidator;
+                                    var parser = constructor.Invoke(null);
+                                    var parameterDocumented = parser as IDocumented;
+                                    var parameterParser = parser as IParameterParser;
 
                                     if (parameterDocumented != null)
+                                    {
                                         parameterDescription = parameterDocumented.Description;
-                                    else if (parameterValidator != null)
-                                        parameterDescription = parameterValidator.Description;
+                                        parameterValue = parameterDocumented.Examples;
+                                    }
+                                    else if (parameterParser != null)
+                                        parameterDescription = parameterParser.Description;
                                 }
                             }
 
-                            endpoint.Attributes.Add(new EndpointAttributeDocumentation
+                            if (endpointParameter.ParameterType.HasFlag(EndpointParameterType.QueryString))
+                            {
+                                if (queryStringExample == null)
+                                    queryStringExample = "?" + endpointParameter.ParameterName + "=" + parameterValue;
+                                else
+                                    queryStringExample += "&" + endpointParameter.ParameterName + "=" + parameterValue;
+                            }
+
+                            endpointDocumentation.Attributes.Add(new EndpointAttributeDocumentation
                             {
                                 Type = endpointParameter.ParameterType.ToString(),
                                 Name = endpointParameter.ParameterName,
@@ -201,7 +224,14 @@ namespace OwinFramework.Pages.Framework.Runtime
                     }
                 }
 
-                endpoints.Add(endpoint);
+                if (string.IsNullOrEmpty(endpointDocumentation.Examples) && !string.IsNullOrEmpty(endpointPath))
+                {
+                    endpointDocumentation.Examples = endpointPath;
+                    if (!string.IsNullOrEmpty(queryStringExample))
+                        endpointDocumentation.Examples += queryStringExample;
+                }
+
+                endpoints.Add(endpointDocumentation);
             }
 
             return endpoints;

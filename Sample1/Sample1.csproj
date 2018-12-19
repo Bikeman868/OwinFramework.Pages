@@ -74,6 +74,8 @@
     <Compile Include="SamplePages\SemiCustomPage.cs" />
     <Compile Include="SamplePages\FullCustomPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SampleServices\ObjectSerializationService.cs" />
+    <Compile Include="SampleServices\ExceptionTestService.cs" />
     <Compile Include="SampleServices\ArithmeticService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

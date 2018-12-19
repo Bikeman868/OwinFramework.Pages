@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
@@ -38,7 +37,7 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// attributes the service endpoint method before they will be available
         /// </summary>
         /// <typeparam name="T">The type of parameter. Must match the type
-        /// parsed by the parameter validator specified in the attribute</typeparam>
+        /// parsed by the parameter parser specified in the attribute</typeparam>
         /// <param name="name">Case insensitive name of the parameter</param>
         /// <returns>The value of the parameter</returns>
         T Parameter<T>(string name);

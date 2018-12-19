@@ -10,7 +10,7 @@ namespace OwinFramework.Pages.Restful.Parameters
     /// a number that is not zero.
     /// </summary>
     /// <typeparam name="T">The type of number</typeparam>
-    public class NonZeroValue<T>: IsType<T>
+    public class NonZeroValue<T>: AnyValue<T>
     {
         private readonly Func<object, bool> _check;
         private const string _errorMessage = "The value can be any number other than zero";
@@ -36,7 +36,7 @@ namespace OwinFramework.Pages.Restful.Parameters
 
             else throw new ServiceBuilderException(
                     "The type '" + type.DisplayName() + "' is not supported by the " +
-                    "positive number service endpoint parameter validator");
+                    "positive number service endpoint parameter parser");
         }
 
         public override IParameterValidationResult Check(string parameter)

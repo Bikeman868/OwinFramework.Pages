@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.Capability;
-using OwinFramework.Pages.Restful.Interfaces;
 
 namespace OwinFramework.Pages.Restful.Parameters
 {
@@ -13,15 +11,16 @@ namespace OwinFramework.Pages.Restful.Parameters
     /// Validates a service endpoint parameter ensuring that it is
     /// parsable from a specific value type
     /// </summary>
-    public class ParameterValidator: IParameterValidator, IDocumented
+    public class ParameterParser: IParameterParser, IDocumented
     {
         private readonly Action<string, Result> _parser;
         private readonly bool _optional;
         private readonly string _description;
         private readonly Type _type;
+        private readonly string _example;
 
         /// <summary>
-        /// The type of object that will be returned by this validator
+        /// The type of object that will be returned by this parser
         /// </summary>
         public virtual Type ParameterType { get { return _type; } }
         
@@ -33,7 +32,7 @@ namespace OwinFramework.Pages.Restful.Parameters
         /// <summary>
         /// Returns examples of valid parameter values in HTML format
         /// </summary>
-        public virtual string Examples { get { return null; } }
+        public virtual string Examples { get { return _example; } }
 
         /// <summary>
         /// If required parameters are not provided in the request then a
@@ -47,12 +46,13 @@ namespace OwinFramework.Pages.Restful.Parameters
         public IList<IEndpointAttributeDocumentation> Attributes { get { return null; } }
 
         /// <summary>
-        /// This is a base class for parameter validators that validate
-        /// standard .Net framework types.
+        /// This is a base class for parameter parsers that parse and validate
+        /// standard .Net framework value types.
         /// </summary>
-        public ParameterValidator(Type type)
+        public ParameterParser(Type type)
         {
             _type = type;
+            _example = "54";
 
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
@@ -133,6 +133,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type == typeof(float))
                 {
+                    _example = "12.45";
                     _parser = (param, result) =>
                     {
                         if (string.IsNullOrEmpty(param))
@@ -157,6 +158,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type == typeof(double))
                 {
+                    _example = "18.34568";
                     _parser = (param, result) =>
                     {
                         if (string.IsNullOrEmpty(param))
@@ -181,6 +183,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type == typeof(bool))
                 {
+                    _example = "true";
                     _parser = (param, result) =>
                     {
                         if (string.IsNullOrEmpty(param))
@@ -205,6 +208,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type == typeof(DateTime))
                 {
+                    _example = DateTime.Now.ToString("r");
                     _parser = (param, result) =>
                     {
                         if (string.IsNullOrEmpty(param))
@@ -229,6 +233,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type.IsEnum)
                 {
+                    _example = Enum.GetNames(type)[0];
                     _parser = (param, result) =>
                     {
                         if (string.IsNullOrEmpty(param))
@@ -249,13 +254,14 @@ namespace OwinFramework.Pages.Restful.Parameters
                             }
                         }
                     };
-                    _description = "Optional, can be one of: " + string.Join(", ", Enum.GetValues(type));
+                    _description = "Optional, can be one of: " + string.Join(", ", Enum.GetNames(type));
                 }
             }
             else
             {
                 if (type == typeof(string))
                 {
+                    _example = "some_text";
                     _parser = (param, result) =>
                     {
                         result.Success = true;
@@ -312,6 +318,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type == typeof(float))
                 {
+                    _example = "3.14159267";
                     _parser = (param, result) =>
                     {
                         float value;
@@ -328,6 +335,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type == typeof(double))
                 {
+                    _example = "3.14159267";
                     _parser = (param, result) =>
                     {
                         double value;
@@ -344,6 +352,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type == typeof(bool))
                 {
+                    _example = "false";
                     _parser = (param, result) =>
                     {
                         bool value;
@@ -360,6 +369,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type == typeof(DateTime))
                 {
+                    _example = DateTime.Now.ToString("r");
                     _parser = (param, result) =>
                     {
                         DateTime value;
@@ -376,6 +386,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                 }
                 else if (type.IsEnum)
                 {
+                    _example = Enum.GetNames(type)[0];
                     _parser = (param, result) =>
                     {
                         try
@@ -389,7 +400,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                         }
                     };
 
-                    _description = "Must be one of: " + string.Join(", ", Enum.GetValues(type));
+                    _description = "Must be one of: " + string.Join(", ", Enum.GetNames(type));
                 }
             }
 
@@ -407,7 +418,9 @@ namespace OwinFramework.Pages.Restful.Parameters
             if (_parser == null)
             {
                 result.Success = false;
-                result.ErrorMessage = "The paramater validator does not know how to parse '" + _type.DisplayName() + "'";
+                result.ErrorMessage = "The paramater parser does not know how to parse '" + 
+                    _type.DisplayName() + "', if this is the type you intended to use then you " + 
+                    "must write a custom parser for this type";
             }
             else
             {

@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Restful
-version 1.0.0-alpha-015
+version 1.0.0-alpha-016
 authors Martin Halliday
 copyright Martin Halliday 2018
 description
@@ -22,7 +22,7 @@ references
   OwinFramework.Pages.Restful.dll
 
 dependencies
-  Owin.Framework.Pages.Core = 1.0.0-alpha-015
+  Owin.Framework.Pages.Core = 1.0.0-alpha-016
 
   Ioc.Modules ~> LOCKED:Minor
   Newtonsoft.Json ~> LOCKED:Minor

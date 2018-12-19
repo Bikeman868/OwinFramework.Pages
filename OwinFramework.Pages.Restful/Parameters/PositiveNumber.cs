@@ -2,7 +2,6 @@
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.Capability;
-using OwinFramework.Pages.Restful.Interfaces;
 
 namespace OwinFramework.Pages.Restful.Parameters
 {
@@ -11,7 +10,7 @@ namespace OwinFramework.Pages.Restful.Parameters
     /// a number greater than zero.
     /// </summary>
     /// <typeparam name="T">The type of number</typeparam>
-    public class PositiveNumber<T> : IsType<T>
+    public class PositiveNumber<T> : AnyValue<T>
     {
         private readonly Func<object, bool> _check;
         private const string _errorMessage = "The value must be a number greter than zero";
@@ -37,7 +36,7 @@ namespace OwinFramework.Pages.Restful.Parameters
 
             else throw new ServiceBuilderException(
                     "The type '" + type.DisplayName() + "' is not supported by the " +
-                    "positive number service endpoint parameter validator");
+                    "positive number service endpoint parameter parser");
         }
 
         public override IParameterValidationResult Check(string parameter)

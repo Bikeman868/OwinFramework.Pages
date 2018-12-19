@@ -5,7 +5,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Capability
     /// <summary>
     /// Defines a class that can parse and validate parameters to service endpoints
     /// </summary>
-    public interface IParameterValidator
+    public interface IParameterParser
     {
         /// <summary>
         /// Returns a description of what is allowed in this parameter

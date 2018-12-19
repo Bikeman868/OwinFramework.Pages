@@ -139,12 +139,12 @@ namespace OwinFramework.Pages.Restful.Runtime
                         var stringValue = function(this, parameter.Name);
                         if (stringValue != null)
                         {
-                            var validationResult = parameter.Validator.Check(stringValue);
+                            var validationResult = parameter.Parser.Check(stringValue);
                             if (!validationResult.Success)
                                 throw new EndpointParameterException(
                                     parameter.Name,
-                                    parameter.Validator.ParameterType,
-                                    parameter.Validator.Description,
+                                    parameter.Parser.ParameterType,
+                                    parameter.Parser.Description,
                                     validationResult.ErrorMessage);
 
                             _parameterValues.Add(parameter.Name, validationResult.Value);
@@ -152,9 +152,9 @@ namespace OwinFramework.Pages.Restful.Runtime
                             break;
                         }
                     }
-                    if (parameter.Validator.IsRequired && !parameterSupplied)
+                    if (parameter.Parser.IsRequired && !parameterSupplied)
                     {
-                        throw new EndpointParameterException(parameter.Name, parameter.Validator.ParameterType, parameter.Validator.Description,
+                        throw new EndpointParameterException(parameter.Name, parameter.Parser.ParameterType, parameter.Parser.Description,
                             "The parameter must be supplied in one of these: " + parameter.ParameterType);
                     }
                 }
@@ -271,7 +271,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             throw new Exception("You can not create child data contexts for a service endpoint");
         }
 
-        private readonly System.Collections.Generic.LinkedList<PropertyEntry> _properties;
+        private readonly LinkedList<PropertyEntry> _properties;
 
         private void SetProperty(Type type, string scopeName, object value)
         {

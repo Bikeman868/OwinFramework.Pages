@@ -62,7 +62,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                 .ToArray();
         }
 
-        public void AddParameter(string name, EndpointParameterType parameterType, IParameterValidator validator)
+        public void AddParameter(string name, EndpointParameterType parameterType, IParameterParser parser)
         {
             var functions = new List<Func<IEndpointRequest, string, string>>();
 
@@ -93,7 +93,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             { 
                 Name = name, 
                 ParameterType = parameterType, 
-                Validator = validator,
+                Parser = parser,
                 Functions = functions.ToArray()
             };
 
@@ -184,6 +184,13 @@ namespace OwinFramework.Pages.Restful.Runtime
                         "Invalid parameter '" + e.ParameterName + "' " + e.ValidationError +
                         (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
                     request.HttpStatus(HttpStatusCode.BadRequest, "Parameter '" + e.ParameterName + "' is invalid. " + e.ValidationError);
+                }
+                catch(BodyDeserializationException e)
+                {
+                    trace(context, () =>
+                        "Request body should by '" + e.BodyType.DisplayName() + "'. " + e.ValidationError +
+                        (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
+                    request.HttpStatus(HttpStatusCode.BadRequest, "Request body is invalid. " + e.ValidationError);
                 }
                 catch (Exception e)
                 {

@@ -52,7 +52,7 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         private static readonly IDictionary<Type, IRequestDeserializer> RequestDeserializers = new Dictionary<Type, IRequestDeserializer>();
         private static readonly IDictionary<Type, IResponseSerializer> ResponseSerializers = new Dictionary<Type, IResponseSerializer>();
-        private static readonly IDictionary<Type, IParameterValidator> ParameterValidators = new Dictionary<Type, IParameterValidator>();
+        private static readonly IDictionary<Type, IParameterParser> ParameterParsers = new Dictionary<Type, IParameterParser>();
 
         /// <summary>
         /// Constructs a new service that can 
@@ -156,8 +156,8 @@ namespace OwinFramework.Pages.Restful.Runtime
 
                     foreach(var parameter in parameterAttributes)
                     {
-                        var validator = GetParameterValidator(parameter.Validation);
-                        endpoint.AddParameter(parameter.ParameterName, parameter.ParameterType, validator);
+                        var parameterParser = GetParameterParser(parameter.ParserType);
+                        endpoint.AddParameter(parameter.ParameterName, parameter.ParameterType, parameterParser);
                     }
 
                     Register(endpoint, endpointAttribute.MethodsToRoute ?? Methods, relativePath);
@@ -240,40 +240,40 @@ namespace OwinFramework.Pages.Restful.Runtime
             }
         }
 
-        private IParameterValidator GetParameterValidator(Type type)
+        private IParameterParser GetParameterParser(Type type)
         {
-            lock (ParameterValidators)
+            lock (ParameterParsers)
             {
-                IParameterValidator validator;
-                if (ParameterValidators.TryGetValue(type, out validator))
-                    return validator;
+                IParameterParser parser;
+                if (ParameterParsers.TryGetValue(type, out parser))
+                    return parser;
 
-                if (typeof(IParameterValidator).IsAssignableFrom(type))
+                if (typeof(IParameterParser).IsAssignableFrom(type))
                 {
                     var constructor = type.GetConstructor(Type.EmptyTypes);
                     if (constructor == null)
                         throw new ServiceBuilderException(
-                            "Type " + type.DisplayName() + " was configured as a service endpoint parameter validator in " +
+                            "Type " + type.DisplayName() + " was configured as a service endpoint parameter parser in " +
                             "the '" + Name + "' service, but it does not have a default public constructor");
 
                     try
                     {
-                        validator = constructor.Invoke(null) as IParameterValidator;
+                        parser = constructor.Invoke(null) as IParameterParser;
                     }
                     catch (Exception ex)
                     {
                         throw new ServiceBuilderException(
-                            "The default public constructor for response serializer " +
-                            type.DisplayName() + " threw exception " + ex.Message, ex);
+                            "The default public constructor for parameter parser '" +
+                            type.DisplayName() + "' threw exception " + ex.Message, ex);
                     }
                 }
                 else
                 {
-                    validator = new ParameterValidator(type);
+                    parser = new ParameterParser(type);
                 }
 
-                ParameterValidators[type] = validator;
-                return validator;
+                ParameterParsers[type] = parser;
+                return parser;
             }
         }
 

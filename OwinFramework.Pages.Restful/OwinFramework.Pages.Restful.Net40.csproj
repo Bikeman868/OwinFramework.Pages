@@ -47,10 +47,10 @@
     <Compile Include="Interfaces\IResponseSerializer.cs" />
     <Compile Include="Interfaces\IRequestDeserializer.cs" />
     <Compile Include="Package.cs" />
-    <Compile Include="Parameters\ParameterValidator.cs" />
+    <Compile Include="Parameters\ParameterParser.cs" />
     <Compile Include="Parameters\NonZeroValue.cs" />
     <Compile Include="Parameters\PositiveNumber.cs" />
-    <Compile Include="Parameters\IsType.cs" />
+    <Compile Include="Parameters\AnyValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Builders\ServiceBuilder.cs" />
     <Compile Include="Runtime\EndpointParameter.cs" />

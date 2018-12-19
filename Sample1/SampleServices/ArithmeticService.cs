@@ -21,10 +21,9 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint(UrlPath = "add")]
-        [EndpointParameter("a", typeof(double), EndpointParameterType.FormField | EndpointParameterType.QueryString)]
-        [EndpointParameter("b", typeof(double))]
+        [EndpointParameter("a", typeof(AnyValue<double>), EndpointParameterType.FormField | EndpointParameterType.QueryString)]
+        [EndpointParameter("b", typeof(AnyValue<double>))]
         [Description("Adds two numbers and returns the sum")]
-        [Example("http://myservice.com/add?a=12&b=6")]
         public void Add2(IEndpointRequest request)
         {
             var a = request.Parameter<double>("a");
@@ -33,8 +32,10 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint]
-        [EndpointParameter("a", typeof(IsType<double>))]
-        [EndpointParameter("b", typeof(double))]
+        [EndpointParameter("a", typeof(AnyValue<double>))]
+        [EndpointParameter("b", typeof(AnyValue<double>))]
+        [Description("Calculates a-b and returns the result")]
+        [Example("http://myservice.com/subtract?a=12&b=6")]
         public void Subtract(IEndpointRequest request)
         {
             var a = request.Parameter<double>("a");
@@ -43,8 +44,8 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint]
-        [EndpointParameter("a", typeof(IsType<double>))]
-        [EndpointParameter("b", typeof(double))]
+        [EndpointParameter("a", typeof(AnyValue<double>))]
+        [EndpointParameter("b", typeof(AnyValue<double>))]
         public void Multiply(IEndpointRequest request)
         {
             var a = request.Parameter<double>("a");
@@ -53,39 +54,13 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint]
-        [EndpointParameter("a", typeof(IsType<double>))]
-        [EndpointParameter("b", typeof(PositiveNumber<double>))]
+        [EndpointParameter("a", typeof(AnyValue<double>))]
+        [EndpointParameter("b", typeof(NonZeroValue<double>))]
         public void Divide(IEndpointRequest request)
         {
             var a = request.Parameter<double>("a");
             var b = request.Parameter<double>("b");
             request.Success(a / b);
-        }
-
-        [Endpoint]
-        public void NotImplemented(IEndpointRequest request)
-        {
-            throw new NotImplementedException("Testing not implemented");
-        }
-
-        [Endpoint]
-        public void AggregateException(IEndpointRequest request)
-        {
-            var exceptions = new List<Exception>();
-
-            try
-            {
-                throw new OutOfMemoryException();
-            }
-            catch (Exception e) { exceptions.Add(e); }
-
-            try
-            {
-                throw new DivideByZeroException();
-            }
-            catch (Exception e) { exceptions.Add(e); }
-
-            throw new AggregateException("Testing aggregate exception", exceptions);
         }
     }
 }

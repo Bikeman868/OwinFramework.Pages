@@ -9,7 +9,7 @@ namespace OwinFramework.Pages.Restful.Runtime
     {
         public string Name { get; set; }
         public EndpointParameterType ParameterType { get; set; }
-        public IParameterValidator Validator { get; set; }
+        public IParameterParser Parser { get; set; }
         public Func<IEndpointRequest, string, string>[] Functions;
     }
 }

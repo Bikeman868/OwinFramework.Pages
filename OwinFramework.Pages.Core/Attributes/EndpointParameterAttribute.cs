@@ -12,14 +12,18 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// Constructs an attribute that defines a parameter that is expected by a service endpoint
         /// </summary>
+        /// <param name="parameterName">The name of the parameter. This will be the name
+        /// if the query string parameter, custom header, form field etc</param>
+        /// <param name="parameterType">Bit flags indicating which methods of providing the parameter are allowed</param>
+        /// <param name="parserType">A type that provides parsing and validation. This type must have a default public constructor</param>
         public EndpointParameterAttribute(
             string parameterName, 
-            Type validation,
+            Type parserType,
             EndpointParameterType parameterType = EndpointParameterType.QueryString)
         {
             ParameterName = parameterName;
             ParameterType = parameterType;
-            Validation = validation;
+            ParserType = parserType;
         }
 
         /// <summary>
@@ -34,11 +38,10 @@ namespace OwinFramework.Pages.Core.Attributes
         public EndpointParameterType ParameterType { get; set; }
 
         /// <summary>
-        /// Specifies the class to use to validate the parameter value. This can be a value type
+        /// Specifies the class to use to parse and validate the parameter value. This can be a value type
         /// in which case the parameter will be parsed as that type. It can also be a nullable
-        /// value type which makes it optional. You can also pass a type of validator that
-        /// implements the validation interface specific to the service builder you are using
+        /// value type which makes it optional. You can also pass a type of parameter parser
         /// </summary>
-        public Type Validation { get; set; }
+        public Type ParserType { get; set; }
     }
 }

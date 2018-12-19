@@ -5,7 +5,7 @@ namespace OwinFramework.Pages.Core.Attributes
     /// <summary>
     /// Provides an example of how to call this page or service
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class ExampleAttribute: Attribute
     {
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.Owin;
 using OwinFramework.InterfacesV1.Capability;
 
@@ -36,6 +37,17 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <returns>A disposable instance. Disposing of this instance will de-register
         /// this route. The router keeps a reference to this instance so you don't need to</returns>
         IDisposable Register(IRunable runable, IRequestFilter filter, int priority = 0, Type declaringType = null);
+
+        /// <summary>
+        /// Registers a handler for requests that match a filter
+        /// </summary>
+        /// <param name="runable">The handler to run when the filter is matched</param>
+        /// <param name="filter">The filter that matches the request</param>
+        /// <param name="priority">Filters are run in ascending order of priority</param>
+        /// <param name="methodInfo">A method that is decorated with custom documentation attributes</param>
+        /// <returns>A disposable instance. Disposing of this instance will de-register
+        /// this route. The router keeps a reference to this instance so you don't need to</returns>
+        IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo);
 
         /// <summary>
         /// Registers a nested router. Nesting routers makes routing more efficient

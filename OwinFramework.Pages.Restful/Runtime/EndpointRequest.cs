@@ -25,7 +25,7 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         private bool _bodyDeserialized;
         private object _body;
-        private IDictionary<string, string> _form;
+        private IFormCollection _form;
         private IDictionary<string, object> _parameterValues;
         private string[] _pathSegments;
 
@@ -79,7 +79,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             return (T)_body;
         }
 
-        public IDictionary<string, string> Form 
+        public IFormCollection Form 
         { 
             get 
             {
@@ -108,32 +108,7 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         public T Parameter<T>(string name)
         {
-            if (_parameterValues == null)
-            {
-                _parameterValues = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
-                for (var i = 0; i < _parameters.Length; i++)
-                {
-                    var parameter = _parameters[i];
-                    for(var j = 0; j < parameter.Functions.Length; j++)
-                    {
-                        var function = parameter.Functions[j];
-                        var stringValue = function(this, parameter.Name);
-                        if (stringValue != null)
-                        {
-                            var validationResult = parameter.Validator.Check(stringValue);
-                            if (!validationResult.Success)
-                                throw new EndpointParameterException(
-                                    parameter.Name, 
-                                    typeof(T),
-                                    parameter.Validator.Description,
-                                    validationResult.ErrorMessage);
-
-                            _parameterValues.Add(parameter.Name, validationResult.Value);
-                            break;
-                        }
-                    }
-                }
-            }
+            RetrieveParameters();
 
             object value;
             if (!_parameterValues.TryGetValue(name, out value))
@@ -147,6 +122,43 @@ namespace OwinFramework.Pages.Restful.Runtime
             throw new Exception(
                 "Parameter '" + name + "' is of type '" + value.GetType().DisplayName() + 
                 "' but the application tried to get '" + typeof(T).DisplayName() + "'");
+        }
+
+        private void RetrieveParameters()
+        {
+            if (_parameterValues == null)
+            {
+                _parameterValues = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
+                for (var i = 0; i < _parameters.Length; i++)
+                {
+                    var parameter = _parameters[i];
+                    var parameterSupplied = false;
+                    for (var j = 0; j < parameter.Functions.Length; j++)
+                    {
+                        var function = parameter.Functions[j];
+                        var stringValue = function(this, parameter.Name);
+                        if (stringValue != null)
+                        {
+                            var validationResult = parameter.Validator.Check(stringValue);
+                            if (!validationResult.Success)
+                                throw new EndpointParameterException(
+                                    parameter.Name,
+                                    parameter.Validator.ParameterType,
+                                    parameter.Validator.Description,
+                                    validationResult.ErrorMessage);
+
+                            _parameterValues.Add(parameter.Name, validationResult.Value);
+                            parameterSupplied = true;
+                            break;
+                        }
+                    }
+                    if (parameter.Validator.IsRequired && !parameterSupplied)
+                    {
+                        throw new EndpointParameterException(parameter.Name, parameter.Validator.ParameterType, parameter.Validator.Description,
+                            "The parameter must be supplied in one of these: " + parameter.ParameterType);
+                    }
+                }
+            }
         }
 
         #endregion

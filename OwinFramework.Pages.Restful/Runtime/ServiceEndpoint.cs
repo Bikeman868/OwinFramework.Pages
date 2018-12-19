@@ -10,6 +10,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Interfaces;
@@ -19,6 +20,7 @@ namespace OwinFramework.Pages.Restful.Runtime
     internal class ServiceEndpoint : IRunable
     {
         public readonly string Path;
+        public readonly MethodInfo MethodInfo;
 
         ElementType INamed.ElementType { get { return ElementType.Service; } }
         string INamed.Name { get; set; }
@@ -45,10 +47,12 @@ namespace OwinFramework.Pages.Restful.Runtime
         public ServiceEndpoint(
             string path, 
             Action<IEndpointRequest> method,
+            MethodInfo methodInfo,
             IDataCatalog dataCatalog,
             IDataDependencyFactory dataDependencyFactory)
         {
             Path = path;
+            MethodInfo = methodInfo;
             _method = method;
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;
@@ -122,10 +126,14 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         private string FormFieldParam(IEndpointRequest request, string parameterName)
         {
-            string value;
-            if (request.Form != null && request.Form.TryGetValue(parameterName, out value))
-                return value;
-            return null;
+            var form = request.Form;
+            if (form == null) return null;
+
+            var values = form.GetValues(parameterName);
+            if (values == null || values.Count == 0)
+                return null;
+
+            return values[0];
         }
 
         Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
@@ -175,7 +183,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     trace(context, () =>
                         "Invalid parameter '" + e.ParameterName + "' " + e.ValidationError +
                         (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
-                    request.HttpStatus(HttpStatusCode.BadRequest, "Parameter '" + e.ParameterName + "' is invalid. " + e.Description);
+                    request.HttpStatus(HttpStatusCode.BadRequest, "Parameter '" + e.ParameterName + "' is invalid. " + e.ValidationError);
                 }
                 catch (Exception e)
                 {

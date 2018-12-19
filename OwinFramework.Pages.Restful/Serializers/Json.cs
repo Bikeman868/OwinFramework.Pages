@@ -9,6 +9,9 @@ using OwinFramework.Pages.Restful.Interfaces;
 
 namespace OwinFramework.Pages.Restful.Serializers
 {
+    /// <summary>
+    /// This is the default serializer, it send the response in Json format
+    /// </summary>
     public class Json: IRequestDeserializer, IResponseSerializer
     {
         public T Body<T>(IOwinContext context)
@@ -49,7 +52,14 @@ namespace OwinFramework.Pages.Restful.Serializers
         {
             context.Response.StatusCode = (int)statusCode;
             context.Response.ReasonPhrase = message ?? statusCode.ToString();
-            return context.Response.WriteAsync("{\"success\":false}");
+
+            var response = new JObject();
+
+            response.Add("success", false);
+            if (!string.IsNullOrEmpty(message))
+                response.Add("message", message);
+
+            return context.Response.WriteAsync(response.ToString(Formatting.None));
         }
 
         public Task Redirect(IOwinContext context, Uri url, bool permenant)

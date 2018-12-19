@@ -7,7 +7,7 @@ namespace OwinFramework.Pages.Core.Attributes
     /// options available to the requester. For example the supported Httl methods,
     /// query string parameters etc.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class OptionAttribute: Attribute
     {
         /// <summary>

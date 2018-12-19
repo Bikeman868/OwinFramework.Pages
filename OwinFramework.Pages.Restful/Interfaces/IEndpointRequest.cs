@@ -64,7 +64,7 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// form fields as a dictionary. If you get this property multiple
         /// times the dictionary will only be constructed once.
         /// </summary>
-        IDictionary<string, string> Form { get; }
+        IFormCollection Form { get; }
 
         /********************************************************************
          * 

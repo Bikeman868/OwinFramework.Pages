@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace OwinFramework.Pages.Restful.Interfaces
+namespace OwinFramework.Pages.Core.Interfaces.Capability
 {
     /// <summary>
-    /// Defines a class that can validate parameters to service endpoints
+    /// Defines a class that can parse and validate parameters to service endpoints
     /// </summary>
     public interface IParameterValidator
     {
@@ -20,5 +17,15 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// about the validity of the parameter value
         /// </summary>
         IParameterValidationResult Check(string parameter);
+
+        /// <summary>
+        /// Return true if this parameter must be supplied
+        /// </summary>
+        bool IsRequired { get; }
+
+        /// <summary>
+        /// The data type that you must use to retrieve this parameter
+        /// </summary>
+        Type ParameterType { get; }
     }
 }

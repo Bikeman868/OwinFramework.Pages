@@ -171,6 +171,8 @@
     <Compile Include="Interfaces\Builder\IPageDependenciesFactory.cs" />
     <Compile Include="Interfaces\Builder\IRegionDependencies.cs" />
     <Compile Include="Interfaces\Builder\IRegionDependenciesFactory.cs" />
+    <Compile Include="Interfaces\Capability\IParameterValidationResult.cs" />
+    <Compile Include="Interfaces\Capability\IParameterValidator.cs" />
     <Compile Include="Interfaces\Collections\IArray.cs" />
     <Compile Include="Interfaces\Collections\IArrayFactory.cs" />
     <Compile Include="Interfaces\Collections\IDictionaryFactory.cs" />

@@ -11,6 +11,7 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
+using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.RequestFilters;
 using OwinFramework.Pages.Restful.Interfaces;
@@ -120,6 +121,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     var endpoint = new ServiceEndpoint(
                         path, 
                         r => m.Invoke(serviceInstance, new[] { r }),
+                        m,
                         _serviceDependenciesFactory.DataCatalog,
                         _serviceDependenciesFactory.DataDependencyFactory)
                     {
@@ -310,7 +312,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     endpoint, 
                     new FilterByPath(pathFilter), 
                     RoutingPriority, 
-                    DeclaringType);
+                    endpoint.MethodInfo);
             }
             else
             {
@@ -320,7 +322,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         new FilterByMethod(methods),
                         new FilterByPath(pathFilter)),
                     RoutingPriority,
-                    DeclaringType);
+                    endpoint.MethodInfo);
             }
         }
     }

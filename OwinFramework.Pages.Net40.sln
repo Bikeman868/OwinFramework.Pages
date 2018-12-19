@@ -17,14 +17,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		paket-install.cmd = paket-install.cmd
-		paket-pack.cmd = paket-pack.cmd
-		paket-restore.cmd = paket-restore.cmd
-		paket-update.cmd = paket-update.cmd
+		install.cmd = install.cmd
 		paket.dependencies = paket.dependencies
 		paket.lock = paket.lock
+		publish.cmd = publish.cmd
 		readme.md = readme.md
+		restore.cmd = restore.cmd
 		todo.txt = todo.txt
+		update.cmd = update.cmd
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Framework.Net40", "OwinFramework.Pages.Framework\OwinFramework.Pages.Framework.Net40.csproj", "{83E44B37-D3AA-4622-A03B-3C976EA58C83}"

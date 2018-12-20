@@ -14,7 +14,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// </summary>
         /// <param name="path">The URL path that should be routed. Can include widecards</param>
         /// <param name="methods">The list of http methods that should be routed</param>
-        public RouteAttribute(string path, params Methods[] methods)
+        public RouteAttribute(string path, params Method[] methods)
         {
             Path = path;
             Methods = methods;
@@ -28,7 +28,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// Request methods that should be routed to this page or service
         /// </summary>
-        public Methods[] Methods { get; set; }
+        public Method[] Methods { get; set; }
 
         /// <summary>
         /// Request methods that should be routed to this page or service

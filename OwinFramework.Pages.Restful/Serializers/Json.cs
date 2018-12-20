@@ -51,7 +51,9 @@ namespace OwinFramework.Pages.Restful.Serializers
                     throw new BodyDeserializationException(
                         typeof(T), 
                         "A JSON serialization of object type " + typeof(T).DisplayName(),
-                        "The Newtonsoft deserializer returned null");
+                        "The Newtonsoft deserializer returned null which probably means that " +
+                        "you did not post a body. The body must be a JSON serialization of " + 
+                        typeof(T).DisplayName());
 
                 return result;
             }

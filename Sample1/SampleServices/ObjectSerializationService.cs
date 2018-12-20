@@ -1,14 +1,22 @@
 ﻿using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Restful.Interfaces;
 using OwinFramework.Pages.Restful.Parameters;
+using OwinFramework.Pages.Restful.Runtime;
 
 namespace Sample1.SampleServices
 {
-    [IsService("objects", "/object/", new[] { Methods.Get, Methods.Post })]
-    public class ObjectSerializationService
+    [IsService("objects", "/object/", new[] { Method.Get, Method.Post })]
+    public class ObjectSerializationService : Service
     {
-        [Endpoint(MethodsToRoute = new[] { Methods.Get, Methods.Post })]
+        public ObjectSerializationService(
+            IServiceDependenciesFactory serviceDependenciesFactory) 
+            : base(serviceDependenciesFactory)
+        {
+        }
+
+        [Endpoint(MethodsToRoute = new[] { Method.Get, Method.Post })]
         [EndpointParameter("which", typeof(AnyValue<Which>))]
         [Description("This is a test of object serialization")]
         public void New(IEndpointRequest request)

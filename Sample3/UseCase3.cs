@@ -70,7 +70,7 @@ namespace Sample3.UseCase3
             requestRouter.Register(
                 page1,
                 new FilterAllFilters(
-                    new FilterByMethod(Methods.Head, Methods.Get),
+                    new FilterByMethod(Method.Head, Method.Get),
                     new FilterByPath("/")),
                     -10);
             #endregion
@@ -78,7 +78,7 @@ namespace Sample3.UseCase3
     }
 
     [IsPage("home")]
-    [Route("/uc3", Methods.Get)]
+    [Route("/uc3", Method.Get)]
     [UsesLayout("layout")]
     [RegionTemplate("main", "/url/form-identification")]
     internal class Page1 : ApplicationElement { }

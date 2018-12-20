@@ -75,7 +75,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="basePath">The base path of endpoints in this service</param>
         /// <param name="methods">The http methods to route to this service</param>
         /// <param name="priority">Routes are matched to the request in order of priority</param>
-        IServiceDefinition Route(string basePath, Methods[] methods, int priority);
+        IServiceDefinition Route(string basePath, Method[] methods, int priority);
 
         /// <summary>
         /// Builds the service

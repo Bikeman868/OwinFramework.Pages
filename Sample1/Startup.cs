@@ -80,7 +80,7 @@ namespace Sample1
             requestRouter.Register(
                 new FullCustomPage(),
                 new FilterAllFilters(
-                    new FilterByMethod(Methods.Head, Methods.Get), 
+                    new FilterByMethod(Method.Head, Method.Get), 
                     new FilterByPath("/pages/*.html")),
                     -10);
 
@@ -90,7 +90,7 @@ namespace Sample1
             requestRouter.Register(
                 ninject.Get<SemiCustomPage>(), 
                 new FilterAllFilters(
-                    new FilterByMethod(Methods.Get, Methods.Post, Methods.Put),
+                    new FilterByMethod(Method.Get, Method.Post, Method.Put),
                     new FilterByPath("/pages/semiCustom.html")),
                     100);
 

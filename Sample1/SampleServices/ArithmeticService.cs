@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using OwinFramework.Pages.Core.Attributes;
+﻿using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Restful.Interfaces;
 using OwinFramework.Pages.Restful.Parameters;
 
 namespace Sample1.SampleServices
 {
-    [IsService("arithmetic", "/math/", new[] { Methods.Post, Methods.Get })]
+    [IsService("arithmetic", "/math/", new[] { Method.Post, Method.Get })]
     public class ArithmeticService
     {
         [Endpoint(UrlPath = "add/{a}/{b}")]

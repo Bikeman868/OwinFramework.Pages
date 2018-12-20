@@ -89,7 +89,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPageDefinition IPageDefinition.Route(string path, int priority, params Methods[] methods)
+        IPageDefinition IPageDefinition.Route(string path, int priority, params Method[] methods)
         {
             if (methods == null || methods.Length == 0)
             {

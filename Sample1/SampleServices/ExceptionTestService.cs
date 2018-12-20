@@ -7,7 +7,7 @@ using OwinFramework.Pages.Restful.Parameters;
 
 namespace Sample1.SampleServices
 {
-    [IsService("exceptions", "/exception/", new[] { Methods.Post, Methods.Get })]
+    [IsService("exceptions", "/exception/", new[] { Method.Post, Method.Get })]
     public class ExceptionTestService
     {
         [Endpoint]

@@ -19,11 +19,11 @@ namespace OwinFramework.Pages.Core.Attributes
         /// this service. You can also specify absolute paths for some or all endpoints</param>
         /// <param name="methods">A list of the Http methods that should be routed to
         /// this service. You can pass an empty list and specify this for each endpoint instead</param>
-        public IsServiceAttribute(string name, string basePath = null, Methods[] methods = null)
+        public IsServiceAttribute(string name, string basePath = null, Method[] methods = null)
             : base(name)
         {
             BasePath = basePath ?? "/";
-            MethodsToRoute = methods ?? new[] { Methods.Post };
+            MethodsToRoute = methods ?? new[] { Method.Post };
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// The http methods that should be routed to this service or an empty list to route
         /// all methods
         /// </summary>
-        public Methods[] MethodsToRoute { get; set; }
+        public Method[] MethodsToRoute { get; set; }
 
         /// <summary>
         /// The router sorts runables by priority and finds the first one that matches the

@@ -3,7 +3,7 @@
     /// <summary>
     /// Specifies an http request method
     /// </summary>
-    public enum Methods
+    public enum Method
     {
         /// <summary>
         /// Request to return headers only with no body

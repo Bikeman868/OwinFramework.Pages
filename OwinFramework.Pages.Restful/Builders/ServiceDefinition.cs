@@ -91,7 +91,7 @@ namespace OwinFramework.Pages.Restful.Builders
             return this;
         }
 
-        public IServiceDefinition Route(string basePath, Methods[] methods, int priority)
+        public IServiceDefinition Route(string basePath, Method[] methods, int priority)
         {
             if (string.IsNullOrEmpty(basePath))
             {

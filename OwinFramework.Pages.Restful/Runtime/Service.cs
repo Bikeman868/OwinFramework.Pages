@@ -40,7 +40,7 @@ namespace OwinFramework.Pages.Restful.Runtime
         public IModule Module { get; set; }
         public string BasePath { get; set; }
         public bool EndpointSpecificPermission { get; set; }
-        public Methods[] Methods { get; set; }
+        public Method[] Methods { get; set; }
         public int RoutingPriority { get; set; }
         public Type DeclaringType { get; set; }
         public Type DefaultDeserializerType { get; set; }
@@ -74,9 +74,19 @@ namespace OwinFramework.Pages.Restful.Runtime
             var defaultSerializer = GetResponseSerializer(DefaultSerializerType);
             var defaultDeserialzer = GetRequestDeserializer(DefaultDeserializerType);
 
-            var methods = DeclaringType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var serviceInstance = DeclaringType.GetConstructor(Type.EmptyTypes).Invoke(null);
+            object serviceInstance = this;
+            if (GetType() == typeof(Service))
+            {
+                var constructor = DeclaringType.GetConstructor(Type.EmptyTypes);
+                if (constructor == null)
+                    throw new ServiceBuilderException(
+                        "The '" + DeclaringType.DisplayName() + "' service is invalid. You " +
+                        "must either provide a default public constructor or inherit from " + 
+                        GetType().DisplayName());
+                serviceInstance = constructor.Invoke(null);
+            }
 
+            var methods = serviceInstance.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var method in methods)
             {
                 EndpointAttribute endpointAttribute = null;
@@ -277,7 +287,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             }
         }
 
-        private void Register(ServiceEndpoint endpoint, Methods[] methods, bool relativePath)
+        private void Register(ServiceEndpoint endpoint, Method[] methods, bool relativePath)
         {
             var requestRouter = _serviceDependenciesFactory.RequestRouter;
 

@@ -38,7 +38,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// The http methods that should be routed to this endpoint or an empty list to route
         /// all methods defined by the service
         /// </summary>
-        public Methods[] MethodsToRoute { get; set; }
+        public Method[] MethodsToRoute { get; set; }
 
         /// <summary>
         /// Specifies the class to use to deserialize the body of the request. If you do not

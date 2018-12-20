@@ -89,7 +89,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="priority">The priority is used to sort request filters.
         /// Higher priority filters execute before lower priority ones</param>
         /// <param name="methods">The http methods to route to this page</param>
-        IPageDefinition Route(string path, int priority, params Methods[] methods);
+        IPageDefinition Route(string path, int priority, params Method[] methods);
 
         /// <summary>
         /// Specifies how to filter out requests to this page on the website

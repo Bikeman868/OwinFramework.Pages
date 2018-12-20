@@ -67,7 +67,7 @@ namespace Sample2
 
 #if VERSION1
     [IsPage]                                                   // This is a webpage
-    [Route("/", Methods.Get)]                                  // This page is served for GET requets for the website root
+    [Route("/", Method.Get)]                                  // This page is served for GET requets for the website root
     [PageTitle("Getting started with Owin Framework Pages")]   // Specifies the page title
     [UsesLayout("homePageLayout")]                             // The layout of this page is 'homePageLayout'
     internal class HomePage { }

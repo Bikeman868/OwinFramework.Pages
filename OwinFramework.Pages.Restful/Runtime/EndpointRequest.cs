@@ -200,7 +200,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             _writeResponse = () => _serializer.Redirect(_context, url, permenant);
         }
 
-        public void Rewrite(Uri url, Methods httpMethod = Methods.Get)
+        public void Rewrite(Uri url, Method httpMethod = Method.Get)
         {
             throw new NotImplementedException();
         }

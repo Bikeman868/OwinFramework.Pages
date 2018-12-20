@@ -65,7 +65,7 @@ namespace Sample3.UseCase1
             requestRouter.Register(
                 page1,
                 new FilterAllFilters(
-                    new FilterByMethod(Methods.Head, Methods.Get),
+                    new FilterByMethod(Method.Head, Method.Get),
                     new FilterByPath("/")),
                     -10);
 
@@ -79,7 +79,7 @@ namespace Sample3.UseCase1
      */
 
     [IsPage("page1")]
-    [Route("/uc1/page1", Methods.Get)]
+    [Route("/uc1/page1", Method.Get)]
     [RegionComponent("body", "page1_body")]
     internal class Page1 : PageBase { }
 
@@ -93,7 +93,7 @@ namespace Sample3.UseCase1
      */
 
     [IsPage("page2")]
-    [Route("/uc1/page2", Methods.Get)]
+    [Route("/uc1/page2", Method.Get)]
     [RegionLayout("body", "page2_body")]
     internal class Page2 : PageBase { }
 

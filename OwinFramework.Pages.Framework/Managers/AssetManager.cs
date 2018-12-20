@@ -87,7 +87,7 @@ namespace OwinFramework.Pages.Framework.Managers
 
             requestRouter.Register(this, 
                 new FilterAllFilters(
-                    new FilterByMethod(Methods.Get),
+                    new FilterByMethod(Method.Get),
                     new FilterByPath(_rootPath.Value + "/**")), -10);
         }
 

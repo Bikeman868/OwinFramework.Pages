@@ -223,7 +223,7 @@
     <Compile Include="Interfaces\Collections\IStringBuilderFactory.cs" />
     <Compile Include="Enums\AssetDeployment.cs" />
     <Compile Include="Enums\AssetType.cs" />
-    <Compile Include="Enums\Methods.cs" />
+    <Compile Include="Enums\Method.cs" />
     <Compile Include="Exceptions\PageBuilderException.cs" />
     <Compile Include="Exceptions\BuilderException.cs" />
     <Compile Include="Interfaces\Builder\IComponentBuilder.cs" />

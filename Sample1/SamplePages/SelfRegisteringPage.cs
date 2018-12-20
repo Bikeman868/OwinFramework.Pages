@@ -12,7 +12,7 @@ namespace Sample1.SamplePages
 {
     [IsPage]
     //[RequiresPermission("administrator")]
-    [Route("/page4", Methods.Get)]
+    [Route("/page4", Method.Get)]
     [Description("<p>This is an example of how to add a full custom page that is discovered and registered automatically by the fluent builder</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for this self registering page</p>")]
     [Example("<a href='/page4'>/page4</a>")]

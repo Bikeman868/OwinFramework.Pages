@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.Core.RequestFilters
         /// Constructs a filter that will accept any request with a matching http method
         /// </summary>
         /// <param name="methods">A list of the methods to accept</param>
-        public FilterByMethod(params Methods[] methods)
+        public FilterByMethod(params Method[] methods)
         {
             if (methods == null || methods.Length == 0)
             {

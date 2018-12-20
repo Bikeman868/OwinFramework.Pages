@@ -277,8 +277,8 @@ namespace Sample1.SamplePages
     [Option(OptionType.Header, "Accept", "Must contain text/html, which is only available response format")]
     [Example("<a href='/home.html'>/home.html</a>")]
     [Example("<a href='/page1'>/page1</a>")]
-    [Route("/home.html", Methods.Get)]
-    [Route("/page1", Methods.Get)]
+    [Route("/home.html", Method.Get)]
+    [Route("/page1", Method.Get)]
     [PageTitle("Page 1")]
     [Style("color: darkred;")]
     [RegionLayout("body", "page1Body")]
@@ -292,7 +292,7 @@ namespace Sample1.SamplePages
     [Description("<p>This is an example of how to add a page declatively using attributes</p>")]
     [Option(OptionType.Method, "GET", "<p>Returns the html for page 2</p>")]
     [Example("<a href='/page2'>/page2</a>")]
-    [Route("/page2", Methods.Get)]
+    [Route("/page2", Method.Get)]
     [PageTitle("Page 2")]
     [Style("color: darkblue;")]
     [RegionLayout("body", "page2Body")]
@@ -303,7 +303,7 @@ namespace Sample1.SamplePages
     /// Uses the 'main' layout but changes the contents of the 'body' region.
     /// </summary>
     [IsPage("page3")]
-    [Route("/page3", Methods.Get)]
+    [Route("/page3", Method.Get)]
     [PageTitle("Page 3")]
     [RegionTemplate("body", "/url/template1")]
     internal class Page3 : PageBase { }

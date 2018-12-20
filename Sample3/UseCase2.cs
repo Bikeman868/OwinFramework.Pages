@@ -103,7 +103,7 @@ namespace Sample3.UseCase2
             requestRouter.Register(
                 page1,
                 new FilterAllFilters(
-                    new FilterByMethod(Methods.Head, Methods.Get),
+                    new FilterByMethod(Method.Head, Method.Get),
                     new FilterByPath("/")),
                     -10);
             #endregion
@@ -111,7 +111,7 @@ namespace Sample3.UseCase2
     }
 
     [IsPage("home")]
-    [Route("/uc2", Methods.Get)]
+    [Route("/uc2", Method.Get)]
     [UsesLayout("layout")]
     internal class Page1 : ApplicationElement { }
 

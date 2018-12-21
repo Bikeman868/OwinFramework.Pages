@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using OwinFramework.InterfacesV1.Capability;
@@ -158,12 +159,12 @@ namespace OwinFramework.Pages.Restful.Runtime
                     try
                     {
                         _requestCount++;
-                        var startTime = DateTime.UtcNow;
+                        long startTime = _millisecondsPerRequest == null ? 0 : TimeNow;
 
                         _method(request);
 
                         if (_millisecondsPerRequest != null)
-                            _millisecondsPerRequest.Record(DateTime.UtcNow - startTime);
+                            _millisecondsPerRequest.Record(ElapsedMilliseconds(startTime));
 
                         if (_requestsPerMinute != null)
                             _requestsPerMinute.Record();
@@ -218,6 +219,38 @@ namespace OwinFramework.Pages.Restful.Runtime
             }
         }
 
+        #region High precision timing
+
+        [DllImport("Kernel32.dll")]
+        private static extern bool QueryPerformanceCounter(out Int64 performanceCount);
+
+        [DllImport("Kernel32.dll")]
+        private static extern bool QueryPerformanceFrequency(out Int64 frequency);
+
+        private static readonly Int64 Frequency;
+
+        static ServiceEndpoint()
+        {
+            QueryPerformanceFrequency(out Frequency);
+        }
+
+        public static long TimeNow
+        {
+            get
+            {
+                long startTime;
+                QueryPerformanceCounter(out startTime);
+                return startTime;
+            }
+        }
+
+        private static float ElapsedMilliseconds(long startTime)
+        {
+            return 1000f * (TimeNow - startTime) / Frequency;            
+        }
+
+        #endregion
+
         #region IAnalysable
 
         private readonly List<IStatisticInformation> _availableStatistics = new List<IStatisticInformation>();
@@ -228,8 +261,8 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         private class CountPerMinute : Statistic
         {
-            private const int _secondsPerBucket = 5;
-            private readonly int[] _buckets = new int[10 * 60 / _secondsPerBucket];
+            private const int SecondsPerBucket = 5;
+            private readonly int[] _buckets = new int[10 * 60 / SecondsPerBucket];
 
             public override IStatistic Refresh()
             {
@@ -260,7 +293,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             {
                 var now = DateTime.UtcNow;
                 var seconds = now.Minute * 60 + now.Second;
-                var bucketIndex = (seconds / _secondsPerBucket) % _buckets.Length;
+                var bucketIndex = (seconds / SecondsPerBucket) % _buckets.Length;
 
                 lock (_buckets)
                 {
@@ -276,23 +309,23 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         private class AverageTime : Statistic
         {
-            private const int _secondsPerBucket = 5;
-            private readonly BucketEntry[] _buckets = new BucketEntry[10 * 60 / _secondsPerBucket];
+            private const int SecondsPerBucket = 5;
+            private readonly BucketEntry[] _buckets = new BucketEntry[10 * 60 / SecondsPerBucket];
 
             private struct BucketEntry
             {
                 public int Count;
-                public double Milliseconds;
+                public float Milliseconds;
             }
 
             public override IStatistic Refresh()
             {
-                double totalMilliseconds;
+                float totalMilliseconds;
                 int totalCount;
 
                 lock (_buckets)
                 {
-                    totalMilliseconds = _buckets.Aggregate(0d, (s, b) => s + b.Milliseconds);
+                    totalMilliseconds = _buckets.Aggregate(0f, (s, b) => s + b.Milliseconds);
                     totalCount = _buckets.Aggregate(0, (s, b) => s + b.Count);
                 }
 
@@ -305,23 +338,23 @@ namespace OwinFramework.Pages.Restful.Runtime
                 }
                 else
                 {
-                    Value = (float)(totalMilliseconds / totalCount);
+                    Value = totalMilliseconds / totalCount;
                     Formatted = Value.ToString("g3", CultureInfo.InvariantCulture) + "ms";
                 }
 
                 return this;
             }
 
-            public void Record(TimeSpan elapsed)
+            public void Record(float elapsedMilliseconds)
             {
                 var now = DateTime.UtcNow;
                 var seconds = now.Minute * 60 + now.Second;
-                var bucketIndex = (seconds / _secondsPerBucket) % _buckets.Length;
+                var bucketIndex = (seconds / SecondsPerBucket) % _buckets.Length;
 
                 lock (_buckets)
                 {
                     _buckets[bucketIndex].Count++;
-                    _buckets[bucketIndex].Milliseconds += elapsed.TotalMilliseconds;
+                    _buckets[bucketIndex].Milliseconds += elapsedMilliseconds;
 
                     bucketIndex++;
                     if (bucketIndex >= _buckets.Length) bucketIndex = 0;

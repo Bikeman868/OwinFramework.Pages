@@ -5,7 +5,7 @@ namespace OwinFramework.Pages.Core.Attributes
     /// <summary>
     /// Attach this attribute to populate a region with static html
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class RegionHtmlAttribute: Attribute
     {
         /// <summary>

@@ -28,7 +28,3 @@
   - Collapsible sections
   - Accordion
   - Forms authentication and account management
-
-* REST Services
-  - Required parameters that are not supplied should result in "Bad Request" response
-  - Add analytics to service endpoints

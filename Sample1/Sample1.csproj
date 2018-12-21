@@ -287,6 +287,17 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
       <ItemGroup>
+        <Reference Include="OwinFramework.AnalysisReporter">
+          <HintPath>..\packages\net40\Owin.Framework.AnalysisReporter\lib\net40\OwinFramework.AnalysisReporter.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
+      <ItemGroup>
         <Reference Include="OwinFramework.DefaultDocument">
           <HintPath>..\packages\net40\Owin.Framework.DefaultDocument\lib\net40\OwinFramework.DefaultDocument.dll</HintPath>
           <Private>True</Private>

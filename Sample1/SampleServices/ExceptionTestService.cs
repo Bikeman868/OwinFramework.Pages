@@ -10,14 +10,14 @@ namespace Sample1.SampleServices
     [IsService("exceptions", "/exception/", new[] { Method.Post, Method.Get })]
     public class ExceptionTestService
     {
-        [Endpoint]
+        [Endpoint(Analytics = AnalyticsLevel.None)]
         [Description("Call this endpoint to see what happens when services are not implemented")]
         public void NotImplemented(IEndpointRequest request)
         {
             throw new NotImplementedException("Testing not implemented");
         }
 
-        [Endpoint]
+        [Endpoint(Analytics = AnalyticsLevel.None)]
         [Description("Call this endpoint to see what happens when services are not implemented")]
         public void Aggregate(IEndpointRequest request)
         {

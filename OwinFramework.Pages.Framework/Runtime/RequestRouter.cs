@@ -10,21 +10,18 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Framework.Analytics;
 
 namespace OwinFramework.Pages.Framework.Runtime
 {
-    internal class RequestRouter: IRequestRouter
+    internal class RequestRouter: IRequestRouter, IAnalysable
     {
-        private readonly List<Registration> _registrations = new List<Registration>();
+        private Registration[] _registrations = new Registration[0];
+        private readonly object _registrationlock = new object();
 
         IRunable IRequestRouter.Route(IOwinContext context)
         {
-            Registration registration;
-
-            lock (_registrations)
-            {
-                registration = _registrations.FirstOrDefault(r => r.Filter.IsMatch(context));
-            }
+            var registration = _registrations.FirstOrDefault(r => r.Filter.IsMatch(context));
 
             if (registration == null)
                 return null;
@@ -43,59 +40,35 @@ namespace OwinFramework.Pages.Framework.Runtime
 
         IDisposable IRequestRouter.Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType)
         {
-            var registration = new Registration
+            return Add(new Registration
                 {
                     Priority = priority,
                     Filter = filter,
                     Runable = runable,
                     DeclaringType = declaringType ?? runable.GetType()
-                };
-
-            lock (_registrations)
-            {
-                _registrations.Add(registration);
-                _registrations.Sort();
-            }
-
-            return registration;
+                });
         }
 
         IDisposable IRequestRouter.Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo)
         {
-            var registration = new Registration
-            {
-                Priority = priority,
-                Filter = filter,
-                Runable = runable,
-                DeclaringType = runable.GetType(),
-                Method = methodInfo
-            };
-
-            lock (_registrations)
-            {
-                _registrations.Add(registration);
-                _registrations.Sort();
-            }
-
-            return registration;
+            return Add(new Registration
+                {
+                    Priority = priority,
+                    Filter = filter,
+                    Runable = runable,
+                    DeclaringType = runable.GetType(),
+                    Method = methodInfo
+                });
         }
 
         IDisposable IRequestRouter.Register(IRequestRouter router, IRequestFilter filter, int priority)
         {
-            var registration = new Registration
+            return Add(new Registration
                 {
                     Priority = priority,
                     Filter = filter,
                     Router = router
-                };
-
-            lock (_registrations)
-            {
-                _registrations.Add(registration);
-                _registrations.Sort();
-            }
-
-            return registration;
+                });
         }
 
         IList<IEndpointDocumentation> IRequestRouter.GetEndpointDocumentation()
@@ -204,6 +177,8 @@ namespace OwinFramework.Pages.Framework.Runtime
                                     else if (parameterParser != null)
                                         parameterDescription = parameterParser.Description;
                                 }
+                                if (!string.IsNullOrEmpty((endpointParameter.Description)))
+                                    parameterDescription = endpointParameter.Description;
                             }
 
                             if (endpointParameter.ParameterType.HasFlag(EndpointParameterType.QueryString))
@@ -213,6 +188,7 @@ namespace OwinFramework.Pages.Framework.Runtime
                                 else
                                     queryStringExample += "&" + endpointParameter.ParameterName + "=" + parameterValue;
                             }
+
 
                             endpointDocumentation.Attributes.Add(new EndpointAttributeDocumentation
                             {
@@ -237,7 +213,80 @@ namespace OwinFramework.Pages.Framework.Runtime
             return endpoints;
         }
 
-        private class Registration: IComparable, IDisposable
+        #region IAnalysable
+
+        private Dictionary<string, EndpointStatistic> _endpointStatistics;
+
+        private void AddAnalysable(IAnalysable analysable)
+        {
+            if (analysable == null) return;
+
+            foreach (var statistic in analysable.AvailableStatistics)
+            {
+                var s = statistic;
+                _endpointStatistics.Add(
+                    statistic.Id,
+                    new EndpointStatistic
+                    {
+                        Statistic = statistic,
+                        GetStatistic = () => analysable.GetStatistic(s.Id)
+                    });
+            }
+        }
+
+        public IList<IStatisticInformation> AvailableStatistics
+        {
+            get
+            {
+                var endpointStatistics = new Dictionary<string, EndpointStatistic>();
+                foreach (var analysable in _registrations.Select(r => r.Runable == null ? (r.Router as IAnalysable) : (r.Runable as IAnalysable)).Where(a => a != null))
+                {
+                    foreach (var statistic in analysable.AvailableStatistics)
+                    {
+                        var s = statistic;
+                        endpointStatistics.Add(
+                            statistic.Id,
+                            new EndpointStatistic
+                            {
+                                Statistic = statistic,
+                                GetStatistic = () => analysable.GetStatistic(s.Id)
+                            });
+                    }
+                }
+                _endpointStatistics = endpointStatistics;
+
+                lock (_endpointStatistics)
+                    return _endpointStatistics.Values.Select(a => a.Statistic).ToList();
+            }
+        }
+
+        public IStatistic GetStatistic(string id)
+        {
+            EndpointStatistic statistic;
+            bool found;
+
+            lock (_endpointStatistics)
+                found = _endpointStatistics.TryGetValue(id, out statistic);
+
+            return found ? statistic.GetStatistic() : null;
+        }
+
+        #endregion
+
+        private Registration Add(Registration registration)
+        {
+            lock (_registrationlock)
+            {
+                var list = _registrations.ToList();
+                list.Add(registration);
+                list.Sort();
+                _registrations = list.ToArray();
+            }
+
+            return registration;
+        }
+
+        private class Registration : IComparable, IDisposable
         {
             public int Priority;
             public IRequestFilter Filter;

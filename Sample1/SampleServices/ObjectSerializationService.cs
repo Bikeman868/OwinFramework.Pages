@@ -16,7 +16,7 @@ namespace Sample1.SampleServices
         {
         }
 
-        [Endpoint(MethodsToRoute = new[] { Method.Get, Method.Post })]
+        [Endpoint(Methods = new[] { Method.Get, Method.Post }, Analytics = AnalyticsLevel.Full)]
         [EndpointParameter("which", typeof(AnyValue<Which>))]
         [Description("This is a test of object serialization")]
         public void New(IEndpointRequest request)

@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analytics\EndpointStatistic.cs" />
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Builders\AttributeMatrix.cs" />
     <Compile Include="Builders\ElementConfiguror.cs" />

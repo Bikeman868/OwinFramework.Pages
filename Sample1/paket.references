@@ -13,6 +13,7 @@ group net40
   Owin.Framework.ExceptionReporter
   Owin.Framework.NotFound
   Owin.Framework.Urchin
+  Owin.Framework.AnalysisReporter
 
 group net45
   Owin
@@ -24,3 +25,4 @@ group net45
   Owin.Framework.ExceptionReporter
   Owin.Framework.NotFound
   Owin.Framework.Urchin
+  Owin.Framework.AnalysisReporter

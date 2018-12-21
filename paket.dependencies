@@ -32,6 +32,7 @@ group net40
 	nuget Owin.Framework.ExceptionReporter ~> 2.6
 	nuget Owin.Framework.NotFound ~> 2.6
 	nuget Owin.Framework.Urchin ~> 2.6
+	nuget Owin.Framework.AnalysisReporter ~> 2.6
   
 group net45 
 	framework: net45
@@ -50,3 +51,4 @@ group net45
 	nuget Owin.Framework.ExceptionReporter ~> 2.6
 	nuget Owin.Framework.NotFound ~> 2.6
 	nuget Owin.Framework.Urchin ~> 2.6
+	nuget Owin.Framework.AnalysisReporter ~> 2.6

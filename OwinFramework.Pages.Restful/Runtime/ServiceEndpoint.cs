@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.InterfacesV1.Middleware;
+using OwinFramework.MiddlewareHelpers.Analysable;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
@@ -17,7 +20,7 @@ using OwinFramework.Pages.Restful.Interfaces;
 
 namespace OwinFramework.Pages.Restful.Runtime
 {
-    internal class ServiceEndpoint : IRunable
+    internal class ServiceEndpoint : IRunable, IAnalysable
     {
         public readonly string Path;
         public readonly MethodInfo MethodInfo;
@@ -48,6 +51,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             string path, 
             Action<IEndpointRequest> method,
             MethodInfo methodInfo,
+            AnalyticsLevel analytics,
             IDataCatalog dataCatalog,
             IDataDependencyFactory dataDependencyFactory)
         {
@@ -60,6 +64,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                 .Split('/')
                 .Where(p => !string.IsNullOrEmpty(p))
                 .ToArray();
+            AddStatistics(analytics, path);
         }
 
         public void AddParameter(string name, EndpointParameterType parameterType, IParameterParser parser)
@@ -152,10 +157,20 @@ namespace OwinFramework.Pages.Restful.Runtime
                 {
                     try
                     {
+                        _requestCount++;
+                        var startTime = DateTime.UtcNow;
+
                         _method(request);
+
+                        if (_millisecondsPerRequest != null)
+                            _millisecondsPerRequest.Record(DateTime.UtcNow - startTime);
+
+                        if (_requestsPerMinute != null)
+                            _requestsPerMinute.Record();
                     }
                     catch (TargetInvocationException e)
                     {
+                        _failCount++;
                         trace(context, () => "Service endpoint threw an exception");
                         throw e.InnerException;
                     }
@@ -202,5 +217,188 @@ namespace OwinFramework.Pages.Restful.Runtime
                 return request.WriteResponse();
             }
         }
+
+        #region IAnalysable
+
+        private readonly List<IStatisticInformation> _availableStatistics = new List<IStatisticInformation>();
+        private int _requestCount;
+        private int _failCount;
+        private CountPerMinute _requestsPerMinute;
+        private AverageTime _millisecondsPerRequest;
+
+        private class CountPerMinute : Statistic
+        {
+            private const int _secondsPerBucket = 5;
+            private readonly int[] _buckets = new int[10 * 60 / _secondsPerBucket];
+
+            public override IStatistic Refresh()
+            {
+                int totalCount;
+
+                lock (_buckets)
+                {
+                    totalCount = _buckets.Aggregate(0, (s, b) => s + b);
+                }
+
+                Denominator = _buckets.Length / 60f;
+
+                if (totalCount == 0)
+                {
+                    Value = 0;
+                    Formatted = "No requests";
+                }
+                else
+                {
+                    Value = totalCount / Denominator;
+                    Formatted = Value.ToString("g3", CultureInfo.InvariantCulture) + "/min";
+                }
+
+                return this;
+            }
+
+            public void Record()
+            {
+                var now = DateTime.UtcNow;
+                var seconds = now.Minute * 60 + now.Second;
+                var bucketIndex = (seconds / _secondsPerBucket) % _buckets.Length;
+
+                lock (_buckets)
+                {
+                    _buckets[bucketIndex]++;
+
+                    bucketIndex++;
+                    if (bucketIndex >= _buckets.Length) bucketIndex = 0;
+
+                    _buckets[bucketIndex] = 0;
+                }
+            }
+        }
+
+        private class AverageTime : Statistic
+        {
+            private const int _secondsPerBucket = 5;
+            private readonly BucketEntry[] _buckets = new BucketEntry[10 * 60 / _secondsPerBucket];
+
+            private struct BucketEntry
+            {
+                public int Count;
+                public double Milliseconds;
+            }
+
+            public override IStatistic Refresh()
+            {
+                double totalMilliseconds;
+                int totalCount;
+
+                lock (_buckets)
+                {
+                    totalMilliseconds = _buckets.Aggregate(0d, (s, b) => s + b.Milliseconds);
+                    totalCount = _buckets.Aggregate(0, (s, b) => s + b.Count);
+                }
+
+                Denominator = totalCount;
+
+                if (totalCount == 0)
+                {
+                    Value = 0;
+                    Formatted = "No requests";
+                }
+                else
+                {
+                    Value = (float)(totalMilliseconds / totalCount);
+                    Formatted = Value.ToString("g3", CultureInfo.InvariantCulture) + "ms";
+                }
+
+                return this;
+            }
+
+            public void Record(TimeSpan elapsed)
+            {
+                var now = DateTime.UtcNow;
+                var seconds = now.Minute * 60 + now.Second;
+                var bucketIndex = (seconds / _secondsPerBucket) % _buckets.Length;
+
+                lock (_buckets)
+                {
+                    _buckets[bucketIndex].Count++;
+                    _buckets[bucketIndex].Milliseconds += elapsed.TotalMilliseconds;
+
+                    bucketIndex++;
+                    if (bucketIndex >= _buckets.Length) bucketIndex = 0;
+
+                    _buckets[bucketIndex].Count = 0;
+                    _buckets[bucketIndex].Milliseconds = 0;
+                }
+            }
+        }
+
+        private void AddStatistics(AnalyticsLevel level, string path)
+        {
+            var baseId = path + "+";
+
+            if (level == AnalyticsLevel.Basic || level == AnalyticsLevel.Full)
+            {
+                _availableStatistics.Add(
+                    new StatisticInformation
+                    {
+                        Id = baseId + "RequestCount",
+                        Name = "Requests to " + path,
+                        Description = "The total number of requests to " + path + " since the service was started"
+                    });
+                _availableStatistics.Add(
+                    new StatisticInformation
+                    {
+                        Id = baseId + "FailCount",
+                        Name = "Failed requests to " + path,
+                        Description = "The number of requests to " + path + " that failed since the service was started"
+                    });
+            }
+            if (level == AnalyticsLevel.Full)
+            {
+                _requestsPerMinute = new CountPerMinute();
+                _availableStatistics.Add(
+                    new StatisticInformation
+                    {
+                        Id = baseId + "RequestRate",
+                        Name = "Requests per minute to " + path,
+                        Description = "The number of successful requests per minute made to " + path + " over the last 10 minutes"
+                    });
+            }
+            if (level == AnalyticsLevel.Full)
+            {
+                _millisecondsPerRequest = new AverageTime();
+                _availableStatistics.Add(
+                    new StatisticInformation
+                    {
+                        Id = baseId + "RequestTime",
+                        Name = "Average execution time for " + path,
+                        Description = "The average time taken to execute successful requests to " + path + " in the last 10 minutes"
+                    });
+            }
+        }
+
+        public IList<IStatisticInformation> AvailableStatistics
+        {
+            get { return _availableStatistics; }
+        }
+
+        public IStatistic GetStatistic(string id)
+        {
+            if (id.EndsWith("RequestCount"))
+                return new IntStatistic(() => _requestCount);
+
+            if (id.EndsWith("FailCount"))
+                return new IntStatistic(() => _failCount);
+
+            if (id.EndsWith("RequestRate"))
+                return _requestsPerMinute;
+
+            if (id.EndsWith("RequestTime"))
+                return _millisecondsPerRequest;
+
+            return null;
+        }
+
+        #endregion
     }
 }

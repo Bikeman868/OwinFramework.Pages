@@ -43,5 +43,10 @@ namespace OwinFramework.Pages.Core.Attributes
         /// value type which makes it optional. You can also pass a type of parameter parser
         /// </summary>
         public Type ParserType { get; set; }
+
+        /// <summary>
+        /// Documentation on the usage of this parameter
+        /// </summary>
+        public string Description { get; set; }
     }
 }

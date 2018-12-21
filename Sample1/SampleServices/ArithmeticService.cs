@@ -18,7 +18,7 @@ namespace Sample1.SampleServices
             request.Success(a + b);
         }
 
-        [Endpoint(UrlPath = "add")]
+        [Endpoint(UrlPath = "add", Analytics = AnalyticsLevel.Full)]
         [EndpointParameter("a", typeof(AnyValue<double>), EndpointParameterType.FormField | EndpointParameterType.QueryString)]
         [EndpointParameter("b", typeof(AnyValue<double>))]
         [Description("Adds two numbers and returns the sum")]
@@ -30,8 +30,8 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint]
-        [EndpointParameter("a", typeof(AnyValue<double>))]
-        [EndpointParameter("b", typeof(AnyValue<double>))]
+        [EndpointParameter("a", typeof(AnyValue<double>), Description = "The number to subtract from")]
+        [EndpointParameter("b", typeof(AnyValue<double>), Description = "The amount to subtract from a")]
         [Description("Calculates a-b and returns the result")]
         [Example("http://myservice.com/subtract?a=12&b=6")]
         public void Subtract(IEndpointRequest request)
@@ -41,7 +41,7 @@ namespace Sample1.SampleServices
             request.Success(a - b);
         }
 
-        [Endpoint]
+        [Endpoint(Analytics = AnalyticsLevel.None)]
         [EndpointParameter("a", typeof(AnyValue<double>))]
         [EndpointParameter("b", typeof(AnyValue<double>))]
         public void Multiply(IEndpointRequest request)

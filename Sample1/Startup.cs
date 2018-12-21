@@ -58,6 +58,7 @@ namespace Sample1
             pipelineBuilder.Register(ninject.Get<OwinFramework.NotFound.NotFoundMiddleware>()).ConfigureWith(config, "/sample1/notFound");
             pipelineBuilder.Register(ninject.Get<OwinFramework.Documenter.DocumenterMiddleware>()).ConfigureWith(config, "/sample1/documenter").RunFirst();
             pipelineBuilder.Register(ninject.Get<OwinFramework.DefaultDocument.DefaultDocumentMiddleware>()).ConfigureWith(config, "/sample1/defaultDocument");
+            pipelineBuilder.Register(ninject.Get<OwinFramework.AnalysisReporter.AnalysisReporterMiddleware>()).ConfigureWith(config, "/sample1/analysisReporter");
             pipelineBuilder.Register(ninject.Get<OwinFramework.ExceptionReporter.ExceptionReporterMiddleware>()).RunFirst();
 
             // Build the owin pipeline

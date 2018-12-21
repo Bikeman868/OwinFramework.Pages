@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Microsoft.Owin;
+using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Debug;
@@ -24,9 +27,10 @@ namespace OwinFramework.Pages.Restful.Runtime
     /// Base implementation of IComponent. Inheriting from this olass will insulate you
     /// from any future additions to the IComponent interface
     /// </summary>
-    public class Service : IService, IDebuggable
+    public class Service : IService, IDebuggable, IAnalysable
     {
         private readonly IServiceDependenciesFactory _serviceDependenciesFactory;
+
         public ElementType ElementType { get { return ElementType.Service; } }
 
         public string Name { get; set; }
@@ -108,7 +112,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                             "' service has a return type, but it should have a return type of 'void'");
 
                     var methodParameters = method.GetParameters();
-                    if (methodParameters == null || methodParameters.Length != 1)
+                    if (methodParameters.Length != 1)
                         throw new ServiceBuilderException(
                             "The '" + method.Name + "' endpoint of the '" + Name +
                             "' service has the wrong parameter list, it must only take one parameter " +
@@ -132,6 +136,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         path, 
                         r => m.Invoke(serviceInstance, new[] { r }),
                         m,
+                        endpointAttribute.Analytics,
                         _serviceDependenciesFactory.DataCatalog,
                         _serviceDependenciesFactory.DataDependencyFactory)
                     {
@@ -142,6 +147,8 @@ namespace OwinFramework.Pages.Restful.Runtime
                             ? defaultSerializer
                             : GetResponseSerializer(endpointAttribute.ResponseSerializer),
                     };
+
+                    AddAnalysable(endpoint);
 
                     var runable = (IRunable)endpoint;
                     runable.Name = method.Name;
@@ -170,7 +177,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         endpoint.AddParameter(parameter.ParameterName, parameter.ParameterType, parameterParser);
                     }
 
-                    Register(endpoint, endpointAttribute.MethodsToRoute ?? Methods, relativePath);
+                    Register(endpoint, endpointAttribute.Methods ?? Methods, relativePath);
                 }
             }
         }
@@ -335,5 +342,48 @@ namespace OwinFramework.Pages.Restful.Runtime
                     endpoint.MethodInfo);
             }
         }
+
+        #region IAnalysable
+
+        private readonly List<IAnalysable> _analysableEndpoints = new List<IAnalysable>();
+        private readonly Dictionary<string, IAnalysable> _endpointStatistics = new Dictionary<string, IAnalysable>();
+
+        private void AddAnalysable(IAnalysable analysable)
+        {
+            if (analysable == null) return;
+
+            lock (_analysableEndpoints)
+                _analysableEndpoints.Add(analysable);
+
+            lock (_endpointStatistics)
+            {
+                foreach (var stat in analysable.AvailableStatistics)
+                {
+                    _endpointStatistics.Add(stat.Id, analysable);
+                }
+            }
+        }
+
+        public IList<IStatisticInformation> AvailableStatistics
+        {
+            get
+            {
+                lock (_analysableEndpoints)
+                    return _analysableEndpoints.SelectMany(a => a.AvailableStatistics).ToList();
+            }
+        }
+
+        public IStatistic GetStatistic(string id)
+        {
+            IAnalysable analysable;
+            bool found;
+
+            lock (_endpointStatistics)
+                found = _endpointStatistics.TryGetValue(id, out analysable);
+
+            return found ? analysable.GetStatistic(id) : null;
+        }
+
+        #endregion
     }
 }

@@ -122,6 +122,7 @@
     <Compile Include="Debug\DebugLayout.cs" />
     <Compile Include="Debug\DebugPage.cs" />
     <Compile Include="Debug\DebugRoute.cs" />
+    <Compile Include="Enums\AnalyticsLevel.cs" />
     <Compile Include="Enums\ElementType.cs" />
     <Compile Include="Enums\CommentStyle.cs" />
     <Compile Include="Enums\EndpointParameterType.cs" />

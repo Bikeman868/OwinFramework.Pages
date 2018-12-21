@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
@@ -21,7 +22,8 @@ namespace OwinFramework.Pages.Core
         IMiddleware<IResponseProducer>,
         IRoutingProcessor,
         ISelfDocumenting,
-        ITraceable
+        ITraceable,
+        IAnalysable
     {
         /// <summary>
         /// Implements ITraceable
@@ -158,5 +160,25 @@ namespace OwinFramework.Pages.Core
         }
 
         #endregion
+
+
+        IList<IStatisticInformation> IAnalysable.AvailableStatistics
+        {
+            get
+            {
+                var analysable = _requestRouter as IAnalysable;
+                return analysable == null 
+                    ? new List<IStatisticInformation>() 
+                    : analysable.AvailableStatistics;
+            }
+        }
+
+        IStatistic IAnalysable.GetStatistic(string id)
+        {
+            var analysable = _requestRouter as IAnalysable;
+            return analysable == null
+                ? null
+                : analysable.GetStatistic(id);
+        }
     }
 }

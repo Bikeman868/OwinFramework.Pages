@@ -16,7 +16,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Takes an incomming request and decides which page or service
         /// will handle it. Returns null for unrecognized URLs
         /// </summary>
-        IRunable Route(IOwinContext context);
+        IRunable Route(IOwinContext context, Action<IOwinContext, Func<string>> trace);
 
         /// <summary>
         /// Adds a branch to the routing tree. This is more efficient

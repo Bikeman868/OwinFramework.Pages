@@ -240,6 +240,8 @@ namespace OwinFramework.Pages.Html.Runtime
             var html = context.Html;
             owinContext.Response.ContentType = "text/html";
 
+            trace(owinContext, () => "Request is for a Pages Framework webpage");
+
 #if TRACE
             context.Trace(() => "Adding static data to the render context");
             context.TraceIndent();
@@ -252,7 +254,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var writeResult = WriteResult.Continue();
             try
             {
-                writeResult.Add(WritePage(context));
+                writeResult.Add(WritePage(context, trace));
             }
             catch (Exception ex)
             {
@@ -277,7 +279,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #region Writing page html structure
 
-        private IWriteResult WritePage(IRenderContext context)
+        private IWriteResult WritePage(IRenderContext context, Action<IOwinContext, Func<string>> trace)
         {
             var result = WriteResult.Continue();
             var html = context.Html;

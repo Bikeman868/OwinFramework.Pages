@@ -19,16 +19,30 @@ namespace OwinFramework.Pages.Framework.Runtime
         private Registration[] _registrations = new Registration[0];
         private readonly object _registrationlock = new object();
 
-        IRunable IRequestRouter.Route(IOwinContext context)
+        IRunable IRequestRouter.Route(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
             var registration = _registrations.FirstOrDefault(r => r.Filter.IsMatch(context));
 
             if (registration == null)
+            {
+                trace(context, () => "No Pages Framework filters match the request");
                 return null;
+            }
 
-            return registration.Router == null 
-                ? registration.Runable
-                : registration.Router.Route(context);
+            if (registration.Router == null)
+            {
+                trace(context, () => 
+                    "Pages framework router matched runable " + 
+                    registration.DeclaringType.DisplayName() + " with filter " +
+                    registration.Filter.Description);
+                return registration.Runable;
+            }
+
+            trace(context, () => 
+                "Pages framework router matched a further level of routing with filter " + 
+                registration.Filter.Description);
+
+            return registration.Router.Route(context, trace);
         }
 
         IRequestRouter IRequestRouter.Add(IRequestFilter filter, int priority)

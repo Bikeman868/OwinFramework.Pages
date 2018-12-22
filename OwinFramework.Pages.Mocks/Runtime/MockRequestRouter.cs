@@ -26,10 +26,6 @@ namespace OwinFramework.Pages.Mocks.Runtime
         public void Dispose()
         { }
 
-        public IRunable Route(IOwinContext context)
-        {
-            return Runable;
-        }
 
         public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType)
         {
@@ -64,6 +60,9 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return this;
         }
 
-
+        public IRunable Route(IOwinContext context, Action<IOwinContext, Func<string>> trace)
+        {
+            return Runable;
+        }
     }
 }

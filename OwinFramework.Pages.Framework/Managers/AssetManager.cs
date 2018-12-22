@@ -290,6 +290,8 @@ namespace OwinFramework.Pages.Framework.Managers
 
         Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
+            trace(context, () => "Request is being hadled by the Asset Manager");
+
             if (context.Request.Method != "GET")
                 throw new HttpException((int)HttpStatusCode.MethodNotAllowed, 
                     "The " + context.Request.Method + " method is not supported for static assets");
@@ -319,6 +321,8 @@ namespace OwinFramework.Pages.Framework.Managers
             var name = lastPathElement.Substring(0, extIndex);
             var ext = lastPathElement.Substring(extIndex);
 
+            trace(context, () => "Asset manager serving asset '" + name + "' of type '" + ext + "'");
+
             AssetType assetType;
             if (string.Equals(ext, ".css", StringComparison.OrdinalIgnoreCase)) assetType = AssetType.Style;
             else if (string.Equals(ext, ".js", StringComparison.OrdinalIgnoreCase)) assetType = AssetType.Script;
@@ -330,6 +334,8 @@ namespace OwinFramework.Pages.Framework.Managers
 
             if (assetType == AssetType.Script)
             {
+                trace(context, () => "Asset is JavaScript");
+
                 context.Response.ContentType = "application/javascript";
 
                 if (string.Equals(secondLastPathElement, "module", StringComparison.OrdinalIgnoreCase))
@@ -351,6 +357,8 @@ namespace OwinFramework.Pages.Framework.Managers
             }
             else if (assetType == AssetType.Style)
             {
+                trace(context, () => "Asset is CSS");
+
                 context.Response.ContentType = "text/css";
 
                 if (string.Equals(secondLastPathElement, "module", StringComparison.OrdinalIgnoreCase))

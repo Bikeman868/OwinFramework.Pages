@@ -54,7 +54,7 @@ namespace OwinFramework.Pages.Core
 
         Task IRoutingProcessor.RouteRequest(IOwinContext context, Func<Task> next)
         {
-            var runable = _requestRouter.Route(context);
+            var runable = _requestRouter.Route(context, Trace);
 
             if (runable == null)
                 return next();

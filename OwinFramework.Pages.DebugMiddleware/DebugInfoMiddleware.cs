@@ -42,7 +42,7 @@ namespace OwinFramework.Pages.DebugMiddleware
             if (string.IsNullOrEmpty(debug)) 
                 return next();
 
-            var runable = _requestRouter.Route(context);
+            var runable = _requestRouter.Route(context, (c, t) => { });
             if (runable == null)
             {
                 context.Response.StatusCode = 404;

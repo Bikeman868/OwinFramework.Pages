@@ -167,6 +167,11 @@ namespace Sample3.UseCase1
         {
         }
 
+        public override IEnumerable<PageArea> GetPageAreas()
+        {
+            return new[] { PageArea.Body };
+        }
+
         public override IWriteResult WritePageArea(IRenderContext context, PageArea pageArea)
         {
             if (pageArea == PageArea.Body)

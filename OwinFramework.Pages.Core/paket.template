@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Core
-version 1.0.0-alpha-018
+version 1.0.0-alpha-019
 authors Martin Halliday
 copyright Martin Halliday 2018
 description

@@ -83,7 +83,7 @@ namespace OwinFramework.Pages.Restful.Runtime
         { 
             get 
             {
-                if (_bodyDeserialized)
+                if (!_bodyDeserialized)
                 {
                     _bodyDeserialized = true;
                     _form = _context.Request.ReadFormAsync().Result;

@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Mocks
-version 1.0.0-alpha-018
+version 1.0.0-alpha-019
 authors Martin Halliday
 copyright Martin Halliday 2018
 description
@@ -23,7 +23,7 @@ references
   OwinFramework.Pages.Mocks.dll
 
 dependencies
-  Owin.Framework.Pages.Core = 1.0.0-alpha-018
+  Owin.Framework.Pages.Core = 1.0.0-alpha-019
 
   Ioc.Modules ~> LOCKED:Minor
   Newtonsoft.Json ~> LOCKED:Minor

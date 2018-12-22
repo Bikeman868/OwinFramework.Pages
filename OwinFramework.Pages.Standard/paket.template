@@ -10,6 +10,7 @@ description
 title Owin Framework Pages Standard Packages
 releasenotes
   This is the first version
+licenseUrl http://www.apache.org/licenses/LICENSE-2.0
 projecturl http://owinframework.com/content/project/owinframework.pages.standard/landing
 
 files

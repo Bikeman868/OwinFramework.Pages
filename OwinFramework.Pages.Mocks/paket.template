@@ -14,6 +14,8 @@ licenseUrl http://www.apache.org/licenses/LICENSE-2.0
 projecturl http://owinframework.com/content/project/owinframework.pages.mocks/landing
 
 files
+  LICENSE
+
   bin/net40/release/OwinFramework.Pages.Mocks.dll ==> lib/net40
   bin/net45/release/OwinFramework.Pages.Mocks.dll ==> lib/net45
 

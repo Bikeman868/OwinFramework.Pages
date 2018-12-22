@@ -13,6 +13,8 @@ licenseUrl http://www.apache.org/licenses/LICENSE-2.0
 projecturl http://owinframework.com/content/project/owinframework.pages.html/landing
 
 files
+  LICENSE
+
   bin/net40/release/OwinFramework.Pages.Html.dll ==> lib/net40
   bin/net45/release/OwinFramework.Pages.Html.dll ==> lib/net45
 

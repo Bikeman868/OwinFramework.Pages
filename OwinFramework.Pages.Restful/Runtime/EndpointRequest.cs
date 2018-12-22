@@ -8,12 +8,15 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Interfaces;
 
 namespace OwinFramework.Pages.Restful.Runtime
 {
     internal class EndpointRequest: IEndpointRequest, IDataContext
     {
+        private readonly Action<IOwinContext, Func<string>> _trace;
+        private readonly IRequestRouter _requestRouter;
         private readonly IOwinContext _context;
         private readonly IDataCatalog _dataCatalog;
         private readonly IDataDependencyFactory _dataDependencyFactory;
@@ -30,6 +33,8 @@ namespace OwinFramework.Pages.Restful.Runtime
         private string[] _pathSegments;
 
         public EndpointRequest(
+            Action<IOwinContext, Func<string>> trace,
+            IRequestRouter requestRouter,
             IOwinContext context,
             IDataCatalog dataCatalog,
             IDataDependencyFactory dataDependencyFactory,
@@ -37,6 +42,8 @@ namespace OwinFramework.Pages.Restful.Runtime
             IResponseSerializer serializer,
             EndpointParameter[] parameters)
         {
+            _trace = trace;
+            _requestRouter = requestRouter;
             _context = context;
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;
@@ -200,9 +207,17 @@ namespace OwinFramework.Pages.Restful.Runtime
             _writeResponse = () => _serializer.Redirect(_context, url, permenant);
         }
 
-        public void Rewrite(Uri url, Method httpMethod = Method.Get)
+        public void Rewrite(string path, Method httpMethod)
         {
-            throw new NotImplementedException();
+            if (path == null)
+                path = _context.Request.Path.Value;
+
+            var runable = _requestRouter.Route(_context, _trace, path, httpMethod);
+            
+            if (runable == null)
+                throw new Exception("Invalid rewrite to " + httpMethod + " " + path);
+
+            _writeResponse = () => runable.Run(_context, _trace);
         }
 
         #endregion

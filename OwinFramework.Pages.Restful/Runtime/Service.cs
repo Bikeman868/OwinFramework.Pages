@@ -133,12 +133,13 @@ namespace OwinFramework.Pages.Restful.Runtime
 
                     var m = method;
                     var endpoint = new ServiceEndpoint(
-                        path, 
+                        path,  
                         r => m.Invoke(serviceInstance, new[] { r }),
                         m,
                         endpointAttribute.Analytics,
                         _serviceDependenciesFactory.DataCatalog,
-                        _serviceDependenciesFactory.DataDependencyFactory)
+                        _serviceDependenciesFactory.DataDependencyFactory,
+                        _serviceDependenciesFactory.RequestRouter)
                     {
                         RequestDeserializer = endpointAttribute.RequestDeserializer == null 
                             ? defaultDeserialzer 

@@ -19,9 +19,31 @@ namespace OwinFramework.Pages.Framework.Runtime
         private Registration[] _registrations = new Registration[0];
         private readonly object _registrationlock = new object();
 
-        IRunable IRequestRouter.Route(IOwinContext context, Action<IOwinContext, Func<string>> trace)
+        IRunable IRequestRouter.Route(
+            IOwinContext context, 
+            Action<IOwinContext, Func<string>> trace,
+            string rewritePath,
+            Method rewriteMethod)
         {
-            var registration = _registrations.FirstOrDefault(r => r.Filter.IsMatch(context));
+            string url;
+            string method;
+
+            if (rewritePath == null)
+            {
+                url = context.Request.Path.Value;
+                method = context.Request.Method;
+            }
+            else
+            {
+                if (!rewritePath.StartsWith("/"))
+                    throw new Exception("When rewriting requests an absolute path must be provided: '" + rewritePath + "'");
+
+                url = rewritePath;
+                method = rewriteMethod.ToString().ToUpper();
+                trace(context, () => "Rewriting the request to " + method + " " + rewritePath);
+            }
+
+            var registration = _registrations.FirstOrDefault(r => r.Filter.IsMatch(context, url, method));
 
             if (registration == null)
             {
@@ -42,7 +64,7 @@ namespace OwinFramework.Pages.Framework.Runtime
                 "Pages framework router matched a further level of routing with filter " + 
                 registration.Filter.Description);
 
-            return registration.Router.Route(context, trace);
+            return registration.Router.Route(context, trace, rewritePath, rewriteMethod);
         }
 
         IRequestRouter IRequestRouter.Add(IRequestFilter filter, int priority)

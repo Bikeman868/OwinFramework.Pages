@@ -1,4 +1,6 @@
-﻿using Microsoft.Owin;
+﻿using System;
+using Microsoft.Owin;
+using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
@@ -11,7 +13,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <summary>
         /// Returns true if the request atches this filter
         /// </summary>
-        bool IsMatch(IOwinContext context);
+        bool IsMatch(IOwinContext context, string absolutePath, string method);
 
         /// <summary>
         /// Returns a short description of the requests that match - output

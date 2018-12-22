@@ -46,6 +46,7 @@ namespace OwinFramework.Pages.Restful.Runtime
         private readonly Action<IEndpointRequest> _method;
         private readonly IDataCatalog _dataCatalog;
         private readonly IDataDependencyFactory _dataDependencyFactory;
+        private readonly IRequestRouter _requestRouter;
         private readonly string[] _pathElements;
 
         public ServiceEndpoint(
@@ -54,13 +55,15 @@ namespace OwinFramework.Pages.Restful.Runtime
             MethodInfo methodInfo,
             AnalyticsLevel analytics,
             IDataCatalog dataCatalog,
-            IDataDependencyFactory dataDependencyFactory)
+            IDataDependencyFactory dataDependencyFactory,
+            IRequestRouter requestRouter)
         {
             Path = path;
             MethodInfo = methodInfo;
             _method = method;
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;
+            _requestRouter = requestRouter;
             _pathElements = path
                 .Split('/')
                 .Where(p => !string.IsNullOrEmpty(p))
@@ -147,6 +150,8 @@ namespace OwinFramework.Pages.Restful.Runtime
             trace(context, () => "Executing service endpoint " + Path);
 
             using (var request = new EndpointRequest(
+                trace,
+                _requestRouter,
                 context, 
                 _dataCatalog,
                 _dataDependencyFactory,

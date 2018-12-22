@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Owin;
 using OwinFramework.InterfacesV1.Capability;
+using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
@@ -16,7 +17,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Takes an incomming request and decides which page or service
         /// will handle it. Returns null for unrecognized URLs
         /// </summary>
-        IRunable Route(IOwinContext context, Action<IOwinContext, Func<string>> trace);
+        /// <param name="context">The OWIN context for the request</param>
+        /// <param name="trace">The method of outputting trace information for this request</param>
+        /// <param name="rewritePath">If this is an internal rewrite then this is the path to rewrite. Null for the original request</param>
+        /// <param name="rewriteMethod">If this is an internal rewrite then this is the method to rewrite</param>
+        IRunable Route(
+            IOwinContext context, 
+            Action<IOwinContext, Func<string>> trace, 
+            string rewritePath = null, 
+            Method rewriteMethod = Method.Get);
 
         /// <summary>
         /// Adds a branch to the routing tree. This is more efficient

@@ -11,7 +11,7 @@ namespace OwinFramework.Pages.Core.RequestFilters
     /// </summary>
     public class FilterAnyFilters: IRequestFilter
     {
-        private readonly Func<IOwinContext, bool> _matchFunc;
+        private readonly Func<IOwinContext, string, string, bool> _matchFunc;
         private readonly string _description;
 
         /// <summary>
@@ -22,17 +22,17 @@ namespace OwinFramework.Pages.Core.RequestFilters
         {
             if (filters == null || filters.Length == 0)
             {
-                _matchFunc = c => false;
+                _matchFunc = (c, u, m) => false;
                 _description = "None";
             }
             else if (filters.Length == 1)
             {
-                _matchFunc = c => filters[0].IsMatch(c);
+                _matchFunc = (c, u, m) => filters[0].IsMatch(c, u, m);
                 _description = filters[0].Description;
             }
             else
             {
-                _matchFunc = c => filters.Any(filter => filter.IsMatch(c));
+                _matchFunc = (c, u, m) => filters.Any(filter => filter.IsMatch(c, u, m));
                 _description = filters.Skip(1).Aggregate(
                     "(" + filters[0].Description + ")", 
                     (s, f) => s += " or (" + f.Description + ")");
@@ -44,9 +44,12 @@ namespace OwinFramework.Pages.Core.RequestFilters
             get { return _description; }
         }
 
-        bool IRequestFilter.IsMatch(IOwinContext context)
+        /// <summary>
+        /// Returns true if the request matches any of the filters
+        /// </summary>
+        public bool IsMatch(IOwinContext context, string absolutePath, string method)
         {
-            return _matchFunc(context);
+            return _matchFunc(context, absolutePath, method);
         }
     }
 }

@@ -130,6 +130,6 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// requet at the same url. This is a useful behavior when you have a submit
         /// button on a form and want to render the same page again in response.</param>
         /// <param name="httpMethod">The HTTP method to use in routing the request</param>
-        void Rewrite(Uri url = null, Method httpMethod = Method.Get);
+        void Rewrite(string path = null, Method httpMethod = Method.Get);
     }
 }

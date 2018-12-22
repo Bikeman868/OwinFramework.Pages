@@ -305,6 +305,6 @@ namespace Sample1.SamplePages
     [IsPage("page3")]
     [Route("/page3", Method.Get)]
     [PageTitle("Page 3")]
-    [RegionTemplate("body", "/url/template1")]
+    [RegionComponent("body", "math_form")]
     internal class Page3 : PageBase { }
 }

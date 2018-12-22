@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using System;
+using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.RequestFilters
@@ -14,7 +15,10 @@ namespace OwinFramework.Pages.Core.RequestFilters
             get { return "All requests"; }
         }
 
-        bool IRequestFilter.IsMatch(IOwinContext context)
+        /// <summary>
+        /// Returns true always
+        /// </summary>
+        public bool IsMatch(IOwinContext context, string absolutePath, string method)
         {
             return true;
         }

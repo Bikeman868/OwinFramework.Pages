@@ -44,9 +44,12 @@ namespace OwinFramework.Pages.Core.RequestFilters
             get { return _description; }
         }
 
-        bool IRequestFilter.IsMatch(IOwinContext context)
+        /// <summary>
+        /// Returns true if the request matches any of the configured methods
+        /// </summary>
+        public bool IsMatch(IOwinContext context, string absolutePath, string method)
         {
-            return _matchFunc(context.Request.Method);
+            return _matchFunc(method);
         }
     }
 }

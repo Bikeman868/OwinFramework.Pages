@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.Owin;
 using Moq.Modules;
 using OwinFramework.InterfacesV1.Capability;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Mocks.Runtime
@@ -60,7 +61,11 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return this;
         }
 
-        public IRunable Route(IOwinContext context, Action<IOwinContext, Func<string>> trace)
+        public IRunable Route(
+            IOwinContext context, 
+            Action<IOwinContext, Func<string>> trace,
+            string absolutePath,
+            Method rewriteMethod)
         {
             return Runable;
         }

@@ -123,9 +123,13 @@ namespace OwinFramework.Pages.Core.RequestFilters
             get { return _description; }
         }
 
-        bool IRequestFilter.IsMatch(IOwinContext context)
+        /// <summary>
+        /// Returns true if the request matches the configured path - including wildcards
+        /// and path elements with parameter placeholders
+        /// </summary>
+        public bool IsMatch(IOwinContext context, string absolutePath, string method)
         {
-            return _matchFunc(context.Request.Path);
+            return _matchFunc(new PathString(absolutePath));
         }
     }
 }

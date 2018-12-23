@@ -41,11 +41,16 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// from another location
         /// </summary>
         /// <param name="context">The Owin context to write to</param>
-        /// <param name="url">The url to redirect the browser to</param>
-        /// <param name="permenant">True if this is a permenant redirect. Be very careful
-        /// about passing true here, browsers will cache this for a very
-        /// long time, and there is no way for you to clear it</param>
-        Task Redirect(IOwinContext context, Uri url, bool permenant);
+        /// <param name="url">The url to redirect the browser to. Note that if you pass
+        /// a relative path in response to a POST some browsers repeat the POST
+        /// at the new location. To be safe always pass an absolute URL.</param>
+        /// <param name="statusCode">It only makes sense to pass a status code 
+        /// that expects a location header, i.e. HttpStatusCode.MovedPermanently,
+        /// HttpStatusCode.TemporaryRedirect or HttpStatusCode.Found.
+        /// Be very careful about passing HttpStatusCode.MovedPermanently here, 
+        /// browsers will cache this for a very long time, and there is no way 
+        /// for you to clear it</param>
+        Task Redirect(IOwinContext context, Uri url, HttpStatusCode statusCode = HttpStatusCode.Found);
 
         /// <summary>
         /// Adds a custom header to the response

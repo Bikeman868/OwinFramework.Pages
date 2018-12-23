@@ -117,15 +117,19 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// should retry the request at a different URL
         /// </summary>
         /// <param name="url">The Url to redirect to</param>
-        /// <param name="permenant">Pass true for permenant redirection. Note that browsers
-        /// will cache this for a long time so there is no way to undo this action</param>
-        void Redirect(Uri url, bool permenant = false);
+        /// <param name="statusCode">It only makes sense to pass a status code 
+        /// that expects a location header, i.e. HttpStatusCode.MovedPermanently,
+        /// HttpStatusCode.TemporaryRedirect or HttpStatusCode.Found.
+        /// Be very careful about passing HttpStatusCode.MovedPermanently here, 
+        /// browsers will cache this for a very long time, and there is no way 
+        /// for you to clear it</param>
+        void Redirect(Uri url, HttpStatusCode statusCode = HttpStatusCode.Found);
 
         /// <summary>
         /// Passes this request back to the request router. The request router will
         /// resolve the URL to a page or service that will provide the response
         /// </summary>
-        /// <param name="url">The URL of the page to render as the response. If you do
+        /// <param name="path">The path to the page to render as the response. If you do
         /// not pass this parameter then the request will be rewritten into a GET
         /// requet at the same url. This is a useful behavior when you have a submit
         /// button on a form and want to render the same page again in response.</param>

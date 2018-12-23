@@ -204,9 +204,9 @@ namespace OwinFramework.Pages.Restful.Runtime
             HttpStatus(HttpStatusCode.BadRequest, message ?? "Bad Request");
         }
 
-        public void Redirect(Uri url, bool permenant = false)
+        public void Redirect(Uri url, HttpStatusCode statusCode)
         {
-            _writeResponse = () => _serializer.Redirect(_context, url, permenant);
+            _writeResponse = () => _serializer.Redirect(_context, url, statusCode);
         }
 
         public void Rewrite(string path, Method httpMethod)

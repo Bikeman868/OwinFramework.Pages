@@ -102,14 +102,39 @@ namespace OwinFramework.Pages.Restful.Serializers
             return context.Response.WriteAsync(response.ToString(Formatting.None));
         }
 
-        public Task Redirect(IOwinContext context, Uri url, bool permenant)
+        public Task Redirect(IOwinContext context, Uri url, HttpStatusCode statusCode)
         {
-            AddHeader(context, "Location", url.ToString());
+            string message;
+            switch (statusCode)
+            {
+                case HttpStatusCode.TemporaryRedirect:
+                    message = "Content temporarily moved, see Location header";
+                    break;
+                case HttpStatusCode.MovedPermanently:
+                    message = "Content permenantly moved, see Location header";
+                    break;
+                case HttpStatusCode.Found:
+                    message = "Content found, see Location header";
+                    break;
+                default:
+                    message = statusCode.ToString();
+                    break;
+            }
 
-            if (permenant) 
-                return HttpStatus(context, HttpStatusCode.MovedPermanently, "Moved permenantly");
+            var location = url.ToString();
 
-            return HttpStatus(context, HttpStatusCode.TemporaryRedirect, "Temporary redirect");
+            context.Response.Headers["Location"] = location;
+            context.Response.StatusCode = (int)statusCode;
+            context.Response.ReasonPhrase = message;
+
+            var response = new JObject 
+            {
+                { "success", true }, 
+                { "redirect", true }, 
+                { "location", location }, 
+                { "message", message }
+            };
+            return context.Response.WriteAsync(response.ToString(Formatting.None));
         }
 
         public void AddHeader(IOwinContext context, string name, string value)

@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Standard
-version 1.0.0-alpha-019
+version 1.0.0-alpha-020
 authors Martin Halliday
 copyright Martin Halliday 2018
 description
@@ -29,10 +29,10 @@ references
   OwinFramework.Pages.Standard.dll
 
 dependencies
-  Owin.Framework.Pages.Core = 1.0.0-alpha-019
-  Owin.Framework.Pages.Framework = 1.0.0-alpha-019
-  Owin.Framework.Pages.Html = 1.0.0-alpha-019
-  Owin.Framework.Pages.Restful = 1.0.0-alpha-019
+  Owin.Framework.Pages.Core = 1.0.0-alpha-020
+  Owin.Framework.Pages.Framework = 1.0.0-alpha-020
+  Owin.Framework.Pages.Html = 1.0.0-alpha-020
+  Owin.Framework.Pages.Restful = 1.0.0-alpha-020
   
   Ioc.Modules ~> LOCKED:Minor
   Urchin.Client ~> LOCKED:Minor

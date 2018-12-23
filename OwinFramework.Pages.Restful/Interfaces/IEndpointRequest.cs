@@ -95,7 +95,7 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// </summary>
         /// <param name="statusCode"></param>
         /// <param name="message">The message to include in the http response header</param>
-        void HttpStatus(HttpStatusCode statusCode, string message);
+        void HttpStatus(HttpStatusCode statusCode, string message = null);
 
         /// <summary>
         /// Returns a 404 (not found) response to the caller
@@ -116,10 +116,14 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// Returns a response to the caller indicating that the user agent
         /// should retry the request at a different URL
         /// </summary>
-        /// <param name="url">The Url to redirect to</param>
+        /// <param name="url">The url to redirect the browser to. Can be a relative 
+        /// URL to redirect to another page on the same website or an absolute URL
+        /// to redirect to a different website.</param>
         /// <param name="statusCode">It only makes sense to pass a status code 
         /// that expects a location header, i.e. HttpStatusCode.MovedPermanently,
         /// HttpStatusCode.TemporaryRedirect or HttpStatusCode.Found.
+        /// Note that when redirecting after a POST TemporaryRedirect will retry the
+        /// POST at the new URL whereas HttpStatusCode.Found will perform a GET request.
         /// Be very careful about passing HttpStatusCode.MovedPermanently here, 
         /// browsers will cache this for a very long time, and there is no way 
         /// for you to clear it</param>

@@ -41,12 +41,14 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// from another location
         /// </summary>
         /// <param name="context">The Owin context to write to</param>
-        /// <param name="url">The url to redirect the browser to. Note that if you pass
-        /// a relative path in response to a POST some browsers repeat the POST
-        /// at the new location. To be safe always pass an absolute URL.</param>
+        /// <param name="url">The url to redirect the browser to. Can be a relative 
+        /// URL to redirect to another page on the same website or an absolute URL
+        /// to redirect to a different website.</param>
         /// <param name="statusCode">It only makes sense to pass a status code 
         /// that expects a location header, i.e. HttpStatusCode.MovedPermanently,
         /// HttpStatusCode.TemporaryRedirect or HttpStatusCode.Found.
+        /// Note that when redirecting after a POST TemporaryRedirect will retry the
+        /// POST at the new URL whereas HttpStatusCode.Found will perform a GET request.
         /// Be very careful about passing HttpStatusCode.MovedPermanently here, 
         /// browsers will cache this for a very long time, and there is no way 
         /// for you to clear it</param>

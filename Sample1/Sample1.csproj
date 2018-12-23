@@ -76,7 +76,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleServices\ObjectSerializationService.cs" />
     <Compile Include="SampleServices\ExceptionTestService.cs" />
-    <Compile Include="SampleServices\ArithmeticService.cs" />
+    <Compile Include="SampleServices\MathFormComponent.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

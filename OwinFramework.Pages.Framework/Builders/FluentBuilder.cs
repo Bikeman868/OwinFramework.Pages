@@ -128,13 +128,16 @@ namespace OwinFramework.Pages.Framework.Builders
 
             var attributes = new AttributeSet(type);
 
+            // Note that any element can also be a service
+            if (attributes.IsService != null)
+                BuildService(type, factory);
+
             if (attributes.IsPackage != null) return BuildPackage(null, type, factory, null);
             if (attributes.IsModule != null) return BuildModule(type, factory);
             if (attributes.IsPage != null) return BuildPage(type, factory);
             if (attributes.IsLayout != null) return BuildLayout(type, factory);
             if (attributes.IsRegion != null) return BuildRegion(type, factory);
             if (attributes.IsComponent != null) return BuildComponent(type, factory);
-            if (attributes.IsService != null) return BuildService(type, factory);
             if (attributes.IsDataProvider != null) return BuildDataProvider(type, factory);
 
             return null;
@@ -229,6 +232,7 @@ namespace OwinFramework.Pages.Framework.Builders
         /// </summary>
         /// <param name="pageInstance">Optional instance to configure</param>
         /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <param name="package">The namespace to use for the page assets</param>
         /// <returns></returns>
         public IPageDefinition BuildUpPage(object pageInstance, Type declaringType, IPackage package)
         {
@@ -243,12 +247,14 @@ namespace OwinFramework.Pages.Framework.Builders
         /// </summary>
         /// <param name="serviceInstance">Optional instance to configure</param>
         /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <param name="factory">Used to construct the service if the service uses constructor injection</param>
+        /// <param name="package">The namespace to use for the service assets</param>
         /// <returns></returns>
-        public IServiceDefinition BuildUpService(object serviceInstance, Type declaringType, IPackage package)
+        public IServiceDefinition BuildUpService(object serviceInstance, Type declaringType, Func<Type, object> factory, IPackage package)
         {
             if (ServiceBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build services");
-            return ServiceBuilder.BuildUpService(serviceInstance, declaringType, package ?? _packageContext);
+            return ServiceBuilder.BuildUpService(serviceInstance, declaringType, factory, package ?? _packageContext);
         }
 
         /// <summary>
@@ -422,7 +428,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (factory != null && typeof(IService).IsAssignableFrom(type))
                 service = factory(type) as IService;
 
-            var serviceDefinition = BuildUpService(service, type, _packageContext);
+            var serviceDefinition = BuildUpService(service, type, factory, _packageContext);
             service = serviceDefinition.Build();
 
             return service;

@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces.Runtime;
+﻿using System;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces
 {
@@ -14,6 +15,6 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// oportunity to do work once that makes the rendering of each instance
         /// faster.
         /// </summary>
-        void Initialize();
+        void Initialize(Func<Type, object> factory);
     }
 }

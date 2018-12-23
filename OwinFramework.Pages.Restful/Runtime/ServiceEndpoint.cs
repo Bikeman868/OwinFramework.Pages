@@ -218,7 +218,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     trace(context, () => 
                         e.GetType().DisplayName() + " exception: " + e.Message + 
                         (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
-                    request.HttpStatus(HttpStatusCode.InternalServerError, "Unhandled exception");
+                    request.HttpStatus(HttpStatusCode.InternalServerError, "Unhandled exception " + e.Message);
                 }
                 return request.WriteResponse();
             }

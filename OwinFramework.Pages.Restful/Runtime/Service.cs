@@ -73,7 +73,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             DefaultSerializerType = typeof(Json);
         }
 
-        public void Initialize()
+        public void Initialize(Func<Type, object> factory)
         {
             var defaultSerializer = GetResponseSerializer(DefaultSerializerType);
             var defaultDeserialzer = GetRequestDeserializer(DefaultDeserializerType);
@@ -81,13 +81,22 @@ namespace OwinFramework.Pages.Restful.Runtime
             object serviceInstance = this;
             if (GetType() == typeof(Service))
             {
-                var constructor = DeclaringType.GetConstructor(Type.EmptyTypes);
-                if (constructor == null)
-                    throw new ServiceBuilderException(
-                        "The '" + DeclaringType.DisplayName() + "' service is invalid. You " +
-                        "must either provide a default public constructor or inherit from " + 
-                        GetType().DisplayName());
-                serviceInstance = constructor.Invoke(null);
+                if (factory == null)
+                {
+                    var constructor = DeclaringType.GetConstructor(Type.EmptyTypes);
+
+                    if (constructor == null)
+                        throw new ServiceBuilderException(
+                            "The '" + DeclaringType.DisplayName() + "' service is invalid. You " +
+                            "must either supply a factory method, provide a default public constructor, or inherit from " +
+                            GetType().DisplayName());
+
+                    serviceInstance = constructor.Invoke(null);
+                }
+                else
+                {
+                    serviceInstance = factory(DeclaringType);
+                }
             }
 
             var methods = serviceInstance.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);

@@ -20,6 +20,9 @@ namespace OwinFramework.Pages.Core.Extensions
         /// </summary>
         public static Task<IFormCollection> ReadFormAsync(this IOwinRequest request)
         {
+            if (request.ContentType == null)
+                return null;
+
             if (request.ContentType.StartsWith("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase))
                 return Task.Factory.StartNew(() => DecodeFormUrlEncoded(request.Body, Encoding.UTF8));
 
@@ -48,27 +51,21 @@ namespace OwinFramework.Pages.Core.Extensions
             Func<string, string> decode = s =>
             {
                 s = s.Replace('+', ' ');
-                var regex = new Regex("#[0-9A-F][0-9A-F]");
+                var regex = new Regex("%[0-9A-F][0-9A-F]");
                 return regex.Replace(s, m =>
                 {
                     var hexDigits = m.Value.Substring(1);
                     var asciiValue = Convert.ToByte(hexDigits, 16);
                     var ch = (char)asciiValue;
-                    return new String(new[] { ch });
+                    return new string(new[] { ch });
                 });
             };
 
             var dictionary = content
                 .Split('&')
-                .Select(p =>
-                {
-                    var e = p.Split('=');
-                    return new
-                    {
-                        name = decode(e[0]),
-                        value = decode(e[1])
-                    };
-                })
+                .Select(p => p.Split('='))
+                .Where(e => e.Length == 2)
+                .Select(e => new { name = decode(e[0]), value = decode(e[1]) })
                 .ToDictionary(e => e.name, e => new []{e.value});
             return new FormCollection(dictionary);
         }

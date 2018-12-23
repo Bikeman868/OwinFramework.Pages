@@ -11,15 +11,18 @@ namespace OwinFramework.Pages.Restful.Builders
     internal class ServiceDefinition : IServiceDefinition
     {
         private readonly INameManager _nameManager;
+        private readonly Func<Type, object> _factory;
         private readonly Service _service;
 
         public ServiceDefinition(
             Service service,
             INameManager nameManager,
             IPackage package,
-            Type declaringType)
+            Type declaringType,
+            Func<Type, object> factory)
         {
             _nameManager = nameManager;
+            _factory = factory;
             _service = service;
 
             if (package != null)
@@ -115,7 +118,7 @@ namespace OwinFramework.Pages.Restful.Builders
 
         public IService Build()
         {
-            _nameManager.AddResolutionHandler(NameResolutionPhase.InitializeRunables, () => _service.Initialize());
+            _nameManager.AddResolutionHandler(NameResolutionPhase.InitializeRunables, () => _service.Initialize(_factory));
             return _service;
         }
     }

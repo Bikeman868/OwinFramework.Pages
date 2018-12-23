@@ -15,7 +15,14 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// instance of the Service class</param>
         /// <param name="declaringType">Type type to extract custom attributes from
         /// that can also define the behaviour of the service</param>
+        /// <param name="factory">If you do not provide a service instance and the
+        /// declaring type does not have a default public constructor, then you must
+        /// provide a factory method that can construct the service.</param>
         /// <param name="package">Optional package adds a namespace to this service</param>
-        IServiceDefinition BuildUpService(object serviceInstance = null, Type declaringType = null, IPackage package = null);
+        IServiceDefinition BuildUpService(
+            object serviceInstance = null, 
+            Type declaringType = null, 
+            Func<Type, object> factory = null,
+            IPackage package = null);
     }
 }

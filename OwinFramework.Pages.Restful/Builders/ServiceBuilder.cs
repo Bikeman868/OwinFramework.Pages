@@ -30,12 +30,16 @@ namespace OwinFramework.Pages.Restful.Builders
             _nameManager = nameManager;
         }
 
-        public IServiceDefinition BuildUpService(object serviceInstance = null, Type declaringType = null, IPackage package = null)
+        public IServiceDefinition BuildUpService(
+            object serviceInstance,
+            Type declaringType,
+            Func<Type, object> factory,
+            IPackage package)
         {
             var service = serviceInstance as Service ?? new Service(_serviceDependenciesFactory);
             if (declaringType == null) declaringType = (serviceInstance ?? service).GetType();
 
-            var serviceDefinition = new ServiceDefinition(service, _nameManager, package, declaringType);
+            var serviceDefinition = new ServiceDefinition(service, _nameManager, package, declaringType, factory);
 
             var attributes = new AttributeSet(declaringType);
             _elementConfiguror.Configure(serviceDefinition, attributes);

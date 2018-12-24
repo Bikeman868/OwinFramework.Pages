@@ -15,44 +15,44 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// Call this method once all of the names have been registered to
         /// resolve name references between elements
         /// </summary>
-        void Bind();
+        INameManager Bind();
 
         /// <summary>
         /// Registers the name of an element
         /// </summary>
         /// <param name="element">The element to register</param>
-        void Register(IElement element);
+        INameManager Register(IElement element);
 
         /// <summary>
         /// Registers the name of a runable
         /// </summary>
         /// <param name="runable">The runable to register</param>
-        void Register(IRunable runable);
+        INameManager Register(IRunable runable);
 
         /// <summary>
         /// Registers the name of a module
         /// </summary>
         /// <param name="module">The module to register</param>
-        void Register(IModule module);
+        INameManager Register(IModule module);
 
         /// <summary>
         /// Registers the name of a package
         /// </summary>
         /// <param name="package">The package to register</param>
-        void Register(IPackage package);
+        INameManager Register(IPackage package);
 
         /// <summary>
         /// Registers the name of a data provider
         /// </summary>
         /// <param name="dataProvider">The data provider to register</param>
-        void Register(IDataProvider dataProvider);
+        INameManager Register(IDataProvider dataProvider);
 
         /// <summary>
         /// Registers the name of a data provider
         /// </summary>
         /// <param name="template">The template to register</param>
         /// <param name="path">The path that the template was loaded from, e.g. '/templates/common/profile'</param>
-        void Register(ITemplate template, string path);
+        INameManager Register(ITemplate template, string path);
 
         /// <summary>
         /// Adds a callback function to execute after all components have been
@@ -60,7 +60,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// </summary>
         /// <param name="resolutionAction">A callback function to call when all names are registered</param>
         /// <param name="phase">The phase of name resolution to participate in</param>
-        void AddResolutionHandler(NameResolutionPhase phase, Action resolutionAction);
+        INameManager AddResolutionHandler(NameResolutionPhase phase, Action resolutionAction);
 
         /// <summary>
         /// Adds a callback function to execute after all components have been
@@ -68,7 +68,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// </summary>
         /// <param name="resolutionAction">A callback function to call when all names are registered</param>
         /// <param name="phase">The phase of name resolution to participate in</param>
-        void AddResolutionHandler(NameResolutionPhase phase, Action<INameManager> resolutionAction);
+        INameManager AddResolutionHandler(NameResolutionPhase phase, Action<INameManager> resolutionAction);
 
         /// <summary>
         /// Adds a callback function to execute after all components have been
@@ -78,7 +78,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// <param name="context">Contextual data to pass back to the handler
         /// names are defined</param>
         /// <param name="phase">The phase of name resolution to participate in</param>
-        void AddResolutionHandler<T>(NameResolutionPhase phase, Action<INameManager, T> resolutionAction, T context);
+        INameManager AddResolutionHandler<T>(NameResolutionPhase phase, Action<INameManager, T> resolutionAction, T context);
 
         /// <summary>
         /// Adds a callback function to execute after all components have been
@@ -88,7 +88,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// <param name="resolutionAction">A callback function to call when all names are registered</param>
         /// <param name="element">The element whose reference needs to be set</param>
         /// <param name="name">The name of the dependent element</param>
-        void AddResolutionHandler<T1, T2>(NameResolutionPhase phase, Action<INameManager, T1, T2> resolutionAction, T1 element, T2 name);
+        INameManager AddResolutionHandler<T1, T2>(NameResolutionPhase phase, Action<INameManager, T1, T2> resolutionAction, T1 element, T2 name);
 
         /// <summary>
         /// Finds the component with the specified name

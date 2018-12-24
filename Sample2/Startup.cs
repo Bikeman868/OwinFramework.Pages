@@ -24,6 +24,8 @@ namespace Sample2
         {
             #region Configure Ninject as the IoC container
 
+            // You can use any IoC container you like. In this example I am using Ninject
+
             var packageLocator = new PackageLocator()
                 .ProbeBinFolderAssemblies()
                 .Add(Assembly.GetExecutingAssembly());
@@ -32,17 +34,25 @@ namespace Sample2
 
             #endregion
 
-            #region Build and Owin pipeline with only the Pages middleware in it
+            #region Build an Owin pipeline with only the Pages middleware in it
+
+            // To keep this example easy to understand I am only adding the Pages middleware
+            // to the OWIN pipeline. In your application you will likely want to add other
+            // middleware here - static files, identification and authorization etc
 
             var config = ninject.Get<IConfiguration>();
-            var pipelineBuilder = ninject.Get<IBuilder>().EnableTracing();
+            var pipelineBuilder = ninject.Get<IBuilder>().EnableTracing(RequestsToTrace.QueryString);
 
             pipelineBuilder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/sample2/pages");
             app.UseBuilder(pipelineBuilder);
 
             #endregion
 
-            #region Choose which builders to use for layouts, regions, components and pages
+            #region Choose which builders to use
+
+            // The fluent builder has a plug in architecture. You can plug in builders for
+            // layouts, regions, components, pages, data providers, services, modules and packages
+            // The OwinFramework.Pages.Html.BuildEngine contains builders for layouts, regions, components and pages
 
             var fluentBuilder = ninject.Get<IFluentBuilder>();
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
@@ -51,14 +61,26 @@ namespace Sample2
 
             #region Find all the layouts, regions, components and pages in my website
 
+            // You can register your layouts, regions, pages etc individually, or
+            // you can ask the fluent builder to scan assemblies for classes that
+            // are decorated with attributes that identify them as these element types.
+
+            // Note that passing a factory method here allows your layouts, regions, pages etc
+            // to use constructor injection. If you do not pass a factory method there then
+            // these classes must have a default public constructor.
+
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
 
             #endregion
 
             #region Resolve all the name references and bind everything together
 
-            var nameManager = ninject.Get<INameManager>();
-            nameManager.Bind();
+            // When the fluent builder registered all of your regions, layouts etc
+            // they were all added to the Name Manager in random order. If these
+            // elements refer to each other by name then these name references must
+            // be resolved after all of the elements are registered
+
+            ninject.Get<INameManager>().Bind();
 
             #endregion
         }
@@ -67,7 +89,7 @@ namespace Sample2
 
 #if VERSION1
     [IsPage]                                                   // This is a webpage
-    [Route("/", Method.Get)]                                  // This page is served for GET requets for the website root
+    [Route("/", Method.Get)]                                   // This page is served for GET requets for the website root
     [PageTitle("Getting started with Owin Framework Pages")]   // Specifies the page title
     [UsesLayout("homePageLayout")]                             // The layout of this page is 'homePageLayout'
     internal class HomePage { }
@@ -87,7 +109,7 @@ namespace Sample2
 
 #if VERSION2
     [IsPage]                                                   // This is a webpage
-    [Route("/", Methods.Get)]                                  // This page is served for GET requets for the website root
+    [Route("/", Method.Get)]                                   // This page is served for GET requets for the website root
     [PageTitle("Getting started with Owin Framework Pages")]   // Specifies the page title
     [UsesLayout("homePageLayout")]                             // The layout of this page is 'homePageLayout'
     internal class HomePage { }
@@ -103,7 +125,7 @@ namespace Sample2
 
 #if VERSION3
     [IsPage]                                                   // This is a webpage
-    [Route("/", Methods.Get)]                                  // This page is served for GET requets for the website root
+    [Route("/", Method.Get)]                                   // This page is served for GET requets for the website root
     [PageTitle("Getting started with Owin Framework Pages")]   // Specifies the page title
     [UsesLayout("homePageLayout")]                             // The layout of this page is 'homePageLayout'
     internal class HomePage { }

@@ -55,7 +55,7 @@ namespace OwinFramework.Pages.Framework.Managers
 
         #region Name registration
 
-        public void Register(IElement element)
+        public INameManager Register(IElement element)
         {
             if (string.IsNullOrEmpty(element.Name))
                 element.Name = GenerateElementName(element.Package);
@@ -66,9 +66,11 @@ namespace OwinFramework.Pages.Framework.Managers
                 _pendingElementRegistrations.Add(element);
             else
                 RegisterElement(element);
+
+            return this;
         }
 
-        public void Register(IRunable runable)
+        public INameManager Register(IRunable runable)
         {
             if (string.IsNullOrEmpty(runable.Name))
                 runable.Name = GenerateElementName(runable.Package);
@@ -79,17 +81,21 @@ namespace OwinFramework.Pages.Framework.Managers
                 _pendingRunableRegistrations.Add(runable);
             else
                 RegisterRunable(runable);
+
+            return this;
         }
 
-        public void Register(IModule module)
+        public INameManager Register(IModule module)
         {
             if (string.IsNullOrEmpty(module.Name))
                 module.Name = GenerateNamespaceName(String.Empty);
 
             lock (_modules) _modules[module.Name] = module;
+
+            return this;
         }
 
-        public void Register(IPackage package)
+        public INameManager Register(IPackage package)
         {
             if (string.IsNullOrEmpty(package.NamespaceName))
                 package.NamespaceName = GenerateNamespaceName(String.Empty);
@@ -100,16 +106,20 @@ namespace OwinFramework.Pages.Framework.Managers
                 package.Name = package.NamespaceName;
 
             lock(_packages) _packages[package.Name] = package;
+
+            return this;
         }
 
-        public void Register(ITemplate template, string path)
+        public INameManager Register(ITemplate template, string path)
         {
             ValidatePath(path);
 
             lock (_templates) _templates[path] = template;
+
+            return this;
         }
 
-        public void Register(IDataProvider dataProvider)
+        public INameManager Register(IDataProvider dataProvider)
         {
             if (string.IsNullOrEmpty(dataProvider.Name))
                 dataProvider.Name = GenerateElementName(dataProvider.Package);
@@ -120,6 +130,8 @@ namespace OwinFramework.Pages.Framework.Managers
                 _pendingDataProviderRegistrations.Add(dataProvider);
             else
                 RegisterDataProvider(dataProvider);
+
+            return this;
         }
 
         private void ValidateElementName(string name, IPackage package)
@@ -157,16 +169,18 @@ namespace OwinFramework.Pages.Framework.Managers
             if (layout != null) lock (_layouts) _layouts.Add(name, layout);
         }
 
-        public void RegisterDataProvider(IDataProvider dataProvider)
+        public INameManager RegisterDataProvider(IDataProvider dataProvider)
         {
             var name = dataProvider.Package == null
                 ? dataProvider.Name
                 : dataProvider.Package.NamespaceName + ":" + dataProvider.Name;
 
             lock (_dataProviders) _dataProviders[name] = dataProvider;
+
+            return this;
         }
 
-        public void RegisterRunable(IRunable runable)
+        public INameManager RegisterRunable(IRunable runable)
         {
             var name = runable.Package == null
                 ? runable.Name
@@ -179,13 +193,15 @@ namespace OwinFramework.Pages.Framework.Managers
             var service = runable as IService;
             if (service != null)
                 lock (_services) _services.Add(name, service);
+
+            return this;
         }
 
         #endregion
 
         #region Resolution handlers
 
-        public void Bind()
+        public INameManager Bind()
         {
             List<Exception> exceptions = null;
 
@@ -253,30 +269,40 @@ namespace OwinFramework.Pages.Framework.Managers
                     throw exceptions[0];
                 throw new AggregateException("Multiple execptions were thrown during name resolution", exceptions);
             }
+
+            return this;
         }
 
-        public void AddResolutionHandler(NameResolutionPhase phase, Action resolutionAction)
+        public INameManager AddResolutionHandler(NameResolutionPhase phase, Action resolutionAction)
         {
             lock (_pendingActions)
                 _pendingActions.Add(new PendingAction(phase, resolutionAction));
+
+            return this;
         }
 
-        public void AddResolutionHandler(NameResolutionPhase phase, Action<INameManager> resolutionAction)
+        public INameManager AddResolutionHandler(NameResolutionPhase phase, Action<INameManager> resolutionAction)
         {
             lock (_pendingActions)
                 _pendingActions.Add(new PendingAction<INameManager>(phase, resolutionAction, this));
+
+            return this;
         }
 
-        public void AddResolutionHandler<T>(NameResolutionPhase phase, Action<INameManager, T> resolutionAction, T context)
+        public INameManager AddResolutionHandler<T>(NameResolutionPhase phase, Action<INameManager, T> resolutionAction, T context)
         {
             lock (_pendingActions)
                 _pendingActions.Add(new PendingAction<INameManager, T>(phase, resolutionAction, this, context));
+
+            return this;
         }
 
-        public void AddResolutionHandler<T1, T2>(NameResolutionPhase phase, Action<INameManager, T1, T2> resolutionAction, T1 param1, T2 param2)
+        public INameManager AddResolutionHandler<T1, T2>(NameResolutionPhase phase, Action<INameManager, T1, T2> resolutionAction, T1 param1, T2 param2)
         {
             lock (_pendingActions)
                 _pendingActions.Add(new PendingAction<INameManager, T1, T2>(phase, resolutionAction, this, param1, param2));
+
+            return this;
         }
 
         private abstract class PendingActionBase : IComparable<PendingActionBase>

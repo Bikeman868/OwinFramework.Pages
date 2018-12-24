@@ -31,16 +31,18 @@ namespace OwinFramework.Pages.Mocks.Managers
             return this;
         }
 
-        public void Bind()
+        public INameManager Bind()
         {
             foreach (var action in _pendingActions) action.Invoke();
             _pendingActions.Clear();
 
             foreach (var page in Pages.Values)
                 page.Initialize();
+
+            return this;
         }
 
-        public void Register(IElement element)
+        public INameManager Register(IElement element)
         {
             if (string.IsNullOrEmpty(element.Name))
                 element.Name = Guid.NewGuid().ToShortString();
@@ -57,9 +59,11 @@ namespace OwinFramework.Pages.Mocks.Managers
 
             var layout = element as ILayout;
             if (layout != null) Layouts.Add(name, layout);
+
+            return this;
         }
 
-        public void Register(IRunable runable)
+        public INameManager Register(IRunable runable)
         {
             var page = runable as IPage;
             if (page != null)
@@ -78,25 +82,31 @@ namespace OwinFramework.Pages.Mocks.Managers
 
                 Services.Add(service.Name, service);
             }
+
+            return this;
         }
 
-        public void Register(IModule module)
+        public INameManager Register(IModule module)
         {
             if (string.IsNullOrEmpty(module.Name))
                 module.Name = Guid.NewGuid().ToShortString();
 
             Modules.Add(module.Name, module);
+
+            return this;
         }
 
-        public void Register(IPackage package)
+        public INameManager Register(IPackage package)
         {
             if (string.IsNullOrEmpty(package.Name))
                 package.Name = Guid.NewGuid().ToShortString();
 
             Packages.Add(package.Name, package);
+
+            return this;
         }
 
-        public void Register(IDataProvider dataProvider)
+        public INameManager Register(IDataProvider dataProvider)
         {
             if (string.IsNullOrEmpty(dataProvider.Name))
                 dataProvider.Name = Guid.NewGuid().ToShortString();
@@ -106,42 +116,54 @@ namespace OwinFramework.Pages.Mocks.Managers
                 : dataProvider.Package.NamespaceName + ":" + dataProvider.Name;
 
             DataProviders[name] = dataProvider;
+
+            return this;
         }
 
-        public void Register(ITemplate template, string path)
+        public INameManager Register(ITemplate template, string path)
         {
             Templates[path] = template;
+
+            return this;
         }
 
-        public void AddResolutionHandler(
+        public INameManager AddResolutionHandler(
             NameResolutionPhase phase, 
             Action resolutionAction)
         {
             _pendingActions.Add(new PendingAction(phase, resolutionAction));
+
+            return this;
         }
 
-        public void AddResolutionHandler(
+        public INameManager AddResolutionHandler(
             NameResolutionPhase phase, 
             Action<INameManager> resolutionAction)
         {
             _pendingActions.Add(new PendingAction<INameManager>(phase, resolutionAction, this));
+
+            return this;
         }
 
-        public void AddResolutionHandler<T>(
+        public INameManager AddResolutionHandler<T>(
             NameResolutionPhase phase, 
             Action<INameManager, T> resolutionAction, 
             T context)
         {
             _pendingActions.Add(new PendingAction<INameManager, T>(phase, resolutionAction, this, context));
+
+            return this;
         }
 
-        public void AddResolutionHandler<T1, T2>(
+        public INameManager AddResolutionHandler<T1, T2>(
             NameResolutionPhase phase,
             Action<INameManager, T1, T2> resolutionAction,
             T1 element,
             T2 name)
         {
             _pendingActions.Add(new PendingAction<INameManager, T1, T2>(phase, resolutionAction, this, element, name));
+
+            return this;
         }
 
         public IComponent ResolveComponent(string name, IPackage package = null)

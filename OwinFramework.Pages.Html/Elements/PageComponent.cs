@@ -20,6 +20,8 @@ namespace OwinFramework.Pages.Html.Elements
             IPageData pageData)
             : base(dependencies, parent, component, pageData)
         {
+            pageData.BeginAddElement(Element);
+            pageData.EndAddElement(Element);
         }
 
         protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)

@@ -194,6 +194,27 @@ namespace OwinFramework.Pages.Framework.Builders
                     .RegionNesting(attributes.IsLayout.RegionNesting);
             }
 
+            if (!ReferenceEquals(attributes.DeployCsss, null))
+            {
+                foreach (var css in attributes.DeployCsss.OrderBy(c => c.Order))
+                {
+                    layout.DeployCss(css.CssSelector, css.CssStyle);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.DeployFunctions, null))
+            {
+                foreach (var function in attributes.DeployFunctions)
+                {
+                    layout.DeployFunction(
+                        function.ReturnType,
+                        function.FunctionName,
+                        function.Parameters,
+                        function.Body,
+                        function.IsPublic);
+                }
+            }
+
             if (!ReferenceEquals(attributes.NeedsDatas, null))
             {
                 foreach (var dataNeed in attributes.NeedsDatas)
@@ -248,27 +269,6 @@ namespace OwinFramework.Pages.Framework.Builders
             if (!ReferenceEquals(attributes.ChildStyle, null))
             {
                 layout.NestedStyle(attributes.ChildStyle.CssStyle);
-            }
-
-            if (!ReferenceEquals(attributes.DeployCsss, null))
-            {
-                foreach (var css in attributes.DeployCsss.OrderBy(c => c.Order))
-                {
-                    layout.DeployCss(css.CssSelector, css.CssStyle);
-                }
-            }
-
-            if (!ReferenceEquals(attributes.DeployFunctions, null))
-            { 
-                foreach(var function in attributes.DeployFunctions)
-                {
-                    layout.DeployFunction(
-                        function.ReturnType, 
-                        function.FunctionName, 
-                        function.Parameters, 
-                        function.Body, 
-                        function.IsPublic);
-                }
             }
 
             if (!ReferenceEquals(attributes.LayoutRegions, null))
@@ -393,6 +393,29 @@ namespace OwinFramework.Pages.Framework.Builders
                 page.CanonicalUrl(attributes.IsPage.CanonicalUrl);
             }
 
+            /*
+            if (!ReferenceEquals(attributes.DeployCsss, null))
+            {
+                foreach (var css in attributes.DeployCsss.OrderBy(c => c.Order))
+                {
+                    page.DeployCss(css.CssSelector, css.CssStyle);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.DeployFunctions, null))
+            {
+                foreach (var function in attributes.DeployFunctions)
+                {
+                    page.DeployFunction(
+                        function.ReturnType,
+                        function.FunctionName,
+                        function.Parameters,
+                        function.Body,
+                        function.IsPublic);
+                }
+            }
+            */
+
             if (!ReferenceEquals(attributes.NeedsDatas, null))
             {
                 foreach (var dataNeed in attributes.NeedsDatas)
@@ -501,6 +524,27 @@ namespace OwinFramework.Pages.Framework.Builders
             if (!ReferenceEquals(attributes.IsRegion, null))
             {
                 region.Name(attributes.IsRegion.Name);
+            }
+
+            if (!ReferenceEquals(attributes.DeployCsss, null))
+            {
+                foreach (var css in attributes.DeployCsss.OrderBy(c => c.Order))
+                {
+                    region.DeployCss(css.CssSelector, css.CssStyle);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.DeployFunctions, null))
+            {
+                foreach (var function in attributes.DeployFunctions)
+                {
+                    region.DeployFunction(
+                        function.ReturnType,
+                        function.FunctionName,
+                        function.Parameters,
+                        function.Body,
+                        function.IsPublic);
+                }
             }
 
             if (!ReferenceEquals(attributes.NeedsDatas, null))

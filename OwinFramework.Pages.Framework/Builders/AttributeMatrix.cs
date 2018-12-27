@@ -90,7 +90,8 @@ namespace OwinFramework.Pages.Framework.Builders
             Add<ChildContainerAttribute>("The [ChildContainerAttribute] only applies to elements that have other elements within them. To change the html element for this element add the [Container] attribute.")
                 .Valid<ILayoutDefinition>()
                 .Valid<ILayout>()
-                .Invalid<IPageDefinition>("Pages have a layout that defines the container.");
+                .Invalid<IPageDefinition>("Pages have a layout that defines the container.")
+                .Invalid<IRegionDefinition>("Regions define their child container in the [Repeat] attribute.");
 
             Add<ChildStyleAttribute>("The [ChildStyleAttribute] only applies to elements that have other elements within them.")
                 .Valid<ILayoutDefinition>()
@@ -112,12 +113,14 @@ namespace OwinFramework.Pages.Framework.Builders
             Add<DeployCssAttribute>()
                 .Valid<IComponentDefinition>()
                 .Valid<ILayoutDefinition>()
-                .Invalid<IRegionDefinition>("Regions can not deploy CSS in this version."); // TODO: Regions should be able to deploy CSS
+                .Valid<IPageDefinition>()
+                .Valid<IRegionDefinition>();
 
             Add<DeployFunctionAttribute>()
                 .Valid<IComponentDefinition>()
                 .Valid<ILayoutDefinition>()
-                .Invalid<IRegionDefinition>("Regions can not deploy JavaScript in this version."); // TODO: Regions should be able to deploy JavaScript
+                .Valid<IPageDefinition>()
+                .Valid<IRegionDefinition>();
 
             Add<DeployedAsAttribute>()
                 .Valid<IComponentDefinition>()

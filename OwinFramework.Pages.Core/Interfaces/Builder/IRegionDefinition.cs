@@ -53,6 +53,23 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition DeployIn(string moduleName);
 
         /// <summary>
+        /// Adds a static asset to this component
+        /// </summary>
+        /// <param name="cssSelector">The selector for this style</param>
+        /// <param name="cssStyle">Style to apply when this selector matches elements</param>
+        IRegionDefinition DeployCss(string cssSelector, string cssStyle);
+
+        /// <summary>
+        /// Specifies that this layout is deployed as part of a module
+        /// </summary>
+        /// <param name="returnType">Optional return type of this function. For example "void"</param>
+        /// <param name="functionName">The name of this function. For example "getData"</param>
+        /// <param name="parameters">TOptional parameters to this function. For example "id, name"</param>
+        /// <param name="functionBody">The body of this function. For example "alert('Hello, world');"</param>
+        /// <param name="isPublic">Pass true to export this function from the package namespace</param>
+        IRegionDefinition DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic);
+
+        /// <summary>
         /// Overrides the default asset deployment scheme for this region
         /// </summary>
         IRegionDefinition AssetDeployment(AssetDeployment assetDeployment);

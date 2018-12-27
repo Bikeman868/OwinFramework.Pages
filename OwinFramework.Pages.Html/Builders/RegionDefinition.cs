@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -8,6 +9,8 @@ using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Interfaces;
 using OwinFramework.Pages.Html.Runtime;
+using System.Collections.Generic;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Builders
 {
@@ -18,6 +21,9 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IFluentBuilder _fluentBuilder;
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly Region _region;
+        private readonly List<FunctionDefinition> _functionDefinitions;
+        private readonly List<CssDefinition> _cssDefinitions;
+
         private string _tagName = "div";
         private string _style;
         private string[] _classNames;
@@ -39,6 +45,9 @@ namespace OwinFramework.Pages.Html.Builders
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
             _componentDependenciesFactory = componentDependenciesFactory;
+
+            _cssDefinitions = new List<CssDefinition>();
+            _functionDefinitions = new List<FunctionDefinition>();
 
             if (package != null)
                 _region.Package = package;
@@ -268,6 +277,44 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        IRegionDefinition IRegionDefinition.DeployCss(string cssSelector, string cssStyle)
+        {
+            if (string.IsNullOrEmpty(cssSelector))
+                throw new ComponentBuilderException("No CSS selector is specified for component CSS asset");
+
+            if (string.IsNullOrEmpty(cssStyle))
+                throw new ComponentBuilderException("No CSS style is specified for component CSS asset");
+
+            var cssDefinition = new CssDefinition
+            {
+                Selector = cssSelector.Trim(),
+                Style = cssStyle.Trim()
+            };
+
+            if (!cssDefinition.Style.EndsWith(";"))
+                cssDefinition.Style += ";";
+
+            _cssDefinitions.Add(cssDefinition);
+
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic)
+        {
+            var functionDefinition = new FunctionDefinition
+            {
+                ReturnType = returnType,
+                FunctionName = functionName,
+                Parameters = parameters,
+                Body = functionBody,
+                IsPublic = isPublic
+            };
+
+            _functionDefinitions.Add(functionDefinition);
+
+            return this;
+        }
+
         IRegionDefinition IRegionDefinition.NeedsComponent(string componentName)
         {
             if (string.IsNullOrEmpty(componentName))
@@ -307,24 +354,67 @@ namespace OwinFramework.Pages.Html.Builders
 
         IRegion IRegionDefinition.Build()
         {
-            _nameManager.AddResolutionHandler(
-                NameResolutionPhase.ResolveElementReferences,
-                nm =>
-                {
-                    if (!string.IsNullOrEmpty(_tagName))
+            if (_cssDefinitions.Count > 0)
+            {
+                _nameManager.AddResolutionHandler(
+                    NameResolutionPhase.ResolveAssetNames,
+                    () =>
+                    {
+                        _region.CssRules = _cssDefinitions
+                            .Select(d =>
+                            {
+                                d.Selector = _htmlHelper.NamespaceCssSelector(d.Selector, _region.Package);
+                                return d;
+                            })
+                            .Select(d =>
+                            {
+                                Action<ICssWriter> writeAction = w => w.WriteRule(d.Selector, d.Style);
+                                return writeAction;
+                            })
+                            .ToArray();
+                    });
+            }
+
+            if (_functionDefinitions.Count > 0)
+            {
+                _nameManager.AddResolutionHandler(
+                    NameResolutionPhase.ResolveAssetNames,
+                    () =>
+                    {
+                        _region.JavascriptFunctions = _functionDefinitions
+                            .Select(d =>
+                            {
+                                Action<IJavascriptWriter> writeAction = w => w.WriteFunction(
+                                    d.FunctionName, d.Parameters, d.Body, d.ReturnType, _region.Package, d.IsPublic);
+                                return writeAction;
+                            })
+                            .ToArray();
+                    });
+            }
+
+            if (!string.IsNullOrEmpty(_tagName))
+            {
+                _nameManager.AddResolutionHandler(
+                    NameResolutionPhase.ResolveElementReferences,
+                    nm =>
                     {
                         var attributes = _htmlHelper.StyleAttributes(_style, _classNames, _region.Package);
-                        _region.WriteOpen = w => {w.WriteOpenTag(_tagName, attributes); w.WriteLine();};
+                        _region.WriteOpen = w => { w.WriteOpenTag(_tagName, attributes); w.WriteLine(); };
                         _region.WriteClose = w => { w.WriteCloseTag(_tagName); w.WriteLine(); };
-                    }
+                    });
+            }
 
-                    if (!string.IsNullOrEmpty(_childTagName))
+            if (!string.IsNullOrEmpty(_childTagName))
+            {
+                _nameManager.AddResolutionHandler(
+                    NameResolutionPhase.ResolveElementReferences,
+                    nm =>
                     {
                         var attributes = _htmlHelper.StyleAttributes(_childStyle, _childClassNames, _region.Package);
                         _region.WriteChildOpen = w => { w.WriteOpenTag(_childTagName, attributes); w.WriteLine(); };
                         _region.WriteChildClose = w => { w.WriteCloseTag(_childTagName); w.WriteLine(); };
-                    }
-                });
+                    });
+            }
 
             _fluentBuilder.Register(_region);
             return _region;

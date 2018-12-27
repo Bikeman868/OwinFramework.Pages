@@ -28,6 +28,20 @@ namespace OwinFramework.Pages.Html.Elements
         public Action<IHtmlWriter> WriteChildOpen { get; set; }
         public Action<IHtmlWriter> WriteChildClose { get; set; }
 
+        public Action<ICssWriter>[] CssRules
+        {
+            get { return _assetDeploymentMixin.CssRules; }
+            set { _assetDeploymentMixin.CssRules = value; }
+        }
+
+        public Action<IJavascriptWriter>[] JavascriptFunctions
+        {
+            get { return _assetDeploymentMixin.JavascriptFunctions; }
+            set { _assetDeploymentMixin.JavascriptFunctions = value; }
+        }
+
+        private AssetDeploymentMixin _assetDeploymentMixin;
+
         private Type _repeatType;
         private Type _listType;
 
@@ -62,6 +76,12 @@ namespace OwinFramework.Pages.Html.Elements
             // this framework!!
 
             _dependencies = dependencies;
+
+            _assetDeploymentMixin = new AssetDeploymentMixin(
+                this,
+                dependencies.CssWriterFactory,
+                dependencies.JavascriptWriterFactory,
+                () => Name);
 
             WriteOpen = w => { };
             WriteClose = w => { };
@@ -241,7 +261,23 @@ namespace OwinFramework.Pages.Html.Elements
             if (pageArea == PageArea.Body)
                 WriteClose(context.Html);
 
+            _assetDeploymentMixin.WritePageArea(context, pageArea);
+
             return result;
+        }
+
+        #endregion
+
+        #region Asset deployment
+
+        public override IWriteResult WriteStaticCss(ICssWriter writer)
+        {
+            return _assetDeploymentMixin.WriteStaticCss(writer);
+        }
+
+        public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
+        {
+            return _assetDeploymentMixin.WriteStaticJavascript(writer);
         }
 
         #endregion

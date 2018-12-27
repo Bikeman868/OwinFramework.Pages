@@ -158,11 +158,17 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
             System.Diagnostics.Trace.WriteLine("Page '" + Name + "' asset deployment");
 #endif
+            var elements = new HashSet<string>();
+
             foreach (var element in data.Elements)
             {
                 var name = string.IsNullOrEmpty(element.Element.Name)
                     ? element.Element.GetType().Name
                     : element.Element.Name;
+
+                var elementUniqueName = element.Element.ElementType.ToString() + ":" + name;
+                if (!elements.Add(elementUniqueName))
+                    continue;
 
                 string deployment;
                 switch (element.AssetDeployment)
@@ -466,10 +472,18 @@ namespace OwinFramework.Pages.Html.Runtime
             try
             {
 #endif
-                if (pageArea == PageArea.Title && !ReferenceEquals(TitleFunc, null))
+                if (pageArea == PageArea.Title)
                 {
-                    renderContext.Html.Write(TitleFunc(renderContext));
-                    return writeResult;
+                    if (ReferenceEquals(TitleFunc, null))
+                    {
+                        if (_layout != null)
+                            writeResult.Add(_layout.WritePageArea(renderContext, PageArea.Title));
+                    }
+                    else
+                    {
+                        renderContext.Html.Write(TitleFunc(renderContext));
+                        return writeResult;
+                    }
                 }
 
                 switch (pageArea)
@@ -500,9 +514,6 @@ namespace OwinFramework.Pages.Html.Runtime
                             return writeResult;
                     }
                 }
-
-                if (!ReferenceEquals(_layout, null))
-                    writeResult.Add(_layout.WritePageArea(renderContext, pageArea));
 #if TRACE
             }
             finally
@@ -515,10 +526,23 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public virtual IWriteResult WriteStylesArea(IRenderContext renderContext)
         {
+#if TRACE
+            renderContext.Trace(() => "Writing styles");
+            renderContext.TraceIndent();
+#endif
             var html = renderContext.Html;
 
-            if (_inPageCssLines != null && _inPageCssLines.Count > 0)
+            if (_inPageCssLines == null || _inPageCssLines.Count == 0)
             {
+#if TRACE
+                renderContext.Trace(() => "page has no static CSS");
+#endif
+            }
+            else
+            {
+#if TRACE
+                renderContext.Trace(() => _inPageCssLines.Count + " lines of static in-page styles");
+#endif
                 if (renderContext.IncludeComments)
                     html.WriteComment("static in-page styles");
 
@@ -538,6 +562,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 if (!ReferenceEquals(_pageComponents, null))
                 {
+#if TRACE
+                    renderContext.Trace(() => _pageComponents.Length + " non-visual components");
+#endif
                     for (var i = 0; i < _pageComponents.Length; i++)
                     {
                         var pageComponent = _pageComponents[i];
@@ -546,12 +573,20 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
 
                 if (!ReferenceEquals(_layout, null))
+                {
+#if TRACE
+                    renderContext.Trace(() => "layout styles");
+#endif
                     writeResult.Add(_layout.WriteStyles(cssWriter));
+                }
 
                 writeResult.Wait();
 
                 if (cssWriter.HasContent)
                 {
+#if TRACE
+                    renderContext.Trace(() => "page has dynamic styles");
+#endif
                     if (renderContext.IncludeComments)
                         html.WriteComment("dynamic styles");
 
@@ -563,17 +598,48 @@ namespace OwinFramework.Pages.Html.Runtime
                     html.WriteCloseTag("style");
                     html.WriteLine();
                 }
+                else
+                {
+#if TRACE
+                    renderContext.Trace(() => "page does not have any dynamic styles");
+#endif
+                }
             }
+
+#if TRACE
+            renderContext.TraceOutdent();
+#endif
+
+            if (!ReferenceEquals(_layout, null))
+                return _layout.WritePageArea(renderContext, PageArea.Styles);
 
             return WriteResult.Continue();
         }
 
+
+        /// <summary>
+        /// Override this method to take over how the styles part of 
+        /// the page head is written
+        /// </summary>
         public virtual IWriteResult WriteScriptsArea(IRenderContext renderContext)
         {
+#if TRACE
+            renderContext.Trace(() => "Writing JavaScript functions");
+            renderContext.TraceIndent();
+#endif
             var html = renderContext.Html;
 
-            if (_inPageScriptLines != null && _inPageScriptLines.Count > 0)
+            if (_inPageScriptLines == null || _inPageScriptLines.Count == 0)
             {
+#if TRACE
+                renderContext.Trace(() => "page has no static JavaScript");
+#endif
+            }
+            else
+            {
+#if TRACE
+                renderContext.Trace(() => "page has " + _inPageScriptLines.Count + " lines of static JavaScript");
+#endif
                 if (renderContext.IncludeComments)
                     html.WriteComment("static in-page javascript");
 
@@ -589,8 +655,11 @@ namespace OwinFramework.Pages.Html.Runtime
             {
                 var writeResult = WriteResult.Continue();
 
-                if (!ReferenceEquals(_pageComponents, null))
+                if (!ReferenceEquals(_pageComponents, null) && _pageComponents.Length > 0)
                 {
+#if TRACE
+                    renderContext.Trace(() => _pageComponents.Length + " non-visual components");
+#endif
                     for (var i = 0; i < _pageComponents.Length; i++)
                     {
                         var pageComponent = _pageComponents[i];
@@ -599,12 +668,20 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
 
                 if (!ReferenceEquals(_layout, null))
+                {
+#if TRACE
+                    renderContext.Trace(() => "layout JavaScript");
+#endif
                     writeResult.Add(_layout.WriteScripts(javascriptWriter));
+                }
 
                 writeResult.Wait();
 
                 if (javascriptWriter.HasContent)
                 {
+#if TRACE
+                    renderContext.Trace(() => "page has dynamic JavaScript");
+#endif
                     if (renderContext.IncludeComments)
                         html.WriteComment("dynamic javascript");
 
@@ -612,11 +689,28 @@ namespace OwinFramework.Pages.Html.Runtime
                     javascriptWriter.ToHtml(html);
                     html.WriteScriptClose();
                 }
+                else
+                {
+#if TRACE
+                    renderContext.Trace(() => "page does not have any dynamic JavaScript");
+#endif
+                }
             }
+
+#if TRACE
+            renderContext.TraceOutdent();
+#endif
+
+            if (!ReferenceEquals(_layout, null))
+                return _layout.WritePageArea(renderContext, PageArea.Scripts);
 
             return WriteResult.Continue();
         }
 
+        /// <summary>
+        /// Override this method to take over how the head part of 
+        /// the page is written
+        /// </summary>
         public virtual IWriteResult WriteHeadArea(IRenderContext context)
         {
             var html = context.Html;
@@ -627,11 +721,15 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                 context.Trace(() => "Writing link to website css " + websiteStylesUrl);
 #endif
-                html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", websiteStylesUrl.ToString());
+                html.WriteUnclosedElement(
+                    "link", 
+                    "rel", "stylesheet", 
+                    "type", "text/css", 
+                    "href", websiteStylesUrl.ToString());
                 html.WriteLine();
             }
 
-            if (_referencedModules != null)
+            if (_referencedModules != null && _referencedModules.Count > 0)
             {
 #if TRACE
                 context.Trace(() => "Writing links to css for referenced modules");
@@ -645,11 +743,17 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                         context.Trace(() => "Writing link to css for module " + moduleStylesUrl);
 #endif
-                        html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", moduleStylesUrl.ToString());
+                        html.WriteUnclosedElement(
+                            "link", 
+                            "rel", "stylesheet", 
+                            "type", "text/css", 
+                            "href", moduleStylesUrl.ToString());
                         html.WriteLine();
                     }
                 }
+#if TRACE
                 context.TraceOutdent();
+#endif
             }
 
             var pageStylesUrl = _dependencies.AssetManager.GetPageAssetUrl(this, AssetType.Style);
@@ -658,7 +762,11 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                 context.Trace(() => "Writing links to page specific css " + pageStylesUrl);
 #endif
-                html.WriteUnclosedElement("link", "rel", "stylesheet", "type", "text/css", "href", pageStylesUrl.ToString());
+                html.WriteUnclosedElement(
+                    "link", 
+                    "rel", "stylesheet", 
+                    "type", "text/css", 
+                    "href", pageStylesUrl.ToString());
                 html.WriteLine();
             }
 
@@ -668,7 +776,10 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                 context.Trace(() => "Writing link to website JavaScript " + websiteScriptUrl);
 #endif
-                html.WriteElement("script", "type", "text/javascript", "src", websiteScriptUrl.ToString());
+                html.WriteElement(
+                    "script", null,
+                    "type", "text/javascript", 
+                    "src", websiteScriptUrl.ToString());
                 html.WriteLine();
             }
 
@@ -687,7 +798,10 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                         context.Trace(() => "Writing link to JavaScript for module " + moduleScriptUrl);
 #endif
-                        html.WriteElement("script", null, "type", "text/javascript", "src", moduleScriptUrl.ToString());
+                        html.WriteElement(
+                            "script", null, 
+                            "type", "text/javascript", 
+                            "src", moduleScriptUrl.ToString());
                         html.WriteLine();
                     }
                 }
@@ -703,20 +817,39 @@ namespace OwinFramework.Pages.Html.Runtime
 #if TRACE
                 context.Trace(() => "Writing link to page specific JavaScript " + pageScriptUrl);
 #endif
-                html.WriteElement("script", null, "type", "text/javascript", "src", pageScriptUrl.ToString());
+                html.WriteElement(
+                    "script", null, 
+                    "type", "text/javascript", 
+                    "src", pageScriptUrl.ToString());
                 html.WriteLine();
             }
 
+            if (!ReferenceEquals(_layout, null))
+                return _layout.WritePageArea(context, PageArea.Head);
+
             return WriteResult.Continue();
         }
 
+        /// <summary>
+        /// Override this method to replace the body of the page with custom Html
+        /// </summary>
         public virtual IWriteResult WriteBodyArea(IRenderContext renderContext)
         {
+            if (!ReferenceEquals(_layout, null))
+                return _layout.WritePageArea(renderContext, PageArea.Body);
+
             return WriteResult.Continue();
         }
 
+        /// <summary>
+        /// Override this method to replace the JavaScript initialization area at the 
+        /// bottom of the page with your custom implementation
+        /// </summary>
         public virtual IWriteResult WriteInitializationArea(IRenderContext renderContext)
         {
+            if (!ReferenceEquals(_layout, null))
+                return _layout.WritePageArea(renderContext, PageArea.Initialization);
+
             return WriteResult.Continue();
         }
 

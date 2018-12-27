@@ -51,23 +51,30 @@ namespace Sample3.UseCase1
 
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
             ninject.Get<OwinFramework.Pages.Framework.BuildEngine>().Install(fluentBuilder);
-            
-            fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
+
+            fluentBuilder.Register(typeof(ApplicationPackage), t => ninject.Get(t));
+
+            fluentBuilder.Register(typeof(Page1), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(Page1BodyComponent), t => ninject.Get(t));
+
+            fluentBuilder.Register(typeof(Page2), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(Page2BodyLayout), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(Page2BodyRegion), t => ninject.Get(t));
+
+            fluentBuilder.Register(typeof(BasePageLayout), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(HeaderRegion), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(BodyRegion), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(FooterRegion), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(HeaderComponent), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(FooterComponent), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(PersonComponent), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(AddressComponent), t => ninject.Get(t));
+
+            fluentBuilder.Register(typeof(ApplicationInfoDataProvider), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(PersonListProvider), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(PersonAddressProvider), t => ninject.Get(t));
 
             nameManager.Bind();
-
-            // This code dynamically adds a route from the root path to the 'page1' page from the 'usecase1' package
-            // In a regular application these routes would be defined statically as attributes on the pages. This
-            // project is unusual because it contains multiple use cases which are essentially all different websites
-            // built into one assembly
-            var package = nameManager.ResolvePackage("usecase1");
-            var page1 = nameManager.ResolvePage("page1", package);
-            requestRouter.Register(
-                page1,
-                new FilterAllFilters(
-                    new FilterByMethod(Method.Head, Method.Get),
-                    new FilterByPath("/")),
-                    -10);
 
             #endregion
         }
@@ -79,7 +86,7 @@ namespace Sample3.UseCase1
      */
 
     [IsPage("page1")]
-    [Route("/uc1/page1", Method.Get)]
+    [Route("/", Method.Get)]
     [RegionComponent("body", "page1_body")]
     internal class Page1 : PageBase { }
 

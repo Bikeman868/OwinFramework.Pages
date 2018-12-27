@@ -22,8 +22,20 @@ namespace OwinFramework.Pages.Html.Elements
         protected readonly IComponentDependenciesFactory Dependencies;
 
         public Action<IRenderContext>[] HtmlWriters;
-        public Action<ICssWriter>[] CssRules;
-        public Action<IJavascriptWriter>[] JavascriptFunctions;
+
+        public Action<ICssWriter>[] CssRules 
+        {
+            get { return _assetDeploymentMixin.CssRules; }
+            set { _assetDeploymentMixin.CssRules = value; }
+        }
+
+        public Action<IJavascriptWriter>[] JavascriptFunctions
+        {
+            get { return _assetDeploymentMixin.JavascriptFunctions; }
+            set { _assetDeploymentMixin.JavascriptFunctions = value; }
+        }
+
+        private AssetDeploymentMixin _assetDeploymentMixin;
 
         public Component(IComponentDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
@@ -33,6 +45,12 @@ namespace OwinFramework.Pages.Html.Elements
             // this framework!!
 
             Dependencies = dependencies;
+
+            _assetDeploymentMixin = new AssetDeploymentMixin(
+                this, 
+                dependencies.CssWriterFactory,
+                dependencies.JavascriptWriterFactory,
+                GetCommentName);
         }
 
         protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
@@ -44,18 +62,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         public override IEnumerable<PageArea> GetPageAreas()
         {
-            if (AssetDeployment != AssetDeployment.InPage)
-                return base.GetPageAreas().ToList();
-
-            var pageAreas = base.GetPageAreas().ToList();
-
-            if (CssRules != null && CssRules.Length > 0)
-                pageAreas.Add(PageArea.Styles);
-
-            if (JavascriptFunctions != null && JavascriptFunctions.Length > 0)
-                pageAreas.Add(PageArea.Scripts);
-
-            return pageAreas;
+            return _assetDeploymentMixin.GetPageAreas(base.GetPageAreas());
         }
 
         protected virtual string GetCommentName()
@@ -80,81 +87,20 @@ namespace OwinFramework.Pages.Html.Elements
                         HtmlWriters[i](context);
                 }
             }
-
-            if (AssetDeployment == AssetDeployment.InPage)
-            {
-                if (pageArea == PageArea.Styles)
-                {
-                    if (CssRules != null && CssRules.Length > 0)
-                    {
-                        var writer = Dependencies.CssWriterFactory.Create(context);
-
-                        for (var i = 0; i < CssRules.Length; i++)
-                            CssRules[i](writer);
-
-                        if (context.IncludeComments)
-                            context.Html.WriteComment("css rules for " + GetCommentName());
-
-                        context.Html.WriteOpenTag("style");
-                        context.Html.WriteLine();
-                        writer.ToHtml(context.Html);
-                        context.Html.WriteCloseTag("style");
-                        context.Html.WriteLine();
-                    }
-                }
-                else if (pageArea == PageArea.Scripts)
-                {
-                    if (JavascriptFunctions != null && JavascriptFunctions.Length > 0)
-                    {
-                        var writer = Dependencies.JavascriptWriterFactory.Create(context);
-
-                        for (var i = 0; i < JavascriptFunctions.Length; i++)
-                            JavascriptFunctions[i](writer);
-
-                        if (context.IncludeComments)
-                            context.Html.WriteComment("javascript functions for " + GetCommentName());
-
-                        context.Html.WriteScriptOpen();
-                        writer.ToHtml(context.Html);
-                        context.Html.WriteScriptClose();
-                    }
-                }
-            }
+            
+            _assetDeploymentMixin.WritePageArea(context, pageArea);
 
             return WriteResult.Continue();
         }
 
         public override IWriteResult WriteStaticCss(ICssWriter writer)
         {
-            if (CssRules != null && CssRules.Length > 0)
-            {
-                if (writer.IncludeComments)
-                    writer.WriteComment("css rules for " + GetCommentName());
-
-                for (var i = 0; i < CssRules.Length; i++)
-                    CssRules[i](writer);
-            }
-
-            return WriteResult.Continue();
+            return _assetDeploymentMixin.WriteStaticCss(writer);
         }
 
         public override IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
         {
-            if (JavascriptFunctions != null && JavascriptFunctions.Length > 0)
-            {
-                if (writer.IncludeComments)
-                {
-                    writer.WriteComment(
-                        "javascript functions for " + GetCommentName(),
-                        CommentStyle.SingleLineC,
-                        Package);
-                }
-
-                for (var i = 0; i < JavascriptFunctions.Length; i++)
-                    JavascriptFunctions[i](writer);
-            }
-
-            return WriteResult.Continue();
+            return _assetDeploymentMixin.WriteStaticJavascript(writer);
         }
     }
 }

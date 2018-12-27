@@ -1,5 +1,6 @@
 ﻿using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Core.Interfaces.Builder
 {
@@ -39,5 +40,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Returns a factory that can construct data scopes
         /// </summary>
         IDataScopeFactory DataScopeFactory { get; }
+
+        /// <summary>
+        /// Returns a factory that can construct css writers
+        /// </summary>
+        ICssWriterFactory CssWriterFactory { get; }
+
+        /// <summary>
+        /// Returns a factory that can construct css writers
+        /// </summary>
+        IJavascriptWriterFactory JavascriptWriterFactory { get; }
     }
 }

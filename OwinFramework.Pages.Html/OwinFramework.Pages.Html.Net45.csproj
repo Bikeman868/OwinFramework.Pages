@@ -53,6 +53,7 @@
     <Compile Include="Builders\CssDefinition.cs" />
     <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
+    <Compile Include="Elements\AssetDeploymentMixin.cs" />
     <Compile Include="Elements\HtmlComponent.cs" />
     <Compile Include="Elements\PageComponent.cs" />
     <Compile Include="Elements\PageElementDependencies.cs" />

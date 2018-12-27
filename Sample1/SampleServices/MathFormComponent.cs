@@ -177,6 +177,7 @@ namespace Sample1.SampleServices
                 html.WriteUnclosedElement("input", "type", "submit", "value", "Subtract");
 
                 html.WriteCloseTag("form");
+                html.WriteUnclosedElement("hr");
 
                 // Multiply form
 
@@ -196,6 +197,7 @@ namespace Sample1.SampleServices
                 html.WriteUnclosedElement("input", "type", "submit", "value", "Multiply");
 
                 html.WriteCloseTag("form");
+                html.WriteUnclosedElement("hr");
 
                 // Divide form
 
@@ -215,6 +217,7 @@ namespace Sample1.SampleServices
                 html.WriteUnclosedElement("input", "type", "submit", "value", "Divide");
 
                 html.WriteCloseTag("form");
+                html.WriteUnclosedElement("hr");
 
                 var result = context.OwinContext.Get<ArithmeticResult>(typeof(ArithmeticResult).FullName);
                 if (result != null)

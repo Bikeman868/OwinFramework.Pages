@@ -1,5 +1,6 @@
+* Bugs
+
 * Missing MVP features
-  - Allow adding [DeployCss] attribute to regions
 
 * Future features
   - Support for multiple instances of pages middleware on 

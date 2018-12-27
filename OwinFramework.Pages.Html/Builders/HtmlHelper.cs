@@ -55,9 +55,9 @@ namespace OwinFramework.Pages.Html.Builders
         public string NamespaceCssSelector(string selector, IPackage package)
         {
             if (package == null || string.IsNullOrEmpty(package.NamespaceName))
-                return selector.Replace(".{ns}_", ".");
+                return selector.Replace("{ns}_", "");
 
-            return selector.Replace(".{ns}_", "." + package.NamespaceName + "_");
+            return selector.Replace("{ns}_", package.NamespaceName + "_");
         }
     }
 }

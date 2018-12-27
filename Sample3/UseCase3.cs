@@ -49,7 +49,10 @@ namespace Sample3.UseCase3
             ninject.Get<OwinFramework.Pages.Framework.BuildEngine>().Install(fluentBuilder);
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
             
-            fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(Page1), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(PageLayout), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(DivRegion), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(ApplicationPackage), t => ninject.Get(t));
 
             var uriLoader = ninject.Get<UriLoader>();
             var markdownTemplateParser = ninject.Get<MarkdownParser>();
@@ -61,24 +64,12 @@ namespace Sample3.UseCase3
 
             nameManager.Bind();
 
-            // This code dynamically adds a route from the root path to the 'home' page from the 'usecase3' package
-            // In a regular application these routes would be defined statically as attributes on the pages. This
-            // project is unusual because it contains multiple use cases which are essentially all different websites
-            // built into one assembly
-            var package = nameManager.ResolvePackage("usecase3");
-            var page1 = nameManager.ResolvePage("home", package);
-            requestRouter.Register(
-                page1,
-                new FilterAllFilters(
-                    new FilterByMethod(Method.Head, Method.Get),
-                    new FilterByPath("/")),
-                    -10);
             #endregion
         }
     }
 
     [IsPage("home")]
-    [Route("/uc3", Method.Get)]
+    [Route("/", Method.Get)]
     [UsesLayout("layout")]
     [RegionTemplate("main", "/url/form-identification")]
     internal class Page1 : ApplicationElement { }

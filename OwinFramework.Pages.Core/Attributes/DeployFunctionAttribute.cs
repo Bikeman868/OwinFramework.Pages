@@ -3,13 +3,13 @@
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Attach this attribute to an element to deploy a static css asset with this element
+    /// Attach this attribute to an element to deploy a static JavaScript function with this element
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class DeployFunctionAttribute: Attribute
     {
         /// <summary>
-        /// Constructs and initializes an attribute that specifies a static CSS asset to deploy
+        /// Constructs and initializes an attribute that specifies a static JavaScript function with this element
         /// </summary>
         /// <param name="returnType">Optional function return type, for exampple "void"</param>
         /// <param name="functionName">The name of the function</param>

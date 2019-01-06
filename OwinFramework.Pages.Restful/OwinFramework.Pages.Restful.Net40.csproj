@@ -59,6 +59,8 @@
     <Compile Include="Runtime\ServiceDependenciesFactory.cs" />
     <Compile Include="Runtime\ServiceDependencies.cs" />
     <Compile Include="Runtime\ServiceEndpoint.cs" />
+    <Compile Include="Serializers\SerializerBase.cs" />
+    <Compile Include="Serializers\PlainText.cs" />
     <Compile Include="Serializers\Json.cs" />
   </ItemGroup>
   <ItemGroup>

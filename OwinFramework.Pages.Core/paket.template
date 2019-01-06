@@ -1,8 +1,8 @@
 type file
 id Owin.Framework.Pages.Core
-version 1.0.0-alpha-021
+version 1.0.0-alpha-022
 authors Martin Halliday
-copyright Martin Halliday 2018
+copyright Martin Halliday 2019
 description
   Defines the interfaces, enums and custom attributes that the other
   packages from Owin.Pages.Framework depend on.

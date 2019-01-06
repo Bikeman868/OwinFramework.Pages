@@ -66,6 +66,8 @@
     <Compile Include="Runtime\ServiceDependencies.cs" />
     <Compile Include="Runtime\ServiceEndpoint.cs" />
     <Compile Include="Serializers\Json.cs" />
+    <Compile Include="Serializers\PlainText.cs" />
+    <Compile Include="Serializers\SerializerBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net45.csproj">

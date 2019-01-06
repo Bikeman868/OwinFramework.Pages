@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Restful.Serializers
     /// <summary>
     /// This is the default serializer, it sends the response in Json format
     /// </summary>
-    public class Json: IRequestDeserializer, IResponseSerializer
+    public class Json : SerializerBase, IRequestDeserializer, IResponseSerializer
     {
         protected JsonSerializerSettings Settings;
 
@@ -75,7 +75,7 @@ namespace OwinFramework.Pages.Restful.Serializers
                 var value = new JValue(data);
                 json = value.ToString();
             }
-            else if (type.IsArray || typeof(IEnumerable).IsAssignableFrom(type))
+            else if (type.IsArray || typeof(IList).IsAssignableFrom(type))
             {
                 var value = new JArray(data);
                 json = value.ToString();
@@ -102,71 +102,5 @@ namespace OwinFramework.Pages.Restful.Serializers
             return context.Response.WriteAsync(response.ToString(Formatting.None));
         }
 
-        public Task Redirect(IOwinContext context, Uri url, HttpStatusCode statusCode)
-        {
-            string message;
-            switch (statusCode)
-            {
-                case HttpStatusCode.TemporaryRedirect:
-                    message = "Content temporarily moved, see Location header";
-                    break;
-                case HttpStatusCode.MovedPermanently:
-                    message = "Content permenantly moved, see Location header";
-                    break;
-                case HttpStatusCode.Found:
-                    message = "Content found, see Location header";
-                    break;
-                default:
-                    message = statusCode.ToString();
-                    break;
-            }
-
-            var location = url.ToString();
-
-            context.Response.Headers["Location"] = location;
-            context.Response.StatusCode = (int)statusCode;
-            context.Response.ReasonPhrase = message;
-
-            var response = new JObject 
-            {
-                { "success", true }, 
-                { "redirect", true }, 
-                { "location", location }, 
-                { "message", message }
-            };
-            return context.Response.WriteAsync(response.ToString(Formatting.None));
-        }
-
-        public void AddHeader(IOwinContext context, string name, string value)
-        {
-            context.Response.Headers[name] = value;
-        }
-
-        public void SetCookie(
-            IOwinContext context, 
-            string name, 
-            string value, 
-            TimeSpan expiry,
-            string domain = null,
-            bool secure = false)
-        {
-            var options = new CookieOptions 
-            { 
-                Domain = domain, 
-                Expires = DateTime.UtcNow + expiry, 
-                Secure = secure
-            };
-            context.Response.Cookies.Append(name, value, options);
-        }
-
-        public void DeleteCookie(IOwinContext context, string name, string domain = null)
-        {
-            var options = new CookieOptions
-            {
-                Domain = domain,
-                Expires = DateTime.UtcNow.AddDays(-1),
-            };
-            context.Response.Cookies.Append(name, string.Empty, options);
-        }
     }
 }

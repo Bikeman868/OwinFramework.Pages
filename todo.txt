@@ -1,6 +1,10 @@
 * Bugs
+  - When service endpoints do not specify a serializer but the service
+    does, it should use the serializer defined by the service
 
 * Missing MVP features
+  - Service endpoints need to be able to return a future (Task<T>)
+    and have the T serialized to the response only after the task completes
 
 * Future features
   - Support for multiple instances of pages middleware on 

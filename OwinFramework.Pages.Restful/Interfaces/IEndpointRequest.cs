@@ -43,6 +43,15 @@ namespace OwinFramework.Pages.Restful.Interfaces
         T Parameter<T>(string name);
 
         /// <summary>
+        /// Retrieves the value of a parameter passed to the service.
+        /// You must declare these parameters by attaching EndpointParamater
+        /// attributes the service endpoint method before they will be available
+        /// </summary>
+        /// <param name="name">Case insensitive name of the parameter</param>
+        /// <returns>The value of the parameter</returns>
+        object GetParameter(string name);
+
+        /// <summary>
         /// Returns a segment from the URL path only parsing the URL on the
         /// first request.
         /// </summary>

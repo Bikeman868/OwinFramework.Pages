@@ -25,25 +25,26 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint(Analytics = AnalyticsLevel.Full)]
-        [EndpointParameter(
-            "a", typeof(AnyValue<double>), 
-            EndpointParameterType.FormField,
-            Description = "The first number to add")]
-        [EndpointParameter(
-            "b", typeof(AnyValue<double>), 
-            EndpointParameterType.FormField,
-            Description = "The second number to add")]
-        [EndpointParameter(
-            "r", typeof(AnyValue<string>), 
-            EndpointParameterType.FormField,
-            Description = "The path of the page to return the results on")]
         [Description("Adds two numbers and returns the sum")]
-        public void Add(IEndpointRequest request)
-        {
-            var a = request.Parameter<double>("a");
-            var b = request.Parameter<double>("b");
-            var r = request.Parameter<string>("r");
+        public void Add(
+            IEndpointRequest request,
 
+            [EndpointParameter(
+                EndpointParameterType.FormField,
+                Description = "The first number to add")]
+            double a,
+
+            [EndpointParameter(
+                EndpointParameterType.FormField,
+                Description = "The second number to add")]
+            double b,
+
+            [EndpointParameter(
+                EndpointParameterType.FormField,
+                ParserType = typeof(AnyValue<string>),
+                Description = "The path of the page to return the results on")]
+            string r)
+        {
             request.OwinContext.Set(
                 typeof(ArithmeticResult).FullName,
                 new ArithmeticResult { Result = a + " + " + b + " = " + (a + b) });
@@ -77,25 +78,12 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint(Analytics = AnalyticsLevel.None)]
-        [EndpointParameter(
-            "a", typeof(AnyValue<double>),
-            EndpointParameterType.FormField,
-            Description = "The first number to multiply")]
-        [EndpointParameter(
-            "b", typeof(AnyValue<double>),
-            EndpointParameterType.FormField,
-            Description = "The second number to multiply")]
-        [EndpointParameter(
-            "r", typeof(AnyValue<string>),
-            EndpointParameterType.FormField,
-            Description = "The path of the page to return the results on")]
-        [Description("Multiplies two numbers together and returns the product")]
-        public void Multiply(IEndpointRequest request)
+        public void Multiply(
+            IEndpointRequest request, 
+            [EndpointParameter(EndpointParameterType.FormField)]double a,
+            [EndpointParameter(EndpointParameterType.FormField)]double b,
+            [EndpointParameter(EndpointParameterType.FormField)]string r)
         {
-            var a = request.Parameter<double>("a");
-            var b = request.Parameter<double>("b");
-            var r = request.Parameter<string>("r");
-
             request.OwinContext.Set(
                 typeof(ArithmeticResult).FullName,
                 new ArithmeticResult { Result = a + " x " + b + " = " + (a * b) });
@@ -126,6 +114,12 @@ namespace Sample1.SampleServices
                 typeof(ArithmeticResult).FullName,
                 new ArithmeticResult { Result = a + " / " + b + " = " + (a / b) });
             request.Rewrite(r);
+        }
+
+        [Endpoint(UrlPath = "/add", Methods = new[]{ Method.Get })]
+        public void QueryAdd(IEndpointRequest request, double a, double b)
+        {
+            request.Success(new ArithmeticResult { Result = a + " + " + b + " = " + (a + b) });
         }
 
         public override System.Collections.Generic.IEnumerable<PageArea> GetPageAreas()

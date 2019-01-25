@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LayoutsPackage.cs" />
+    <Compile Include="LibrariesPackage.cs" />
     <Compile Include="MenuPackage.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

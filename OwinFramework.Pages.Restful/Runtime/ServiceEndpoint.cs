@@ -209,7 +209,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                 catch(BodyDeserializationException e)
                 {
                     trace(context, () =>
-                        "Request body should by '" + e.BodyType.DisplayName() + "'. " + e.ValidationError +
+                        "Request body should be '" + e.BodyType.DisplayName() + "'. " + e.ValidationError +
                         (string.IsNullOrEmpty(e.StackTrace) ? string.Empty : "\n" + e.StackTrace));
                     request.HttpStatus(HttpStatusCode.BadRequest, "Request body is invalid. " + e.ValidationError);
                 }

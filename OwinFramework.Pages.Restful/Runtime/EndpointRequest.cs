@@ -133,6 +133,17 @@ namespace OwinFramework.Pages.Restful.Runtime
                 "' but the application tried to get '" + typeof(T).DisplayName() + "'");
         }
 
+        public object GetParameter(string name)
+        {
+            RetrieveParameters();
+
+            object value;
+            if (!_parameterValues.TryGetValue(name, out value))
+                return null;
+
+            return value;
+        }
+
         private void RetrieveParameters()
         {
             if (_parameterValues == null)

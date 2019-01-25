@@ -121,17 +121,51 @@ namespace OwinFramework.Pages.Restful.Runtime
                             "' service has a return type, but it should have a return type of 'void'");
 
                     var methodParameters = method.GetParameters();
-                    if (methodParameters.Length != 1)
+
+                    if (methodParameters.Length == 0 || methodParameters[0].ParameterType != typeof(IEndpointRequest))
                         throw new ServiceBuilderException(
                             "The '" + method.Name + "' endpoint of the '" + Name +
-                            "' service has the wrong parameter list, it must only take one parameter " +
+                            "' service has the wrong parameter list, the first parameter must be " +
                             "of type '" + typeof(IEndpointRequest).DisplayName() + "'");
 
-                    if (methodParameters[0].ParameterType != typeof(IEndpointRequest))
-                        throw new ServiceBuilderException(
-                            "The parameter of the '" + method.Name + "' endpoint in the '" + Name +
-                            "' service has the wrong type. The parameter must be " +
-                            "of type '" + typeof(IEndpointRequest).DisplayName() + "'");
+                    var parameterNames = new string[methodParameters.Length];
+
+                    if (methodParameters.Length > 1)
+                    {
+                        for (var i = 1; i < methodParameters.Length; i++)
+                        {
+                            var methodParameter = methodParameters[i];
+                            EndpointParameterAttribute endpointParameterAttribute = null;
+
+                            foreach (var attribute in methodParameter.GetCustomAttributes(false))
+                            {
+                                endpointParameterAttribute = attribute as EndpointParameterAttribute;
+                                if (endpointParameterAttribute != null)
+                                {
+                                    if (string.IsNullOrEmpty(endpointParameterAttribute.ParameterName))
+                                        endpointParameterAttribute.ParameterName = methodParameter.Name;
+
+                                    if (endpointParameterAttribute.ParserType == null)
+                                        endpointParameterAttribute.ParserType = methodParameter.ParameterType;
+
+                                    break;
+                                }
+                            }
+
+                            if (endpointParameterAttribute == null)
+                            {
+                                endpointParameterAttribute = new EndpointParameterAttribute 
+                                {
+                                    ParameterName = methodParameter.Name,
+                                    ParameterType = EndpointParameterType.QueryString,
+                                    ParserType = methodParameter.ParameterType
+                                };
+                            }
+
+                            parameterAttributes.Add(endpointParameterAttribute);
+                            parameterNames[i] = endpointParameterAttribute.ParameterName;
+                        }
+                    }
 
                     var path = method.Name.ToLower();
                     if (!string.IsNullOrEmpty(endpointAttribute.UrlPath))
@@ -141,9 +175,26 @@ namespace OwinFramework.Pages.Restful.Runtime
                     if (relativePath) path = BasePath + path;
 
                     var m = method;
+
+                    Action<IEndpointRequest> action;
+                    if (methodParameters.Length == 1)
+                        action = r => m.Invoke(serviceInstance, new[] { r });
+                    else
+                        action = r => 
+                        {
+                            var parameters = new object[parameterNames.Length];
+
+                            parameters[0] = r;
+
+                            for (var i = 1; i < parameterNames.Length; i++)
+                                parameters[i] = r.GetParameter(parameterNames[i]);
+
+                            m.Invoke(serviceInstance, parameters);
+                        };
+
                     var endpoint = new ServiceEndpoint(
                         path,  
-                        r => m.Invoke(serviceInstance, new[] { r }),
+                        action,
                         m,
                         endpointAttribute.Analytics,
                         _serviceDependenciesFactory.DataCatalog,

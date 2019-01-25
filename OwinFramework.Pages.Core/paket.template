@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Core
-version 1.0.0-alpha-022
+version 1.0.0
 authors Martin Halliday
 copyright Martin Halliday 2019
 description
@@ -10,7 +10,7 @@ title Owin Framework Pages Core
 releasenotes
   This is the first version
 licenseUrl http://www.apache.org/licenses/LICENSE-2.0
-projecturl http://owinframework.com/content/project/owinframework.pages.core/landing
+projecturl http://owinframework.net/content/project/owinframework.pages.core/landing
 
 files
   LICENSE

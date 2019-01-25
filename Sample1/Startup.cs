@@ -113,6 +113,7 @@ namespace Sample1
             // your application can refer to the desktop menu region as "menus:desktop_menu"
             fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus");
             fluentBuilder.Register(ninject.Get<LayoutsPackage>(), "layouts");
+            fluentBuilder.Register(ninject.Get<LibrariesPackage>(), "libraries");
 
             // This is an example of registering all of the elements defined in an assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));

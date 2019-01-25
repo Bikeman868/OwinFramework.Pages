@@ -228,6 +228,7 @@ namespace Sample1.SamplePages
     [LayoutRegion("main", "rightColumn")]
     [RegionComponent("left", "sidebar1")]
     [RegionComponent("main", "page1Body")]
+    [NeedsComponent("libraries:Redux")]
     internal class Page1Layout { }
 
     /// <summary>
@@ -282,6 +283,10 @@ namespace Sample1.SamplePages
     [PageTitle("Page 1")]
     [Style("color: darkred;")]
     [RegionLayout("body", "page1Body")]
+    [NeedsComponent("libraries:jQuery")]
+    [NeedsComponent("libraries:React")]
+    [NeedsComponent("libraries:AngularJS")]
+    [NeedsComponent("libraries:Redux")]
     internal class Page1 : PageBase { }
 
     /// <summary>

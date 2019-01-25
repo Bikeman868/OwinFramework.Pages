@@ -6,24 +6,36 @@ namespace OwinFramework.Pages.Core.Attributes
     /// <summary>
     /// Attach this attribute to a method within a service definition.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Parameter, AllowMultiple = true, Inherited = true)]
     public class EndpointParameterAttribute : Attribute
     {
         /// <summary>
-        /// Constructs an attribute that defines a parameter that is expected by a service endpoint
+        /// Constructs an attribute that defines a parameter that is expected by a service endpoint.
+        /// This version of the constructor is for the case where the attribute is attached to a method
         /// </summary>
         /// <param name="parameterName">The name of the parameter. This will be the name
         /// if the query string parameter, custom header, form field etc</param>
-        /// <param name="parameterType">Bit flags indicating which methods of providing the parameter are allowed</param>
         /// <param name="parserType">A type that provides parsing and validation. This type must have a default public constructor</param>
+        /// <param name="parameterType">Bit flags indicating which methods of providing the parameter are allowed</param>
         public EndpointParameterAttribute(
             string parameterName, 
             Type parserType,
             EndpointParameterType parameterType = EndpointParameterType.QueryString)
         {
             ParameterName = parameterName;
-            ParameterType = parameterType;
             ParserType = parserType;
+            ParameterType = parameterType;
+        }
+
+        /// <summary>
+        /// Constructs an attribute that defines a parameter that is expected by a service endpoint
+        /// This version of the constructor is for the case where the attribute is attached to a parameter
+        /// </summary>
+        /// <param name="parameterType">Bit flags indicating which methods of providing the parameter are allowed</param>
+        public EndpointParameterAttribute(
+            EndpointParameterType parameterType = EndpointParameterType.QueryString)
+        {
+            ParameterType = parameterType;
         }
 
         /// <summary>

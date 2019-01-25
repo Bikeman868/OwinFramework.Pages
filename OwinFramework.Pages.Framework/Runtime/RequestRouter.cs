@@ -138,10 +138,41 @@ namespace OwinFramework.Pages.Framework.Runtime
                 }
 
                 object[] customAttributes = null;
-                if(registration.Method != null)
-                    customAttributes = registration.Method.GetCustomAttributes(true);
+                if (registration.Method != null)
+                {
+                    customAttributes = registration.Method.GetCustomAttributes(true)
+                        .Concat(
+                            registration.Method.GetParameters()
+                                .Skip(1)
+                                .Select(p => new
+                                    {
+                                        parameter = p,
+                                        attribute = p.GetCustomAttributes(false).Select(a => a as EndpointParameterAttribute).FirstOrDefault(a => a != null)
+                                    })
+                                .Select(o => 
+                                    {
+                                        var attribute = o.attribute;
+
+                                        if (attribute == null) 
+                                            attribute = new EndpointParameterAttribute
+                                            {
+                                                ParameterType = EndpointParameterType.QueryString
+                                            };
+
+                                        if (string.IsNullOrEmpty(attribute.ParameterName))
+                                            attribute.ParameterName = o.parameter.Name;
+
+                                        if (attribute.ParserType == null)
+                                            attribute.ParserType = o.parameter.ParameterType;
+
+                                        return attribute;
+                                    }))
+                        .ToArray();
+                }
                 else if (registration.DeclaringType != null)
+                {
                     customAttributes = registration.DeclaringType.GetCustomAttributes(true);
+                }
 
                 string endpointPath = null;
                 string queryStringExample = null;

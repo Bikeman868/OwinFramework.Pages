@@ -58,6 +58,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Templates\Template5.vue" />
     <Content Include="Templates\Template4.svg" />
     <Content Include="Templates\Template3.svg" />
     <Content Include="Templates\Template1.html" />

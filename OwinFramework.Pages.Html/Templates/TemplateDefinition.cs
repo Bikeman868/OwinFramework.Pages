@@ -286,30 +286,16 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddTemplate(string templatePath)
         {
-            var template = _nameManager.ResolveTemplate(templatePath);
+            _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
+                {
+                    AddConsumerNeeds(nm.ResolveTemplate(templatePath) as IDataConsumer);
+                });
 
-            if (template == null)
-            {
-                var placeholder = Actions.AddPlaceholder();
-
-                _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
-                    {
-                        var t = nm.ResolveTemplate(templatePath);
-                        if (t == null)
-                        {
-                            placeholder(r => r.Html.WriteElementLine("p", "Unknown template " + templatePath));
-                        }
-                        else
-                        {
-                            placeholder(r => t.WritePageArea(r, PageArea.Body));
-                            AddConsumerNeeds(t as IDataConsumer);
-                        }
-                    });
-            }
-            else
-            {
-                AddTemplate(template);
-            }
+            Actions.Add(r => 
+                {
+                    var t = _nameManager.ResolveTemplate(templatePath);
+                    if (t != null) t.WritePageArea(r, PageArea.Body);
+                });
 
             return this;
         }

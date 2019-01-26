@@ -48,6 +48,15 @@ namespace OwinFramework.Pages.Html.Runtime
             return lines;
         }
 
+        public ICssWriter WriteLineRaw(string line)
+        {
+            _elements.Add(new RawTextElement
+            {
+                Text = line
+            });
+            return this;
+        }
+
         public ICssWriter WriteRule(string selector, string styles, IPackage package)
         {
             _elements.Add(new CssRule
@@ -70,6 +79,36 @@ namespace OwinFramework.Pages.Html.Runtime
             public abstract void ToHtml(IHtmlWriter writer);
             public abstract void ToStringBuilder(IStringBuilder writer);
             public abstract void ToLines(IList<string> writer);
+        }
+
+        private class RawTextElement : CssElement
+        {
+            public string Text;
+
+            public override void ToHtml(IHtmlWriter writer)
+            {
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    writer.Write(Text);
+                    writer.WriteLine();
+                }
+            }
+
+            public override void ToStringBuilder(IStringBuilder writer)
+            {
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    writer.AppendLine(Text);
+                }
+            }
+
+            public override void ToLines(IList<string> writer)
+            {
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    writer.Add(Text);
+                }
+            }
         }
 
         private class CssComment: CssElement

@@ -92,17 +92,17 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         ITemplateDefinition AddRegion(IRegion region);
 
         /// <summary>
-        /// Adds a reference to a region
+        /// Adds a reference to a component
         /// </summary>
         ITemplateDefinition AddComponent(string componentName);
 
         /// <summary>
-        /// Adds a reference to a region
+        /// Adds a reference to a component
         /// </summary>
         ITemplateDefinition AddComponent(IComponent component);
 
         /// <summary>
-        /// Adds a reference to a region
+        /// Adds a reference to another template
         /// </summary>
         ITemplateDefinition AddTemplate(string templatePath);
 

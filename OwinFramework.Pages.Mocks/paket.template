@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Mocks
-version 1.0.0
+version 1.0.1
 authors Martin Halliday
 copyright Martin Halliday 2019
 description
@@ -9,7 +9,7 @@ description
   to write unit tests for your application.
 title Owin Framework Pages Mocks
 releasenotes
-  This is the first version
+  Bug fix release
 licenseUrl http://www.apache.org/licenses/LICENSE-2.0
 projecturl http://owinframework.net/content/project/owinframework.pages.mocks/landing
 

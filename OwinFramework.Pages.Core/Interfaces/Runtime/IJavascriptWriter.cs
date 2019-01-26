@@ -61,6 +61,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         IJavascriptWriter WriteComment(string comment, CommentStyle commentStyle = CommentStyle.SingleLineC, IPackage package = null);
 
         /// <summary>
+        /// Provides a mechanism for writing pre-formatted JavaScript to the JavaScript file
+        /// </summary>
+        IJavascriptWriter WriteLineRaw(string line, IPackage package = null);
+
+        /// <summary>
         /// Writes the buffered CSS into an Html document
         /// </summary>
         void ToHtml(IHtmlWriter html);

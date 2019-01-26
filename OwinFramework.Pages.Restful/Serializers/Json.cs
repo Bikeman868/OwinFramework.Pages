@@ -77,7 +77,7 @@ namespace OwinFramework.Pages.Restful.Serializers
             }
             else if (type.IsArray || typeof(IList).IsAssignableFrom(type))
             {
-                var value = new JArray(data);
+                var value = JArray.FromObject(data);
                 json = value.ToString();
             }
             else

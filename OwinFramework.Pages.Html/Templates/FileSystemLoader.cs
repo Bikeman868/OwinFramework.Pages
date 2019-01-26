@@ -11,6 +11,7 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Templates;
+using System.Security.Cryptography;
 
 namespace OwinFramework.Pages.Html.Templates
 {
@@ -30,9 +31,10 @@ namespace OwinFramework.Pages.Html.Templates
 
         private class TemplateInfo
         {
-            public FileInfo File;
+            public string FileName;
             public string TemplatePath;
             public ITemplateParser Parser;
+            public byte[] Checksum;
         }
 
         public FileSystemLoader(
@@ -71,7 +73,7 @@ namespace OwinFramework.Pages.Html.Templates
                     var templatePath = mapPath(path);
 
                     Trace.WriteLine("Parsing file '" + file.FullName + "' with '" + parser + "' and registering as '" + templatePath + "'");
-                    LoadFile(file, parser, templatePath);
+                    LoadFile(file.FullName, parser, templatePath);
                 }
             }
         }
@@ -79,15 +81,17 @@ namespace OwinFramework.Pages.Html.Templates
         /// <summary>
         /// Loads a single file and returns the template
         /// </summary>
-        /// <param name="file">The file to load</param>
+        /// <param name="fileName">The file to load</param>
         /// <param name="parser">The parser to use to parse the template file</param>
         /// <param name="templatePath">Optional template path registers the template 
         /// with the Name Manager. Also causes the template to be periodically
         /// reloaded</param>
         /// <returns>The template that was loaded</returns>
-        public ITemplate LoadFile(FileInfo file, ITemplateParser parser, string templatePath = null)
+        public ITemplate LoadFile(string fileName, ITemplateParser parser, string templatePath = null)
         {
-            var template = LoadAndParseFile(file, parser);
+            Encoding encoding;
+            var buffer = LoadFileContents(fileName, out encoding);
+            var template = parser.Parse(buffer, encoding, Package);
 
             if (!string.IsNullOrEmpty(templatePath))
             {
@@ -95,19 +99,25 @@ namespace OwinFramework.Pages.Html.Templates
 
                 Reload(new TemplateInfo
                     {
-                        File = file,
+                        FileName = fileName,
                         Parser = parser,
-                        TemplatePath = templatePath
+                        TemplatePath = templatePath,
+                        Checksum = CalculateChecksum(buffer)
                     });
             }
 
             return template;
         }
 
-        private ITemplate LoadAndParseFile(FileInfo file, ITemplateParser parser)
+        private byte[] LoadFileContents(string fileName, out Encoding encoding)
         {
+            var file = new FileInfo(fileName);
+
+            if (!file.Exists)
+                throw new TemplateLoaderException("Template file does not exist '" + fileName + "'");
+
             if (file.Length > 500 * 1024)
-                throw new TemplateLoaderException("Template file is too large. Maximum size is 500KB.");
+                throw new TemplateLoaderException("Template file '" + fileName + "'is too large. Maximum size is 500KB.");
 
             var buffer = new byte[file.Length];
             using (var stream = file.OpenRead())
@@ -117,10 +127,17 @@ namespace OwinFramework.Pages.Html.Templates
                     offset += stream.Read(buffer, offset, buffer.Length - offset);
             }
 
-            Encoding encoding;
             buffer = RemovePreamble(buffer, out encoding);
 
-            return parser.Parse(buffer, encoding, Package);
+            return buffer;
+        }
+
+        private byte[] CalculateChecksum(byte[] buffer)
+        {
+            using (var sha = new SHA1Managed())
+            {
+                return sha.ComputeHash(buffer);
+            }
         }
 
         private void Reload(TemplateInfo info)
@@ -163,8 +180,29 @@ namespace OwinFramework.Pages.Html.Templates
 
                                 try
                                 {
-                                    var template = LoadAndParseFile(templateInfo.File, templateInfo.Parser);
-                                    _nameManager.Register(template, templateInfo.TemplatePath);
+                                    Encoding encoding;
+                                    var buffer = LoadFileContents(templateInfo.FileName, out encoding);
+                                    var checksum = CalculateChecksum(buffer);
+
+                                    if (checksum.Length != templateInfo.Checksum.Length)
+                                    {
+                                        var template = templateInfo.Parser.Parse(buffer, encoding, Package);
+                                        _nameManager.Register(template, templateInfo.TemplatePath);
+                                        templateInfo.Checksum = checksum;
+                                    }
+                                    else
+                                    {
+                                        for (var j = 0; j < checksum.Length; j++)
+                                        {
+                                            if (checksum[j] != templateInfo.Checksum[j])
+                                            {
+                                                var template = templateInfo.Parser.Parse(buffer, encoding, Package);
+                                                _nameManager.Register(template, templateInfo.TemplatePath);
+                                                templateInfo.Checksum = checksum;
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 catch (ThreadAbortException)
                                 {
@@ -172,7 +210,7 @@ namespace OwinFramework.Pages.Html.Templates
                                 }
                                 catch (Exception ex)
                                 {
-                                    var message = "Failed to load template " + templateInfo.File.FullName + ". " + ex.Message;
+                                    var message = "Failed to load template " + templateInfo.FileName + ". " + ex.Message;
                                     exception = new Exception(message, ex);
                                     Trace.WriteLine(message);
                                 }

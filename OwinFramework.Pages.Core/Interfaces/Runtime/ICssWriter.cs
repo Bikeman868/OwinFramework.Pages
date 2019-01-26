@@ -35,6 +35,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         ICssWriter WriteComment(string comment);
 
         /// <summary>
+        /// Provides a mechanism to write preformatted css to the css file
+        /// </summary>
+        ICssWriter WriteLineRaw(string line);
+
+        /// <summary>
         /// Allows you to check if any css styles were written
         /// </summary>
         bool HasContent { get; }

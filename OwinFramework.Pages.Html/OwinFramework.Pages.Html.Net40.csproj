@@ -51,6 +51,7 @@
     <Compile Include="Builders\HtmlHelper.cs" />
     <Compile Include="Elements\AssetDeploymentMixin.cs" />
     <Compile Include="Elements\TemplateComponent.cs" />
+    <Compile Include="Templates\MultiPartParser.cs" />
     <Compile Include="Templates\MustacheParser.cs" />
     <Compile Include="Templates\TemplateLoader.cs" />
     <Compile Include="Templates\Text\DocumentParser.cs" />

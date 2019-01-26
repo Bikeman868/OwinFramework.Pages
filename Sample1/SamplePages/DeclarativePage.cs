@@ -82,7 +82,7 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("navigation")]
     [DeployCss("p.{ns}_footer", "font-weight:bold; font-size:9pt;")]
-    [DeployFunction("int", "footerFunction", "string action", "alert(action);")]
+    [DeployFunction("int", "footerFunction", "action", "alert(action);")]
     [RenderHtml("footer.standard", "<p class='{ns}_footer'>This is where the html for the page footer goes</p>")]
     internal class StandardFooterComponent { }
 
@@ -244,8 +244,10 @@ namespace Sample1.SamplePages
     //[RegionTemplate("main", "/page2/body")]
     //[RegionTemplate("main", "/file/template1")]
     //[RegionTemplate("main", "/file/template2")]
-    [RegionTemplate("main", "/file/template3")]
+    //[RegionTemplate("main", "/file/template3")]
     //[RegionTemplate("main", "/file/template4")]
+    [RegionTemplate("main", "/file/template5")]
+    [NeedsComponent("libraries:Vue")]
     internal class Page2Layout { }
 
     /*

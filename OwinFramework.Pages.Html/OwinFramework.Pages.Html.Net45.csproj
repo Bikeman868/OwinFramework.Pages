@@ -106,6 +106,7 @@
     <Compile Include="Templates\AsIsParser.cs" />
     <Compile Include="Templates\FileSystemLoader.cs" />
     <Compile Include="Templates\MarkdownParser.cs" />
+    <Compile Include="Templates\MultiPartParser.cs" />
     <Compile Include="Templates\MustacheParser.cs" />
     <Compile Include="Templates\Template.cs" />
     <Compile Include="Templates\TemplateBuilder.cs" />

@@ -15,7 +15,6 @@ namespace OwinFramework.Pages.Html.Elements
     public class TemplateComponent : Component
     {
         private string _templatePath;
-        private ITemplate _template;
 
         public TemplateComponent(IComponentDependenciesFactory dependencies)
             : base(dependencies)
@@ -31,14 +30,13 @@ namespace OwinFramework.Pages.Html.Elements
         {
             var debugComponent = debugInfo as DebugComponent ?? new DebugComponent();
 
-            if (childDepth != 0 && _template != null)
+            if (childDepth != 0)
             {
                 debugComponent.Children = new List<DebugInfo> 
                 { 
                     new DebugInfo
                     {
                         Name = _templatePath,
-                        Instance = _template,
                         Type = "Template"
                     }
                 };
@@ -65,33 +63,34 @@ namespace OwinFramework.Pages.Html.Elements
             Dependencies.NameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, 
                 nm =>
                 {
-                    _template = nm.ResolveTemplate(_templatePath);
+                    var template = nm.ResolveTemplate(_templatePath);
+                    var dataConsumer = template as IDataConsumer;
+                    if (dataConsumer == null) return;
 
-                    var dataConsumer = _template as IDataConsumer;
-                    if (dataConsumer != null)
+                    // Note that if you change the template and dynamically reload it
+                    // whilst the website is running you can not change the data dependencies
+
+                    var needs = dataConsumer.GetConsumerNeeds();
+                    if (needs == null)
+                        return;
+
+                    var thisDataConsumer = this as IDataConsumer;
+                    if (needs.DataDependencies != null)
                     {
-                        var needs = dataConsumer.GetConsumerNeeds();
-                        if (needs == null)
-                            return;
+                        foreach (var dependency in needs.DataDependencies)
+                            thisDataConsumer.HasDependency(dependency.DataType, dependency.ScopeName);
+                    }
 
-                        var thisDataConsumer = this as IDataConsumer;
-                        if (needs.DataDependencies != null)
-                        {
-                            foreach (var dependency in needs.DataDependencies)
-                                thisDataConsumer.HasDependency(dependency.DataType, dependency.ScopeName);
-                        }
+                    if (needs.DataSupplyDependencies != null)
+                    {
+                        foreach (var dataSupply in needs.DataSupplyDependencies)
+                            thisDataConsumer.HasDependency(dataSupply);
+                    }
 
-                        if (needs.DataSupplyDependencies != null)
-                        {
-                            foreach (var dataSupply in needs.DataSupplyDependencies)
-                                thisDataConsumer.HasDependency(dataSupply);
-                        }
-
-                        if (needs.DataSupplierDependencies != null)
-                        {
-                            foreach (var dataSupplier in needs.DataSupplierDependencies)
-                                thisDataConsumer.HasDependency(dataSupplier.Item1, dataSupplier.Item2);
-                        }
+                    if (needs.DataSupplierDependencies != null)
+                    {
+                        foreach (var dataSupplier in needs.DataSupplierDependencies)
+                            thisDataConsumer.HasDependency(dataSupplier.Item1, dataSupplier.Item2);
                     }
                 });
 
@@ -100,7 +99,8 @@ namespace OwinFramework.Pages.Html.Elements
 
         private void RenderTemplate(IRenderContext renderContext)
         {
-            _template.WritePageArea(renderContext, PageArea.Body);
+            var template = Dependencies.NameManager.ResolveTemplate(_templatePath);
+            template.WritePageArea(renderContext, PageArea.Body);
         }
     }
 }

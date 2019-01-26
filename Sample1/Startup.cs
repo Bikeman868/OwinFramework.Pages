@@ -142,15 +142,17 @@ namespace Sample1
             var asIsTemplateParser = ninject.Get<AsIsParser>();
             var markdownTemplateParser = ninject.Get<MarkdownParser>();
             var mustacheParser = ninject.Get<MustacheParser>();
+            var multiPartParser = ninject.Get<MultiPartParser>();
 
             // This is an example of loading and parsing template files using different
             // parsers for different file formats
             var fileSystemLoader = ninject.Get<FileSystemLoader>();
             fileSystemLoader.RootPath = new PathString("/file");
-            fileSystemLoader.ReloadInterval = TimeSpan.FromMinutes(10);
+            fileSystemLoader.ReloadInterval = TimeSpan.FromSeconds(3);
             fileSystemLoader.Load(asIsTemplateParser, p => p.Value.EndsWith(".html"));
             fileSystemLoader.Load(markdownTemplateParser, p => p.Value.EndsWith(".md"));
             fileSystemLoader.Load(mustacheParser, p => p.Value.EndsWith(".svg"));
+            fileSystemLoader.Load(multiPartParser, p => p.Value.EndsWith(".vue"));
 
             // This is an example of loading and parsing template from a URL
             var uriLoader = ninject.Get<UriLoader>();

@@ -44,6 +44,17 @@ namespace OwinFramework.Pages.Html.Runtime
             return lines;
         }
 
+        public IJavascriptWriter WriteLineRaw(string line, IPackage package)
+        {
+            var javascriptNamespace = GetNamespace(package);
+            javascriptNamespace.Add(
+                new RawTextElement
+                {
+                    Text = line
+                });
+            return this;
+        }
+
         public IJavascriptWriter WriteVariable(string variableName, string initializationExpression, string type, IPackage package, bool isPublic )
         {
             var javascriptNamespace = GetNamespace(package);
@@ -121,6 +132,28 @@ namespace OwinFramework.Pages.Html.Runtime
             public abstract void Write(IHtmlWriter writer);
             public abstract void Write(IStringBuilder stringBuilder, string indent);
             public abstract void Write(IList<string> lines, string indent);
+        }
+
+        private class RawTextElement: JavascriptElement
+        {
+            public string Text;
+
+            public override void Write(IHtmlWriter writer)
+            {
+                writer.Write(Text);
+                writer.WriteLine();
+            }
+
+            public override void Write(IStringBuilder stringBuilder, string indent)
+            {
+                stringBuilder.Append(indent);
+                stringBuilder.AppendLine(Text);
+            }
+
+            public override void Write(IList<string> lines, string indent)
+            {
+                lines.Add(Text);
+            }
         }
 
         private class CommentElement: JavascriptElement
@@ -254,15 +287,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
                 else if (IsPublic)
                 {
-                    if (string.IsNullOrEmpty(Type))
-                    {
-                        writer.Write("var ");
-                    }
-                    else
-                    {
-                        writer.Write(Type);
-                        writer.Write(' ');
-                    }
+                    writer.Write("var ");
                     writer.Write(Name);
                     writer.Write(" = function (");
                 }
@@ -296,15 +321,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
                 else if (IsPublic)
                 {
-                    if (string.IsNullOrEmpty(Type))
-                    {
-                        stringBuilder.Append("var ");
-                    }
-                    else
-                    {
-                        stringBuilder.Append(Type);
-                        stringBuilder.Append(' ');
-                    }
+                    stringBuilder.Append("var ");
                     stringBuilder.Append(Name);
                     stringBuilder.Append(" = function (");
                 }
@@ -338,12 +355,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 if (string.IsNullOrEmpty(Name))
                     header = indent + "function (";
                 else if (IsPublic)
-                {
-                    if (string.IsNullOrEmpty(Type))
-                        header = indent + "var " + Name + " = function (";
-                    else
-                        header = indent + Type + " " + Name + " = function (";
-                }
+                    header = indent + "var " + Name + " = function (";
                 else
                     header = indent + "function " + Name + " (";
 

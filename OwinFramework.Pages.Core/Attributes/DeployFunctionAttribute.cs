@@ -29,7 +29,7 @@ namespace OwinFramework.Pages.Core.Attributes
         }
 
         /// <summary>
-        /// The return type of this function
+        /// The return type of this function for documentation only
         /// </summary>
         public string ReturnType { get; set; }
 

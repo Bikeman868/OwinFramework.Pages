@@ -42,7 +42,7 @@ namespace OwinFramework.Pages.Core.Extensions
             if (t.IsValueType) return displayName;
 
             var ns = namespaceOption;
-            if (t.Namespace.StartsWith("System") || t.IsNested || t.IsGenericType)
+            if (t.Namespace == null || t.Namespace.StartsWith("System") || t.IsNested || t.IsGenericType)
                 ns = NamespaceOption.None;
 
             switch (ns)

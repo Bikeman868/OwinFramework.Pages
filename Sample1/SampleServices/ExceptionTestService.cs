@@ -18,7 +18,7 @@ namespace Sample1.SampleServices
         }
 
         [Endpoint(Analytics = AnalyticsLevel.None)]
-        [Description("Call this endpoint to see what happens when services are not implemented")]
+        [Description("Call this endpoint to see what happens when services throw aggregate exceptions")]
         public void Aggregate(IEndpointRequest request)
         {
             var exceptions = new List<Exception>();

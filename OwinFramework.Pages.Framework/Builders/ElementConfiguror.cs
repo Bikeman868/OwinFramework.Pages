@@ -702,7 +702,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (!ReferenceEquals(attributes.IsService, null))
             {
                 service.Name(attributes.IsService.Name);
-                service.Route(attributes.IsService.BasePath, attributes.IsService.MethodsToRoute, attributes.IsService.Priority);
+                service.Route(attributes.IsService.BasePath, attributes.IsService.Methods, attributes.IsService.Priority);
 
                 if (!string.IsNullOrEmpty(attributes.IsService.RequiredPermission))
                     service.RequiredPermission(attributes.IsService.RequiredPermission, attributes.IsService.EndpointSpecificPermission);

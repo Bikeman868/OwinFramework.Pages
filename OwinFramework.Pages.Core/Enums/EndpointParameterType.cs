@@ -10,7 +10,7 @@ namespace OwinFramework.Pages.Core.Enums
     public enum EndpointParameterType
     {
         /// <summary>
-        /// The field can be passed in a form field. For fields are
+        /// The field can be passed in a form field. Form fields are
         /// input elements in html that are included when forms are
         /// POSTed by a Submit button.
         /// </summary>
@@ -29,9 +29,9 @@ namespace OwinFramework.Pages.Core.Enums
         /// <summary>
         /// The field can be passed as a custom header. This can be useful
         /// for extracting header values and validating them as input
-        /// parameters to a REST service endpoint. You can also define your
-        /// own custom headers but you must be careful not to violate
-        /// http protocol standards.
+        /// parameters to a REST service endpoint (for example X-REAL-IP). 
+        /// You can also define your own custom headers but you must be 
+        /// careful not to violate http protocol standards.
         /// </summary>
         Header = 8
     }

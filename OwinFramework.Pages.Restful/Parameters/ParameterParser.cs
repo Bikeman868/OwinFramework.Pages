@@ -430,7 +430,7 @@ namespace OwinFramework.Pages.Restful.Parameters
             return result;
         }
 
-        private class Result: IParameterValidationResult
+        protected class Result: IParameterValidationResult
         {
             public bool Success { get; set; }
             public object Value { get; set; }

@@ -23,7 +23,7 @@ namespace OwinFramework.Pages.Core.Attributes
             : base(name)
         {
             BasePath = basePath ?? "/";
-            MethodsToRoute = methods ?? new[] { Method.Post };
+            Methods = methods ?? new[] { Method.Post };
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// The http methods that should be routed to this service or an empty list to route
         /// all methods
         /// </summary>
-        public Method[] MethodsToRoute { get; set; }
+        public Method[] Methods { get; set; }
 
         /// <summary>
         /// The router sorts runables by priority and finds the first one that matches the

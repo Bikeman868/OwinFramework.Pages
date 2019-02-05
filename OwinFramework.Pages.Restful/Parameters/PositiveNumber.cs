@@ -28,10 +28,19 @@ namespace OwinFramework.Pages.Restful.Parameters
             if (type == typeof(int) || type == typeof(int?))
                 _check = v => (int)v > 0;
 
-            if (type == typeof(float) || type == typeof(float?))
+            else if (type == typeof(long) || type == typeof(long?))
+                _check = v => (long)v > 0;
+
+            else if (type == typeof(short) || type == typeof(short?))
+                _check = v => (short)v > 0;
+
+            else if (type == typeof(byte) || type == typeof(byte?))
+                _check = v => (byte)v > 0;
+
+            else if (type == typeof(float) || type == typeof(float?))
                 _check = v => (float)v > 0;
 
-            if (type == typeof(double) || type == typeof(double?))
+            else if (type == typeof(double) || type == typeof(double?))
                 _check = v => (double)v > 0;
 
             else throw new ServiceBuilderException(
@@ -44,7 +53,19 @@ namespace OwinFramework.Pages.Restful.Parameters
             var result = base.Check(parameter);
             if (!result.Success) return result;
 
-            if (_check(result.Value)) return result;
+            if (IsRequired)
+            {
+                if (_check(result.Value)) 
+                    return result;
+            }
+            else
+            {
+                if (result.Value == null)
+                    return result;
+
+                if (_check(result.Value)) 
+                    return result;
+            }
 
             result.Success = false;
             result.ErrorMessage = _errorMessage;

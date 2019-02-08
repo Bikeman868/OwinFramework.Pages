@@ -118,6 +118,13 @@ namespace OwinFramework.Pages.Html.Templates
                     }
                 }
             }
+
+            public bool IsRepeaterOf(Type dataType, string scopeName)
+            {
+                if (dataType != _repeatType) return false;
+                if (string.IsNullOrEmpty(scopeName)) return true;
+                return string.Equals(scopeName, _repeatScope);
+            }
         }
 
         public TemplateDefinition(
@@ -397,9 +404,7 @@ namespace OwinFramework.Pages.Html.Templates
                 r.Html.WriteText(formattedValue);
             });
 
-            var dataConsumer = _template as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency(typeof(T), scopeName);
+            AddDependency(typeof(T), scopeName);
 
             return this;
         }
@@ -430,9 +435,7 @@ namespace OwinFramework.Pages.Html.Templates
                     r.Html.WriteText(formattedValue);
             });
 
-            var dataConsumer = _template as IDataConsumer;
-            if (dataConsumer != null)
-                dataConsumer.HasDependency(dataType, scopeName);
+            AddDependency(dataType, scopeName);
 
             return this;
         }
@@ -537,6 +540,18 @@ namespace OwinFramework.Pages.Html.Templates
                 foreach (var dataSupplier in needs.DataSupplierDependencies)
                     thisDataConsumer.HasDependency(dataSupplier.Item1, dataSupplier.Item2);
             }
+        }
+
+        private void AddDependency(Type dataType, string scopeName)
+        {
+            var dataConsumer = _template as IDataConsumer;
+            if (ReferenceEquals(dataConsumer, null))
+                return;
+
+            if (_repeatStack.Any(r => r.IsRepeaterOf(dataType, scopeName)))
+                return;
+
+            dataConsumer.HasDependency(dataType, scopeName);
         }
 
         #endregion

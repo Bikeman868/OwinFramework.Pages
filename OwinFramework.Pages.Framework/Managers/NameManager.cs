@@ -159,14 +159,21 @@ namespace OwinFramework.Pages.Framework.Managers
                 ? element.Name
                 : element.Package.NamespaceName + ":" + element.Name;
 
-            var component = element as IComponent;
-            if (component != null) lock (_components) _components.Add(name, component);
+            try
+            {
+                var component = element as IComponent;
+                if (component != null) lock (_components) _components.Add(name, component);
 
-            var region = element as IRegion;
-            if (region != null) lock (_regions) _regions.Add(name, region);
+                var region = element as IRegion;
+                if (region != null) lock (_regions) _regions.Add(name, region);
 
-            var layout = element as ILayout;
-            if (layout != null) lock (_layouts) _layouts.Add(name, layout);
+                var layout = element as ILayout;
+                if (layout != null) lock (_layouts) _layouts.Add(name, layout);
+            }
+            catch (Exception ex)
+            {
+                throw new NameManagerException("Failed to register element name '" + name + "' as " + element, ex);
+            }
         }
 
         public INameManager RegisterDataProvider(IDataProvider dataProvider)
@@ -175,8 +182,14 @@ namespace OwinFramework.Pages.Framework.Managers
                 ? dataProvider.Name
                 : dataProvider.Package.NamespaceName + ":" + dataProvider.Name;
 
-            lock (_dataProviders) _dataProviders[name] = dataProvider;
-
+            try
+            {
+                lock (_dataProviders) _dataProviders[name] = dataProvider;
+            }
+            catch (Exception ex)
+            {
+                throw new NameManagerException("Failed to register data provider name '" + name + "' as " + dataProvider, ex);
+            }
             return this;
         }
 
@@ -186,14 +199,20 @@ namespace OwinFramework.Pages.Framework.Managers
                 ? runable.Name
                 : runable.Package.NamespaceName + ":" + runable.Name;
 
-            var page = runable as IPage;
-            if (page != null)
-                lock (_pages) _pages.Add(name, page);
+            try
+            { 
+                var page = runable as IPage;
+                if (page != null)
+                    lock (_pages) _pages.Add(name, page);
 
-            var service = runable as IService;
-            if (service != null)
-                lock (_services) _services.Add(name, service);
-
+                var service = runable as IService;
+                if (service != null)
+                    lock (_services) _services.Add(name, service);
+            }
+            catch (Exception ex)
+            {
+                throw new NameManagerException("Failed to register runable name '" + name + "' as " + runable, ex);
+            }
             return this;
         }
 

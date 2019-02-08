@@ -28,6 +28,7 @@ namespace OwinFramework.Pages.Framework.Runtime
             string url;
             string method;
 
+            
             if (rewritePath == null)
             {
                 url = context.Request.Path.Value;

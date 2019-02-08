@@ -221,7 +221,8 @@ namespace OwinFramework.Pages.Framework.Builders
             Add<UsesComponentAttribute>()
                 .Valid<IRegionDefinition>()
                 .Valid<IRegion>()
-                .Invalid<ILayoutDefinition>("Please use the [RegionComponent] attribute instead so that the region name can be specified.");
+                .Invalid<ILayoutDefinition>("Please use the [RegionComponent] attribute instead so that the region name can be specified.")
+                .Invalid<IPageDefinition>("You can not add components directly to the page but you can use the [NeedsComponent] attribute to add component dependencies.");
 
             Add<UsesLayoutAttribute>()
                 .Valid<IPageDefinition>()

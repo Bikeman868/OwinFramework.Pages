@@ -548,6 +548,9 @@ namespace OwinFramework.Pages.Html.Templates
             if (ReferenceEquals(dataConsumer, null))
                 return;
 
+            if (!ReferenceEquals(_repeat, null) && _repeat.IsRepeaterOf(dataType, scopeName))
+                return;
+
             if (_repeatStack.Any(r => r.IsRepeaterOf(dataType, scopeName)))
                 return;
 

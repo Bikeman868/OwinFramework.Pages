@@ -2,8 +2,8 @@
     "owinFramework": {
         "pages": {
             "html": {
-                "includeComments": false,
-                "indented": false
+                "includeComments": true,
+                "indented": true
             }
         }
     },

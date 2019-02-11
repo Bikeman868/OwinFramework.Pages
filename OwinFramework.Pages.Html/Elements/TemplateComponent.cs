@@ -105,9 +105,41 @@ namespace OwinFramework.Pages.Html.Elements
 
         protected override string GetCommentName()
         {
-            return
-                "'" + _multiPartTemplatePath + ", " + _headTemplatePath + ", " + _bodyTemplatePath + ", " + _initializationTemplatePath + "' templates" +
-                (Package == null ? string.Empty : " from the '" + Package.Name + "' package");
+            string name;
+
+            if (string.IsNullOrEmpty(_multiPartTemplatePath))
+            {
+                var first = true;
+                name = "template set '";
+
+                Action<string, string> add = (n,v) =>
+                    {
+                        if (!string.IsNullOrEmpty(v))
+                        {
+                            if (first)
+                                first = false;
+                            else
+                                name += ",";
+                            name += n + '=' + v;
+                        }
+                    };
+
+                add("head", _headTemplatePath);
+                add("script", _scriptTemplatePath);
+                add("style", _styleTemplatePath);
+                add("body", _bodyTemplatePath);
+                add("init", _initializationTemplatePath);
+                name += "'";
+            }
+            else
+            {
+                name = "multi-part template '" + _multiPartTemplatePath + "'";
+            }
+
+            if (Package != null)
+                name += " from the '" + Package.Name + "' package";
+
+            return name;
         }
 
         /// <summary>
@@ -254,7 +286,8 @@ namespace OwinFramework.Pages.Html.Elements
             var template = Dependencies.NameManager.ResolveTemplate(templatePath);
             if (template == null) return;
 
-            if (template.GetPageAreas().Count() < 2)
+            var pageAreas = template.GetPageAreas().ToArray();
+            if (pageAreas.Length < 2)
                 return;
 
             _multiPartTemplatePath = templatePath;
@@ -264,6 +297,8 @@ namespace OwinFramework.Pages.Html.Elements
             StyleWriters = new Action<IRenderContext>[] { RenderMultiPartStyle };
             BodyWriters = new Action<IRenderContext>[] { RenderMultiPartBody };
             InitializationWriters = new Action<IRenderContext>[] { RenderMultiPartInitialization };
+
+            PageAreas = pageAreas;
         }
 
         private void AddTemplateDependencies(INameManager nm, string templatePath)

@@ -40,7 +40,7 @@ namespace OwinFramework.Pages.Html.Elements
             _defaultHtml = defaultHtml;
             _replaceNamespaces = _defaultHtml.IndexOf("{ns}_", StringComparison.OrdinalIgnoreCase) >= 0;
 
-            HtmlWriters = new Action<IRenderContext>[] { RenderHtml };
+            BodyWriters = new Action<IRenderContext>[] { RenderHtml };
         }
 
         private void RenderHtml(IRenderContext renderContext)

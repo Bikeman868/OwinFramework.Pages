@@ -222,6 +222,26 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         ITemplateDefinition AddText(string assetName, string defaultText, bool isPreFormatted = false);
 
         /// <summary>
+        /// Adds HTML to the head section of the page
+        /// </summary>
+        ITemplateDefinition AddHeadLine(string html);
+
+        /// <summary>
+        /// Adds JavaScript to the head of the page
+        /// </summary>
+        ITemplateDefinition AddScriptLine(string javaScript);
+
+        /// <summary>
+        /// Adds CSS to the head of the page
+        /// </summary>
+        ITemplateDefinition AddStyleLine(string css);
+
+        /// <summary>
+        /// Adds JavaScript to the bottom of the page HTML
+        /// </summary>
+        ITemplateDefinition AddInitializationLine(string javaScript);
+
+        /// <summary>
         /// Constructs and returns the template that was defined
         /// </summary>
         ITemplate Build();

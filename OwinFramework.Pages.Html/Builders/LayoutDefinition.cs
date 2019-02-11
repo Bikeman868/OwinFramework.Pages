@@ -179,7 +179,7 @@ namespace OwinFramework.Pages.Html.Builders
         ILayoutDefinition ILayoutDefinition.Template(string regionName, string templatePath)
         {
             var templateComponent = new TemplateComponent(_componentDependenciesFactory);
-            templateComponent.Template(templatePath);
+            templateComponent.BodyTemplate(templatePath);
             _regionComponents[regionName] = templateComponent;
 
             return this;

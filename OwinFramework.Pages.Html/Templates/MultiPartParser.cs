@@ -43,130 +43,74 @@ namespace OwinFramework.Pages.Html.Templates
             var templateDefinition = _templateBuilder.BuildUpTemplate();
 
             var section = "--html";
+            var newSection = true;
+            var blankLineCount = 0;
 
-            var html = new List<string>();
-            var javaScript = new List<string>();
-            var css = new List<string>();
+            var lines = text
+                .Replace("\r", string.Empty)
+                .Split('\n')
+                .Select(s => s.Trim());
 
-            var lines = text.Replace("\r", string.Empty).Split('\n').Select(s => s.Trim());
             foreach (var line in lines)
             {
                 if (line.StartsWith("--"))
                 {
                     section = line.ToLower().Trim();
+                    newSection = true;
+                    blankLineCount = 0;
                     continue;
                 }
 
+                if (line.Length == 0)
+                {
+                    if (!newSection)
+                        blankLineCount++;
+                    continue;
+                }
+
+
                 if (section.StartsWith("--javascript"))
                 {
-                    javaScript.Add(line);
+                    for (var i = 0; i < blankLineCount; i++)
+                        templateDefinition.AddScriptLine(string.Empty);
+
+                    templateDefinition.AddScriptLine(line);
                 }
                 else if (section.StartsWith("--css"))
                 {
-                    css.Add(line);
+                    for (var i = 0; i < blankLineCount; i++)
+                        templateDefinition.AddStyleLine(string.Empty);
+
+                    templateDefinition.AddStyleLine(line);
+                }
+                else if (section.StartsWith("--head"))
+                {
+                    for (var i = 0; i < blankLineCount; i++)
+                        templateDefinition.AddHeadLine(string.Empty);
+
+                    templateDefinition.AddHeadLine(line);
+                }
+                else if (section.StartsWith("--init"))
+                {
+                    for (var i = 0; i < blankLineCount; i++)
+                        templateDefinition.AddInitializationLine(string.Empty);
+
+                    templateDefinition.AddInitializationLine(line);
                 }
                 else if (section.StartsWith("--html"))
                 {
-                    html.Add(line);
-                }
-            }
+                    for (var i = 0; i < blankLineCount; i++)
+                        templateDefinition.AddLineBreak();
 
-            if (html.Count > 0 || javaScript.Count > 0 || css.Count > 0)
-            {
-                templateDefinition.AddComponent(new AssetComponent(css, html, javaScript));
+                    templateDefinition.AddHtml(line);
+                    templateDefinition.AddLineBreak();
+                }
+
+                newSection = false;
+                blankLineCount = 0;
             }
 
             return templateDefinition.Build();
-        }
-
-
-        private class AssetComponent: IComponent
-        {
-            IModule IDeployable.Module { get; set; }
-            AssetDeployment IDeployable.AssetDeployment { get; set; }
-            IPackage IPackagable.Package { get; set; }
-            ElementType INamed.ElementType { get { return ElementType.Component; } }
-            string INamed.Name { get; set; }
-
-            private object _lock = new object();
-            private List<string> _css;
-            private List<string> _html;
-            private List<string> _javaScript;
-            private PageArea[] _pageAreas;
-
-            public AssetComponent(List<string> css, List<string> html, List<string> javaScript)
-            {
-                _css = css;
-                _html = html;
-                _javaScript = javaScript;
-                _pageAreas = new PageArea[] { PageArea.Body };
-            }
-
-            IWriteResult IComponent.WritePageArea(IRenderContext context, PageArea pageArea)
-            {
-                if (pageArea == PageArea.Body)
-                {
-                    lock (_lock)
-                    {
-                        if (_css != null && _css.Count > 0)
-                        {
-                            context.Html.WriteOpenTag("style");
-                            context.Html.WriteLine();
-
-                            foreach (var line in _css)
-                                if (!string.IsNullOrWhiteSpace(line))
-                                    context.Html.WriteLine(line);
-
-                            context.Html.WriteCloseTag("style");
-                            context.Html.WriteLine();
-                        }
-
-                        if (_html != null && _html.Count > 0)
-                        {
-                            foreach (var line in _html)
-                                if (!string.IsNullOrWhiteSpace(line))
-                                    context.Html.WriteLine(line);
-                        }
-
-                        if (_javaScript != null && _javaScript.Count > 0)
-                        {
-                            context.Html.WriteScriptOpen();
-
-                            foreach (var line in _javaScript)
-                                if (!string.IsNullOrWhiteSpace(line))
-                                    context.Html.WriteLine(line);
-
-                            context.Html.WriteScriptClose();
-                        }
-                    }
-                }
-                return WriteResult.Continue();
-            }
-
-            IEnumerable<PageArea> IPageWriter.GetPageAreas()
-            {
-                return _pageAreas;
-            }
-
-            IWriteResult IPageWriter.WriteInPageStyles(ICssWriter writer, Func<ICssWriter, IWriteResult, IWriteResult> childrenWriter)
-            {
-                return WriteResult.Continue();
-            }
-
-            IWriteResult IPageWriter.WriteInPageFunctions(IJavascriptWriter writer, Func<IJavascriptWriter, IWriteResult, IWriteResult> childrenWriter)
-            {
-                return WriteResult.Continue();
-            }
-
-            IWriteResult IDeployable.WriteStaticCss(ICssWriter writer)
-            {
-                return WriteResult.Continue();
-            }
-
-            IWriteResult IDeployable.WriteStaticJavascript(IJavascriptWriter writer)
-            {
-                return WriteResult.Continue();
-            }
         }
     }
 }

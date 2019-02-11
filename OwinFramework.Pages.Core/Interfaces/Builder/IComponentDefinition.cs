@@ -136,6 +136,22 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IComponentDefinition Render(string assetName, string html);
 
         /// <summary>
+        /// Tells the component to render some html into the page head
+        /// </summary>
+        /// <param name="assetName">The name of the asset must uniquely identify a 
+        /// text asset. The asset manager can be used to provdide localized verions</param>
+        /// <param name="html">The html to render in the default locale</param>
+        IComponentDefinition RenderHead(string assetName, string html);
+
+        /// <summary>
+        /// Tells the component to render some html into the page initialization
+        /// </summary>
+        /// <param name="assetName">The name of the asset must uniquely identify a 
+        /// text asset. The asset manager can be used to provdide localized verions</param>
+        /// <param name="html">The html to render in the default locale</param>
+        IComponentDefinition RenderInitialization(string assetName, string html);
+
+        /// <summary>
         /// Builds the component
         /// </summary>
         IComponent Build();

@@ -21,7 +21,11 @@ namespace OwinFramework.Pages.Html.Templates
         private readonly INameManager _nameManager;
         private readonly IAssetManager _assetManager;
         private readonly Template _template;
-        private readonly ActionList _actions;
+        private readonly ActionList _headActions;
+        private readonly ActionList _scriptActions;
+        private readonly ActionList _styleActions;
+        private readonly ActionList _bodyActions;
+        private readonly ActionList _initializationActions;
         private readonly Stack<Element> _elementStack;
         private readonly Stack<Repeat> _repeatStack;
 
@@ -29,7 +33,11 @@ namespace OwinFramework.Pages.Html.Templates
         private Element _element;
         private Repeat _repeat;
 
-        private ActionList Actions { get { return _repeat ?? _actions; } }
+        private ActionList HeadActions { get { return _headActions; } }
+        private ActionList ScriptActions { get { return _scriptActions; } }
+        private ActionList StyleActions { get { return _styleActions; } }
+        private ActionList BodyActions { get { return _repeat ?? _bodyActions; } }
+        private ActionList InitializationActions { get { return _initializationActions; } }
 
         private class Element
         {
@@ -37,7 +45,7 @@ namespace OwinFramework.Pages.Html.Templates
             public List<string> Attributes = new List<string>();
         }
 
-        private class ActionList
+        private abstract class ActionList
         {
             protected readonly List<Action<IRenderContext>> _renderActions = new List<Action<IRenderContext>>();
 
@@ -67,13 +75,55 @@ namespace OwinFramework.Pages.Html.Templates
                 return a => _renderActions[index] = a;
             }
 
-            public void ToTemplate(Template template)
+            public abstract void ToTemplate(Template template);
+        }
+
+        private class BodyActionList : ActionList
+        {
+            public override void ToTemplate(Template template)
             {
-                template.Add(_renderActions);
+                if (_renderActions.Count > 0)
+                    template.Add(_renderActions);
             }
         }
 
-        private class Repeat: ActionList
+        private class HeadActionList : ActionList
+        {
+            public override void ToTemplate(Template template)
+            {
+                if (_renderActions.Count > 0)
+                    template.AddHead(_renderActions);
+            }
+        }
+
+        private class ScriptActionList : ActionList
+        {
+            public override void ToTemplate(Template template)
+            {
+                if (_renderActions.Count > 0)
+                    template.AddScript(_renderActions);
+            }
+        }
+
+        private class StyleActionList : ActionList
+        {
+            public override void ToTemplate(Template template)
+            {
+                if (_renderActions.Count > 0)
+                    template.AddStyle(_renderActions);
+            }
+        }
+
+        private class InitializationActionList : ActionList
+        {
+            public override void ToTemplate(Template template)
+            {
+                if (_renderActions.Count > 0)
+                    template.AddInitialization(_renderActions);
+            }
+        }
+
+        private class Repeat : BodyActionList
         {
             private readonly Type _repeatType;
             private readonly Type _listType;
@@ -135,7 +185,12 @@ namespace OwinFramework.Pages.Html.Templates
             _nameManager = nameManager;
             _assetManager = assetManager;
 
-            _actions = new ActionList();
+            _headActions = new HeadActionList();
+            _scriptActions = new ScriptActionList();
+            _styleActions = new StyleActionList();
+            _bodyActions = new BodyActionList();
+            _initializationActions = new InitializationActionList();
+
             _elementStack = new Stack<Element>();
             _repeatStack = new Stack<Repeat>();
             _template = new Template(dataConsumerFactory);
@@ -160,19 +215,19 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddHtml(string html)
         {
-            Actions.Add(r => r.Html.Write(html));
+            BodyActions.Add(r => r.Html.Write(html));
             return this;
         }
 
         public ITemplateDefinition AddElement(string tag, string content, params string[] attributePairs)
         {
-            Actions.Add(r => r.Html.WriteElement(tag, content, attributePairs));
+            BodyActions.Add(r => r.Html.WriteElement(tag, content, attributePairs));
             return this;
         }
 
         public ITemplateDefinition AddSelfClosingElement(string tag, params string[] attributePairs)
         {
-            Actions.Add(r => r.Html.WriteOpenTag(tag, true, attributePairs));
+            BodyActions.Add(r => r.Html.WriteOpenTag(tag, true, attributePairs));
             return this;
         }
 
@@ -198,7 +253,7 @@ namespace OwinFramework.Pages.Html.Templates
             if (property == null)
                 throw new TemplateBuilderException("Type " + dataType.DisplayName() + " does not have a public '" + propertyName + "' property");
 
-            Actions.AddPrior(r =>
+            BodyActions.AddPrior(r =>
                 {
                     var data = r.Data.Get(dataType, scopeName);
                     var propertyValue = property.GetValue(data, null);
@@ -221,13 +276,13 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddLineBreak()
         {
-            Actions.Add(r => r.Html.WriteLine());
+            BodyActions.Add(r => r.Html.WriteLine());
             return this;
         }
 
         public ITemplateDefinition AddLayout(string layoutName)
         {
-            var placeholder = Actions.AddPlaceholder();
+            var placeholder = BodyActions.AddPlaceholder();
 
             _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
             {
@@ -241,7 +296,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddLayout(ILayout layout)
         {
-            Actions.Add(r => layout.WritePageArea(r, PageArea.Body, (rc, pa, rn) => WriteResult.Continue())); // TODO: Write layout regions
+            BodyActions.Add(r => layout.WritePageArea(r, PageArea.Body, (rc, pa, rn) => WriteResult.Continue())); // TODO: Write layout regions
             AddConsumerNeeds(layout as IDataConsumer);
 
             return this;
@@ -249,7 +304,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddRegion(string regionName)
         {
-            var placeholder = Actions.AddPlaceholder();
+            var placeholder = BodyActions.AddPlaceholder();
 
             _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
             {
@@ -263,7 +318,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddRegion(IRegion region)
         {
-            Actions.Add(r => region.WritePageArea(r, PageArea.Body, null, (rc, pa) => WriteResult.Continue())); // TODO: Write region
+            BodyActions.Add(r => region.WritePageArea(r, PageArea.Body, null, (rc, pa) => WriteResult.Continue())); // TODO: Write region
             AddConsumerNeeds(region as IDataConsumer);
 
             return this;
@@ -271,7 +326,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddComponent(string componentName)
         {
-            var placeholder = Actions.AddPlaceholder();
+            var placeholder = BodyActions.AddPlaceholder();
 
             _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
                 {
@@ -285,7 +340,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddComponent(IComponent component)
         {
-            Actions.Add(r => component.WritePageArea(r, PageArea.Body));
+            BodyActions.Add(r => component.WritePageArea(r, PageArea.Body));
             AddConsumerNeeds(component as IDataConsumer);
 
             return this;
@@ -294,22 +349,51 @@ namespace OwinFramework.Pages.Html.Templates
         public ITemplateDefinition AddTemplate(string templatePath)
         {
             _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
-                {
-                    AddConsumerNeeds(nm.ResolveTemplate(templatePath) as IDataConsumer);
-                });
+            {
+                AddConsumerNeeds(nm.ResolveTemplate(templatePath) as IDataConsumer);
+            });
 
-            Actions.Add(r => 
-                {
-                    var t = _nameManager.ResolveTemplate(templatePath);
-                    if (t != null) t.WritePageArea(r, PageArea.Body);
-                });
+            HeadActions.Add(r => 
+            {
+                var t = _nameManager.ResolveTemplate(templatePath);
+                if (t != null) t.WritePageArea(r, PageArea.Head);
+            });
+
+            ScriptActions.Add(r =>
+            {
+                var t = _nameManager.ResolveTemplate(templatePath);
+                if (t != null) t.WritePageArea(r, PageArea.Scripts);
+            });
+
+            StyleActions.Add(r =>
+            {
+                var t = _nameManager.ResolveTemplate(templatePath);
+                if (t != null) t.WritePageArea(r, PageArea.Styles);
+            });
+
+            BodyActions.Add(r =>
+            {
+                var t = _nameManager.ResolveTemplate(templatePath);
+                if (t != null) t.WritePageArea(r, PageArea.Body);
+            });
+
+            InitializationActions.Add(r =>
+            {
+                var t = _nameManager.ResolveTemplate(templatePath);
+                if (t != null) t.WritePageArea(r, PageArea.Initialization);
+            });
 
             return this;
         }
 
         public ITemplateDefinition AddTemplate(ITemplate template)
         {
-            Actions.Add(r => template.WritePageArea(r, PageArea.Body));
+            HeadActions.Add(r => template.WritePageArea(r, PageArea.Head));
+            ScriptActions.Add(r => template.WritePageArea(r, PageArea.Scripts));
+            StyleActions.Add(r => template.WritePageArea(r, PageArea.Styles));
+            BodyActions.Add(r => template.WritePageArea(r, PageArea.Body));
+            InitializationActions.Add(r => template.WritePageArea(r, PageArea.Initialization));
+
             AddConsumerNeeds(template as IDataConsumer);
 
             return this;
@@ -323,7 +407,7 @@ namespace OwinFramework.Pages.Html.Templates
         public ITemplateDefinition AddData(Type dataType, string scopeName = null)
         {
             // TODO: Figure out how to do this
-            Actions.Add(r =>
+            BodyActions.Add(r =>
                 {
                     // r.Data.Set(dataType, value, scopeName);
                 });
@@ -333,7 +417,7 @@ namespace OwinFramework.Pages.Html.Templates
         public ITemplateDefinition AddData<T>(string scopeName = null)
         {
             // TODO: Figure out how to do this
-            Actions.Add(r =>
+            BodyActions.Add(r =>
             {
                 // r.Data.Set(typeof(T), value, scopeName);
             });
@@ -359,7 +443,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         private ITemplateDefinition ExtractProperty(Type dataType, PropertyInfo property, string scopeName = null, string propertyScopeName = null)
         {
-            Actions.Add(r =>
+            BodyActions.Add(r =>
             {
                 var obj = r.Data.Get(dataType, propertyScopeName);
                 var value = property.GetValue(obj, null);
@@ -371,7 +455,7 @@ namespace OwinFramework.Pages.Html.Templates
         public ITemplateDefinition RepeatStart(Type dataTypeToRepeat, string scopeName, string listScopeName)
         {
             var repeat = new Repeat(dataTypeToRepeat, listScopeName, scopeName);
-            Actions.Add(repeat.Enact);
+            BodyActions.Add(repeat.Enact);
 
             if (_repeat != null)
                 _repeatStack.Push(_repeat);
@@ -397,7 +481,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddDataField<T>(Func<T, string> formatFunc, string scopeName = null)
         {
-            Actions.Add(r =>
+            BodyActions.Add(r =>
             {
                 var data = r.Data.Get<T>(scopeName);
                 var formattedValue = formatFunc(data);
@@ -420,7 +504,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         private ITemplateDefinition AddDataField(Type dataType, PropertyInfo property, IDataFieldFormatter dataFormatter = null, string scopeName = null)
         {
-            Actions.Add(r =>
+            BodyActions.Add(r =>
             {
                 var data = r.Data.Get(dataType, scopeName);
                 var propertyValue = property.GetValue(data, null);
@@ -442,7 +526,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddText(string assetName, string defaultText, bool isPreFormatted)
         {
-            Actions.Add(r =>
+            BodyActions.Add(r =>
             {
                 var html = r.Html;
 
@@ -476,9 +560,53 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
+        public ITemplateDefinition AddHeadLine(string html)
+        {
+            HeadActions.Add(r =>
+                {
+                    r.Html.Write(html);
+                    r.Html.WriteLine();
+                });
+            return this;
+        }
+
+        public ITemplateDefinition AddScriptLine(string javaScript)
+        {
+            ScriptActions.Add(r =>
+                {
+                    r.Html.Write(javaScript);
+                    r.Html.WriteLine();
+                });
+            return this;
+        }
+
+        public ITemplateDefinition AddStyleLine(string css)
+        {
+            StyleActions.Add(r =>
+                {
+                    r.Html.Write(css);
+                    r.Html.WriteLine();
+                });
+            return this;
+        }
+
+        public ITemplateDefinition AddInitializationLine(string javaScript)
+        {
+            InitializationActions.Add(r =>
+                {
+                    r.Html.Write(javaScript);
+                    r.Html.WriteLine();
+                });
+            return this;
+        }
+
         public ITemplate Build()
         {
-            Actions.ToTemplate(_template);
+            HeadActions.ToTemplate(_template);
+            ScriptActions.ToTemplate(_template);
+            StyleActions.ToTemplate(_template);
+            BodyActions.ToTemplate(_template);
+            InitializationActions.ToTemplate(_template);
             return _template;
         }
 
@@ -501,13 +629,13 @@ namespace OwinFramework.Pages.Html.Templates
             }
 
             var element = _element;
-            Actions.Add(r => r.Html.WriteOpenTag(element.Tag, element.Attributes.ToArray()));
+            BodyActions.Add(r => r.Html.WriteOpenTag(element.Tag, element.Attributes.ToArray()));
         }
 
         private void WriteElementCloseTag()
         {
             var element = _element;
-            Actions.Add(r => r.Html.WriteCloseTag(element.Tag));
+            BodyActions.Add(r => r.Html.WriteCloseTag(element.Tag));
 
             _element = _elementStack.Count > 0 ? _elementStack.Pop() : null;
         }
@@ -558,5 +686,7 @@ namespace OwinFramework.Pages.Html.Templates
         }
 
         #endregion
+
+
     }
 }

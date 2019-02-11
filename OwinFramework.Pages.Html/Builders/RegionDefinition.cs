@@ -142,7 +142,7 @@ namespace OwinFramework.Pages.Html.Builders
         IRegionDefinition IRegionDefinition.Template(string templatePath)
         {
             var templateComponent = new TemplateComponent(_componentDependenciesFactory);
-            templateComponent.Template(templatePath);
+            templateComponent.BodyTemplate(templatePath);
             _region.Content = templateComponent;
 
             return this;

@@ -106,6 +106,8 @@ namespace OwinFramework.Pages.Html.Templates
                     });
             }
 
+            template.IsStatic = !ReloadInterval.HasValue;
+
             return template;
         }
 

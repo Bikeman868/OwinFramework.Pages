@@ -21,14 +21,97 @@ namespace OwinFramework.Pages.Html.Elements
 
         protected readonly IComponentDependenciesFactory Dependencies;
 
-        public Action<IRenderContext>[] HtmlWriters;
+        private Action<IRenderContext>[] _headWriters;
+        private Action<IRenderContext>[] _scriptWriters;
+        private Action<IRenderContext>[] _styleWriters;
+        public Action<IRenderContext>[] _bodyWriters;
+        public Action<IRenderContext>[] _initializationWriters;
 
+        /// <summary>
+        /// These are actions that must execute during the rendering of the page head
+        /// </summary>
+        public Action<IRenderContext>[] HeadWriters
+        {
+            get { return _headWriters; }
+            set
+            {
+                _headWriters = value;
+                EnsurePageArea(PageArea.Head, value == null);
+            }
+        }
+
+        /// <summary>
+        /// These are actions that must execute during the rendering of the in-page scripts
+        /// </summary>
+        public Action<IRenderContext>[] ScriptWriters
+        {
+            get { return _scriptWriters; }
+            set
+            {
+                _scriptWriters = value;
+                EnsurePageArea(PageArea.Scripts, value == null);
+            }
+        }
+
+        /// <summary>
+        /// These are actions that must execute during the rendering of the in-page styles
+        /// </summary>
+        public Action<IRenderContext>[] StyleWriters
+        {
+            get { return _styleWriters; }
+            set
+            {
+                _styleWriters = value;
+                EnsurePageArea(PageArea.Styles, value == null);
+            }
+        }
+
+        /// <summary>
+        /// These are actions that must execute during the rendering of the page body
+        /// </summary>
+        public Action<IRenderContext>[] BodyWriters
+        {
+            get { return _bodyWriters; }
+            set
+            {
+                _bodyWriters = value;
+                EnsurePageArea(PageArea.Body, value == null);
+            }
+        }
+
+        /// <summary>
+        /// These are actions that must execute during the rendering of the page initialization script
+        /// </summary>
+        public Action<IRenderContext>[] InitializationWriters
+        {
+            get { return _initializationWriters; }
+            set
+            {
+                _initializationWriters = value;
+                EnsurePageArea(PageArea.Initialization, value == null);
+            }
+        }
+
+        private void EnsurePageArea(PageArea pageArea, bool delete)
+        {
+            if (delete)
+                PageAreas = PageAreas.Where(a => a != pageArea).ToArray();
+            else if (!PageAreas.Contains(pageArea))
+                PageAreas = PageAreas.Concat(Enumerable.Repeat(pageArea, 1)).ToArray();
+        }
+
+        /// <summary>
+        /// These CSS rules will be written to the style assets for the component
+        /// </summary>
         public Action<ICssWriter>[] CssRules 
         {
             get { return _assetDeploymentMixin.CssRules; }
             set { _assetDeploymentMixin.CssRules = value; }
         }
 
+        /// <summary>
+        /// These JS functions will be written to the script assets for the component
+        /// </summary>
         public Action<IJavascriptWriter>[] JavascriptFunctions
         {
             get { return _assetDeploymentMixin.JavascriptFunctions; }
@@ -76,18 +159,66 @@ namespace OwinFramework.Pages.Html.Elements
             IRenderContext context, 
             PageArea pageArea)
         {
-            if (pageArea == PageArea.Body)
+            if (pageArea == PageArea.Head)
             {
-                if (context.IncludeComments)
-                    context.Html.WriteComment(GetCommentName());
-
-                if (HtmlWriters != null)
+                if (_headWriters != null && _headWriters.Length > 0)
                 {
-                    for (var i = 0; i < HtmlWriters.Length; i++)
-                        HtmlWriters[i](context);
+                    if (context.IncludeComments)
+                        context.Html.WriteComment(GetCommentName());
+
+                    for (var i = 0; i < _headWriters.Length; i++)
+                        _headWriters[i](context);
                 }
             }
-            
+
+            if (pageArea == PageArea.Scripts)
+            {
+                if (_scriptWriters != null && _scriptWriters.Length > 0)
+                {
+                    if (context.IncludeComments)
+                        context.Html.WriteComment(GetCommentName());
+
+                    for (var i = 0; i < _scriptWriters.Length; i++)
+                        _scriptWriters[i](context);
+                }
+            }
+
+            if (pageArea == PageArea.Styles)
+            {
+                if (_styleWriters != null && _styleWriters.Length > 0)
+                {
+                    if (context.IncludeComments)
+                        context.Html.WriteComment(GetCommentName());
+
+                    for (var i = 0; i < _styleWriters.Length; i++)
+                        _styleWriters[i](context);
+                }
+            }
+
+            if (pageArea == PageArea.Body)
+            {
+                if (_bodyWriters != null && _bodyWriters.Length > 0)
+                {
+                    if (context.IncludeComments)
+                        context.Html.WriteComment(GetCommentName());
+
+                    for (var i = 0; i < _bodyWriters.Length; i++)
+                        _bodyWriters[i](context);
+                }
+            }
+
+            if (pageArea == PageArea.Initialization)
+            {
+                if (_initializationWriters != null && _initializationWriters.Length > 0)
+                {
+                    if (context.IncludeComments)
+                        context.Html.WriteComment(GetCommentName());
+
+                    for (var i = 0; i < _initializationWriters.Length; i++)
+                        _initializationWriters[i](context);
+                }
+            }
+
             _assetDeploymentMixin.WritePageArea(context, pageArea);
 
             return WriteResult.Continue();

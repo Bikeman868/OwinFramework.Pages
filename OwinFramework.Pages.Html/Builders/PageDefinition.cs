@@ -234,7 +234,7 @@ namespace OwinFramework.Pages.Html.Builders
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
             var component = new TemplateComponent(_componentDependenciesFactory);
-            component.Template(templatePath);
+            component.BodyTemplate(templatePath);
 
             _page.PopulateRegion(regionName, component);
 

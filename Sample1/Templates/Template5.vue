@@ -6,7 +6,7 @@
 
 #app { color: pink; }
 
---JavaScript
+--init
 
 var app = new Vue({
   el: '#app',

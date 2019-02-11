@@ -12,6 +12,7 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Templates;
+using System.Security.Cryptography;
 
 namespace OwinFramework.Pages.Html.Templates
 {
@@ -33,6 +34,7 @@ namespace OwinFramework.Pages.Html.Templates
             public Uri Uri;
             public string TemplatePath;
             public ITemplateParser Parser;
+            public byte[] Checksum;
         }
 
         public UriLoader(
@@ -71,7 +73,9 @@ namespace OwinFramework.Pages.Html.Templates
             if (!uri.IsAbsoluteUri)
                 throw new ArgumentException("The Uri must be absolute", "uri");
 
-            var template = LoadAndParseUri(uri, parser);
+            Encoding encoding;
+            var buffer = LoadUriContents(uri, out encoding);
+            var template = parser.Parse(buffer, encoding, Package);
 
             if (!string.IsNullOrEmpty(templatePath))
             {
@@ -81,25 +85,35 @@ namespace OwinFramework.Pages.Html.Templates
                 {
                     Uri = uri,
                     Parser = parser,
-                    TemplatePath = templatePath
+                    TemplatePath = templatePath,
+                    Checksum = CalculateChecksum(buffer)
                 });
             }
 
+            template.IsStatic = !ReloadInterval.HasValue;
+            
             return template;
         }
 
-        private ITemplate LoadAndParseUri(Uri uri, ITemplateParser parser)
+        private byte[] LoadUriContents(Uri uri, out Encoding encoding)
         {
-            byte[] templateData;
+            byte[] buffer;
             using (var webClient = new WebClient())
             {
-                templateData = webClient.DownloadData(uri);
+                buffer = webClient.DownloadData(uri);
             }
 
-            Encoding encoding;
-            templateData = RemovePreamble(templateData, out encoding);
+            buffer = RemovePreamble(buffer, out encoding);
 
-            return parser.Parse(templateData, encoding, Package);
+            return buffer;
+        }
+
+        private byte[] CalculateChecksum(byte[] buffer)
+        {
+            using (var sha = new SHA1Managed())
+            {
+                return sha.ComputeHash(buffer);
+            }
         }
 
         private void Reload(TemplateInfo info)
@@ -142,8 +156,29 @@ namespace OwinFramework.Pages.Html.Templates
 
                                 try
                                 {
-                                    var template = LoadAndParseUri(templateInfo.Uri, templateInfo.Parser);
-                                    _nameManager.Register(template, templateInfo.TemplatePath);
+                                    Encoding encoding;
+                                    var buffer = LoadUriContents(templateInfo.Uri, out encoding);
+                                    var checksum = CalculateChecksum(buffer);
+
+                                    if (checksum.Length != templateInfo.Checksum.Length)
+                                    {
+                                        var template = templateInfo.Parser.Parse(buffer, encoding, Package);
+                                        _nameManager.Register(template, templateInfo.TemplatePath);
+                                        templateInfo.Checksum = checksum;
+                                    }
+                                    else
+                                    {
+                                        for (var j = 0; j < checksum.Length; j++)
+                                        {
+                                            if (checksum[j] != templateInfo.Checksum[j])
+                                            {
+                                                var template = templateInfo.Parser.Parse(buffer, encoding, Package);
+                                                _nameManager.Register(template, templateInfo.TemplatePath);
+                                                templateInfo.Checksum = checksum;
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 catch (ThreadAbortException)
                                 {

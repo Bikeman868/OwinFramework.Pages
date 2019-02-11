@@ -11,6 +11,14 @@ namespace OwinFramework.Pages.Core.Interfaces
     public interface ITemplate : IPageWriter, IPackagable, INamed
     {
         /// <summary>
+        /// This property is true if the template is not reloaded after the
+        /// application has started up. In this case the template renderer
+        /// can avoid finding the template in the name manager every time the
+        /// template is loaded
+        /// </summary>
+        bool IsStatic { get; set; }
+
+        /// <summary>
         /// This is called once during the rendering of the page body.
         /// Templates can not write to the page head or any other area of the page.
         /// </summary>

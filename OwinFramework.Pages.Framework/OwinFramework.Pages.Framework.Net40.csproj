@@ -45,6 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Analytics\EndpointStatistic.cs" />
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Builders\AttributeMatrix.cs" />

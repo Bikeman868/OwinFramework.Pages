@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		publish.cmd = publish.cmd
 		readme.md = readme.md
 		restore.cmd = restore.cmd
+		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 		todo.txt = todo.txt
 		update.cmd = update.cmd
 	EndProjectSection

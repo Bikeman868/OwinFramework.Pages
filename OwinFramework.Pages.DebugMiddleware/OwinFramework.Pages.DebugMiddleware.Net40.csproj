@@ -60,6 +60,9 @@
     <EmbeddedResource Include="svg.js" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="DebugHtmlPage.cs" />
     <Compile Include="SvgDrawing\DebugSvgDrawing.cs" />
     <Compile Include="DebugInfoMiddleware.cs" />

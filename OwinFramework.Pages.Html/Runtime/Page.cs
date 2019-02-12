@@ -488,14 +488,14 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 switch (pageArea)
                 {
+                    case PageArea.Head:
+                        writeResult.Add(WriteHeadArea(renderContext));
+                        break;
                     case PageArea.Styles:
                         writeResult.Add(WriteStylesArea(renderContext));
                         break;
                     case PageArea.Scripts:
                         writeResult.Add(WriteScriptsArea(renderContext));
-                        break;
-                    case PageArea.Head:
-                        writeResult.Add(WriteHeadArea(renderContext));
                         break;
                     case PageArea.Body:
                         writeResult.Add(WriteBodyArea(renderContext));

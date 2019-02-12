@@ -196,13 +196,13 @@ namespace OwinFramework.Pages.Html.Elements
         /// </summary>
         public void StyleTemplate(string templatePath)
         {
-            _headTemplatePath = templatePath;
+            _styleTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
 
-            HeadWriters = new Action<IRenderContext>[] { RenderHeadTemplate };
+            StyleWriters = new Action<IRenderContext>[] { RenderStyleTemplate };
         }
 
         /// <summary>

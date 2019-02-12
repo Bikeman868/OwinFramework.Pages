@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="LibrariesPackage.cs" />
     <Compile Include="LayoutsPackage.cs" />
     <Compile Include="MenuPackage.cs" />

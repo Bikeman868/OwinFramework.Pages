@@ -192,8 +192,11 @@ namespace OwinFramework.Pages.Restful.Runtime
                             m.Invoke(serviceInstance, parameters);
                         };
 
+                    var httpMethods = endpointAttribute.Methods ?? Methods;
+
                     var endpoint = new ServiceEndpoint(
-                        path,  
+                        path,
+                        httpMethods,
                         action,
                         m,
                         endpointAttribute.Analytics,
@@ -238,7 +241,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         endpoint.AddParameter(parameter.ParameterName, parameter.ParameterType, parameterParser);
                     }
 
-                    Register(endpoint, endpointAttribute.Methods ?? Methods, relativePath);
+                    Register(endpoint, httpMethods, relativePath);
                 }
             }
         }

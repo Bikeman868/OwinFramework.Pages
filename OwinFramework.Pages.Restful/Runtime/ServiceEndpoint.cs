@@ -51,6 +51,7 @@ namespace OwinFramework.Pages.Restful.Runtime
 
         public ServiceEndpoint(
             string path, 
+            Method[] methods,
             Action<IEndpointRequest> method,
             MethodInfo methodInfo,
             AnalyticsLevel analytics,
@@ -68,7 +69,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                 .Split('/')
                 .Where(p => !string.IsNullOrEmpty(p))
                 .ToArray();
-            AddStatistics(analytics, path);
+            AddStatistics(analytics, path, methods);
         }
 
         public void AddParameter(string name, EndpointParameterType parameterType, IParameterParser parser)
@@ -370,9 +371,17 @@ namespace OwinFramework.Pages.Restful.Runtime
             }
         }
 
-        private void AddStatistics(AnalyticsLevel level, string path)
+        private void AddStatistics(AnalyticsLevel level, string path, Method[] methods)
         {
             var baseId = path + "+";
+
+            if (methods != null && methods.Length > 0)
+                baseId = string.Join("", methods) + baseId;
+
+            var name = path;
+            if (methods != null && methods.Length > 0)
+                name = string.Join(" or ", methods) + " " + name;
+
 
             if (level == AnalyticsLevel.Basic || level == AnalyticsLevel.Full)
             {
@@ -380,15 +389,15 @@ namespace OwinFramework.Pages.Restful.Runtime
                     new StatisticInformation
                     {
                         Id = baseId + "RequestCount",
-                        Name = "Requests to " + path,
-                        Description = "The total number of requests to " + path + " since the service was started"
+                        Name = "Requests to " + name,
+                        Description = "The total number of requests to " + name + " since the service was started"
                     });
                 _availableStatistics.Add(
                     new StatisticInformation
                     {
                         Id = baseId + "FailCount",
-                        Name = "Failed requests to " + path,
-                        Description = "The number of requests to " + path + " that failed since the service was started"
+                        Name = "Failed requests to " + name,
+                        Description = "The number of requests to " + name + " that failed since the service was started"
                     });
             }
             if (level == AnalyticsLevel.Full)
@@ -398,8 +407,8 @@ namespace OwinFramework.Pages.Restful.Runtime
                     new StatisticInformation
                     {
                         Id = baseId + "RequestRate",
-                        Name = "Requests per minute to " + path,
-                        Description = "The number of successful requests per minute made to " + path + " over the last 10 minutes"
+                        Name = "Requests per minute to " + name,
+                        Description = "The number of successful requests per minute made to " + name + " over the last 10 minutes"
                     });
             }
             if (level == AnalyticsLevel.Full)
@@ -409,8 +418,8 @@ namespace OwinFramework.Pages.Restful.Runtime
                     new StatisticInformation
                     {
                         Id = baseId + "RequestTime",
-                        Name = "Average execution time for " + path,
-                        Description = "The average time taken to execute successful requests to " + path + " in the last 10 minutes"
+                        Name = "Average execution time for " + name,
+                        Description = "The average time taken to execute successful requests to " + name + " in the last 10 minutes"
                     });
             }
         }

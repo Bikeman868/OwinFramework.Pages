@@ -116,9 +116,9 @@ namespace OwinFramework.Pages.Core.Attributes
         public UsesLayoutAttribute UsesLayout;
 
         /// <summary>
-        /// For a region, specifies the template to render inside the region
+        /// Specifies the templates to render for this element
         /// </summary>
-        public UsesTemplateAttribute UsesTemplate;
+        public IList<RenderTemplateAttribute> RenderTemplates;
 
         /// <summary>
         /// Defines a static css asset to deploy on any page that includes this element
@@ -220,7 +220,6 @@ namespace OwinFramework.Pages.Core.Attributes
                 Style = Set(Style, attribute);
                 CacheOutput = Set(CacheOutput, attribute);
                 UsesLayout = Set(UsesLayout, attribute);
-                UsesTemplate = Set(UsesTemplate, attribute);
 
                 DeployCsss = Add(DeployCsss, attribute);
                 DeployFunctions = Add(DeployFunctions, attribute);
@@ -231,6 +230,7 @@ namespace OwinFramework.Pages.Core.Attributes
                 RegionHtmls = Add(RegionHtmls, attribute);
                 RegionTemplates = Add(RegionTemplates, attribute);
                 RenderHtmls = Add(RenderHtmls, attribute);
+                RenderTemplates = Add(RenderTemplates, attribute);
                 Routes = Add(Routes, attribute);
                 UsesComponents = Add(UsesComponents, attribute);
                 LayoutRegions = Add(LayoutRegions, attribute);

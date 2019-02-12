@@ -139,10 +139,28 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.Template(string templatePath)
+        IRegionDefinition IRegionDefinition.AddTemplate(string templatePath, PageArea pageArea)
         {
-            var templateComponent = new TemplateComponent(_componentDependenciesFactory);
-            templateComponent.BodyTemplate(templatePath);
+            var templateComponent = (_region.Content as TemplateComponent) ?? new TemplateComponent(_componentDependenciesFactory);
+            switch(pageArea)
+            {
+                case PageArea.Head:
+                    templateComponent.HeadTemplate(templatePath);
+                    break;
+                case PageArea.Scripts:
+                    templateComponent.ScriptTemplate(templatePath);
+                    break;
+                case PageArea.Styles:
+                    templateComponent.StyleTemplate(templatePath);
+                    break;
+                case PageArea.Body:
+                    templateComponent.BodyTemplate(templatePath);
+                    break;
+                case PageArea.Initialization:
+                    templateComponent.InitializationTemplate(templatePath);
+                    break;
+            }
+
             _region.Content = templateComponent;
 
             return this;

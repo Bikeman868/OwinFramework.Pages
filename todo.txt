@@ -15,25 +15,6 @@
   - Routing POST requests to component that rendered the form tag
   - https://en.wikipedia.org/wiki/Post/Redirect/Get
    
-* Template classes
-  - Define a style and content file that is specific to the template - like Angular
-  - Files deployed with the application and loaded at startup
-  - Css supports usual deployment options - packages, global or in-page
-  - Html parser for the content defined by the template class
-  - Supports forms and POSTback 
-
-  [IsTemplate("/templates/product")]
-  [TemplateStyle("~/assets/template/product/product-component.css")]
-  [TemplateContent("~/assets/template/product/product-component.md")]
-  [TemplateParser("markdown-with-mustache")]
-  [NeedsData(typeof(Product))]
-  public class MyTemplate: Template
-  {
-    protected override OnPostback(...)
-	{
-	}
-  }
-
 * Template parsers
   - Html with custom tags for data binding and repeating
   - Angular subset

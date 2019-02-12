@@ -69,7 +69,7 @@
     <Compile Include="Attributes\PartOfAttribute.cs" />
     <Compile Include="Attributes\UsesComponentAttribute.cs" />
     <Compile Include="Attributes\NeedsDataAttribute.cs" />
-    <Compile Include="Attributes\UsesTemplateAttribute.cs" />
+    <Compile Include="Attributes\RenderTemplateAttribute.cs" />
     <Compile Include="Attributes\UsesLayoutAttribute.cs" />
     <Compile Include="Attributes\LayoutRegionAttribute.cs" />
     <Compile Include="Attributes\ContainerAttribute.cs" />

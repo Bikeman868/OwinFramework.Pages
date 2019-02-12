@@ -230,7 +230,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<IRegion>()
                 .Invalid<ILayoutDefinition>("Please use the [RegionLayout] attribute instead so that the region name can be specified.");
 
-            Add<UsesTemplateAttribute>()
+            Add<RenderTemplateAttribute>()
                 .Valid<IRegionDefinition>()
                 .Invalid<ILayoutDefinition>("Please use the [RegionTemplate] attribute instead so that the region name can be specified.");
 
@@ -274,7 +274,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.SuppliesDatas != null) CheckAttribute<T, SuppliesDataAttribute>(result);
             if (attributes.UsesComponents != null) CheckAttribute<T, UsesComponentAttribute>(result);
             if (attributes.UsesLayout != null) CheckAttribute<T, UsesLayoutAttribute>(result);
-            if (attributes.UsesTemplate != null) CheckAttribute<T, UsesTemplateAttribute>(result);
+            if (attributes.RenderTemplates != null) CheckAttribute<T, RenderTemplateAttribute>(result);
             if (attributes.LayoutRegions != null) CheckAttribute<T, LayoutRegionAttribute>(result);
 
             return result.Count > 0 ? result : null;

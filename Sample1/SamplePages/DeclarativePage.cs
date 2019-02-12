@@ -127,13 +127,14 @@ namespace Sample1.SamplePages
     internal class MainHeaderRegion { }
 
     /// <summary>
-    /// Defines a region called 'header' that is at the top of every page
+    /// Defines a region called 'header' that is at the top of every page. It also
+    /// writes some initialization JavaScript into the bottom of every page
     /// </summary>
     [IsRegion("title")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [UsesTemplate("/common/pageTitle")]
-    [NeedsData(typeof(ApplicationInfo))] //TODO: This should not be required, the template already knows its data needs
+    [RenderTemplate("/common/pageTitle", PageArea.Body)]
+    [RenderTemplate("/common/pageInitialization", PageArea.Initialization)]
     internal class TitleRegion { }
 
     /// <summary>

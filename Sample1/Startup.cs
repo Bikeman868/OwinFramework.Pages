@@ -131,11 +131,16 @@ namespace Sample1
             nameManager.Register(template1, "/common/pageTitle");
 
             var template2 = templateBuilder.BuildUpTemplate()
+                .AddHtml("alert('Hello!');")
+                .Build();
+            nameManager.Register(template2, "/common/pageInitialization");
+
+            var template3 = templateBuilder.BuildUpTemplate()
                 .AddElementOpen("p", "class", "test")
                 .AddText("page-2-body", "Page 2 body")
                 .AddElementClose()
                 .Build();
-            nameManager.Register(template2, "/page2/body");
+            nameManager.Register(template3, "/page2/body");
 
             // This is an example of loading and parsing template files using different
             // parsers for different file formats

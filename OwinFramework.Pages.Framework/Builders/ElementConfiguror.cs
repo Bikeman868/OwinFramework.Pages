@@ -586,14 +586,16 @@ namespace OwinFramework.Pages.Framework.Builders
                 contentSpecified = true;
             }
 
-            if (!ReferenceEquals(attributes.UsesTemplate, null))
+            if (!ReferenceEquals(attributes.RenderTemplates, null) && attributes.RenderTemplates.Count > 0)
             {
                 if (contentSpecified)
                     throw new FluentBuilderException(
-                        "A region can contain either a layout, a component, static Html or a template. " +
+                        "A region can contain either a layout, a component, static Html or a set of templates. " +
                         "You can not have more than one of these things on region " + attributes.Type.DisplayName());
 
-                region.Template(attributes.UsesTemplate.TemplatePath);
+                foreach (var template in attributes.RenderTemplates)
+                    region.AddTemplate(template.TemplatePath, template.PageArea);
+
                 contentSpecified = true;
             }
 

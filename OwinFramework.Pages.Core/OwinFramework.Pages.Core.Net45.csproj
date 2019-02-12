@@ -58,6 +58,7 @@
     <Compile Include="Attributes\DataScopeAttribute.cs" />
     <Compile Include="Attributes\RegionHtmlAttribute.cs" />
     <Compile Include="Attributes\RegionTemplateAttribute.cs" />
+    <Compile Include="Attributes\RenderTemplateAttribute.cs" />
     <Compile Include="Attributes\SuppliesDataAttribute.cs" />
     <Compile Include="Attributes\PageTitleAttribute.cs" />
     <Compile Include="Attributes\ChildStyleAttribute.cs" />
@@ -85,7 +86,6 @@
     <Compile Include="Attributes\IsPackageAttribute.cs" />
     <Compile Include="Attributes\IsLayoutAttribute.cs" />
     <Compile Include="Attributes\IsPageAttribute.cs" />
-    <Compile Include="Attributes\UsesTemplateAttribute.cs" />
     <Compile Include="Collections\ArrayFactory.cs" />
     <Compile Include="Collections\DictionaryFactory.cs" />
     <Compile Include="Collections\Disposable.cs" />

@@ -115,7 +115,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// </summary>
         /// <param name="templatePath">A / separated path to the template to load
         /// into this region of the layout</param>
-        IRegionDefinition Template(string templatePath);
+        /// <param name="pageArea">The area of the page to render the template into</param>
+        IRegionDefinition AddTemplate(string templatePath, PageArea pageArea = PageArea.Body);
 
         /// <summary>
         /// Specifies the html tag to render around the contents of

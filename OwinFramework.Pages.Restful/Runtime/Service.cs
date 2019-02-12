@@ -24,8 +24,8 @@ using OwinFramework.Pages.Restful.Serializers;
 namespace OwinFramework.Pages.Restful.Runtime
 {
     /// <summary>
-    /// Base implementation of IComponent. Inheriting from this olass will insulate you
-    /// from any future additions to the IComponent interface
+    /// Base implementation of IService. Inheriting from this class will insulate you
+    /// from any future additions to the IService interface
     /// </summary>
     public class Service : IService, IDebuggable, IAnalysable
     {

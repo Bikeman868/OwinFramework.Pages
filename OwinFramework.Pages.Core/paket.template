@@ -1,14 +1,14 @@
 type file
 id Owin.Framework.Pages.Core
-version 1.1.1
+version 1.1.2
 authors Martin Halliday
-copyright Martin Halliday 2019
+copyright Martin Halliday 2018-2019
 description
   Defines the interfaces, enums and custom attributes that the other
   packages from Owin.Pages.Framework depend on.
 title Owin Framework Pages Core
 releasenotes
-  Multi-part templates
+  NUnit downgrade from version 3 to version 2
 licenseUrl http://www.apache.org/licenses/LICENSE-2.0
 projecturl http://owinframework.net/content/project/owinframework.pages.core/landing
 

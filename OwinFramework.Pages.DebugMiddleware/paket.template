@@ -1,14 +1,14 @@
 type file
 id Owin.Framework.Pages.DebugMiddleware
-version 1.1.1
+version 1.1.2
 authors Martin Halliday
-copyright Martin Halliday 2019
+copyright Martin Halliday 2018-2019
 description
   Middleware that shows the internal structure of pages to help with
   debugging issues with page composition and data provisioning.
 title Owin Framework Pages Debug Middleware
 releasenotes
-  Multi-part templates
+  NUnit downgrade from version 3 to version 2
 licenseUrl http://www.apache.org/licenses/LICENSE-2.0
 projecturl http://owinframework.net/content/project/owinframework.pages.debugmiddleware/landing
 
@@ -25,7 +25,7 @@ references
   OwinFramework.Pages.DebugMiddleware.dll
 
 dependencies
-  Owin.Framework.Pages.Core >= 1.1.1
+  Owin.Framework.Pages.Core >= 1.1.2
 
   Ioc.Modules ~> LOCKED:Minor
   Newtonsoft.Json ~> LOCKED:Minor

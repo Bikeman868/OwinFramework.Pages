@@ -232,11 +232,12 @@ namespace OwinFramework.Pages.Framework.Builders
 
             Add<RenderTemplateAttribute>()
                 .Valid<IRegionDefinition>()
+                .Invalid<IPageDefinition>("Please use the [RegionTemplate] attribute instead so that the region name can be specified.")
                 .Invalid<ILayoutDefinition>("Please use the [RegionTemplate] attribute instead so that the region name can be specified.");
 
             Add<LayoutRegionAttribute>()
                 .Valid<ILayoutDefinition>()
-                .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [RegionLayout] and [RegionComponent] attributes.");
+                .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [RegionTemplate], [RegionLayout] and [RegionComponent] attributes.");
         }
 
         private AttributeDefinition Add<T>(string usageMessage = null)

@@ -71,6 +71,7 @@ namespace OwinFramework.Pages.Restful.Runtime
 
             DefaultDeserializerType = typeof(Json);
             DefaultSerializerType = typeof(Json);
+            AllowAnonymous = true;
         }
 
         public void Initialize(Func<Type, object> factory)

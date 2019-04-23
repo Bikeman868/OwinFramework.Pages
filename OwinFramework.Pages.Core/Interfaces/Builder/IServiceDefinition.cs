@@ -55,6 +55,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IServiceDefinition RequiredPermission(string requiredPermission, bool endpointSpecificPermission);
 
         /// <summary>
+        /// Defines that the user must identify with the system to make this service call
+        /// </summary>
+        IServiceDefinition RequireIdentification();
+
+        /// <summary>
         /// Defines the default serialization for endpoints in this service
         /// </summary>
         /// <param name="requestDeserializer">The type that deserializes the request body</param>

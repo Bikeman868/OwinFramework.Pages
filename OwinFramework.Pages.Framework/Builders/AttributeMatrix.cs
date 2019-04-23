@@ -199,6 +199,12 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<IPage>()
                 .Valid<IService>();
 
+            Add<RequiresIdentificationAttribute>()
+                .Valid<IPageDefinition>()
+                .Valid<IServiceDefinition>()
+                .Valid<IPage>()
+                .Valid<IService>();
+
             Add<RouteAttribute>("Only pages and services can handle Http requests and return responses. Elements like regions, layouts and components produce fragments of Html.")
                 .Valid<IPageDefinition>()
                 .Valid<IServiceDefinition>();
@@ -270,6 +276,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.RenderHtmls != null) CheckAttribute<T, RenderHtmlAttribute>(result);
             if (attributes.Repeat != null) CheckAttribute<T, RepeatAttribute>(result);
             if (attributes.RequiresPermission != null) CheckAttribute<T, RequiresPermissionAttribute>(result);
+            if (attributes.RequiresIdentification != null) CheckAttribute<T, RequiresIdentificationAttribute>(result);
             if (attributes.Routes != null) CheckAttribute<T, RouteAttribute>(result);
             if (attributes.Style != null) CheckAttribute<T, StyleAttribute>(result);
             if (attributes.SuppliesDatas != null) CheckAttribute<T, SuppliesDataAttribute>(result);

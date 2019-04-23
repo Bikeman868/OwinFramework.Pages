@@ -77,8 +77,15 @@ namespace OwinFramework.Pages.Restful.Builders
 
         public IServiceDefinition RequiredPermission(string requiredPermission, bool endpointSpecificPermission)
         {
+            _service.AllowAnonymous = false;
             _service.RequiredPermission = requiredPermission;
             _service.EndpointSpecificPermission = endpointSpecificPermission;
+            return this;
+        }
+
+        public IServiceDefinition RequireIdentification()
+        {
+            _service.AllowAnonymous = false;
             return this;
         }
 

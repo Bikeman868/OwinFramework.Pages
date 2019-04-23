@@ -62,6 +62,7 @@
     <Compile Include="Attributes\RegionHtmlAttribute.cs" />
     <Compile Include="Attributes\RegionTemplateAttribute.cs" />
     <Compile Include="Attributes\RenderTemplateAttribute.cs" />
+    <Compile Include="Attributes\RequiresIdentificationAttribute.cs" />
     <Compile Include="Attributes\SuppliesDataAttribute.cs" />
     <Compile Include="Attributes\PageTitleAttribute.cs" />
     <Compile Include="Attributes\ChildStyleAttribute.cs" />

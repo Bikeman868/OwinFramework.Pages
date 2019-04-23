@@ -31,7 +31,8 @@ namespace OwinFramework.Pages.Core.Attributes
         public Method[] Methods { get; set; }
 
         /// <summary>
-        /// Request methods that should be routed to this page or service
+        /// Routes are compared to the request in priority order and the 
+        /// first matching route is used to handle the request
         /// </summary>
         public int Priority { get; set; }
     }

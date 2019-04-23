@@ -3,14 +3,15 @@
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Attach this attribute to an element to make it part of a package (namespace)
+    /// Attach this attribute to an element to specify that the caller must
+    /// identify themselves and their account must be assigned a specific permission
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class RequiresPermissionAttribute: Attribute
     {
         /// <summary>
-        /// Constructs and initializes an attribute that specifies the package that 
-        /// this element belongs to
+        /// Constructs and initializes an attribute that specifies the permission that
+        /// a user must have to call this endpoint
         /// </summary>
         /// <param name="permissionName">The name of the required permission</param>
         /// <param name="resourcePath">Optional path to the protected resource</param>

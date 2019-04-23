@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.Restful
-version 1.1.2
+version 1.1.3
 authors Martin Halliday
 copyright Martin Halliday 2018-2019
 description
@@ -8,7 +8,8 @@ description
   endpoints that respond to RESTful requests.
 title Owin Framework Pages Restful
 releasenotes
-  NUnit downgrade from version 3 to version 2
+  Pages and services can be called anonymously unless the [RequiresIdentification]
+  attribute is attached or the endpoint has a required permission
 licenseUrl http://www.apache.org/licenses/LICENSE-2.0
 projecturl http://owinframework.net/content/project/owinframework.pages.restful/landing
 
@@ -25,7 +26,7 @@ references
   OwinFramework.Pages.Restful.dll
 
 dependencies
-  Owin.Framework.Pages.Core >= 1.1.2
+  Owin.Framework.Pages.Core >= 1.1.3
 
   Ioc.Modules ~> LOCKED:Minor
   Newtonsoft.Json ~> LOCKED:Minor

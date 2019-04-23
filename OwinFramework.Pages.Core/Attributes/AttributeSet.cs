@@ -101,6 +101,12 @@ namespace OwinFramework.Pages.Core.Attributes
         public RequiresPermissionAttribute RequiresPermission;
 
         /// <summary>
+        /// Specifies that the caller must identify themselves to the
+        /// system in order to call this endpoint
+        /// </summary>
+        public RequiresIdentificationAttribute RequiresIdentification;
+
+        /// <summary>
         /// Defines how to style this element
         /// </summary>
         public StyleAttribute Style;
@@ -217,6 +223,7 @@ namespace OwinFramework.Pages.Core.Attributes
                 PartOf = Set(PartOf, attribute);
                 Repeat = Set(Repeat, attribute);
                 RequiresPermission = Set(RequiresPermission, attribute);
+                RequiresIdentification = Set(RequiresIdentification, attribute);
                 Style = Set(Style, attribute);
                 CacheOutput = Set(CacheOutput, attribute);
                 UsesLayout = Set(UsesLayout, attribute);

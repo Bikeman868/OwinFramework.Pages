@@ -686,6 +686,11 @@ namespace OwinFramework.Pages.Framework.Builders
                 service.RequiredPermission(attributes.RequiresPermission.PermissionName, false);
             }
 
+            if (attributes.RequiresIdentification != null)
+            {
+                service.RequireIdentification();
+            }
+
             if (!ReferenceEquals(attributes.PartOf, null))
             {
                 service.PartOf(attributes.PartOf.PackageName);
@@ -1197,8 +1202,14 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (attributes.RequiresPermission != null)
             {
+                runable.AllowAnonymous = false;
                 runable.RequiredPermission = attributes.RequiresPermission.PermissionName;
                 runable.SecureResource = attributes.RequiresPermission.ResourcePath;
+            }
+
+            if (attributes.RequiresIdentification != null)
+            {
+                runable.AllowAnonymous = false;
             }
 
             if (attributes.CacheOutput != null)

@@ -9,7 +9,7 @@
 * Future features
   - Support for multiple instances of pages middleware on 
     different Owin routes and possibly with different fluent
-	builder configurations.
+    builder configurations.
   
 * Forms
   - Routing POST requests to component that rendered the form tag

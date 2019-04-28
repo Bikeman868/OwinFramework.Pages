@@ -1,0 +1,44 @@
+type file
+id Owin.Framework.Pages.CMS.Runtime
+version 1.0.0
+authors Martin Halliday
+copyright Martin Halliday 2019
+description
+  You must include this package in your website to render pages
+  defined within the CMS.
+title Owin Framework Pages CMS Runtime
+releasenotes
+  First version
+licenseUrl http://www.apache.org/licenses/LICENSE-2.0
+projecturl http://owinframework.net/content/project/owinframework.pages.cms.runtime/landing
+
+files
+  LICENSE
+
+  bin/net40/release/OwinFramework.Pages.CMS.Runtime.dll ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.CMS.Runtime.dll ==> lib/net45
+
+  bin/net40/release/OwinFramework.Pages.CMS.Runtime.xml ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.CMS.Runtime.xml ==> lib/net45
+
+  bin/net40/release/OwinFramework.Pages.CMS.Runtime.pdb ==> lib/net40
+  bin/net45/release/OwinFramework.Pages.CMS.Runtime.pdb ==> lib/net45
+
+references
+  OwinFramework.Pages.CMS.Runtime.dll
+
+dependencies
+  Owin.Framework.Pages.Core >= 1.1.3
+  
+  Ioc.Modules ~> LOCKED:Minor
+  Newtonsoft.Json ~> LOCKED:Minor
+  Urchin.Client ~> LOCKED:Minor
+  Prius ~> LOCKED:Minor
+
+  framework: net40
+    Microsoft.Owin = LOCKED:Build-net40
+    Owin.Framework ~> LOCKED:Minor-net40
+
+  framework: net45
+    Microsoft.Owin = LOCKED:Build-net45
+    Owin.Framework ~> LOCKED:Minor-net45

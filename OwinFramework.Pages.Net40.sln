@@ -40,6 +40,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample3", "Sample3\Sample3.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Standard.Net40", "OwinFramework.Pages.Standard\OwinFramework.Pages.Standard.Net40.csproj", "{2B3CFCAB-67EB-4D62-A49A-971E92DBC7E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.CMS.Runtime.Net40", "OwinFramework.Pages.CMS.Runtime\OwinFramework.Pages.CMS.Runtime.Net40.csproj", "{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.CMS.Editor.Net40", "OwinFramework.Pages.CMS.Editor\OwinFramework.Pages.CMS.Editor.Net40.csproj", "{60C824DF-D107-4441-AD21-DBE2CE0D6829}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +94,14 @@ Global
 		{2B3CFCAB-67EB-4D62-A49A-971E92DBC7E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B3CFCAB-67EB-4D62-A49A-971E92DBC7E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B3CFCAB-67EB-4D62-A49A-971E92DBC7E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

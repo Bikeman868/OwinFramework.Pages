@@ -38,6 +38,12 @@
     <Reference Include="Ioc.Modules">
       <HintPath>..\packages\Ioc.Modules\lib\net45\Ioc.Modules.dll</HintPath>
     </Reference>
+    <Reference Include="Prius.Contracts">
+      <HintPath>..\packages\Prius\lib\net45\Prius.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Prius.Orm">
+      <HintPath>..\packages\Prius\lib\net45\Prius.Orm.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,6 +56,24 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\DataLayer.cs" />
+    <Compile Include="Data\TestDatabaseReader.cs" />
+    <Compile Include="Interfaces\Database\AuditRecord.cs" />
+    <Compile Include="Interfaces\Database\ElementVersionRecordBase.cs" />
+    <Compile Include="Interfaces\Database\ElementRecordBase.cs" />
+    <Compile Include="Interfaces\Database\ElementPropertyRecord.cs" />
+    <Compile Include="Interfaces\Database\PageVersionRecord.cs" />
+    <Compile Include="Interfaces\Database\VersionRecord.cs" />
+    <Compile Include="Interfaces\Database\LayoutVersionRecord.cs" />
+    <Compile Include="Interfaces\Database\LayoutRecord.cs" />
+    <Compile Include="Interfaces\Database\ComponentRecord.cs" />
+    <Compile Include="Interfaces\Database\PackageRecord.cs" />
+    <Compile Include="Interfaces\Database\ModuleRecord.cs" />
+    <Compile Include="Interfaces\Database\RegionRecord.cs" />
+    <Compile Include="Interfaces\Database\PageRecord.cs" />
+    <Compile Include="Interfaces\Database\UpdateResult.cs" />
+    <Compile Include="Interfaces\IDatabaseUpdater.cs" />
+    <Compile Include="Interfaces\IDatabaseReader.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -63,6 +87,7 @@
       <Name>OwinFramework.Pages.Core.Net45</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -45,22 +45,25 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.Name(string name)
         {
-            if (string.IsNullOrEmpty(name)) return this;
-
-            _page.Name = name;
+            if (!string.IsNullOrEmpty(name))
+                _page.Name = name;
 
             return this;
         }
 
         IPageDefinition IPageDefinition.CanonicalUrl(string canonicalUrl)
         {
-            _page.CanonicalUrlFunc = rc => canonicalUrl;
+            if (!string.IsNullOrEmpty(canonicalUrl))
+                _page.CanonicalUrlFunc = rc => canonicalUrl;
+
             return this;
         }
 
         IPageDefinition IPageDefinition.CanonicalUrl(Func<IRenderContext, string> canonicalUrlFunc)
         {
-            _page.CanonicalUrlFunc = canonicalUrlFunc;
+            if (canonicalUrlFunc != null)
+                _page.CanonicalUrlFunc = canonicalUrlFunc;
+
             return this;
         }
 
@@ -126,6 +129,9 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.RequiresPermission(string permissionName, string assetName)
         {
+            if (string.IsNullOrEmpty(permissionName))
+                return this;
+
             _page.AuthenticationFunc = c =>
                 {
                     var authorization = c.GetFeature<IAuthorization>();

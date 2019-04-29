@@ -8,6 +8,7 @@ using Owin;
 using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
 using OwinFramework.Interfaces.Utility;
+using OwinFramework.Pages.CMS.Runtime;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Interfaces.Templates;
@@ -40,6 +41,9 @@ namespace Sample1
 
             // For this example we will use Ninject as the IoC container
             var ninject = new StandardKernel(new Ioc.Modules.Ninject.Module(packageLocator));
+
+            // Prius requires a factory to work
+            PriusIntegration.PriusFactory.Ninject = ninject;
 
             // Next we load up the configuration file and watch for changes
             var hostingEnvironment = ninject.Get<IHostingEnvironment>();
@@ -114,6 +118,7 @@ namespace Sample1
             fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus");
             fluentBuilder.Register(ninject.Get<LayoutsPackage>(), "layouts");
             fluentBuilder.Register(ninject.Get<LibrariesPackage>(), "libraries");
+            fluentBuilder.Register(ninject.Get<CmsRuntimePackage>(), "cms");
 
             // This is an example of registering all of the elements defined in an assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));

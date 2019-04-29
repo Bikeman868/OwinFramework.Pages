@@ -27,6 +27,9 @@ namespace Sample1
                     new IocRegistration().Init<IBuilder>(),
                     new IocRegistration().Init<IRequestRouter>(),
                     new IocRegistration().Init<IFluentBuilder>(),
+
+                    new IocRegistration().Init<Prius.Contracts.Interfaces.External.IFactory, PriusIntegration.PriusFactory>(),
+                    new IocRegistration().Init<Prius.Contracts.Interfaces.External.IErrorReporter, PriusIntegration.PriusErrorReporter>(),
                 };
             }
         }

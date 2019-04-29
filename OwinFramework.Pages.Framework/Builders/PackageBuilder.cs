@@ -31,7 +31,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
         IPackageDefinition IPackageBuilder.BuildUpPackage(object packageInstance, Type declaringType)
         {
-            var package = packageInstance as Runtime.Package ?? new Runtime.Package(_packageDependenciesFactory);
+            var package = packageInstance as Core.Interfaces.IPackage ?? new Runtime.Package(_packageDependenciesFactory);
             if (declaringType == null) declaringType = (packageInstance ?? package).GetType();
 
             var packageDefinition = new PackageDefinition(package, _fluentBuilder, _nameManager);

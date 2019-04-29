@@ -304,7 +304,7 @@ namespace OwinFramework.Pages.Framework.Builders
         #region Builders for each element type
 
         /// <summary>
-        /// This is called when a module is discovered through reflection and it needs
+        /// This is called when a package is discovered through reflection and it needs
         /// to be consutucted and initialized, or when a package is explicitly registered
         /// with a custom namespace
         /// </summary>

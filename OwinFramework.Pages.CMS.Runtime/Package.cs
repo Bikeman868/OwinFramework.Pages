@@ -5,6 +5,9 @@ using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using Prius.Contracts.Interfaces;
+using OwinFramework.Pages.CMS.Runtime.Interfaces;
+using OwinFramework.Pages.CMS.Runtime.Data;
 
 namespace OwinFramework.Pages.CMS.Runtime
 {
@@ -22,6 +25,9 @@ namespace OwinFramework.Pages.CMS.Runtime
             {
                 return new List<IocRegistration>
                 {
+                    // These are internal classes that need wiring up with IoC
+                    new IocRegistration().Init<IDatabaseReader, TestDatabaseReader>(),
+
                     // These are the external dependencies for this package
                     new IocRegistration().Init<IHtmlWriterFactory>(),
                     new IocRegistration().Init<ICssWriterFactory>(),
@@ -35,6 +41,9 @@ namespace OwinFramework.Pages.CMS.Runtime
                     new IocRegistration().Init<IRegionDependenciesFactory>(),
                     new IocRegistration().Init<IComponentDependenciesFactory>(),
                     new IocRegistration().Init<IDataProviderDependenciesFactory>(),
+
+                    new IocRegistration().Init<ICommandFactory>(),
+                    new IocRegistration().Init<IContextFactory>(),
                 };
             }
         }

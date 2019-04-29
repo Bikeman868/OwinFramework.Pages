@@ -35,6 +35,12 @@
     <Reference Include="Ioc.Modules">
       <HintPath>..\packages\Ioc.Modules\lib\net40\Ioc.Modules.dll</HintPath>
     </Reference>
+    <Reference Include="Prius.Contracts">
+      <HintPath>..\packages\Prius\lib\net40\Prius.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Prius.Orm">
+      <HintPath>..\packages\Prius\lib\net40\Prius.Orm.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,11 +48,36 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Urchin.Client">
+      <HintPath>..\packages\Urchin.Client\lib\net40\Urchin.Client.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CmsRuntimePackage.cs" />
+    <Compile Include="Configuration\CmsConfiguration.cs" />
+    <Compile Include="Data\TestDatabaseReader.cs" />
+    <Compile Include="Interfaces\Database\AuditRecord.cs" />
+    <Compile Include="Interfaces\Database\ComponentRecord.cs" />
+    <Compile Include="Interfaces\Database\ElementPropertyRecord.cs" />
+    <Compile Include="Interfaces\Database\ElementRecordBase.cs" />
+    <Compile Include="Interfaces\Database\ElementVersionRecordBase.cs" />
+    <Compile Include="Interfaces\Database\LayoutRecord.cs" />
+    <Compile Include="Interfaces\Database\LayoutRegionRecord.cs" />
+    <Compile Include="Interfaces\Database\LayoutVersionRecord.cs" />
+    <Compile Include="Interfaces\Database\ModuleRecord.cs" />
+    <Compile Include="Interfaces\Database\PackageRecord.cs" />
+    <Compile Include="Interfaces\Database\PageRecord.cs" />
+    <Compile Include="Interfaces\Database\ElementComponentRecord.cs" />
+    <Compile Include="Interfaces\Database\PageRouteRecord.cs" />
+    <Compile Include="Interfaces\Database\PageVersionRecord.cs" />
+    <Compile Include="Interfaces\Database\RegionRecord.cs" />
+    <Compile Include="Interfaces\Database\UpdateResult.cs" />
+    <Compile Include="Interfaces\Database\VersionRecord.cs" />
+    <Compile Include="Interfaces\IDatabaseReader.cs" />
+    <Compile Include="Interfaces\IDatabaseUpdater.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

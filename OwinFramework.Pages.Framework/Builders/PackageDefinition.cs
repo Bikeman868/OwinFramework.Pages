@@ -10,10 +10,10 @@ namespace OwinFramework.Pages.Framework.Builders
     {
         private readonly IFluentBuilder _builder;
         private readonly INameManager _nameManager;
-        private readonly Runtime.Package _package;
+        private readonly IPackage _package;
 
         public PackageDefinition(
-            Runtime.Package package,
+            IPackage package,
             IFluentBuilder builder,
             INameManager nameManager)
         {

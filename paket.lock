@@ -18,7 +18,7 @@ NUGET
       Newtonsoft.Json (>= 7.0.1)
       Urchin.Client (>= 1.2.1)
     Svg (2.3)
-    Urchin.Client (1.2.1)
+    Urchin.Client (1.2.6)
       Ioc.Modules (>= 1.2.1)
       Newtonsoft.Json (>= 7.0.1)
 

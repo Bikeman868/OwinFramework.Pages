@@ -113,6 +113,7 @@ namespace OwinFramework.Pages.CMS.Runtime
                     .DeployIn(pageVersion.ModuleName)
                     .Title(pageVersion.Title)
                     .CanonicalUrl(pageVersion.CanonicalUrl)
+                    .Layout(pageVersion.LayoutName)
                     .BodyStyle(pageVersion.BodyStyle)
                     .RequiresPermission(pageVersion.RequiredPermission, pageVersion.AssetPath);
 

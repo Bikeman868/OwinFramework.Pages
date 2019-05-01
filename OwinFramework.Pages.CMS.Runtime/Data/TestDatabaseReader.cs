@@ -38,11 +38,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 }
             };
 
-            _layoutVersions = _layouts.Select(l => new LayoutVersionRecord
-                {
+            _layoutVersions = new List<LayoutVersionRecord>
+            {
+                new LayoutVersionRecord {
                     Id = elementVersionId++,
                     Version = 1,
-                    ElementId = l.Id,
+                    ElementId = _layouts[0].Id,
                     AssetDeployment = AssetDeployment.Inherit,
                     RegionNesting = "header,main,footer",
                     LayoutRegions = new List<LayoutRegionRecord>
@@ -52,17 +53,42 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             RegionName = "header",
                             ContentType = "html",
                             ContentName = "header",
-                            ContentValue = "<h1>Header</h1>"
+                            ContentValue = "<h1>Header V1</h1>"
                         },
                         new LayoutRegionRecord
                         {
                             RegionName = "footer",
                             ContentType = "html",
                             ContentName = "footer",
-                            ContentValue = "<h1>Footer</h1>"
+                            ContentValue = "<h1>Footer V1</h1>"
                         }
                     }
-                }).ToList();
+                },
+                new LayoutVersionRecord {
+                    Id = elementVersionId++,
+                    Version = 2,
+                    ElementId = _layouts[0].Id,
+                    AssetDeployment = AssetDeployment.Inherit,
+                    RegionNesting = "header,main,footer",
+                    LayoutRegions = new List<LayoutRegionRecord>
+                    {
+                        new LayoutRegionRecord
+                        {
+                            RegionName = "header",
+                            ContentType = "html",
+                            ContentName = "header",
+                            ContentValue = "<h1>Header V2</h1>"
+                        },
+                        new LayoutRegionRecord
+                        {
+                            RegionName = "footer",
+                            ContentType = "html",
+                            ContentName = "footer",
+                            ContentValue = "<h1>Footer V2</h1>"
+                        }
+                    }
+                }
+            };
 
             _pages = new List<PageRecord>
             {
@@ -70,15 +96,25 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 {
                     Id = elementId++,
                     CraetedBy = "urn:user:1234",
-                    CreatedWhen = DateTime.UtcNow
+                    CreatedWhen = DateTime.UtcNow,
+                    Name = "page_1"
+                },
+                new PageRecord 
+                {
+                    Id = elementId++,
+                    CraetedBy = "urn:user:1234",
+                    CreatedWhen = DateTime.UtcNow,
+                    Name = "page_2"
                 }
             };
 
-            _pageVersions = _pages.Select(p => new PageVersionRecord
+            _pageVersions = new List<PageVersionRecord>
+            {
+                new PageVersionRecord
                 {
                     Id = elementVersionId++,
                     Version = 1,
-                    ElementId = p.Id,
+                    ElementId = _pages[0].Id,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     LayoutVersionId = _layoutVersions[0].Id,
                     CanonicalUrl = "http://sample1.localhost/cms/page1/",
@@ -92,8 +128,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                         },
                         new PageRouteRecord
                         {
-                            Path = "/cms/page2",
-                            Priority = 100
+                            Path = "/cms/page1_old_url",
+                            Priority = -10
                         }
                     },
                     LayoutRegions = new List<LayoutRegionRecord>
@@ -106,7 +142,97 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             ContentValue = "<p>This is CMS page 1</p>"
                         }
                     }
-                }).ToList();
+                },
+                new PageVersionRecord
+                {
+                    Id = elementVersionId++,
+                    Version = 1,
+                    ElementId = _pages[1].Id,
+                    AssetDeployment = AssetDeployment.PerWebsite,
+                    LayoutVersionId = _layoutVersions[0].Id,
+                    CanonicalUrl = "http://sample1.localhost/cms/page2/",
+                    Title = "Second CMS Page",
+                    Routes = new List<PageRouteRecord>
+                    {
+                        new PageRouteRecord
+                        {
+                            Path = "/cms/page2",
+                            Priority = 200
+                        }
+                    },
+                    LayoutRegions = new List<LayoutRegionRecord>
+                    {
+                        new LayoutRegionRecord
+                        {
+                            RegionName = "main",
+                            ContentType = "html",
+                            ContentName = "cms-page1",
+                            ContentValue = "<p>This is CMS page 2</p>"
+                        }
+                    }
+                },
+                new PageVersionRecord
+                {
+                    Id = elementVersionId++,
+                    Version = 2,
+                    ElementId = _pages[0].Id,
+                    AssetDeployment = AssetDeployment.PerWebsite,
+                    LayoutVersionId = _layoutVersions[1].Id,
+                    CanonicalUrl = "http://sample1.localhost/cms/page1/",
+                    Title = "First CMS Page",
+                    Routes = new List<PageRouteRecord>
+                    {
+                        new PageRouteRecord
+                        {
+                            Path = "/cms/page1",
+                            Priority = 200
+                        },
+                        new PageRouteRecord
+                        {
+                            Path = "/cms/page1_old_url",
+                            Priority = -10
+                        }
+                    },
+                    LayoutRegions = new List<LayoutRegionRecord>
+                    {
+                        new LayoutRegionRecord
+                        {
+                            RegionName = "main",
+                            ContentType = "html",
+                            ContentName = "cms-page1",
+                            ContentValue = "<p>This is CMS page 1</p>"
+                        }
+                    }
+                },
+                new PageVersionRecord
+                {
+                    Id = elementVersionId++,
+                    Version = 2,
+                    ElementId = _pages[1].Id,
+                    AssetDeployment = AssetDeployment.PerWebsite,
+                    LayoutVersionId = _layoutVersions[1].Id,
+                    CanonicalUrl = "http://sample1.localhost/cms/page2/",
+                    Title = "Second CMS Page",
+                    Routes = new List<PageRouteRecord>
+                    {
+                        new PageRouteRecord
+                        {
+                            Path = "/cms/page2",
+                            Priority = 200
+                        }
+                    },
+                    LayoutRegions = new List<LayoutRegionRecord>
+                    {
+                        new LayoutRegionRecord
+                        {
+                            RegionName = "main",
+                            ContentType = "html",
+                            ContentName = "cms-page1",
+                            ContentValue = "<p>This is CMS page 2</p>"
+                        }
+                    }
+                }
+            };
 
             _properties = new List<ElementPropertyRecord> 
             { 
@@ -123,9 +249,17 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new WebsiteVersionRecord
                 {
-                    Id = websiteVersionId,
+                    Id = websiteVersionId++,
                     Name = "1.0",
                     Description = "First version",
+                    CraetedBy = "urn:user:1234",
+                    CreatedWhen = DateTime.UtcNow
+                },
+                new WebsiteVersionRecord
+                {
+                    Id = websiteVersionId++,
+                    Name = "1.1",
+                    Description = "Modified layout",
                     CraetedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow
                 }
@@ -137,9 +271,23 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 {
                     WebsiteVersionId = _websiteVersions[0].Id,
                     PageVersionId = _pageVersions[0].Id
+                },
+                new WebsiteVersionPageRecord
+                {
+                    WebsiteVersionId = _websiteVersions[0].Id,
+                    PageVersionId = _pageVersions[1].Id
+                },
+                new WebsiteVersionPageRecord
+                {
+                    WebsiteVersionId = _websiteVersions[1].Id,
+                    PageVersionId = _pageVersions[2].Id
+                },
+                new WebsiteVersionPageRecord
+                {
+                    WebsiteVersionId = _websiteVersions[1].Id,
+                    PageVersionId = _pageVersions[3].Id
                 }
             };
-
         }
 
         IList<T> IDatabaseReader.GetWebsiteVersions<T>(Func<WebsiteVersionRecord, T> map, Func<WebsiteVersionRecord, bool> predicate)
@@ -222,9 +370,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 : elementVersions.Select(map).ToList();
         }
 
-        T IDatabaseReader.GetPage<T>(long elementId, int version, Func<PageRecord, PageVersionRecord, T> map)
+        T IDatabaseReader.GetPage<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
         {
-            var page = _pages.FirstOrDefault(p => p.Id == elementId);
+            var page = _pages.FirstOrDefault(p => p.Id == pageId);
             if (page == null) return default(T);
 
             var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ElementId == page.Id && pv.Version == version);
@@ -233,9 +381,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(page, pageVersion);
         }
 
-        T IDatabaseReader.GetLayout<T>(long elementId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map)
+        T IDatabaseReader.GetLayout<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
-            var layout = _layouts.FirstOrDefault(l => l.Id == elementId);
+            var layout = _layouts.FirstOrDefault(l => l.Id == layoutId);
             if (layout == null) return default(T);
 
             var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ElementId == layout.Id && lv.Version == version);
@@ -244,9 +392,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(layout, layoutVersion);
         }
 
-        T IDatabaseReader.GetPage<T>(long elementVersionId, Func<PageRecord, PageVersionRecord, T> map)
+        T IDatabaseReader.GetPage<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map)
         {
-            var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ElementId == elementVersionId);
+            var pageVersion = _pageVersions.FirstOrDefault(pv => pv.Id == pageVersionId);
             if (pageVersion == null) return default(T);
 
             var page = _pages.FirstOrDefault(p => p.Id == pageVersion.ElementId);
@@ -255,9 +403,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(page, pageVersion);
         }
 
-        T IDatabaseReader.GetLayout<T>(long elementVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map)
+        T IDatabaseReader.GetLayout<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
-            var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ElementId == elementVersionId);
+            var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.Id == layoutVersionId);
             if (layoutVersion == null) return default(T);
 
             var layout = _layouts.FirstOrDefault(l => l.Id == layoutVersion.ElementId);

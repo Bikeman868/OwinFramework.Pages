@@ -55,34 +55,34 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// Retrieves a single page version by its ID number
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
-        /// <param name="elementId">The unique ID of the page to return</param>
+        /// <param name="pageId">The unique ID of the page to return</param>
         /// <param name="version">The version of the page to get</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetPage<T>(long elementId, int version, Func<PageRecord, PageVersionRecord, T> map);
+        T GetPage<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single layout version by its ID number
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
-        /// <param name="elementId">The unique ID of the layout to return</param>
+        /// <param name="layoutId">The unique ID of the layout to return</param>
         /// <param name="version">The version of the layout to get</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetLayout<T>(long elementId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map);
+        T GetLayout<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single page version by its ID number
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
-        /// <param name="elementVersionId">The unique ID of the page version to return</param>
+        /// <param name="pageVersionId">The unique ID of the page version to return</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetPage<T>(long elementVersionId, Func<PageRecord, PageVersionRecord, T> map);
+        T GetPage<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single layout version by its ID number
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
-        /// <param name="elementVersionId">The unique ID of the layout version to return</param>
+        /// <param name="layoutVersionId">The unique ID of the layout version to return</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetLayout<T>(long elementVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map);
+        T GetLayout<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map);
     }
 }

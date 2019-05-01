@@ -17,7 +17,7 @@
         public CmsConfiguration()
         {
             PriusRepositoryName = "cms";
-            WebsiteVersionName = "1.0";
+            WebsiteVersionName = "1.1";
         }
     }
 }

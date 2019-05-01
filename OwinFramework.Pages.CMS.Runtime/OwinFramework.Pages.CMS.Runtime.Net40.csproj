@@ -56,7 +56,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CmsRuntimePackage.cs" />
+    <Compile Include="CmsStaticRuntimePackage.cs" />
     <Compile Include="Configuration\CmsConfiguration.cs" />
     <Compile Include="Data\TestDatabaseReader.cs" />
     <Compile Include="Interfaces\Database\AuditRecord.cs" />

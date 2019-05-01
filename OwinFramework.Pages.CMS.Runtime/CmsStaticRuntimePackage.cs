@@ -10,7 +10,14 @@ using Urchin.Client.Interfaces;
 
 namespace OwinFramework.Pages.CMS.Runtime
 {
-    public class CmsRuntimePackage : IPackage
+    /// <summary>
+    /// This CMS runtime package configures CMS pages into the Pages
+    /// middleware at startup and does not change the configuration whilst
+    /// the website is running. This is a very efficient and scaleable way
+    /// of running a CMS website, but any changes to website pages will
+    /// not be reflected on the website until the webservers are recylced.
+    /// </summary>
+    public class CmsStaticRuntimePackage : IPackage
     {
         public IModule Module { get; set; }
         public ElementType ElementType { get { return ElementType.Package; } }
@@ -25,7 +32,7 @@ namespace OwinFramework.Pages.CMS.Runtime
         private readonly IDisposable _config;
         private CmsConfiguration _configuration;
 
-        public CmsRuntimePackage(
+        public CmsStaticRuntimePackage(
             IPackageDependenciesFactory dependencies,
             IConfigurationStore configurationStore,
             IDatabaseReader databaseReader)
@@ -44,12 +51,10 @@ namespace OwinFramework.Pages.CMS.Runtime
         {
             _layouts = new Dictionary<long, ILayout>();
 
-            var websitePages = _database.GetWebsiteVersionPages(_configuration.WebsiteVersionName, v => v);
+            var websiteVersionPages = _database.GetWebsiteVersionPages(_configuration.WebsiteVersionName, vp => vp);
 
-            foreach (var page in websitePages)
-            {
+            foreach (var page in websiteVersionPages)
                 BuildPage(builder, page.PageVersionId);
-            }
 
             _layouts.Clear();
 

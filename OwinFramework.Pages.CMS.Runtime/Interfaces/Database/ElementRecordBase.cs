@@ -17,9 +17,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long Id { get; set; }
 
         /// <summary>
-        /// The name of this element. This name is displayed in the CMS editor so that
-        /// the user can identify which element this is. If the name is blank then the
-        /// ID will be used instead
+        /// The name of this element. This name must be unique amongst elements of the
+        /// same type, and it must be a valid CSS class name and a valid JavaScript identifier.
+        /// The recommended format is all lower case with underscore between words - for example
+        /// 'cart_checkout_1'
         /// </summary>
         [Mapping("name")]
         public string Name { get; set; }

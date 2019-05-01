@@ -1,8 +1,4 @@
 ﻿using Prius.Contracts.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -15,7 +11,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long ElementVersionId { get; set; }
 
         /// <summary>
-        /// The name of a component to render on the page
+        /// The name of a component to render on the page. This can be a component
+        /// defined in code or the name of a component version from CMS
         /// </summary>
         [Mapping("component")]
         public string ComponentName { get; set; }

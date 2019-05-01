@@ -2,8 +2,6 @@
 using Ioc.Modules;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Collections;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
-using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using Prius.Contracts.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;

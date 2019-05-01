@@ -3,41 +3,29 @@ using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.CMS.Runtime.Data
 {
     internal class TestDatabaseReader: IDatabaseReader
     {
-        private List<VersionRecord> _versions;
+        private readonly List<WebsiteVersionRecord> _websiteVersions;
+        private readonly List<WebsiteVersionPageRecord> _websiteVersionPages;
 
-        private List<PageRecord> _pages;
-        private List<PageVersionRecord> _pageVersions;
+        private readonly List<PageRecord> _pages;
+        private readonly List<PageVersionRecord> _pageVersions;
 
-        private List<LayoutRecord> _layouts;
-        private List<LayoutVersionRecord> _layoutVersions;
+        private readonly List<LayoutRecord> _layouts;
+        private readonly List<LayoutVersionRecord> _layoutVersions;
 
-        private List<ElementPropertyRecord> _properties;
+        private readonly List<ElementPropertyRecord> _properties;
 
         public TestDatabaseReader()
         {
-            _versions = new List<VersionRecord>
-            {
-                new VersionRecord
-                {
-                    Id = 1,
-                    Name = "1.0",
-                    Description = "First version",
-                    CraetedBy = "urn:user:1234",
-                    CreatedWhen = DateTime.UtcNow
-                }
-            };
-
             var elementId = 1;
             var elementVersionId = 1;
             var propertyId = 1;
+            var websiteVersionId = 1;
 
             _layouts = new List<LayoutRecord>
             {
@@ -53,9 +41,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             _layoutVersions = _layouts.Select(l => new LayoutVersionRecord
                 {
                     Id = elementVersionId++,
-                    VersionId = _versions[0].Id,
+                    Version = 1,
                     ElementId = l.Id,
-                    Enabled = true,
                     AssetDeployment = AssetDeployment.Inherit,
                     RegionNesting = "header,main,footer",
                     LayoutRegions = new List<LayoutRegionRecord>
@@ -90,11 +77,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             _pageVersions = _pages.Select(p => new PageVersionRecord
                 {
                     Id = elementVersionId++,
-                    VersionId = _versions[0].Id,
+                    Version = 1,
                     ElementId = p.Id,
-                    Enabled = true,
                     AssetDeployment = AssetDeployment.PerWebsite,
-                    LayoutName = _layouts[0].Name,
+                    LayoutVersionId = _layoutVersions[0].Id,
                     CanonicalUrl = "http://sample1.localhost/cms/page1/",
                     Title = "First CMS Page",
                     Routes = new List<PageRouteRecord>
@@ -132,21 +118,84 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     Value = "First CMS Page"
                 }
             };
+
+            _websiteVersions = new List<WebsiteVersionRecord>
+            {
+                new WebsiteVersionRecord
+                {
+                    Id = websiteVersionId,
+                    Name = "1.0",
+                    Description = "First version",
+                    CraetedBy = "urn:user:1234",
+                    CreatedWhen = DateTime.UtcNow
+                }
+            };
+
+            _websiteVersionPages = new List<WebsiteVersionPageRecord>
+            {
+                new WebsiteVersionPageRecord
+                {
+                    WebsiteVersionId = _websiteVersions[0].Id,
+                    PageVersionId = _pageVersions[0].Id
+                }
+            };
+
         }
 
-        IList<T> IDatabaseReader.GetVersions<T>(Func<VersionRecord, T> map, Func<VersionRecord, bool> predicate)
+        IList<T> IDatabaseReader.GetWebsiteVersions<T>(Func<WebsiteVersionRecord, T> map, Func<WebsiteVersionRecord, bool> predicate)
         {
             if (predicate == null)
-                return _versions.Select(map).ToList();
-            return _versions.Where(predicate).Select(map).ToList();
+                return _websiteVersions
+                    .Select(map)
+                    .ToList();
+
+            return _websiteVersions
+                .Where(predicate)
+                .Select(map)
+                .ToList();
+        }
+
+        IList<T> IDatabaseReader.GetWebsiteVersionPages<T>(
+            long websiteVersionId, 
+            Func<WebsiteVersionPageRecord, T> map,
+            Func<WebsiteVersionPageRecord, bool> predicate)
+        {
+            if (predicate == null)
+                return _websiteVersionPages
+                    .Where(pv => pv.WebsiteVersionId == websiteVersionId)
+                    .Select(map)
+                    .ToList();
+
+            return _websiteVersionPages
+                .Where(pv => pv.WebsiteVersionId == websiteVersionId)
+                .Where(predicate)
+                .Select(map)
+                .ToList();
+        }
+
+        IList<T> IDatabaseReader.GetWebsiteVersionPages<T>(
+            string websiteVersionName, 
+            Func<WebsiteVersionPageRecord, T> map,
+            Func<WebsiteVersionPageRecord, bool> predicate)
+        {
+            var websiteVersion = _websiteVersions
+                .FirstOrDefault(v => String.Equals(v.Name, websiteVersionName, StringComparison.OrdinalIgnoreCase));
+
+            return websiteVersion == null 
+                ? null 
+                : ((IDatabaseReader)this).GetWebsiteVersionPages(websiteVersion.Id, map, predicate);
         }
 
         IDictionary<string, string> IDatabaseReader.GetElementProperties(long elementVersionId)
         {
-            return _properties.Where(p => p.ElementVersionId == elementVersionId).ToDictionary(p => p.Name, p => p.Value);
+            return _properties
+                .Where(p => p.ElementVersionId == elementVersionId)
+                .ToDictionary(p => p.Name, p => p.Value);
         }
 
-        IList<T> IDatabaseReader.GetElementVersions<T>(long elementId, Func<VersionRecord, ElementVersionRecordBase, T> map)
+        IList<T> IDatabaseReader.GetElementVersions<T>(
+            long elementId, 
+            Func<ElementVersionRecordBase, T> map)
         {
             IEnumerable<ElementVersionRecordBase> elementVersions = null;
 
@@ -164,86 +213,57 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 var layout = _layouts.FirstOrDefault(l => l.Id == elementId);
                 if (layout != null)
                 {
-                    elementVersions = _layoutVersions
-                        .Where(lv => lv.ElementId == layout.Id);
+                    elementVersions = _layoutVersions.Where(lv => lv.ElementId == layout.Id);
                 }
             }
             
             return elementVersions == null 
                 ? new List<T>()
-                : elementVersions
-                    .Select(ev => map(_versions.FirstOrDefault(v => v.Id == ev.VersionId), ev))
-                    .ToList();
+                : elementVersions.Select(map).ToList();
         }
 
-        T IDatabaseReader.GetPage<T>(long elementId, string versionName, Func<PageRecord, PageVersionRecord, T> map)
+        T IDatabaseReader.GetPage<T>(long elementId, int version, Func<PageRecord, PageVersionRecord, T> map)
         {
-            var version = _versions.FirstOrDefault(v => string.Equals(v.Name, versionName, StringComparison.OrdinalIgnoreCase));
-            if (version == null) return default(T);
-
             var page = _pages.FirstOrDefault(p => p.Id == elementId);
             if (page == null) return default(T);
 
-            var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ElementId == page.Id && pv.VersionId == version.Id);
+            var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ElementId == page.Id && pv.Version == version);
             if (pageVersion == null) return default(T);
 
             return map(page, pageVersion);
         }
 
-        T IDatabaseReader.GetLayout<T>(long elementId, string versionName, Func<LayoutRecord, LayoutVersionRecord, T> map)
+        T IDatabaseReader.GetLayout<T>(long elementId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
-            var version = _versions.FirstOrDefault(v => string.Equals(v.Name, versionName, StringComparison.OrdinalIgnoreCase));
-            if (version == null) return default(T);
-
             var layout = _layouts.FirstOrDefault(l => l.Id == elementId);
             if (layout == null) return default(T);
 
-            var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ElementId == layout.Id && lv.VersionId == version.Id);
+            var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ElementId == layout.Id && lv.Version == version);
             if (layoutVersion == null) return default(T);
 
             return map(layout, layoutVersion);
         }
 
-        IList<T> IDatabaseReader.GetPages<T>(
-            string versionName, 
-            Func<PageRecord, PageVersionRecord, T> map, 
-            Func<PageRecord, PageVersionRecord, bool> predicate)
+        T IDatabaseReader.GetPage<T>(long elementVersionId, Func<PageRecord, PageVersionRecord, T> map)
         {
-            var version = _versions.FirstOrDefault(v => string.Equals(v.Name, versionName, StringComparison.OrdinalIgnoreCase));
-            if (version == null) return new List<T>();
+            var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ElementId == elementVersionId);
+            if (pageVersion == null) return default(T);
 
-            var pages = _pageVersions
-                .Where(pv => pv.VersionId == version.Id)
-                .Select(pv => new 
-                { 
-                    PageVersion = pv, 
-                    Page = _pages.FirstOrDefault(p => p.Id == pv.ElementId)
-                });
+            var page = _pages.FirstOrDefault(p => p.Id == pageVersion.ElementId);
+            if (page == null) return default(T);
 
-            if (predicate != null) pages = pages.Where(o => predicate(o.Page, o.PageVersion));
-
-            return pages.Select(o => map(o.Page, o.PageVersion)).ToList();
+            return map(page, pageVersion);
         }
 
-        IList<T> IDatabaseReader.GetLayouts<T>(
-            string versionName, 
-            Func<LayoutRecord, LayoutVersionRecord, T> map, 
-            Func<LayoutRecord, LayoutVersionRecord, bool> predicate)
+        T IDatabaseReader.GetLayout<T>(long elementVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
-            var version = _versions.FirstOrDefault(v => string.Equals(v.Name, versionName, StringComparison.OrdinalIgnoreCase));
-            if (version == null) return new List<T>();
+            var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ElementId == elementVersionId);
+            if (layoutVersion == null) return default(T);
 
-            var layouts = _layoutVersions
-                .Where(lv => lv.VersionId == version.Id)
-                .Select(lv => new 
-                { 
-                    LayoutVersion = lv, 
-                    Layout = _layouts.FirstOrDefault(l => l.Id == lv.ElementId)
-                });
+            var layout = _layouts.FirstOrDefault(l => l.Id == layoutVersion.ElementId);
+            if (layout == null) return default(T);
 
-            if (predicate != null) layouts = layouts.Where(o => predicate(o.Layout, o.LayoutVersion));
-
-            return layouts.Select(o => map(o.Layout, o.LayoutVersion)).ToList();
+            return map(layout, layoutVersion);
         }
     }
 }

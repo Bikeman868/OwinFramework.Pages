@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OwinFramework.Pages.CMS.Runtime.Configuration
+﻿namespace OwinFramework.Pages.CMS.Runtime.Configuration
 {
     internal class CmsConfiguration
     {
@@ -18,12 +12,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Configuration
         /// can edit any version of the website, but each instance of the 
         /// runtime only displays one specific version.
         /// </summary>
-        public string VersionName { get; set; }
+        public string WebsiteVersionName { get; set; }
 
         public CmsConfiguration()
         {
             PriusRepositoryName = "cms";
-            VersionName = "1.0";
+            WebsiteVersionName = "1.0";
         }
     }
 }

@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Prius.Contracts.Attributes;
+﻿using Prius.Contracts.Attributes;
 using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
     /// <summary>
     /// A POCO that defines the database fields common to all element versions.
-    /// When new versions are created all elements from the current element 
-    /// versions are duplicated into the new version. The new version can then
-    /// be edited, validated and then made live.
     /// </summary>
     public class ElementVersionRecordBase
     {
@@ -23,23 +15,25 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long Id { get; set; }
 
         /// <summary>
-        /// The unique ID of the version that this is part of. 
-        /// </summary>
-        [Mapping("versionId")]
-        public long VersionId { get; set; }
-
-        /// <summary>
         /// The unique ID of the element that this is a version of.
         /// </summary>
         [Mapping("elementId")]
         public long ElementId { get; set; }
 
         /// <summary>
-        /// Set this to false to temporarily remove this version of the element 
-        /// from the website
+        /// The version number of this version of the element. The website
+        /// can use different versions of the same element on different pages
+        /// at the same time.
         /// </summary>
-        [Mapping("enabled")]
-        public bool Enabled { get; set; }
+        [Mapping("version")]
+        public int Version { get; set; }
+
+        /// <summary>
+        /// The name of this version of the element. This will be a 
+        /// calculated from of the element name and element version number
+        /// for example "twoColumnLayout_v3" and is not stored in the database
+        /// </summary>
+        public string VersionName { get; set; }
 
         /// <summary>
         /// Optional package name defines the namespace of the element name

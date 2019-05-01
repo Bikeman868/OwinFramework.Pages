@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
+﻿namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
     /// <summary>
     /// POCO that returns results from a database update

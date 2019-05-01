@@ -1,8 +1,4 @@
 ﻿using Prius.Contracts.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -13,6 +9,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// </summary>
         [Mapping("region")]
         public string RegionName { get; set; }
+
+        /// <summary>
+        /// The unique ID of the region version or NULL when RegionName
+        /// contains the name of the region to bind
+        /// </summary>
+        public long? RegionVersionId { get; set; }
 
         /// <summary>
         /// Can be 'Layout', 'Component', 'Html' or 'Template'

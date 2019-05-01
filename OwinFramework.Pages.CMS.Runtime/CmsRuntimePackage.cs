@@ -6,8 +6,6 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Urchin.Client.Interfaces;
 
 namespace OwinFramework.Pages.CMS.Runtime
@@ -21,6 +19,9 @@ namespace OwinFramework.Pages.CMS.Runtime
 
         private readonly IPackageDependenciesFactory _dependencies;
         private readonly IDatabaseReader _database;
+
+        private Dictionary<long, ILayout> _layouts;
+
         private readonly IDisposable _config;
         private CmsConfiguration _configuration;
 
@@ -41,107 +42,115 @@ namespace OwinFramework.Pages.CMS.Runtime
 
         public IPackage Build(IFluentBuilder builder)
         {
-            BuildRegions(builder);
-            BuildLayouts(builder);
-            BuildPages(builder);
+            _layouts = new Dictionary<long, ILayout>();
+
+            var websitePages = _database.GetWebsiteVersionPages(_configuration.WebsiteVersionName, v => v);
+
+            foreach (var page in websitePages)
+            {
+                BuildPage(builder, page.PageVersionId);
+            }
+
+            _layouts.Clear();
 
             return this;
         }
 
-        private void BuildRegions(IFluentBuilder builder)
+        private IPage BuildPage(IFluentBuilder builder, long pageVersionId)
         {
-        }
+            var data = _database.GetPage(pageVersionId, (p, v) => new Tuple<PageRecord, PageVersionRecord>(p, v));
+            var page = data.Item1;
+            var pageVersion = data.Item2;
 
-        private void BuildLayouts(IFluentBuilder builder)
-        {
-            var records = _database.GetLayouts(
-                _configuration.VersionName, 
-                (l, v) => new Tuple<LayoutRecord, LayoutVersionRecord>(l, v), 
-                (l, v) => v.Enabled);
+            pageVersion.VersionName = page.Name + "_v" + pageVersion.Version;
 
-            foreach(var record in records)
+            var pageDefinition = builder.BuildUpPage()
+                .Name(pageVersion.VersionName)
+                .AssetDeployment(pageVersion.AssetDeployment)
+                .PartOf(pageVersion.PackageName)
+                .DeployIn(pageVersion.ModuleName)
+                .Title(pageVersion.Title)
+                .CanonicalUrl(pageVersion.CanonicalUrl)
+                .BodyStyle(pageVersion.BodyStyle)
+                .RequiresPermission(pageVersion.RequiredPermission, pageVersion.AssetPath);
+
+            if (pageVersion.LayoutVersionId.HasValue)
             {
-                var layout = record.Item1;
-                var layoutVersion = record.Item2;
-
-                var layoutDefinition = builder.BuildUpLayout()
-                    .Name(layout.Name)
-                    .AssetDeployment(layoutVersion.AssetDeployment)
-                    .PartOf(layoutVersion.PackageName)
-                    .DeployIn(layoutVersion.ModuleName)
-                    .RegionNesting(layoutVersion.RegionNesting);
-
-                if (layoutVersion.Components != null)
-                    foreach (var component in layoutVersion.Components)
-                        layoutDefinition.NeedsComponent(component.ComponentName);
-
-                if (layoutVersion.LayoutRegions != null)
-                { 
-                    foreach(var layoutRegion in layoutVersion.LayoutRegions)
-                    {
-                        if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
-                            layoutDefinition.Html(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
-                        else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
-                            layoutDefinition.Layout(layoutRegion.RegionName, layoutRegion.ContentName);
-                        else if (string.Equals(layoutRegion.ContentType, "template", StringComparison.OrdinalIgnoreCase))
-                            layoutDefinition.Template(layoutRegion.RegionName, layoutRegion.ContentName);
-                        else if (string.Equals(layoutRegion.ContentType, "component", StringComparison.OrdinalIgnoreCase))
-                            layoutDefinition.Component(layoutRegion.RegionName, layoutRegion.ContentName);
-                    }
+                ILayout layout;
+                if (!_layouts.TryGetValue(pageVersion.LayoutVersionId.Value, out layout))
+                {
+                    layout = BuildLayout(builder, pageVersion.LayoutVersionId.Value);
+                    _layouts.Add(pageVersion.LayoutVersionId.Value, layout);
                 }
 
-                layoutDefinition.Build();
+                pageDefinition.Layout(layout);
             }
+            else
+            {
+                pageDefinition.Layout(pageVersion.LayoutName);
+            }
+
+            if (pageVersion.Routes != null)
+                foreach (var route in pageVersion.Routes)
+                    pageDefinition.Route(route.Path, route.Priority);
+
+            if (pageVersion.Components != null)
+                foreach (var component in pageVersion.Components)
+                    pageDefinition.NeedsComponent(component.ComponentName);
+
+            if (pageVersion.LayoutRegions != null)
+            { 
+                foreach(var layoutRegion in pageVersion.LayoutRegions)
+                {
+                    if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
+                        pageDefinition.RegionHtml(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
+                    else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
+                        pageDefinition.RegionLayout(layoutRegion.RegionName, layoutRegion.ContentName);
+                    else if (string.Equals(layoutRegion.ContentType, "template", StringComparison.OrdinalIgnoreCase))
+                        pageDefinition.RegionTemplate(layoutRegion.RegionName, layoutRegion.ContentName);
+                    else if (string.Equals(layoutRegion.ContentType, "component", StringComparison.OrdinalIgnoreCase))
+                        pageDefinition.RegionComponent(layoutRegion.RegionName, layoutRegion.ContentName);
+                }
+            }
+
+            return pageDefinition.Build();
         }
 
-        private void BuildPages(IFluentBuilder builder)
+        private ILayout BuildLayout(IFluentBuilder builder, long layoutVersionId)
         {
-            var records = _database.GetPages(
-                _configuration.VersionName, 
-                (p, v) => new Tuple<PageRecord, PageVersionRecord>(p, v), 
-                (p, v) => v.Enabled);
+            var data = _database.GetLayout(layoutVersionId, (l, v) => new Tuple<LayoutRecord, LayoutVersionRecord>(l, v));
+            var layout = data.Item1;
+            var layoutVersion = data.Item2;
 
-            foreach(var record in records)
-            {
-                var page = record.Item1;
-                var pageVersion = record.Item2;
+            layoutVersion.VersionName = layout.Name + "_v" + layoutVersion.Version;
 
-                var pageDefinition = builder.BuildUpPage()
-                    .Name(page.Name)
-                    .AssetDeployment(pageVersion.AssetDeployment)
-                    .PartOf(pageVersion.PackageName)
-                    .DeployIn(pageVersion.ModuleName)
-                    .Title(pageVersion.Title)
-                    .CanonicalUrl(pageVersion.CanonicalUrl)
-                    .Layout(pageVersion.LayoutName)
-                    .BodyStyle(pageVersion.BodyStyle)
-                    .RequiresPermission(pageVersion.RequiredPermission, pageVersion.AssetPath);
+            var layoutDefinition = builder.BuildUpLayout()
+                .Name(layoutVersion.VersionName)
+                .AssetDeployment(layoutVersion.AssetDeployment)
+                .PartOf(layoutVersion.PackageName)
+                .DeployIn(layoutVersion.ModuleName)
+                .RegionNesting(layoutVersion.RegionNesting);
 
-                if (pageVersion.Routes != null)
-                    foreach (var route in pageVersion.Routes)
-                        pageDefinition.Route(route.Path, route.Priority);
+            if (layoutVersion.Components != null)
+                foreach (var component in layoutVersion.Components)
+                    layoutDefinition.NeedsComponent(component.ComponentName);
 
-                if (pageVersion.Components != null)
-                    foreach (var component in pageVersion.Components)
-                        pageDefinition.NeedsComponent(component.ComponentName);
-
-                if (pageVersion.LayoutRegions != null)
-                { 
-                    foreach(var layoutRegion in pageVersion.LayoutRegions)
-                    {
-                        if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
-                            pageDefinition.RegionHtml(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
-                        else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
-                            pageDefinition.RegionLayout(layoutRegion.RegionName, layoutRegion.ContentName);
-                        else if (string.Equals(layoutRegion.ContentType, "template", StringComparison.OrdinalIgnoreCase))
-                            pageDefinition.RegionTemplate(layoutRegion.RegionName, layoutRegion.ContentName);
-                        else if (string.Equals(layoutRegion.ContentType, "component", StringComparison.OrdinalIgnoreCase))
-                            pageDefinition.RegionComponent(layoutRegion.RegionName, layoutRegion.ContentName);
-                    }
+            if (layoutVersion.LayoutRegions != null)
+            { 
+                foreach(var layoutRegion in layoutVersion.LayoutRegions)
+                {
+                    if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
+                        layoutDefinition.Html(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
+                    else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
+                        layoutDefinition.Layout(layoutRegion.RegionName, layoutRegion.ContentName);
+                    else if (string.Equals(layoutRegion.ContentType, "template", StringComparison.OrdinalIgnoreCase))
+                        layoutDefinition.Template(layoutRegion.RegionName, layoutRegion.ContentName);
+                    else if (string.Equals(layoutRegion.ContentType, "component", StringComparison.OrdinalIgnoreCase))
+                        layoutDefinition.Component(layoutRegion.RegionName, layoutRegion.ContentName);
                 }
-
-                pageDefinition.Build();
             }
+
+            return layoutDefinition.Build();
         }
     }
 }

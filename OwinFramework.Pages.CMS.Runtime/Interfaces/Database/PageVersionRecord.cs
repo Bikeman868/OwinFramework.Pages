@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
@@ -13,11 +9,18 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     public class PageVersionRecord: ElementVersionRecordBase
     {
         /// <summary>
-        /// The name of the layout for this page. This can be the name of
-        /// a layout defined by CMS or a layout defined in code
+        /// When the layout is defined in code this is the name of the
+        /// layout. Otherwise the LayoutVersionId determines the layout
+        /// to use on this version of the page.
         /// </summary>
         [Mapping("layoutName")]
         public string LayoutName { get; set; }
+
+        /// <summary>
+        /// The ID of a layout version or NULL if the layout is defined in code
+        /// </summary>
+        [Mapping("layoutVersionId")]
+        public long? LayoutVersionId { get; set; }
 
         /// <summary>
         /// When there are multiple ways to reach the same page you should

@@ -60,11 +60,13 @@
     <Compile Include="Configuration\CmsConfiguration.cs" />
     <Compile Include="Data\TestDatabaseReader.cs" />
     <Compile Include="Interfaces\Database\AuditRecord.cs" />
+    <Compile Include="Interfaces\Database\RegionTemplateRecord.cs" />
     <Compile Include="Interfaces\Database\ElementPropertyRecord.cs" />
     <Compile Include="Interfaces\Database\ElementRecordBase.cs" />
     <Compile Include="Interfaces\Database\ElementVersionRecordBase.cs" />
     <Compile Include="Interfaces\Database\LayoutRecord.cs" />
     <Compile Include="Interfaces\Database\LayoutRegionRecord.cs" />
+    <Compile Include="Interfaces\Database\RegionVersionRecord.cs" />
     <Compile Include="Interfaces\Database\LayoutVersionRecord.cs" />
     <Compile Include="Interfaces\Database\ModuleRecord.cs" />
     <Compile Include="Interfaces\Database\PackageRecord.cs" />

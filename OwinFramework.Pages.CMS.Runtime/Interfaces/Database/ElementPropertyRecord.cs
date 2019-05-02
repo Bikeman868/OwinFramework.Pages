@@ -3,7 +3,9 @@
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
     /// <summary>
-    /// A POCO that defines the database fields of layout records
+    /// A POCO that defines the properties of a component. These correspond
+    /// with the C# property definitions on the class that implements the
+    /// component.
     /// </summary>
     public class ElementPropertyRecord
     {

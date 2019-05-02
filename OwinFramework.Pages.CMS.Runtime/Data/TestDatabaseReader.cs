@@ -18,6 +18,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         private readonly List<LayoutRecord> _layouts;
         private readonly List<LayoutVersionRecord> _layoutVersions;
 
+        private readonly List<RegionRecord> _regions;
+        private readonly List<RegionVersionRecord> _regionVersions;
+
         private readonly List<ElementPropertyRecord> _properties;
 
         public TestDatabaseReader()
@@ -26,6 +29,45 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             var elementVersionId = 1;
             var propertyId = 1;
             var websiteVersionId = 1;
+
+            _regions = new List<RegionRecord>
+            {
+                new RegionRecord
+                {
+                    Id = elementId++,
+                    Name = "example_region_1",
+                    CraetedBy = "urn:user:1234",
+                    CreatedWhen = DateTime.UtcNow
+                },
+                new RegionRecord
+                {
+                    Id = elementId++,
+                    Name = "example_region_2",
+                    CraetedBy = "urn:user:1234",
+                    CreatedWhen = DateTime.UtcNow
+                }
+            };
+
+            _regionVersions = new List<RegionVersionRecord>
+            {
+                new RegionVersionRecord
+                {
+                    Id = elementVersionId++,
+                    Version = 1,
+                    ElementId = _regions[0].Id,
+                    LayoutName = "col_2_left_fixed"
+                },
+                new RegionVersionRecord
+                {
+                    Id = elementVersionId++,
+                    Version = 1,
+                    ElementId = _regions[1].Id,
+                    RegionTemplates = new List<RegionTemplateRecord>
+                    {
+                        new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/template1"}
+                    }
+                }
+            };
 
             _layouts = new List<LayoutRecord>
             {
@@ -240,8 +282,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 {
                     Id = propertyId++,
                     ElementVersionId = _pageVersions[0].Id,
-                    Name = "Title",
-                    Value = "First CMS Page"
+                    Name = "StockTicker",
+                    Value = "AMZN"
                 }
             };
 

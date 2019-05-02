@@ -5,5 +5,9 @@
     /// </summary>
     public class RegionRecord: ElementRecordBase
     {
+        public RegionRecord()
+        {
+            ElementType = "Region";
+        }
     }
 }

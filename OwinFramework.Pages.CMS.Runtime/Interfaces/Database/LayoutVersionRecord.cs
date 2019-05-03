@@ -9,13 +9,16 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     public class LayoutVersionRecord: ElementVersionRecordBase
     {
         /// <summary>
-        /// The name of a permission that is required to view this page
+        /// The names of the regions within this layout separated by commas. 
+        /// Regions can be grouped by enclusing them in round brackets. For
+        /// example "region1(region2,region3)"
         /// </summary>
         [Mapping("regionNesting")]
         public string RegionNesting { get; set; }
 
         /// <summary>
-        /// Overrides the content of the page layout just for this page
+        /// Specifies the defalt content for each region named in the RegionNesting
+        /// property. These region assignments can be overriden for a page.
         /// </summary>
         public List<LayoutRegionRecord> LayoutRegions { get; set; }
 

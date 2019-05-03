@@ -70,6 +70,15 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         T GetLayout<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map);
 
         /// <summary>
+        /// Retrieves a single layout version by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="regionId">The unique ID of the region to return</param>
+        /// <param name="version">The version of the region to get</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetRegion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map);
+
+        /// <summary>
         /// Retrieves a single page version by its ID number
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
@@ -84,5 +93,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <param name="layoutVersionId">The unique ID of the layout version to return</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         T GetLayout<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map);
+
+        /// <summary>
+        /// Retrieves a single layout version by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="regionVersionId">The unique ID of the region version to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetRegion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map);
     }
 }

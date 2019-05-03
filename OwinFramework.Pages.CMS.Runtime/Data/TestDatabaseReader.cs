@@ -55,7 +55,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     Id = elementVersionId++,
                     Version = 1,
                     ElementId = _regions[0].Id,
-                    LayoutName = "col_2_left_fixed"
+                    LayoutName = "layouts:col_2_left_fixed"
                 },
                 new RegionVersionRecord
                 {
@@ -117,9 +117,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                         new LayoutRegionRecord
                         {
                             RegionName = "header",
-                            ContentType = "html",
-                            ContentName = "header",
-                            ContentValue = "<h1>Header V2</h1>"
+                            RegionVersionId = _regionVersions[0].Id
                         },
                         new LayoutRegionRecord
                         {
@@ -434,6 +432,17 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(layout, layoutVersion);
         }
 
+        T IDatabaseReader.GetRegion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map)
+        {
+            var region = _regions.FirstOrDefault(r => r.Id == regionId);
+            if (region == null) return default(T);
+
+            var regionVersion = _regionVersions.FirstOrDefault(rv => rv.ElementId == region.Id && rv.Version == version);
+            if (regionVersion == null) return default(T);
+
+            return map(region, regionVersion);
+        }
+
         T IDatabaseReader.GetPage<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map)
         {
             var pageVersion = _pageVersions.FirstOrDefault(pv => pv.Id == pageVersionId);
@@ -454,6 +463,17 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             if (layout == null) return default(T);
 
             return map(layout, layoutVersion);
+        }
+
+        T IDatabaseReader.GetRegion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map)
+        {
+            var regionVersion = _regionVersions.FirstOrDefault(lv => lv.Id == regionVersionId);
+            if (regionVersion == null) return default(T);
+
+            var region = _regions.FirstOrDefault(r => r.Id == regionVersion.ElementId);
+            if (region == null) return default(T);
+
+            return map(region, regionVersion);
         }
     }
 }

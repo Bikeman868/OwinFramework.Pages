@@ -12,12 +12,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     public class RegionVersionRecord: ElementVersionRecordBase
     {
         /// <summary>
-        /// The name of a permission that is required to view this page
-        /// </summary>
-        [Mapping("regionNesting")]
-        public string RegionNesting { get; set; }
-
-        /// <summary>
         /// Specifies that the region contains a layout defined in code and
         /// referenced by name
         /// </summary>
@@ -51,6 +45,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// </summary>
         [Mapping("assetValue")]
         public string AssetValue { get; set; }
+
+        /// <summary>
+        /// When the region contains a layout this property can be used to
+        /// override the regions of the layout for this region version.
+        /// </summary>
+        public List<LayoutRegionRecord> LayoutRegions { get; set; }
 
         /// <summary>
         /// A list of the templates to render into this region.

@@ -23,10 +23,11 @@ namespace OwinFramework.Pages.CMS.Runtime
             {
                 return new List<IocRegistration>
                 {
-                    // These are internal classes that need wiring up with IoC
+                    // These are internal classes that need wiring up in IoC
                     new IocRegistration().Init<IDatabaseReader, TestDatabaseReader>(),
 
-                    // These are the external dependencies for this package
+                    // These are the external dependencies for this package that can be
+                    // satisfied by installing additional NuGet packages
                     new IocRegistration().Init<IHtmlWriterFactory>(),
                     new IocRegistration().Init<ICssWriterFactory>(),
                     new IocRegistration().Init<IJavascriptWriterFactory>(),

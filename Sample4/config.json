@@ -1,0 +1,24 @@
+﻿{
+    "owinFramework": {
+        "pages": {
+            "html": {
+                "includeComments": true,
+                "indented": true
+            }
+        }
+    },
+    "sample4": {
+        "pages": {
+
+        },
+        "notFound": {
+
+        },
+        "documenter": {
+
+        },
+        "defaultDocument": {
+            "defaultPage": "/home"
+        }
+    }
+}

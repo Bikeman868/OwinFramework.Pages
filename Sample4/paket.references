@@ -1,0 +1,29 @@
+﻿Ioc.Modules
+Ninject
+Ioc.Modules.Ninject
+Newtonsoft.Json
+Prius
+
+group net40
+  Owin
+  Microsoft.Owin
+  Microsoft.Owin.Host.SystemWeb
+  Owin.Framework
+  Owin.Framework.DefaultDocument
+  Owin.Framework.Documenter
+  Owin.Framework.ExceptionReporter
+  Owin.Framework.NotFound
+  Owin.Framework.Urchin
+  Owin.Framework.AnalysisReporter
+
+group net45
+  Owin
+  Microsoft.Owin
+  Microsoft.Owin.Host.SystemWeb
+  Owin.Framework
+  Owin.Framework.DefaultDocument
+  Owin.Framework.Documenter
+  Owin.Framework.ExceptionReporter
+  Owin.Framework.NotFound
+  Owin.Framework.Urchin
+  Owin.Framework.AnalysisReporter

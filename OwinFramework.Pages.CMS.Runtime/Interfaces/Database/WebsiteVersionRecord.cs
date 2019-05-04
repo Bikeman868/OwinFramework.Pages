@@ -41,5 +41,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// </summary>
         [Mapping("createdWhen")]
         public DateTime CreatedWhen { get; set; }
+
+        /// <summary>
+        /// This is used to construct the Canonical URL of pages in the website
+        /// </summary>
+        [Mapping("baseUrl")]
+        public string BaseUrl { get; set; }
     }
 }

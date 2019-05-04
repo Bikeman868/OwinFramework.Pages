@@ -40,7 +40,7 @@ namespace OwinFramework.Pages.Html.Elements
             set { _assetDeploymentMixin.JavascriptFunctions = value; }
         }
 
-        private AssetDeploymentMixin _assetDeploymentMixin;
+        private readonly AssetDeploymentMixin _assetDeploymentMixin;
 
         private Type _repeatType;
         private Type _listType;

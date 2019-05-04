@@ -24,6 +24,24 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition Name(string name);
 
         /// <summary>
+        /// Specifies the html tag to render around the contents of
+        /// this region. The default is 'div' if this method is not called
+        /// </summary>
+        IRegionDefinition Tag(string tagName);
+
+        /// <summary>
+        /// The css class names to add to this region
+        /// </summary>
+        IRegionDefinition ClassNames(params string[] classNames);
+
+        /// <summary>
+        /// The css style to appy to this region
+        /// </summary>
+        IRegionDefinition Style(string style);
+
+        #region Packaging and deployment
+
+        /// <summary>
         /// Specifies that this region is part of a package and should
         /// generate and reference assets from that packages namespace
         /// </summary>
@@ -74,6 +92,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// </summary>
         IRegionDefinition AssetDeployment(AssetDeployment assetDeployment);
 
+        #endregion
+
+        #region Content is a layout
+
         /// <summary>
         /// Specifies the default layout for this region. This can
         /// be overriden for each instance of the region on a layout
@@ -85,6 +107,56 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// be overriden for each instance of the region on a layout
         /// </summary>
         IRegionDefinition Layout(string layoutName);
+        
+        /// <summary>
+        /// Overrides the default contents of one of the regions in the layout
+        /// layout with a specific component
+        /// </summary>
+        IPageDefinition LayoutRegionComponent(string regionName, IComponent component);
+
+        /// <summary>
+        /// Overrides the default contents of one of the regions in the layout
+        /// layout with a named component
+        /// </summary>
+        IPageDefinition LayoutRegionComponent(string regionName, string componentName);
+
+        /// <summary>
+        /// Overrides the default contents of one of the regions in the layout
+        /// layout with a specific layout
+        /// </summary>
+        IPageDefinition LayoutRegionLayout(string regionName, ILayout layout);
+
+        /// <summary>
+        /// Overrides the default contents of one of the regions in the layout
+        /// layout with a named layout
+        /// </summary>
+        IPageDefinition LayoutRegionLayout(string regionName, string layoutName);
+
+        /// <summary>
+        /// Populates a region of the layout with static Html avoiding the need
+        /// to define a region and a component for very simple use cases. A region 
+        /// and a component will be generated internally with default properties.
+        /// </summary>
+        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="textAssetName">The name of the text asset to localize</param>
+        /// <param name="defaultHtml">The default Html for all unsupported locales.
+        /// Note that if you did not setup localization then this will be the html
+        /// for all locales.</param>
+        IPageDefinition LayoutRegionHtml(string regionName, string textAssetName, string defaultHtml);
+
+        /// <summary>
+        /// Populates a region of the layout with a template avoiding the need
+        /// to define a region and a component. A region and a component will be
+        /// generated internally with default properties.
+        /// </summary>
+        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="templatePath">A / separated path to the template to load
+        /// into this region of the layout</param>
+        IPageDefinition LayoutRegionTemplate(string regionName, string templatePath);
+        
+        #endregion
+
+        #region Content is a component
 
         /// <summary>
         /// Specifies the default component for this region. This can
@@ -97,6 +169,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// be overriden for each instance of the region on a layout
         /// </summary>
         IRegionDefinition Component(string componentName);
+        
+        #endregion
+
+        #region Content is html
 
         /// <summary>
         /// Populates the region with static Html avoiding the need to define a 
@@ -109,6 +185,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// for all locales.</param>
         IRegionDefinition Html(string textAssetName, string defaultHtml);
 
+        #endregion
+
+        #region Content is a template
+
         /// <summary>
         /// Populates the region with a template avoiding the need to define a 
         /// component. A component will be generated internally with default properties.
@@ -118,21 +198,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="pageArea">The area of the page to render the template into</param>
         IRegionDefinition AddTemplate(string templatePath, PageArea pageArea = PageArea.Body);
 
-        /// <summary>
-        /// Specifies the html tag to render around the contents of
-        /// this region. The default is 'div' if this method is not called
-        /// </summary>
-        IRegionDefinition Tag(string tagName);
+        #endregion
 
-        /// <summary>
-        /// The css class names to add to this region
-        /// </summary>
-        IRegionDefinition ClassNames(params string[] classNames);
-
-        /// <summary>
-        /// The css style to appy to this region
-        /// </summary>
-        IRegionDefinition Style(string style);
+        #region Data binding
 
         /// <summary>
         /// Adds metadata to the region that can be queried to establish
@@ -186,24 +254,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition DataProvider(IDataProvider dataProvider);
 
         /// <summary>
-        /// Specifies a component that renders output to the page that this element
-        /// depends on. For example if you have a component that renders a link to the
-        /// Boostrap library, any other components that use Bootstrap can ensure it is
-        /// included on the page.
-        /// </summary>
-        /// <param name="componentName">The name of the component that this element depends on</param>
-        IRegionDefinition NeedsComponent(string componentName);
-
-        /// <summary>
-        /// Specifies a component that renders output to the page that this element
-        /// depends on. For example if you have a component that renders a link to the
-        /// Boostrap library, any other components that use Bootstrap can ensure it is
-        /// included on the page.
-        /// </summary>
-        /// <param name="component">The component that this element depends on</param>
-        IRegionDefinition NeedsComponent(IComponent component);
-
-        /// <summary>
         /// Causes the region to be rendered multiple times, once
         /// for each object in the data context
         /// </summary>
@@ -228,6 +278,30 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
             string childStyle = "", 
             string listScope = "", 
             params string[] childClassNames);
+
+        #endregion
+
+        #region Dependencies
+
+        /// <summary>
+        /// Specifies a component that renders output to the page that this element
+        /// depends on. For example if you have a component that renders a link to the
+        /// Boostrap library, any other components that use Bootstrap can ensure it is
+        /// included on the page.
+        /// </summary>
+        /// <param name="componentName">The name of the component that this element depends on</param>
+        IRegionDefinition NeedsComponent(string componentName);
+
+        /// <summary>
+        /// Specifies a component that renders output to the page that this element
+        /// depends on. For example if you have a component that renders a link to the
+        /// Boostrap library, any other components that use Bootstrap can ensure it is
+        /// included on the page.
+        /// </summary>
+        /// <param name="component">The component that this element depends on</param>
+        IRegionDefinition NeedsComponent(IComponent component);
+
+        #endregion
 
         /// <summary>
         /// Builds the region

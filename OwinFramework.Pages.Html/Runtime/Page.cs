@@ -715,6 +715,15 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             var html = context.Html;
 
+            if (CanonicalUrlFunc != null)
+            {
+                html.WriteUnclosedElement(
+                    "link", 
+                    "rel", "canonical", 
+                    "href", CanonicalUrlFunc(context));
+                html.WriteLine();
+            }
+
             var websiteStylesUrl = _dependencies.AssetManager.GetWebsiteAssetUrl(AssetType.Style);
             if (websiteStylesUrl != null)
             {

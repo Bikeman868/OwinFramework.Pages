@@ -6,6 +6,7 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Urchin.Client.Interfaces;
 
 namespace OwinFramework.Pages.CMS.Runtime
@@ -53,10 +54,18 @@ namespace OwinFramework.Pages.CMS.Runtime
             _layoutVersions = new Dictionary<long, ILayout>();
             _regionVersions = new Dictionary<long, IRegion>();
 
-            var websiteVersionPages = _database.GetWebsiteVersionPages(_configuration.WebsiteVersionName, vp => vp);
+            var websiteVersions = _database.GetWebsiteVersions(
+                v => v, 
+                v => string.Equals(v.Name, _configuration.WebsiteVersionName, StringComparison.OrdinalIgnoreCase));
+            
+            if (websiteVersions.Count != 1)
+                throw new Exception("There is no website version in the database '" + _configuration.WebsiteVersionName + "'");
+
+            var websiteVersion = websiteVersions[0];
+            var websiteVersionPages = _database.GetWebsiteVersionPages(websiteVersion.Id, vp => vp);
 
             foreach (var page in websiteVersionPages)
-                BuildPage(builder, page.PageVersionId);
+                BuildPage(builder, websiteVersion, page.PageVersionId);
 
             _layoutVersions.Clear();
             _regionVersions.Clear();
@@ -86,7 +95,10 @@ namespace OwinFramework.Pages.CMS.Runtime
             return region;
         }
 
-        private IPage BuildPage(IFluentBuilder builder, long pageVersionId)
+        private IPage BuildPage(
+            IFluentBuilder builder, 
+            WebsiteVersionRecord websiteVersion, 
+            long pageVersionId)
         {
             var data = _database.GetPage(pageVersionId, (p, v) => new Tuple<PageRecord, PageVersionRecord>(p, v));
             var page = data.Item1;
@@ -94,13 +106,37 @@ namespace OwinFramework.Pages.CMS.Runtime
 
             pageVersion.VersionName = page.Name + "_v" + pageVersion.Version;
 
+            var pageUrl = pageVersion.CanonicalUrl;
+            if (string.IsNullOrEmpty(pageUrl) && pageVersion.Routes != null && pageVersion.Routes.Count > 0)
+                pageUrl = pageVersion.Routes.OrderByDescending(r => r.Priority).First().Path;
+
+            string canonicalUrl = null;
+            if (!string.IsNullOrEmpty(websiteVersion.BaseUrl) && !string.IsNullOrEmpty(pageUrl))
+            {
+                canonicalUrl = websiteVersion.BaseUrl;
+                if (canonicalUrl.EndsWith("/"))
+                {
+                    if (pageUrl.StartsWith("/"))
+                        canonicalUrl += pageUrl.Substring(1);
+                    else
+                        canonicalUrl += pageUrl;
+                }
+                else
+                {
+                    if (pageUrl.StartsWith("/"))
+                        canonicalUrl += pageUrl;
+                    else
+                        canonicalUrl += "/" + pageUrl;
+                }
+            }
+
             var pageDefinition = builder.BuildUpPage()
                 .Name(pageVersion.VersionName)
                 .AssetDeployment(pageVersion.AssetDeployment)
                 .PartOf(pageVersion.PackageName)
                 .DeployIn(pageVersion.ModuleName)
                 .Title(pageVersion.Title)
-                .CanonicalUrl(pageVersion.CanonicalUrl)
+                .CanonicalUrl(canonicalUrl)
                 .BodyStyle(pageVersion.BodyStyle)
                 .RequiresPermission(pageVersion.RequiredPermission, pageVersion.AssetPath);
 
@@ -214,22 +250,20 @@ namespace OwinFramework.Pages.CMS.Runtime
                     regionDefinition.AddTemplate(template.TemplatePath, template.PageArea);
             }
 
-            /*
             if (hasLayout && regionVersion.LayoutRegions != null)
             { 
                 foreach(var layoutRegion in regionVersion.LayoutRegions)
                 {
                     if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.RegionHtml(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
+                        regionDefinition.LayoutRegionHtml(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
                     else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.RegionLayout(layoutRegion.RegionName, layoutRegion.ContentName);
+                        regionDefinition.LayoutRegionLayout(layoutRegion.RegionName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "template", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.RegionTemplate(layoutRegion.RegionName, layoutRegion.ContentName);
+                        regionDefinition.LayoutRegionTemplate(layoutRegion.RegionName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "component", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.RegionComponent(layoutRegion.RegionName, layoutRegion.ContentName);
+                        regionDefinition.LayoutRegionComponent(layoutRegion.RegionName, layoutRegion.ContentName);
                 }
             }
-            */
 
             return regionDefinition.Build();
         }

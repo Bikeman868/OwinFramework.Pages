@@ -62,6 +62,26 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        IRegionDefinition IRegionDefinition.Tag(string tagName)
+        {
+            _tagName = tagName;
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.ClassNames(params string[] classNames)
+        {
+            _classNames = classNames;
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.Style(string style)
+        {
+            _style = style;
+            return this;
+        }
+
+        #region Packaging and deployment
+
         IRegionDefinition IRegionDefinition.PartOf(IPackage package)
         {
             _region.Package = package;
@@ -83,6 +103,67 @@ namespace OwinFramework.Pages.Html.Builders
 
             return this;
         }
+        
+        IRegionDefinition IRegionDefinition.DeployIn(IModule module)
+        {
+            _region.Module = module;
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.DeployIn(string moduleName)
+        {
+            if (string.IsNullOrEmpty(moduleName)) return this;
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, r, n) => r.Module = nm.ResolveModule(n),
+                _region,
+                moduleName);
+
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.DeployCss(string cssSelector, string cssStyle)
+        {
+            if (string.IsNullOrEmpty(cssSelector))
+                throw new ComponentBuilderException("No CSS selector is specified for component CSS asset");
+
+            if (string.IsNullOrEmpty(cssStyle))
+                throw new ComponentBuilderException("No CSS style is specified for component CSS asset");
+
+            var cssDefinition = new CssDefinition
+            {
+                Selector = cssSelector.Trim(),
+                Style = cssStyle.Trim()
+            };
+
+            if (!cssDefinition.Style.EndsWith(";"))
+                cssDefinition.Style += ";";
+
+            _cssDefinitions.Add(cssDefinition);
+
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic)
+        {
+            var functionDefinition = new FunctionDefinition
+            {
+                ReturnType = returnType,
+                FunctionName = functionName,
+                Parameters = parameters,
+                Body = functionBody,
+                IsPublic = isPublic
+            };
+
+            _functionDefinitions.Add(functionDefinition);
+
+            return this;
+        }
+
+        #endregion
+
+        #region Defining the contents of the region
 
         IRegionDefinition IRegionDefinition.AssetDeployment(AssetDeployment assetDeployment)
         {
@@ -166,23 +247,40 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.Tag(string tagName)
+
+        public IPageDefinition LayoutRegionComponent(string regionName, IComponent component)
         {
-            _tagName = tagName;
-            return this;
+            throw new NotImplementedException("Regions can not contain customized layouts in this version");
         }
 
-        IRegionDefinition IRegionDefinition.ClassNames(params string[] classNames)
+        public IPageDefinition LayoutRegionComponent(string regionName, string componentName)
         {
-            _classNames = classNames;
-            return this;
+            throw new NotImplementedException("Regions can not contain customized layouts in this version");
         }
 
-        IRegionDefinition IRegionDefinition.Style(string style)
+        public IPageDefinition LayoutRegionLayout(string regionName, ILayout layout)
         {
-            _style = style;
-            return this;
+            throw new NotImplementedException("Regions can not contain customized layouts in this version");
         }
+
+        public IPageDefinition LayoutRegionLayout(string regionName, string layoutName)
+        {
+            throw new NotImplementedException("Regions can not contain customized layouts in this version");
+        }
+
+        public IPageDefinition LayoutRegionHtml(string regionName, string textAssetName, string defaultHtml)
+        {
+            throw new NotImplementedException("Regions can not contain customized layouts in this version");
+        }
+
+        public IPageDefinition LayoutRegionTemplate(string regionName, string templatePath)
+        {
+            throw new NotImplementedException("Regions can not contain customized layouts in this version");
+        }
+
+        #endregion
+
+        #region Data binding and repetition
 
         IRegionDefinition IRegionDefinition.ForEach<T>(
             string scopeName, 
@@ -289,49 +387,9 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.DeployIn(IModule module)
-        {
-            _region.Module = module;
-            return this;
-        }
+        #endregion
 
-        IRegionDefinition IRegionDefinition.DeployCss(string cssSelector, string cssStyle)
-        {
-            if (string.IsNullOrEmpty(cssSelector))
-                throw new ComponentBuilderException("No CSS selector is specified for component CSS asset");
-
-            if (string.IsNullOrEmpty(cssStyle))
-                throw new ComponentBuilderException("No CSS style is specified for component CSS asset");
-
-            var cssDefinition = new CssDefinition
-            {
-                Selector = cssSelector.Trim(),
-                Style = cssStyle.Trim()
-            };
-
-            if (!cssDefinition.Style.EndsWith(";"))
-                cssDefinition.Style += ";";
-
-            _cssDefinitions.Add(cssDefinition);
-
-            return this;
-        }
-
-        IRegionDefinition IRegionDefinition.DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic)
-        {
-            var functionDefinition = new FunctionDefinition
-            {
-                ReturnType = returnType,
-                FunctionName = functionName,
-                Parameters = parameters,
-                Body = functionBody,
-                IsPublic = isPublic
-            };
-
-            _functionDefinitions.Add(functionDefinition);
-
-            return this;
-        }
+        #region Dependencies
 
         IRegionDefinition IRegionDefinition.NeedsComponent(string componentName)
         {
@@ -357,18 +415,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IRegionDefinition IRegionDefinition.DeployIn(string moduleName)
-        {
-            if (string.IsNullOrEmpty(moduleName)) return this;
-
-            _nameManager.AddResolutionHandler(
-                NameResolutionPhase.ResolveElementReferences,
-                (nm, r, n) => r.Module = nm.ResolveModule(n),
-                _region,
-                moduleName);
-
-            return this;
-        }
+        #endregion
 
         IRegion IRegionDefinition.Build()
         {

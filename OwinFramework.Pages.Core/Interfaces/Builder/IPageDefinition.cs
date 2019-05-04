@@ -40,47 +40,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="canonicalUrlFunc">A delegate that will calculate the 
         /// canonical Url for this page</param>
         IPageDefinition CanonicalUrl(Func<IRenderContext, string> canonicalUrlFunc);
-
-        /// <summary>
-        /// Specifies that this page is part of a package and should
-        /// generate and reference assets from that packages namespace
-        /// </summary>
-        /// <param name="package">The package that this page is
-        /// part of</param>
-        IPageDefinition PartOf(IPackage package);
-
-        /// <summary>
-        /// Specifies that this page is part of a package and should
-        /// generate and reference assets from that packages namespace
-        /// </summary>
-        /// <param name="packageName">The name of the package that this 
-        /// page is part of</param>
-        IPageDefinition PartOf(string packageName);
-
-        /// <summary>
-        /// Specifies that this page is deployed as part of a module
-        /// </summary>
-        /// <param name="module">The module that this page is deployed in</param>
-        IPageDefinition DeployIn(IModule module);
-
-        /// <summary>
-        /// Specifies that this page is deployed as part of a module
-        /// </summary>
-        /// <param name="moduleName">The name of the module that this 
-        /// layout is deployed in</param>
-        IPageDefinition DeployIn(string moduleName);
-
+        
         /// <summary>
         /// Sets the css style of the body tag
         /// </summary>
         /// <param name="cssStyle">A valid css style definition, for example "margin: 10;"</param>
         /// <returns></returns>
         IPageDefinition BodyStyle(string cssStyle);
-
-        /// <summary>
-        /// Overrides the default asset deployment scheme for this page
-        /// </summary>
-        IPageDefinition AssetDeployment(AssetDeployment assetDeployment);
 
         /// <summary>
         /// Specifies the relative path to this page on the website
@@ -114,7 +80,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Defines information that can be used by the Output Cache middleware to cache
         /// this page. The output cache can cache the generated Html for a period of time
         /// and can also instruct the browser, CDN and proxy services to cache the page.
-        /// By default the page will not be cached anywhere on the assuption that pages
+        /// By default the page will not be cached anywhere on the assumption that pages
         /// contain dynamic data that changes with every request.
         /// </summary>
         /// <param name="cacheCategory">This category name if passed to the output
@@ -124,6 +90,46 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="cachePriority">Defines how expensive it is to produce this
         /// page and therefore how much benefit there is to caching it.</param>
         IPageDefinition Cache(string cacheCategory, CachePriority cachePriority);
+
+        #region Packaging and deployment
+
+        /// <summary>
+        /// Specifies that this page is part of a package and should
+        /// generate and reference assets from that packages namespace
+        /// </summary>
+        /// <param name="package">The package that this page is
+        /// part of</param>
+        IPageDefinition PartOf(IPackage package);
+
+        /// <summary>
+        /// Specifies that this page is part of a package and should
+        /// generate and reference assets from that packages namespace
+        /// </summary>
+        /// <param name="packageName">The name of the package that this 
+        /// page is part of</param>
+        IPageDefinition PartOf(string packageName);
+
+        /// <summary>
+        /// Specifies that this page is deployed as part of a module
+        /// </summary>
+        /// <param name="module">The module that this page is deployed in</param>
+        IPageDefinition DeployIn(IModule module);
+
+        /// <summary>
+        /// Specifies that this page is deployed as part of a module
+        /// </summary>
+        /// <param name="moduleName">The name of the module that this 
+        /// layout is deployed in</param>
+        IPageDefinition DeployIn(string moduleName);
+        
+        /// <summary>
+        /// Overrides the default asset deployment scheme for this page
+        /// </summary>
+        IPageDefinition AssetDeployment(AssetDeployment assetDeployment);
+
+        #endregion
+
+        #region Page layout
 
         /// <summary>
         /// Defaines the layout of this page. If no layout is specified
@@ -184,6 +190,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="templatePath">A / separated path to the template to load
         /// into this region of the layout</param>
         IPageDefinition RegionTemplate(string regionName, string templatePath);
+        
+        #endregion
+
+        #region Data binding
 
         /// <summary>
         /// Adds metadata to the page that can be queried to establish
@@ -228,6 +238,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// </summary>
         /// <param name="dataProvider">The data provider that is required for this page</param>
         IPageDefinition DataProvider(IDataProvider dataProvider);
+        
+        #endregion
+
+        #region Non-visual components
 
         /// <summary>
         /// Specifies a component that renders output to the page that this element
@@ -246,6 +260,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// </summary>
         /// <param name="component">The component that this element depends on</param>
         IPageDefinition NeedsComponent(IComponent component);
+
+        #endregion
 
         /// <summary>
         /// Builds the page

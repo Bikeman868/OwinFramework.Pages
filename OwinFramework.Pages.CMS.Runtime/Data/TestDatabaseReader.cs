@@ -122,9 +122,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                         new LayoutRegionRecord
                         {
                             RegionName = "footer",
-                            ContentType = "html",
-                            ContentName = "footer",
-                            ContentValue = "<h1>Footer V2</h1>"
+                            RegionVersionId = _regionVersions[1].Id
                         }
                     }
                 }
@@ -157,7 +155,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     ElementId = _pages[0].Id,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     LayoutVersionId = _layoutVersions[0].Id,
-                    CanonicalUrl = "http://sample1.localhost/cms/page1/",
                     Title = "First CMS Page",
                     Routes = new List<PageRouteRecord>
                     {
@@ -190,7 +187,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     ElementId = _pages[1].Id,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     LayoutVersionId = _layoutVersions[0].Id,
-                    CanonicalUrl = "http://sample1.localhost/cms/page2/",
                     Title = "Second CMS Page",
                     Routes = new List<PageRouteRecord>
                     {
@@ -218,7 +214,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     ElementId = _pages[0].Id,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     LayoutVersionId = _layoutVersions[1].Id,
-                    CanonicalUrl = "http://sample1.localhost/cms/page1/",
                     Title = "First CMS Page",
                     Routes = new List<PageRouteRecord>
                     {
@@ -251,7 +246,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     ElementId = _pages[1].Id,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     LayoutVersionId = _layoutVersions[1].Id,
-                    CanonicalUrl = "http://sample1.localhost/cms/page2/",
                     Title = "Second CMS Page",
                     Routes = new List<PageRouteRecord>
                     {
@@ -293,7 +287,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     Name = "1.0",
                     Description = "First version",
                     CraetedBy = "urn:user:1234",
-                    CreatedWhen = DateTime.UtcNow
+                    CreatedWhen = DateTime.UtcNow,
+                    BaseUrl = "http://sample1.localhost/"
                 },
                 new WebsiteVersionRecord
                 {
@@ -301,7 +296,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     Name = "1.1",
                     Description = "Modified layout",
                     CraetedBy = "urn:user:1234",
-                    CreatedWhen = DateTime.UtcNow
+                    CreatedWhen = DateTime.UtcNow,
+                    BaseUrl = "http://uat.sample1.localhost/"
                 }
             };
 

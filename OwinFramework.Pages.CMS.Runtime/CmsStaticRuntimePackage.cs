@@ -28,8 +28,10 @@ namespace OwinFramework.Pages.CMS.Runtime
         private readonly IPackageDependenciesFactory _dependencies;
         private readonly IDatabaseReader _database;
 
-        private Dictionary<long, ILayout> _layoutVersions;
-        private Dictionary<long, IRegion> _regionVersions;
+        private Dictionary<long, long> _layoutVersions;
+        private Dictionary<long, long> _regionVersions;
+        private Dictionary<long, ILayout> _layouts;
+        private Dictionary<long, IRegion> _regions;
 
         private readonly IDisposable _config;
         private CmsConfiguration _configuration;
@@ -51,47 +53,65 @@ namespace OwinFramework.Pages.CMS.Runtime
 
         public IPackage Build(IFluentBuilder builder)
         {
-            _layoutVersions = new Dictionary<long, ILayout>();
-            _regionVersions = new Dictionary<long, IRegion>();
+            _layouts = new Dictionary<long, ILayout>();
+            _regions = new Dictionary<long, IRegion>();
 
             var websiteVersions = _database.GetWebsiteVersions(
                 v => v, 
                 v => string.Equals(v.Name, _configuration.WebsiteVersionName, StringComparison.OrdinalIgnoreCase));
-            
+
             if (websiteVersions.Count != 1)
-                throw new Exception("There is no website version in the database '" + _configuration.WebsiteVersionName + "'");
+                throw new Exception("There is no website version '" + _configuration.WebsiteVersionName + "' in the database");
 
             var websiteVersion = websiteVersions[0];
             var websiteVersionPages = _database.GetWebsiteVersionPages(websiteVersion.Id, vp => vp);
 
+            _layoutVersions = _database
+                .GetWebsiteVersionLayouts(websiteVersion.Id, v => new { v.LayoutId, v.LayoutVersionId})
+                .ToDictionary(v => v.LayoutId, v => v.LayoutVersionId);
+
+            _regionVersions = _database
+                .GetWebsiteVersionRegions(websiteVersion.Id, v => new { v.RegionId, v.RegionVersionId})
+                .ToDictionary(v => v.RegionId, v => v.RegionVersionId);
+
+            foreach (var regionId in _regionVersions.Keys.ToList())
+                GetRegion(builder, regionId);
+
+            foreach (var layoutId in _layoutVersions.Keys.ToList())
+                GetLayout(builder, layoutId);
+
             foreach (var page in websiteVersionPages)
                 BuildPage(builder, websiteVersion, page.PageVersionId);
 
-            _layoutVersions.Clear();
-            _regionVersions.Clear();
+            _layouts.Clear();
+            _regions.Clear();
 
             return this;
         }
 
-        private ILayout GetLayoutVersion(IFluentBuilder builder, long layoutVersionId)
+        private ILayout GetLayout(
+            IFluentBuilder builder, 
+            long layoutId)
         {
             ILayout layout;
-            if (_layoutVersions.TryGetValue(layoutVersionId, out layout))
+            if (_layouts.TryGetValue(layoutId, out layout))
                 return layout;
 
-            layout = BuildLayout(builder, layoutVersionId);
-            _layoutVersions.Add(layoutVersionId, layout);
+            layout = BuildLayout(builder, layoutId);
+            _layouts.Add(layoutId, layout);
             return layout;
         }
 
-        private IRegion GetRegionVersion(IFluentBuilder builder, long regionVersionId)
+        private IRegion GetRegion(
+            IFluentBuilder builder, 
+            long regionId)
         {
             IRegion region;
-            if (_regionVersions.TryGetValue(regionVersionId, out region))
+            if (_regions.TryGetValue(regionId, out region))
                 return region;
 
-            region = BuildRegion(builder, regionVersionId);
-            _regionVersions.Add(regionVersionId, region);
+            region = BuildRegion(builder, regionId);
+            _regions.Add(regionId, region);
             return region;
         }
 
@@ -140,8 +160,8 @@ namespace OwinFramework.Pages.CMS.Runtime
                 .BodyStyle(pageVersion.BodyStyle)
                 .RequiresPermission(pageVersion.RequiredPermission, pageVersion.AssetPath);
 
-            if (pageVersion.LayoutVersionId.HasValue)
-                pageDefinition.Layout(GetLayoutVersion(builder, pageVersion.LayoutVersionId.Value));
+            if (pageVersion.LayoutId.HasValue)
+                pageDefinition.Layout(GetLayout(builder, pageVersion.LayoutId.Value));
             else
                 pageDefinition.Layout(pageVersion.LayoutName);
 
@@ -157,7 +177,9 @@ namespace OwinFramework.Pages.CMS.Runtime
             { 
                 foreach(var layoutRegion in pageVersion.LayoutRegions)
                 {
-                    if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
+                    if (layoutRegion.LayoutId.HasValue)
+                        pageDefinition.RegionLayout(layoutRegion.RegionName, GetLayout(builder, layoutRegion.LayoutId.Value));                        
+                    else if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
                         pageDefinition.RegionHtml(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
                     else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
                         pageDefinition.RegionLayout(layoutRegion.RegionName, layoutRegion.ContentName);
@@ -171,8 +193,14 @@ namespace OwinFramework.Pages.CMS.Runtime
             return pageDefinition.Build();
         }
 
-        private ILayout BuildLayout(IFluentBuilder builder, long layoutVersionId)
+        private ILayout BuildLayout(
+            IFluentBuilder builder, 
+            long layoutId)
         {
+            long layoutVersionId;
+            if (!_layoutVersions.TryGetValue(layoutId, out layoutVersionId))
+                throw new Exception("The website version does not define which version of layout ID " + layoutId + " to use");
+
             var data = _database.GetLayout(layoutVersionId, (l, v) => new Tuple<LayoutRecord, LayoutVersionRecord>(l, v));
             var layout = data.Item1;
             var layoutVersion = data.Item2;
@@ -194,8 +222,12 @@ namespace OwinFramework.Pages.CMS.Runtime
             { 
                 foreach(var layoutRegion in layoutVersion.LayoutRegions)
                 {
-                    if (layoutRegion.RegionVersionId.HasValue)
-                        layoutDefinition.Region(layoutRegion.RegionName, GetRegionVersion(builder, layoutRegion.RegionVersionId.Value));
+                    if (layoutRegion.RegionId.HasValue)
+                        layoutDefinition.Region(layoutRegion.RegionName, GetRegion(builder, layoutRegion.RegionId.Value));
+                    else if (layoutRegion.LayoutId.HasValue)
+                        layoutDefinition.Layout(layoutRegion.RegionName, GetLayout(builder, layoutRegion.LayoutId.Value));                        
+                    else if (string.Equals(layoutRegion.ContentType, "region", StringComparison.OrdinalIgnoreCase))
+                        layoutDefinition.Region(layoutRegion.RegionName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
                         layoutDefinition.Html(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
                     else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
@@ -210,8 +242,14 @@ namespace OwinFramework.Pages.CMS.Runtime
             return layoutDefinition.Build();
         }
 
-        private IRegion BuildRegion(IFluentBuilder builder, long regionVersionId)
+        private IRegion BuildRegion(
+            IFluentBuilder builder, 
+            long regionId)
         {
+            long regionVersionId;
+            if (!_regionVersions.TryGetValue(regionId, out regionVersionId))
+                throw new Exception("The website version does not define which version of region ID " + regionId + " to use");
+
             var data = _database.GetRegion(regionVersionId, (l, v) => new Tuple<RegionRecord, RegionVersionRecord>(l, v));
             var region = data.Item1;
             var regionVersion = data.Item2;
@@ -230,9 +268,9 @@ namespace OwinFramework.Pages.CMS.Runtime
 
             var hasLayout = false;
 
-            if (regionVersion.LayoutVersionId.HasValue)
+            if (regionVersion.LayoutId.HasValue)
             {
-                regionDefinition.Layout(GetLayoutVersion(builder, regionVersion.LayoutVersionId.Value));
+                regionDefinition.Layout(GetLayout(builder, regionVersion.LayoutId.Value));
                 hasLayout = true;
             }
             else if (!string.IsNullOrEmpty(regionVersion.LayoutName))
@@ -254,7 +292,9 @@ namespace OwinFramework.Pages.CMS.Runtime
             { 
                 foreach(var layoutRegion in regionVersion.LayoutRegions)
                 {
-                    if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
+                    if (layoutRegion.LayoutId.HasValue)
+                        regionDefinition.Layout(GetLayout(builder, layoutRegion.LayoutId.Value));                        
+                    else if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
                         regionDefinition.LayoutRegionHtml(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
                     else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
                         regionDefinition.LayoutRegionLayout(layoutRegion.RegionName, layoutRegion.ContentName);

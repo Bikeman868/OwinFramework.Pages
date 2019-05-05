@@ -11,13 +11,17 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string RegionName { get; set; }
 
         /// <summary>
-        /// The unique ID of the region version or NULL when RegionName
-        /// contains the name of the region to bind
+        /// The unique ID of the region to render into this region. 
         /// </summary>
-        public long? RegionVersionId { get; set; }
+        public long? RegionId { get; set; }
 
         /// <summary>
-        /// Can be 'Layout', 'Component', 'Html' or 'Template'
+        /// The unique ID of the layout to render into this region. 
+        /// </summary>
+        public long? LayoutId { get; set; }
+
+        /// <summary>
+        /// Can be 'Region', 'Layout', 'Component', 'Html' or 'Template'
         /// </summary>
         [Mapping("contentType")]
         public string ContentType { get; set; }

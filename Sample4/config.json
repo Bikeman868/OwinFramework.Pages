@@ -4,6 +4,10 @@
             "html": {
                 "includeComments": true,
                 "indented": true
+            },
+            "cms": { 
+                "priusRepositoryName":  "cms",
+                "websiteVersionName": "1.0"
             }
         }
     },

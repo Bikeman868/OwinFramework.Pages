@@ -14,7 +14,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// This is done so that audit records for example do not need to know the element type.
         /// </summary>
         [Mapping("elementId")]
-        public long Id { get; set; }
+        public long ElementId { get; set; }
 
         /// <summary>
         /// The name of this element. This name must be unique amongst elements of the

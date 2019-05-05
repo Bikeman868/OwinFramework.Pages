@@ -19,11 +19,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string LayoutName { get; set; }
 
         /// <summary>
-        /// Specifies that the region contains a layout version defined in 
+        /// Specifies that the region contains a layout defined in 
         /// the CMS
         /// </summary>
-        [Mapping("layoutVersionId")]
-        public long? LayoutVersionId { get; set; }
+        [Mapping("layoutId")]
+        public long? LayoutId { get; set; }
 
         /// <summary>
         /// Specifies that the region contains a component. Components must be 

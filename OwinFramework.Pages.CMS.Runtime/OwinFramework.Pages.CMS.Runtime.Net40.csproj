@@ -58,6 +58,7 @@
     </Compile>
     <Compile Include="CmsStaticRuntimePackage.cs" />
     <Compile Include="Configuration\CmsConfiguration.cs" />
+    <Compile Include="Data\TestDatabaseReaderBase.cs" />
     <Compile Include="Data\TestDatabaseReader.cs" />
     <Compile Include="Interfaces\Database\AuditRecord.cs" />
     <Compile Include="Interfaces\Database\RegionTemplateRecord.cs" />
@@ -76,6 +77,8 @@
     <Compile Include="Interfaces\Database\PageVersionRecord.cs" />
     <Compile Include="Interfaces\Database\RegionRecord.cs" />
     <Compile Include="Interfaces\Database\UpdateResult.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionRegion.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionLayout.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionPageRecord.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionRecord.cs" />
     <Compile Include="Interfaces\IDatabaseReader.cs" />

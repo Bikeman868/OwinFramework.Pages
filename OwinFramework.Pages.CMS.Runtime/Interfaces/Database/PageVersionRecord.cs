@@ -17,10 +17,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string LayoutName { get; set; }
 
         /// <summary>
-        /// The ID of a layout version or NULL if the layout is defined in code
+        /// The ID of a layout or NULL if the layout is defined in code
         /// </summary>
         [Mapping("layoutVersionId")]
-        public long? LayoutVersionId { get; set; }
+        public long? LayoutId { get; set; }
 
         /// <summary>
         /// When there are multiple ways to reach the same page you should

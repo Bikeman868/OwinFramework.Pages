@@ -12,7 +12,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// Primary key that uniquely identifies this element version in the database.
         /// </summary>
         [Mapping("elementVersionId")]
-        public long Id { get; set; }
+        public long ElementVersionId { get; set; }
 
         /// <summary>
         /// The unique ID of the element that this is a version of.

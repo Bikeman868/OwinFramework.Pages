@@ -5,7 +5,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// <summary>
     /// A POCO that defines the database fields of layout records
     /// </summary>
-    public class WebsiteVersionPageRecord
+    public class WebsiteVersionLayoutRecord
     {
         /// <summary>
         /// Primary key that uniquely identifies this version of the website
@@ -14,16 +14,16 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long WebsiteVersionId { get; set; }
 
         /// <summary>
-        /// The ID of a page to include in this version of the website
+        /// The unique ID of a layout to include in this version of the website
         /// </summary>
-        [Mapping("pageId")]
-        public long PageId { get; set; }
+        [Mapping("layoutId")]
+        public long LayoutId { get; set; }
 
         /// <summary>
-        /// Defines which version of the page should be used in this version
-        /// of the website
+        /// Defines which version of this layout should be used in this 
+        /// version of the website
         /// </summary>
-        [Mapping("pageVersionId")]
-        public long PageVersionId { get; set; }
+        [Mapping("layoutVersionId")]
+        public long LayoutVersionId { get; set; }
     }
 }

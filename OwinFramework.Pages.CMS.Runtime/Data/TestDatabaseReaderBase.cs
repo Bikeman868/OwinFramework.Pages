@@ -22,6 +22,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         protected List<RegionRecord> _regions;
         protected List<RegionVersionRecord> _regionVersions;
 
+        protected List<DataScopeRecord> _dataScopes;
+        protected List<DataTypeRecord> _dataTypes;
+        protected List<DataTypeVersionRecord> _dataTypeVersions;
+
         protected List<ElementPropertyRecord> _properties;
 
         IList<T> IDatabaseReader.GetWebsiteVersions<T>(Func<WebsiteVersionRecord, T> map, Func<WebsiteVersionRecord, bool> predicate)

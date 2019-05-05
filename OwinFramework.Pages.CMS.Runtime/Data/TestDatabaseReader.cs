@@ -15,6 +15,24 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             var elementVersionId = 1;
             var propertyId = 1;
             var websiteVersionId = 1;
+            var dataScopeId = 1;
+            var dataTypeId = 1;
+            var dataTypeVersionId = 1;
+
+            _dataScopes = new List<DataScopeRecord>
+            {
+
+            };
+
+            _dataTypes = new List<DataTypeRecord>
+            {
+                
+            };
+
+            _dataTypeVersions = new List<DataTypeVersionRecord>
+            {
+                
+            };
 
             _regions = new List<RegionRecord>
             {

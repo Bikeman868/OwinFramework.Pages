@@ -7,12 +7,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// with the C# property definitions on the class that implements the
     /// component.
     /// </summary>
-    public class ElementPropertyRecord
+    public class ElementDataScopeRecord
     {
         /// <summary>
         /// Primary key that uniquely identifies this element property in the database.
         /// </summary>
-        [Mapping("elementPropertyId")]
+        [Mapping("elementDataScopeId")]
         public long Id { get; set; }
 
         /// <summary>
@@ -22,15 +22,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long ElementVersionId { get; set; }
 
         /// <summary>
-        /// The name of the property value to set
+        /// The ID of the data scope to use when resolving data binding
         /// </summary>
-        [Mapping("name")]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// The value to set for this property
-        /// </summary>
-        [Mapping("value")]
-        public string Value { get; set; }
+        [Mapping("dataScopeId")]
+        public long DataScopeId { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces;
 
 namespace OwinFramework.Pages.Html.Elements
 {
@@ -26,7 +27,7 @@ namespace OwinFramework.Pages.Html.Elements
             context.Trace(() => ToString() + " writing page " + Enum.GetName(typeof(PageArea), pageArea).ToLower());
 #endif
             if (context.IncludeComments)
-                context.Html.WriteComment("region component " + Name);
+                context.Html.WriteComment("region component " + this.FullyQualifiedName());
 
             return contentWriter(context, pageArea);
         }

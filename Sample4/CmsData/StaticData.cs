@@ -5,6 +5,7 @@ using OwinFramework.Pages.CMS.Runtime.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Enums;
+using Sample4.DataProviders;
 
 namespace Sample4.CmsData
 {
@@ -12,11 +13,15 @@ namespace Sample4.CmsData
     {
         public StaticData()
         {
+            const string creator = "urn:user:1";
+
             var elementId = 1;
             var elementVersionId = 1;
             var propertyId = 1;
             var websiteVersionId = 1;
-            string creator = "urn:user:1";
+            var dataScopeId = 1;
+            var dataTypeId = 1;
+            var dataTypeVersionId = 1;
 
             _regions = new List<RegionRecord>
             {
@@ -70,6 +75,38 @@ namespace Sample4.CmsData
 
 
 
+            _dataScopes = new List<DataScopeRecord>
+            {
+
+            };
+
+            _dataTypes = new List<DataTypeRecord>
+            {
+                new DataTypeRecord
+                {
+                    DataTypeId = dataTypeId++,
+                    DisplayName = "Customer",
+                    CraetedBy = creator,
+                    CreatedWhen = DateTime.UtcNow
+                }
+            };
+
+            _dataTypeVersions = new List<DataTypeVersionRecord>
+            {
+                new DataTypeVersionRecord
+                {
+                    DataTypeId = _dataTypes[0].DataTypeId,
+                    DataTypeVersionId = dataTypeVersionId++,
+                    CraetedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
+                    AssemblyName = typeof(CustomerViewModel).Assembly.FullName,
+                    TypeName = typeof(CustomerViewModel).FullName,
+                    Scopes = new long[0]
+                }
+            };
+
+
+
             _regionVersions = new List<RegionVersionRecord>
             {
                 new RegionVersionRecord
@@ -86,8 +123,9 @@ namespace Sample4.CmsData
                     Version = 1,
                     RegionTemplates = new List<RegionTemplateRecord>
                     {
-                        new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/template1"}
-                    }
+                        new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/customer"}
+                    },
+                    RepeatDataTypeId = _dataTypes[0].DataTypeId
                 },
                 new RegionVersionRecord
                 {
@@ -214,68 +252,48 @@ namespace Sample4.CmsData
             {
                 new WebsiteVersionRecord
                 {
-                    Id = websiteVersionId++,
+                    Id = websiteVersionId,
                     Name = "1.0",
                     Description = "First version",
                     CraetedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow,
-                    BaseUrl = "http://sample1.localhost/"
+                    BaseUrl = "http://sample4.localhost/"
                 }
             };
 
-            _websiteVersionPages = new List<WebsiteVersionPageRecord>
-            {
-                new WebsiteVersionPageRecord
-                {
-                    WebsiteVersionId = _websiteVersions[0].Id,
-                    PageId = _pageVersions[0].ElementId,
-                    PageVersionId = _pageVersions[0].ElementVersionId
-                }
-            };
+            // There is only 1 version of this website so all versions
+            // of all elements are included
 
-            _websiteVersionLayouts = new List<WebsiteVersionLayoutRecord>
-            {
-                new WebsiteVersionLayoutRecord
-                {
-                    WebsiteVersionId = _websiteVersions[0].Id,
-                    LayoutId = _layoutVersions[0].ElementId,
-                    LayoutVersionId = _layoutVersions[0].ElementVersionId
-                },
-                new WebsiteVersionLayoutRecord
-                {
-                    WebsiteVersionId = _websiteVersions[0].Id,
-                    LayoutId = _layoutVersions[1].ElementId,
-                    LayoutVersionId = _layoutVersions[1].ElementVersionId
-                },
-                new WebsiteVersionLayoutRecord
-                {
-                    WebsiteVersionId = _websiteVersions[0].Id,
-                    LayoutId = _layoutVersions[2].ElementId,
-                    LayoutVersionId = _layoutVersions[2].ElementVersionId
-                }
-            };
+            _websiteVersionPages = _pageVersions
+                .Select(pv => 
+                    new WebsiteVersionPageRecord
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        PageId = pv.ElementId,
+                        PageVersionId = pv.ElementVersionId
+                    
+                    })
+                .ToList();
 
-            _websiteVersionRegions = new List<WebsiteVersionRegionRecord>
-            {
-                new WebsiteVersionRegionRecord
-                {
-                    WebsiteVersionId = _websiteVersions[0].Id,
-                    RegionId = _regionVersions[0].ElementId,
-                    RegionVersionId = _regionVersions[0].ElementVersionId
-                },
-                new WebsiteVersionRegionRecord
-                {
-                    WebsiteVersionId = _websiteVersions[0].Id,
-                    RegionId = _regionVersions[1].ElementId,
-                    RegionVersionId = _regionVersions[1].ElementVersionId
-                },
-                new WebsiteVersionRegionRecord
-                {
-                    WebsiteVersionId = _websiteVersions[0].Id,
-                    RegionId = _regionVersions[2].ElementId,
-                    RegionVersionId = _regionVersions[2].ElementVersionId
-                },
-            };
+            _websiteVersionLayouts = _layoutVersions
+                .Select(lv => 
+                    new WebsiteVersionLayoutRecord
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        LayoutId = lv.ElementId,
+                        LayoutVersionId = lv.ElementVersionId
+                    })
+                .ToList();
+
+            _websiteVersionRegions = _regionVersions
+                .Select(rv => 
+                    new WebsiteVersionRegionRecord
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        RegionId = rv.ElementId,
+                        RegionVersionId = rv.ElementVersionId
+                    })
+                .ToList();
         }
     }
 }

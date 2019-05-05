@@ -63,6 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmsData\StaticData.cs" />
+    <Compile Include="DataProviders\CustomersDataProvider.cs" />
+    <Compile Include="DataProviders\CustomerViewModel.cs" />
     <Compile Include="DataProviders\MenuDataProvider.cs" />
     <Compile Include="PriusIntegration\PriusErrorReporter.cs" />
     <Compile Include="PriusIntegration\PriusFactory.cs" />

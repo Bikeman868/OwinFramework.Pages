@@ -211,7 +211,7 @@ namespace OwinFramework.Pages.Html.Elements
             IWriteResult result;
 
             if (context.IncludeComments)
-                context.Html.WriteComment("region " + Name);
+                context.Html.WriteComment("region " + this.FullyQualifiedName());
 
             if (pageArea == PageArea.Body)
                 WriteOpen(context.Html);

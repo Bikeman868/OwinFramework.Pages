@@ -47,6 +47,42 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string AssetValue { get; set; }
 
         /// <summary>
+        /// Optional ID of the type of data to repeat in this region
+        /// </summary>
+        [Mapping("repeatDataTypeId")]
+        public long? RepeatDataTypeId { get; set; }
+
+        /// <summary>
+        /// Optional ID of the scope to use when resolving the list of data to repeat
+        /// </summary>
+        [Mapping("repeatDataScopeId")]
+        public long? RepeatDataScopeId { get; set; }
+
+        /// <summary>
+        /// Optional ID of the scope to use for data that is repeated
+        /// </summary>
+        [Mapping("listDataScopeId")]
+        public long? ListDataScopeId { get; set; }
+
+        /// <summary>
+        /// Optional HTML tag to wrap repeated child elements in
+        /// </summary>
+        [Mapping("listElementTag")]
+        public string ListElementTag { get; set; }
+
+        /// <summary>
+        /// Optional HTML style to apply to child elements
+        /// </summary>
+        [Mapping("listElementStyle")]
+        public string ListElementStyle { get; set; }
+
+        /// <summary>
+        /// Optional comma separated list of CSS class names to apply to child elements
+        /// </summary>
+        [Mapping("listElementStyle")]
+        public string ListElementClasses { get; set; }
+
+        /// <summary>
         /// When the region contains a layout this property can be used to
         /// override the regions of the layout for this region version.
         /// </summary>
@@ -64,5 +100,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// render references to JavaScript libraries into the head of the page.
         /// </summary>
         public List<ElementComponentRecord> Components { get; set; }
+
+        /// <summary>
+        /// A list of the data scopes to use to resolve data binding within this region
+        /// </summary>
+        public List<ElementDataScopeRecord> DataScopes { get; set; }
     }
 }

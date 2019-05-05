@@ -130,7 +130,7 @@ namespace OwinFramework.Pages.Html.Elements
 #endif
 
             if (context.IncludeComments)
-                context.Html.WriteComment("layout " + Name);
+                context.Html.WriteComment("layout " + this.FullyQualifiedName());
 
             for (var i = 0; i < _visualElements.Length; i++)
             {

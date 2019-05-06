@@ -239,7 +239,7 @@ namespace Sample4.CmsData
                             RegionName = "footer",
                             ContentType = "html",
                             ContentName = "footer-text",
-                            ContentValue = "This is the footer"
+                            ContentValue = "<hr>This is the footer"
                         }
                     }
                 }
@@ -277,7 +277,7 @@ namespace Sample4.CmsData
                     LayoutId = _layouts[0].ElementId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "Customers",
-                    Routes = new List<PageRouteRecord>
+                    Routes = new []
                     {
                         new PageRouteRecord
                         {
@@ -285,7 +285,7 @@ namespace Sample4.CmsData
                             Priority = 200
                         }
                     },
-                    LayoutRegions = new List<LayoutRegionRecord>
+                    LayoutRegions = new []
                     {
                         new LayoutRegionRecord
                         {
@@ -302,7 +302,7 @@ namespace Sample4.CmsData
                     LayoutId = _layouts[0].ElementId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "Orders",
-                    Routes = new List<PageRouteRecord>
+                    Routes = new []
                     {
                         new PageRouteRecord
                         {
@@ -310,7 +310,7 @@ namespace Sample4.CmsData
                             Priority = 200
                         }
                     },
-                    LayoutRegions = new List<LayoutRegionRecord>
+                    LayoutRegions = new []
                     {
                         new LayoutRegionRecord
                         {

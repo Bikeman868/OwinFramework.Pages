@@ -151,7 +151,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     LayoutId = _layouts[0].ElementId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "First CMS Page",
-                    Routes = new List<PageRouteRecord>
+                    Routes = new []
                     {
                         new PageRouteRecord
                         {
@@ -164,7 +164,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             Priority = -10
                         }
                     },
-                    LayoutRegions = new List<LayoutRegionRecord>
+                    LayoutRegions = new []
                     {
                         new LayoutRegionRecord
                         {
@@ -183,7 +183,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     AssetDeployment = AssetDeployment.PerWebsite,
                     LayoutId = _layouts[0].ElementId,
                     Title = "Second CMS Page",
-                    Routes = new List<PageRouteRecord>
+                    Routes = new []
                     {
                         new PageRouteRecord
                         {
@@ -191,7 +191,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             Priority = 200
                         }
                     },
-                    LayoutRegions = new List<LayoutRegionRecord>
+                    LayoutRegions = new []
                     {
                         new LayoutRegionRecord
                         {
@@ -210,7 +210,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     LayoutId = _layouts[1].ElementId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "First CMS Page",
-                    Routes = new List<PageRouteRecord>
+                    Routes = new []
                     {
                         new PageRouteRecord
                         {
@@ -223,7 +223,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             Priority = -10
                         }
                     },
-                    LayoutRegions = new List<LayoutRegionRecord>
+                    LayoutRegions = new []
                     {
                         new LayoutRegionRecord
                         {
@@ -242,7 +242,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     LayoutId = _layouts[1].ElementId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "Second CMS Page",
-                    Routes = new List<PageRouteRecord>
+                    Routes = new []
                     {
                         new PageRouteRecord
                         {
@@ -250,7 +250,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             Priority = 200
                         }
                     },
-                    LayoutRegions = new List<LayoutRegionRecord>
+                    LayoutRegions = new []
                     {
                         new LayoutRegionRecord
                         {

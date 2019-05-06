@@ -74,7 +74,6 @@
     <Compile Include="Interfaces\Database\RegionVersionRecord.cs" />
     <Compile Include="Interfaces\Database\LayoutVersionRecord.cs" />
     <Compile Include="Interfaces\Database\ModuleRecord.cs" />
-    <Compile Include="Interfaces\Database\PackageRecord.cs" />
     <Compile Include="Interfaces\Database\PageRecord.cs" />
     <Compile Include="Interfaces\Database\ElementComponentRecord.cs" />
     <Compile Include="Interfaces\Database\PageRouteRecord.cs" />

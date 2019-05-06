@@ -59,18 +59,18 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// Defines which request URLs will render this page
         /// </summary>
-        public List<PageRouteRecord> Routes { get; set; }
+        public PageRouteRecord[] Routes { get; set; }
 
         /// <summary>
         /// Overrides the content of the page layout just for this page
         /// </summary>
-        public List<LayoutRegionRecord> LayoutRegions { get; set; }
+        public LayoutRegionRecord[] LayoutRegions { get; set; }
 
         /// <summary>
         /// A list of the components to render directly onto the page. 
         /// These are typically non-visual components that do things like 
         /// render references to JavaScript libraries into the head of the page.
         /// </summary>
-        public List<ElementComponentRecord> Components { get; set; }
+        public ElementComponentRecord[] Components { get; set; }
     }
 }

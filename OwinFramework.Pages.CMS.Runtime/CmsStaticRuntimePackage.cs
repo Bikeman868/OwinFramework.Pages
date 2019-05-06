@@ -136,7 +136,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             pageVersion.VersionName = page.Name + "_v" + pageVersion.Version;
 
             var pageUrl = pageVersion.CanonicalUrl;
-            if (string.IsNullOrEmpty(pageUrl) && pageVersion.Routes != null && pageVersion.Routes.Count > 0)
+            if (string.IsNullOrEmpty(pageUrl) && pageVersion.Routes != null && pageVersion.Routes.Length > 0)
                 pageUrl = pageVersion.Routes.OrderByDescending(r => r.Priority).First().Path;
 
             string canonicalUrl = null;

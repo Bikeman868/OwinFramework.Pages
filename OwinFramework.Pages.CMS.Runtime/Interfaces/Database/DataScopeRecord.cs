@@ -31,7 +31,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The identity of the user/application/system that created this data scope
         /// </summary>
         [Mapping("createdBy")]
-        public string CraetedBy { get; set; }
+        public string CreatedBy { get; set; }
 
         /// <summary>
         /// The date/time when this data scope was created
@@ -46,10 +46,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string Name { get; set; }
 
         /// <summary>
-        /// When this property is true the Name property is the name
-        /// of a data provider, otherwise it is the data scope name
+        /// Optional data type specifier. If this is missing then the Name
+        /// property is assumed to be the name of a data provider
         /// </summary>
-        [Mapping("isProvider")]
-        public bool IsProviderName { get; set; }
+        [Mapping("dataTypeId")]
+        public long? DataTypeId { get; set; }
     }
 }

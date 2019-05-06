@@ -207,8 +207,8 @@ namespace OwinFramework.Pages.Html.Builders
 
         IPageDefinition IPageDefinition.RegionLayout(string regionName, string layoutName)
         {
-            if (string.IsNullOrEmpty(layoutName))
-                throw new PageBuilderException("You must provide a layout name when configuring a page region layout");
+            if (string.IsNullOrEmpty(regionName))
+                throw new PageBuilderException("You must provide a region name when configuring a page region layout");
 
             if (string.IsNullOrEmpty(layoutName))
                 throw new PageBuilderException("You must provide a layout name when configuring a page region layout");
@@ -218,6 +218,31 @@ namespace OwinFramework.Pages.Html.Builders
                 (nm, p, n) => p.PopulateRegion(regionName, nm.ResolveLayout(n, p.Package)),
                 _page,
                 layoutName);
+            return this;
+        }
+
+        IPageDefinition IPageDefinition.RegionRegion(string layoutRegion, IRegion region)
+        {
+            if (string.IsNullOrEmpty(layoutRegion))
+                throw new PageBuilderException("You must provide a region name when configuring page regions");
+
+            _page.PopulateRegion(layoutRegion, region);
+            return this;
+        }
+
+        IPageDefinition IPageDefinition.RegionRegion(string layoutRegion, string regionName)
+        {
+            if (string.IsNullOrEmpty(layoutRegion))
+                throw new PageBuilderException("You must provide a layout name when configuring a page region layout");
+
+            if (string.IsNullOrEmpty(regionName))
+                throw new PageBuilderException("You must provide a region name when configuring a page region layout");
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences,
+                (nm, p, n) => p.PopulateRegion(regionName, nm.ResolveRegion(n, p.Package)),
+                _page,
+                regionName);
             return this;
         }
 
@@ -382,6 +407,5 @@ namespace OwinFramework.Pages.Html.Builders
             _nameManager.AddResolutionHandler(NameResolutionPhase.InitializeRunables, () => _page.Initialize());
             return _page;
         }
-
     }
 }

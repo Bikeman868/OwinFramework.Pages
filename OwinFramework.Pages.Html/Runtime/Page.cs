@@ -124,10 +124,16 @@ namespace OwinFramework.Pages.Html.Runtime
                 var regionElements = new List<Tuple<string, IRegion, IElement>>();
                 foreach(var regionName in Layout.GetRegionNames())
                 {
-                    var region = Layout.GetRegion(regionName);
                     var element = _regions != null && _regions.ContainsKey(regionName)
                         ? _regions[regionName]
                         : Layout.GetElement(regionName);
+                    var region = element as IRegion;
+
+                    if (region == null)
+                        region = Layout.GetRegion(regionName);
+                    else
+                        element = null;
+
                     regionElements.Add(new Tuple<string, IRegion, IElement>(regionName, region, element));
                 }
                 _layout = new PageLayout(elementDependencies, null, Layout, regionElements, data);

@@ -3,7 +3,7 @@
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
     /// <summary>
-    /// A POCO that defines the database fields of layout records
+    /// A POCO that defines the database fields of website version data type records
     /// </summary>
     public class WebsiteVersionDataTypeRecord
     {

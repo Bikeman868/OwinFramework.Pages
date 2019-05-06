@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.CMS.Runtime.Data;
-using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Enums;
 using Sample4.DataProviders;
@@ -23,92 +22,114 @@ namespace Sample4.CmsData
             var dataTypeId = 1;
             var dataTypeVersionId = 1;
 
-            _regions = new List<RegionRecord>
+            _regions = new []
             {
                 new RegionRecord
                 {
                     ElementId = elementId++,
-                    Name = "menu",
-                    CraetedBy = creator,
-                    CreatedWhen = DateTime.UtcNow
-                },
-                new RegionRecord
-                {
-                    ElementId = elementId++,
                     Name = "header",
-                    CraetedBy = creator,
+                    CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new RegionRecord
                 {
                     ElementId = elementId++,
                     Name = "footer",
-                    CraetedBy = creator,
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow
+                },
+                new RegionRecord
+                {
+                    ElementId = elementId++,
+                    Name = "customer_list",
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow
+                },
+                new RegionRecord
+                {
+                    ElementId = elementId++,
+                    Name = "order_list",
+                    CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 }
             };
 
-            _layouts = new List<LayoutRecord>
+            _layouts = new []
             {
                 new LayoutRecord 
                 {
                     ElementId = elementId++,
                     Name = "page",
-                    CraetedBy = creator,
+                    CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new LayoutRecord 
                 {
                     ElementId = elementId++,
                     Name = "header",
-                    CraetedBy = creator,
+                    CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new LayoutRecord 
                 {
                     ElementId = elementId++,
                     Name = "footer",
-                    CraetedBy = creator,
+                    CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
             };
 
 
 
-            _dataScopes = new List<DataScopeRecord>
-            {
+            _dataScopes = new DataScopeRecord[0];
 
-            };
-
-            _dataTypes = new List<DataTypeRecord>
+            _dataTypes = new []
             {
                 new DataTypeRecord
                 {
                     DataTypeId = dataTypeId++,
                     DisplayName = "Customer",
-                    CraetedBy = creator,
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow
+                },
+                new DataTypeRecord
+                {
+                    DataTypeId = dataTypeId++,
+                    DisplayName = "Order",
+                    CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 }
             };
 
-            _dataTypeVersions = new List<DataTypeVersionRecord>
+            _dataTypeVersions = new []
             {
                 new DataTypeVersionRecord
                 {
                     DataTypeId = _dataTypes[0].DataTypeId,
                     DataTypeVersionId = dataTypeVersionId++,
-                    CraetedBy = creator,
+                    CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     AssemblyName = typeof(CustomerViewModel).Assembly.FullName,
                     TypeName = typeof(CustomerViewModel).FullName,
-                    Scopes = new long[0]
-                }
+                    Type = typeof(CustomerViewModel)
+                },
+                new DataTypeVersionRecord
+                {
+                    DataTypeId = _dataTypes[1].DataTypeId,
+                    DataTypeVersionId = dataTypeVersionId++,
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
+                    AssemblyName = typeof(OrderViewModel).Assembly.FullName,
+                    TypeName = typeof(OrderViewModel).FullName,
+                    Type = typeof(OrderViewModel)
+                },
             };
 
 
 
-            _regionVersions = new List<RegionVersionRecord>
+            _regionVersions = new []
             {
+                // header region
                 new RegionVersionRecord
                 {
                     ElementId = _regions[0].ElementId,
@@ -116,35 +137,50 @@ namespace Sample4.CmsData
                     Version = 1,
                     LayoutName = "layouts:col_2_left_fixed"
                 },
+                // footer region
                 new RegionVersionRecord
                 {
                     ElementId = _regions[1].ElementId,
                     ElementVersionId = elementVersionId++,
                     Version = 1,
-                    RegionTemplates = new List<RegionTemplateRecord>
-                    {
-                        new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/customer"}
-                    },
-                    RepeatDataTypeId = _dataTypes[0].DataTypeId
+                    LayoutName = "layouts:full_page"
                 },
+                // customer_list region
                 new RegionVersionRecord
                 {
                     ElementId = _regions[2].ElementId,
                     ElementVersionId = elementVersionId++,
                     Version = 1,
-                    LayoutName = "layouts:full_page"
-                }
+                    RegionTemplates = new []
+                    {
+                        new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/customer"}
+                    },
+                    RepeatDataTypeId = _dataTypes[0].DataTypeId
+                },
+                // order_list region
+                new RegionVersionRecord
+                {
+                    ElementId = _regions[3].ElementId,
+                    ElementVersionId = elementVersionId++,
+                    Version = 1,
+                    RegionTemplates = new []
+                    {
+                        new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/order"}
+                    },
+                    RepeatDataTypeId = _dataTypes[1].DataTypeId
+                },
             };
 
-            _layoutVersions = new List<LayoutVersionRecord>
+            _layoutVersions = new []
             {
+                // page layout
                 new LayoutVersionRecord {
                     ElementId = _layouts[0].ElementId,
                     ElementVersionId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     RegionNesting = "header,main,footer",
-                    LayoutRegions = new List<LayoutRegionRecord>
+                    LayoutRegions = new []
                     {
                         new LayoutRegionRecord
                         {
@@ -158,14 +194,22 @@ namespace Sample4.CmsData
                         }
                     }
                 },
+                // header layout
                 new LayoutVersionRecord {
                     ElementId = _layouts[1].ElementId,
                     ElementVersionId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
-                    RegionNesting = "menu",
-                    LayoutRegions = new List<LayoutRegionRecord>
+                    RegionNesting = "title,menu",
+                    LayoutRegions = new []
                     {
+                        new LayoutRegionRecord
+                        {
+                            RegionName = "title",
+                            ContentType = "html",
+                            ContentName = "website-title",
+                            ContentValue = "<h1>CMS Example</h1>"
+                        },
                         new LayoutRegionRecord
                         {
                             RegionName = "menu",
@@ -173,7 +217,7 @@ namespace Sample4.CmsData
                             ContentName = "menus:desktop_menu"
                         }
                     },
-                    Components = new List<ElementComponentRecord>
+                    Components = new []
                     {
                         new ElementComponentRecord
                         {
@@ -181,13 +225,14 @@ namespace Sample4.CmsData
                         }
                     }
                 },
+                // footer layout
                 new LayoutVersionRecord {
                     ElementId = _layouts[2].ElementId,
                     ElementVersionId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     RegionNesting = "footer",
-                    LayoutRegions = new List<LayoutRegionRecord>
+                    LayoutRegions = new []
                     {
                         new LayoutRegionRecord
                         {
@@ -202,18 +247,27 @@ namespace Sample4.CmsData
 
 
 
-            _pages = new List<PageRecord>
+            _pages = new []
             {
                 new PageRecord 
                 {
                     ElementId = elementId++,
-                    CraetedBy = creator,
+                    CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
-                    Name = "home"
+                    Name = "customers",
+                    Description = "Displays a list of customers"
+                },
+                new PageRecord 
+                {
+                    ElementId = elementId++,
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
+                    Name = "orders",
+                    Description = "Displays a list of orders"
                 }
             };
 
-            _pageVersions = new List<PageVersionRecord>
+            _pageVersions = new []
             {
                 new PageVersionRecord
                 {
@@ -222,12 +276,12 @@ namespace Sample4.CmsData
                     Version = 1,
                     LayoutId = _layouts[0].ElementId,
                     AssetDeployment = AssetDeployment.PerWebsite,
-                    Title = "CMS Example",
+                    Title = "Customers",
                     Routes = new List<PageRouteRecord>
                     {
                         new PageRouteRecord
                         {
-                            Path = "/home",
+                            Path = "/customers",
                             Priority = 200
                         }
                     },
@@ -236,19 +290,40 @@ namespace Sample4.CmsData
                         new LayoutRegionRecord
                         {
                             RegionName = "main",
-                            ContentType = "html",
-                            ContentName = "cms-page1",
-                            ContentValue = "<p>Page content goes here</p>"
+                            RegionId = _regions[2].ElementId
+                        }
+                    }
+                },
+                new PageVersionRecord
+                {
+                    ElementId = _pages[1].ElementId,
+                    ElementVersionId = elementVersionId++,
+                    Version = 1,
+                    LayoutId = _layouts[0].ElementId,
+                    AssetDeployment = AssetDeployment.PerWebsite,
+                    Title = "Orders",
+                    Routes = new List<PageRouteRecord>
+                    {
+                        new PageRouteRecord
+                        {
+                            Path = "/orders",
+                            Priority = 200
+                        }
+                    },
+                    LayoutRegions = new List<LayoutRegionRecord>
+                    {
+                        new LayoutRegionRecord
+                        {
+                            RegionName = "main",
+                            RegionId = _regions[3].ElementId
                         }
                     }
                 }
             };
 
-            _properties = new List<ElementPropertyRecord> 
-            { 
-            };
+            _properties = new ElementPropertyRecord[0];
 
-            _websiteVersions = new List<WebsiteVersionRecord>
+            _websiteVersions = new []
             {
                 new WebsiteVersionRecord
                 {
@@ -273,7 +348,7 @@ namespace Sample4.CmsData
                         PageVersionId = pv.ElementVersionId
                     
                     })
-                .ToList();
+                .ToArray();
 
             _websiteVersionLayouts = _layoutVersions
                 .Select(lv => 
@@ -283,7 +358,7 @@ namespace Sample4.CmsData
                         LayoutId = lv.ElementId,
                         LayoutVersionId = lv.ElementVersionId
                     })
-                .ToList();
+                .ToArray();
 
             _websiteVersionRegions = _regionVersions
                 .Select(rv => 
@@ -293,7 +368,17 @@ namespace Sample4.CmsData
                         RegionId = rv.ElementId,
                         RegionVersionId = rv.ElementVersionId
                     })
-                .ToList();
+                .ToArray();
+
+            _websiteVersionDataTypes = _dataTypeVersions
+                .Select(v => 
+                    new WebsiteVersionDataTypeRecord
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        DataTypeVersionId = v.DataTypeVersionId,
+                        DataTypeId = v.DataTypeId
+                    })
+                .ToArray();
         }
     }
 }

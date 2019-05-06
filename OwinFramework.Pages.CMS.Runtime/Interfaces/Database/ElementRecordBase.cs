@@ -36,7 +36,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The identity of the user/application/system that created this element
         /// </summary>
         [Mapping("createdBy")]
-        public string CraetedBy { get; set; }
+        public string CreatedBy { get; set; }
 
         /// <summary>
         /// The date/time when this element was created. See the audit log for details

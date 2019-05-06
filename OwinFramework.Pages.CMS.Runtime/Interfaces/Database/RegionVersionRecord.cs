@@ -59,10 +59,22 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long? RepeatDataScopeId { get; set; }
 
         /// <summary>
+        /// Optional name of the scope to use when resolving the list of data to repeat
+        /// </summary>
+        [Mapping("repeatDataScopeName")]
+        public string RepeatDataScopeName { get; set; }
+
+        /// <summary>
         /// Optional ID of the scope to use for data that is repeated
         /// </summary>
         [Mapping("listDataScopeId")]
         public long? ListDataScopeId { get; set; }
+
+        /// <summary>
+        /// Optional name of the scope to use for data that is repeated
+        /// </summary>
+        [Mapping("listDataScopeName")]
+        public string ListDataScopeName { get; set; }
 
         /// <summary>
         /// Optional HTML tag to wrap repeated child elements in
@@ -86,12 +98,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// When the region contains a layout this property can be used to
         /// override the regions of the layout for this region version.
         /// </summary>
-        public List<LayoutRegionRecord> LayoutRegions { get; set; }
+        public LayoutRegionRecord[] LayoutRegions { get; set; }
 
         /// <summary>
         /// A list of the templates to render into this region.
         /// </summary>
-        public List<RegionTemplateRecord> RegionTemplates { get; set; }
+        public RegionTemplateRecord[] RegionTemplates { get; set; }
 
         /// <summary>
         /// A list of the components to render directly onto any page that 
@@ -99,11 +111,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// These are typically non-visual components that do things like 
         /// render references to JavaScript libraries into the head of the page.
         /// </summary>
-        public List<ElementComponentRecord> Components { get; set; }
+        public ElementComponentRecord[] Components { get; set; }
 
         /// <summary>
         /// A list of the data scopes to use to resolve data binding within this region
         /// </summary>
-        public List<ElementDataScopeRecord> DataScopes { get; set; }
+        public ElementDataScopeRecord[] DataScopes { get; set; }
     }
 }

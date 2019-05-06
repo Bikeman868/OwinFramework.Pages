@@ -32,6 +32,8 @@ namespace OwinFramework.Pages.CMS.Runtime
         private Dictionary<long, long> _regionVersions;
         private Dictionary<long, ILayout> _layouts;
         private Dictionary<long, IRegion> _regions;
+        private Dictionary<long, DataScopeRecord> _dataScopes;
+        private Dictionary<long, DataTypeVersionRecord> _dataTypes;
 
         private readonly IDisposable _config;
         private CmsConfiguration _configuration;
@@ -55,23 +57,30 @@ namespace OwinFramework.Pages.CMS.Runtime
         {
             _layouts = new Dictionary<long, ILayout>();
             _regions = new Dictionary<long, IRegion>();
+            _dataScopes = new Dictionary<long, DataScopeRecord>();
 
             var websiteVersions = _database.GetWebsiteVersions(
                 v => v, 
                 v => string.Equals(v.Name, _configuration.WebsiteVersionName, StringComparison.OrdinalIgnoreCase));
 
-            if (websiteVersions.Count != 1)
+            if (websiteVersions.Length != 1)
                 throw new Exception("There is no website version '" + _configuration.WebsiteVersionName + "' in the database");
 
             var websiteVersion = websiteVersions[0];
-            var websiteVersionPages = _database.GetWebsiteVersionPages(websiteVersion.Id, vp => vp);
+            var websiteVersionPages = _database.GetWebsitePages(websiteVersion.Id, vp => vp);
+
+            _dataTypes = _database
+                .GetWebsiteDataTypes(
+                    websiteVersion.Id, 
+                    wd => _database.GetDataType(wd.DataTypeVersionId, (dt, dtv) => dtv))
+                .ToDictionary(dtv => dtv.DataTypeId, dtv => dtv);
 
             _layoutVersions = _database
-                .GetWebsiteVersionLayouts(websiteVersion.Id, v => new { v.LayoutId, v.LayoutVersionId})
+                .GetWebsiteLayouts(websiteVersion.Id, v => new { v.LayoutId, v.LayoutVersionId})
                 .ToDictionary(v => v.LayoutId, v => v.LayoutVersionId);
 
             _regionVersions = _database
-                .GetWebsiteVersionRegions(websiteVersion.Id, v => new { v.RegionId, v.RegionVersionId})
+                .GetWebsiteRegions(websiteVersion.Id, v => new { v.RegionId, v.RegionVersionId})
                 .ToDictionary(v => v.RegionId, v => v.RegionVersionId);
 
             foreach (var regionId in _regionVersions.Keys.ToList())
@@ -177,8 +186,12 @@ namespace OwinFramework.Pages.CMS.Runtime
             { 
                 foreach(var layoutRegion in pageVersion.LayoutRegions)
                 {
-                    if (layoutRegion.LayoutId.HasValue)
-                        pageDefinition.RegionLayout(layoutRegion.RegionName, GetLayout(builder, layoutRegion.LayoutId.Value));                        
+                    if (layoutRegion.RegionId.HasValue)
+                        pageDefinition.RegionRegion(layoutRegion.RegionName, GetRegion(builder, layoutRegion.RegionId.Value));
+                    else if (layoutRegion.LayoutId.HasValue)
+                        pageDefinition.RegionLayout(layoutRegion.RegionName, GetLayout(builder, layoutRegion.LayoutId.Value));
+                    else if (string.Equals(layoutRegion.ContentType, "region", StringComparison.OrdinalIgnoreCase))
+                        pageDefinition.RegionRegion(layoutRegion.RegionName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
                         pageDefinition.RegionHtml(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
                     else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
@@ -286,6 +299,70 @@ namespace OwinFramework.Pages.CMS.Runtime
             {
                 foreach (var template in regionVersion.RegionTemplates)
                     regionDefinition.AddTemplate(template.TemplatePath, template.PageArea);
+            }
+
+            if (regionVersion.DataScopes != null)
+            {
+                foreach (var dataScope in regionVersion.DataScopes)
+                {
+                    DataScopeRecord dataScopeRecord;
+                    if (_dataScopes.TryGetValue(dataScope.DataScopeId, out dataScopeRecord))
+                    {
+                        if (dataScopeRecord.DataTypeId.HasValue)
+                        {
+                            DataTypeVersionRecord dataType;
+                            if (!_dataTypes.TryGetValue(dataScopeRecord.DataTypeId.Value, out dataType))
+                                throw new Exception("Region ID " + regionId + 
+                                    " has an invalid data scope with ID " + dataScope.DataScopeId + 
+                                    ". There is no data type ID " + dataScopeRecord.DataTypeId.Value +
+                                    " in this version of the website");
+
+                            regionDefinition.DataScope(dataType.Type, dataScopeRecord.Name);
+                        }
+                        else
+                        {
+                            regionDefinition.DataProvider(dataScopeRecord.Name);
+                        }
+                    }                    
+                }
+            }
+
+            if (regionVersion.RepeatDataTypeId.HasValue)
+            {
+                DataTypeVersionRecord dataType;
+                if (!_dataTypes.TryGetValue(regionVersion.RepeatDataTypeId.Value, out dataType))
+                    throw new Exception("Region ID " + regionId + 
+                        " has an invalid data repetition. There is no data type ID " + regionVersion.RepeatDataTypeId.Value +
+                        " in this version of the website");
+
+                var repeatScope = regionVersion.RepeatDataScopeName;
+                var listScope = regionVersion.ListDataScopeName;
+
+                if (regionVersion.RepeatDataScopeId.HasValue)
+                {
+                    DataScopeRecord repeatScopeRecord;
+                    if (_dataScopes.TryGetValue(regionVersion.RepeatDataScopeId.Value, out repeatScopeRecord))
+                        repeatScope = repeatScopeRecord.Name;
+                }
+
+                if (regionVersion.ListDataScopeId.HasValue)
+                {
+                    DataScopeRecord listScopeRecord;
+                    if (_dataScopes.TryGetValue(regionVersion.ListDataScopeId.Value, out listScopeRecord))
+                        listScope = listScopeRecord.Name;
+                }
+
+                var childClasses = string.IsNullOrEmpty(regionVersion.ListElementClasses)
+                    ? new string[0]
+                    : regionVersion.ListElementClasses.Split(',');
+                
+                regionDefinition.ForEach(
+                    dataType.Type, 
+                    repeatScope, 
+                    regionVersion.ListElementTag,
+                    regionVersion.ListElementStyle,
+                    listScope,
+                    childClasses);
             }
 
             if (hasLayout && regionVersion.LayoutRegions != null)

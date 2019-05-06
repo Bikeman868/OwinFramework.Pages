@@ -94,10 +94,10 @@ namespace Sample4
 
             // This is an example of loading and parsing template files using the same
             // parser for all templates. In this case they are all Vue components
-            var multiPartParser = ninject.Get<MultiPartParser>();
+            var multiPartParser = ninject.Get<MustacheParser>();
             var fileSystemLoader = ninject.Get<FileSystemLoader>();
             fileSystemLoader.ReloadInterval = TimeSpan.FromSeconds(3);
-            fileSystemLoader.Load(multiPartParser, p => p.Value.EndsWith(".vue"));
+            fileSystemLoader.Load(multiPartParser, p => p.Value.EndsWith(".html"));
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements

@@ -20,19 +20,19 @@ namespace Sample4.DataProviders
             { 
                 new CustomerViewModel
                 {
-                    Name = "Cusotmer 1",
+                    Name = "Customer 1",
                     CreditLimit = 50000,
                     OrderTotal = 245000
                 },
                 new CustomerViewModel
                 {
-                    Name = "Cusotmer 2",
+                    Name = "Customer 2",
                     CreditLimit = 900000,
                     OrderTotal = 635000
                 },
                 new CustomerViewModel
                 {
-                    Name = "Cusotmer 3",
+                    Name = "Customer 3",
                     CreditLimit = 1500,
                     OrderTotal = 18000
                 },

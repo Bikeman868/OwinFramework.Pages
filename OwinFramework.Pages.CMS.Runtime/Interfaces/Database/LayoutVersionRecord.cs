@@ -20,13 +20,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// Specifies the defalt content for each region named in the RegionNesting
         /// property. These region assignments can be overriden for a page.
         /// </summary>
-        public List<LayoutRegionRecord> LayoutRegions { get; set; }
+        public LayoutRegionRecord[] LayoutRegions { get; set; }
 
         /// <summary>
         /// A list of the components to render directly onto any page containing this layout.
         /// These are typically non-visual components that do things like 
         /// render references to JavaScript libraries into the head of the page.
         /// </summary>
-        public List<ElementComponentRecord> Components { get; set; }
+        public ElementComponentRecord[] Components { get; set; }
     }
 }

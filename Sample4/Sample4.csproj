@@ -58,12 +58,15 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Templates\Template1.vue" />
+    <Content Include="Templates\order.html" />
+    <Content Include="Templates\customer.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmsData\StaticData.cs" />
+    <Compile Include="DataProviders\OrdersDataProvider.cs" />
     <Compile Include="DataProviders\CustomersDataProvider.cs" />
+    <Compile Include="DataProviders\OrderViewModel.cs" />
     <Compile Include="DataProviders\CustomerViewModel.cs" />
     <Compile Include="DataProviders\MenuDataProvider.cs" />
     <Compile Include="PriusIntegration\PriusErrorReporter.cs" />

@@ -28,7 +28,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The identity of the user/application/system that created this data type version
         /// </summary>
         [Mapping("createdBy")]
-        public string CraetedBy { get; set; }
+        public string CreatedBy { get; set; }
 
         /// <summary>
         /// The date/time when this data type version was created
@@ -49,8 +49,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string TypeName { get; set; }
 
         /// <summary>
+        /// The .Net Type that this record represents
+        /// </summary>
+        public Type Type { get; set; }
+
+        /// <summary>
         /// Ids of the data scope records for this type of data
         /// </summary>
-        public long[] Scopes { get; set; }
+        public long[] ScopeIds { get; set; }
     }
 }

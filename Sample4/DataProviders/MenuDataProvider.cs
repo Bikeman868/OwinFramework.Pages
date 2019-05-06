@@ -21,20 +21,19 @@ namespace Sample4.DataProviders
             : base(dependencies) 
         {
 
-            var communityMenu = new MenuPackage.MenuItem
+            var dataMenu = new MenuPackage.MenuItem
             {
-                Name = "Menu 1",
+                Name = "Data",
                 SubMenu = new []
                     {
-                        new MenuPackage.MenuItem { Name = "Page 1", Url = "/page1" },
-                        new MenuPackage.MenuItem { Name = "Page 2", Url = "/page2" },
-                        new MenuPackage.MenuItem { Name = "Page 3", Url = "/page3" }
+                        new MenuPackage.MenuItem { Name = "Customers", Url = "/customers" },
+                        new MenuPackage.MenuItem { Name = "Orders", Url = "/orders" },
                     }
             };
 
             var newsMenu = new MenuPackage.MenuItem
             {
-                Name = "Menu 2",
+                Name = "Sorting",
                 SubMenu = new []
                     {
                         new MenuPackage.MenuItem { Name = "Today", Url = "#" },
@@ -45,7 +44,7 @@ namespace Sample4.DataProviders
 
             _desktopMenu = new List<MenuPackage.MenuItem> 
             { 
-                communityMenu,
+                dataMenu,
                 newsMenu
             };
 

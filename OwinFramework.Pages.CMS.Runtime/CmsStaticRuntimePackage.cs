@@ -72,6 +72,9 @@ namespace OwinFramework.Pages.CMS.Runtime
             var websiteVersion = websiteVersions[0];
             var websiteVersionPages = _database.GetWebsitePages(websiteVersion.Id, vp => vp);
 
+            _pageVersions = websiteVersionPages
+                .ToDictionary(vp => vp.PageId, vp => vp.PageVersionId);
+
             _dataTypes = _database
                 .GetWebsiteDataTypes(
                     websiteVersion.Id, 
@@ -158,7 +161,13 @@ namespace OwinFramework.Pages.CMS.Runtime
         {
             if (pageVersion.MasterPageId.HasValue)
             {
-                var masterPageRecord = GetPage(builder, websiteVersion, pageVersion.MasterPageId.Value);
+                long masterPageVersionId;
+                if (!_pageVersions.TryGetValue(pageVersion.MasterPageId.Value, out masterPageVersionId))
+                    throw new Exception("Page with version ID "+ pageVersion.ElementVersionId + 
+                        " has a master page ID of " + pageVersion.MasterPageId.Value + 
+                        " but there is no version of that page configured for this version of the website");
+
+                var masterPageRecord = GetPage(builder, websiteVersion, masterPageVersionId);
 
                 if (string.IsNullOrEmpty(pageVersion.RequiredPermission))
                     pageVersion.RequiredPermission = masterPageRecord.RequiredPermission;

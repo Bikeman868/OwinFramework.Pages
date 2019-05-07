@@ -66,8 +66,8 @@
     <Compile Include="CmsData\StaticData.cs" />
     <Compile Include="DataProviders\OrdersDataProvider.cs" />
     <Compile Include="DataProviders\CustomersDataProvider.cs" />
-    <Compile Include="DataProviders\OrderViewModel.cs" />
-    <Compile Include="DataProviders\CustomerViewModel.cs" />
+    <Compile Include="ViewModels\OrderViewModel.cs" />
+    <Compile Include="ViewModels\CustomerViewModel.cs" />
     <Compile Include="DataProviders\MenuDataProvider.cs" />
     <Compile Include="PriusIntegration\PriusErrorReporter.cs" />
     <Compile Include="PriusIntegration\PriusFactory.cs" />

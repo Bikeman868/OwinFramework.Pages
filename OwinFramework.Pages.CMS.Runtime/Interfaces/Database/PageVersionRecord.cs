@@ -9,6 +9,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     public class PageVersionRecord: ElementVersionRecordBase
     {
         /// <summary>
+        /// The PageId of a page to copy settings from where they
+        /// are not defined within this page
+        /// </summary>
+        [Mapping("masterPageId")]
+        public long? MasterPageId { get; set; }
+
+        /// <summary>
         /// When the layout is defined in code this is the name of the
         /// layout. Otherwise the LayoutVersionId determines the layout
         /// to use on this version of the page.

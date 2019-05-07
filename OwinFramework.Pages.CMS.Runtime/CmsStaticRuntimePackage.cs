@@ -28,8 +28,10 @@ namespace OwinFramework.Pages.CMS.Runtime
         private readonly IPackageDependenciesFactory _dependencies;
         private readonly IDatabaseReader _database;
 
+        private Dictionary<long, long> _pageVersions;
         private Dictionary<long, long> _layoutVersions;
         private Dictionary<long, long> _regionVersions;
+        private Dictionary<long, PageVersionRecord> _masterPages;
         private Dictionary<long, ILayout> _layouts;
         private Dictionary<long, IRegion> _regions;
         private Dictionary<long, DataScopeRecord> _dataScopes;
@@ -55,6 +57,7 @@ namespace OwinFramework.Pages.CMS.Runtime
 
         public IPackage Build(IFluentBuilder builder)
         {
+            _masterPages = new Dictionary<long, PageVersionRecord>();
             _layouts = new Dictionary<long, ILayout>();
             _regions = new Dictionary<long, IRegion>();
             _dataScopes = new Dictionary<long, DataScopeRecord>();
@@ -90,12 +93,36 @@ namespace OwinFramework.Pages.CMS.Runtime
                 GetLayout(builder, layoutId);
 
             foreach (var page in websiteVersionPages)
-                BuildPage(builder, websiteVersion, page.PageVersionId);
+                GetPage(builder, websiteVersion, page.PageVersionId);
 
+            _masterPages.Clear();
             _layouts.Clear();
             _regions.Clear();
+            _dataScopes.Clear();
 
             return this;
+        }
+
+        private PageVersionRecord GetPage(
+            IFluentBuilder builder, 
+            WebsiteVersionRecord websiteVersion, 
+            long pageVersionId)
+        {
+            PageVersionRecord pageRecord;
+            if (_masterPages.TryGetValue(pageVersionId, out pageRecord))
+                return pageRecord;
+
+            var data = _database.GetPage(pageVersionId, (p, v) => new Tuple<PageRecord, PageVersionRecord>(p, v));
+            var page = data.Item1;
+            var pageVersion = data.Item2;
+
+            pageVersion.VersionName = page.Name + "_v" + pageVersion.Version;
+
+            if (pageVersion.Routes != null && pageVersion.Routes.Length > 0)
+                BuildPage(builder, websiteVersion, pageVersion);
+
+            _masterPages.Add(pageVersionId, pageVersion);
+            return pageVersion;
         }
 
         private ILayout GetLayout(
@@ -124,16 +151,61 @@ namespace OwinFramework.Pages.CMS.Runtime
             return region;
         }
 
-        private IPage BuildPage(
+        private void BuildPage(
             IFluentBuilder builder, 
             WebsiteVersionRecord websiteVersion, 
-            long pageVersionId)
+            PageVersionRecord pageVersion)
         {
-            var data = _database.GetPage(pageVersionId, (p, v) => new Tuple<PageRecord, PageVersionRecord>(p, v));
-            var page = data.Item1;
-            var pageVersion = data.Item2;
+            if (pageVersion.MasterPageId.HasValue)
+            {
+                var masterPageRecord = GetPage(builder, websiteVersion, pageVersion.MasterPageId.Value);
 
-            pageVersion.VersionName = page.Name + "_v" + pageVersion.Version;
+                if (string.IsNullOrEmpty(pageVersion.RequiredPermission))
+                    pageVersion.RequiredPermission = masterPageRecord.RequiredPermission;
+
+                if (string.IsNullOrEmpty(pageVersion.AssetPath))
+                    pageVersion.AssetPath = masterPageRecord.AssetPath;
+
+                if (string.IsNullOrEmpty(pageVersion.BodyStyle))
+                    pageVersion.BodyStyle = masterPageRecord.BodyStyle;
+
+                if (string.IsNullOrEmpty(pageVersion.ModuleName))
+                    pageVersion.ModuleName = masterPageRecord.ModuleName;
+
+                if (!pageVersion.LayoutId.HasValue && string.IsNullOrEmpty(pageVersion.LayoutName))
+                {
+                    pageVersion.LayoutId = masterPageRecord.LayoutId;
+                    pageVersion.LayoutName = masterPageRecord.LayoutName;
+                }
+
+                if (pageVersion.LayoutRegions == null || pageVersion.LayoutRegions.Length == 0)
+                    pageVersion.LayoutRegions = masterPageRecord.LayoutRegions;
+                else if (masterPageRecord.LayoutRegions != null && masterPageRecord.LayoutRegions.Length > 0)
+                {
+                    foreach (var layoutRegion in masterPageRecord.LayoutRegions)
+                    {
+                        if (pageVersion.LayoutRegions.FirstOrDefault(
+                                lr => string.Equals(layoutRegion.RegionName, lr.RegionName, StringComparison.OrdinalIgnoreCase)) == null)
+                            pageVersion.LayoutRegions = pageVersion.LayoutRegions
+                                .Concat(Enumerable.Repeat(layoutRegion, 1))
+                                .ToArray();
+                    }
+                }
+
+                if (pageVersion.Components == null || pageVersion.Components.Length == 0)
+                    pageVersion.Components = masterPageRecord.Components;
+                else if (masterPageRecord.Components != null && masterPageRecord.Components.Length > 0)
+                {
+                    foreach (var component in masterPageRecord.Components)
+                    {
+                        if (pageVersion.Components.FirstOrDefault(
+                                c => string.Equals(component.ComponentName, c.ComponentName, StringComparison.OrdinalIgnoreCase)) == null)
+                            pageVersion.Components = pageVersion.Components
+                                .Concat(Enumerable.Repeat(component, 1))
+                                .ToArray();
+                    }
+                }
+            }
 
             var pageUrl = pageVersion.CanonicalUrl;
             if (string.IsNullOrEmpty(pageUrl) && pageVersion.Routes != null && pageVersion.Routes.Length > 0)
@@ -162,7 +234,6 @@ namespace OwinFramework.Pages.CMS.Runtime
             var pageDefinition = builder.BuildUpPage()
                 .Name(pageVersion.VersionName)
                 .AssetDeployment(pageVersion.AssetDeployment)
-                .PartOf(pageVersion.PackageName)
                 .DeployIn(pageVersion.ModuleName)
                 .Title(pageVersion.Title)
                 .CanonicalUrl(canonicalUrl)
@@ -203,7 +274,7 @@ namespace OwinFramework.Pages.CMS.Runtime
                 }
             }
 
-            return pageDefinition.Build();
+            pageDefinition.Build();
         }
 
         private ILayout BuildLayout(
@@ -223,7 +294,6 @@ namespace OwinFramework.Pages.CMS.Runtime
             var layoutDefinition = builder.BuildUpLayout()
                 .Name(layoutVersion.VersionName)
                 .AssetDeployment(layoutVersion.AssetDeployment)
-                .PartOf(layoutVersion.PackageName)
                 .DeployIn(layoutVersion.ModuleName)
                 .RegionNesting(layoutVersion.RegionNesting);
 
@@ -272,7 +342,6 @@ namespace OwinFramework.Pages.CMS.Runtime
             var regionDefinition = builder.BuildUpRegion()
                 .Name(regionVersion.VersionName)
                 .AssetDeployment(regionVersion.AssetDeployment)
-                .PartOf(regionVersion.PackageName)
                 .DeployIn(regionVersion.ModuleName);
 
             if (regionVersion.Components != null)

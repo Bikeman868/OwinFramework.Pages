@@ -36,12 +36,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string VersionName { get; set; }
 
         /// <summary>
-        /// Optional package name defines the namespace of the element name
-        /// </summary>
-        [Mapping("packageName")]
-        public string PackageName { get; set; }
-
-        /// <summary>
         /// Optional module name defines how assets are deployed when 
         /// asset deployment is configured as module
         /// </summary>

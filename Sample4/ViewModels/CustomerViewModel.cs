@@ -1,4 +1,4 @@
-﻿namespace Sample4.DataProviders
+﻿namespace Sample4.ViewModels
 {
     public class CustomerViewModel
     {

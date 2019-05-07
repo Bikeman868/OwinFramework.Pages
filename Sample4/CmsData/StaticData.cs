@@ -5,6 +5,7 @@ using OwinFramework.Pages.CMS.Runtime.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Enums;
 using Sample4.DataProviders;
+using Sample4.ViewModels;
 
 namespace Sample4.CmsData
 {
@@ -254,6 +255,14 @@ namespace Sample4.CmsData
                     ElementId = elementId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
+                    Name = "master_page",
+                    Description = "Defailes page attributes that are inherited by other pages"
+                },
+                new PageRecord 
+                {
+                    ElementId = elementId++,
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
                     Name = "customers",
                     Description = "Displays a list of customers"
                 },
@@ -276,6 +285,14 @@ namespace Sample4.CmsData
                     Version = 1,
                     LayoutId = _layouts[0].ElementId,
                     AssetDeployment = AssetDeployment.PerWebsite,
+                    Title = "Sample 4",
+                },
+                new PageVersionRecord
+                {
+                    ElementId = _pages[1].ElementId,
+                    ElementVersionId = elementVersionId++,
+                    Version = 1,
+                    MasterPageId = _pages[0].ElementId,
                     Title = "Customers",
                     Routes = new []
                     {
@@ -296,11 +313,10 @@ namespace Sample4.CmsData
                 },
                 new PageVersionRecord
                 {
-                    ElementId = _pages[1].ElementId,
+                    ElementId = _pages[2].ElementId,
                     ElementVersionId = elementVersionId++,
                     Version = 1,
-                    LayoutId = _layouts[0].ElementId,
-                    AssetDeployment = AssetDeployment.PerWebsite,
+                    MasterPageId = _pages[0].ElementId,
                     Title = "Orders",
                     Routes = new []
                     {

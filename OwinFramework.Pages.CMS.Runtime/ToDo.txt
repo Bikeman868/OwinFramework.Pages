@@ -1,0 +1,17 @@
+﻿Wrap components in database records to add descriptions and expose properties that can be configured.
+
+When components are set into regions allow the component name including package specifier, or the
+component ID to be specified. When using a component ID allow a set of property values to be specified.
+In this case an instance of the component should be constructed with the specified property values. This
+is similar to the Kentico Webpart concept.
+
+Define a change notification mechanism and an implementation that uses the audit log in the database to
+apply changes that were made in other web servers in the farm.
+
+Build another runtime package that is not static - i.e. it receives change notifications and dynamically
+adjusts the pages, regions and layouts.
+
+Build a mechanism to switch the website to a different version of the website whilst it is running and
+with no downtime.
+
+Build an editor SPA in Vue.

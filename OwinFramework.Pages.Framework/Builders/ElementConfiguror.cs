@@ -191,7 +191,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 layout
                     .Name(attributes.IsLayout.Name)
-                    .RegionNesting(attributes.IsLayout.RegionNesting);
+                    .ZoneNesting(attributes.IsLayout.ZoneNesting);
             }
 
             if (!ReferenceEquals(attributes.DeployCsss, null))
@@ -275,7 +275,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var usesRegion in attributes.LayoutRegions)
                 {
-                    layout.Region(usesRegion.RegionName, usesRegion.RegionElement);
+                    layout.Region(usesRegion.ZoneName, usesRegion.RegionElementName);
                 }
             }
 
@@ -451,7 +451,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionComponent in attributes.RegionComponents)
                 {
-                    page.RegionComponent(regionComponent.Region, regionComponent.Component);
+                    page.ZoneComponent(regionComponent.Region, regionComponent.Component);
                 }
             }
 
@@ -459,7 +459,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionLayout in attributes.RegionLayouts)
                 {
-                    page.RegionLayout(regionLayout.Region, regionLayout.Layout);
+                    page.ZoneLayout(regionLayout.Region, regionLayout.Layout);
                 }
             }
 
@@ -467,7 +467,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionTemplate in attributes.RegionTemplates)
                 {
-                    page.RegionTemplate(regionTemplate.Region, regionTemplate.TemplatePath);
+                    page.ZoneTemplate(regionTemplate.Region, regionTemplate.TemplatePath);
                 }
             }
 

@@ -248,32 +248,32 @@ namespace OwinFramework.Pages.Html.Builders
         }
 
 
-        public IPageDefinition LayoutRegionComponent(string regionName, IComponent component)
+        public IPageDefinition ZoneComponent(string zoneName, IComponent component)
         {
             throw new NotImplementedException("Regions can not contain customized layouts in this version");
         }
 
-        public IPageDefinition LayoutRegionComponent(string regionName, string componentName)
+        public IPageDefinition ZoneComponent(string zoneName, string componentName)
         {
             throw new NotImplementedException("Regions can not contain customized layouts in this version");
         }
 
-        public IPageDefinition LayoutRegionLayout(string regionName, ILayout layout)
+        public IPageDefinition ZoneLayout(string zoneName, ILayout layout)
         {
             throw new NotImplementedException("Regions can not contain customized layouts in this version");
         }
 
-        public IPageDefinition LayoutRegionLayout(string regionName, string layoutName)
+        public IPageDefinition ZoneLayout(string zoneName, string layoutName)
         {
             throw new NotImplementedException("Regions can not contain customized layouts in this version");
         }
 
-        public IPageDefinition LayoutRegionHtml(string regionName, string textAssetName, string defaultHtml)
+        public IPageDefinition ZoneHtml(string zoneName, string textAssetName, string defaultHtml)
         {
             throw new NotImplementedException("Regions can not contain customized layouts in this version");
         }
 
-        public IPageDefinition LayoutRegionTemplate(string regionName, string templatePath)
+        public IPageDefinition ZoneTemplate(string zoneName, string templatePath)
         {
             throw new NotImplementedException("Regions can not contain customized layouts in this version");
         }

@@ -147,13 +147,28 @@ namespace OwinFramework.Pages.Html.Elements
             if (clone == null)
                 throw new Exception("Cloning failed for " + GetType().FullName);
 
-            clone.HeadWriters = _headWriters;
-            clone.ScriptWriters = _scriptWriters;
-            clone.StyleWriters = _styleWriters;
-            clone.BodyWriters = _bodyWriters;
-            clone.InitializationWriters = _initializationWriters;
-            clone.CssRules = CssRules;
-            clone.JavascriptFunctions = JavascriptFunctions;
+            base.CopyTo(clone);
+
+            if (_headWriters != null)
+                clone.HeadWriters = _headWriters;
+
+            if (_scriptWriters != null)
+                clone.ScriptWriters = _scriptWriters;
+
+            if (_styleWriters != null)
+                clone.StyleWriters = _styleWriters;
+
+            if (_bodyWriters != null)
+                clone.BodyWriters = _bodyWriters;
+
+            if (_initializationWriters != null)
+                clone.InitializationWriters = _initializationWriters;
+
+            if (CssRules != null)
+                clone.CssRules = CssRules;
+
+            if (JavascriptFunctions != null)
+                clone.JavascriptFunctions = JavascriptFunctions;
 
             return clone;
         }

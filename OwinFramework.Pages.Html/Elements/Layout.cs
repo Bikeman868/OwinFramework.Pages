@@ -22,8 +22,8 @@ namespace OwinFramework.Pages.Html.Elements
 
         private VisualElement[] _visualElements;
 
-        protected IThreadSafeDictionary<string, IRegion> RegionsByName;
-        protected IThreadSafeDictionary<string, IElement> ElementsByName;
+        protected IThreadSafeDictionary<string, IRegion> RegionsByZoneName;
+        protected IThreadSafeDictionary<string, IElement> ElementsByZoneName;
 
         public Layout(ILayoutDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
@@ -32,15 +32,15 @@ namespace OwinFramework.Pages.Html.Elements
             // this would break all layouts in all applications that use
             // this framework!!
 
-            RegionsByName = dependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
-            ElementsByName = dependencies.DictionaryFactory.Create<string, IElement>(StringComparer.InvariantCultureIgnoreCase);
+            RegionsByZoneName = dependencies.DictionaryFactory.Create<string, IRegion>(StringComparer.InvariantCultureIgnoreCase);
+            ElementsByZoneName = dependencies.DictionaryFactory.Create<string, IElement>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
         {
             var debugLayout = debugInfo as DebugLayout ?? new DebugLayout();
 
-            debugLayout.Children = RegionsByName.Select(
+            debugLayout.Children = RegionsByZoneName.Select(
                 kvp => new DebugLayoutRegion
                 {
                     Name = kvp.Key,
@@ -53,36 +53,36 @@ namespace OwinFramework.Pages.Html.Elements
             return base.PopulateDebugInfo<T>(debugLayout, parentDepth, childDepth);
         }
 
-        public void PopulateRegion(string regionName, IRegion region)
+        public void PopulateZone(string zoneName, IRegion region)
         {
-            RegionsByName[regionName] = region;
-            PopulateElement(regionName, region.Content);
+            RegionsByZoneName[zoneName] = region;
+            PopulateElement(zoneName, region.Content);
         }
 
-        public IEnumerable<string> GetRegionNames()
+        public IEnumerable<string> GetZoneNames()
         {
-            return RegionsByName.Keys;
+            return RegionsByZoneName.Keys;
         }
 
-        public void PopulateElement(string regionName, IElement element)
+        public void PopulateElement(string zoneName, IElement element)
         {
-            ElementsByName[regionName] = element;
+            ElementsByZoneName[zoneName] = element;
         }
 
-        public IRegion GetRegion(string regionName)
+        public IRegion GetRegion(string zoneName)
         {
             IRegion region;
-            if (!RegionsByName.TryGetValue(regionName, out region))
-                throw new Exception("Layout does not have a '" + regionName + "' region");
+            if (!RegionsByZoneName.TryGetValue(zoneName, out region))
+                throw new Exception("Layout does not have a '" + zoneName + "' region");
 
             return region;
         }
 
-        public IElement GetElement(string regionName)
+        public IElement GetElement(string zoneName)
         {
             IElement element;
-            if (!ElementsByName.TryGetValue(regionName, out element))
-                throw new Exception("Layout does not have a '" + regionName + "' region");
+            if (!ElementsByZoneName.TryGetValue(zoneName, out element))
+                throw new Exception("Layout does not have a '" + zoneName + "' region");
 
             return element;
         }
@@ -94,9 +94,9 @@ namespace OwinFramework.Pages.Html.Elements
             Add(visualElement);
         }
 
-        public void AddRegionVisualElement(string regionName)
+        public void AddZoneVisualElement(string zoneName)
         {
-            var visualElement = new VisualElement { RegionName = regionName };
+            var visualElement = new VisualElement { ZoneName = zoneName };
             Add(visualElement);
         }
 
@@ -139,8 +139,8 @@ namespace OwinFramework.Pages.Html.Elements
                 if (pageArea == PageArea.Body && !ReferenceEquals(visualElement.StaticHtml, null))
                     visualElement.StaticHtml.WriteAction(context.Html);
 
-                if (!ReferenceEquals(visualElement.RegionName, null))
-                    result.Add(childWriter(context, pageArea, visualElement.RegionName));
+                if (!ReferenceEquals(visualElement.ZoneName, null))
+                    result.Add(childWriter(context, pageArea, visualElement.ZoneName));
             }
 
 #if TRACE
@@ -152,7 +152,7 @@ namespace OwinFramework.Pages.Html.Elements
 
         private class VisualElement
         {
-            public string RegionName;
+            public string ZoneName;
             public StaticHtmlElement StaticHtml;
         }
     }

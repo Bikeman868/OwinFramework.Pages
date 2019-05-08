@@ -12,7 +12,7 @@ namespace OwinFramework.Pages.Html.Elements
 {
     internal class PageLayout: PageElement
     {
-        private readonly IThreadSafeDictionary<string, PageRegion> _regions;
+        private readonly IThreadSafeDictionary<string, PageZone> _zones;
 
         public PageLayout(
             PageElementDependencies dependencies,
@@ -24,26 +24,26 @@ namespace OwinFramework.Pages.Html.Elements
         {
             pageData.BeginAddElement(Element);
 
-            _regions = dependencies.DictionaryFactory.Create<string, PageRegion>();
+            _zones = dependencies.DictionaryFactory.Create<string, PageZone>(StringComparer.OrdinalIgnoreCase);
 
             var regionElementList = regionElements == null
                 ? new List<Tuple<string, IRegion, IElement>>() 
                 : regionElements.ToList();
 
-            foreach(var regionName in layout.GetRegionNames())
+            foreach(var zoneName in layout.GetZoneNames())
             {
-                var name = regionName;
+                var name = zoneName;
                 var regionElement = regionElementList.FirstOrDefault(
                     re => string.Equals(re.Item1, name, StringComparison.OrdinalIgnoreCase));
 
                 var region = regionElement == null ? layout.GetRegion(name) : regionElement.Item2;
                 var element = regionElement == null ? layout.GetElement(name) : regionElement.Item3;
 
-                var pageRegion = new PageRegion(dependencies, this, region, element, pageData);
-                _regions[regionName] = pageRegion;
+                var pageRegion = new PageZone(dependencies, this, region, element, pageData);
+                _zones[zoneName] = pageRegion;
             }
 
-            Children = _regions.Values.ToArray();
+            Children = _zones.Values.ToArray();
 
             pageData.EndAddElement(Element);
         }
@@ -54,7 +54,7 @@ namespace OwinFramework.Pages.Html.Elements
 
             if (childDepth != 0)
             {
-                debugLayout.Children = _regions
+                debugLayout.Children = _zones
                     .Select(kvp =>
                         new DebugLayoutRegion
                         {
@@ -82,10 +82,10 @@ namespace OwinFramework.Pages.Html.Elements
         private IWriteResult WriteRegion(
             IRenderContext renderContext,
             PageArea pageArea,
-            string regionName)
+            string zoneName)
         {
-            PageRegion pageRegion;
-            if (_regions.TryGetValue(regionName, out pageRegion))
+            PageZone pageRegion;
+            if (_zones.TryGetValue(zoneName, out pageRegion))
                 return pageRegion.WritePageArea(renderContext, pageArea);
 
             return WriteResult.Continue();

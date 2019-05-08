@@ -184,7 +184,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// For a layout, defines the region component to use for each region of the layout
         /// </summary>
-        public IList<LayoutRegionAttribute> LayoutRegions;
+        public IList<LayoutZoneAttribute> LayoutRegions;
 
         /// <summary>
         /// For a region, defines a type of data that will be resolved within this region

@@ -75,7 +75,7 @@
     <Compile Include="Attributes\NeedsDataAttribute.cs" />
     <Compile Include="Attributes\RenderTemplateAttribute.cs" />
     <Compile Include="Attributes\UsesLayoutAttribute.cs" />
-    <Compile Include="Attributes\LayoutRegionAttribute.cs" />
+    <Compile Include="Attributes\LayoutZoneAttribute.cs" />
     <Compile Include="Attributes\ContainerAttribute.cs" />
     <Compile Include="Attributes\RouteAttribute.cs" />
     <Compile Include="Attributes\DescriptionAttribute.cs" />

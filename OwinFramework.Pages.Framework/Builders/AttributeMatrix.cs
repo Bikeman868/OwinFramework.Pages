@@ -227,23 +227,23 @@ namespace OwinFramework.Pages.Framework.Builders
             Add<UsesComponentAttribute>()
                 .Valid<IRegionDefinition>()
                 .Valid<IRegion>()
-                .Invalid<ILayoutDefinition>("Please use the [RegionComponent] attribute instead so that the region name can be specified.")
+                .Invalid<ILayoutDefinition>("Please use the [ZoneComponent] attribute instead so that the region name can be specified.")
                 .Invalid<IPageDefinition>("You can not add components directly to the page but you can use the [NeedsComponent] attribute to add component dependencies.");
 
             Add<UsesLayoutAttribute>()
                 .Valid<IPageDefinition>()
                 .Valid<IRegionDefinition>()
                 .Valid<IRegion>()
-                .Invalid<ILayoutDefinition>("Please use the [RegionLayout] attribute instead so that the region name can be specified.");
+                .Invalid<ILayoutDefinition>("Please use the [ZoneLayout] attribute instead so that the region name can be specified.");
 
             Add<RenderTemplateAttribute>()
                 .Valid<IRegionDefinition>()
-                .Invalid<IPageDefinition>("Please use the [RegionTemplate] attribute instead so that the region name can be specified.")
-                .Invalid<ILayoutDefinition>("Please use the [RegionTemplate] attribute instead so that the region name can be specified.");
+                .Invalid<IPageDefinition>("Please use the [ZoneTemplate] attribute instead so that the region name can be specified.")
+                .Invalid<ILayoutDefinition>("Please use the [ZoneTemplate] attribute instead so that the region name can be specified.");
 
-            Add<LayoutRegionAttribute>()
+            Add<LayoutZoneAttribute>()
                 .Valid<ILayoutDefinition>()
-                .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [RegionTemplate], [RegionLayout] and [RegionComponent] attributes.");
+                .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [ZoneTemplate], [ZoneLayout] and [ZoneComponent] attributes.");
         }
 
         private AttributeDefinition Add<T>(string usageMessage = null)
@@ -283,7 +283,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.UsesComponents != null) CheckAttribute<T, UsesComponentAttribute>(result);
             if (attributes.UsesLayout != null) CheckAttribute<T, UsesLayoutAttribute>(result);
             if (attributes.RenderTemplates != null) CheckAttribute<T, RenderTemplateAttribute>(result);
-            if (attributes.LayoutRegions != null) CheckAttribute<T, LayoutRegionAttribute>(result);
+            if (attributes.LayoutRegions != null) CheckAttribute<T, LayoutZoneAttribute>(result);
 
             return result.Count > 0 ? result : null;
         }

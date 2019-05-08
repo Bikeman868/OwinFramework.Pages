@@ -171,18 +171,18 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IPageDefinition IPageDefinition.RegionComponent(string regionName, IComponent component)
+        IPageDefinition IPageDefinition.ZoneComponent(string zoneName, IComponent component)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
-            _page.PopulateRegion(regionName, component);
+            _page.PopulateRegion(zoneName, component);
             return this;
         }
 
-        IPageDefinition IPageDefinition.RegionComponent(string regionName, string componentName)
+        IPageDefinition IPageDefinition.ZoneComponent(string zoneName, string componentName)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
             if (string.IsNullOrEmpty(componentName))
@@ -190,24 +190,24 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences, 
-                (nm, p, n) =>p.PopulateRegion(regionName, nm.ResolveComponent(n, p.Package)),
+                (nm, p, n) =>p.PopulateRegion(zoneName, nm.ResolveComponent(n, p.Package)),
                 _page,
                 componentName);
             return this;
         }
 
-        IPageDefinition IPageDefinition.RegionLayout(string regionName, ILayout layout)
+        IPageDefinition IPageDefinition.ZoneLayout(string zoneName, ILayout layout)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
-            _page.PopulateRegion(regionName, layout);
+            _page.PopulateRegion(zoneName, layout);
             return this;
         }
 
-        IPageDefinition IPageDefinition.RegionLayout(string regionName, string layoutName)
+        IPageDefinition IPageDefinition.ZoneLayout(string zoneName, string layoutName)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring a page region layout");
 
             if (string.IsNullOrEmpty(layoutName))
@@ -215,59 +215,59 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, p, n) => p.PopulateRegion(regionName, nm.ResolveLayout(n, p.Package)),
+                (nm, p, n) => p.PopulateRegion(zoneName, nm.ResolveLayout(n, p.Package)),
                 _page,
                 layoutName);
             return this;
         }
 
-        IPageDefinition IPageDefinition.RegionRegion(string layoutRegion, IRegion region)
+        IPageDefinition IPageDefinition.ZoneRegion(string zoneName, IRegion region)
         {
-            if (string.IsNullOrEmpty(layoutRegion))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
-            _page.PopulateRegion(layoutRegion, region);
+            _page.PopulateRegion(zoneName, region);
             return this;
         }
 
-        IPageDefinition IPageDefinition.RegionRegion(string layoutRegion, string regionName)
+        IPageDefinition IPageDefinition.ZoneRegion(string zoneName, string regionName)
         {
-            if (string.IsNullOrEmpty(layoutRegion))
-                throw new PageBuilderException("You must provide a layout name when configuring a page region layout");
+            if (string.IsNullOrEmpty(zoneName))
+                throw new PageBuilderException("You must provide a layout zone name when configuring a page zone layout");
 
             if (string.IsNullOrEmpty(regionName))
                 throw new PageBuilderException("You must provide a region name when configuring a page region layout");
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, p, n) => p.PopulateRegion(regionName, nm.ResolveRegion(n, p.Package)),
+                (nm, p, n) => p.PopulateRegion(zoneName, nm.ResolveRegion(n, p.Package)),
                 _page,
                 regionName);
             return this;
         }
 
-        IPageDefinition IPageDefinition.RegionHtml(string regionName, string textAssetName, string defaultHtml)
+        IPageDefinition IPageDefinition.ZoneHtml(string zoneName, string textAssetName, string defaultHtml)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
             var component = new HtmlComponent(_componentDependenciesFactory);
             component.Html(textAssetName, defaultHtml);
 
-            _page.PopulateRegion(regionName, component);
+            _page.PopulateRegion(zoneName, component);
 
             return this;
         }
 
-        IPageDefinition IPageDefinition.RegionTemplate(string regionName, string templatePath)
+        IPageDefinition IPageDefinition.ZoneTemplate(string zoneName, string templatePath)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
             var component = new TemplateComponent(_componentDependenciesFactory);
             component.BodyTemplate(templatePath);
 
-            _page.PopulateRegion(regionName, component);
+            _page.PopulateRegion(zoneName, component);
 
             return this;
         }

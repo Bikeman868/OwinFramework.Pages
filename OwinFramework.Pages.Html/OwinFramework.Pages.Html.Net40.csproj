@@ -194,7 +194,7 @@
     <Compile Include="Elements\PageLayout.cs" />
     <Compile Include="Builders\LayoutDefinition.cs" />
     <Compile Include="Elements\StaticHtmlElement.cs" />
-    <Compile Include="Elements\PageRegion.cs" />
+    <Compile Include="Elements\PageZone.cs" />
     <Compile Include="Builders\RegionDefinition.cs" />
     <Compile Include="Runtime\ComponentDependencies.cs" />
     <Compile Include="Runtime\ComponentDependenciesFactory.cs" />

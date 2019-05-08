@@ -2,13 +2,13 @@
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
-    public class LayoutRegionRecord
+    public class LayoutZoneRecord
     {
         /// <summary>
-        /// The name of the region within the layout to configure
+        /// The name of the zone within the layout to configure
         /// </summary>
-        [Mapping("region")]
-        public string RegionName { get; set; }
+        [Mapping("zone")]
+        public string ZoneName { get; set; }
 
         /// <summary>
         /// The unique ID of the region to render into this region. 

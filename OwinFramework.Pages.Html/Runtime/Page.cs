@@ -81,7 +81,7 @@ namespace OwinFramework.Pages.Html.Runtime
         /// </summary>
         public override ElementType ElementType { get { return ElementType.Page; } }
 
-        private Dictionary<string, IElement> _regions;
+        private Dictionary<string, IElement> _layoutZones;
 
         private readonly IPageDependenciesFactory _dependencies;
         private readonly IDataScopeRules _dataScopeRules;
@@ -122,19 +122,19 @@ namespace OwinFramework.Pages.Html.Runtime
             if (Layout != null)
             {
                 var regionElements = new List<Tuple<string, IRegion, IElement>>();
-                foreach(var regionName in Layout.GetRegionNames())
+                foreach(var zoneName in Layout.GetZoneNames())
                 {
-                    var element = _regions != null && _regions.ContainsKey(regionName)
-                        ? _regions[regionName]
-                        : Layout.GetElement(regionName);
+                    var element = _layoutZones != null && _layoutZones.ContainsKey(zoneName)
+                        ? _layoutZones[zoneName]
+                        : Layout.GetElement(zoneName);
                     var region = element as IRegion;
 
                     if (region == null)
-                        region = Layout.GetRegion(regionName);
+                        region = Layout.GetRegion(zoneName);
                     else
                         element = null;
 
-                    regionElements.Add(new Tuple<string, IRegion, IElement>(regionName, region, element));
+                    regionElements.Add(new Tuple<string, IRegion, IElement>(zoneName, region, element));
                 }
                 _layout = new PageLayout(elementDependencies, null, Layout, regionElements, data);
             }
@@ -214,11 +214,11 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
-        public void PopulateRegion(string regionName, IElement element)
+        public void PopulateRegion(string zoneName, IElement element)
         {
-            if (_regions == null)
-                _regions = new Dictionary<string, IElement>(StringComparer.OrdinalIgnoreCase);
-            _regions[regionName] = element;
+            if (_layoutZones == null)
+                _layoutZones = new Dictionary<string, IElement>(StringComparer.OrdinalIgnoreCase);
+            _layoutZones[zoneName] = element;
         }
         
         /// <summary>

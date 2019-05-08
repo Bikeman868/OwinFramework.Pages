@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// </summary>
     public abstract class Element : IElement, IDebuggable, IDataConsumer, ILibraryConsumer
     {
-        private readonly IDataConsumer _dataConsumer;
+        private IDataConsumer _dataConsumer;
         private List<IComponent> _dependentComponents;
 
         public abstract ElementType ElementType { get; }
@@ -27,11 +27,26 @@ namespace OwinFramework.Pages.Html.Elements
         public virtual IPackage Package { get; set; }
         public virtual IModule Module { get; set; }
 
+        protected PageArea[] PageAreas = { PageArea.Body };
+
         protected Element(IDataConsumerFactory dataConsumerFactory)
         {
             _dataConsumer = dataConsumerFactory == null
                 ? null
                 : dataConsumerFactory.Create();
+        }
+
+        protected void CopyTo(Element to)
+        {
+            to.Name = Name;
+            to.Package = Package;
+            to.Module = Module;
+            to.AssetDeployment = AssetDeployment;
+
+            to.PageAreas = PageAreas;
+
+            to._dataConsumer = _dataConsumer;
+            to._dependentComponents = _dependentComponents;
         }
 
         public T GetDebugInfo<T>(int parentDepth, int childDepth) where T: DebugInfo 
@@ -89,8 +104,6 @@ namespace OwinFramework.Pages.Html.Elements
         {
             return WriteResult.Continue();
         }
-
-        protected PageArea[] PageAreas = { PageArea.Body };
 
         public virtual IEnumerable<PageArea> GetPageAreas()
         {

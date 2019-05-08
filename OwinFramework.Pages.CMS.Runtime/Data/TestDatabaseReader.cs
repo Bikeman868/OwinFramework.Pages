@@ -88,18 +88,18 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     RegionNesting = "header,main,footer",
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "header",
+                            ZoneName = "header",
                             ContentType = "html",
                             ContentName = "header",
                             ContentValue = "<h1>Header V1</h1>"
                         },
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "footer",
+                            ZoneName = "footer",
                             ContentType = "html",
                             ContentName = "footer",
                             ContentValue = "<h1>Footer V1</h1>"
@@ -112,16 +112,16 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     Version = 2,
                     AssetDeployment = AssetDeployment.Inherit,
                     RegionNesting = "header,main,footer",
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "header",
+                            ZoneName = "header",
                             RegionId = _regions[0].ElementId
                         },
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "footer",
+                            ZoneName = "footer",
                             RegionId = _regions[1].ElementId
                         }
                     }
@@ -169,11 +169,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             Priority = -10
                         }
                     },
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "main",
+                            ZoneName = "main",
                             ContentType = "html",
                             ContentName = "cms-page1",
                             ContentValue = "<p>This is CMS page 1</p>"
@@ -196,11 +196,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             Priority = 200
                         }
                     },
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "main",
+                            ZoneName = "main",
                             ContentType = "html",
                             ContentName = "cms-page1",
                             ContentValue = "<p>This is CMS page 2</p>"
@@ -212,7 +212,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     ElementId = _pages[0].ElementId,
                     ElementVersionId = elementVersionId++,
                     Version = 2,
-                    LayoutId = _layouts[1].ElementId,
+                    LayoutId = _layouts[0].ElementId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "First CMS Page",
                     Routes = new []
@@ -228,11 +228,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             Priority = -10
                         }
                     },
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "main",
+                            ZoneName = "main",
                             ContentType = "html",
                             ContentName = "cms-page1",
                             ContentValue = "<p>This is CMS page 1</p>"
@@ -244,7 +244,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     ElementId = _pages[1].ElementId,
                     ElementVersionId = elementVersionId++,
                     Version = 2,
-                    LayoutId = _layouts[1].ElementId,
+                    LayoutId = _layouts[0].ElementId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "Second CMS Page",
                     Routes = new []
@@ -255,11 +255,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             Priority = 200
                         }
                     },
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "main",
+                            ZoneName = "main",
                             ContentType = "html",
                             ContentName = "cms-page1",
                             ContentValue = "<p>This is CMS page 2</p>"
@@ -361,6 +361,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     RegionVersionId = _regionVersions[1].ElementVersionId
                 }
             };
+
+            _websiteVersionDataTypes = new WebsiteVersionDataTypeRecord [0];
+            _websiteVersionComponents = new WebsiteVersionComponentRecord [0];
         }
     }
 }

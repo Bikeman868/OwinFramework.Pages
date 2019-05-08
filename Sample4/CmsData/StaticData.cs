@@ -28,9 +28,10 @@ namespace Sample4.CmsData
                 new ComponentRecord
                 {
                     ElementId = elementId++,
-                    Name = "test_widget",
+                    Name = "message",
                     CreatedBy = creator,
-                    CreatedWhen = DateTime.UtcNow
+                    CreatedWhen = DateTime.UtcNow,
+                    Description = "Displays a text message as a paragraph"
                 }
             };
 
@@ -61,6 +62,13 @@ namespace Sample4.CmsData
                 {
                     ElementId = elementId++,
                     Name = "order_list",
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow
+                },
+                new RegionRecord
+                {
+                    ElementId = elementId++,
+                    Name = "title",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 }
@@ -121,7 +129,7 @@ namespace Sample4.CmsData
                     TypeName = "System.String",
                     Type = typeof(string),
                     DisplayName = "Message",
-                    Description = "A message to display on the page"
+                    Description = "The message to output onto the page"
                 }
             };
 
@@ -205,6 +213,14 @@ namespace Sample4.CmsData
                     },
                     RepeatDataTypeId = _dataTypes[1].DataTypeId
                 },
+                // title region
+                new RegionVersionRecord
+                {
+                    ElementId = _regions[4].ElementId,
+                    ElementVersionId = elementVersionId++,
+                    Version = 1,
+                    ComponentId = _components[0].ElementId
+                },
             };
 
             _layoutVersions = new []
@@ -216,16 +232,16 @@ namespace Sample4.CmsData
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     RegionNesting = "header,main,footer",
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "header",
+                            ZoneName = "header",
                             LayoutId = _layouts[1].ElementId
                         },
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "footer",
+                            ZoneName = "footer",
                             LayoutId = _layouts[2].ElementId
                         }
                     }
@@ -237,18 +253,16 @@ namespace Sample4.CmsData
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     RegionNesting = "title,menu",
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "title",
-                            ContentType = "html",
-                            ContentName = "website-title",
-                            ContentValue = "<h1>CMS Example</h1>"
+                            ZoneName = "title",
+                            RegionId = _regions[4].ElementId
                         },
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "menu",
+                            ZoneName = "menu",
                             ContentType = "region",
                             ContentName = "menus:desktop_menu"
                         }
@@ -268,11 +282,11 @@ namespace Sample4.CmsData
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     RegionNesting = "footer",
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "footer",
+                            ZoneName = "footer",
                             RegionId = _regions[1].ElementId
                         }
                     }
@@ -285,8 +299,15 @@ namespace Sample4.CmsData
                 {
                     ElementPropertyId = _properties[0].ElementPropertyId,
                     ElementVersionId = _regionVersions[1].ElementVersionId,
-                    ValueText = "Hello, world",
-                    Value = "Hello, world"
+                    ValueText = "This is the footer",
+                    Value = "This is the footer"
+                },
+                new ElementPropertyValueRecord
+                {
+                    ElementPropertyId = _properties[0].ElementPropertyId,
+                    ElementVersionId = _regionVersions[4].ElementVersionId,
+                    ValueText = "This is the title",
+                    Value = "This is the title"
                 }
             };
 
@@ -348,11 +369,11 @@ namespace Sample4.CmsData
                             Priority = 200
                         }
                     },
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "main",
+                            ZoneName = "main",
                             RegionId = _regions[2].ElementId
                         }
                     }
@@ -372,11 +393,11 @@ namespace Sample4.CmsData
                             Priority = 200
                         }
                     },
-                    LayoutRegions = new []
+                    LayoutZones = new []
                     {
-                        new LayoutRegionRecord
+                        new LayoutZoneRecord
                         {
-                            RegionName = "main",
+                            ZoneName = "main",
                             RegionId = _regions[3].ElementId
                         }
                     }

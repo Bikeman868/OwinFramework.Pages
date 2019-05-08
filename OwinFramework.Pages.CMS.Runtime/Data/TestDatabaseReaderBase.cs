@@ -171,7 +171,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T[] IDatabaseReader.GetWebsiteDataTypes<T>(string websiteVersionName, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate)
         {
-            throw new NotImplementedException();
+            var websiteVersion = _websiteVersions
+                .FirstOrDefault(v => string.Equals(v.Name, websiteVersionName, StringComparison.OrdinalIgnoreCase));
+
+            return websiteVersion == null 
+                ? null 
+                : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.Id, map, predicate);
         }
 
         IDictionary<string, object> IDatabaseReader.GetElementPropertyValues(long elementVersionId)

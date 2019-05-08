@@ -11,12 +11,12 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace Sample4.Elements
 {
-    [IsComponent("test_widget")]
-    public class SampleComponent: Component
+    [IsComponent("message")]
+    public class MessageComponent: Component
     {
         public string Message { get; set; }
 
-        public SampleComponent(
+        public MessageComponent(
             IComponentDependenciesFactory dependencies) 
             : base(dependencies)
         {
@@ -27,6 +27,8 @@ namespace Sample4.Elements
             if (pageArea == PageArea.Body)
             {
                 context.Html.WriteComment("Test widget");
+                context.Html.WriteUnclosedElement("hr");
+                context.Html.WriteLine();
                 context.Html.WriteElementLine("p", Message);
             }
 

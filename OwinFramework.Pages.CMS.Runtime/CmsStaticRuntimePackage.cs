@@ -193,15 +193,15 @@ namespace OwinFramework.Pages.CMS.Runtime
                     pageVersion.LayoutName = masterPageRecord.LayoutName;
                 }
 
-                if (pageVersion.LayoutRegions == null || pageVersion.LayoutRegions.Length == 0)
-                    pageVersion.LayoutRegions = masterPageRecord.LayoutRegions;
-                else if (masterPageRecord.LayoutRegions != null && masterPageRecord.LayoutRegions.Length > 0)
+                if (pageVersion.LayoutZones == null || pageVersion.LayoutZones.Length == 0)
+                    pageVersion.LayoutZones = masterPageRecord.LayoutZones;
+                else if (masterPageRecord.LayoutZones != null && masterPageRecord.LayoutZones.Length > 0)
                 {
-                    foreach (var layoutRegion in masterPageRecord.LayoutRegions)
+                    foreach (var layoutRegion in masterPageRecord.LayoutZones)
                     {
-                        if (pageVersion.LayoutRegions.FirstOrDefault(
-                                lr => string.Equals(layoutRegion.RegionName, lr.RegionName, StringComparison.OrdinalIgnoreCase)) == null)
-                            pageVersion.LayoutRegions = pageVersion.LayoutRegions
+                        if (pageVersion.LayoutZones.FirstOrDefault(
+                                lr => string.Equals(layoutRegion.ZoneName, lr.ZoneName, StringComparison.OrdinalIgnoreCase)) == null)
+                            pageVersion.LayoutZones = pageVersion.LayoutZones
                                 .Concat(Enumerable.Repeat(layoutRegion, 1))
                                 .ToArray();
                     }
@@ -268,24 +268,24 @@ namespace OwinFramework.Pages.CMS.Runtime
                 foreach (var component in pageVersion.Components)
                     pageDefinition.NeedsComponent(component.ComponentName);
 
-            if (pageVersion.LayoutRegions != null)
+            if (pageVersion.LayoutZones != null)
             { 
-                foreach(var layoutRegion in pageVersion.LayoutRegions)
+                foreach(var layoutRegion in pageVersion.LayoutZones)
                 {
                     if (layoutRegion.RegionId.HasValue)
-                        pageDefinition.RegionRegion(layoutRegion.RegionName, GetRegion(builder, layoutRegion.RegionId.Value));
+                        pageDefinition.ZoneRegion(layoutRegion.ZoneName, GetRegion(builder, layoutRegion.RegionId.Value));
                     else if (layoutRegion.LayoutId.HasValue)
-                        pageDefinition.RegionLayout(layoutRegion.RegionName, GetLayout(builder, layoutRegion.LayoutId.Value));
+                        pageDefinition.ZoneLayout(layoutRegion.ZoneName, GetLayout(builder, layoutRegion.LayoutId.Value));
                     else if (string.Equals(layoutRegion.ContentType, "region", StringComparison.OrdinalIgnoreCase))
-                        pageDefinition.RegionRegion(layoutRegion.RegionName, layoutRegion.ContentName);
+                        pageDefinition.ZoneRegion(layoutRegion.ZoneName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
-                        pageDefinition.RegionHtml(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
+                        pageDefinition.ZoneHtml(layoutRegion.ZoneName, layoutRegion.ContentName, layoutRegion.ContentValue);
                     else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
-                        pageDefinition.RegionLayout(layoutRegion.RegionName, layoutRegion.ContentName);
+                        pageDefinition.ZoneLayout(layoutRegion.ZoneName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "template", StringComparison.OrdinalIgnoreCase))
-                        pageDefinition.RegionTemplate(layoutRegion.RegionName, layoutRegion.ContentName);
+                        pageDefinition.ZoneTemplate(layoutRegion.ZoneName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "component", StringComparison.OrdinalIgnoreCase))
-                        pageDefinition.RegionComponent(layoutRegion.RegionName, layoutRegion.ContentName);
+                        pageDefinition.ZoneComponent(layoutRegion.ZoneName, layoutRegion.ContentName);
                 }
             }
 
@@ -310,30 +310,30 @@ namespace OwinFramework.Pages.CMS.Runtime
                 .Name(layoutVersion.VersionName)
                 .AssetDeployment(layoutVersion.AssetDeployment)
                 .DeployIn(layoutVersion.ModuleName)
-                .RegionNesting(layoutVersion.RegionNesting);
+                .ZoneNesting(layoutVersion.RegionNesting);
 
             if (layoutVersion.Components != null)
                 foreach (var component in layoutVersion.Components)
                     layoutDefinition.NeedsComponent(component.ComponentName);
 
-            if (layoutVersion.LayoutRegions != null)
+            if (layoutVersion.LayoutZones != null)
             { 
-                foreach(var layoutRegion in layoutVersion.LayoutRegions)
+                foreach(var layoutRegion in layoutVersion.LayoutZones)
                 {
                     if (layoutRegion.RegionId.HasValue)
-                        layoutDefinition.Region(layoutRegion.RegionName, GetRegion(builder, layoutRegion.RegionId.Value));
+                        layoutDefinition.Region(layoutRegion.ZoneName, GetRegion(builder, layoutRegion.RegionId.Value));
                     else if (layoutRegion.LayoutId.HasValue)
-                        layoutDefinition.Layout(layoutRegion.RegionName, GetLayout(builder, layoutRegion.LayoutId.Value));                        
+                        layoutDefinition.Layout(layoutRegion.ZoneName, GetLayout(builder, layoutRegion.LayoutId.Value));                        
                     else if (string.Equals(layoutRegion.ContentType, "region", StringComparison.OrdinalIgnoreCase))
-                        layoutDefinition.Region(layoutRegion.RegionName, layoutRegion.ContentName);
+                        layoutDefinition.Region(layoutRegion.ZoneName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
-                        layoutDefinition.Html(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
+                        layoutDefinition.Html(layoutRegion.ZoneName, layoutRegion.ContentName, layoutRegion.ContentValue);
                     else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
-                        layoutDefinition.Layout(layoutRegion.RegionName, layoutRegion.ContentName);
+                        layoutDefinition.Layout(layoutRegion.ZoneName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "template", StringComparison.OrdinalIgnoreCase))
-                        layoutDefinition.Template(layoutRegion.RegionName, layoutRegion.ContentName);
+                        layoutDefinition.Template(layoutRegion.ZoneName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "component", StringComparison.OrdinalIgnoreCase))
-                        layoutDefinition.Component(layoutRegion.RegionName, layoutRegion.ContentName);
+                        layoutDefinition.Component(layoutRegion.ZoneName, layoutRegion.ContentName);
                 }
             }
 
@@ -497,13 +497,13 @@ namespace OwinFramework.Pages.CMS.Runtime
                     if (layoutRegion.LayoutId.HasValue)
                         regionDefinition.Layout(GetLayout(builder, layoutRegion.LayoutId.Value));                        
                     else if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.LayoutRegionHtml(layoutRegion.RegionName, layoutRegion.ContentName, layoutRegion.ContentValue);
+                        regionDefinition.ZoneHtml(layoutRegion.ZoneName, layoutRegion.ContentName, layoutRegion.ContentValue);
                     else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.LayoutRegionLayout(layoutRegion.RegionName, layoutRegion.ContentName);
+                        regionDefinition.ZoneLayout(layoutRegion.ZoneName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "template", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.LayoutRegionTemplate(layoutRegion.RegionName, layoutRegion.ContentName);
+                        regionDefinition.ZoneTemplate(layoutRegion.ZoneName, layoutRegion.ContentName);
                     else if (string.Equals(layoutRegion.ContentType, "component", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.LayoutRegionComponent(layoutRegion.RegionName, layoutRegion.ContentName);
+                        regionDefinition.ZoneComponent(layoutRegion.ZoneName, layoutRegion.ContentName);
                 }
             }
 

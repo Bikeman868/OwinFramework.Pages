@@ -71,7 +71,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// Overrides the content of the page layout just for this page
         /// </summary>
-        public LayoutRegionRecord[] LayoutRegions { get; set; }
+        public LayoutZoneRecord[] LayoutZones { get; set; }
 
         /// <summary>
         /// A list of the components to render directly onto the page. 

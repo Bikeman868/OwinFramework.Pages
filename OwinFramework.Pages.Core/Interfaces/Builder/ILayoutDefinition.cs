@@ -66,15 +66,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic);
 
         /// <summary>
-        /// Defines how regions are nested. By default regions are rendered one
-        /// after the other using whatever html is produced by the region.
-        /// Calling this method introduces additional regions as defined by the
-        /// layout to contain some of the contained regions.
-        /// For example if the layout renders a table then the RegionNesting
-        /// could specify the regions to have in each row like this
+        /// Defines how zones are nested. By default zones are rendered one
+        /// after the other using whatever html is produced by the zone.
+        /// Calling this method introduces additional markup as defined by the
+        /// layout to contain some of the contained zones.
+        /// For example if the layout renders a table then the zoneNesting
+        /// could specify the zones to have in each row like this
         /// "(r1,r2)(r3)(r4,r5)" which would create 3 rows
         /// </summary>
-        ILayoutDefinition RegionNesting(string regionNesting);
+        ILayoutDefinition ZoneNesting(string zoneNesting);
 
         /// <summary>
         /// Overrides the default asset deployment scheme for this layout
@@ -82,62 +82,58 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         ILayoutDefinition AssetDeployment(AssetDeployment assetDeployment);
 
         /// <summary>
-        /// Defines how to render one of the regions of the layout. If you 
-        /// do not specify how to produce the region it will be rendered
-        /// using the default region.
+        /// Fills a layout zone with a region element
         /// </summary>
-        ILayoutDefinition Region(string regionName, IRegion region);
+        ILayoutDefinition Region(string zoneName, IRegion region);
 
         /// <summary>
-        /// Defines the name of the region element to use to render a region. If you 
-        /// do not specify how to produce the region it will be rendered
-        /// using the default region.
+        /// Fills a layout zone with a region element by name
         /// </summary>
-        ILayoutDefinition Region(string regionName, string name);
+        ILayoutDefinition Region(string zoneName, string name);
 
         /// <summary>
-        /// Overrides the component to place in a region. The region can have
+        /// Overrides the component to place in a zone. The region can have
         /// a default component inside it in which case this call will override
         /// that for this specific instance on this layout.
         /// </summary>
-        ILayoutDefinition Component(string regionName, IComponent component);
+        ILayoutDefinition Component(string zoneName, IComponent component);
 
         /// <summary>
-        /// Overrides the named component to place in a region
+        /// Overrides the named component to place in a zone
         /// </summary>
-        ILayoutDefinition Component(string regionName, string componentName);
+        ILayoutDefinition Component(string zoneName, string componentName);
 
         /// <summary>
-        /// Overrides the default region content with a specific layout
+        /// Overrides the default zone content with a specific layout
         /// </summary>
-        ILayoutDefinition Layout(string regionName, ILayout layout);
+        ILayoutDefinition Layout(string zoneName, ILayout layout);
 
         /// <summary>
-        /// Overrides the default region content with a named layout
+        /// Overrides the default zone content with a named layout
         /// </summary>
-        ILayoutDefinition Layout(string regionName, string layoutName);
+        ILayoutDefinition Layout(string zoneName, string layoutName);
 
         /// <summary>
-        /// Populates a region of the layout with static Html avoiding the need
+        /// Populates a zone of the layout with static Html avoiding the need
         /// to define a region and a component for very simple use cases. A region 
         /// and a component will be generated internally with default properties.
         /// </summary>
-        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="zoneName">The name of the zone within the layout</param>
         /// <param name="textAssetName">The name of the text asset to localize</param>
         /// <param name="defaultHtml">The default Html for all unsupported locales.
         /// Note that if you did not setup localization then this will be the html
         /// for all locales.</param>
-        ILayoutDefinition Html(string regionName, string textAssetName, string defaultHtml);
+        ILayoutDefinition Html(string zoneName, string textAssetName, string defaultHtml);
 
         /// <summary>
-        /// Populates a region of the layout with a template avoiding the need
+        /// Populates a zone of the layout with a template avoiding the need
         /// to define a region and a component. A region and a component will be
         /// generated internally with default properties.
         /// </summary>
-        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="zoneName">The name of the region within the layout</param>
         /// <param name="templatePath">A / separated path to the template to load
         /// into this region of the layout</param>
-        ILayoutDefinition Template(string regionName, string templatePath);
+        ILayoutDefinition Template(string zoneName, string templatePath);
 
         /// <summary>
         /// Specifies the html tag to render around the regions of
@@ -160,19 +156,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
 
         /// <summary>
         /// Specifies the html tag to render around regions grouped by
-        /// the RegionNesting property. Defaults to 'div'.
+        /// the zoneNesting property. Defaults to 'div'.
         /// </summary>
         ILayoutDefinition NestingTag(string tagName);
 
         /// <summary>
         /// The css class names to add to any regions created as a result
-        /// of round brackets in the RegionNesting property
+        /// of round brackets in the zoneNesting property
         /// </summary>
         ILayoutDefinition NestedClassNames(params string[] classNames);
 
         /// <summary>
         /// The css style to appy to  any regions created as a result
-        /// of round brackets in the RegionNesting property
+        /// of round brackets in the zoneNesting property
         /// </summary>
         ILayoutDefinition NestedStyle(string style);
 

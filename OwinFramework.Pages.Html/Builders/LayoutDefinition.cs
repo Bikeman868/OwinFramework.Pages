@@ -22,7 +22,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IRegionDependenciesFactory _regionDependenciesFactory;
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
 
-        private RegionSet _regionSet;
+        private ZoneSet _zoneSet;
         private readonly Dictionary<string, object> _regionElements;
         private readonly Dictionary<string, object> _regionLayouts;
         private readonly Dictionary<string, object> _regionComponents;
@@ -93,10 +93,10 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.RegionNesting(string regionNesting)
+        ILayoutDefinition ILayoutDefinition.ZoneNesting(string zoneNesting)
         {
             var position = 0;
-            _regionSet = RegionSet.Parse(regionNesting, ref position);
+            _zoneSet = ZoneSet.Parse(zoneNesting, ref position);
             return this;
         }
 
@@ -106,81 +106,81 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.Region(string regionName, IRegion region)
+        ILayoutDefinition ILayoutDefinition.Region(string zoneName, IRegion region)
         {
-            _regionElements[regionName] = region;
+            _regionElements[zoneName] = region;
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.Region(string regionName, string name)
+        ILayoutDefinition ILayoutDefinition.Region(string zoneName, string name)
         {
-            if (string.IsNullOrEmpty(regionName))
-                throw new LayoutBuilderException("You must provide a region name when configuring layout regions");
+            if (string.IsNullOrEmpty(zoneName))
+                throw new LayoutBuilderException("You must provide a region name when configuring layout zones");
 
             if (string.IsNullOrEmpty(name))
-                throw new LayoutBuilderException("You must provide the name of the region element when configuring layout regions");
+                throw new LayoutBuilderException("You must provide the name of the region element when configuring layout zones");
 
-            _regionElements[regionName] = name;
+            _regionElements[zoneName] = name;
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.Component(string regionName, IComponent component)
+        ILayoutDefinition ILayoutDefinition.Component(string zoneName, IComponent component)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new LayoutBuilderException("You must provide a region name when defining which component to place into a layout region");
 
-            _regionComponents[regionName] = component;
+            _regionComponents[zoneName] = component;
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.Component(string regionName, string componentName)
+        ILayoutDefinition ILayoutDefinition.Component(string zoneName, string componentName)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new LayoutBuilderException("You must provide a region name when defining which component to place into a layout region");
 
             if (string.IsNullOrEmpty(componentName))
                 throw new LayoutBuilderException("You must provide the name of the component element when defining which component to place into a layout region");
 
-            _regionComponents[regionName] = componentName;
+            _regionComponents[zoneName] = componentName;
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.Layout(string regionName, ILayout layout)
+        ILayoutDefinition ILayoutDefinition.Layout(string zoneName, ILayout layout)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new LayoutBuilderException("You must provide a region name when defining which layout to place into a layout region");
 
-            _regionLayouts[regionName] = layout;
+            _regionLayouts[zoneName] = layout;
 
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.Layout(string regionName, string layoutName)
+        ILayoutDefinition ILayoutDefinition.Layout(string zoneName, string layoutName)
         {
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new LayoutBuilderException("You must provide a region name when defining which layout to place into a layout region");
 
-            if (string.IsNullOrEmpty(regionName))
+            if (string.IsNullOrEmpty(zoneName))
                 throw new LayoutBuilderException("You must provide the name of the layout element when defining which layout to place into a layout region");
 
-            _regionLayouts[regionName] = layoutName;
+            _regionLayouts[zoneName] = layoutName;
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.Html(string regionName, string textAssetName, string defaultHtml)
+        ILayoutDefinition ILayoutDefinition.Html(string zoneName, string textAssetName, string defaultHtml)
         {
             var htmlComponent = new HtmlComponent(_componentDependenciesFactory);
             htmlComponent.Html(textAssetName, defaultHtml);
-            _regionComponents[regionName] = htmlComponent;
+            _regionComponents[zoneName] = htmlComponent;
 
             return this;
         }
 
-        ILayoutDefinition ILayoutDefinition.Template(string regionName, string templatePath)
+        ILayoutDefinition ILayoutDefinition.Template(string zoneName, string templatePath)
         {
             var templateComponent = new TemplateComponent(_componentDependenciesFactory);
             templateComponent.BodyTemplate(templatePath);
-            _regionComponents[regionName] = templateComponent;
+            _regionComponents[zoneName] = templateComponent;
 
             return this;
         }
@@ -360,117 +360,117 @@ namespace OwinFramework.Pages.Html.Builders
                 nm =>
                 {
                     var regionComponentKeys = _regionComponents.Keys.ToList();
-                    foreach (var regionName in regionComponentKeys)
+                    foreach (var zoneName in regionComponentKeys)
                     {
-                        var componentRef = _regionComponents[regionName];
+                        var componentRef = _regionComponents[zoneName];
                         var componentName = componentRef as string;
                         var component = componentRef as IComponent;
 
                         if (componentName != null)
                             component = nm.ResolveComponent(componentName, _layout.Package);
 
-                        _regionComponents[regionName] = component;
+                        _regionComponents[zoneName] = component;
                     }
 
                     var regionLayoutKeys = _regionLayouts.Keys.ToList();
-                    foreach (var regionName in regionLayoutKeys)
+                    foreach (var zoneName in regionLayoutKeys)
                     {
-                        var layoutRef = _regionLayouts[regionName];
+                        var layoutRef = _regionLayouts[zoneName];
                         var layoutName = layoutRef as string;
                         var layout = layoutRef as ILayout;
 
                         if (layoutName != null)
                             layout = nm.ResolveLayout(layoutName, _layout.Package);
 
-                        _regionLayouts[regionName] = layout;
+                        _regionLayouts[zoneName] = layout;
                     }
 
-                    ResolveRegionNames(_regionSet, nm);
+                    ResolveZoneNames(_zoneSet, nm);
 
                     WriteOpeningTag();
-                    WriteRegions(_regionSet);
+                    WriteRegions(_zoneSet);
                     WriteClosingTag();
                 });
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.CreateInstances, 
-                () => SetRegionInstances(_regionSet));
+                () => SetRegionInstances(_zoneSet));
 
             _fluentBuilder.Register(_layout);
             return _layout;
         }
 
-        #region Region nesting
+        #region Zone nesting
 
-        private class RegionSetRegion
+        private class ZoneSetRegion
         {
-            public RegionSet ChildRegions;
-            public string RegionName;
+            public ZoneSet ChildZones;
+            public string ZoneName;
             public string RegionElementName;
             public IRegion Region;
         }
 
-        private class RegionSet
+        private class ZoneSet
         {
-            public List<RegionSetRegion> Regions;
+            public List<ZoneSetRegion> Zones;
 
-            public static RegionSet Parse(string regions, ref int position)
+            public static ZoneSet Parse(string zones, ref int position)
             {
-                var result = new RegionSet
+                var result = new ZoneSet
                 {
-                    Regions = new List<RegionSetRegion>()
+                    Zones = new List<ZoneSetRegion>()
                 };
 
                 var start = position;
-                while (position < regions.Length)
+                while (position < zones.Length)
                 {
-                    switch (regions[position])
+                    switch (zones[position])
                     {
                         case '(':
-                            result.Regions.AddRange(BuildList(regions, start, position));
+                            result.Zones.AddRange(BuildList(zones, start, position));
                             position++;
-                            result.Regions.Add(new RegionSetRegion { ChildRegions = Parse(regions, ref position) });
+                            result.Zones.Add(new ZoneSetRegion { ChildZones = Parse(zones, ref position) });
                             position++;
                             start = position;
                             break;
                         case ')':
-                            result.Regions.AddRange(BuildList(regions, start, position));
+                            result.Zones.AddRange(BuildList(zones, start, position));
                             return result;
                         default:
                             position++;
                             break;
                     }
                 }
-                result.Regions.AddRange(BuildList(regions, start, position));
+                result.Zones.AddRange(BuildList(zones, start, position));
                 return result;
             }
 
-            private static IEnumerable<RegionSetRegion> BuildList(string regions, int start, int end)
+            private static IEnumerable<ZoneSetRegion> BuildList(string zones, int start, int end)
             {
-                if (end <= start) return Enumerable.Empty<RegionSetRegion>();
+                if (end <= start) return Enumerable.Empty<ZoneSetRegion>();
 
-                var regionNames = regions.Substring(start, end - start);
-                return regionNames
+                var zoneNames = zones.Substring(start, end - start);
+                return zoneNames
                     .Split(',')
                     .Select(s => s.Trim())
-                    .Select(n => new RegionSetRegion { RegionName = n });
+                    .Select(n => new ZoneSetRegion { ZoneName = n });
             }
         }
 
-        private void ResolveRegionNames(RegionSet regionSet, INameManager nameManager)
+        private void ResolveZoneNames(ZoneSet zoneSet, INameManager nameManager)
         {
-            if (regionSet == null || regionSet.Regions == null) return;
+            if (zoneSet == null || zoneSet.Zones == null) return;
 
-            foreach (var region in regionSet.Regions)
+            foreach (var region in zoneSet.Zones)
             {
                 if (region.Region == null)
                 {
                     if (region.RegionElementName == null)
                     {
-                        if (region.RegionName != null)
+                        if (region.ZoneName != null)
                         {
                             object element;
-                            if (_regionElements.TryGetValue(region.RegionName, out element))
+                            if (_regionElements.TryGetValue(region.ZoneName, out element))
                             {
                                 region.RegionElementName = element as string;
                                 region.Region = element as IRegion;
@@ -483,65 +483,65 @@ namespace OwinFramework.Pages.Html.Builders
                     }
                 }
 
-                if (region.Region == null && region.RegionName != null)
+                if (region.Region == null && region.ZoneName != null)
                 {
                     region.Region = new RegionComponent(_regionDependenciesFactory);
                 }
 
-                if (region.RegionName != null)
+                if (region.ZoneName != null)
                 {
-                    _layout.PopulateRegion(region.RegionName, region.Region);
+                    _layout.PopulateZone(region.ZoneName, region.Region);
                 }
 
-                if (region.ChildRegions != null)
+                if (region.ChildZones != null)
                 {
-                    ResolveRegionNames(region.ChildRegions, nameManager);
+                    ResolveZoneNames(region.ChildZones, nameManager);
                 }
             }
         }
 
-        private void WriteRegions(RegionSet regionSet)
+        private void WriteRegions(ZoneSet zoneSet)
         {
-            if (regionSet == null || regionSet.Regions == null) return;
+            if (zoneSet == null || zoneSet.Zones == null) return;
 
-            foreach (var region in regionSet.Regions)
+            foreach (var region in zoneSet.Zones)
             {
-                if (region.RegionName != null)
+                if (region.ZoneName != null)
                 {
-                    _layout.AddRegionVisualElement(region.RegionName);
+                    _layout.AddZoneVisualElement(region.ZoneName);
                 }
 
-                if (region.ChildRegions != null)
+                if (region.ChildZones != null)
                 {
                     WriteNestingOpeningTag();
-                    WriteRegions(region.ChildRegions);
+                    WriteRegions(region.ChildZones);
                     WriteNestingClosingTag();
                 }
             }
         }
 
-        private void SetRegionInstances(RegionSet regionSet)
+        private void SetRegionInstances(ZoneSet zoneSet)
         {
-            if (regionSet == null || regionSet.Regions == null) return;
+            if (zoneSet == null || zoneSet.Zones == null) return;
 
-            foreach (var region in regionSet.Regions)
+            foreach (var region in zoneSet.Zones)
             {
                 if (region.Region != null)
                 {
                     IElement regionContent = null;
 
-                    if (_regionComponents.ContainsKey(region.RegionName))
-                        regionContent = _regionComponents[region.RegionName] as IElement;
+                    if (_regionComponents.ContainsKey(region.ZoneName))
+                        regionContent = _regionComponents[region.ZoneName] as IElement;
 
-                    if (_regionLayouts.ContainsKey(region.RegionName))
-                        regionContent = _regionLayouts[region.RegionName] as IElement;
+                    if (_regionLayouts.ContainsKey(region.ZoneName))
+                        regionContent = _regionLayouts[region.ZoneName] as IElement;
 
-                    _layout.PopulateElement(region.RegionName, regionContent);
+                    _layout.PopulateElement(region.ZoneName, regionContent);
                 }
 
-                if (region.ChildRegions != null)
+                if (region.ChildZones != null)
                 {
-                    SetRegionInstances(region.ChildRegions);
+                    SetRegionInstances(region.ChildZones);
                 }
             }
         }

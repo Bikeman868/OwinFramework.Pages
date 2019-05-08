@@ -109,50 +109,50 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition Layout(string layoutName);
         
         /// <summary>
-        /// Overrides the default contents of one of the regions in the layout
+        /// Overrides the default contents of one of the zone in the layout
         /// layout with a specific component
         /// </summary>
-        IPageDefinition LayoutRegionComponent(string regionName, IComponent component);
+        IPageDefinition ZoneComponent(string zoneName, IComponent component);
 
         /// <summary>
-        /// Overrides the default contents of one of the regions in the layout
+        /// Overrides the default contents of one of the zones in the layout
         /// layout with a named component
         /// </summary>
-        IPageDefinition LayoutRegionComponent(string regionName, string componentName);
+        IPageDefinition ZoneComponent(string zoneName, string componentName);
 
         /// <summary>
-        /// Overrides the default contents of one of the regions in the layout
+        /// Overrides the default contents of one of the zones in the layout
         /// layout with a specific layout
         /// </summary>
-        IPageDefinition LayoutRegionLayout(string regionName, ILayout layout);
+        IPageDefinition ZoneLayout(string zoneName, ILayout layout);
 
         /// <summary>
-        /// Overrides the default contents of one of the regions in the layout
+        /// Overrides the default contents of one of the zones in the layout
         /// layout with a named layout
         /// </summary>
-        IPageDefinition LayoutRegionLayout(string regionName, string layoutName);
+        IPageDefinition ZoneLayout(string zoneName, string layoutName);
 
         /// <summary>
-        /// Populates a region of the layout with static Html avoiding the need
+        /// Populates a zone of the layout with static Html avoiding the need
         /// to define a region and a component for very simple use cases. A region 
         /// and a component will be generated internally with default properties.
         /// </summary>
-        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="zoneName">The name of the zone within the layout</param>
         /// <param name="textAssetName">The name of the text asset to localize</param>
         /// <param name="defaultHtml">The default Html for all unsupported locales.
         /// Note that if you did not setup localization then this will be the html
         /// for all locales.</param>
-        IPageDefinition LayoutRegionHtml(string regionName, string textAssetName, string defaultHtml);
+        IPageDefinition ZoneHtml(string zoneName, string textAssetName, string defaultHtml);
 
         /// <summary>
         /// Populates a region of the layout with a template avoiding the need
         /// to define a region and a component. A region and a component will be
         /// generated internally with default properties.
         /// </summary>
-        /// <param name="regionName">The name of the region within the layout</param>
+        /// <param name="zoneName">The name of the zone within the layout</param>
         /// <param name="templatePath">A / separated path to the template to load
         /// into this region of the layout</param>
-        IPageDefinition LayoutRegionTemplate(string regionName, string templatePath);
+        IPageDefinition ZoneTemplate(string zoneName, string templatePath);
         
         #endregion
 

@@ -75,7 +75,7 @@ namespace Sample3.UseCase3
     internal class Page1 : ApplicationElement { }
 
     [IsLayout("layout", "main")]
-    [LayoutRegion("main", "div")]
+    [LayoutZone("main", "div")]
     internal class PageLayout : ApplicationElement { }
 
     [IsRegion("div")]

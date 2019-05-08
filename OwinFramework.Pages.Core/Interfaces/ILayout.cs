@@ -16,25 +16,25 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <summary>
         /// Changes the component that is displayed in a region of the layout
         /// </summary>
-        /// <param name="regionName">The name of a region on this layout</param>
+        /// <param name="zoneName">The name of a region on this layout</param>
         /// <param name="element">The element to render in this region</param>
-        void PopulateElement(string regionName, IElement element);
+        void PopulateElement(string zoneName, IElement element);
 
         /// <summary>
         /// Gets a region from the layout
         /// </summary>
-        IRegion GetRegion(string regionName);
+        IRegion GetRegion(string zoneName);
 
         /// <summary>
         /// Gets the element that is within the specified region
         /// </summary>
-        IElement GetElement(string regionName);
+        IElement GetElement(string zoneName);
 
         /// <summary>
         /// Returns a list of the regions on this layout
         /// </summary>
         /// <returns></returns>
-        IEnumerable<string> GetRegionNames();
+        IEnumerable<string> GetZoneNames();
 
         /// <summary>
         /// This is called for each area of the page where this instance wants

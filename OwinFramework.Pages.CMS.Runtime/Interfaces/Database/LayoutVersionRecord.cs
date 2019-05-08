@@ -17,10 +17,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string RegionNesting { get; set; }
 
         /// <summary>
-        /// Specifies the defalt content for each region named in the RegionNesting
-        /// property. These region assignments can be overriden for a page.
+        /// Specifies the defalt content for each zone named in the zoneNesting
+        /// property. These zone assignments can be overriden for a page.
         /// </summary>
-        public LayoutRegionRecord[] LayoutRegions { get; set; }
+        public LayoutZoneRecord[] LayoutZones { get; set; }
 
         /// <summary>
         /// A list of the components to render directly onto any page containing this layout.

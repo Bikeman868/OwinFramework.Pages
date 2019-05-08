@@ -9,7 +9,7 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal class PageRegion : PageElement, IDataSupplier, IDataSupply, IDataScopeRules
+    internal class PageZone : PageElement, IDataSupplier, IDataSupply, IDataScopeRules
     {
         private readonly IDataContextBuilder _dataContextBuilder;
         private readonly Func<IRenderContext, PageArea, IWriteResult> _writeContent;
@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.Html.Elements
         private IRegion Region { get { return (IRegion)Element; } }
         private IDataScopeRules ElementDataScopeRules { get { return Element as IDataScopeRules; } }
 
-        public PageRegion(
+        public PageZone(
             PageElementDependencies dependencies,
             PageElement parent,
             IRegion region, 

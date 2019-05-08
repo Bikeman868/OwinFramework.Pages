@@ -32,7 +32,7 @@ namespace OwinFramework.Pages.Standard
                 .Tag("div")
                 .ClassNames("{ns}_ly_full_page")
                 .DeployCss("div.{ns}_ly_full_page", "height:auto; width:auto; overflow-x: hidden; overflow-y: auto;")
-                .RegionNesting("main")
+                .ZoneNesting("main")
                 .Region("main", nullRegion)
                 .Build();
 
@@ -45,7 +45,7 @@ namespace OwinFramework.Pages.Standard
                 .DeployCss("div.{ns}_ly_col_2_left_fixed", "overflow: hidden;")
                 .DeployCss("div.{ns}_ly_col_2_left_fixed > div.{ns}_rg_col_left", "overflow: hidden; float: left; width: 250px;")
                 .DeployCss("div.{ns}_ly_col_2_left_fixed > div.{ns}_rg_col_right", "margin-left: 250px;")
-                .RegionNesting("left,right")
+                .ZoneNesting("left,right")
                 .Region("left", 
                     builder.BuildUpRegion()
                     .Tag("div")
@@ -67,7 +67,7 @@ namespace OwinFramework.Pages.Standard
                 .DeployCss("div.{ns}_ly_col_2_right_fixed", "overflow: hidden;")
                 .DeployCss("div.{ns}_ly_col_2_right_fixed > div.{ns}_rg_col_left", "overflow: hidden; width: auto;")
                 .DeployCss("div.{ns}_ly_col_2_right_fixed > div.{ns}_rg_col_right", "width: 250px; float: right;")
-                .RegionNesting("right,left")
+                .ZoneNesting("right,left")
                 .Region("left",
                     builder.BuildUpRegion()
                     .Tag("div")

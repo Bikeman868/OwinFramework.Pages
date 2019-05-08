@@ -110,8 +110,8 @@ namespace Sample3.UseCase2
     internal class Page1 : ApplicationElement { }
 
     [IsLayout("layout", "head,body")]
-    [LayoutRegion("head", "div")]
-    [LayoutRegion("body", "div")]
+    [LayoutZone("head", "div")]
+    [LayoutZone("body", "div")]
     [RegionTemplate("head", "/title")]
     [RegionTemplate("body", "/people")]
     internal class BasePageLayout : ApplicationElement { }

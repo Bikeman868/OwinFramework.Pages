@@ -268,7 +268,7 @@ namespace OwinFramework.Pages.Standard
             var desktopOptionLayout = builder.BuildUpLayout()
                 .Tag("li")
                 .ClassNames("{ns}_dt_option")
-                .RegionNesting("head,submenu")
+                .ZoneNesting("head,submenu")
                 .Region("head", desktopMenuItemRegion)
                 .Region("submenu", desktopDropDownMenuRegion)
                 .DataProvider(subMenuDataProvider)
@@ -320,7 +320,7 @@ namespace OwinFramework.Pages.Standard
             // of the sub-menu options
             var mobileMenuOptionLayout = builder.BuildUpLayout()
                 .Tag("")
-                .RegionNesting("head,subMenu")
+                .ZoneNesting("head,subMenu")
                 .Region("head", mobileMenuHead)
                 .Region("subMenu", mobileSubMenu)
                 .DataProvider(subMenuDataProvider)
@@ -343,7 +343,7 @@ namespace OwinFramework.Pages.Standard
             // This layout is the top-level container for the mobile menu. It defines
             // the mobile menu consisting of a hamburger button and a slide-out panel
             var mobileMenuLayout = builder.BuildUpLayout()
-                .RegionNesting("hamburger,slideout")
+                .ZoneNesting("hamburger,slideout")
                 .Region("hamburger", mobileHamburgerRegion)
                 .Region("slideout", mobileSlideoutRegion)
                 .Build();

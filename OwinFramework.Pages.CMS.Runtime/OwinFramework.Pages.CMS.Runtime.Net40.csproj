@@ -74,7 +74,7 @@
     <Compile Include="Interfaces\Database\ElementRecordBase.cs" />
     <Compile Include="Interfaces\Database\ElementVersionRecordBase.cs" />
     <Compile Include="Interfaces\Database\LayoutRecord.cs" />
-    <Compile Include="Interfaces\Database\LayoutRegionRecord.cs" />
+    <Compile Include="Interfaces\Database\LayoutZoneRecord.cs" />
     <Compile Include="Interfaces\Database\RegionVersionRecord.cs" />
     <Compile Include="Interfaces\Database\LayoutVersionRecord.cs" />
     <Compile Include="Interfaces\Database\ModuleRecord.cs" />

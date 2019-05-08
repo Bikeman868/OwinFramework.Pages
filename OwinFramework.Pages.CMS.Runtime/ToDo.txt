@@ -15,3 +15,5 @@ Build a mechanism to switch the website to a different version of the website wh
 with no downtime.
 
 Build an editor SPA in Vue.
+- Layout regions should be called "Zones" to avoid confusion with region elements.
+

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -15,7 +16,7 @@ namespace OwinFramework.Pages.Html.Elements
     /// Base implementation of IComponent. Applications inherit from this olass 
     /// to insulate their code from any future additions to the IComponent interface
     /// </summary>
-    public class Component : Element, IComponent
+    public class Component : Element, IComponent, ICloneable
     {
         public override ElementType ElementType { get { return ElementType.Component; } }
 
@@ -24,8 +25,8 @@ namespace OwinFramework.Pages.Html.Elements
         private Action<IRenderContext>[] _headWriters;
         private Action<IRenderContext>[] _scriptWriters;
         private Action<IRenderContext>[] _styleWriters;
-        public Action<IRenderContext>[] _bodyWriters;
-        public Action<IRenderContext>[] _initializationWriters;
+        private Action<IRenderContext>[] _bodyWriters;
+        private Action<IRenderContext>[] _initializationWriters;
 
         /// <summary>
         /// These are actions that must execute during the rendering of the page head
@@ -134,6 +135,27 @@ namespace OwinFramework.Pages.Html.Elements
                 dependencies.CssWriterFactory,
                 dependencies.JavascriptWriterFactory,
                 GetCommentName);
+        }
+
+        public object Clone()
+        {
+            var constructor = GetType().GetConstructor(new[] { typeof(IComponentDependenciesFactory) });
+            if (constructor == null)
+                throw new Exception("Unable to clone component " + GetType().FullName);
+
+            var clone = constructor.Invoke(new object[] { Dependencies }) as Component;
+            if (clone == null)
+                throw new Exception("Cloning failed for " + GetType().FullName);
+
+            clone.HeadWriters = _headWriters;
+            clone.ScriptWriters = _scriptWriters;
+            clone.StyleWriters = _styleWriters;
+            clone.BodyWriters = _bodyWriters;
+            clone.InitializationWriters = _initializationWriters;
+            clone.CssRules = CssRules;
+            clone.JavascriptFunctions = JavascriptFunctions;
+
+            return clone;
         }
 
         protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)

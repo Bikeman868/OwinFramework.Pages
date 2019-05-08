@@ -1,4 +1,5 @@
-﻿using Prius.Contracts.Attributes;
+﻿using System;
+using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -13,24 +14,60 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// Primary key that uniquely identifies this element property in the database.
         /// </summary>
         [Mapping("elementPropertyId")]
-        public long Id { get; set; }
+        public long ElementPropertyId { get; set; }
 
         /// <summary>
-        /// The element version to apply this property value to
+        /// The element that has this property available
         /// </summary>
-        [Mapping("elementVersionId")]
-        public long ElementVersionId { get; set; }
+        [Mapping("elementId")]
+        public long ElementId { get; set; }
 
         /// <summary>
-        /// The name of the property value to set
+        /// The text to label fields within the CMS editor
+        /// </summary>
+        [Mapping("displayName")]
+        public string DisplayName { get; set; }
+
+        /// <summary>
+        /// An HTML description of the property including validation rules
+        /// </summary>
+        [Mapping("description")]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// The name of a region defined in code that is an editor for this
+        /// property. This region will be renderd onto the editor and displayed
+        /// when the user clicks the edit button next to this field. If this
+        /// is not specified then the CMS will provide an editor based on the 
+        /// Type.
+        /// </summary>
+        [Mapping("editRegionName")]
+        public string EditRegionName { get; set; }
+
+        /// <summary>
+        /// The name of a region defined in code that displays the current value
+        /// of this property. When this is not specified the CMS will provide
+        /// a display UI based on the Type.
+        /// </summary>
+        [Mapping("displayRegionName")]
+        public string DisplayRegionName { get; set; }
+
+        /// <summary>
+        /// The name of the property to set
         /// </summary>
         [Mapping("name")]
         public string Name { get; set; }
 
         /// <summary>
-        /// The value to set for this property
+        /// The fully qualified name of the .Net type to use for
+        /// parsing property values
         /// </summary>
-        [Mapping("value")]
-        public string Value { get; set; }
+        [Mapping("typeName")]
+        public string TypeName { get; set; }
+
+        /// <summary>
+        /// The .Net type of this property
+        /// </summary>
+        public Type Type { get; set; }
     }
 }

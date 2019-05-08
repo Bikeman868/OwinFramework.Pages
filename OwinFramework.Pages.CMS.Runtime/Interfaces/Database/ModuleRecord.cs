@@ -5,5 +5,9 @@
     /// </summary>
     public class ModuleRecord: ElementRecordBase
     {
+        public ModuleRecord()
+        {
+            ElementType = "Module";
+        }
     }
 }

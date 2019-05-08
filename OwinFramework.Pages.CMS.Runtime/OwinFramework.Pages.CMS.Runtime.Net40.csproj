@@ -65,6 +65,10 @@
     <Compile Include="Interfaces\Database\DataTypeVersionRecord.cs" />
     <Compile Include="Interfaces\Database\DataTypeRecord.cs" />
     <Compile Include="Interfaces\Database\ElementDataScopeRecord.cs" />
+    <Compile Include="Interfaces\Database\ComponentRecord.cs" />
+    <Compile Include="Interfaces\Database\ComponentVersionRecord.cs" />
+    <Compile Include="Interfaces\Database\ElementPropertyValueRecord.cs" />
+    <Compile Include="Interfaces\Database\ModuleVersionRecord.cs" />
     <Compile Include="Interfaces\Database\RegionTemplateRecord.cs" />
     <Compile Include="Interfaces\Database\ElementPropertyRecord.cs" />
     <Compile Include="Interfaces\Database\ElementRecordBase.cs" />
@@ -80,9 +84,10 @@
     <Compile Include="Interfaces\Database\PageVersionRecord.cs" />
     <Compile Include="Interfaces\Database\RegionRecord.cs" />
     <Compile Include="Interfaces\Database\UpdateResult.cs" />
-    <Compile Include="Interfaces\Database\WebsiteVersionDataType.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionDataTypeRecord.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionComponentRecord.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionRegion.cs" />
-    <Compile Include="Interfaces\Database\WebsiteVersionLayout.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionLayoutRecord.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionPageRecord.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionRecord.cs" />
     <Compile Include="Interfaces\IDatabaseReader.cs" />
@@ -99,6 +104,9 @@
   <ItemGroup>
     <None Include="OwinFramework.Pages.CMS.Runtime.Net40.paket.references" />
     <None Include="paket.template" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ToDo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

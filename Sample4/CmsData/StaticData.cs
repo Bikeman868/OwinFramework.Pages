@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using OwinFramework.Pages.CMS.Runtime.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Enums;
-using Sample4.DataProviders;
 using Sample4.ViewModels;
 
 namespace Sample4.CmsData
@@ -22,6 +20,19 @@ namespace Sample4.CmsData
             var dataScopeId = 1;
             var dataTypeId = 1;
             var dataTypeVersionId = 1;
+
+            #region Elements
+
+            _components = new[]
+            {
+                new ComponentRecord
+                {
+                    ElementId = elementId++,
+                    Name = "test_widget",
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow
+                }
+            };
 
             _regions = new []
             {
@@ -80,8 +91,6 @@ namespace Sample4.CmsData
                 },
             };
 
-
-
             _dataScopes = new DataScopeRecord[0];
 
             _dataTypes = new []
@@ -101,6 +110,24 @@ namespace Sample4.CmsData
                     CreatedWhen = DateTime.UtcNow
                 }
             };
+
+            _properties = new[]
+            {
+                new ElementPropertyRecord
+                {
+                    ElementId = _components[0].ElementId,
+                    ElementPropertyId = propertyId++,
+                    Name = "Message",
+                    TypeName = "System.String",
+                    Type = typeof(string),
+                    DisplayName = "Message",
+                    Description = "A message to display on the page"
+                }
+            };
+
+            #endregion
+
+            #region Element versions
 
             _dataTypeVersions = new []
             {
@@ -126,7 +153,15 @@ namespace Sample4.CmsData
                 },
             };
 
-
+            _componentVersions = new[]
+            {
+                new ComponentVersionRecord
+                {
+                    ElementId = _components[0].ElementId,
+                    ElementVersionId = elementVersionId++,
+                    Version = 1
+                }
+            };
 
             _regionVersions = new []
             {
@@ -144,7 +179,7 @@ namespace Sample4.CmsData
                     ElementId = _regions[1].ElementId,
                     ElementVersionId = elementVersionId++,
                     Version = 1,
-                    LayoutName = "layouts:full_page"
+                    ComponentId = _components[0].ElementId
                 },
                 // customer_list region
                 new RegionVersionRecord
@@ -238,15 +273,26 @@ namespace Sample4.CmsData
                         new LayoutRegionRecord
                         {
                             RegionName = "footer",
-                            ContentType = "html",
-                            ContentName = "footer-text",
-                            ContentValue = "<hr>This is the footer"
+                            RegionId = _regions[1].ElementId
                         }
                     }
                 }
             };
 
+            _propertyValues = new[]
+            {
+                new ElementPropertyValueRecord
+                {
+                    ElementPropertyId = _properties[0].ElementPropertyId,
+                    ElementVersionId = _regionVersions[1].ElementVersionId,
+                    ValueText = "Hello, world",
+                    Value = "Hello, world"
+                }
+            };
 
+            #endregion
+
+            #region Pages
 
             _pages = new []
             {
@@ -337,7 +383,9 @@ namespace Sample4.CmsData
                 }
             };
 
-            _properties = new ElementPropertyRecord[0];
+            #endregion
+
+            #region Website
 
             _websiteVersions = new []
             {
@@ -386,6 +434,16 @@ namespace Sample4.CmsData
                     })
                 .ToArray();
 
+            _websiteVersionComponents = _componentVersions
+                .Select(v => 
+                    new WebsiteVersionComponentRecord
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ComponentId = v.ElementId,
+                        ComponentVersionId = v.ElementVersionId
+                    })
+                .ToArray();
+
             _websiteVersionDataTypes = _dataTypeVersions
                 .Select(v => 
                     new WebsiteVersionDataTypeRecord
@@ -395,6 +453,9 @@ namespace Sample4.CmsData
                         DataTypeId = v.DataTypeId
                     })
                 .ToArray();
+
+            #endregion
         }
+
     }
 }

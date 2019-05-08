@@ -26,11 +26,18 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long? LayoutId { get; set; }
 
         /// <summary>
-        /// Specifies that the region contains a component. Components must be 
-        /// defined in code and referenced by name
+        /// Specifies that the region contains a component defined in
+        /// code and referenced by name
         /// </summary>
         [Mapping("componentName")]
         public string ComponentName { get; set; }
+
+        /// <summary>
+        /// Specifies that the region contains a component defined in 
+        /// the CMS
+        /// </summary>
+        [Mapping("componentId")]
+        public long? ComponentId { get; set; }
 
         /// <summary>
         /// Specifies that the region contains localizable html. This 

@@ -101,16 +101,36 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// If null is passed then all records are returned</param>
         T[] GetWebsiteDataTypes<T>(string websiteVersionName, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate = null);
 
+        /// <summary>
+        /// Retrieves a list of bindable data types for a website version
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="websiteVersionId">The unique ID of this website version to retrieve</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        /// <param name="predicate">A function that determines which records to return. 
+        /// If null is passed then all records are returned</param>
+        T[] GetWebsiteComponents<T>(long websiteVersionId, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate = null);
+
+        /// <summary>
+        /// Retrieves a list of bindable data types for a website version
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="websiteVersionName">The name of the website version to retrieve</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        /// <param name="predicate">A function that determines which records to return. 
+        /// If null is passed then all records are returned</param>
+        T[] GetWebsiteComponents<T>(string websiteVersionName, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate = null);
+
         #endregion
 
         #region Elements
 
         /// <summary>
-        /// Retrieves the properties to set on a specific element version
+        /// Retrieves the property values to set on a specific element version
         /// </summary>
         /// <param name="elementVersionId">The element version to get properties for</param>
         /// <returns></returns>
-        IDictionary<string, string> GetElementProperties(long elementVersionId);
+        IDictionary<string, object> GetElementPropertyValues(long elementVersionId);
 
         /// <summary>
         /// Retrieves a list of the versions that exist for an element
@@ -179,6 +199,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <param name="dataTypeVersionId">The unique ID of the data type version to return</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         T GetDataType<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map);
+
+        /// <summary>
+        /// Retrieves a single layout version by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="componentVersionId">The unique ID of the component version to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetComponent<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map);
 
         #endregion
     }

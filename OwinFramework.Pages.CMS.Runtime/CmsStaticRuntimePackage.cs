@@ -31,6 +31,7 @@ namespace OwinFramework.Pages.CMS.Runtime
         private Dictionary<long, long> _pageVersions;
         private Dictionary<long, long> _layoutVersions;
         private Dictionary<long, long> _regionVersions;
+        private Dictionary<long, long> _componentVersions;
         private Dictionary<long, PageVersionRecord> _masterPages;
         private Dictionary<long, ILayout> _layouts;
         private Dictionary<long, IRegion> _regions;
@@ -81,6 +82,10 @@ namespace OwinFramework.Pages.CMS.Runtime
                     wd => _database.GetDataType(wd.DataTypeVersionId, (dt, dtv) => dtv))
                 .ToDictionary(dtv => dtv.DataTypeId, dtv => dtv);
 
+            _componentVersions = _database
+                .GetWebsiteComponents(websiteVersion.Id, v => new { v.ComponentId, v.ComponentVersionId})
+                .ToDictionary(v => v.ComponentId, v => v.ComponentVersionId);
+
             _layoutVersions = _database
                 .GetWebsiteLayouts(websiteVersion.Id, v => new { v.LayoutId, v.LayoutVersionId})
                 .ToDictionary(v => v.LayoutId, v => v.LayoutVersionId);
@@ -102,6 +107,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             _layouts.Clear();
             _regions.Clear();
             _dataScopes.Clear();
+            _componentVersions.Clear();
 
             return this;
         }
@@ -368,6 +374,47 @@ namespace OwinFramework.Pages.CMS.Runtime
             {
                 regionDefinition.Layout(regionVersion.LayoutName);
                 hasLayout = true;
+            }
+            else if (regionVersion.ComponentId.HasValue)
+            {
+                long componentVersionId;
+                if (!_componentVersions.TryGetValue(regionVersion.ComponentId.Value, out componentVersionId))
+                    throw new Exception("Region version ID " + regionVersion.ElementVersionId + 
+                        " references component ID " + regionVersion.ComponentId.Value + 
+                        " but this component has no version defined for this version of the website");
+
+                var componentRecord = _database.GetComponent(componentVersionId, (c, v) => c);
+                var componentName = componentRecord.Name;
+
+                var regionProperties = _database.GetElementPropertyValues(regionVersion.ElementVersionId);
+                if (regionProperties != null && regionProperties.Count > 0)
+                {
+                    _dependencies.NameManager.AddResolutionHandler(
+                        NameResolutionPhase.ResolveElementReferences,
+                        nm =>
+                        {
+                            var component = nm.ResolveComponent(componentName, this);
+                            var cloneable = component as ICloneable;
+
+                            if (cloneable != null)
+                            {
+                                component = (IComponent)cloneable.Clone();
+                                var componentProperties = component.GetType().GetProperties();
+                                foreach (var regionProperty in regionProperties)
+                                {
+                                    var componentProperty = componentProperties.FirstOrDefault(
+                                        p => string.Equals(p.Name, regionProperty.Key, StringComparison.OrdinalIgnoreCase));
+                                    if (componentProperty != null)
+                                        componentProperty.SetValue(component, regionProperty.Value, null);
+                                }
+                            }
+                            regionDefinition.Component(component);
+                        });
+                }
+                else
+                {
+                    regionDefinition.Component(componentName);
+                }
             }
             else if (!string.IsNullOrEmpty(regionVersion.AssetName))
                 regionDefinition.Html(regionVersion.AssetName, regionVersion.AssetValue);

@@ -1,8 +1,5 @@
-﻿using OwinFramework.Pages.CMS.Runtime.Interfaces;
-using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
+﻿using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.CMS.Runtime.Data
@@ -24,6 +21,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             _dataTypes = new DataTypeRecord[0];
 
             _dataTypeVersions = new DataTypeVersionRecord[0];
+
+            _components = new ComponentRecord[0];
+
+            _componentVersions = new ComponentVersionRecord[0];
+
+            _properties = new ElementPropertyRecord[0];
+
+            _propertyValues = new ElementPropertyValueRecord[0];
 
             _regions = new []
             {
@@ -260,17 +265,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                             ContentValue = "<p>This is CMS page 2</p>"
                         }
                     }
-                }
-            };
-
-            _properties = new []
-            { 
-                new ElementPropertyRecord
-                {
-                    Id = propertyId++,
-                    ElementVersionId = _pageVersions[0].ElementVersionId,
-                    Name = "StockTicker",
-                    Value = "AMZN"
                 }
             };
 

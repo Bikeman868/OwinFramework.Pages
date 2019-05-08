@@ -10,9 +10,9 @@ namespace OwinFramework.Pages.Html.Elements
     /// A lightweight version of the region class that provides a simple way to put a component
     /// directly into a layout without explicitly configuring a region element.
     /// </summary>
-    public class RegionComponent : Region
+    public class LayoutZoneRegion : Region
     {
-        public RegionComponent(IRegionDependenciesFactory dependencies)
+        public LayoutZoneRegion(IRegionDependenciesFactory dependencies)
             : base(dependencies)
         {
         }
@@ -27,7 +27,7 @@ namespace OwinFramework.Pages.Html.Elements
             context.Trace(() => ToString() + " writing page " + Enum.GetName(typeof(PageArea), pageArea).ToLower());
 #endif
             if (context.IncludeComments)
-                context.Html.WriteComment("region component " + this.FullyQualifiedName());
+                context.Html.WriteComment("layout zone " + this.FullyQualifiedName());
 
             return contentWriter(context, pageArea);
         }

@@ -137,7 +137,33 @@ namespace OwinFramework.Pages.Html.Elements
                 GetCommentName);
         }
 
-        public object Clone()
+        protected void CopyTo(Component to)
+        {
+            base.CopyTo(to);
+
+            if (_headWriters != null)
+                to.HeadWriters = _headWriters;
+
+            if (_scriptWriters != null)
+                to.ScriptWriters = _scriptWriters;
+
+            if (_styleWriters != null)
+                to.StyleWriters = _styleWriters;
+
+            if (_bodyWriters != null)
+                to.BodyWriters = _bodyWriters;
+
+            if (_initializationWriters != null)
+                to.InitializationWriters = _initializationWriters;
+
+            if (CssRules != null)
+                to.CssRules = CssRules;
+
+            if (JavascriptFunctions != null)
+                to.JavascriptFunctions = JavascriptFunctions;
+        }
+
+        public virtual object Clone()
         {
             var constructor = GetType().GetConstructor(new[] { typeof(IComponentDependenciesFactory) });
             if (constructor == null)
@@ -147,28 +173,7 @@ namespace OwinFramework.Pages.Html.Elements
             if (clone == null)
                 throw new Exception("Cloning failed for " + GetType().FullName);
 
-            base.CopyTo(clone);
-
-            if (_headWriters != null)
-                clone.HeadWriters = _headWriters;
-
-            if (_scriptWriters != null)
-                clone.ScriptWriters = _scriptWriters;
-
-            if (_styleWriters != null)
-                clone.StyleWriters = _styleWriters;
-
-            if (_bodyWriters != null)
-                clone.BodyWriters = _bodyWriters;
-
-            if (_initializationWriters != null)
-                clone.InitializationWriters = _initializationWriters;
-
-            if (CssRules != null)
-                clone.CssRules = CssRules;
-
-            if (JavascriptFunctions != null)
-                clone.JavascriptFunctions = JavascriptFunctions;
+            CopyTo(clone);
 
             return clone;
         }

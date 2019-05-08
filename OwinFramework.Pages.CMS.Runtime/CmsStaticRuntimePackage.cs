@@ -379,7 +379,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             {
                 long componentVersionId;
                 if (!_componentVersions.TryGetValue(regionVersion.ComponentId.Value, out componentVersionId))
-                    throw new Exception("Region version ID " + regionVersion.ElementVersionId + 
+                    throw new Exception("zone version ID " + regionVersion.ElementVersionId + 
                         " references component ID " + regionVersion.ComponentId.Value + 
                         " but this component has no version defined for this version of the website");
 
@@ -437,7 +437,7 @@ namespace OwinFramework.Pages.CMS.Runtime
                         {
                             DataTypeVersionRecord dataType;
                             if (!_dataTypes.TryGetValue(dataScopeRecord.DataTypeId.Value, out dataType))
-                                throw new Exception("Region ID " + regionId + 
+                                throw new Exception("zone ID " + regionId + 
                                     " has an invalid data scope with ID " + dataScope.DataScopeId + 
                                     ". There is no data type ID " + dataScopeRecord.DataTypeId.Value +
                                     " in this version of the website");
@@ -456,7 +456,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             {
                 DataTypeVersionRecord dataType;
                 if (!_dataTypes.TryGetValue(regionVersion.RepeatDataTypeId.Value, out dataType))
-                    throw new Exception("Region ID " + regionId + 
+                    throw new Exception("zone ID " + regionId + 
                         " has an invalid data repetition. There is no data type ID " + regionVersion.RepeatDataTypeId.Value +
                         " in this version of the website");
 
@@ -490,20 +490,20 @@ namespace OwinFramework.Pages.CMS.Runtime
                     childClasses);
             }
 
-            if (hasLayout && regionVersion.LayoutRegions != null)
+            if (hasLayout && regionVersion.LayoutZones != null)
             { 
-                foreach(var layoutRegion in regionVersion.LayoutRegions)
+                foreach(var zone in regionVersion.LayoutZones)
                 {
-                    if (layoutRegion.LayoutId.HasValue)
-                        regionDefinition.Layout(GetLayout(builder, layoutRegion.LayoutId.Value));                        
-                    else if (string.Equals(layoutRegion.ContentType, "html", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.ZoneHtml(layoutRegion.ZoneName, layoutRegion.ContentName, layoutRegion.ContentValue);
-                    else if (string.Equals(layoutRegion.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.ZoneLayout(layoutRegion.ZoneName, layoutRegion.ContentName);
-                    else if (string.Equals(layoutRegion.ContentType, "template", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.ZoneTemplate(layoutRegion.ZoneName, layoutRegion.ContentName);
-                    else if (string.Equals(layoutRegion.ContentType, "component", StringComparison.OrdinalIgnoreCase))
-                        regionDefinition.ZoneComponent(layoutRegion.ZoneName, layoutRegion.ContentName);
+                    if (zone.LayoutId.HasValue)
+                        regionDefinition.Layout(GetLayout(builder, zone.LayoutId.Value));                        
+                    else if (string.Equals(zone.ContentType, "html", StringComparison.OrdinalIgnoreCase))
+                        regionDefinition.ZoneHtml(zone.ZoneName, zone.ContentName, zone.ContentValue);
+                    else if (string.Equals(zone.ContentType, "layout", StringComparison.OrdinalIgnoreCase))
+                        regionDefinition.ZoneLayout(zone.ZoneName, zone.ContentName);
+                    else if (string.Equals(zone.ContentType, "template", StringComparison.OrdinalIgnoreCase))
+                        regionDefinition.ZoneTemplate(zone.ZoneName, zone.ContentName);
+                    else if (string.Equals(zone.ContentType, "component", StringComparison.OrdinalIgnoreCase))
+                        regionDefinition.ZoneComponent(zone.ZoneName, zone.ContentName);
                 }
             }
 

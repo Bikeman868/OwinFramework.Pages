@@ -26,7 +26,7 @@ namespace Sample4.Elements
         {
             if (pageArea == PageArea.Body)
             {
-                context.Html.WriteComment("Test widget");
+                context.Html.WriteComment("message component");
                 context.Html.WriteUnclosedElement("hr");
                 context.Html.WriteLine();
                 context.Html.WriteElementLine("p", Message);

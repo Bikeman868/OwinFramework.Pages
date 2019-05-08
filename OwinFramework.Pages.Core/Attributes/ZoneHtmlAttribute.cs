@@ -3,26 +3,26 @@
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Attach this attribute to populate a region with static html
+    /// Attach this attribute to populate a layout zone with static html
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public class RegionHtmlAttribute: Attribute
+    public class ZoneHtmlAttribute: Attribute
     {
         /// <summary>
         /// Constructs and initializes an attribute that defines static Html
-        /// to place in a region of a layout
+        /// to place in a zone of a layout
         /// </summary>
-        public RegionHtmlAttribute(string region, string localizationId, string html)
+        public ZoneHtmlAttribute(string zoneName, string localizationId, string html)
         {
-            Region = region;
+            ZoneName = zoneName;
             Html = html;
             LocalizationId = localizationId;
         }
 
         /// <summary>
-        /// The name of the region to populate
+        /// The name of the zone to populate
         /// </summary>
-        public string Region { get; set; }
+        public string ZoneName { get; set; }
 
         /// <summary>
         /// The default Html to render for unsupported languages

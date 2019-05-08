@@ -18,7 +18,7 @@ namespace OwinFramework.Pages.DebugMiddleware.SvgDrawing.Elements
                 bool showButtons)
             : base(
                 page, 
-                "Region '" + debugRegion.Name + "'",
+                "zone '" + debugRegion.Name + "'",
                 headingLevel)
         {
             CssClass = "region";

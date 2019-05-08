@@ -252,7 +252,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                 {
                     if (layoutRegion.Region == null)
                     {
-                        html.WriteElementLine("p", "Region '" + layoutRegion.Name + "' has default region for the layout");
+                        html.WriteElementLine("p", "zone '" + layoutRegion.Name + "' has default region for the layout");
                         if (layout.Element != null)
                         {
                             var layoutInstance = layout.Element.GetDebugInfo<DebugLayout>();
@@ -273,11 +273,11 @@ namespace OwinFramework.Pages.DebugMiddleware
                     {
                         if (depth == 1)
                         {
-                            html.WriteElementLine("p", "Region '" + layoutRegion.Name + "' contains '" + layoutRegion.Region.Name + "'");
+                            html.WriteElementLine("p", "zone '" + layoutRegion.Name + "' contains '" + layoutRegion.Region.Name + "'");
                         }
                         else
                         { 
-                            html.WriteElementLine("p", "Region '" + layoutRegion.Name + "' contents");
+                            html.WriteElementLine("p", "zone '" + layoutRegion.Name + "' contents");
                             StartIndent(html, true);
                             WriteDebugInfo(html, layoutRegion.Region, depth - 1);
                             EndIndent(html);
@@ -366,7 +366,7 @@ namespace OwinFramework.Pages.DebugMiddleware
         {
             if (region.Element != null)
             {
-                html.WriteElementLine("p", "Region inherits from '" + region.Element.Name + "' region");
+                html.WriteElementLine("p", "zone inherits from '" + region.Element.Name + "' region");
                 if (depth != 1)
                 {
                     StartIndent(html, false);
@@ -394,7 +394,7 @@ namespace OwinFramework.Pages.DebugMiddleware
             {
                 if (region.Scope.Scopes != null)
                 {
-                    html.WriteElementLine("p", "Region data scope");
+                    html.WriteElementLine("p", "zone data scope");
                     StartIndent(html, false);
                     WriteDebugInfo(html, region.Scope, 3);
                     EndIndent(html);
@@ -403,7 +403,7 @@ namespace OwinFramework.Pages.DebugMiddleware
 
             if (region.Children != null && region.Children.Count > 0)
             {
-                html.WriteElementLine("p", "Region has contents");
+                html.WriteElementLine("p", "zone has contents");
                 if (depth != 1)
                 {
                     StartIndent(html, true);

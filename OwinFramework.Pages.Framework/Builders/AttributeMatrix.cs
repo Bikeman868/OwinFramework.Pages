@@ -160,23 +160,23 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Invalid<IModuleDefinition>("Modules and Packages are distinctly different ways of grouping elements, you can not put a module into a package.")
                 .Invalid<IPackageDefinition>("Packages can not contain other packages.");
 
-            Add<RegionComponentAttribute>()
+            Add<ZoneComponentAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
                 .Valid<ILayout>()
                 .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
             
-            Add<RegionHtmlAttribute>()
+            Add<ZoneHtmlAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
                 .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
 
-            Add<RegionTemplateAttribute>()
+            Add<ZoneTemplateAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
                 .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
 
-            Add<RegionLayoutAttribute>()
+            Add<ZoneLayoutAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
                 .Valid<ILayout>()
@@ -241,7 +241,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Invalid<IPageDefinition>("Please use the [ZoneTemplate] attribute instead so that the region name can be specified.")
                 .Invalid<ILayoutDefinition>("Please use the [ZoneTemplate] attribute instead so that the region name can be specified.");
 
-            Add<LayoutZoneAttribute>()
+            Add<ZoneRegionAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [ZoneTemplate], [ZoneLayout] and [ZoneComponent] attributes.");
         }
@@ -269,10 +269,10 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.NeedsDatas != null) CheckAttribute<T, NeedsDataAttribute>(result);
             if (attributes.PageTitle != null) CheckAttribute<T, PageTitleAttribute>(result);
             if (attributes.PartOf != null) CheckAttribute<T, PartOfAttribute>(result);
-            if (attributes.RegionComponents != null) CheckAttribute<T, RegionComponentAttribute>(result);
-            if (attributes.RegionLayouts != null) CheckAttribute<T, RegionLayoutAttribute>(result);
-            if (attributes.RegionHtmls != null) CheckAttribute<T, RegionHtmlAttribute>(result);
-            if (attributes.RegionTemplates != null) CheckAttribute<T, RegionTemplateAttribute>(result);
+            if (attributes.RegionComponents != null) CheckAttribute<T, ZoneComponentAttribute>(result);
+            if (attributes.RegionLayouts != null) CheckAttribute<T, ZoneLayoutAttribute>(result);
+            if (attributes.RegionHtmls != null) CheckAttribute<T, ZoneHtmlAttribute>(result);
+            if (attributes.RegionTemplates != null) CheckAttribute<T, ZoneTemplateAttribute>(result);
             if (attributes.RenderHtmls != null) CheckAttribute<T, RenderHtmlAttribute>(result);
             if (attributes.Repeat != null) CheckAttribute<T, RepeatAttribute>(result);
             if (attributes.RequiresPermission != null) CheckAttribute<T, RequiresPermissionAttribute>(result);
@@ -283,7 +283,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.UsesComponents != null) CheckAttribute<T, UsesComponentAttribute>(result);
             if (attributes.UsesLayout != null) CheckAttribute<T, UsesLayoutAttribute>(result);
             if (attributes.RenderTemplates != null) CheckAttribute<T, RenderTemplateAttribute>(result);
-            if (attributes.LayoutRegions != null) CheckAttribute<T, LayoutZoneAttribute>(result);
+            if (attributes.LayoutRegions != null) CheckAttribute<T, ZoneRegionAttribute>(result);
 
             return result.Count > 0 ? result : null;
         }

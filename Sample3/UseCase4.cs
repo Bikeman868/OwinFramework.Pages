@@ -79,10 +79,10 @@ namespace Sample3.UseCase4
 
     [IsLayout("console", "map,terminal")]
     [PartOf("usecase4")]
-    [LayoutZone("map", "full_width")]
-    [LayoutZone("terminal", "full_width")]
-    [RegionComponent("map", "game_map")]
-    [RegionHtml("terminal", "", "This is where the terminal window goes")]
+    [ZoneRegion("map", "full_width")]
+    [ZoneRegion("terminal", "full_width")]
+    [ZoneRegionmap", "game_map")]
+    [ZoneHtml("terminal", "", "This is where the terminal window goes")]
     internal class Console { }
 
     [IsRegion("full_width")]

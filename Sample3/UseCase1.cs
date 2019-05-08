@@ -87,7 +87,7 @@ namespace Sample3.UseCase1
 
     [IsPage("page1")]
     [Route("/", Method.Get)]
-    [RegionComponent("body", "page1_body")]
+    [ZoneComponent("body", "page1_body")]
     internal class Page1 : PageBase { }
 
     [IsComponent("page1_body")]
@@ -101,12 +101,12 @@ namespace Sample3.UseCase1
 
     [IsPage("page2")]
     [Route("/uc1/page2", Method.Get)]
-    [RegionLayout("body", "page2_body")]
+    [ZoneLayout("body", "page2_body")]
     internal class Page2 : PageBase { }
 
     [IsLayout("page2_body", "main")]
-    [LayoutZone("main", "page2_body")]
-    [RegionComponent("main", "address")]
+    [ZoneRegion("main", "page2_body")]
+    [ZoneComponent("main", "address")]
     internal class Page2BodyLayout : ApplicationElement { }
 
     [IsRegion("page2_body")]
@@ -120,11 +120,11 @@ namespace Sample3.UseCase1
     internal class PageBase : ApplicationElement { }
 
     [IsLayout("layout", "header,body,footer")]
-    [LayoutZone("header", "header")]
-    [LayoutZone("body", "body")]
-    [LayoutZone("footer", "footer")]
-    [RegionComponent("header", "header")]
-    [RegionComponent("footer", "footer")]
+    [ZoneRegion("header", "header")]
+    [ZoneRegion("body", "body")]
+    [ZoneRegion("footer", "footer")]
+    [ZoneComponent("header", "header")]
+    [ZoneComponent("footer", "footer")]
     internal class BasePageLayout : ApplicationElement { }
 
     [IsRegion("header")]

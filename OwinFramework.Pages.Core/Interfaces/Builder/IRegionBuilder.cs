@@ -10,9 +10,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Starts building a new region or configuring an existing region
         /// </summary>
-        /// <param name="regionInstance">Pass an instance of the Region class to 
+        /// <param name="regionInstance">Pass an instance of the zone class to 
         /// configure an instance of a derrived class or pass null to construct an
-        /// instance of the Region class</param>
+        /// instance of the zone class</param>
         /// <param name="declaringType">Type type to extract custom attributes from
         /// that can also define the behaviour of the region</param>
         /// <param name="package">Optional package adds a namespace to this region</param>

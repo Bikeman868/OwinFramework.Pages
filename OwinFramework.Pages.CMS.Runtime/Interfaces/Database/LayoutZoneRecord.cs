@@ -21,7 +21,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long? LayoutId { get; set; }
 
         /// <summary>
-        /// Can be 'Region', 'Layout', 'Component', 'Html' or 'Template'
+        /// Can be 'zone', 'Layout', 'Component', 'Html' or 'Template'
         /// </summary>
         [Mapping("contentType")]
         public string ContentType { get; set; }

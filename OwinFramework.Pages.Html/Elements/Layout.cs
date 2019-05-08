@@ -73,7 +73,7 @@ namespace OwinFramework.Pages.Html.Elements
         {
             IRegion region;
             if (!RegionsByZoneName.TryGetValue(zoneName, out region))
-                throw new Exception("Layout does not have a '" + zoneName + "' region");
+                throw new Exception("Layout does not have a '" + zoneName + "' zone");
 
             return region;
         }
@@ -82,7 +82,7 @@ namespace OwinFramework.Pages.Html.Elements
         {
             IElement element;
             if (!ElementsByZoneName.TryGetValue(zoneName, out element))
-                throw new Exception("Layout does not have a '" + zoneName + "' region");
+                throw new Exception("Layout does not have a '" + zoneName + "' zone");
 
             return element;
         }

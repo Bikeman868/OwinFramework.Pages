@@ -71,11 +71,11 @@ namespace Sample3.UseCase3
     [IsPage("home")]
     [Route("/", Method.Get)]
     [UsesLayout("layout")]
-    [RegionTemplate("main", "/url/form-identification")]
+    [ZoneTemplate("main", "/url/form-identification")]
     internal class Page1 : ApplicationElement { }
 
     [IsLayout("layout", "main")]
-    [LayoutZone("main", "div")]
+    [ZoneRegion("main", "div")]
     internal class PageLayout : ApplicationElement { }
 
     [IsRegion("div")]

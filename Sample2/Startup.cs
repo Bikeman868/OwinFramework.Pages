@@ -95,8 +95,8 @@ namespace Sample2
     internal class HomePage { }
 
     [IsLayout("homePageLayout", "region1")]                    // The 'homePageLayout' has 1 region called 'region1'
-    [LayoutZone("region1", "defaultRegion")]                 // Region 1 is implemented by the 'defaultRegion'
-    [RegionComponent("region1", "helloWorld")]                 // Region 1 contains the 'helloWorld' component
+    [ZoneRegion("region1", "defaultRegion")]                 // zone 1 is implemented by the 'defaultRegion'
+    [ZoneComponent("region1", "helloWorld")]                 // zone 1 contains the 'helloWorld' component
     internal class HomePageLayout { }
 
     [IsRegion("defaultRegion")]                                // Defines the 'defaultRegion'
@@ -115,7 +115,7 @@ namespace Sample2
     internal class HomePage { }
 
     [IsLayout("homePageLayout", "region1")]                    // The 'homePageLayout' has 1 region called 'region1'
-    [LayoutRegion("region1", "defaultRegion")]                 // Region 1 is implemented by the 'defaultRegion'
+    [LayoutRegion("region1", "defaultRegion")]                 // zone 1 is implemented by the 'defaultRegion'
     internal class HomePageLayout { }
 
     [IsRegion("defaultRegion")]                                // Defines the 'defaultRegion'
@@ -131,7 +131,7 @@ namespace Sample2
     internal class HomePage { }
 
     [IsLayout("homePageLayout", "region1")]                    // The 'homePageLayout' has 1 region called 'region1'
-    [ZoneHtml("region1", "hello-world", "Hello, world")]     // Region 1 contains static Html
+    [ZoneHtml("region1", "hello-world", "Hello, world")]     // zone 1 contains static Html
     internal class HomePageLayout { }
 #endif
 

@@ -51,7 +51,7 @@ namespace OwinFramework.Pages.Core.Debug
         /// </summary>
         public DebugRegion()
         {
-            Type = "Region";
+            Type = "zone";
         }
 
         /// <summary>

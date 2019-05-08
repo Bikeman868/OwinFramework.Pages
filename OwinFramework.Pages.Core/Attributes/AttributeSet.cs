@@ -149,22 +149,22 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// For a layout, specifies a component to place in one of the regions of the layout
         /// </summary>
-        public IList<RegionComponentAttribute> RegionComponents;
+        public IList<ZoneComponentAttribute> RegionComponents;
 
         /// <summary>
         /// For a layout, specifies a layout to place in one of the regions of the layout
         /// </summary>
-        public IList<RegionLayoutAttribute> RegionLayouts;
+        public IList<ZoneLayoutAttribute> RegionLayouts;
 
         /// <summary>
         /// For a layout, specifies html to place in one of the regions of the layout
         /// </summary>
-        public IList<RegionHtmlAttribute> RegionHtmls;
+        public IList<ZoneHtmlAttribute> RegionHtmls;
 
         /// <summary>
         /// For a layout, specifies html to place in one of the regions of the layout
         /// </summary>
-        public IList<RegionTemplateAttribute> RegionTemplates;
+        public IList<ZoneTemplateAttribute> RegionTemplates;
 
         /// <summary>
         /// Defines some static html to render into the component or region
@@ -184,7 +184,7 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// For a layout, defines the region component to use for each region of the layout
         /// </summary>
-        public IList<LayoutZoneAttribute> LayoutRegions;
+        public IList<ZoneRegionAttribute> LayoutRegions;
 
         /// <summary>
         /// For a region, defines a type of data that will be resolved within this region

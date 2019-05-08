@@ -201,11 +201,11 @@ namespace Sample1.SamplePages
     [IsLayout("main", "header(body,footer)")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [LayoutZone("header", "header")]
-    [LayoutZone("body", "body")]
-    [LayoutZone("footer", "footer")]
-    [RegionLayout("header", "header")]
-    [RegionComponent("footer", "footer")]
+    [ZoneRegion("header", "header")]
+    [ZoneRegion("body", "body")]
+    [ZoneRegion("footer", "footer")]
+    [ZoneLayout("header", "header")]
+    [ZoneComponent("footer", "footer")]
     internal class MainLayout { }
 
     /// <summary>
@@ -214,8 +214,8 @@ namespace Sample1.SamplePages
     [IsLayout("header", "title,menu")]
     [PartOf("application")]
     [DeployedAs("navigation")]
-    [LayoutZone("title", "title")]
-    [LayoutZone("menu", "menus:desktop_menu")]
+    [ZoneRegion("title", "title")]
+    [ZoneRegion("menu", "menus:desktop_menu")]
     internal class HeaderLayout { }
 
     /// <summary>
@@ -225,10 +225,10 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("content")]
     [Container("div", "2col.vertical.fixed")]
-    [LayoutZone("left", "leftColumn")]
-    [LayoutZone("main", "rightColumn")]
-    [RegionComponent("left", "sidebar1")]
-    [RegionComponent("main", "page1Body")]
+    [ZoneRegion("left", "leftColumn")]
+    [ZoneRegion("main", "rightColumn")]
+    [ZoneComponent("left", "sidebar1")]
+    [ZoneComponent("main", "page1Body")]
     [NeedsComponent("libraries:Redux")]
     internal class Page1Layout { }
 
@@ -239,15 +239,15 @@ namespace Sample1.SamplePages
     [PartOf("application")]
     [DeployedAs("content")]
     [Container("div", "2col.vertical.fixed")]
-    [LayoutZone("left", "leftColumn")]
-    [LayoutZone("main", "rightColumn")]
-    [RegionComponent("left", "sidebar2")]
+    [ZoneRegion("left", "leftColumn")]
+    [ZoneRegion("main", "rightColumn")]
+    [ZoneComponent("left", "sidebar2")]
     //[ZoneTemplate("main", "/page2/body")]
     //[ZoneTemplate("main", "/file/template1")]
     //[ZoneTemplate("main", "/file/template2")]
     //[ZoneTemplate("main", "/file/template3")]
     //[ZoneTemplate("main", "/file/template4")]
-    [RegionTemplate("main", "/file/template5")]
+    [ZoneTemplate("main", "/file/template5")]
     [NeedsComponent("libraries:Vue")]
     internal class Page2Layout { }
 
@@ -285,7 +285,7 @@ namespace Sample1.SamplePages
     [Route("/page1", Method.Get)]
     [PageTitle("Page 1")]
     [Style("color: darkred;")]
-    [RegionLayout("body", "page1Body")]
+    [ZoneLayout("body", "page1Body")]
     [NeedsComponent("libraries:jQuery")]
     [NeedsComponent("libraries:React")]
     [NeedsComponent("libraries:AngularJS")]
@@ -303,7 +303,7 @@ namespace Sample1.SamplePages
     [Route("/page2", Method.Get)]
     [PageTitle("Page 2")]
     [Style("color: darkblue;")]
-    [RegionLayout("body", "page2Body")]
+    [ZoneLayout("body", "page2Body")]
     internal class Page2 : PageBase { }
 
     /// <summary>
@@ -313,6 +313,6 @@ namespace Sample1.SamplePages
     [IsPage("page3")]
     [Route("/page3", Method.Get)]
     [PageTitle("Page 3")]
-    [RegionComponent("body", "math_form")]
+    [ZoneComponent("body", "math_form")]
     internal class Page3 : PageBase { }
 }

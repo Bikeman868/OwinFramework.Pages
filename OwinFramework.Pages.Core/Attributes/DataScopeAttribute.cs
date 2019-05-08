@@ -3,7 +3,7 @@
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// This can be attached to a Page or a Region to define how a particular type
+    /// This can be attached to a Page or a zone to define how a particular type
     /// of data will be retrieved for this element and its children.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]

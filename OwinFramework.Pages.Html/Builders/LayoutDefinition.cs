@@ -400,7 +400,7 @@ namespace OwinFramework.Pages.Html.Builders
             return _layout;
         }
 
-        #region Zone nesting
+        #region zoneName nesting
 
         private class ZoneSetRegion
         {
@@ -485,7 +485,7 @@ namespace OwinFramework.Pages.Html.Builders
 
                 if (region.Region == null && region.ZoneName != null)
                 {
-                    region.Region = new RegionComponent(_regionDependenciesFactory);
+                    region.Region = new LayoutZoneRegion(_regionDependenciesFactory);
                 }
 
                 if (region.ZoneName != null)

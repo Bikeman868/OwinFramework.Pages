@@ -283,7 +283,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach(var regionComponent in attributes.RegionComponents)
                 {
-                    layout.Component(regionComponent.Region, regionComponent.Component);
+                    layout.Component(regionComponent.ZoneName, regionComponent.Component);
                 }
             }
 
@@ -299,7 +299,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionHtml in attributes.RegionHtmls)
                 {
-                    layout.Html(regionHtml.Region, regionHtml.LocalizationId, regionHtml.Html);
+                    layout.Html(regionHtml.ZoneName, regionHtml.LocalizationId, regionHtml.Html);
                 }
             }
 
@@ -307,7 +307,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionTemplate in attributes.RegionTemplates)
                 {
-                    layout.Template(regionTemplate.Region, regionTemplate.TemplatePath);
+                    layout.Template(regionTemplate.ZoneName, regionTemplate.TemplatePath);
                 }
             }
         }
@@ -451,7 +451,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionComponent in attributes.RegionComponents)
                 {
-                    page.ZoneComponent(regionComponent.Region, regionComponent.Component);
+                    page.ZoneComponent(regionComponent.ZoneName, regionComponent.Component);
                 }
             }
 
@@ -467,7 +467,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionTemplate in attributes.RegionTemplates)
                 {
-                    page.ZoneTemplate(regionTemplate.Region, regionTemplate.TemplatePath);
+                    page.ZoneTemplate(regionTemplate.ZoneName, regionTemplate.TemplatePath);
                 }
             }
 
@@ -987,7 +987,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 {
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,
-                        (nm, l, rc) => l.PopulateElement(rc.Region, nm.ResolveComponent(rc.Component, l.Package)),
+                        (nm, l, rc) => l.PopulateElement(rc.ZoneName, nm.ResolveComponent(rc.Component, l.Package)),
                         layout,
                         regionComponent);
                 }

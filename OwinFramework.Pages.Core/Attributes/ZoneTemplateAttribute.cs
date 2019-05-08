@@ -3,25 +3,25 @@
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Attach this attribute to populate a region with static html
+    /// Attach this attribute to populate a layout zone with static html
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public class RegionTemplateAttribute: Attribute
+    public class ZoneTemplateAttribute: Attribute
     {
         /// <summary>
         /// Constructs and initializes an attribute that defines a template
-        /// to render into a region of a layout
+        /// to render into a zone of a layout
         /// </summary>
-        public RegionTemplateAttribute(string region, string templatePath)
+        public ZoneTemplateAttribute(string zoneName, string templatePath)
         {
-            Region = region;
+            ZoneName = zoneName;
             TemplatePath = templatePath;
         }
 
         /// <summary>
-        /// The name of the region to populate
+        /// The name of the zoneName to populate
         /// </summary>
-        public string Region { get; set; }
+        public string ZoneName { get; set; }
 
         /// <summary>
         /// The template to render

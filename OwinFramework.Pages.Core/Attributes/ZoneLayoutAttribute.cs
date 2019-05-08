@@ -3,17 +3,17 @@
 namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
-    /// Attach this attribute to populate a region with a layout
+    /// Attach this attribute to populate a layout zone with a layout
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public class RegionLayoutAttribute: Attribute
+    public class ZoneLayoutAttribute: Attribute
     {
         /// <summary>
         /// Creates an attribute that associates a layout with a region of another layout
         /// </summary>
         /// <param name="region">The name of the region to populate</param>
         /// <param name="layout">The name of the layout to render in this region</param>
-        public RegionLayoutAttribute(string region, string layout)
+        public ZoneLayoutAttribute(string region, string layout)
         {
             Region = region;
             Layout = layout;

@@ -103,9 +103,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 
         /// <summary>
         /// When the region contains a layout this property can be used to
-        /// override the regions of the layout for this region version.
+        /// override the zones of the layout for this region version.
         /// </summary>
-        public LayoutZoneRecord[] LayoutRegions { get; set; }
+        public LayoutZoneRecord[] LayoutZones { get; set; }
 
         /// <summary>
         /// A list of the templates to render into this region.

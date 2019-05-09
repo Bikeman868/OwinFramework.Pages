@@ -27,7 +27,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate
         /// can use this to filter out their own messages from the update
         /// stream if they want
         /// </summary>
-        public string ServerName { get; set; }
+        public string MachineName { get; set; }
 
         /// <summary>
         /// The element properties that were changed by a user. Note that

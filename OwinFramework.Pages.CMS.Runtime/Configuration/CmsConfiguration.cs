@@ -5,7 +5,12 @@
         /// <summary>
         /// The Prius repository that contains the CMS data
         /// </summary>
-        public string PriusRepositoryName { get; set; }
+        public string CmsRepositoryName { get; set; }
+
+        /// <summary>
+        /// The Prius repository that contains the CMS data
+        /// </summary>
+        public string LiveUpdateRepositoryName { get; set; }
 
         /// <summary>
         /// The name of the website version to render by default. The editor
@@ -16,8 +21,9 @@
 
         public CmsConfiguration()
         {
-            PriusRepositoryName = "cms";
-            WebsiteVersionName = "1.1";
+            CmsRepositoryName = "cms";
+            LiveUpdateRepositoryName = "live-update";
+            WebsiteVersionName = "1.0";
         }
     }
 }

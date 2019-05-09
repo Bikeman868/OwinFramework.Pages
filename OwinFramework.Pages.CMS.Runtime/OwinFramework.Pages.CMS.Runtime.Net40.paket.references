@@ -2,6 +2,7 @@
 Newtonsoft.Json
 Urchin.Client
 Prius
+Newtonsoft.Json
 
 group net40
   Owin.Framework framework: net40

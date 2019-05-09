@@ -120,6 +120,7 @@
     <None Include="paket.template" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SQL\MySQL\LiveUpdate.sql" />
     <Content Include="ToDo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -10,6 +10,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
         private readonly object _lock = new object();
         private ILiveUpdateRecipient[] _subscribers;
 
+        public void Dispose()
+        {
+        }
+
         void ILiveUpdateSender.Send(MessageDto updateMessage)
         {
             var subscribers = _subscribers;

@@ -21,8 +21,8 @@
 
         public CmsConfiguration()
         {
-            CmsRepositoryName = "cms";
-            LiveUpdateRepositoryName = "live-update";
+            CmsRepositoryName = "cms-website";
+            LiveUpdateRepositoryName = "cms-update";
             WebsiteVersionName = "1.0";
         }
     }

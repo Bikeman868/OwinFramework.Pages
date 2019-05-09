@@ -7,7 +7,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
     /// Receives changes in website design from other webservers so that
     /// all servers render the website identically
     /// </summary>
-    public interface ILiveUpdateReceiver
+    public interface ILiveUpdateReceiver: IDisposable
     {
         ILiveUpdateRecipient Subscribe(Action<MessageDto> onMessageReceived = null);
     }

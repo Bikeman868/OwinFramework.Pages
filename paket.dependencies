@@ -9,6 +9,8 @@ nuget Moq = 4.2.1507.0118
 nuget Moq.Modules = 1.0.2
 nuget Newtonsoft.Json = 7.0.1
 nuget Prius ~> 2
+nuget Prius.MySql ~> 2
+nuget MySql.Data = 6.9.9
 
 nuget NUnit ~> 2
 

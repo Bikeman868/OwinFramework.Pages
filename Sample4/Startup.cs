@@ -9,6 +9,7 @@ using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
 using OwinFramework.Interfaces.Utility;
 using OwinFramework.Pages.CMS.Runtime;
+using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.DebugMiddleware;
 using OwinFramework.Pages.Html.Templates;
 using OwinFramework.Pages.Standard;
@@ -24,6 +25,7 @@ namespace Sample4
     public class Startup
     {
         private static IDisposable _configurationFileSource;
+        private static IDisposable _updateSyncronizer;
 
         public void Configuration(IAppBuilder app)
         {
@@ -42,6 +44,9 @@ namespace Sample4
             var hostingEnvironment = ninject.Get<IHostingEnvironment>();
             var configFile = new FileInfo(hostingEnvironment.MapPath("config.json"));
             _configurationFileSource = ninject.Get<FileSource>().Initialize(configFile, TimeSpan.FromSeconds(5));
+
+            // Build an instance that will sync changes between servers
+            _updateSyncronizer = ninject.Get<ILiveUpdateReceiver>();
 
             // Get a reference to the loaded configuration
             var config = ninject.Get<IConfiguration>();

@@ -3,6 +3,7 @@ Ninject
 Ioc.Modules.Ninject
 Newtonsoft.Json
 Prius
+Prius.MySql
 
 group net40
   Owin

@@ -9,11 +9,10 @@ using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate;
 using Prius.Contracts.Interfaces;
 using Urchin.Client.Interfaces;
-using ParameterDirection = Prius.Contracts.Attributes.ParameterDirection;
 
 namespace OwinFramework.Pages.CMS.Runtime.Synchronization
 {
-    public class DatabaseSynchronizer: ILiveUpdateSender, ILiveUpdateReceiver, IDisposable
+    public class DatabaseSynchronizer: ILiveUpdateSender, ILiveUpdateReceiver
     {
         private readonly IContextFactory _contextFactory;
         private readonly ICommandFactory _commandFactory;
@@ -72,7 +71,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
 
         void ILiveUpdateSender.Send(MessageDto message)
         {
-            _sentMessagesCurrent.Add(message.UniqueId);
+            lock (_lock) _sentMessagesCurrent.Add(message.UniqueId);
 
             NotifySubscribers(message);
             AppendToDatabase(message);
@@ -120,8 +119,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
                     }
                     else
                     {
-                        if (_sentMessagesPrior.Contains(message.UniqueId)) continue;
-                        if (_sentMessagesCurrent.Contains(message.UniqueId)) continue;
+                        lock (_lock)
+                        {
+                            if (_sentMessagesPrior.Contains(message.UniqueId)) continue;
+                            if (_sentMessagesCurrent.Contains(message.UniqueId)) continue;
+                        }
 
                         NotifySubscribers(message);
                     }
@@ -139,11 +141,20 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
 
         private void AppendToDatabase(MessageDto message)
         {
-            var json = JsonConvert.SerializeObject(message);
+            var settings = new JsonSerializerSettings
+            {
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                Formatting = Formatting.None,
+                NullValueHandling = NullValueHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.None
+            };
+            var json = JsonConvert.SerializeObject(message, settings);
 
             using (var command = _commandFactory.CreateStoredProcedure("sp_InsertMessage"))
             {
-                command.AddParameter("message", json);
+                command.AddParameter("message_text", json);
                 using (var context = _contextFactory.Create(_configuration.LiveUpdateRepositoryName))
                 {
                     context.ExecuteNonQuery(command);
@@ -155,7 +166,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
         {
             using (var command = _commandFactory.CreateStoredProcedure("sp_GetLastMessageId"))
             {
-                var messageIdParameter = command.AddParameter("messageId", SqlDbType.BigInt);
+                var messageIdParameter = command.AddParameter("message_id", SqlDbType.BigInt);
                 using (var context = _contextFactory.Create(_configuration.LiveUpdateRepositoryName))
                 {
                     context.ExecuteNonQuery(command);
@@ -168,16 +179,26 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
         {
             using (var command = _commandFactory.CreateStoredProcedure("sp_GetNextMessage"))
             {
-                command.AddParameter("messageId", lastMessageId);
+                command.AddParameter("message_id", lastMessageId);
                 using (var context = _contextFactory.Create(_configuration.LiveUpdateRepositoryName))
                 {
                     using (var reader = context.ExecuteReader(command))
                     {
                         if (reader.Read())
                         {
-                            lastMessageId = reader.Get(0, lastMessageId);
+                            lastMessageId = reader.Get<long>(0);
                             var json = reader.Get<string>(1);
-                            return JsonConvert.DeserializeObject<MessageDto>(json);
+
+                            var settings = new JsonSerializerSettings
+                            {
+                                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                                DateParseHandling = DateParseHandling.DateTime,
+                                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                                DefaultValueHandling = DefaultValueHandling.Ignore,
+                                NullValueHandling = NullValueHandling.Ignore,
+                                TypeNameHandling = TypeNameHandling.None
+                            };
+                            return JsonConvert.DeserializeObject<MessageDto>(json, settings);
                         }
                     }
                 }

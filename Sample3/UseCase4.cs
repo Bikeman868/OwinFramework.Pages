@@ -81,7 +81,7 @@ namespace Sample3.UseCase4
     [PartOf("usecase4")]
     [ZoneRegion("map", "full_width")]
     [ZoneRegion("terminal", "full_width")]
-    [ZoneRegionmap", "game_map")]
+    [ZoneRegion("map", "game_map")]
     [ZoneHtml("terminal", "", "This is where the terminal window goes")]
     internal class Console { }
 

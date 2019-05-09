@@ -92,6 +92,15 @@
     <Compile Include="Interfaces\Database\WebsiteVersionRecord.cs" />
     <Compile Include="Interfaces\IDatabaseReader.cs" />
     <Compile Include="Interfaces\IDatabaseUpdater.cs" />
+    <Compile Include="Interfaces\ILiveUpdateReceiver.cs" />
+    <Compile Include="Interfaces\ILiveUpdateSender.cs" />
+    <Compile Include="Interfaces\LiveUpdate\ElementVersionReference.cs" />
+    <Compile Include="Interfaces\LiveUpdate\ILiveUpdateRecipient.cs" />
+    <Compile Include="Interfaces\LiveUpdate\ElementReference.cs" />
+    <Compile Include="Interfaces\LiveUpdate\WebsiteVersionChange.cs" />
+    <Compile Include="Interfaces\LiveUpdate\PropertyChange.cs" />
+    <Compile Include="Synchronization\InProcessSynchronizer.cs" />
+    <Compile Include="Interfaces\LiveUpdate\MessageDto.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

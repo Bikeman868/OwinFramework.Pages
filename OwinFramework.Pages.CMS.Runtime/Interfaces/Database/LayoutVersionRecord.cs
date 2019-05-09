@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Prius.Contracts.Attributes;
+﻿using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {

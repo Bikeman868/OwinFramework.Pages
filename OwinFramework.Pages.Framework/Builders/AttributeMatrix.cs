@@ -164,23 +164,23 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
                 .Valid<ILayout>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
+                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have zones");
             
             Add<ZoneHtmlAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
+                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have zones");
 
             Add<ZoneTemplateAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
+                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have zones");
 
             Add<ZoneLayoutAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Valid<IPageDefinition>()
                 .Valid<ILayout>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have named regions");
+                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have zones");
 
             Add<RenderHtmlAttribute>()
                 .Valid<IComponentDefinition>()
@@ -205,7 +205,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<IPage>()
                 .Valid<IService>();
 
-            Add<RouteAttribute>("Only pages and services can handle Http requests and return responses. Elements like regions, layouts and components produce fragments of Html.")
+            Add<RouteAttribute>("Only pages and services can handle Http requests and return responses. Elements like regions, layouts and components produce fragments of Html not entire responses.")
                 .Valid<IPageDefinition>()
                 .Valid<IServiceDefinition>();
 
@@ -227,19 +227,19 @@ namespace OwinFramework.Pages.Framework.Builders
             Add<UsesComponentAttribute>()
                 .Valid<IRegionDefinition>()
                 .Valid<IRegion>()
-                .Invalid<ILayoutDefinition>("Please use the [ZoneComponent] attribute instead so that the region name can be specified.")
+                .Invalid<ILayoutDefinition>("Please use the [ZoneComponent] attribute instead so that the zone name can be specified.")
                 .Invalid<IPageDefinition>("You can not add components directly to the page but you can use the [NeedsComponent] attribute to add component dependencies.");
 
             Add<UsesLayoutAttribute>()
                 .Valid<IPageDefinition>()
                 .Valid<IRegionDefinition>()
                 .Valid<IRegion>()
-                .Invalid<ILayoutDefinition>("Please use the [ZoneLayout] attribute instead so that the region name can be specified.");
+                .Invalid<ILayoutDefinition>("Please use the [ZoneLayout] attribute instead so that the zone name can be specified.");
 
             Add<RenderTemplateAttribute>()
                 .Valid<IRegionDefinition>()
-                .Invalid<IPageDefinition>("Please use the [ZoneTemplate] attribute instead so that the region name can be specified.")
-                .Invalid<ILayoutDefinition>("Please use the [ZoneTemplate] attribute instead so that the region name can be specified.");
+                .Invalid<IPageDefinition>("Please use the [ZoneTemplate] attribute instead so that the zone name can be specified.")
+                .Invalid<ILayoutDefinition>("Please use the [ZoneTemplate] attribute instead so that the zone name can be specified.");
 
             Add<ZoneRegionAttribute>()
                 .Valid<ILayoutDefinition>()

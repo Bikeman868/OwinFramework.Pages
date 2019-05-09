@@ -19,12 +19,14 @@ namespace OwinFramework.Pages.CMS.Runtime
 
         IList<IocRegistration> Ioc.Modules.IPackage.IocRegistrations
         {
-            get 
+            get
             {
                 return new List<IocRegistration>
                 {
                     // These are internal classes that need wiring up in IoC
                     new IocRegistration().Init<IDatabaseReader, TestDatabaseReader>(),
+                    new IocRegistration().Init<ILiveUpdateSender, Synchronization.InProcessSynchronizer>(), 
+                    new IocRegistration().Init(container => (ILiveUpdateReceiver)container.Resolve<ILiveUpdateSender>()),
 
                     // These are the external dependencies for this package that can be
                     // satisfied by installing additional NuGet packages
@@ -46,6 +48,5 @@ namespace OwinFramework.Pages.CMS.Runtime
                 };
             }
         }
-
     }
 }

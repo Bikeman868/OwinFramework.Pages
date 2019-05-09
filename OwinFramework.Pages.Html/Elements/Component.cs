@@ -141,26 +141,14 @@ namespace OwinFramework.Pages.Html.Elements
         {
             base.CopyTo(to);
 
-            if (_headWriters != null)
-                to.HeadWriters = _headWriters;
+            to._headWriters = _headWriters;
+            to._scriptWriters = _scriptWriters;
+            to._styleWriters = _styleWriters;
+            to._bodyWriters = _bodyWriters;
+            to._initializationWriters = _initializationWriters;
 
-            if (_scriptWriters != null)
-                to.ScriptWriters = _scriptWriters;
-
-            if (_styleWriters != null)
-                to.StyleWriters = _styleWriters;
-
-            if (_bodyWriters != null)
-                to.BodyWriters = _bodyWriters;
-
-            if (_initializationWriters != null)
-                to.InitializationWriters = _initializationWriters;
-
-            if (CssRules != null)
-                to.CssRules = CssRules;
-
-            if (JavascriptFunctions != null)
-                to.JavascriptFunctions = JavascriptFunctions;
+            to.CssRules = CssRules;
+            to.JavascriptFunctions = JavascriptFunctions;
         }
 
         public virtual object Clone()

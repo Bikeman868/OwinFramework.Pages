@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
@@ -16,12 +17,49 @@ namespace OwinFramework.Pages.CMS.Editor.Services
 
         private Dictionary<long, Client> _connectedClients;
         private long _nextId;
+        private Thread _expiryThread;
 
         public LiveUpdateService(ILiveUpdateReceiver liveUpdateReceiver)
         {
             _liveUpdateReceiver = liveUpdateReceiver;
             _connectedClients = new Dictionary<long, Client>();
-            _nextId = 1;
+
+            _expiryThread = new Thread(() =>
+            {
+                var count = 60;
+                while (true)
+                {
+                    try
+                    {
+                        Thread.Sleep(1000);
+                        if (--count == 0)
+                        {
+                            count = 60;
+                            lock (_connectedClients)
+                            {
+                                var ids = _connectedClients.Keys.ToList();
+                                foreach (var id in ids)
+                                {
+                                    var client = _connectedClients[id];
+                                    if (client.Expired)
+                                    {
+                                        _connectedClients.Remove(id);
+                                        client.Dispose();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    { }
+                }
+            })
+            {
+                IsBackground = true,
+                Priority = ThreadPriority.BelowNormal
+            };
+
+            _expiryThread.Start();
         }
 
         [Endpoint]
@@ -130,7 +168,7 @@ namespace OwinFramework.Pages.CMS.Editor.Services
             {
                 _id = id;
                 _responseEvent = new ManualResetEventSlim(false);
-                _maximumWaitTime = TimeSpan.FromMinutes(1);
+                _maximumWaitTime = TimeSpan.FromSeconds(60);
                 _expiryTime = TimeSpan.FromMinutes(10);
                 _lock = new object();
 

@@ -8,6 +8,7 @@ using Owin;
 using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
 using OwinFramework.Interfaces.Utility;
+using OwinFramework.Pages.CMS.Editor;
 using OwinFramework.Pages.CMS.Runtime;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.DebugMiddleware;
@@ -44,9 +45,6 @@ namespace Sample4
             var hostingEnvironment = ninject.Get<IHostingEnvironment>();
             var configFile = new FileInfo(hostingEnvironment.MapPath("config.json"));
             _configurationFileSource = ninject.Get<FileSource>().Initialize(configFile, TimeSpan.FromSeconds(5));
-
-            // Build an instance that will sync changes between servers
-            _updateSyncronizer = ninject.Get<ILiveUpdateReceiver>();
 
             // Get a reference to the loaded configuration
             var config = ninject.Get<IConfiguration>();
@@ -89,12 +87,13 @@ namespace Sample4
             // package by putting the namespace name and a colon in front of the element
             // name. For example after loading the menu package into the "menus" namespace
             // your application can refer to the desktop menu region as "menus:desktop_menu"
-            fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus");
-            fluentBuilder.Register(ninject.Get<LayoutsPackage>(), "layouts");
-            fluentBuilder.Register(ninject.Get<LibrariesPackage>(), "libraries");
-            fluentBuilder.Register(ninject.Get<CmsStaticRuntimePackage>(), "cms");
+            fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus", t => ninject.Get(t));
+            fluentBuilder.Register(ninject.Get<LayoutsPackage>(), "layouts", t => ninject.Get(t));
+            fluentBuilder.Register(ninject.Get<LibrariesPackage>(), "libraries", t => ninject.Get(t));
+            fluentBuilder.Register(ninject.Get<CmsStaticRuntimePackage>(), "cms", t => ninject.Get(t));
+            fluentBuilder.Register(ninject.Get<CmsEditorPackage>(), "cmseditor", t => ninject.Get(t));
 
-            // This is an example of registering all of the elements defined in an assembly
+            // Register all of the elements defined in this assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
 
             // This is an example of loading and parsing template files using the same

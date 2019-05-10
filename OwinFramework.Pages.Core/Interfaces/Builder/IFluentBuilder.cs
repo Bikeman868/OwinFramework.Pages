@@ -20,7 +20,13 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Registers all components, layouts, regions etc defined in the package. Optionally
         /// allows you to modify the namespace of the package from the default one
         /// </summary>
-        IPackage Register(IPackage package, string namespaceName);
+        /// <param name="package">The package instance to register</param>
+        /// <param name="namespaceName">The namespace to use for all css class
+        /// names and javascript functions within this package</param>
+        /// <param name="factory">If this package includes services that you must
+        /// supply a factory method here. It will only be used to construct
+        /// instances of services</param>
+        IPackage Register(IPackage package, string namespaceName, Func<Type, object> factory = null);
 
         /// <summary>
         /// Searches within the given assembly for all eleemnts and

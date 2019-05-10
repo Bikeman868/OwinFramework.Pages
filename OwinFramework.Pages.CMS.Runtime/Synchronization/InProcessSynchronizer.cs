@@ -35,14 +35,18 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
                 {
                     lock (_lock)
                     {
-                        _subscribers = _subscribers.Where(s => !ReferenceEquals(s, unsubscribe)).ToArray();
+                        if (_subscribers != null)
+                            _subscribers = _subscribers.Where(s => !ReferenceEquals(s, unsubscribe)).ToArray();
                     }
                 }, 
                 onMessageReceived);
 
             lock (_lock)
             {
-                _subscribers = _subscribers.Concat(Enumerable.Repeat(subscriber, 1)).ToArray();
+                if (_subscribers == null)
+                    _subscribers = new ILiveUpdateRecipient[] { subscriber };
+                else
+                    _subscribers = _subscribers.Concat(Enumerable.Repeat(subscriber, 1)).ToArray();
             }
 
             return subscriber;

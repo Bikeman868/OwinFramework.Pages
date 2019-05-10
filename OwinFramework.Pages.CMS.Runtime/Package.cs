@@ -6,6 +6,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 using Prius.Contracts.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Data;
+using Urchin.Client.Interfaces;
 
 namespace OwinFramework.Pages.CMS.Runtime
 {
@@ -30,21 +31,9 @@ namespace OwinFramework.Pages.CMS.Runtime
 
                     // These are the external dependencies for this package that can be
                     // satisfied by installing additional NuGet packages
-                    new IocRegistration().Init<IHtmlWriterFactory>(),
-                    new IocRegistration().Init<ICssWriterFactory>(),
-                    new IocRegistration().Init<IJavascriptWriterFactory>(),
-                    new IocRegistration().Init<IStringBuilderFactory>(),
-                    new IocRegistration().Init<IDictionaryFactory>(),
-
-                    new IocRegistration().Init<IModuleDependenciesFactory>(),
-                    new IocRegistration().Init<IPageDependenciesFactory>(),
-                    new IocRegistration().Init<ILayoutDependenciesFactory>(),
-                    new IocRegistration().Init<IRegionDependenciesFactory>(),
-                    new IocRegistration().Init<IComponentDependenciesFactory>(),
-                    new IocRegistration().Init<IDataProviderDependenciesFactory>(),
-
-                    new IocRegistration().Init<ICommandFactory>(),
+                    new IocRegistration().Init<IConfigurationStore>(),
                     new IocRegistration().Init<IContextFactory>(),
+                    new IocRegistration().Init<ICommandFactory>(),
                 };
             }
         }

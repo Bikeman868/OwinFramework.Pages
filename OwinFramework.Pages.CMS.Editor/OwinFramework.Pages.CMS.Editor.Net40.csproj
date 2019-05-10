@@ -35,6 +35,10 @@
     <Reference Include="Ioc.Modules">
       <HintPath>..\packages\Ioc.Modules\lib\net40\Ioc.Modules.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,8 +51,10 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CmsEditorPackage.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\LiveUpdateService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.CMS.Runtime\OwinFramework.Pages.CMS.Runtime.Net40.csproj">
@@ -58,6 +64,10 @@
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">
       <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
       <Name>OwinFramework.Pages.Core.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net40.csproj">
+      <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>
+      <Name>OwinFramework.Pages.Restful.Net40</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

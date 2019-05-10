@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Ioc.Modules;
+using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
@@ -23,18 +24,7 @@ namespace OwinFramework.Pages.CMS.Editor
                 return new List<IocRegistration>
                 {
                     // These are the external dependencies for this package
-                    new IocRegistration().Init<IHtmlWriterFactory>(),
-                    new IocRegistration().Init<ICssWriterFactory>(),
-                    new IocRegistration().Init<IJavascriptWriterFactory>(),
-                    new IocRegistration().Init<IStringBuilderFactory>(),
-                    new IocRegistration().Init<IDictionaryFactory>(),
-
-                    new IocRegistration().Init<IModuleDependenciesFactory>(),
-                    new IocRegistration().Init<IPageDependenciesFactory>(),
-                    new IocRegistration().Init<ILayoutDependenciesFactory>(),
-                    new IocRegistration().Init<IRegionDependenciesFactory>(),
-                    new IocRegistration().Init<IComponentDependenciesFactory>(),
-                    new IocRegistration().Init<IDataProviderDependenciesFactory>(),
+                    new IocRegistration().Init<ILiveUpdateReceiver>(),
                 };
             }
         }

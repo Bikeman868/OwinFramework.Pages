@@ -51,6 +51,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
             _hashSetSwapMinutes = 5;
             _nextHashSetSwap = DateTime.UtcNow.AddMinutes(_hashSetSwapMinutes);
 
+            _subscribers = new ILiveUpdateRecipient[0];
+
             _pollingThread = new Thread(PollThreadEntry)
             {
                 Name = "Poll change events",

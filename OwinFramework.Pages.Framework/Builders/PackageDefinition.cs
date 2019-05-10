@@ -11,15 +11,18 @@ namespace OwinFramework.Pages.Framework.Builders
         private readonly IFluentBuilder _builder;
         private readonly INameManager _nameManager;
         private readonly IPackage _package;
+        private readonly Func<Type, object> _factory;
 
         public PackageDefinition(
             IPackage package,
             IFluentBuilder builder,
-            INameManager nameManager)
+            INameManager nameManager, 
+            Func<Type, object> factory)
         {
             _package = package;
             _builder = builder;
             _nameManager = nameManager;
+            _factory = factory;
         }
 
         IPackageDefinition IPackageDefinition.Name(string name)

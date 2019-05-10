@@ -29,12 +29,12 @@ namespace OwinFramework.Pages.Framework.Builders
             _fluentBuilder = fluentBuilder;
         }
 
-        IPackageDefinition IPackageBuilder.BuildUpPackage(object packageInstance, Type declaringType)
+        IPackageDefinition IPackageBuilder.BuildUpPackage(object packageInstance, Type declaringType, Func<Type, object> factory)
         {
             var package = packageInstance as Core.Interfaces.IPackage ?? new Runtime.Package(_packageDependenciesFactory);
             if (declaringType == null) declaringType = (packageInstance ?? package).GetType();
 
-            var packageDefinition = new PackageDefinition(package, _fluentBuilder, _nameManager);
+            var packageDefinition = new PackageDefinition(package, _fluentBuilder, _nameManager, factory);
 
             var attributes = new AttributeSet(declaringType);
             _elementConfiguror.Configure(packageDefinition, attributes);

@@ -35,7 +35,6 @@ namespace Sample4
 
                     new IocRegistration().Init<IDatabaseReader, StaticData>(),
                     new IocRegistration().Init<ILiveUpdateSender, OwinFramework.Pages.CMS.Runtime.Synchronization.DatabaseSynchronizer>(), 
-                    new IocRegistration().Init(container => (ILiveUpdateReceiver)container.Resolve<ILiveUpdateSender>()),
                 };
             }
         }

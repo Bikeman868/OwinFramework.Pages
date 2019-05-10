@@ -15,6 +15,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// construct an instance of the Package class</param>
         /// <param name="declaringType">Type type to extract custom attributes from
         /// that can also define the behaviour of the package</param>
-        IPackageDefinition BuildUpPackage(object packageInstance = null, Type declaringType = null);
+        /// <param name="factory">If the package includes services then it needs a 
+        /// factory to build the services</param>
+        IPackageDefinition BuildUpPackage(object packageInstance = null, Type declaringType = null, Func<Type, object> factory = null);
     }
 }

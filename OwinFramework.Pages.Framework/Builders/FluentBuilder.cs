@@ -34,6 +34,7 @@ namespace OwinFramework.Pages.Framework.Builders
         private readonly HashSet<string> _assemblies;
         private readonly HashSet<Type> _types;
         private readonly IPackage _packageContext;
+        private readonly Func<Type, object> _factory;
 
         public FluentBuilder(
             INameManager nameManager,
@@ -51,6 +52,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private FluentBuilder(
             FluentBuilder parent,
+            Func<Type, object> factory,
             IPackage packageContext,
             IDataCatalog dataCatalog,
             IDataDependencyFactory dataDependencyFactory,
@@ -63,6 +65,7 @@ namespace OwinFramework.Pages.Framework.Builders
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;
             _dataSupplierFactory = dataSupplierFactory;
+            _factory = factory;
 
             ModuleBuilder = parent.ModuleBuilder;
             PageBuilder = parent.PageBuilder;
@@ -76,12 +79,15 @@ namespace OwinFramework.Pages.Framework.Builders
 
         #region Register a package overriding the namespace
 
-        IPackage IFluentBuilder.Register(IPackage package, string namespaceName)
+        IPackage IFluentBuilder.Register(
+            IPackage package, 
+            string namespaceName, 
+            Func<Type, object> factory)
         {
             var type = package.GetType();
             if (!_types.Add(type)) return package;
 
-            return BuildPackage(package, type, null, namespaceName);
+            return BuildPackage(package, type, factory, namespaceName);
         }
 
         #endregion
@@ -254,7 +260,7 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             if (ServiceBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build services");
-            return ServiceBuilder.BuildUpService(serviceInstance, declaringType, factory, package ?? _packageContext);
+            return ServiceBuilder.BuildUpService(serviceInstance, declaringType, factory ?? _factory, package ?? _packageContext);
         }
 
         /// <summary>
@@ -286,17 +292,18 @@ namespace OwinFramework.Pages.Framework.Builders
         }
 
         /// <summary>
-        /// Calls the module builder plug-in to return a fluent interface for configuring a module.
-        /// You can pass a module instance or allow the builder to build one from scratch
+        /// Calls the package builder plug-in to return a fluent interface for configuring a package.
+        /// You can pass a package instance or allow the builder to build one from scratch
         /// </summary>
         /// <param name="packageInstance">Optional instance to configure</param>
         /// <param name="declaringType">Used to configure the instance from custom attributes</param>
+        /// <param name="factory">If the package registers services then it needs a factory to construct them</param>
         /// <returns></returns>
-        public IPackageDefinition BuildUpPackage(object packageInstance, Type declaringType)
+        public IPackageDefinition BuildUpPackage(object packageInstance, Type declaringType, Func<Type, object> factory)
         {
             if (PackageBuilder == null)
                 throw new FluentBuilderException("There is no build engine installed that knows how to build packages");
-            return PackageBuilder.BuildUpPackage(packageInstance, declaringType);
+            return PackageBuilder.BuildUpPackage(packageInstance, declaringType, factory);
         }
 
         #endregion
@@ -313,7 +320,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (package == null && factory != null && typeof(IPackage).IsAssignableFrom(type))
                 package = factory(type) as IPackage;
 
-            var packageDefinition = BuildUpPackage(package, type);
+            var packageDefinition = BuildUpPackage(package, type, factory);
 
             package = packageDefinition.Build();
 
@@ -322,6 +329,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
             var packageBuilder = new FluentBuilder(
                 this,
+                factory,
                 package,
                 _dataCatalog,
                 _dataDependencyFactory,

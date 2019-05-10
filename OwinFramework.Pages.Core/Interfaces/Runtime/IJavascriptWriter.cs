@@ -66,17 +66,17 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         IJavascriptWriter WriteLineRaw(string line, IPackage package = null);
 
         /// <summary>
-        /// Writes the buffered CSS into an Html document
+        /// Writes the buffered JavaScript into an Html document
         /// </summary>
         void ToHtml(IHtmlWriter html);
 
         /// <summary>
-        /// Writes the buffered CSS to a string builder
+        /// Writes the buffered JavaScript to a string builder
         /// </summary>
         void ToStringBuilder(IStringBuilder stringBuilder);
 
         /// <summary>
-        /// Writes the buffered CSS to a list of lines
+        /// Writes the buffered JavaScript to a list of lines
         /// </summary>
         IList<string> ToLines();
     }

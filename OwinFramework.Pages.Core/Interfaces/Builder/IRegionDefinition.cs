@@ -78,7 +78,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IRegionDefinition DeployCss(string cssSelector, string cssStyle);
 
         /// <summary>
-        /// Specifies that this layout is deployed as part of a module
+        /// Specifies that this JavaScript function must be included in pages that use this region
         /// </summary>
         /// <param name="returnType">Optional return type of this function. For example "void"</param>
         /// <param name="functionName">The name of this function. For example "getData"</param>

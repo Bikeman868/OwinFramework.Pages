@@ -214,7 +214,7 @@ namespace OwinFramework.Pages.CMS.Editor.Services
                 lock (_lock)
                 {
                     if (_response == null)
-                        _response = new Response();
+                        _response = NewResponse();
                     _response.Messages.Add(message);
                 }
 

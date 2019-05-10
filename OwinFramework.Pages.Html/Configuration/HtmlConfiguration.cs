@@ -24,6 +24,9 @@ namespace OwinFramework.Pages.Html.Configuration
 
         private readonly IDisposable _configChange;
 
+        /// <summary>
+        /// Note that this constructor is public for serialization
+        /// </summary>
         public HtmlConfiguration()
         {
             HtmlFormat = HtmlFormat.Html;

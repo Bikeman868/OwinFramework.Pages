@@ -465,7 +465,6 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 foreach (var element in _elements)
                 {
-                    lines.Add(String.Empty);
                     element.Write(lines, hasNamespace ? "  " : string.Empty);
                 }
 

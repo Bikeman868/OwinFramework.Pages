@@ -67,9 +67,9 @@ namespace OwinFramework.Pages.CMS.Editor
             // Load templates and accumulate all of the CSS and JS assets
 
             var script = new StringBuilder();
-            var styles = new StringBuilder();
+            var less = new StringBuilder();
 
-            var liveUpdateLogTemplate = AddVueTemplate(script, styles, "LiveUpdateLog");
+            var liveUpdateLogTemplate = AddVueTemplate(script, less, "LiveUpdateLog");
 
             // JavaScript and CSS assets
 
@@ -82,7 +82,7 @@ namespace OwinFramework.Pages.CMS.Editor
                 .Name("assets")
                 .DeployIn(module)
                 .DeployFunction(null, "init", null, script.ToString(), true)
-                .DeployCss(styles.ToString())
+                .DeployLess(less.ToString())
                 .RenderInitialization("cms-editor-init", "<script>ns." + NamespaceName + ".init();</script>")
                 .Build();
 
@@ -121,14 +121,14 @@ namespace OwinFramework.Pages.CMS.Editor
 
         private string AddVueTemplate(
             StringBuilder script, 
-            StringBuilder css,
+            StringBuilder less,
             string baseName)
         {
             var templateDefinition = _templateBuilder.BuildUpTemplate();
 
             var markupName = baseName + ".html";
             var viewModelName = baseName + ".js";
-            var stylesheetName = baseName + ".css";
+            var stylesheetName = baseName + ".less";
 
             var markupLines = GetEmbeddedTemplate(markupName);
             if (markupLines != null)
@@ -151,7 +151,7 @@ namespace OwinFramework.Pages.CMS.Editor
             if (styles != null)
             {
                 foreach (var line in styles)
-                    css.AppendLine(line);
+                    less.AppendLine(line);
             }
 
             var template = templateDefinition.Build();

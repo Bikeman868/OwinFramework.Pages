@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using dotless.Core.configuration;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
@@ -23,6 +24,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly Component _component;
         private readonly List<FunctionDefinition> _functionDefinitions;
         private readonly List<CssDefinition> _cssDefinitions;
+        private readonly List<LessDefinition> _lessDefinitions;
         private readonly List<HtmlDefinition> _headHtmlToRender;
         private readonly List<HtmlDefinition> _bodyHtmlToRender;
         private readonly List<HtmlDefinition> _initializationHtmlToRender;
@@ -49,6 +51,7 @@ namespace OwinFramework.Pages.Html.Builders
             _fluentBuilder = fluentBuilder;
 
             _cssDefinitions = new List<CssDefinition>();
+            _lessDefinitions = new List<LessDefinition>();
             _functionDefinitions = new List<FunctionDefinition>();
             _headHtmlToRender = new List<HtmlDefinition>();
             _bodyHtmlToRender = new List<HtmlDefinition>();
@@ -234,39 +237,17 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        IComponentDefinition IComponentDefinition.DeployCss(string cssStyleSheet)
+        IComponentDefinition IComponentDefinition.DeployLess(string lessStyles)
         {
-            var index = 0;
-
-            while (index < cssStyleSheet.Length)
+            if (!string.IsNullOrWhiteSpace(lessStyles))
             {
-                try
+                var lessDefinition = new LessDefinition
                 {
-                    if (char.IsWhiteSpace(cssStyleSheet[index]))
-                    {
-                        index++;
-                        continue;
-                    }
+                    LessStyles = lessStyles.Trim()
+                };
 
-                    var selectorEnd = cssStyleSheet.IndexOf('{', index);
-                    while (string.Equals(cssStyleSheet.Substring(selectorEnd, 5), "{ns}_",
-                        StringComparison.OrdinalIgnoreCase))
-                        selectorEnd = cssStyleSheet.IndexOf('{', selectorEnd + 1);
-
-                    var selector = cssStyleSheet.Substring(index, selectorEnd - index).Trim();
-                    var ruleEnd = cssStyleSheet.IndexOf('}', selectorEnd);
-                    var rule = cssStyleSheet.Substring(selectorEnd + 1, ruleEnd - selectorEnd);
-
-                    ((IComponentDefinition)this).DeployCss(selector, rule);
-
-                    index = ruleEnd + 1;
-                }
-                catch
-                {
-                    throw new Exception("Error pasring CSS at character position " + index + ". " + cssStyleSheet);
-                }
+                _lessDefinitions.Add(lessDefinition);
             }
-
             return this;
         }
 
@@ -314,20 +295,39 @@ namespace OwinFramework.Pages.Html.Builders
         {
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveAssetNames,
-                () => 
-                { 
-                    _component.CssRules = _cssDefinitions
-                        .Select(d =>
+                () =>
+                {
+                    var css = new List<Action<ICssWriter>>();
+
+                    if (_lessDefinitions != null && _lessDefinitions.Count > 0)
+                    {
+                        var aggregate = _lessDefinitions.Aggregate(string.Empty, (a, s) => a + _htmlHelper.NamespaceCssSelector(s.LessStyles, _component.Package) + '\n');
+                        var dotlessConfig = new DotlessConfiguration { MinifyOutput = true };
+                        var less = dotless.Core.Less.Parse(aggregate, dotlessConfig);
+
+                        foreach( var line in less.Replace("\r", "").Split('\n'))
                         {
-                            d.Selector = _htmlHelper.NamespaceCssSelector(d.Selector, _component.Package);
-                            return d;
-                        })
-                        .Select(d =>
-                        {
-                            Action<ICssWriter> writeAction = w => w.WriteRule(d.Selector, d.Style);
-                            return writeAction;
-                        })
-                        .ToArray();
+                            var trimmed = line.Trim();
+                            if (trimmed.Length > 0)
+                            {
+                                Action<ICssWriter> writeAction = w => w.WriteLineRaw(trimmed);
+                                css.Add(writeAction);
+                            }
+                        }
+                    }
+
+                    if (_cssDefinitions != null && _cssDefinitions.Count > 0)
+                    {
+                        css.AddRange(_cssDefinitions
+                            .Select(d =>
+                            {
+                                d.Selector = _htmlHelper.NamespaceCssSelector(d.Selector, _component.Package);
+                                Action<ICssWriter> writeAction = w => w.WriteRule(d.Selector, d.Style);
+                                return writeAction;
+                            }));
+                    }
+
+                    _component.CssRules = css.ToArray();
 
                     _component.JavascriptFunctions = _functionDefinitions
                         .Select(d =>

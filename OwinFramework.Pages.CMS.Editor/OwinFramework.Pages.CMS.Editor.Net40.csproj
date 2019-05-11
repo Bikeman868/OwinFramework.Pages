@@ -96,7 +96,7 @@
     <EmbeddedResource Include="Templates\LiveUpdateLog.js" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Templates\LiveUpdateLog.css" />
+    <EmbeddedResource Include="Templates\LiveUpdateLog.less" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -34,6 +34,9 @@
     <DocumentationFile>bin\net40\Release\OwinFramework.Pages.Html.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dotless.ClientOnly">
+      <HintPath>..\packages\DotlessClientOnly\lib\dotless.ClientOnly.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,6 +52,7 @@
     <Compile Include="BuildEngine.cs" />
     <Compile Include="Builders\ComponentBuilder.cs" />
     <Compile Include="Builders\ComponentDefinition.cs" />
+    <Compile Include="Builders\LessDefinition.cs" />
     <Compile Include="Builders\CssDefinition.cs" />
     <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />

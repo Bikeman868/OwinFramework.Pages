@@ -63,10 +63,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Adds a static asset to this component
         /// </summary>
-        /// <param name="cssStyleSheet">A stylesheet defining multiple styles. This style sheet
-        /// will be parsed into individual style definitions that will then be processed
-        /// individually by the other overload.</param>
-        IComponentDefinition DeployCss(string cssStyleSheet);
+        /// <param name="lessStyles">A stylesheet defining multiple styles in LESS format</param>
+        IComponentDefinition DeployLess(string lessStyles);
 
         /// <summary>
         /// Specifies that this layout is deployed as part of a module

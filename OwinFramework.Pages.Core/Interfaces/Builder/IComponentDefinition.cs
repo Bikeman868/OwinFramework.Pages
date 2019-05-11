@@ -54,9 +54,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <summary>
         /// Adds a static asset to this component
         /// </summary>
-        /// <param name="cssSelector">The selector for this style</param>
+        /// <param name="cssSelector">The selector for this style. This selector can include
+        /// {ns}_ markers that will be replaced by the namespace of the pachage or removed
+        /// when there is no package in context</param>
         /// <param name="cssStyle">Style to apply when this selector matches elements</param>
         IComponentDefinition DeployCss(string cssSelector, string cssStyle);
+
+        /// <summary>
+        /// Adds a static asset to this component
+        /// </summary>
+        /// <param name="cssStyleSheet">A stylesheet defining multiple styles. This style sheet
+        /// will be parsed into individual style definitions that will then be processed
+        /// individually by the other overload.</param>
+        IComponentDefinition DeployCss(string cssStyleSheet);
 
         /// <summary>
         /// Specifies that this layout is deployed as part of a module

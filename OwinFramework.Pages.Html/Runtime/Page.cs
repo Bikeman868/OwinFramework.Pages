@@ -145,7 +145,10 @@ namespace OwinFramework.Pages.Html.Runtime
             }
             else
             {
-                _pageComponents = _components.Select(c => new PageComponent(elementDependencies, null, c, data)).ToArray();
+                _pageComponents = _components
+                    .ToList()
+                    .Select(c => new PageComponent(elementDependencies, null, c, data))
+                    .ToArray();
 
                 foreach (var component in _components)
                 {

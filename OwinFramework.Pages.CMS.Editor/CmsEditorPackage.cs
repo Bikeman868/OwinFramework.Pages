@@ -12,7 +12,6 @@ using OwinFramework.Pages.Core.Interfaces.Templates;
 using Urchin.Client.Interfaces;
 using OwinFramework.Interfaces.Utility;
 using OwinFramework.MiddlewareHelpers.EmbeddedResources;
-using OwinFramework.Pages.CMS.Editor.Assets;
 
 namespace OwinFramework.Pages.CMS.Editor
 {
@@ -20,35 +19,40 @@ namespace OwinFramework.Pages.CMS.Editor
     {
         private readonly ITemplateBuilder _templateBuilder;
         private readonly INameManager _nameManager;
+        private readonly IAssetManager _assetManager;
         private readonly IJavascriptWriterFactory _javascriptWriterFactory;
+        private readonly ICssWriterFactory _cssWriterFactory;
         private readonly IServiceDependenciesFactory _serviceDependenciesFactory;
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly EditorConfiguration _configuration;
         private readonly ResourceManager _resourceManager;
 
-        string IPackage.NamespaceName { get; set; }
-        IModule IPackage.Module { get; set; }
-        ElementType INamed.ElementType { get { return ElementType.Package; } }
-        string INamed.Name { get; set; }
+        public string NamespaceName { get; set; }
+        public IModule Module { get; set; }
+        public ElementType ElementType { get { return ElementType.Package; } }
+        public string Name { get; set; }
 
         public CmsEditorPackage(
             IHostingEnvironment hostingEnvironment,
             ITemplateBuilder templateBuilder,
             INameManager nameManager,
+            IAssetManager assetManager,
             IConfigurationStore configurationStore,
             IJavascriptWriterFactory javascriptWriterFactory,
+            ICssWriterFactory cssWriterFactory,
             IServiceDependenciesFactory serviceDependenciesFactory,
             IComponentDependenciesFactory componentDependenciesFactory)
         {
             _templateBuilder = templateBuilder;
             _nameManager = nameManager;
+            _assetManager = assetManager;
             _javascriptWriterFactory = javascriptWriterFactory;
+            _cssWriterFactory = cssWriterFactory;
             _serviceDependenciesFactory = serviceDependenciesFactory;
             _componentDependenciesFactory = componentDependenciesFactory;
 
-            var mimeTypeEvaluator = new MimeTypeEvaluator();
-            _resourceManager = new ResourceManager(hostingEnvironment, mimeTypeEvaluator);
-
+            Name = "cms_editor";
+            _resourceManager = new ResourceManager(hostingEnvironment, new MimeTypeEvaluator());
             _configuration = new EditorConfiguration(configurationStore);
         }
 
@@ -60,29 +64,26 @@ namespace OwinFramework.Pages.CMS.Editor
                 .Route(_configuration.ServiceBasePath + "live-update/", new []{ Method.Get }, 0)
                 .Build();
 
-            // Load templates and generate CSS and JS assets
+            // Load templates and accumulate all of the CSS and JS assets
 
-            var javascriptWriter = _javascriptWriterFactory.Create(HtmlFormat.Html, true, false);
+            var script = new StringBuilder();
+            var styles = new StringBuilder();
 
-            var liveUpdateLogTemplate = AddVueTemplate(javascriptWriter, "LiveUpdateLog");
+            var liveUpdateLogTemplate = AddVueTemplate(script, styles, "LiveUpdateLog");
 
-            // Buils the assets service to serve the assets
-
-            fluentBuilder.BuildUpService(
-                new AssetsService(
-                    _serviceDependenciesFactory,
-                    javascriptWriter.ToLines(), 
-                    null))
-                .Route(_configuration.ServiceBasePath + "assets/", new []{ Method.Get }, 0)
-                .Build();
-
-            var assetsLinksComponent = fluentBuilder.BuildUpComponent(
-                new AssetLinksComponent(_configuration, _componentDependenciesFactory))
-                .Build();
+            // JavaScript and CSS assets
 
             var module = fluentBuilder.BuildUpModule()
-                .Name("cms")
+                .Name("cms_editor")
                 .AssetDeployment(AssetDeployment.PerModule)
+                .Build();
+
+            var assetsComponent = fluentBuilder.BuildUpComponent(null)
+                .Name("assets")
+                .DeployIn(module)
+                .DeployFunction(null, "init", null, script.ToString(), true)
+                .DeployCss(styles.ToString())
+                .RenderInitialization("cms-editor-init", "<script>ns." + NamespaceName + ".init();</script>")
                 .Build();
 
             // Define internal elements
@@ -93,10 +94,10 @@ namespace OwinFramework.Pages.CMS.Editor
 
             var editorRegion = fluentBuilder.BuildUpRegion()
                 .Name("editor")
-                .NeedsComponent("libraries:vue")
                 .AssetDeployment(AssetDeployment.PerModule)
                 .DeployIn(module)
-                .NeedsComponent(assetsLinksComponent)
+                .NeedsComponent("libraries:vue")
+                .NeedsComponent(assetsComponent)
                 .AddTemplate(liveUpdateLogTemplate)
                 .Build();
 
@@ -118,7 +119,10 @@ namespace OwinFramework.Pages.CMS.Editor
             return this;
         }
 
-        private string AddVueTemplate(IJavascriptWriter javascriptWriter, string baseName)
+        private string AddVueTemplate(
+            StringBuilder script, 
+            StringBuilder css,
+            string baseName)
         {
             var templateDefinition = _templateBuilder.BuildUpTemplate();
 
@@ -140,14 +144,14 @@ namespace OwinFramework.Pages.CMS.Editor
             if (viewModel != null)
             {
                 foreach (var line in viewModel)
-                    javascriptWriter.WriteLineRaw(line, this);
+                    script.AppendLine(line);
             }
 
             var styles = GetEmbeddedTemplate(stylesheetName);
             if (styles != null)
             {
                 foreach (var line in styles)
-                    templateDefinition.AddStyleLine(line);
+                    css.AppendLine(line);
             }
 
             var template = templateDefinition.Build();

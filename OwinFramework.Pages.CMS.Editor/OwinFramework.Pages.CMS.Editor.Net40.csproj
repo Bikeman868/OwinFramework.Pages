@@ -63,10 +63,6 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Assets\AssetLinksComponent.cs" />
-    <Compile Include="Assets\AssetsService.cs" />
-    <Compile Include="Assets\StyleSerializer.cs" />
-    <Compile Include="Assets\ScriptSerializer.cs" />
     <Compile Include="CmsEditorPackage.cs" />
     <Compile Include="Configuration\EditorConfiguration.cs" />
     <Compile Include="Package.cs" />
@@ -98,6 +94,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Templates\LiveUpdateLog.html" />
     <EmbeddedResource Include="Templates\LiveUpdateLog.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Templates\LiveUpdateLog.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

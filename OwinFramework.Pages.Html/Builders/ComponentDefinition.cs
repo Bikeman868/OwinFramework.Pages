@@ -234,6 +234,42 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        IComponentDefinition IComponentDefinition.DeployCss(string cssStyleSheet)
+        {
+            var index = 0;
+
+            while (index < cssStyleSheet.Length)
+            {
+                try
+                {
+                    if (char.IsWhiteSpace(cssStyleSheet[index]))
+                    {
+                        index++;
+                        continue;
+                    }
+
+                    var selectorEnd = cssStyleSheet.IndexOf('{', index);
+                    while (string.Equals(cssStyleSheet.Substring(selectorEnd, 5), "{ns}_",
+                        StringComparison.OrdinalIgnoreCase))
+                        selectorEnd = cssStyleSheet.IndexOf('{', selectorEnd + 1);
+
+                    var selector = cssStyleSheet.Substring(index, selectorEnd - index).Trim();
+                    var ruleEnd = cssStyleSheet.IndexOf('}', selectorEnd);
+                    var rule = cssStyleSheet.Substring(selectorEnd + 1, ruleEnd - selectorEnd);
+
+                    ((IComponentDefinition)this).DeployCss(selector, rule);
+
+                    index = ruleEnd + 1;
+                }
+                catch
+                {
+                    throw new Exception("Error pasring CSS at character position " + index + ". " + cssStyleSheet);
+                }
+            }
+
+            return this;
+        }
+
         IComponentDefinition IComponentDefinition.DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic)
         {
             var functionDefinition = new FunctionDefinition 
@@ -305,21 +341,21 @@ namespace OwinFramework.Pages.Html.Builders
                     if (_headHtmlToRender.Count > 0)
                     {
                         _component.HeadWriters = _headHtmlToRender
-                            .Select(d => GetHtmlAction(d))
+                            .Select(GetHtmlAction)
                             .ToArray();
                     }
 
                     if (_bodyHtmlToRender.Count > 0)
                     {
                         _component.BodyWriters = _bodyHtmlToRender
-                            .Select(d => GetHtmlAction(d))
+                            .Select(GetHtmlAction)
                             .ToArray();
                     }
 
                     if (_initializationHtmlToRender.Count > 0)
                     {
                         _component.InitializationWriters = _initializationHtmlToRender
-                            .Select(d => GetHtmlAction(d))
+                            .Select(GetHtmlAction)
                             .ToArray();
                     }
                 });

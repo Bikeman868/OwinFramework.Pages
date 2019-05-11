@@ -443,7 +443,7 @@ namespace OwinFramework.Pages.Html.Runtime
                     stringBuilder.AppendLine(string.Empty);
 
                     foreach (var element in _elements.Where(e => e.IsPublic && !string.IsNullOrEmpty(e.Name)))
-                            stringBuilder.Append("  exported." + element.Name + " = " + element.Name + ";");
+                            stringBuilder.AppendLine("  exported." + element.Name + " = " + element.Name + ";");
 
                     stringBuilder.AppendLine(LineN2());
                     stringBuilder.AppendLine(LineN1());

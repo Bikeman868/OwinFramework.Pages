@@ -94,3 +94,4 @@ BEGIN
 END//
 DELIMITER ;
 
+CALL sp_InsertMessage('');

@@ -6,6 +6,19 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
 {
     public interface IDatabaseReader
     {
+        #region Environments
+
+        /// <summary>
+        /// Retrieves a list of environments
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        /// <param name="predicate">A function that determines which environments to return. 
+        /// If null is passed then all environments are returned</param>
+        T[] GetEnvironments<T>(Func<EnvironmentRecord, T> map, Func<EnvironmentRecord, bool> predicate = null);
+
+        #endregion
+
         #region Website versions
 
         /// <summary>

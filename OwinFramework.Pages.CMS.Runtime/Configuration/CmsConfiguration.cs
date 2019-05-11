@@ -13,17 +13,18 @@
         public string LiveUpdateRepositoryName { get; set; }
 
         /// <summary>
-        /// The name of the website version to render by default. The editor
+        /// The name of the environment. This is used to determine which
+        /// version of the website to render by default. The editor
         /// can edit any version of the website, but each instance of the 
         /// runtime only displays one specific version.
         /// </summary>
-        public string WebsiteVersionName { get; set; }
+        public string EnvironmentName { get; set; }
 
         public CmsConfiguration()
         {
             CmsRepositoryName = "cms-website";
             LiveUpdateRepositoryName = "cms-update";
-            WebsiteVersionName = "1.0";
+            EnvironmentName = "prod";
         }
     }
 }

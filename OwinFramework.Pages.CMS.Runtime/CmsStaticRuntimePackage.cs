@@ -63,35 +63,44 @@ namespace OwinFramework.Pages.CMS.Runtime
             _regions = new Dictionary<long, IRegion>();
             _dataScopes = new Dictionary<long, DataScopeRecord>();
 
+            var environments = _database.GetEnvironments(
+                v => v,
+                v => string.Equals(v.Name, _configuration.EnvironmentName, StringComparison.OrdinalIgnoreCase));
+
+            if (environments.Length != 1)
+                throw new Exception("There is no environment '" + _configuration.EnvironmentName + "' in the database");
+
+            var environment = environments[0];
+
             var websiteVersions = _database.GetWebsiteVersions(
                 v => v, 
-                v => string.Equals(v.Name, _configuration.WebsiteVersionName, StringComparison.OrdinalIgnoreCase));
+                v => v.WebsiteVersionId == environment.WebsiteVersionId);
 
             if (websiteVersions.Length != 1)
-                throw new Exception("There is no website version '" + _configuration.WebsiteVersionName + "' in the database");
+                throw new Exception("There is no website version ID " + environment.WebsiteVersionId + " in the database");
 
             var websiteVersion = websiteVersions[0];
-            var websiteVersionPages = _database.GetWebsitePages(websiteVersion.Id, vp => vp);
+            var websiteVersionPages = _database.GetWebsitePages(websiteVersion.WebsiteVersionId, vp => vp);
 
             _pageVersions = websiteVersionPages
                 .ToDictionary(vp => vp.PageId, vp => vp.PageVersionId);
 
             _dataTypes = _database
                 .GetWebsiteDataTypes(
-                    websiteVersion.Id, 
+                    websiteVersion.WebsiteVersionId, 
                     wd => _database.GetDataType(wd.DataTypeVersionId, (dt, dtv) => dtv))
-                .ToDictionary(dtv => dtv.DataTypeId, dtv => dtv);
+                .ToDictionary(dtv => dtv.ElementId, dtv => dtv);
 
             _componentVersions = _database
-                .GetWebsiteComponents(websiteVersion.Id, v => new { v.ComponentId, v.ComponentVersionId})
+                .GetWebsiteComponents(websiteVersion.WebsiteVersionId, v => new { v.ComponentId, v.ComponentVersionId})
                 .ToDictionary(v => v.ComponentId, v => v.ComponentVersionId);
 
             _layoutVersions = _database
-                .GetWebsiteLayouts(websiteVersion.Id, v => new { v.LayoutId, v.LayoutVersionId})
+                .GetWebsiteLayouts(websiteVersion.WebsiteVersionId, v => new { v.LayoutId, v.LayoutVersionId})
                 .ToDictionary(v => v.LayoutId, v => v.LayoutVersionId);
 
             _regionVersions = _database
-                .GetWebsiteRegions(websiteVersion.Id, v => new { v.RegionId, v.RegionVersionId})
+                .GetWebsiteRegions(websiteVersion.WebsiteVersionId, v => new { v.RegionId, v.RegionVersionId})
                 .ToDictionary(v => v.RegionId, v => v.RegionVersionId);
 
             foreach (var regionId in _regionVersions.Keys.ToList())
@@ -101,7 +110,7 @@ namespace OwinFramework.Pages.CMS.Runtime
                 GetLayout(builder, layoutId);
 
             foreach (var page in websiteVersionPages)
-                GetPage(builder, websiteVersion, page.PageVersionId);
+                GetPage(builder, environment, page.PageVersionId);
 
             _masterPages.Clear();
             _layouts.Clear();
@@ -114,7 +123,7 @@ namespace OwinFramework.Pages.CMS.Runtime
 
         private PageVersionRecord GetPage(
             IFluentBuilder builder, 
-            WebsiteVersionRecord websiteVersion, 
+            EnvironmentRecord environment, 
             long pageVersionId)
         {
             PageVersionRecord pageRecord;
@@ -128,7 +137,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             pageVersion.VersionName = page.Name + "_v" + pageVersion.Version;
 
             if (pageVersion.Routes != null && pageVersion.Routes.Length > 0)
-                BuildPage(builder, websiteVersion, pageVersion);
+                BuildPage(builder, environment, pageVersion);
 
             _masterPages.Add(pageVersionId, pageVersion);
             return pageVersion;
@@ -162,7 +171,7 @@ namespace OwinFramework.Pages.CMS.Runtime
 
         private void BuildPage(
             IFluentBuilder builder, 
-            WebsiteVersionRecord websiteVersion, 
+            EnvironmentRecord environment, 
             PageVersionRecord pageVersion)
         {
             if (pageVersion.MasterPageId.HasValue)
@@ -173,7 +182,7 @@ namespace OwinFramework.Pages.CMS.Runtime
                         " has a master page ID of " + pageVersion.MasterPageId.Value + 
                         " but there is no version of that page configured for this version of the website");
 
-                var masterPageRecord = GetPage(builder, websiteVersion, masterPageVersionId);
+                var masterPageRecord = GetPage(builder, environment, masterPageVersionId);
 
                 if (string.IsNullOrEmpty(pageVersion.RequiredPermission))
                     pageVersion.RequiredPermission = masterPageRecord.RequiredPermission;
@@ -227,9 +236,9 @@ namespace OwinFramework.Pages.CMS.Runtime
                 pageUrl = pageVersion.Routes.OrderByDescending(r => r.Priority).First().Path;
 
             string canonicalUrl = null;
-            if (!string.IsNullOrEmpty(websiteVersion.BaseUrl) && !string.IsNullOrEmpty(pageUrl))
+            if (!string.IsNullOrEmpty(environment.BaseUrl) && !string.IsNullOrEmpty(pageUrl))
             {
-                canonicalUrl = websiteVersion.BaseUrl;
+                canonicalUrl = environment.BaseUrl;
                 if (canonicalUrl.EndsWith("/"))
                 {
                     if (pageUrl.StartsWith("/"))
@@ -310,7 +319,7 @@ namespace OwinFramework.Pages.CMS.Runtime
                 .Name(layoutVersion.VersionName)
                 .AssetDeployment(layoutVersion.AssetDeployment)
                 .DeployIn(layoutVersion.ModuleName)
-                .ZoneNesting(layoutVersion.RegionNesting);
+                .ZoneNesting(layoutVersion.ZoneNesting);
 
             if (layoutVersion.Components != null)
                 foreach (var component in layoutVersion.Components)

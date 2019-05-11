@@ -72,6 +72,7 @@
     <Compile Include="Interfaces\Database\ComponentRecord.cs" />
     <Compile Include="Interfaces\Database\ComponentVersionRecord.cs" />
     <Compile Include="Interfaces\Database\ElementPropertyValueRecord.cs" />
+    <Compile Include="Interfaces\Database\RecordBase.cs" />
     <Compile Include="Interfaces\Database\ModuleVersionRecord.cs" />
     <Compile Include="Interfaces\Database\RegionTemplateRecord.cs" />
     <Compile Include="Interfaces\Database\ElementPropertyRecord.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Interfaces\Database\UpdateResult.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionDataTypeRecord.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionComponentRecord.cs" />
+    <Compile Include="Interfaces\Database\EnvironmentRecord.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionRegion.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionLayoutRecord.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionPageRecord.cs" />

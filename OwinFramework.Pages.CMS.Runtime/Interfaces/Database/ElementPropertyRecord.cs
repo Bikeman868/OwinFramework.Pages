@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// with the C# property definitions on the class that implements the
     /// component.
     /// </summary>
-    public class ElementPropertyRecord
+    public class ElementPropertyRecord: RecordBase
     {
         /// <summary>
         /// Primary key that uniquely identifies this element property in the database.
@@ -21,18 +21,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// </summary>
         [Mapping("elementId")]
         public long ElementId { get; set; }
-
-        /// <summary>
-        /// The text to label fields within the CMS editor
-        /// </summary>
-        [Mapping("displayName")]
-        public string DisplayName { get; set; }
-
-        /// <summary>
-        /// An HTML description of the property including validation rules
-        /// </summary>
-        [Mapping("description")]
-        public string Description { get; set; }
 
         /// <summary>
         /// The name of a region defined in code that is an editor for this
@@ -51,12 +39,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// </summary>
         [Mapping("displayRegionName")]
         public string DisplayRegionName { get; set; }
-
-        /// <summary>
-        /// The name of the property to set
-        /// </summary>
-        [Mapping("name")]
-        public string Name { get; set; }
 
         /// <summary>
         /// The fully qualified name of the .Net type to use for

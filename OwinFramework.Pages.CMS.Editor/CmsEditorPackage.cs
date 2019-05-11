@@ -19,11 +19,6 @@ namespace OwinFramework.Pages.CMS.Editor
     {
         private readonly ITemplateBuilder _templateBuilder;
         private readonly INameManager _nameManager;
-        private readonly IAssetManager _assetManager;
-        private readonly IJavascriptWriterFactory _javascriptWriterFactory;
-        private readonly ICssWriterFactory _cssWriterFactory;
-        private readonly IServiceDependenciesFactory _serviceDependenciesFactory;
-        private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly EditorConfiguration _configuration;
         private readonly ResourceManager _resourceManager;
 
@@ -36,20 +31,10 @@ namespace OwinFramework.Pages.CMS.Editor
             IHostingEnvironment hostingEnvironment,
             ITemplateBuilder templateBuilder,
             INameManager nameManager,
-            IAssetManager assetManager,
-            IConfigurationStore configurationStore,
-            IJavascriptWriterFactory javascriptWriterFactory,
-            ICssWriterFactory cssWriterFactory,
-            IServiceDependenciesFactory serviceDependenciesFactory,
-            IComponentDependenciesFactory componentDependenciesFactory)
+            IConfigurationStore configurationStore)
         {
             _templateBuilder = templateBuilder;
             _nameManager = nameManager;
-            _assetManager = assetManager;
-            _javascriptWriterFactory = javascriptWriterFactory;
-            _cssWriterFactory = cssWriterFactory;
-            _serviceDependenciesFactory = serviceDependenciesFactory;
-            _componentDependenciesFactory = componentDependenciesFactory;
 
             Name = "cms_editor";
             _resourceManager = new ResourceManager(hostingEnvironment, new MimeTypeEvaluator());
@@ -62,6 +47,7 @@ namespace OwinFramework.Pages.CMS.Editor
 
             fluentBuilder.BuildUpService(null, typeof(LiveUpdateService))
                 .Route(_configuration.ServiceBasePath + "live-update/", new []{ Method.Get }, 0)
+                .RequiredPermission(Permissions.View, false)
                 .Build();
 
             // Load templates and accumulate all of the CSS and JS assets
@@ -126,28 +112,33 @@ namespace OwinFramework.Pages.CMS.Editor
         {
             var templateDefinition = _templateBuilder.BuildUpTemplate();
 
-            var markupName = baseName + ".html";
-            var viewModelName = baseName + ".js";
-            var stylesheetName = baseName + ".less";
+            var markupFileName = baseName + ".html";
+            var viewModelFileName = baseName + ".js";
+            var stylesheetFileName = baseName + ".less";
 
-            var markupLines = GetEmbeddedTemplate(markupName);
+            var markupLines = GetEmbeddedTemplate(markupFileName);
             if (markupLines != null)
             {
-                foreach (var line in GetEmbeddedTemplate(markupName))
+                foreach (var line in GetEmbeddedTemplate(markupFileName))
                 {
                     templateDefinition.AddHtml(line);
                     templateDefinition.AddLineBreak();
                 }
             }
 
-            var viewModel = GetEmbeddedTemplate(viewModelName);
+            var viewModel = GetEmbeddedTemplate(viewModelFileName);
             if (viewModel != null)
             {
+#if DEBUG
+                foreach (var line in viewModel)
+                    templateDefinition.AddInitializationLine(line);
+#else
                 foreach (var line in viewModel)
                     script.AppendLine(line);
+#endif
             }
 
-            var styles = GetEmbeddedTemplate(stylesheetName);
+            var styles = GetEmbeddedTemplate(stylesheetFileName);
             if (styles != null)
             {
                 foreach (var line in styles)

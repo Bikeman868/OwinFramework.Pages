@@ -12,8 +12,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// Regions can be grouped by enclusing them in round brackets. For
         /// example "region1(region2,region3)"
         /// </summary>
-        [Mapping("regionNesting")]
-        public string RegionNesting { get; set; }
+        [Mapping("zoneNesting")]
+        public string ZoneNesting { get; set; }
 
         /// <summary>
         /// Specifies the defalt content for each zone named in the zoneNesting

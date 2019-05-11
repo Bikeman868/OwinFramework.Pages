@@ -87,7 +87,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     ElementVersionId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
-                    RegionNesting = "header,main,footer",
+                    ZoneNesting = "header,main,footer",
                     LayoutZones = new []
                     {
                         new LayoutZoneRecord
@@ -111,7 +111,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     ElementVersionId = elementVersionId++,
                     Version = 2,
                     AssetDeployment = AssetDeployment.Inherit,
-                    RegionNesting = "header,main,footer",
+                    ZoneNesting = "header,main,footer",
                     LayoutZones = new []
                     {
                         new LayoutZoneRecord
@@ -272,21 +272,43 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new WebsiteVersionRecord
                 {
-                    Id = websiteVersionId++,
+                    WebsiteVersionId = websiteVersionId++,
                     Name = "1.0",
                     Description = "First version",
-                    CraetedBy = "urn:user:1234",
+                    CreatedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow,
-                    BaseUrl = "http://sample1.localhost/"
                 },
                 new WebsiteVersionRecord
                 {
-                    Id = websiteVersionId++,
+                    WebsiteVersionId = websiteVersionId++,
                     Name = "1.1",
                     Description = "Modified layout",
-                    CraetedBy = "urn:user:1234",
+                    CreatedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow,
-                    BaseUrl = "http://uat.sample1.localhost/"
+                }
+            };
+
+            _environments = new[]
+            {
+                new EnvironmentRecord
+                {
+                    EnvironmentId = 1,
+                    Name = "prod",
+                    CreatedBy = "urn:user:1234",
+                    CreatedWhen = DateTime.UtcNow,
+                    DisplayName = "Production",
+                    BaseUrl = "http://sample1.localhost/",
+                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId
+                },
+                new EnvironmentRecord
+                {
+                    EnvironmentId = 1,
+                    Name = "stage",
+                    CreatedBy = "urn:user:1234",
+                    CreatedWhen = DateTime.UtcNow,
+                    DisplayName = "Staging",
+                    BaseUrl = "http://staging.sample1.localhost/",
+                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId
                 }
             };
 
@@ -294,25 +316,25 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new WebsiteVersionPageRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].Id,
+                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
                     PageId = _pageVersions[0].ElementId,
                     PageVersionId = _pageVersions[0].ElementVersionId
                 },
                 new WebsiteVersionPageRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].Id,
+                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
                     PageId = _pageVersions[1].ElementId,
                     PageVersionId = _pageVersions[1].ElementVersionId
                 },
                 new WebsiteVersionPageRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].Id,
+                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
                     PageId = _pageVersions[2].ElementId,
                     PageVersionId = _pageVersions[2].ElementVersionId
                 },
                 new WebsiteVersionPageRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].Id,
+                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
                     PageId = _pageVersions[3].ElementId,
                     PageVersionId = _pageVersions[3].ElementVersionId
                 }
@@ -322,13 +344,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new WebsiteVersionLayoutRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].Id,
+                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
                     LayoutId = _layoutVersions[0].ElementId,
                     LayoutVersionId = _layoutVersions[0].ElementVersionId
                 },
                 new WebsiteVersionLayoutRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].Id,
+                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
                     LayoutId = _layoutVersions[1].ElementId,
                     LayoutVersionId = _layoutVersions[1].ElementVersionId
                 }
@@ -338,25 +360,25 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new WebsiteVersionRegionRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].Id,
+                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
                     RegionId = _regionVersions[0].ElementId,
                     RegionVersionId = _regionVersions[0].ElementVersionId
                 },
                 new WebsiteVersionRegionRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].Id,
+                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
                     RegionId = _regionVersions[1].ElementId,
                     RegionVersionId = _regionVersions[1].ElementVersionId
                 },
                 new WebsiteVersionRegionRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].Id,
+                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
                     RegionId = _regionVersions[0].ElementId,
                     RegionVersionId = _regionVersions[0].ElementVersionId
                 },
                 new WebsiteVersionRegionRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].Id,
+                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
                     RegionId = _regionVersions[1].ElementId,
                     RegionVersionId = _regionVersions[1].ElementVersionId
                 }

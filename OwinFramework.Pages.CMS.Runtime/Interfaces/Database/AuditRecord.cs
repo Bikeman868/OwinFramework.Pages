@@ -16,10 +16,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 
         /// <summary>
         /// Foreign key that uniquely identifies the element version that this 
-        /// audit entry is for
+        /// audit entry is for or null if this is not element related
         /// </summary>
         [Mapping("elementVersionId")]
-        public long ElementVersionId { get; set; }
+        public long? ElementVersionId { get; set; }
 
         /// <summary>
         /// The identity of the user/application/system that modified this element version

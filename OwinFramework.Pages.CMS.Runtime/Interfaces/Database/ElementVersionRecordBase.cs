@@ -6,7 +6,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// <summary>
     /// A POCO that defines the database fields common to all element versions.
     /// </summary>
-    public class ElementVersionRecordBase
+    public class ElementVersionRecordBase: RecordBase
     {
         /// <summary>
         /// Primary key that uniquely identifies this element version in the database.

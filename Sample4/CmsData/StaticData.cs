@@ -18,8 +18,6 @@ namespace Sample4.CmsData
             var propertyId = 1;
             var websiteVersionId = 1;
             var dataScopeId = 1;
-            var dataTypeId = 1;
-            var dataTypeVersionId = 1;
 
             #region Elements
 
@@ -105,14 +103,14 @@ namespace Sample4.CmsData
             {
                 new DataTypeRecord
                 {
-                    DataTypeId = dataTypeId++,
+                    ElementId = elementId++,
                     DisplayName = "Customer",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new DataTypeRecord
                 {
-                    DataTypeId = dataTypeId++,
+                    ElementId = elementId++,
                     DisplayName = "Order",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
@@ -141,8 +139,8 @@ namespace Sample4.CmsData
             {
                 new DataTypeVersionRecord
                 {
-                    DataTypeId = _dataTypes[0].DataTypeId,
-                    DataTypeVersionId = dataTypeVersionId++,
+                    ElementId = _dataTypes[0].ElementId,
+                    ElementVersionId = elementVersionId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     AssemblyName = typeof(CustomerViewModel).Assembly.FullName,
@@ -151,8 +149,8 @@ namespace Sample4.CmsData
                 },
                 new DataTypeVersionRecord
                 {
-                    DataTypeId = _dataTypes[1].DataTypeId,
-                    DataTypeVersionId = dataTypeVersionId++,
+                    ElementId = _dataTypes[1].ElementId,
+                    ElementVersionId = elementVersionId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     AssemblyName = typeof(OrderViewModel).Assembly.FullName,
@@ -199,7 +197,7 @@ namespace Sample4.CmsData
                     {
                         new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/customer"}
                     },
-                    RepeatDataTypeId = _dataTypes[0].DataTypeId
+                    RepeatDataTypeId = _dataTypes[0].ElementId
                 },
                 // order_list region
                 new RegionVersionRecord
@@ -211,7 +209,7 @@ namespace Sample4.CmsData
                     {
                         new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/order"}
                     },
-                    RepeatDataTypeId = _dataTypes[1].DataTypeId
+                    RepeatDataTypeId = _dataTypes[1].ElementId
                 },
                 // title region
                 new RegionVersionRecord
@@ -231,7 +229,7 @@ namespace Sample4.CmsData
                     ElementVersionId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
-                    RegionNesting = "header,main,footer",
+                    ZoneNesting = "header,main,footer",
                     LayoutZones = new []
                     {
                         new LayoutZoneRecord
@@ -252,7 +250,7 @@ namespace Sample4.CmsData
                     ElementVersionId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
-                    RegionNesting = "title,menu",
+                    ZoneNesting = "title,menu",
                     LayoutZones = new []
                     {
                         new LayoutZoneRecord
@@ -281,7 +279,7 @@ namespace Sample4.CmsData
                     ElementVersionId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
-                    RegionNesting = "footer",
+                    ZoneNesting = "footer",
                     LayoutZones = new []
                     {
                         new LayoutZoneRecord
@@ -412,12 +410,25 @@ namespace Sample4.CmsData
             {
                 new WebsiteVersionRecord
                 {
-                    Id = websiteVersionId,
+                    WebsiteVersionId = websiteVersionId,
                     Name = "1.0",
                     Description = "First version",
-                    CraetedBy = "urn:user:1234",
+                    CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
-                    BaseUrl = "http://sample4.localhost/"
+                }
+            };
+
+            _environments = new[]
+            {
+                new EnvironmentRecord
+                {
+                    EnvironmentId = 1,
+                    Name = "prod",
+                    DisplayName = "Production",
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
+                    BaseUrl = "http://sample4.localhost/",
+                    WebsiteVersionId = websiteVersionId
                 }
             };
 
@@ -470,8 +481,8 @@ namespace Sample4.CmsData
                     new WebsiteVersionDataTypeRecord
                     {
                         WebsiteVersionId = websiteVersionId,
-                        DataTypeVersionId = v.DataTypeVersionId,
-                        DataTypeId = v.DataTypeId
+                        DataTypeVersionId = v.ElementVersionId,
+                        DataTypeId = v.ElementId
                     })
                 .ToArray();
 

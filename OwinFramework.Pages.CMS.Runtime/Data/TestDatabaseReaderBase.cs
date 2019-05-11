@@ -8,6 +8,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 {
     public class TestDatabaseReaderBase: IDatabaseReader
     {
+        protected EnvironmentRecord[] _environments;
+
         protected WebsiteVersionRecord[] _websiteVersions;
         protected WebsiteVersionPageRecord[] _websiteVersionPages;
         protected WebsiteVersionLayoutRecord[] _websiteVersionLayouts;
@@ -33,6 +35,19 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         protected ElementPropertyRecord[] _properties;
         protected ElementPropertyValueRecord[] _propertyValues;
+
+        T[] IDatabaseReader.GetEnvironments<T>(Func<EnvironmentRecord, T> map, Func<EnvironmentRecord, bool> predicate)
+        {
+            if (predicate == null)
+                return _environments
+                    .Select(map)
+                    .ToArray();
+
+            return _environments
+                .Where(predicate)
+                .Select(map)
+                .ToArray();
+        }
 
         T[] IDatabaseReader.GetWebsiteVersions<T>(Func<WebsiteVersionRecord, T> map, Func<WebsiteVersionRecord, bool> predicate)
         {
@@ -75,7 +90,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsitePages(websiteVersion.Id, map, predicate);
+                : ((IDatabaseReader)this).GetWebsitePages(websiteVersion.WebsiteVersionId, map, predicate);
         }
 
         T[] IDatabaseReader.GetWebsiteComponents<T>(long websiteVersionId, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate)
@@ -100,7 +115,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteComponents(websiteVersion.Id, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteComponents(websiteVersion.WebsiteVersionId, map, predicate);
         }
 
         T[] IDatabaseReader.GetWebsiteLayouts<T>(long websiteVersionId, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate)
@@ -125,7 +140,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteLayouts(websiteVersion.Id, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteLayouts(websiteVersion.WebsiteVersionId, map, predicate);
         }
 
         T[] IDatabaseReader.GetWebsiteRegions<T>(long websiteVersionId, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate)
@@ -150,7 +165,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteRegions(websiteVersion.Id, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteRegions(websiteVersion.WebsiteVersionId, map, predicate);
         }
 
         
@@ -176,7 +191,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.Id, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.WebsiteVersionId, map, predicate);
         }
 
         IDictionary<string, object> IDatabaseReader.GetElementPropertyValues(long elementVersionId)
@@ -311,14 +326,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T IDatabaseReader.GetDataType<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map)
         {
-            var dataTypeVersion = _dataTypeVersions.FirstOrDefault(v => v.DataTypeVersionId == dataTypeVersionId);
+            var dataTypeVersion = _dataTypeVersions.FirstOrDefault(v => v.ElementVersionId == dataTypeVersionId);
             if (dataTypeVersion == null) return default(T);
 
-            var dataType = _dataTypes.FirstOrDefault(r => r.DataTypeId == dataTypeVersion.DataTypeId);
+            var dataType = _dataTypes.FirstOrDefault(r => r.ElementId == dataTypeVersion.ElementId);
             if (dataType == null) return default(T);
 
             dataTypeVersion.ScopeIds = _dataScopes
-                .Where(s => s.DataTypeId == dataType.DataTypeId)
+                .Where(s => s.DataTypeId == dataType.ElementId)
                 .Select(r => r.DataScopeId)
                 .ToArray();
 

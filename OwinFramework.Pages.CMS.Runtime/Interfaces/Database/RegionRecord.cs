@@ -7,7 +7,7 @@
     {
         public RegionRecord()
         {
-            ElementType = "zone";
+            ElementType = "Region";
         }
     }
 }

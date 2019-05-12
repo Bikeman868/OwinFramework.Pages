@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.Core.Interfaces;
+﻿using System.Collections.Generic;
+using OwinFramework.Pages.Core.Interfaces;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,6 +16,14 @@ using OwinFramework.MiddlewareHelpers.EmbeddedResources;
 
 namespace OwinFramework.Pages.CMS.Editor
 {
+    /// <summary>
+    /// This package exports a layout and a region called "cms:editor" that
+    /// you can refer to in your application to include the CMS editor into
+    /// a page on your website.
+    /// This package optionally adds a page to your website containing the
+    /// CMS editor. You can enable this page by setting a URL path in the
+    /// Urchin configuration.
+    /// </summary>
     public class CmsEditorPackage: IPackage
     {
         private readonly ITemplateBuilder _templateBuilder;
@@ -57,26 +66,35 @@ namespace OwinFramework.Pages.CMS.Editor
 
             var liveUpdateLogTemplate = AddVueTemplate(script, less, "LiveUpdateLog");
 
-            // JavaScript and CSS assets
+            // Load JavaScript modules and build a dictionary
+
+            var scriptModules = new List<string>();
+
+            LoadScriptModule("liveUpdatePoller", scriptModules);
+
+            // Output JavaScript and CSS assets in a module asset
 
             var module = fluentBuilder.BuildUpModule()
                 .Name("cms_editor")
                 .AssetDeployment(AssetDeployment.PerModule)
                 .Build();
 
-            var assetsComponent = fluentBuilder.BuildUpComponent(null)
+            var assetsComponentBuilder = fluentBuilder.BuildUpComponent(null)
                 .Name("assets")
                 .DeployIn(module)
-                .DeployFunction(null, "init", null, script.ToString(), true)
-                .DeployLess(less.ToString())
-                .RenderInitialization("cms-editor-init", "<script>ns." + NamespaceName + ".init();</script>")
-                .Build();
+#if !DEBUG
+                .DeployFunction(null, "initVue", null, script.ToString(), true)
+                .RenderInitialization("cms-editor-init", "<script>ns." + NamespaceName + ".initVue();</script>")
+#endif
+                .DeployLess(less.ToString());
 
-            // Define internal elements
+            foreach (var scriptModule in scriptModules)
+                assetsComponentBuilder.DeployScript(scriptModule);
 
-            // ...
+            var assetsComponent = assetsComponentBuilder.Build();
 
-            // Define the top level elements
+            // Define the elements that applications can reference to
+            // include the CMS editor into a page on their website
 
             var editorRegion = fluentBuilder.BuildUpRegion()
                 .Name("editor")
@@ -87,7 +105,7 @@ namespace OwinFramework.Pages.CMS.Editor
                 .AddTemplate(liveUpdateLogTemplate)
                 .Build();
 
-            var pageLayout = fluentBuilder.BuildUpLayout()
+            var editorLayout = fluentBuilder.BuildUpLayout()
                 .Name("editor")
                 .ZoneNesting("main")
                 .Region("main", editorRegion)
@@ -98,7 +116,7 @@ namespace OwinFramework.Pages.CMS.Editor
                 fluentBuilder.BuildUpPage()
                     .Name("editor")
                     .Route(_configuration.EditorPath, 0, Method.Get)
-                    .Layout(pageLayout)
+                    .Layout(editorLayout)
                     .Build();
             }
 
@@ -116,17 +134,17 @@ namespace OwinFramework.Pages.CMS.Editor
             var viewModelFileName = baseName + ".js";
             var stylesheetFileName = baseName + ".less";
 
-            var markupLines = GetEmbeddedTemplate(markupFileName);
+            var markupLines = GetEmbeddedTextFile(markupFileName);
             if (markupLines != null)
             {
-                foreach (var line in GetEmbeddedTemplate(markupFileName))
+                foreach (var line in GetEmbeddedTextFile(markupFileName))
                 {
                     templateDefinition.AddHtml(line);
                     templateDefinition.AddLineBreak();
                 }
             }
 
-            var viewModel = GetEmbeddedTemplate(viewModelFileName);
+            var viewModel = GetEmbeddedTextFile(viewModelFileName);
             if (viewModel != null)
             {
 #if DEBUG
@@ -138,7 +156,7 @@ namespace OwinFramework.Pages.CMS.Editor
 #endif
             }
 
-            var styles = GetEmbeddedTemplate(stylesheetFileName);
+            var styles = GetEmbeddedTextFile(stylesheetFileName);
             if (styles != null)
             {
                 foreach (var line in styles)
@@ -153,7 +171,14 @@ namespace OwinFramework.Pages.CMS.Editor
             return templatePath;
         }
 
-        private string[] GetEmbeddedTemplate(string templateName)
+        private void LoadScriptModule(string moduleName, List<string> modules)
+        {
+            var lines = GetEmbeddedTextFile(moduleName + ".js");
+            if (lines != null)
+                modules.Add(string.Join("\n", lines));
+        }
+
+        private string[] GetEmbeddedTextFile(string templateName)
         {
             var resource = _resourceManager.GetResource(Assembly.GetExecutingAssembly(), templateName);
             if (resource.Content == null) return null;

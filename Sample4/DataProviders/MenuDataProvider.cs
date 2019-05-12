@@ -39,10 +39,22 @@ namespace Sample4.DataProviders
                     }
             };
 
+            var adminMenu = new MenuPackage.MenuItem
+            {
+                Name = "Admin",
+                SubMenu = new []
+                    {
+                        new MenuPackage.MenuItem { Name = "CMS", Url = "/admin/cms" },
+                        new MenuPackage.MenuItem { Name = "Users", Url = "/admin/users" },
+                        new MenuPackage.MenuItem { Name = "Permissions", Url = "/admin/permissions" }
+                    }
+            };
+
             _menu = new List<MenuPackage.MenuItem> 
             { 
                 dataMenu,
-                sortMenu
+                sortMenu,
+                adminMenu
             };
         }
 

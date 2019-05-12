@@ -29,6 +29,8 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly List<HtmlDefinition> _bodyHtmlToRender;
         private readonly List<HtmlDefinition> _initializationHtmlToRender;
 
+        private string _javaScript;
+
         private class HtmlDefinition
         {
             public int Order;
@@ -251,6 +253,12 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
+        IComponentDefinition IComponentDefinition.DeployScript(string script)
+        {
+            _javaScript = _javaScript == null ? script : _javaScript + "\n" + script;
+            return this;
+        }
+
         IComponentDefinition IComponentDefinition.DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic)
         {
             var functionDefinition = new FunctionDefinition 
@@ -291,7 +299,7 @@ namespace OwinFramework.Pages.Html.Builders
             return this;
         }
 
-        public IComponent Build()
+        IComponent IComponentDefinition.Build()
         {
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveAssetNames,
@@ -329,14 +337,25 @@ namespace OwinFramework.Pages.Html.Builders
 
                     _component.CssRules = css.ToArray();
 
-                    _component.JavascriptFunctions = _functionDefinitions
-                        .Select(d =>
-                        {
-                            Action<IJavascriptWriter> writeAction = w => w.WriteFunction(
-                                d.FunctionName, d.Parameters, d.Body, d.ReturnType, _component.Package, d.IsPublic);
-                            return writeAction;
-                        })
-                        .ToArray();
+                    var javascriptWriters = new List<Action<IJavascriptWriter>>();
+
+                    if (!string.IsNullOrEmpty(_javaScript))
+                    {
+                        javascriptWriters.Add(w => w.WriteLineRaw(_javaScript, _component.Package));
+                    }
+
+                    if (_functionDefinitions != null && _functionDefinitions.Count > 0)
+                    {
+                        javascriptWriters.AddRange(_functionDefinitions
+                            .Select(d =>
+                            {
+                                Action<IJavascriptWriter> writeAction = w => w.WriteFunction(
+                                    d.FunctionName, d.Parameters, d.Body, d.ReturnType, _component.Package, d.IsPublic);
+                                return writeAction;
+                            }));
+                    }
+
+                    _component.JavascriptFunctions = javascriptWriters.ToArray();
 
                     if (_headHtmlToRender.Count > 0)
                     {

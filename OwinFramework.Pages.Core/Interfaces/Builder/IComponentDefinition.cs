@@ -67,14 +67,24 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IComponentDefinition DeployLess(string lessStyles);
 
         /// <summary>
-        /// Specifies that this layout is deployed as part of a module
+        /// Specifies that any pages referening this component should include a JavaScript
+        /// function that is required by the component
         /// </summary>
         /// <param name="returnType">Optional return type of this function. For example "void"</param>
         /// <param name="functionName">The name of this function. For example "getData"</param>
-        /// <param name="parameters">TOptional parameters to this function. For example "id, name"</param>
+        /// <param name="parameters">Optional parameters to this function. For example "id, name"</param>
         /// <param name="functionBody">The body of this function. For example "alert('Hello, world');"</param>
         /// <param name="isPublic">Pass true to export this function from the package namespace</param>
         IComponentDefinition DeployFunction(string returnType, string functionName, string parameters, string functionBody, bool isPublic);
+
+        /// <summary>
+        /// Specifies that any pages referening this component should include some JavaScript
+        /// that should run when the page is loaded
+        /// </summary>
+        /// <param name="script">A piece of JavaScript that will be written to the namespace
+        /// of the package that this component is part of. Note that nothing from this
+        /// JavaScript will be exported from that namespace</param>
+        IComponentDefinition DeployScript(string script);
 
         /// <summary>
         /// Overrides the default asset deployment scheme for this component

@@ -244,6 +244,7 @@ namespace Sample4.CmsData
                         }
                     }
                 },
+
                 // header layout
                 new LayoutVersionRecord {
                     ElementId = _layouts[1].ElementId,
@@ -273,6 +274,7 @@ namespace Sample4.CmsData
                         }
                     }
                 },
+
                 // footer layout
                 new LayoutVersionRecord {
                     ElementId = _layouts[2].ElementId,
@@ -338,6 +340,14 @@ namespace Sample4.CmsData
                     CreatedWhen = DateTime.UtcNow,
                     Name = "orders",
                     Description = "Displays a list of orders"
+                },
+                new PageRecord 
+                {
+                    ElementId = elementId++,
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
+                    Name = "cms_editor",
+                    Description = "Displays the CMS editor"
                 }
             };
 
@@ -397,6 +407,31 @@ namespace Sample4.CmsData
                         {
                             ZoneName = "main",
                             RegionId = _regions[3].ElementId
+                        }
+                    }
+                },
+                new PageVersionRecord
+                {
+                    ElementId = _pages[3].ElementId,
+                    ElementVersionId = elementVersionId++,
+                    Version = 1,
+                    MasterPageId = _pages[0].ElementId,
+                    Title = "CMS",
+                    Routes = new []
+                    {
+                        new PageRouteRecord
+                        {
+                            Path = "/admin/cms",
+                            Priority = 200
+                        }
+                    },
+                    LayoutZones = new []
+                    {
+                        new LayoutZoneRecord
+                        {
+                            ZoneName = "main",
+                            ContentType = "Region",
+                            ContentName = "cmseditor:editor"
                         }
                     }
                 }

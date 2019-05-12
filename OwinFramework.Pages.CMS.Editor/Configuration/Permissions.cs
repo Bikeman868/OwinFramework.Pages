@@ -15,6 +15,7 @@ namespace OwinFramework.Pages.CMS.Editor.Configuration
         // These permissions have the name of the element as the asset name
         // so that you can grant editing permissions on individual elements
 
+        public const string EditEnvironment = "cms:edit/environment";
         public const string EditComponent = "cms:edit/component";
         public const string EditDataScope = "cms:edit/datascope";
         public const string EditDataType = "cms:edit/datatype";
@@ -23,9 +24,11 @@ namespace OwinFramework.Pages.CMS.Editor.Configuration
         public const string EditPage = "cms:edit/page";
         public const string EditRegion = "cms:edit/region";
 
-        // These permissions have the website version as the asset name
-        // so that you can grant access to specific versions of the website
+        // These permissions have the environment name as the asset name
+        // so that you can grant access to specific environments where the
+        // website runs
 
+        public const string ChangeEnvironmentVersion = "cms:version/environment";
         public const string ChangeComponentVersion = "cms:version/component";
         public const string ChangeDataTypeVersion = "cms:version/datatype";
         public const string ChangeLayoutVersion = "cms:version/layout";

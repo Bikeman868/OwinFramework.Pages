@@ -10,6 +10,10 @@
   - Support for multiple instances of pages middleware on 
     different Owin routes and possibly with different fluent
     builder configurations.
+  - For service endpoints the RequiredPermission attribute asset path
+    should be able to contain placeholders for parameter values. For
+	example "/user/{userid}" where {userid} is replaced with the value
+	of the userid parameter passed to the method.
   
 * Forms
   - Routing POST requests to component that rendered the form tag

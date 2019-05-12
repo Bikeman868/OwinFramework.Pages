@@ -100,7 +100,7 @@
     <EmbeddedResource Include="Templates\LiveUpdateLog.less" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JavascriptModules\liveUpdatePoller.js" />
+    <EmbeddedResource Include="JavascriptModules\liveUpdateModule.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CssStyles\" />

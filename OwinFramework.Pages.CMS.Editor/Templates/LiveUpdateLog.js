@@ -3,15 +3,57 @@
     data: {
         updates: [
             {
-                when: "12s ago",
+                elapsed: "12s ago",
                 from: "SHVANMHALLIDAY",
-                properties: [{elementType:"Region", elementVersion:23, property:"DisplayName", value:"New name"}],
-                versions: [{ websiteVersion: 1, elementType: "Region", elementId: 5, fromVersion: 19, toVersion:20 }],
-                added: [{ elementType: "Region", elementId: 5 }],
-                deleted: [{ elementType: "Layout", elementId: 2 }],
-                newVersions: [{ elementType: "Layout", elementId: 2, elementVersion: 3 }],
-                deletedVersions: [{ elementType: "Layout", elementId: 2, elementVersion: 1 }]
+                changes: "Description of changes"
             }
         ]
+    },
+    methods: {
+        updateTimes: function () {
+            var date = new Date();
+            for (let i = 0; i < this.updates.length; i++) {
+                var updateDate = new Date(this.updates[i].when);
+                var secondsAgo = Math.trunc((date - updateDate) / 1000);
+                if (isNaN(secondsAgo) && secondsAgo > 1200) {
+                    this.updates.splice(i, 1);
+                    i = i - 1;
+                } else {
+                    this.updates[i].elapsed = secondsAgo + "s ago";
+                }
+            }
+            setTimeout(this.updateTimes, 1000);
+        }
+    },
+    created: function () {
+        var vm = this;
+        liveUpdateData.subscribe(function (update) {
+            var updateData =
+            {
+                when: update.when,
+                from: update.machine,
+                changes: ""
+            };
+            if (update.propertyChanges && update.propertyChanges.length > 0) {
+                updateData.changes += "Property changes. ";
+            }
+            if (update.websiteVersionChanges && update.websiteVersionChanges.length > 0) {
+                updateData.changes += "Website version changes. ";
+            }
+            if (update.newElements && update.newElements.length > 0) {
+                updateData.changes += "New elements. ";
+            }
+            if (update.deletedElements && update.deletedElements.length > 0) {
+                updateData.changes += "Deleted elements. ";
+            }
+            if (update.newVersions && update.newVersions.length > 0) {
+                updateData.changes += "New element versions. ";
+            }
+            if (update.deletedElementVersions && update.deletedElementVersions.length > 0) {
+                updateData.changes += "Deleted element versions. ";
+            }
+            vm.updates.unshift(updateData);
+        });
+        this.updateTimes();
     }
 })

@@ -66,11 +66,11 @@ namespace OwinFramework.Pages.CMS.Editor
 
             var liveUpdateLogTemplate = AddVueTemplate(script, less, "LiveUpdateLog");
 
-            // Load JavaScript modules and build a dictionary
+            // Load JavaScript modules and concatenate all the JavaScript
 
             var scriptModules = new List<string>();
 
-            LoadScriptModule("liveUpdatePoller", scriptModules);
+            LoadScriptModule("liveUpdateModule", scriptModules);
 
             // Output JavaScript and CSS assets in a module asset
 
@@ -82,10 +82,8 @@ namespace OwinFramework.Pages.CMS.Editor
             var assetsComponentBuilder = fluentBuilder.BuildUpComponent(null)
                 .Name("assets")
                 .DeployIn(module)
-#if !DEBUG
                 .DeployFunction(null, "initVue", null, script.ToString(), true)
                 .RenderInitialization("cms-editor-init", "<script>ns." + NamespaceName + ".initVue();</script>")
-#endif
                 .DeployLess(less.ToString());
 
             foreach (var scriptModule in scriptModules)
@@ -147,13 +145,8 @@ namespace OwinFramework.Pages.CMS.Editor
             var viewModel = GetEmbeddedTextFile(viewModelFileName);
             if (viewModel != null)
             {
-#if DEBUG
-                foreach (var line in viewModel)
-                    templateDefinition.AddInitializationLine(line);
-#else
                 foreach (var line in viewModel)
                     script.AppendLine(line);
-#endif
             }
 
             var styles = GetEmbeddedTextFile(stylesheetFileName);

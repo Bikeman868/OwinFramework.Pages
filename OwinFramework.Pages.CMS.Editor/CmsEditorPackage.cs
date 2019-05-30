@@ -99,6 +99,7 @@ namespace OwinFramework.Pages.CMS.Editor
                 .AssetDeployment(AssetDeployment.PerModule)
                 .DeployIn(module)
                 .NeedsComponent("libraries:vue")
+                .NeedsComponent("ajax:ajax")
                 .NeedsComponent(assetsComponent)
                 .AddTemplate(liveUpdateLogTemplate)
                 .Build();

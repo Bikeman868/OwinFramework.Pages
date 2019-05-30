@@ -35,6 +35,7 @@
 var liveUpdateService = function () {
     var register = function () {
         alert("Register for live update");
+        ns.ajax.restModule.sendGet();
         return 99;
     };
 

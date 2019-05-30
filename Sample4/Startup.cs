@@ -90,6 +90,7 @@ namespace Sample4
             fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus", t => ninject.Get(t));
             fluentBuilder.Register(ninject.Get<LayoutsPackage>(), "layouts", t => ninject.Get(t));
             fluentBuilder.Register(ninject.Get<LibrariesPackage>(), "libraries", t => ninject.Get(t));
+            fluentBuilder.Register(ninject.Get<AjaxPackage>(), "ajax", t => ninject.Get(t));
             fluentBuilder.Register(ninject.Get<CmsStaticRuntimePackage>(), "cms", t => ninject.Get(t));
             fluentBuilder.Register(ninject.Get<CmsEditorPackage>(), "cmseditor", t => ninject.Get(t));
 

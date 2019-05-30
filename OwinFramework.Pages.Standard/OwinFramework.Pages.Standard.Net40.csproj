@@ -46,6 +46,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AjaxPackage.cs" />
     <Compile Include="LibrariesPackage.cs" />
     <Compile Include="LayoutsPackage.cs" />
     <Compile Include="MenuPackage.cs" />
@@ -70,6 +71,9 @@
   <ItemGroup>
     <None Include="OwinFramework.Pages.Standard.Net40.paket.references" />
     <None Include="paket.template" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\ajaxLibrary.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

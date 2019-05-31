@@ -34,42 +34,46 @@
 
 var liveUpdateService = function () {
     var register = function () {
-        alert("Register for live update");
-        ns.ajax.restModule.sendGet();
-        return 99;
-    };
-
-    var deregister = function (id) {
-        alert("Deregister for live update " + id);
-    };
-
-    var poll = function (id) {
-        var date = new Date();
-        return [
-            {
-                id: "673267",
-                when: date,
-                machine: "MARTIN",
-                propertyChanges: [
-                {
-                    elementType: "Region",
-                    versionId: 12,
-                    name: "Title",
-                    value: "New Title"
-                }]
+        ns.ajax.restModule.getJson({
+            url: "/cms/api/live-update/register",
+            isSuccess: function(ajax) {
+                return ajax.status === 200 && ajax.response.success;
             },
-            {
-                id: "8743526",
-                when: date,
-                machine: "CONTENT1",
-                newElements: [
-                    {
-                        elementType: "Region",
-                        id: 786
-                    }
-                ]
+            onSuccess: function(ajax) {
+                liveUpdateService.clientId = ajax.response.id;
             }
-        ];
+        });
+    };
+
+    var deregister = function () {
+        ns.ajax.restModule.getJson({
+            url: "/cms/api/live-update/deregister?id=" + liveUpdateService.clientId,
+            isSuccess: function (ajax) {
+                return ajax.status === 200 && ajax.response.success;
+            },
+            onSuccess: function (ajax) {
+                liveUpdateService.clientId = undefined;
+            }
+        });
+    };
+
+    var poll = function (onSuccess, onDone) {
+        if (liveUpdateService.clientId == undefined) {
+            onDone();
+        } else {
+        ns.ajax.restModule.getJson({
+                url: "/cms/api/live-update/poll?id=" + liveUpdateService.clientId,
+                isSuccess: function(ajax) {
+                    return ajax.status === 200 && ajax.response.success;
+                },
+                onSuccess: function(ajax) {
+                    onSuccess(ajax.response.messages);
+                },
+                onDone: function(ajax) {
+                    onDone();
+                }
+            });
+        }
     };
 
     return {
@@ -80,27 +84,29 @@ var liveUpdateService = function () {
 }();
 
 var liveUpdatePoller = function () {
-    var id = liveUpdateService.register();
+    liveUpdateService.register();
 
     window.addEventListener("beforeunload", function () {
-        liveUpdateService.deregister(id);
+        liveUpdateService.deregister();
     });
 
     var poll = function () {
-        var updates = liveUpdateService.poll(id);
-        if (updates && updates.length > 0) {
-            for (let i = 0; i < updates.length; i++)
-                liveUpdateData.add(updates[i]);
-        }
-        liveUpdateData.prune();
-        setTimeout(poll, 3000);
+        liveUpdateService.poll(
+            function(updates) {
+                if (updates && updates.length > 0) {
+                    for (let i = 0; i < updates.length; i++)
+                        liveUpdateData.add(updates[i]);
+                }
+            },
+            function() {
+                liveUpdateData.prune();
+                setTimeout(poll, 3000);
+                    
+            }
+        );
     };
 
     poll();
-
-    return {
-        id: id
-    }
 }();
 
 exported.liveUpdateData = liveUpdateData;

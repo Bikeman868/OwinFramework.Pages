@@ -3,7 +3,7 @@
     data: {
         updates: [
             {
-                elapsed: "12s ago",
+                when: "2019-05-31",
                 from: "SHVANMHALLIDAY",
                 changes: "Description of changes"
             }

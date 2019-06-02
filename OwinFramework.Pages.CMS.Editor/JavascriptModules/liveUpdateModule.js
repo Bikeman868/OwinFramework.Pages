@@ -32,66 +32,15 @@
     }
 }();
 
-var liveUpdateService = function () {
-    var register = function () {
-        ns.ajax.restModule.getJson({
-            url: "/cms/api/live-update/register",
-            isSuccess: function(ajax) {
-                return ajax.status === 200 && ajax.response.success;
-            },
-            onSuccess: function(ajax) {
-                liveUpdateService.clientId = ajax.response.id;
-            }
-        });
-    };
-
-    var deregister = function () {
-        ns.ajax.restModule.getJson({
-            url: "/cms/api/live-update/deregister?id=" + liveUpdateService.clientId,
-            isSuccess: function (ajax) {
-                return ajax.status === 200 && ajax.response.success;
-            },
-            onSuccess: function (ajax) {
-                liveUpdateService.clientId = undefined;
-            }
-        });
-    };
-
-    var poll = function (onSuccess, onDone) {
-        if (liveUpdateService.clientId == undefined) {
-            onDone();
-        } else {
-        ns.ajax.restModule.getJson({
-                url: "/cms/api/live-update/poll?id=" + liveUpdateService.clientId,
-                isSuccess: function(ajax) {
-                    return ajax.status === 200 && ajax.response.success;
-                },
-                onSuccess: function(ajax) {
-                    onSuccess(ajax.response.messages);
-                },
-                onDone: function(ajax) {
-                    onDone();
-                }
-            });
-        }
-    };
-
-    return {
-        register: register,
-        deregister: deregister,
-        poll: poll
-    }
-}();
-
 var liveUpdatePoller = function () {
-    liveUpdateService.register();
+    ns.cmseditor.liveUpdateService.register();
 
     window.addEventListener("beforeunload", function () {
-        liveUpdateService.deregister();
+        ns.cmseditor.liveUpdateService.deregister();
     });
 
     var poll = function () {
-        liveUpdateService.poll(
+        ns.cmseditor.liveUpdateService.poll(
             function(updates) {
                 if (updates && updates.length > 0) {
                     for (let i = 0; i < updates.length; i++)

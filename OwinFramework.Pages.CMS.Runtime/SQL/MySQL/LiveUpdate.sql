@@ -76,7 +76,7 @@ DELIMITER ;
 
 
 DELIMITER //
-CREATE PROCEDURE `sp_GetNextMessage`
+CREATE PROCEDURE sp_GetNextMessage
 (
 	IN message_id BIGINT UNSIGNED
 ) DETERMINISTIC
@@ -94,4 +94,3 @@ BEGIN
 END//
 DELIMITER ;
 
-CALL sp_InsertMessage('');

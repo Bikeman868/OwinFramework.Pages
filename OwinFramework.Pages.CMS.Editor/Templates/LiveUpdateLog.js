@@ -27,6 +27,7 @@
     },
     created: function () {
         var vm = this;
+        this.updates = [];
         liveUpdateData.subscribe(function (update) {
             var updateData =
             {

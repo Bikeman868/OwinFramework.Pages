@@ -56,6 +56,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         IJavascriptWriter WriteFunction(string functionName, string parameters, string functionBody, string returnType, IPackage package, bool isPublic = true);
 
         /// <summary>
+        /// Writes a Javascript class into the buffer
+        /// </summary>
+        /// <param name="className">The name of the class to write</param>
+        /// <param name="classBody">The body of the class definition. Should return an object containing public properties and methods of the class</param>
+        /// <param name="package">The package to write this class into</param>
+        /// <param name="isPublic">Pass false to make this class private to the package</param>
+        IJavascriptWriter WriteClass(string className, string classBody, IPackage package, bool isPublic = true);
+
+        /// <summary>
         /// Writes a comment into the Javascript
         /// </summary>
         IJavascriptWriter WriteComment(string comment, CommentStyle commentStyle = CommentStyle.SingleLineC, IPackage package = null);

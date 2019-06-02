@@ -84,6 +84,19 @@ namespace OwinFramework.Pages.Html.Runtime
             return this;
         }
 
+        public IJavascriptWriter WriteClass(string className, string classBody, IPackage package, bool isPublic)
+        {
+            var javascriptNamespace = GetNamespace(package);
+            javascriptNamespace.Add(
+                new ClassElement
+                {
+                    Name = className,
+                    IsPublic = isPublic,
+                    Body = classBody
+                });
+            return this;
+        }
+
         public IJavascriptWriter WriteComment(string comment, CommentStyle commentStyle, IPackage package)
         {
             if (!IncludeComments) return this;
@@ -370,6 +383,63 @@ namespace OwinFramework.Pages.Html.Runtime
                     lines.Add(indent + "  " + line);
 
                 lines.Add(indent + (string.IsNullOrEmpty(Name) ? "}();" : "}"));
+            }
+        }
+
+        private class ClassElement : JavascriptElement
+        {
+            public string Body;
+
+            public override void Write(IHtmlWriter writer)
+            {
+                if (string.IsNullOrEmpty(Name))
+                    throw new Exception("You can not add a JavaScript class with no name");
+
+                writer.Write("var ");
+                writer.Write(Name);
+                writer.WriteLine(" = function () {");
+                writer.IndentLevel++;
+
+                foreach (var line in Body.Replace("\r", "").Split('\n'))
+                    writer.WriteLine(line);
+
+                writer.IndentLevel--;
+                writer.WriteLine("}();");
+            }
+
+            public override void Write(IStringBuilder stringBuilder, string indent)
+            {
+                if (string.IsNullOrEmpty(Name))
+                    throw new Exception("You can not add a JavaScript class with no name");
+
+                stringBuilder.Append(indent);
+
+                stringBuilder.Append("var ");
+                stringBuilder.Append(Name);
+                stringBuilder.AppendLine(" = function () {");
+
+                foreach (var line in Body.Replace("\r", "").Split('\n'))
+                {
+                    stringBuilder.Append(indent);
+                    stringBuilder.Append("  ");
+                    stringBuilder.AppendLine(line);
+                }
+
+                stringBuilder.Append(indent);
+                stringBuilder.AppendLine("}();");
+            }
+
+            public override void Write(IList<string> lines, string indent)
+            {
+                if (string.IsNullOrEmpty(Name))
+                    throw new Exception("You can not add a JavaScript class with no name");
+
+                lines.Add(indent + "var " + Name + " = function () {");
+
+                foreach (var line in Body.Replace("\r", "").Split('\n'))
+                    lines.Add(indent + "  " + line);
+
+                lines.Add(indent + "}();");
             }
         }
 

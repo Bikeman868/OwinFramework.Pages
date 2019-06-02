@@ -142,12 +142,13 @@ namespace OwinFramework.Pages.Restful.Builders
 
         public IService Build()
         {
-            if (!string.IsNullOrEmpty(_service.ClientScriptComponentName))
+            if (!string.IsNullOrEmpty(_service.ClientScriptComponentName) && !string.IsNullOrEmpty(_service.Name))
             {
                 _clientScriptComponent = new ClientScriptComponent
                 {
                     ServiceName = _service.Name,
-                    Name = _service.ClientScriptComponentName
+                    Name = _service.ClientScriptComponentName,
+                    Package = _service.Package
                 };
                 _nameManager.Register(_clientScriptComponent);
             }
@@ -202,7 +203,7 @@ namespace OwinFramework.Pages.Restful.Builders
             public IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
             {
                 writer.WriteComment("Client-side wrapper for the " + ServiceName + " service");
-                writer.WriteLineRaw(ClientScript);
+                writer.WriteFunction(ServiceName + "Service", null, ClientScript, null, Package);
                 return new WriteResult();
             }
 

@@ -55,9 +55,10 @@ namespace OwinFramework.Pages.CMS.Editor
             // Build the API services
 
             fluentBuilder.BuildUpService(null, typeof(LiveUpdateService))
+                .Name("liveUpdate")
                 .Route(_configuration.ServiceBasePath + "live-update/", new []{ Method.Get }, 0)
                 .RequiredPermission(Permissions.View, false)
-                .CreateComponent("liveUpdateService")
+                .CreateComponent("liveUpdateClient")
                 .Build();
 
             // Load templates and accumulate all of the CSS and JS assets
@@ -101,7 +102,7 @@ namespace OwinFramework.Pages.CMS.Editor
                 .DeployIn(module)
                 .NeedsComponent("libraries:vue")
                 .NeedsComponent("ajax:ajax")
-                .NeedsComponent("liveUpdateService")
+                .NeedsComponent("liveUpdateClient")
                 .NeedsComponent(assetsComponent)
                 .AddTemplate(liveUpdateLogTemplate)
                 .Build();

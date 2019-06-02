@@ -244,6 +244,9 @@ namespace OwinFramework.Pages.Framework.Builders
             Add<ZoneRegionAttribute>()
                 .Valid<ILayoutDefinition>()
                 .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [ZoneTemplate], [ZoneLayout] and [ZoneComponent] attributes.");
+
+            Add<GenerateClientScriptAttribute>("You can only add this attribute to service definitions. It instructs the service builder to generate client-side JavaScript for the service.")
+                .Valid<IServiceDefinition>();
         }
 
         private AttributeDefinition Add<T>(string usageMessage = null)
@@ -284,15 +287,16 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.UsesLayout != null) CheckAttribute<T, UsesLayoutAttribute>(result);
             if (attributes.RenderTemplates != null) CheckAttribute<T, RenderTemplateAttribute>(result);
             if (attributes.LayoutRegions != null) CheckAttribute<T, ZoneRegionAttribute>(result);
+            if (attributes.GenerateClientScript != null) CheckAttribute<T, GenerateClientScriptAttribute>(result);
 
             return result.Count > 0 ? result : null;
         }
 
-        private void CheckAttribute<TElement, TAttribute>(List<string> result)
+        private void CheckAttribute<TElement, TAttribute>(ICollection<string> result)
         {
             var definition = _attributeDefinitions[typeof(TAttribute)];
             var message = definition.Check<TElement>();
-            if (!String.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message))
                 result.Add(message);
         }
     }

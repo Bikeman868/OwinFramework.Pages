@@ -58,6 +58,7 @@
     <Compile Include="Attributes\EndpointAttribute.cs" />
     <Compile Include="Attributes\NeedsComponentAttribute.cs" />
     <Compile Include="Attributes\DataScopeAttribute.cs" />
+    <Compile Include="Attributes\GenerateClientScriptAttribute.cs" />
     <Compile Include="Attributes\ZoneTemplateAttribute.cs" />
     <Compile Include="Attributes\ZoneHtmlAttribute.cs" />
     <Compile Include="Attributes\RequiresIdentificationAttribute.cs" />

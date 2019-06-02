@@ -122,6 +122,12 @@ namespace OwinFramework.Pages.Core.Attributes
         public UsesLayoutAttribute UsesLayout;
 
         /// <summary>
+        /// For services, specifies that a component should be generated that
+        /// renders JavaScript into the page to make calls to the service
+        /// </summary>
+        public GenerateClientScriptAttribute GenerateClientScript;
+
+        /// <summary>
         /// Specifies the templates to render for this element
         /// </summary>
         public IList<RenderTemplateAttribute> RenderTemplates;
@@ -227,6 +233,7 @@ namespace OwinFramework.Pages.Core.Attributes
                 Style = Set(Style, attribute);
                 CacheOutput = Set(CacheOutput, attribute);
                 UsesLayout = Set(UsesLayout, attribute);
+                GenerateClientScript = Set(GenerateClientScript, attribute);
 
                 DeployCsss = Add(DeployCsss, attribute);
                 DeployFunctions = Add(DeployFunctions, attribute);

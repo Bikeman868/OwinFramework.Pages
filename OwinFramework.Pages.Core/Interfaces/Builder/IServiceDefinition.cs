@@ -83,6 +83,15 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IServiceDefinition Route(string basePath, Method[] methods, int priority);
 
         /// <summary>
+        /// Creates a component that renders client-side JavaScript into the page
+        /// making it easy to call the endpoints in this service from JavaScript.
+        /// Requires the "ajax" library or an equivalent implementation.
+        /// </summary>
+        /// <param name="componentName"></param>
+        /// <returns></returns>
+        IServiceDefinition CreateComponent(string componentName);
+
+        /// <summary>
         /// Builds the service
         /// </summary>
         IService Build();

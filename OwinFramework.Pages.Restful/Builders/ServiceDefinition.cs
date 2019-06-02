@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using OwinFramework.InterfacesV1.Middleware;
+using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Runtime;
 
 namespace OwinFramework.Pages.Restful.Builders
@@ -13,6 +17,8 @@ namespace OwinFramework.Pages.Restful.Builders
         private readonly INameManager _nameManager;
         private readonly Func<Type, object> _factory;
         private readonly Service _service;
+
+        private ClientScriptComponent _clientScriptComponent;
 
         public ServiceDefinition(
             Service service,
@@ -49,7 +55,12 @@ namespace OwinFramework.Pages.Restful.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolvePackageNames,
-                (nm, s, n) => s.Package = nm.ResolvePackage(n),
+                (nm, s, n) =>
+                {
+                    s.Package = nm.ResolvePackage(n);
+                    if (_clientScriptComponent != null)
+                        _clientScriptComponent.Package = _service.Package;
+                },
                 _service,
                 packageName);
 
@@ -123,10 +134,98 @@ namespace OwinFramework.Pages.Restful.Builders
             return this;
         }
 
+        public IServiceDefinition CreateComponent(string componentName)
+        {
+            _service.ClientScriptComponentName = componentName;
+            return this;
+        }
+
         public IService Build()
         {
-            _nameManager.AddResolutionHandler(NameResolutionPhase.InitializeRunables, () => _service.Initialize(_factory));
+            if (!string.IsNullOrEmpty(_service.ClientScriptComponentName))
+            {
+                _clientScriptComponent = new ClientScriptComponent
+                {
+                    ServiceName = _service.Name,
+                    Name = _service.ClientScriptComponentName
+                };
+                _nameManager.Register(_clientScriptComponent);
+            }
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.InitializeRunables,
+                () =>
+                {
+                    _service.Initialize(_factory);
+
+                    if (_clientScriptComponent != null)
+                        _clientScriptComponent.ClientScript = _service.ClientScript;
+                });
             return _service;
+        }
+
+        private class ClientScriptComponent: IComponent
+        {
+            public string ServiceName { get; set; }
+            public string ClientScript { get; set; }
+            public IModule Module { get; set; }
+            public AssetDeployment AssetDeployment { get; set; }
+            public IPackage Package{ get; set; }
+            public ElementType ElementType{get { return ElementType.Component; }}
+            public string Name { get; set; }
+
+            public IWriteResult WritePageArea(IRenderContext context, PageArea pageArea)
+            {
+                return new WriteResult();
+            }
+
+            public IEnumerable<PageArea> GetPageAreas()
+            {
+                return Enumerable.Empty<PageArea>();
+            }
+
+            public IWriteResult WriteInPageStyles(ICssWriter writer, Func<ICssWriter, IWriteResult, IWriteResult> childrenWriter)
+            {
+                return new WriteResult();
+            }
+
+            public IWriteResult WriteInPageFunctions(IJavascriptWriter writer, Func<IJavascriptWriter, IWriteResult, IWriteResult> childrenWriter)
+            {
+                return new WriteResult();
+            }
+
+            public IWriteResult WriteStaticCss(ICssWriter writer)
+            {
+                return new WriteResult();
+            }
+
+            public IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
+            {
+                writer.WriteComment("Client-side wrapper for the " + ServiceName + " service");
+                writer.WriteLineRaw(ClientScript);
+                return new WriteResult();
+            }
+
+            private class WriteResult: IWriteResult
+            {
+                bool IWriteResult.IsComplete
+                {
+                    get { return true; }
+                }
+
+                IWriteResult IWriteResult.Add(IWriteResult priorWriteResult)
+                {
+                    return this;
+                }
+
+                void IWriteResult.Wait(bool cancel)
+                {
+                }
+
+                void IDisposable.Dispose()
+                {
+                }
+            }
         }
     }
 }

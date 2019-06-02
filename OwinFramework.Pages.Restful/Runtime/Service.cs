@@ -49,6 +49,8 @@ namespace OwinFramework.Pages.Restful.Runtime
         public Type DeclaringType { get; set; }
         public Type DefaultDeserializerType { get; set; }
         public Type DefaultSerializerType { get; set; }
+        public string ClientScriptComponentName { get; set; }
+        public string ClientScript { get; set; }
 
         private readonly Regex _paramRegex = new Regex("{[^}]*}", RegexOptions.Compiled | RegexOptions.Singleline);
 
@@ -245,6 +247,8 @@ namespace OwinFramework.Pages.Restful.Runtime
                     Register(endpoint, httpMethods, relativePath);
                 }
             }
+
+            ClientScript = "var test='Hello world'";
         }
 
         T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)

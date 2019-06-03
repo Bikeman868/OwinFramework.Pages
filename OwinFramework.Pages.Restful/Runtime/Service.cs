@@ -255,11 +255,13 @@ namespace OwinFramework.Pages.Restful.Runtime
                         clientScript.AppendLine("  },");
                     firstEndpoint = false;
 
-                    clientScript.AppendLine("  " + char.ToLower(method.Name[0]) + method.Name.Substring(1) + ": function(callback, params) {");
+                    clientScript.AppendLine("  " + char.ToLower(method.Name[0]) + method.Name.Substring(1) + ": function(params, onSuccess, onDone) {");
                     clientScript.AppendLine("    var request = { isSuccess: function(ajax){ return ajax.status === 200; } };");
-                    clientScript.AppendLine("    request.url = \"/cms/api/live-update/register\";");
-                    clientScript.AppendLine("    request.body = \"\";");
-                    clientScript.AppendLine("    if (callback != undefined) request.onSuccess = function(ajax){ callback(ajax.response); }");
+                    clientScript.AppendLine("    request.url = \"/cms/api/live-update/" + method.Name.ToLower() + "\";");
+                    clientScript.AppendLine("    if (params != undefined) request.url = request.url + \"?id=\" + params.id");
+                    //clientScript.AppendLine("    request.body = \"\";");
+                    clientScript.AppendLine("    if (onSuccess != undefined) request.onSuccess = function(ajax){ onSuccess(ajax.response); }");
+                    clientScript.AppendLine("    if (onDone != undefined) request.onDone = onDone;");
                     clientScript.AppendLine("    ns.ajax.restModule.getJson(request);");
                 }
             }
@@ -267,51 +269,6 @@ namespace OwinFramework.Pages.Restful.Runtime
             if (!firstEndpoint) clientScript.AppendLine("  }");
             clientScript.AppendLine("}");
             ClientScript = clientScript.ToString();
-/*
-            ClientScript = 
-@"return {
-  register: function () {
-    ns.ajax.restModule.getJson({
-      url: ""/cms/api/live-update/register"",
-      isSuccess: function(ajax) {
-        return ajax.status === 200 && ajax.response.success;
-      },
-      onSuccess: function(ajax) {
-        liveUpdateService.clientId = ajax.response.id;
-      }
-    });
-  },
-  deregister: function () {
-    ns.ajax.restModule.getJson({
-      url: ""/cms/api/live-update/deregister?id="" + liveUpdateService.clientId,
-      isSuccess: function (ajax) {
-        return ajax.status === 200 && ajax.response.success;
-      },
-      onSuccess: function (ajax) {
-        liveUpdateService.clientId = undefined;
-      }
-    });
-  },
-  poll: function (onSuccess, onDone) {
-    if (liveUpdateService.clientId == undefined) {
-      onDone();
-    } else {
-      ns.ajax.restModule.getJson({
-        url: ""/cms/api/live-update/poll?id="" + liveUpdateService.clientId,
-        isSuccess: function(ajax) {
-          return ajax.status === 200 && ajax.response.success;
-        },
-        onSuccess: function(ajax) {
-          onSuccess(ajax.response.messages);
-        },
-        onDone: function(ajax) {
-          onDone();
-        }
-      });
-    }
-  }
-}";
-*/
         }
 
         T IDebuggable.GetDebugInfo<T>(int parentDepth, int childDepth)

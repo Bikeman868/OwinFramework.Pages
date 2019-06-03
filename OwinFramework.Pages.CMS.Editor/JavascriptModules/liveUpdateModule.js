@@ -33,26 +33,35 @@
 }();
 
 var liveUpdatePoller = function () {
-    ns.cmseditor.liveUpdateService.register();
+    ns.cmseditor.liveUpdateService.register(
+        null,
+        function (response) { liveUpdateData.clientId = response.id });
 
     window.addEventListener("beforeunload", function () {
-        ns.cmseditor.liveUpdateService.deregister();
+        ns.cmseditor.liveUpdateService.deregister(
+            { id: liveUpdateData.clientId });
     });
 
     var poll = function () {
-        ns.cmseditor.liveUpdateService.poll(
-            function(updates) {
-                if (updates && updates.length > 0) {
-                    for (let i = 0; i < updates.length; i++)
-                        liveUpdateData.add(updates[i]);
+        if (liveUpdateData.clientId == undefined) {
+            setTimeout(poll, 1000);
+        } else {
+            ns.cmseditor.liveUpdateService.poll(
+                {
+                    id: liveUpdateData.clientId
+                },
+                function(response) {
+                    if (response.updates && response.updates.length > 0) {
+                        for (let i = 0; i < response.updates.length; i++)
+                            liveUpdateData.add(response.updates[i]);
+                    }
+                },
+                function() {
+                    liveUpdateData.prune();
+                    setTimeout(poll, 3000);
                 }
-            },
-            function() {
-                liveUpdateData.prune();
-                setTimeout(poll, 3000);
-                    
-            }
-        );
+            );
+        }
     };
 
     poll();

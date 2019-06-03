@@ -251,18 +251,90 @@ namespace OwinFramework.Pages.Restful.Runtime
 
                     Register(endpoint, httpMethods, relativePath);
 
-                    if (!firstEndpoint)
-                        clientScript.AppendLine("  },");
+                    if (!firstEndpoint) clientScript.AppendLine("  },");
                     firstEndpoint = false;
 
-                    clientScript.AppendLine("  " + char.ToLower(method.Name[0]) + method.Name.Substring(1) + ": function(params, onSuccess, onDone) {");
-                    clientScript.AppendLine("    var request = { isSuccess: function(ajax){ return ajax.status === 200; } };");
-                    clientScript.AppendLine("    request.url = \"/cms/api/live-update/" + method.Name.ToLower() + "\";");
-                    clientScript.AppendLine("    if (params != undefined) request.url = request.url + \"?id=\" + params.id");
-                    //clientScript.AppendLine("    request.body = \"\";");
-                    clientScript.AppendLine("    if (onSuccess != undefined) request.onSuccess = function(ajax){ onSuccess(ajax.response); }");
-                    clientScript.AppendLine("    if (onDone != undefined) request.onDone = onDone;");
-                    clientScript.AppendLine("    ns.ajax.restModule.getJson(request);");
+                    var queryStringParameters = parameterAttributes
+                        .Where(p => (p.ParameterType & EndpointParameterType.QueryString) == EndpointParameterType.QueryString)
+                        .Select(p => p.ParameterName.ToLower())
+                        .ToList();
+
+                    var pathParameters = parameterAttributes
+                        .Where(p => (p.ParameterType & (EndpointParameterType.PathSegment | EndpointParameterType.QueryString)) == EndpointParameterType.PathSegment)
+                        .Select(p => p.ParameterName.ToLower())
+                        .ToList();
+
+                    var headerParameters = parameterAttributes
+                        .Where(p => (p.ParameterType & (EndpointParameterType.Header | EndpointParameterType.PathSegment | EndpointParameterType.QueryString)) == EndpointParameterType.Header)
+                        .Select(p => p.ParameterName.ToLower())
+                        .ToList();
+
+                    var formParameters = parameterAttributes
+                        .Where(p => (p.ParameterType & (EndpointParameterType.FormField | EndpointParameterType.Header | EndpointParameterType.PathSegment | EndpointParameterType.QueryString)) == EndpointParameterType.FormField)
+                        .Select(p => p.ParameterName.ToLower())
+                        .ToList();
+
+                        var methodName = char.ToLower(method.Name[0]) + method.Name.Substring(1);
+                        clientScript.AppendLine("  " + methodName + ": function(params, onSuccess, onDone) {");
+                        clientScript.AppendLine("    var request = { isSuccess: function(ajax){ return ajax.status === 200; } };");
+
+                        if (pathParameters.Count > 0)
+                        {
+                            var url = "\"" + path + "\"";
+                            foreach (var parameter in pathParameters)
+                                url = url.Replace("{" + parameter + "}", "\" + params." + parameter + " + \"");
+                            if (url.EndsWith(" + \"\"")) url = url.Substring(0, url.Length - 5);
+                            if (url.StartsWith("\"\" + ")) url = url.Substring(5);
+                            clientScript.AppendLine("    request.url = " + url + ";");
+                        }
+                        else
+                        {
+                            clientScript.AppendLine("    request.url = \"" + path + "\";");
+                        }
+
+                        if (queryStringParameters.Count > 0)
+                        {
+                            clientScript.AppendLine("    var query = \"\";");
+                            clientScript.AppendLine("    if (params != undefined) {");
+                            foreach (var parameter in queryStringParameters)
+                                clientScript.AppendLine("      if (params." + parameter + " != undefined) query += \"&" + parameter + "=\" + params." + parameter + ";");
+                            clientScript.AppendLine("    }");
+                            clientScript.AppendLine("    if (query.length > 0) request.url += \"?\" + query.substring(1);");
+                        }
+
+                        clientScript.AppendLine("    if (onSuccess != undefined) request.onSuccess = function(ajax){ onSuccess(ajax.response); }");
+                        clientScript.AppendLine("    if (onDone != undefined) request.onDone = onDone;");
+
+                    for (var i = httpMethods.Length - 1; i >= 0; i--)
+                    {
+                        var httpMethod = httpMethods[i];
+                        var functionCall = string.Empty;
+
+                        switch (httpMethod)
+                        {
+                            case Method.Get:
+                                functionCall = "ns.ajax.restModule.getJson(request)";
+                                break;
+                            case Method.Post:
+                                functionCall = "ns.ajax.restModule.postJson(request)";
+                                break;
+                            case Method.Put:
+                                functionCall = "ns.ajax.restModule.putJson(request)";
+                                break;
+                            case Method.Delete:
+                                functionCall = "ns.ajax.restModule.sendDelete(request)";
+                                break;
+                        }
+
+                        if (httpMethods.Length == 1)
+                            clientScript.AppendLine("    " + functionCall + ";");
+                        else if (i == 0)
+                            clientScript.AppendLine("    else " + functionCall + ";");
+                        else if (i == httpMethods.Length - 1)
+                            clientScript.AppendLine("    if (params.method == \"" + httpMethod.ToString().ToUpper() + "\") " + functionCall + ";");
+                        else
+                            clientScript.AppendLine("    else if (params.method == \"" + httpMethod.ToString().ToUpper() + "\") " + functionCall + ";");
+                    }
                 }
             }
 

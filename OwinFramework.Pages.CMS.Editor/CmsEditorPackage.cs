@@ -56,7 +56,7 @@ namespace OwinFramework.Pages.CMS.Editor
 
             fluentBuilder.BuildUpService(null, typeof(LiveUpdateService))
                 .Name("liveUpdate")
-                .Route(_configuration.ServiceBasePath + "live-update/", new []{ Method.Get }, 0)
+                .Route(_configuration.ServiceBasePath + "live-update/", new []{ Method.Get, Method.Post, Method.Delete }, 0)
                 .RequiredPermission(Permissions.View, false)
                 .CreateComponent("liveUpdateClient")
                 .Build();

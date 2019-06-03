@@ -202,7 +202,6 @@ namespace OwinFramework.Pages.Restful.Builders
 
             public IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
             {
-                writer.WriteComment("Client-side wrapper for the " + ServiceName + " service");
                 writer.WriteClass(ServiceName + "Service", ClientScript, Package);
                 return new WriteResult();
             }

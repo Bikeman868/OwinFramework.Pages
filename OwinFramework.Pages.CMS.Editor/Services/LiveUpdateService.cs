@@ -7,6 +7,7 @@ using OwinFramework.Pages.CMS.Editor.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate;
 using OwinFramework.Pages.Core.Attributes;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Restful.Interfaces;
 using OwinFramework.Pages.Restful.Parameters;
 
@@ -16,7 +17,7 @@ namespace OwinFramework.Pages.CMS.Editor.Services
     {
         private readonly ILiveUpdateReceiver _liveUpdateReceiver;
 
-        private Dictionary<long, Client> _connectedClients;
+        private readonly Dictionary<long, Client> _connectedClients;
         private long _nextId;
         private Thread _expiryThread;
 
@@ -63,7 +64,7 @@ namespace OwinFramework.Pages.CMS.Editor.Services
             _expiryThread.Start();
         }
 
-        [Endpoint]
+        [Endpoint(UrlPath = "session", Methods = new[]{ Method.Post })]
         public void Register(IEndpointRequest request)
         {
             var response = new Response
@@ -81,8 +82,8 @@ namespace OwinFramework.Pages.CMS.Editor.Services
             request.Success(response);
         }
 
-        [Endpoint]
-        [EndpointParameter("id", typeof(AnyValue<long>))]
+        [Endpoint(UrlPath = "session/{id}", Methods = new[]{ Method.Delete })]
+        [EndpointParameter("id", typeof(AnyValue<long>), EndpointParameterType.PathSegment)]
         public void Deregister(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
@@ -106,8 +107,8 @@ namespace OwinFramework.Pages.CMS.Editor.Services
             request.Success(response);
         }
 
-        [Endpoint]
-        [EndpointParameter("id", typeof(AnyValue<long>))]
+        [Endpoint(UrlPath = "updates/{id}")]
+        [EndpointParameter("id", typeof(AnyValue<long>), EndpointParameterType.PathSegment)]
         public void Poll(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");

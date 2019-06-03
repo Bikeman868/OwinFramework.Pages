@@ -61,6 +61,12 @@
         else
             ajax.setRequestHeader("Accept", "application/json");
 
+        if (request.headers != undefined) {
+            for (var i = 0; i < request.headers.length; i++) {
+                ajax.setRequestHeader(request.headers[i].name, request.headers[i].value);
+            }
+        }
+
         return ajax;
     }
 

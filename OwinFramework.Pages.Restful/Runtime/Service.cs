@@ -274,36 +274,47 @@ namespace OwinFramework.Pages.Restful.Runtime
                         .Select(p => p.ParameterName.ToLower())
                         .ToList();
 
-                        var methodName = char.ToLower(method.Name[0]) + method.Name.Substring(1);
-                        clientScript.AppendLine("  " + methodName + ": function(params, onSuccess, onDone) {");
-                        clientScript.AppendLine("    var request = { isSuccess: function(ajax){ return ajax.status === 200; } };");
+                    var methodName = char.ToLower(method.Name[0]) + method.Name.Substring(1);
+                    clientScript.AppendLine("  " + methodName + ": function(params, onSuccess, onDone) {");
+                    clientScript.AppendLine("    var request = { isSuccess: function(ajax){ return ajax.status === 200; } };");
 
-                        if (pathParameters.Count > 0)
-                        {
-                            var url = "\"" + path + "\"";
-                            foreach (var parameter in pathParameters)
-                                url = url.Replace("{" + parameter + "}", "\" + params." + parameter + " + \"");
-                            if (url.EndsWith(" + \"\"")) url = url.Substring(0, url.Length - 5);
-                            if (url.StartsWith("\"\" + ")) url = url.Substring(5);
-                            clientScript.AppendLine("    request.url = " + url + ";");
-                        }
-                        else
-                        {
-                            clientScript.AppendLine("    request.url = \"" + path + "\";");
-                        }
+                    if (pathParameters.Count > 0)
+                    {
+                        var url = "\"" + path + "\"";
+                        foreach (var parameter in pathParameters)
+                            url = url.Replace("{" + parameter + "}", "\" + params." + parameter + " + \"");
+                        if (url.EndsWith(" + \"\"")) url = url.Substring(0, url.Length - 5);
+                        if (url.StartsWith("\"\" + ")) url = url.Substring(5);
+                        clientScript.AppendLine("    request.url = " + url + ";");
+                    }
+                    else
+                    {
+                        clientScript.AppendLine("    request.url = \"" + path + "\";");
+                    }
 
-                        if (queryStringParameters.Count > 0)
-                        {
-                            clientScript.AppendLine("    var query = \"\";");
-                            clientScript.AppendLine("    if (params != undefined) {");
-                            foreach (var parameter in queryStringParameters)
-                                clientScript.AppendLine("      if (params." + parameter + " != undefined) query += \"&" + parameter + "=\" + params." + parameter + ";");
-                            clientScript.AppendLine("    }");
-                            clientScript.AppendLine("    if (query.length > 0) request.url += \"?\" + query.substring(1);");
-                        }
+                    if (queryStringParameters.Count > 0)
+                    {
+                        clientScript.AppendLine("    var query = \"\";");
+                        clientScript.AppendLine("    if (params != undefined) {");
+                        foreach (var parameter in queryStringParameters)
+                            clientScript.AppendLine("      if (params." + parameter + " != undefined) query += \"&" + parameter + "=\" + params." + parameter + ";");
+                        clientScript.AppendLine("    }");
+                        clientScript.AppendLine("    if (query.length > 0) request.url += \"?\" + query.substring(1);");
+                    }
 
-                        clientScript.AppendLine("    if (onSuccess != undefined) request.onSuccess = function(ajax){ onSuccess(ajax.response); }");
-                        clientScript.AppendLine("    if (onDone != undefined) request.onDone = onDone;");
+                    if (headerParameters.Count > 0)
+                    {
+                        clientScript.AppendLine("    request.headers = [");
+                        for (var i = 0; i < headerParameters.Count; i++)
+                        {
+                            var headerParameter = headerParameters[i];
+                            clientScript.AppendLine("      { name: \"" + headerParameter + "\", value: params." + headerParameter + " }" + (i == headerParameters.Count - 1 ? "" : ","));
+                        }
+                        clientScript.AppendLine("    ];");
+                    }
+
+                    clientScript.AppendLine("    if (onSuccess != undefined) request.onSuccess = function(ajax){ onSuccess(ajax.response); }");
+                    clientScript.AppendLine("    if (onDone != undefined) request.onDone = onDone;");
 
                     for (var i = httpMethods.Length - 1; i >= 0; i--)
                     {

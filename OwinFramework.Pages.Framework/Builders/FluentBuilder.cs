@@ -87,7 +87,17 @@ namespace OwinFramework.Pages.Framework.Builders
             var type = package.GetType();
             if (!_types.Add(type)) return package;
 
-            return BuildPackage(package, type, factory, namespaceName);
+            return BuildPackage(package, type, factory, namespaceName ?? package.NamespaceName);
+        }
+
+        IPackage IFluentBuilder.Register(
+            IPackage package, 
+            Func<Type, object> factory)
+        {
+            var type = package.GetType();
+            if (!_types.Add(type)) return package;
+
+            return BuildPackage(package, type, factory, package.NamespaceName);
         }
 
         #endregion

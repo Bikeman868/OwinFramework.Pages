@@ -35,7 +35,7 @@ namespace Sample1.SamplePackages
         /// 1. Most easy, least flexible
         /// 
         /// Decorate any class with the [IsRegion] attribute and the fluent builder
-        /// will construct and initialize an instance of the zone class for you.
+        /// will construct and initialize an instance of the region class for you.
         /// Other elements can refer to this region by its name.
         /// </summary>
         [IsRegion("region1")]
@@ -47,10 +47,10 @@ namespace Sample1.SamplePackages
         /// <summary>
         /// 2. Flexibiliy of overriding virtual methods in the base class
         /// 
-        /// By inheriting from zone you can override the virtual methods to alter 
-        /// the regions behavior. In this case the fluent builder needs to know how 
+        /// By inheriting from Region you can override the virtual methods to alter 
+        /// the region's behavior. In this case the fluent builder needs to know how 
         /// to construct your class so you will need to pass the optional factory 
-        /// method when you register with the fluent builder
+        /// parameter when you register with the fluent builder
         /// </summary>
         [IsRegion("region2")]
         [Container("ul")]
@@ -73,7 +73,7 @@ namespace Sample1.SamplePackages
         /// This also gives you the option of not registering the region by name and just
         /// use the class directly. If you go take this approach then the custom attributes
         /// will not automatically be applied. You can however make the attributes work
-        /// by using the zone Builder.
+        /// by using the Region Builder.
         /// </summary>
         [Container("ul")]
         [Repeat(typeof(NewsItem), null, "li")]
@@ -91,7 +91,7 @@ namespace Sample1.SamplePackages
         /// attributes. This is more powerful because we can introduce logic in C# to
         /// define the properties dynamically at runtime.
         /// In this example you can still use the Fluent Builder to register the region by
-        /// name, and you can still use the zone Builder to override the properties using
+        /// name, and you can still use the Region Builder to override the properties using
         /// attributes and fluent syntax.
         /// </summary>
         private class RegionExample4 : Region
@@ -133,7 +133,6 @@ namespace Sample1.SamplePackages
         /// work and should never be necessary, but it can be done if you really want to.
         /// You can still register your region with the fluent builder but many of the custom
         /// attributes will not do anything.
-        /// This class can
         /// </summary>
         private class RegionExample5 : IRegion, IDataConsumer
         {

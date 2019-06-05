@@ -23,7 +23,11 @@ namespace OwinFramework.Pages.Standard
     public class MenuPackage : Framework.Runtime.Package
     {
         public MenuPackage(IPackageDependenciesFactory dependencies)
-            : base(dependencies) { }
+            : base(dependencies)
+        {
+            Name = "menus";
+            NamespaceName = "menus";
+        }
 
         /// <summary>
         /// Defines an option on a menu. Each menu option can have a list of sub-options

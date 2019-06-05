@@ -109,6 +109,12 @@ namespace OwinFramework.Pages.CMS.Editor.Services
 
         [Endpoint(UrlPath = "updates/{id}")]
         [EndpointParameter("id", typeof(AnyValue<long>), EndpointParameterType.PathSegment)]
+
+        //[Endpoint(UrlPath = "updates", Methods = new[]{ Method.Post })]
+        //[EndpointParameter("id", typeof(AnyValue<long>), EndpointParameterType.FormField)]
+
+        //[Endpoint(UrlPath = "updates")]
+        //[EndpointParameter("id", typeof(AnyValue<long>))]
         public void Poll(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");

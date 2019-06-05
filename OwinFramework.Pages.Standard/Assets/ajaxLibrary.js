@@ -183,12 +183,40 @@
 
     // The passed in request object must have the following properties:
     // url = The URL of the endpoint to call
+    // body = The form fields to send with the request in the format
+    //        name=value&name=value&name=value
+    var putForm = function (request) {
+        request.method = "PUT";
+        request.responsetype = "json";
+        request.accept = "application/json";
+        request.contentType = "application/x-www-form-urlencoded";
+        var ajax = buildAjax(request);
+
+        sendAjax(ajax, request);
+    }
+
+    // The passed in request object must have the following properties:
+    // url = The URL of the endpoint to call
     // body = The JSON object to send with the request
     var postJson = function (request) {
         request.method = "POST";
         request.responsetype = "json";
         request.accept = "application/json";
         request.contentType = "application/json";
+        var ajax = buildAjax(request);
+
+        sendAjax(ajax, request);
+    }
+
+    // The passed in request object must have the following properties:
+    // url = The URL of the endpoint to call
+    // body = The form fields to send with the request in the format
+    //        name=value&name=value&name=value
+    var postForm = function (request) {
+        request.method = "POST";
+        request.responsetype = "json";
+        request.accept = "application/json";
+        request.contentType = "application/x-www-form-urlencoded";
         var ajax = buildAjax(request);
 
         sendAjax(ajax, request);
@@ -212,6 +240,8 @@
         getXml: getXml, // Performs a GET request and returns the results as a XMLDocument object
         putJson: putJson, // Performs a PUT request passing a JavaScript object
         postJson: postJson, // Performs a PUT request passing a JavaScript object
+        putForm: putForm, // Performs a PUT request passing a url encoded form
+        postForm: postForm, // Performs a PUT request passing a url encoded form
         sendDelete: sendDelete // Performs a DELETE request
     }
 }();

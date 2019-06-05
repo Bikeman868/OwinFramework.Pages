@@ -14,7 +14,11 @@ namespace OwinFramework.Pages.Standard
     public class LibrariesPackage : Framework.Runtime.Package
     {
         public LibrariesPackage(IPackageDependenciesFactory dependencies)
-            : base(dependencies) { }
+            : base(dependencies)
+        {
+            Name = "libraries";
+            NamespaceName = "libraries";
+        }
 
         /// <summary>
         /// This component renders a link to a library in the page head

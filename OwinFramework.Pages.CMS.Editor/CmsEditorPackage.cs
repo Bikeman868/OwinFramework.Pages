@@ -46,6 +46,7 @@ namespace OwinFramework.Pages.CMS.Editor
             _nameManager = nameManager;
 
             Name = "cms_editor";
+            NamespaceName = "cmseditor";
             _resourceManager = new ResourceManager(hostingEnvironment, new MimeTypeEvaluator());
             _configuration = new EditorConfiguration(configurationStore);
         }

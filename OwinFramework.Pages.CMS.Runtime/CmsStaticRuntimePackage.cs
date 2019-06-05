@@ -49,6 +49,9 @@ namespace OwinFramework.Pages.CMS.Runtime
             _dependencies = dependencies;
             _database = databaseReader;
             _config = configurationStore.Register("/owinFramework/pages/cms", ConfigurationChanged, new CmsConfiguration());
+
+            Name = "cms";
+            NamespaceName = "cms";
         }
 
         private void ConfigurationChanged(CmsConfiguration configuration)

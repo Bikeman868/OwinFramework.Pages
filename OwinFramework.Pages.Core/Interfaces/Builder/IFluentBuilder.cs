@@ -26,7 +26,17 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="factory">If this package includes services that you must
         /// supply a factory method here. It will only be used to construct
         /// instances of services</param>
-        IPackage Register(IPackage package, string namespaceName, Func<Type, object> factory = null);
+        IPackage Register(IPackage package, string namespaceName = null, Func<Type, object> factory = null);
+
+        /// <summary>
+        /// Registers all components, layouts, regions etc defined in the package using
+        /// the default namespace for the package
+        /// </summary>
+        /// <param name="package">The package instance to register</param>
+        /// <param name="factory">If this package includes services that you must
+        /// supply a factory method here. It will only be used to construct
+        /// instances of services</param>
+        IPackage Register(IPackage package, Func<Type, object> factory);
 
         /// <summary>
         /// Searches within the given assembly for all eleemnts and

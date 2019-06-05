@@ -10,7 +10,11 @@ namespace OwinFramework.Pages.Standard
     public class LayoutsPackage : Framework.Runtime.Package
     {
         public LayoutsPackage(IPackageDependenciesFactory dependencies)
-            : base(dependencies) { }
+            : base(dependencies)
+        {
+            Name = "layouts";
+            NamespaceName = "layouts";
+        }
 
         public override IPackage Build(IFluentBuilder builder)
         {

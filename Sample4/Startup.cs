@@ -71,6 +71,11 @@ namespace Sample4
             // that implements the various interfaces like IPage, IComponent etc
             var fluentBuilder = ninject.Get<IFluentBuilder>();
 
+            // If you want to use dependency injection with your elements then you will need
+            // to define a factory method so that the fluent builder can construct the classes
+            // that it finds in your assemblies.
+            Func<Type, object> factory = t => ninject.Get(t);
+
             // You must install build engines before trying to build elements using the
             // fluent builder. You can use the built-in engines, install NuGet packages
             // that provide build engines, or write your own.
@@ -87,12 +92,14 @@ namespace Sample4
             // package by putting the namespace name and a colon in front of the element
             // name. For example after loading the menu package into the "menus" namespace
             // your application can refer to the desktop menu region as "menus:desktop_menu"
-            fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus", t => ninject.Get(t));
-            fluentBuilder.Register(ninject.Get<LayoutsPackage>(), "layouts", t => ninject.Get(t));
-            fluentBuilder.Register(ninject.Get<LibrariesPackage>(), "libraries", t => ninject.Get(t));
-            fluentBuilder.Register(ninject.Get<AjaxPackage>(), "ajax", t => ninject.Get(t));
-            fluentBuilder.Register(ninject.Get<CmsStaticRuntimePackage>(), "cms", t => ninject.Get(t));
-            fluentBuilder.Register(ninject.Get<CmsEditorPackage>(), "cmseditor", t => ninject.Get(t));
+            // Packages also have a default namespace to use if you don't specify one in
+            // your application code.
+            fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus", factory);
+            fluentBuilder.Register(ninject.Get<LayoutsPackage>(), factory);
+            fluentBuilder.Register(ninject.Get<LibrariesPackage>(), factory);
+            fluentBuilder.Register(ninject.Get<AjaxPackage>(), t => factory);
+            fluentBuilder.Register(ninject.Get<CmsStaticRuntimePackage>(), factory);
+            fluentBuilder.Register(ninject.Get<CmsEditorPackage>(), factory);
 
             // Register all of the elements defined in this assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
@@ -106,7 +113,7 @@ namespace Sample4
             fileSystemLoader.Load(mustacheParser, p => p.Value.EndsWith(".html"));
 
             // Now that all of the elements are loaded an registered we can resolve name
-            // references between elements
+            // references between elements binding them together into a runable website
             nameManager.Bind();
         }
     }

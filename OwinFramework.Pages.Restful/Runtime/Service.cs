@@ -282,7 +282,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     {
                         var url = "\"" + path + "\"";
                         foreach (var parameter in pathParameters)
-                            url = url.Replace("{" + parameter + "}", "\" + params." + parameter + " + \"");
+                            url = url.Replace("{" + parameter + "}", "\" + encodeURIComponent(params." + parameter + ") + \"");
                         if (url.EndsWith(" + \"\"")) url = url.Substring(0, url.Length - 5);
                         if (url.StartsWith("\"\" + ")) url = url.Substring(5);
                         clientScript.AppendLine("    request.url = " + url + ";");
@@ -297,7 +297,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         clientScript.AppendLine("    var query = \"\";");
                         clientScript.AppendLine("    if (params != undefined) {");
                         foreach (var parameter in queryStringParameters)
-                            clientScript.AppendLine("      if (params." + parameter + " != undefined) query += \"&" + parameter + "=\" + params." + parameter + ";");
+                            clientScript.AppendLine("      if (params." + parameter + " != undefined) query += \"&" + parameter + "=\" + encodeURIComponent(params." + parameter + ");");
                         clientScript.AppendLine("    }");
                         clientScript.AppendLine("    if (query.length > 0) request.url += \"?\" + query.substring(1);");
                     }
@@ -311,6 +311,18 @@ namespace OwinFramework.Pages.Restful.Runtime
                             clientScript.AppendLine("      { name: \"" + headerParameter + "\", value: params." + headerParameter + " }" + (i == headerParameters.Count - 1 ? "" : ","));
                         }
                         clientScript.AppendLine("    ];");
+                    }
+
+                    if (formParameters.Count > 0)
+                    {
+                        clientScript.AppendLine("    if (params != undefined) {");
+                        clientScript.AppendLine("      var form = \"\";");
+                        foreach (var parameter in formParameters)
+                          clientScript.AppendLine("      if (params." + parameter + " != undefined) form += \"&" + parameter + "=\" + encodeURIComponent(params." + parameter + ");");
+                        clientScript.AppendLine("      if (form.length > 0) {");
+                        clientScript.AppendLine("        request.body = form.substring(1);");
+                        clientScript.AppendLine("      }");
+                        clientScript.AppendLine("    }");
                     }
 
                     clientScript.AppendLine("    if (onSuccess != undefined) request.onSuccess = function(ajax){ onSuccess(ajax.response); }");
@@ -327,7 +339,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                                 functionCall = "ns.ajax.restModule.getJson(request)";
                                 break;
                             case Method.Post:
-                                functionCall = "ns.ajax.restModule.postJson(request)";
+                                functionCall = formParameters.Count > 0 ? "ns.ajax.restModule.postForm(request)" : "ns.ajax.restModule.postJson(request)";
                                 break;
                             case Method.Put:
                                 functionCall = "ns.ajax.restModule.putJson(request)";

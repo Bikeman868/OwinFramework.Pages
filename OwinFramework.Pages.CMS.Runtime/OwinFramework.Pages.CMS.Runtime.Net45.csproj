@@ -33,10 +33,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\net45\Release\OwinFramework.Pages.CMS.Runtime.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ioc.Modules">
       <HintPath>..\packages\Ioc.Modules\lib\net45\Ioc.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\net45\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Prius.Contracts">
       <HintPath>..\packages\Prius\lib\net45\Prius.Contracts.dll</HintPath>
@@ -51,33 +56,67 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Urchin.Client">
+      <HintPath>..\packages\net45\Urchin.Client\lib\net45\Urchin.Client.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Configuration\DataLayer.cs" />
+    <Compile Include="CmsStaticRuntimePackage.cs" />
+    <Compile Include="Configuration\CmsConfiguration.cs" />
     <Compile Include="Data\TestDatabaseReader.cs" />
+    <Compile Include="Data\TestDatabaseReaderBase.cs" />
     <Compile Include="Interfaces\Database\AuditRecord.cs" />
+    <Compile Include="Interfaces\Database\ComponentVersionRecord.cs" />
+    <Compile Include="Interfaces\Database\DataScopeRecord.cs" />
+    <Compile Include="Interfaces\Database\DataTypeRecord.cs" />
+    <Compile Include="Interfaces\Database\DataTypeVersionRecord.cs" />
+    <Compile Include="Interfaces\Database\ElementComponentRecord.cs" />
+    <Compile Include="Interfaces\Database\ElementDataScopeRecord.cs" />
+    <Compile Include="Interfaces\Database\ElementPropertyValueRecord.cs" />
     <Compile Include="Interfaces\Database\ElementVersionRecordBase.cs" />
     <Compile Include="Interfaces\Database\ElementRecordBase.cs" />
     <Compile Include="Interfaces\Database\ElementPropertyRecord.cs" />
+    <Compile Include="Interfaces\Database\EnvironmentRecord.cs" />
+    <Compile Include="Interfaces\Database\LayoutZoneRecord.cs" />
+    <Compile Include="Interfaces\Database\ModuleVersionRecord.cs" />
+    <Compile Include="Interfaces\Database\PageRouteRecord.cs" />
     <Compile Include="Interfaces\Database\PageVersionRecord.cs" />
-    <Compile Include="Interfaces\Database\VersionRecord.cs" />
     <Compile Include="Interfaces\Database\LayoutVersionRecord.cs" />
     <Compile Include="Interfaces\Database\LayoutRecord.cs" />
     <Compile Include="Interfaces\Database\ComponentRecord.cs" />
-    <Compile Include="Interfaces\Database\PackageRecord.cs" />
     <Compile Include="Interfaces\Database\ModuleRecord.cs" />
+    <Compile Include="Interfaces\Database\RecordBase.cs" />
     <Compile Include="Interfaces\Database\RegionRecord.cs" />
     <Compile Include="Interfaces\Database\PageRecord.cs" />
+    <Compile Include="Interfaces\Database\RegionTemplateRecord.cs" />
+    <Compile Include="Interfaces\Database\RegionVersionRecord.cs" />
     <Compile Include="Interfaces\Database\UpdateResult.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionComponentRecord.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionDataTypeRecord.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionLayoutRecord.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionPageRecord.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionRecord.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionRegion.cs" />
     <Compile Include="Interfaces\IDatabaseUpdater.cs" />
     <Compile Include="Interfaces\IDatabaseReader.cs" />
+    <Compile Include="Interfaces\ILiveUpdateReceiver.cs" />
+    <Compile Include="Interfaces\ILiveUpdateSender.cs" />
+    <Compile Include="Interfaces\LiveUpdate\ElementReference.cs" />
+    <Compile Include="Interfaces\LiveUpdate\ElementVersionReference.cs" />
+    <Compile Include="Interfaces\LiveUpdate\ILiveUpdateRecipient.cs" />
+    <Compile Include="Interfaces\LiveUpdate\MessageDto.cs" />
+    <Compile Include="Interfaces\LiveUpdate\PropertyChange.cs" />
+    <Compile Include="Interfaces\LiveUpdate\WebsiteVersionChange.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Synchronization\DatabaseSynchronizer.cs" />
+    <Compile Include="Synchronization\InProcessSynchronizer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LICENSE" />
     <None Include="OwinFramework.Pages.CMS.Runtime.Net45.paket.references" />
     <None Include="paket.template" />
   </ItemGroup>
@@ -87,7 +126,10 @@
       <Name>OwinFramework.Pages.Core.Net45</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="SQL\MySQL\LiveUpdate.sql" />
+    <Content Include="ToDo.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

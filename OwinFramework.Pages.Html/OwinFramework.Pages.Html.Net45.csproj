@@ -34,6 +34,9 @@
     <DocumentationFile>bin\net45\Release\OwinFramework.Pages.Html.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dotless.ClientOnly">
+      <HintPath>..\packages\DotlessClientOnly\lib\dotless.ClientOnly.dll</HintPath>
+    </Reference>
     <Reference Include="OwinFramework, Version=2.6.8.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\net45\Owin.Framework\lib\net45\OwinFramework.dll</HintPath>
@@ -56,11 +59,13 @@
     <Compile Include="Builders\CssDefinition.cs" />
     <Compile Include="Builders\FunctionDefinition.cs" />
     <Compile Include="Builders\HtmlHelper.cs" />
+    <Compile Include="Builders\LessDefinition.cs" />
     <Compile Include="Elements\AssetDeploymentMixin.cs" />
     <Compile Include="Elements\HtmlComponent.cs" />
+    <Compile Include="Elements\LayoutZoneRegion.cs" />
     <Compile Include="Elements\PageComponent.cs" />
     <Compile Include="Elements\PageElementDependencies.cs" />
-    <Compile Include="Elements\RegionComponent.cs" />
+    <Compile Include="Elements\PageZone.cs" />
     <Compile Include="Elements\TemplateComponent.cs" />
     <Compile Include="Interfaces\IHtmlHelper.cs" />
     <Compile Include="Builders\LayoutBuilder.cs" />
@@ -88,7 +93,6 @@
     <Compile Include="Elements\PageLayout.cs" />
     <Compile Include="Builders\LayoutDefinition.cs" />
     <Compile Include="Elements\StaticHtmlElement.cs" />
-    <Compile Include="Elements\PageRegion.cs" />
     <Compile Include="Builders\RegionDefinition.cs" />
     <Compile Include="Runtime\ComponentDependencies.cs" />
     <Compile Include="Runtime\ComponentDependenciesFactory.cs" />
@@ -173,8 +177,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="LICENSE" />
     <None Include="OwinFramework.Pages.Html.Net45.paket.references" />
     <EmbeddedResource Include="Runtime\html-entities.json" />
+    <None Include="readme.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

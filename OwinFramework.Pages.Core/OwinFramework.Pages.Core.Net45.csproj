@@ -54,13 +54,11 @@
     <Compile Include="Attributes\DeployCssAttribute.cs" />
     <Compile Include="Attributes\EndpointAttribute.cs" />
     <Compile Include="Attributes\EndpointParameterAttribute.cs" />
+    <Compile Include="Attributes\GenerateClientScriptAttribute.cs" />
     <Compile Include="Attributes\IsDataProviderAttribute.cs" />
     <Compile Include="Attributes\DeployFunctionAttribute.cs" />
-    <Compile Include="Attributes\LayoutRegionAttribute.cs" />
     <Compile Include="Attributes\NeedsComponentAttribute.cs" />
     <Compile Include="Attributes\DataScopeAttribute.cs" />
-    <Compile Include="Attributes\RegionHtmlAttribute.cs" />
-    <Compile Include="Attributes\RegionTemplateAttribute.cs" />
     <Compile Include="Attributes\RenderTemplateAttribute.cs" />
     <Compile Include="Attributes\RequiresIdentificationAttribute.cs" />
     <Compile Include="Attributes\SuppliesDataAttribute.cs" />
@@ -81,8 +79,6 @@
     <Compile Include="Attributes\DescriptionAttribute.cs" />
     <Compile Include="Attributes\OptionAttribute.cs" />
     <Compile Include="Attributes\ExampleAttribute.cs" />
-    <Compile Include="Attributes\RegionComponentAttribute.cs" />
-    <Compile Include="Attributes\RegionLayoutAttribute.cs" />
     <Compile Include="Attributes\IsServiceAttribute.cs" />
     <Compile Include="Attributes\IsRegionAttribute.cs" />
     <Compile Include="Attributes\IsModuleAttribute.cs" />
@@ -90,6 +86,11 @@
     <Compile Include="Attributes\IsPackageAttribute.cs" />
     <Compile Include="Attributes\IsLayoutAttribute.cs" />
     <Compile Include="Attributes\IsPageAttribute.cs" />
+    <Compile Include="Attributes\ZoneComponentAttribute.cs" />
+    <Compile Include="Attributes\ZoneHtmlAttribute.cs" />
+    <Compile Include="Attributes\ZoneLayoutAttribute.cs" />
+    <Compile Include="Attributes\ZoneRegionAttribute.cs" />
+    <Compile Include="Attributes\ZoneTemplateAttribute.cs" />
     <Compile Include="Collections\ArrayFactory.cs" />
     <Compile Include="Collections\DictionaryFactory.cs" />
     <Compile Include="Collections\Disposable.cs" />
@@ -276,7 +277,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="paket.template" />
+    <None Include="LICENSE" />
     <None Include="OwinFramework.Pages.Core.Net45.csproj.paket.references" />
+    <None Include="readme.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

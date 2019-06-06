@@ -9,8 +9,11 @@ description
   to write unit tests for your application.
 title Owin Framework Pages Mocks
 releasenotes
-  Pages and services can be called anonymously unless the [RequiresIdentification]
-  attribute is attached or the endpoint has a required permission
+  Services can generate a component that renders a client-side JavaScript
+  to call the service.
+  The parts of a layout are renamed from "Regions" to "Zones" to avoid
+  consusion between this and the Region element. This affects all properties
+  methods and attributes that relate to the regions/zones of a layout.
 licenseUrl http://www.apache.org/licenses/LICENSE-2.0
 projecturl http://owinframework.net/content/project/owinframework.pages.mocks/landing
 

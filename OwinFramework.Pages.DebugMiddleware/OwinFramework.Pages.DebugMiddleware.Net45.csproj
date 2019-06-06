@@ -107,6 +107,7 @@
     <Content Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LICENSE" />
     <None Include="OwinFramework.Pages.DebugMiddleware.Net45.paket.references" />
   </ItemGroup>
   <PropertyGroup>

@@ -79,7 +79,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="LICENSE" />
     <None Include="OwinFramework.Pages.Restful.Net45.paket.references" />
+    <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="paket.template" />

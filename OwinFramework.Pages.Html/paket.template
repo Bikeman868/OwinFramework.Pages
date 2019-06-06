@@ -8,8 +8,11 @@ description
   enable your website to respond to requests by returning pages of Html.
 title Owin Framework Pages Html
 releasenotes
-  Pages and services can be called anonymously unless the [RequiresIdentification]
-  attribute is attached or the endpoint has a required permission
+  Services can generate a component that renders a client-side JavaScript
+  to call the service.
+  The parts of a layout are renamed from "Regions" to "Zones" to avoid
+  consusion between this and the Region element. This affects all properties
+  methods and attributes that relate to the regions/zones of a layout.
 licenseUrl http://www.apache.org/licenses/LICENSE-2.0
 projecturl http://owinframework.net/content/project/owinframework.pages.html/landing
 
@@ -33,7 +36,7 @@ dependencies
   
   Ioc.Modules ~> LOCKED:Minor
   Urchin.Client ~> LOCKED:Minor
-  dotless.ClientOnly ~> LOCKED:Minor
+  DotlessClientOnly ~> LOCKED:Minor
 
   framework: net40
     Microsoft.Owin = LOCKED:Build-net40

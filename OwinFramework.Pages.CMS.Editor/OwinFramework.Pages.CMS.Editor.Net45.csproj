@@ -33,10 +33,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\net45\Release\OwinFramework.Pages.CMS.Editor.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ioc.Modules">
       <HintPath>..\packages\Ioc.Modules\lib\net45\Ioc.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\net45\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework, Version=2.6.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\net45\Owin.Framework\lib\net45\OwinFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,13 +54,20 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Urchin.Client">
+      <HintPath>..\packages\net45\Urchin.Client\lib\net45\Urchin.Client.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CmsEditorPackage.cs" />
+    <Compile Include="Configuration\EditorConfiguration.cs" />
+    <Compile Include="Configuration\Permissions.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\LiveUpdateService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.CMS.Runtime\OwinFramework.Pages.CMS.Runtime.Net45.csproj">
@@ -62,10 +78,22 @@
       <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
       <Name>OwinFramework.Pages.Core.Net45</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net45.csproj">
+      <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>
+      <Name>OwinFramework.Pages.Restful.Net45</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="OwinFramework.Pages.CMS.Editor.Net45.paket.references" />
     <None Include="paket.template" />
+    <EmbeddedResource Include="Templates\LiveUpdateLog.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="JavascriptModules\liveUpdateModule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\LiveUpdateLog.html" />
+    <EmbeddedResource Include="Templates\LiveUpdateLog.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

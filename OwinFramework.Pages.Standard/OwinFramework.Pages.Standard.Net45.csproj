@@ -34,6 +34,10 @@
     <DocumentationFile>bin\Net45\Release\OwinFramework.Pages.Standard.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OwinFramework, Version=2.6.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\net45\Owin.Framework\lib\net45\OwinFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +50,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AjaxPackage.cs" />
     <Compile Include="LayoutsPackage.cs" />
     <Compile Include="LibrariesPackage.cs" />
     <Compile Include="MenuPackage.cs" />
@@ -68,8 +73,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="LICENSE" />
     <None Include="OwinFramework.Pages.Standard.Net45.paket.references" />
     <None Include="paket.template" />
+    <None Include="readme.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\ajaxLibrary.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

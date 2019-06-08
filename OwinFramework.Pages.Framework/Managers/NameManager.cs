@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Framework.Interfaces;
 
 namespace OwinFramework.Pages.Framework.Managers
 {
@@ -29,8 +32,10 @@ namespace OwinFramework.Pages.Framework.Managers
 
         private readonly IDictionary<string, HashSet<string>> _assetNames;
         private readonly Random _random;
+        private bool _debugLogging;
 
-        public NameManager()
+        public NameManager(
+            IFrameworkConfiguration frameworkConfiguration)
         {
             _pendingActions = new List<PendingActionBase>();
 
@@ -51,6 +56,7 @@ namespace OwinFramework.Pages.Framework.Managers
             _pendingRunableRegistrations = new List<IRunable>();
 
             _random = new Random();
+            frameworkConfiguration.Subscribe(config => _debugLogging = config.DebugLogging);
         }
 
         #region Name registration
@@ -58,7 +64,14 @@ namespace OwinFramework.Pages.Framework.Managers
         public INameManager Register(IElement element)
         {
             if (string.IsNullOrEmpty(element.Name))
+            {
                 element.Name = GenerateElementName(element.Package);
+
+                if (_debugLogging)
+                    Trace.WriteLine("Name manager assigned '" + element.Name + 
+                        "' to anonymous " + element.ElementType + " of type " + 
+                        element.GetType().DisplayName());
+            }
             else
                 ValidateElementName(element.Name, element.Package);
 
@@ -73,7 +86,14 @@ namespace OwinFramework.Pages.Framework.Managers
         public INameManager Register(IRunable runable)
         {
             if (string.IsNullOrEmpty(runable.Name))
+            {
                 runable.Name = GenerateElementName(runable.Package);
+
+                if (_debugLogging)
+                    Trace.WriteLine("Name manager assigned '" + runable.Name + 
+                        "' to anonymous " + runable.ElementType + " of type " + 
+                        runable.GetType().DisplayName());
+            }
             else
                 ValidateElementName(runable.Name, runable.Package);
 
@@ -88,7 +108,14 @@ namespace OwinFramework.Pages.Framework.Managers
         public INameManager Register(IModule module)
         {
             if (string.IsNullOrEmpty(module.Name))
-                module.Name = GenerateNamespaceName(String.Empty);
+            {
+                module.Name = GenerateNamespaceName(string.Empty);
+
+                if (_debugLogging)
+                    Trace.WriteLine("Name manager assigned '" + module.Name + 
+                        "' to anonymous " + module.ElementType + " of type " + 
+                        module.GetType().DisplayName());
+            }
 
             lock (_modules) _modules[module.Name] = module;
 
@@ -98,12 +125,27 @@ namespace OwinFramework.Pages.Framework.Managers
         public INameManager Register(IPackage package)
         {
             if (string.IsNullOrEmpty(package.NamespaceName))
-                package.NamespaceName = GenerateNamespaceName(String.Empty);
+            {
+                package.NamespaceName = GenerateNamespaceName(string.Empty);
+
+                if (_debugLogging)
+                    Trace.WriteLine("Name manager assigned namespace '" + package.NamespaceName + 
+                        "' to anonymous " + package.ElementType + " of type " + 
+                        package.GetType().DisplayName());
+            }
             else
+            {
                 ValidateElementName(package.NamespaceName, null);
+            }
 
             if (string.IsNullOrEmpty(package.Name))
+            {
                 package.Name = package.NamespaceName;
+
+                if (_debugLogging)
+                    Trace.WriteLine("Name manager assigned namespace as the name of anonymous " + 
+                        package.ElementType + " of type " + package.GetType().DisplayName());
+            }
 
             lock(_packages) _packages[package.Name] = package;
 
@@ -116,15 +158,29 @@ namespace OwinFramework.Pages.Framework.Managers
 
             lock (_templates) _templates[path] = template;
 
+            if (_debugLogging)
+                Trace.WriteLine("Name manager registering template path '" + path + 
+                    "' to " + (template.IsStatic ? "static" : "dynamic") + " template of type " + 
+                    template.GetType().DisplayName());
+
             return this;
         }
 
         public INameManager Register(IDataProvider dataProvider)
         {
             if (string.IsNullOrEmpty(dataProvider.Name))
+            {
                 dataProvider.Name = GenerateElementName(dataProvider.Package);
+
+                if (_debugLogging)
+                    Trace.WriteLine("Name manager assigned '" + dataProvider.Name +
+                                    "' to anonymous " + dataProvider.ElementType + " of type " +
+                                    dataProvider.GetType().DisplayName());
+            }
             else
+            {
                 ValidateElementName(dataProvider.Name, dataProvider.Package);
+            }
 
             if (dataProvider.Package == null)
                 _pendingDataProviderRegistrations.Add(dataProvider);

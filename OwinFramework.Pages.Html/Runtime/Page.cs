@@ -206,7 +206,7 @@ namespace OwinFramework.Pages.Html.Runtime
                         break;
                 }
 
-#if TRACE
+#if DEBUG
                 System.Diagnostics.Trace.WriteLine("   " + name + " deployed to " + deployment);
 #endif
             }

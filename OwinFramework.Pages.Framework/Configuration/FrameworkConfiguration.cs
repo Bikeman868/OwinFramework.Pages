@@ -23,6 +23,9 @@ namespace OwinFramework.Pages.Framework.Configuration
         [JsonProperty("assetVersion")]
         public string AssetVersion { get; private set; }
 
+        [JsonProperty("debugLogging")]
+        public bool DebugLogging { get; private set; }
+
         #region Implementation details
 
         private readonly List<Action<IFrameworkConfiguration>> _subscribers;
@@ -34,6 +37,7 @@ namespace OwinFramework.Pages.Framework.Configuration
             AssetRootPath = "/assets";
             AssetCacheTime = TimeSpan.FromHours(1);
             AssetVersion = "1";
+            DebugLogging = false;
         }
 
         public FrameworkConfiguration(IConfigurationStore configurationStore)
@@ -48,6 +52,7 @@ namespace OwinFramework.Pages.Framework.Configuration
                     AssetRootPath = c.AssetRootPath;
                     AssetCacheTime = c.AssetCacheTime;
                     AssetVersion = c.AssetVersion;
+                    DebugLogging = c.DebugLogging;
 
                     lock(_subscribers)
                         foreach (var subscriber in _subscribers)

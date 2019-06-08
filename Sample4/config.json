@@ -1,37 +1,40 @@
 ﻿{
-    "prius": { 
-        "databases":[
+    "prius": {
+        "databases": [
             {
-                "name":"cms-update", 
-                "type":"MySql", 
-                "connectionString":"Server=localhost;Database=cms_update;Uid=svc_test;Pwd=password;"
+                "name": "cms-update",
+                "type": "MySql",
+                "connectionString": "Server=localhost;Database=cms_update;Uid=svc_test;Pwd=password;"
             },
             {
-                "name":"cms-website", 
-                "type":"MySql", 
-                "connectionString":"Server=localhost;Database=cms_website;Uid=svc_test;Pwd=password;"
+                "name": "cms-website",
+                "type": "MySql",
+                "connectionString": "Server=localhost;Database=cms_website;Uid=svc_test;Pwd=password;"
             }
         ],
-        "fallbackPolicies":[
-            {"name":"none", "allowedFailurePercent":100}
+        "fallbackPolicies": [
+            { "name": "none", "allowedFailurePercent": 100 }
         ],
-        "repositories":[
+        "repositories": [
             {
-                "name":"cms-update",
-                "clusters":[
-                    {"sequence":1, "databases":["cms-update"], "fallbackPolicy":"none"}
+                "name": "cms-update",
+                "clusters": [
+                    { "sequence": 1, "databases": [ "cms-update" ], "fallbackPolicy": "none" }
                 ]
             },
             {
-                "name":"cms-website",
-                "clusters":[
-                    {"sequence":1, "databases":["cms-website"], "fallbackPolicy":"none"}
+                "name": "cms-website",
+                "clusters": [
+                    { "sequence": 1, "databases": [ "cms-website" ], "fallbackPolicy": "none" }
                 ]
             }
         ]
     },
     "owinFramework": {
         "pages": {
+            "framework": { 
+                "debugLogging":  false
+            },
             "html": {
                 "includeComments": true,
                 "indented": true

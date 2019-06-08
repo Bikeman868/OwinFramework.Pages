@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Exceptions;
+using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Framework.Interfaces;
 
 namespace OwinFramework.Pages.Framework.Builders
 {
@@ -36,11 +40,14 @@ namespace OwinFramework.Pages.Framework.Builders
         private readonly IPackage _packageContext;
         private readonly Func<Type, object> _factory;
 
+        private bool _debugLogging;
+
         public FluentBuilder(
             INameManager nameManager,
             IDataCatalog dataCatalog,
             IDataDependencyFactory dataDependencyFactory,
-            IDataSupplierFactory dataSupplierFactory)
+            IDataSupplierFactory dataSupplierFactory,
+            IFrameworkConfiguration frameworkConfiguration)
         {
             _nameManager = nameManager;
             _dataCatalog = dataCatalog;
@@ -48,6 +55,8 @@ namespace OwinFramework.Pages.Framework.Builders
             _dataSupplierFactory = dataSupplierFactory;
             _assemblies = new HashSet<string>();
             _types = new HashSet<Type>();
+
+            frameworkConfiguration.Subscribe(config => _debugLogging = config.DebugLogging);
         }
 
         private FluentBuilder(
@@ -87,6 +96,11 @@ namespace OwinFramework.Pages.Framework.Builders
             var type = package.GetType();
             if (!_types.Add(type)) return package;
 
+            if (_debugLogging) Trace.WriteLine(
+                "Fluent builder registering package " + 
+                type.FullName + 
+                (string.IsNullOrEmpty(namespaceName) ? " with its default namespace" : " with namespace " + namespaceName));
+
             return BuildPackage(package, type, factory, namespaceName ?? package.NamespaceName);
         }
 
@@ -96,6 +110,8 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             var type = package.GetType();
             if (!_types.Add(type)) return package;
+
+            if (_debugLogging) Trace.WriteLine("Fluent builder registering package " + type.FullName + " with its default namespace");
 
             return BuildPackage(package, type, factory, package.NamespaceName);
         }
@@ -109,23 +125,24 @@ namespace OwinFramework.Pages.Framework.Builders
             if (!_assemblies.Add(assembly.FullName))
                 return;
 
-            var types = assembly.GetTypes();
+            if (_debugLogging) Trace.WriteLine("Fluent builder is registering elements from assembly " + assembly.FullName);
 
+            var types = assembly.GetTypes().Where(t => t.IsClass && !t.ContainsGenericParameters && !t.IsInterface);
             var  exceptions = new List<Exception>();
 
-            Action<Type> register = t =>
+            foreach (var type in types)
+            {
+                try
                 {
-                    try
-                    {
-                        ((IFluentBuilder)this).Register(t, factory);
-                    }
-                    catch (Exception ex)
-                    {
-                        exceptions.Add(ex);
-                    }
-                };
-
-            foreach (var type in types) register(type);
+                    ((IFluentBuilder)this).Register(type, factory);
+                }
+                catch (Exception ex)
+                {
+                    if (_debugLogging) Trace.WriteLine("EXCEPTION: Fluent builder caught exception " + 
+                        ex.Message + "registering " + type.FullName + " from assembly " + assembly.FullName);
+                    exceptions.Add(ex);
+                }
+            }
 
             if (exceptions.Count == 1)
                 throw exceptions[0];
@@ -146,15 +163,46 @@ namespace OwinFramework.Pages.Framework.Builders
 
             // Note that any element can also be a service
             if (attributes.IsService != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering a service of type " + type.FullName);
                 BuildService(type, factory);
+            }
 
-            if (attributes.IsPackage != null) return BuildPackage(null, type, factory, null);
-            if (attributes.IsModule != null) return BuildModule(type, factory);
-            if (attributes.IsPage != null) return BuildPage(type, factory);
-            if (attributes.IsLayout != null) return BuildLayout(type, factory);
-            if (attributes.IsRegion != null) return BuildRegion(type, factory);
-            if (attributes.IsComponent != null) return BuildComponent(type, factory);
-            if (attributes.IsDataProvider != null) return BuildDataProvider(type, factory);
+            if (attributes.IsPackage != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering a package of type " + type.FullName);
+                return BuildPackage(null, type, factory, null);
+            }
+            if (attributes.IsModule != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering a module of type " + type.FullName);
+                return BuildModule(type, factory);
+            }
+            if (attributes.IsPage != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering a page of type " + type.FullName);
+                return BuildPage(type, factory);
+            }
+            if (attributes.IsLayout != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering a layout of type " + type.FullName);
+                return BuildLayout(type, factory);
+            }
+            if (attributes.IsRegion != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering a region of type " + type.FullName);
+                return BuildRegion(type, factory);
+            }
+            if (attributes.IsComponent != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering a component of type " + type.FullName);
+                return BuildComponent(type, factory);
+            }
+            if (attributes.IsDataProvider != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering a data provider of type " + type.FullName);
+                return BuildDataProvider(type, factory);
+            }
 
             return null;
         }
@@ -173,27 +221,51 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             var package = obj as IPackage;
             if (package != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering the '" + 
+                    package.Name + "' package of type " + obj.GetType().DisplayName() + " with the name manager");
                 _nameManager.Register(package);
+            }
 
             var module = obj as IModule;
             if (module != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering the '" + 
+                    module.Name + "' module of type " + obj.GetType().DisplayName() + " with the name manager");
                 _nameManager.Register(module);
+            }
 
             var runable = obj as IRunable;
             if (runable != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering the '" + 
+                    runable.Name + "' runable of type " + obj.GetType().DisplayName() + " with the name manager");
                 _nameManager.Register(runable);
+            }
 
             var element = obj as IElement;
             if (element != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering the '" + 
+                    element.Name + "' " + element.ElementType + " of type " + obj.GetType().DisplayName() + " with the name manager");
                 _nameManager.Register(element);
+            }
 
             var dataProvider = obj as IDataProvider;
             if (dataProvider != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering the '" + 
+                    dataProvider.Name + "' data provider of type " + obj.GetType().DisplayName() + " with the name manager");
                 _nameManager.Register(dataProvider);
+            }
 
             var dataSupplier = obj as IDataSupplier;
             if (dataSupplier != null)
+            {
+                if (_debugLogging) Trace.WriteLine("Fluent builder is registering data supplier of type " + 
+                    obj.GetType().DisplayName() + " with the data catalog");
                 _dataCatalog.Register(dataSupplier);
+            }
         }
 
         #endregion

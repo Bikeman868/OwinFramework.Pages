@@ -9,6 +9,7 @@ using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Framework.Interfaces;
 using OwinFramework.Pages.Framework.Managers;
 using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Runtime;
@@ -25,7 +26,8 @@ namespace OwinFramework.Pages.UnitTests.Framework.Managers
         {
             Reset();
 
-            _nameManager = new NameManager();
+            _nameManager = new NameManager(
+                SetupMock<IFrameworkConfiguration>());
         }
 
         [Test]

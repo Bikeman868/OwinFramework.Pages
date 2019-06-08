@@ -26,6 +26,12 @@ namespace OwinFramework.Pages.Framework.Interfaces
         string AssetVersion { get; }
 
         /// <summary>
+        /// Turn this on to see detailed trace output when diagnosing issues with your website.
+        /// Turn this off always in your production environment
+        /// </summary>
+        bool DebugLogging { get; }
+
+        /// <summary>
         /// Adds an action to perform when the framework configuration changes
         /// </summary>
         /// <param name="action"></param>

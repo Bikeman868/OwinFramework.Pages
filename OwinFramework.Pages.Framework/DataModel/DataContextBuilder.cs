@@ -128,7 +128,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void AddMissingData(IRenderContext renderContext, IDataDependency missingDependency)
         {
-#if TRACE
+#if DEBUG
             renderContext.Trace(() => "Data context builder #" + Id + " has been notified of a missing dependency on " + missingDependency);
 #endif
 
@@ -153,7 +153,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             if (_dataSupplies.All(s => s != supply))
             {
-#if TRACE
+#if DEBUG
                 Trace.WriteLine("Data context builder #" + Id + " adding supply '" + supply + "'");
 #endif
                 _dataSupplies.Add(supply);
@@ -172,7 +172,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             if (_suppliedDependencies.Any(s => Equals(s.DataDependency, suppliedDependency.DataDependency)))
                 return;
-#if TRACE
+#if DEBUG
             Trace.WriteLine("Data context builder #" + Id + " adding supplied dependency '" + suppliedDependency + "'");
 #endif
             _suppliedDependencies.Add(suppliedDependency);
@@ -184,7 +184,7 @@ namespace OwinFramework.Pages.Framework.DataModel
 
         public void ResolveSupplies()
         {
-#if TRACE
+#if DEBUG
             Trace.WriteLine("Data context builder #" + Id + " resolving suppliers");
 #endif
 

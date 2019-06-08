@@ -11,6 +11,7 @@ using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Framework.Builders;
 using OwinFramework.Pages.Framework.DataModel;
+using OwinFramework.Pages.Framework.Interfaces;
 
 namespace OwinFramework.Pages.UnitTests.Html.Runtime
 {
@@ -25,6 +26,7 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
         private IDataDependencyFactory _dataDependencyFactory;
         private IDataCatalog _dataCatalog;
         private IRequestRouter _requestRouter;
+        private IFrameworkConfiguration _frameworkConfiguration;
 
         [SetUp]
         public void Setup()
@@ -37,6 +39,7 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
             _dataSupplierFactory = SetupMock<IDataSupplierFactory>();
             _dataDependencyFactory = SetupMock<IDataDependencyFactory>();
             _requestRouter = SetupMock<IRequestRouter>();
+            _frameworkConfiguration = SetupMock<IFrameworkConfiguration>();
 
             _elementConfiguror = new ElementConfiguror(
                 _dataSupplierFactory,
@@ -48,7 +51,8 @@ namespace OwinFramework.Pages.UnitTests.Html.Runtime
                 _nameManager,
                 _dataCatalog,
                 _dataProviderDependenciesFactory.DataDependencyFactory,
-                _dataProviderDependenciesFactory.DataSupplierFactory);
+                _dataProviderDependenciesFactory.DataSupplierFactory,
+                _frameworkConfiguration);
 
             _fluentBuilder.DataProviderBuilder = new DataProviderBuilder(
                 _dataProviderDependenciesFactory,

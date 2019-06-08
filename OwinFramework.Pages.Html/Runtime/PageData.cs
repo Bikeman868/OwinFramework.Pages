@@ -167,8 +167,8 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public void Log(string message)
         {
-#if TRACE
-            if (String.IsNullOrEmpty(message)) return;
+#if DEBUG
+            if (string.IsNullOrEmpty(message)) return;
             Trace.WriteLine(_currentState.MessagePrefix + message);
 #endif
         }

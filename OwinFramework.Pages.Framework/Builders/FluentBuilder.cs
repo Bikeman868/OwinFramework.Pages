@@ -88,7 +88,7 @@ namespace OwinFramework.Pages.Framework.Builders
 
         #region Register a package overriding the namespace
 
-        IPackage IFluentBuilder.Register(
+        IPackage IFluentBuilder.RegisterPackage(
             IPackage package, 
             string namespaceName, 
             Func<Type, object> factory)
@@ -104,7 +104,7 @@ namespace OwinFramework.Pages.Framework.Builders
             return BuildPackage(package, type, factory, namespaceName ?? package.NamespaceName);
         }
 
-        IPackage IFluentBuilder.Register(
+        IPackage IFluentBuilder.RegisterPackage(
             IPackage package, 
             Func<Type, object> factory)
         {
@@ -125,7 +125,7 @@ namespace OwinFramework.Pages.Framework.Builders
             if (!_assemblies.Add(assembly.FullName))
                 return;
 
-            if (_debugLogging) Trace.WriteLine("Fluent builder is registering elements from assembly " + assembly.FullName);
+            if (_debugLogging) Trace.WriteLine("Fluent builder is discovering elements in assembly " + assembly.FullName);
 
             var types = assembly.GetTypes().Where(t => t.IsClass && !t.ContainsGenericParameters && !t.IsInterface);
             var  exceptions = new List<Exception>();
@@ -134,7 +134,11 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 try
                 {
-                    ((IFluentBuilder)this).Register(type, factory);
+                    var element = ((IFluentBuilder)this).Register(type, factory);
+                    if (_debugLogging && element != null)
+                    {
+                        Trace.WriteLine("Fluent builder discovered and registered " + type.DisplayName() + " in asembly " + assembly.FullName);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -399,6 +403,34 @@ namespace OwinFramework.Pages.Framework.Builders
         /// </summary>
         private IPackage BuildPackage(IPackage package, Type type, Func<Type, object> factory, string namespaceName)
         {
+            if (_debugLogging)
+            {
+                var message = "Fluent builder is building";
+
+                if (package != null)
+                {
+                    message += " an instance of package " + package.GetType().DisplayName();
+                    if (type != null) message += " using attributes from " + type.DisplayName();
+                }
+                else
+                {
+                    if (type == null)
+                        message += " a package of unspecified type";
+                    else
+                        message += " a package of type " + type.DisplayName();
+
+                    if (factory == null)
+                        message += " using the default public constructor";
+                    else
+                        message += " using a factory";
+                }
+
+                if (!string.IsNullOrEmpty(namespaceName))
+                    message += " defining the '" + namespaceName + "' namespace";
+
+                Trace.WriteLine(message);
+            }
+
             if (package == null && factory != null && typeof(IPackage).IsAssignableFrom(type))
                 package = factory(type) as IPackage;
 
@@ -428,6 +460,23 @@ namespace OwinFramework.Pages.Framework.Builders
         /// </summary>
         private IModule BuildModule(Type type, Func<Type, object> factory)
         {
+            if (_debugLogging)
+            {
+                var message = "Fluent builder is building";
+
+                if (type == null)
+                    message += " a module of unknown type";
+                else
+                    message += " a module of type " + type.DisplayName();
+
+                if (factory == null)
+                    message += " using the default public constructor";
+                else
+                    message += " using a factory";
+
+                Trace.WriteLine(message);
+            }
+
             IModule module = null;
 
             if (factory != null && typeof(IModule).IsAssignableFrom(type))
@@ -445,6 +494,23 @@ namespace OwinFramework.Pages.Framework.Builders
         /// </summary>
         private IPage BuildPage(Type type, Func<Type, object> factory)
         {
+            if (_debugLogging)
+            {
+                var message = "Fluent builder is building";
+
+                if (type == null)
+                    message += " a page of unknown type";
+                else
+                    message += " a page of type " + type.DisplayName();
+
+                if (factory == null)
+                    message += " using the default public constructor";
+                else
+                    message += " using a factory";
+
+                Trace.WriteLine(message);
+            }
+
             IPage page = null;
 
             if (factory != null && typeof(IPage).IsAssignableFrom(type))
@@ -462,6 +528,23 @@ namespace OwinFramework.Pages.Framework.Builders
         /// </summary>
         private ILayout BuildLayout(Type type, Func<Type, object> factory)
         {
+            if (_debugLogging)
+            {
+                var message = "Fluent builder is building";
+
+                if (type == null)
+                    message += " a layout of unknown type";
+                else
+                    message += " a layout of type " + type.DisplayName();
+
+                if (factory == null)
+                    message += " using the default public constructor";
+                else
+                    message += " using a factory";
+
+                Trace.WriteLine(message);
+            }
+
             ILayout layout = null;
 
             if (factory != null && typeof(ILayout).IsAssignableFrom(type))
@@ -479,6 +562,23 @@ namespace OwinFramework.Pages.Framework.Builders
         /// </summary>
         private IRegion BuildRegion(Type type, Func<Type, object> factory)
         {
+            if (_debugLogging)
+            {
+                var message = "Fluent builder is building";
+
+                if (type == null)
+                    message += " a region of unknown type";
+                else
+                    message += " a region of type " + type.DisplayName();
+
+                if (factory == null)
+                    message += " using the default public constructor";
+                else
+                    message += " using a factory";
+
+                Trace.WriteLine(message);
+            }
+
             IRegion region = null;
 
             if (factory != null && typeof(IRegion).IsAssignableFrom(type))
@@ -496,6 +596,23 @@ namespace OwinFramework.Pages.Framework.Builders
         /// </summary>
         private IComponent BuildComponent(Type type, Func<Type, object> factory)
         {
+            if (_debugLogging)
+            {
+                var message = "Fluent builder is building";
+
+                if (type == null)
+                    message += " a component of unknown type";
+                else
+                    message += " a component of type " + type.DisplayName();
+
+                if (factory == null)
+                    message += " using the default public constructor";
+                else
+                    message += " using a factory";
+
+                Trace.WriteLine(message);
+            }
+
             IComponent component = null;
 
             if (factory != null && typeof(IComponent).IsAssignableFrom(type))
@@ -513,6 +630,23 @@ namespace OwinFramework.Pages.Framework.Builders
         /// </summary>
         private IService BuildService(Type type, Func<Type, object> factory)
         {
+            if (_debugLogging)
+            {
+                var message = "Fluent builder is building";
+
+                if (type == null)
+                    message += " a service of unknown type";
+                else
+                    message += " a service of type " + type.DisplayName();
+
+                if (factory == null)
+                    message += " using the default public constructor";
+                else
+                    message += " using a factory";
+
+                Trace.WriteLine(message);
+            }
+
             IService service = null;
 
             if (factory != null && typeof(IService).IsAssignableFrom(type))
@@ -526,6 +660,23 @@ namespace OwinFramework.Pages.Framework.Builders
 
         private IDataProvider BuildDataProvider(Type type, Func<Type, object> factory)
         {
+            if (_debugLogging)
+            {
+                var message = "Fluent builder is building";
+
+                if (type == null)
+                    message += " a data provider of unknown type";
+                else
+                    message += " a data provider of type " + type.DisplayName();
+
+                if (factory == null)
+                    message += " using the default public constructor";
+                else
+                    message += " using a factory";
+
+                Trace.WriteLine(message);
+            }
+
             IDataProvider dataProvider = null;
 
             if (factory != null && typeof(IDataProvider).IsAssignableFrom(type))

@@ -115,10 +115,10 @@ namespace Sample1
             // package by putting the namespace name and a colon in front of the element
             // name. For example after loading the menu package into the "menus" namespace
             // your application can refer to the desktop menu region as "menus:desktop_menu"
-            fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus");
-            fluentBuilder.Register(ninject.Get<LayoutsPackage>(), "layouts");
-            fluentBuilder.Register(ninject.Get<LibrariesPackage>(), "libraries");
-            fluentBuilder.Register(ninject.Get<CmsStaticRuntimePackage>(), "cms");
+            fluentBuilder.RegisterPackage(ninject.Get<MenuPackage>(), "menus");
+            fluentBuilder.RegisterPackage(ninject.Get<LayoutsPackage>(), "layouts");
+            fluentBuilder.RegisterPackage(ninject.Get<LibrariesPackage>(), "libraries");
+            fluentBuilder.RegisterPackage(ninject.Get<CmsStaticRuntimePackage>(), "cms");
 
             // This is an example of registering all of the elements defined in an assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));

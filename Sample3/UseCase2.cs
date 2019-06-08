@@ -18,6 +18,8 @@ using OwinFramework.Pages.Core.Interfaces.Templates;
 using OwinFramework.Pages.Core.RequestFilters;
 using OwinFramework.Pages.DebugMiddleware;
 using OwinFramework.Pages.Framework.DataModel;
+using OwinFramework.Pages.Framework.Interfaces;
+using Urchin.Client.Interfaces;
 
 namespace Sample3.UseCase2
 {
@@ -32,6 +34,9 @@ namespace Sample3.UseCase2
                 .Add(Assembly.GetExecutingAssembly());
 
             var ninject = new StandardKernel(new Ioc.Modules.Ninject.Module(packageLocator));
+
+            var urchin = ninject.Get<IConfigurationStore>();
+            urchin.UpdateConfiguration("{ 'owinFramework': { 'pages': { 'framework': { 'debugLogging': true } } } }");
 
             var config = ninject.Get<IConfiguration>();
             var pipelineBuilder = ninject.Get<IBuilder>().EnableTracing();
@@ -48,17 +53,18 @@ namespace Sample3.UseCase2
             var nameManager = ninject.Get<INameManager>();
             var templateBuilder = ninject.Get<ITemplateBuilder>();
             var requestRouter = ninject.Get<IRequestRouter>();
+            Func<Type, object> factory = t => ninject.Get(t);
 
             ninject.Get<OwinFramework.Pages.Framework.BuildEngine>().Install(fluentBuilder);
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
             
-            fluentBuilder.Register(typeof(Page1), t => ninject.Get(t));
-            fluentBuilder.Register(typeof(DivRegion), t => ninject.Get(t));
-            fluentBuilder.Register(typeof(ApplicationPackage), t => ninject.Get(t));
-            fluentBuilder.Register(typeof(BasePageLayout), t => ninject.Get(t));
-            fluentBuilder.Register(typeof(ApplicationInfoDataProvider), t => ninject.Get(t));
-            fluentBuilder.Register(typeof(PersonListProvider), t => ninject.Get(t));
-            fluentBuilder.Register(typeof(PersonAddressProvider), t => ninject.Get(t));
+            fluentBuilder.Register(typeof(Page1), factory);
+            fluentBuilder.Register(typeof(DivRegion), factory);
+            fluentBuilder.Register(typeof(ApplicationPackage), factory);
+            fluentBuilder.Register(typeof(BasePageLayout), factory);
+            fluentBuilder.Register(typeof(ApplicationInfoDataProvider), factory);
+            fluentBuilder.Register(typeof(PersonListProvider), factory);
+            fluentBuilder.Register(typeof(PersonAddressProvider), factory);
 
             nameManager.Register(
                 templateBuilder.BuildUpTemplate()

@@ -94,12 +94,12 @@ namespace Sample4
             // your application can refer to the desktop menu region as "menus:desktop_menu"
             // Packages also have a default namespace to use if you don't specify one in
             // your application code.
-            fluentBuilder.Register(ninject.Get<MenuPackage>(), "menus", factory);
-            fluentBuilder.Register(ninject.Get<LayoutsPackage>(), factory);
-            fluentBuilder.Register(ninject.Get<LibrariesPackage>(), factory);
-            fluentBuilder.Register(ninject.Get<AjaxPackage>(), t => factory);
-            fluentBuilder.Register(ninject.Get<CmsStaticRuntimePackage>(), factory);
-            fluentBuilder.Register(ninject.Get<CmsEditorPackage>(), factory);
+            fluentBuilder.RegisterPackage(ninject.Get<MenuPackage>(), "menus", factory);
+            fluentBuilder.RegisterPackage(ninject.Get<LayoutsPackage>(), factory);
+            fluentBuilder.RegisterPackage(ninject.Get<LibrariesPackage>(), factory);
+            fluentBuilder.RegisterPackage(ninject.Get<AjaxPackage>(), factory);
+            fluentBuilder.RegisterPackage(ninject.Get<CmsStaticRuntimePackage>(), factory);
+            fluentBuilder.RegisterPackage(ninject.Get<CmsEditorPackage>(), factory);
 
             // Register all of the elements defined in this assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));

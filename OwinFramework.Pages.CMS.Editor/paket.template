@@ -1,6 +1,6 @@
 type file
 id Owin.Framework.Pages.CMS.Editor
-version 1.2.1
+version 1.2.2
 authors Martin Halliday
 copyright Martin Halliday 2018-2019
 description
@@ -29,10 +29,10 @@ references
   OwinFramework.Pages.CMS.Editor.dll
 
 dependencies
-  Owin.Framework.Pages.Core >= 1.2.1
-  Owin.Framework.Pages.CMS.Runtime >= 1.2.1
-  Owin.Framework.Pages.Html >= 1.2.1
-  Owin.Framework.Pages.Restful >= 1.2.1
+  Owin.Framework.Pages.Core >= 1.2.2
+  Owin.Framework.Pages.CMS.Runtime >= 1.2.2
+  Owin.Framework.Pages.Html >= 1.2.2
+  Owin.Framework.Pages.Restful >= 1.2.2
   
   Ioc.Modules ~> LOCKED:Minor
   Newtonsoft.Json ~> LOCKED:Minor

@@ -506,14 +506,25 @@ namespace OwinFramework.Pages.Html.Templates
         {
             BodyActions.Add(r =>
             {
-                var data = r.Data.Get(dataType, scopeName);
-                var propertyValue = property.GetValue(data, null);
-
                 string formattedValue;
-                if (dataFormatter == null)
-                    formattedValue = propertyValue == null ? null : propertyValue.ToString();
+
+                var data = r.Data.Get(dataType, scopeName);
+                if (data == null)
+                {
+                    if (dataFormatter == null)
+                        formattedValue = null;
+                    else
+                        formattedValue = dataFormatter.Format(property, null);
+                }
                 else
-                    formattedValue = dataFormatter.Format(property, propertyValue);
+                {
+                    var propertyValue = property.GetValue(data, null);
+
+                    if (dataFormatter == null)
+                        formattedValue = propertyValue == null ? null : propertyValue.ToString();
+                    else
+                        formattedValue = dataFormatter.Format(property, propertyValue);
+                }
 
                 if (!string.IsNullOrEmpty(formattedValue))
                     r.Html.WriteText(formattedValue);

@@ -24,5 +24,11 @@ namespace OwinFramework.Pages.Framework.Interfaces
         /// This will be added into the URL of assets to bust the cache on deployments.
         /// </summary>
         string AssetVersion { get; }
+
+        /// <summary>
+        /// Adds an action to perform when the framework configuration changes
+        /// </summary>
+        /// <param name="action"></param>
+        void Subscribe(Action<IFrameworkConfiguration> action);
     }
 }

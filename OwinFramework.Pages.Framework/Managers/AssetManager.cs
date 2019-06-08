@@ -22,7 +22,6 @@ namespace OwinFramework.Pages.Framework.Managers
     internal class AssetManager: IAssetManager, IRunable, IDebuggable
     {
         private readonly IFrameworkConfiguration _frameworkConfiguration;
-        private readonly IHtmlWriterFactory _htmlWriterFactory;
         private readonly ICssWriterFactory _cssWriterFactory;
         private readonly IJavascriptWriterFactory _javascriptWriterFactory;
         private readonly IStringBuilderFactory _stringBuilderFactory;
@@ -47,19 +46,18 @@ namespace OwinFramework.Pages.Framework.Managers
         private readonly IThreadSafeDictionary<string, IStringBuilder> _pageStyleBuilders;
         private readonly IThreadSafeDictionary<string, IStringBuilder> _pageFunctionBuilders;
 
-        private readonly PathString _rootPath;
+        private PathString _rootPath;
+        private IDisposable _runableRegistration;
 
         public AssetManager(
             IRequestRouter requestRouter,
             IFrameworkConfiguration frameworkConfiguration,
-            IHtmlWriterFactory htmlWriterFactory,
             ICssWriterFactory cssWriterFactory,
             IJavascriptWriterFactory javascriptWriterFactory,
             IStringBuilderFactory stringBuilderFactory,
             IDictionaryFactory dictionaryFactory)
         {
             _frameworkConfiguration = frameworkConfiguration;
-            _htmlWriterFactory = htmlWriterFactory;
             _cssWriterFactory = cssWriterFactory;
             _javascriptWriterFactory = javascriptWriterFactory;
             _stringBuilderFactory = stringBuilderFactory;
@@ -81,14 +79,22 @@ namespace OwinFramework.Pages.Framework.Managers
             _pageStyleBuilders = dictionaryFactory.Create<string, IStringBuilder>();
             _pageFunctionBuilders = dictionaryFactory.Create<string, IStringBuilder>();
 
-            var rootPath = frameworkConfiguration.AssetRootPath;
-            if (rootPath.EndsWith("/") && rootPath.Length > 1) rootPath = rootPath.Substring(0, rootPath.Length - 1);
-            _rootPath = new PathString(rootPath);
+            frameworkConfiguration.Subscribe(config =>
+            {
+                var rootPath = config.AssetRootPath;
+                if (rootPath.EndsWith("/") && rootPath.Length > 1) rootPath = rootPath.Substring(0, rootPath.Length - 1);
+                _rootPath = new PathString(rootPath);
 
-            requestRouter.Register(this, 
-                new FilterAllFilters(
-                    new FilterByMethod(Method.Get),
-                    new FilterByPath(_rootPath.Value + "/**")), -10);
+                var priorRegistration = _runableRegistration;
+
+                _runableRegistration = requestRouter.Register(this, 
+                    new FilterAllFilters(
+                        new FilterByMethod(Method.Get),
+                        new FilterByPath(_rootPath.Value + "/**")), -10);
+
+                if (priorRegistration != null)
+                    priorRegistration.Dispose();
+            });
         }
 
         string IAssetManager.GetSupportedLanguage(string acceptLanguageHeader)
@@ -290,7 +296,7 @@ namespace OwinFramework.Pages.Framework.Managers
 
         Task IRunable.Run(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
-            trace(context, () => "Request is being hadled by the Asset Manager");
+            trace(context, () => "Request is being handled by the Asset Manager");
 
             if (context.Request.Method != "GET")
                 throw new HttpException((int)HttpStatusCode.MethodNotAllowed, 

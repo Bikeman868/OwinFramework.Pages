@@ -1,6 +1,39 @@
 ﻿<div id="cms_page_editor" class="panel">
     <h2>Page Details</h2>
-    <p>Title {{page.title}}</p>
-    <p>Description {{page.description}}</p>
-    <button type="button" v-on:click="saveChanges">Save</button>
+    <div v-if="mode === 'new'">
+        <p><input v-model="editingPage.title" placeholder="Page title"></p>
+        <p><input v-model="editingPage.description" placeholder="Page description">
+        </p>
+        <p>
+            <button type="button" v-on:click="createNew">Create</button>
+            <button type="button" v-on:click="cancelChanges">Cancel</button>
+        </p>
+    </div>
+    <div v-if="mode === 'edit'">
+        <p><input v-model="editingPage.title" placeholder="Page title"></p>
+        <p><input v-model="editingPage.description" placeholder="Page description">
+<p>
+            <button type="button" v-on:click="saveChanges">Save</button>
+            <button type="button" v-on:click="cancelChanges">Cancel</button>
+        </p>
+    </div>
+    <div v-if="mode === 'view'">
+        <p>Title: {{currentPage.title}}</p>
+        <p>Description: {{currentPage.description}}</p>
+        <p>
+            <button type="button" v-on:click="editPage">Edit</button>
+            <button type="button" v-on:click="newPage">New</button>
+            <button type="button" v-on:click="deletePage">Delete</button>
+        </p>
+    </div>
+    <div v-if="mode === 'delete'">
+        <h3>Confirm page deletion</h3>
+        <p>This will delete all versions of this page in all versions of the website</p>
+        <p>Title: {{currentPage.title}}</p>
+        <p>Description: {{currentPage.description}}</p>
+        <p>
+            <button type="button" v-on:click="confirmDelete">Delete</button>
+            <button type="button" v-on:click="cancelChanges">Cancel</button>
+        </p>
+    </div>
 </div>

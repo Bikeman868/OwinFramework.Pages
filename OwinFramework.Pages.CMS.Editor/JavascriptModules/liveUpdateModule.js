@@ -38,8 +38,9 @@ var liveUpdatePoller = function () {
         function (response) { liveUpdateData.clientId = response.id });
 
     window.addEventListener("beforeunload", function () {
-        ns.cmseditor.liveUpdateService.deregister(
-            { id: liveUpdateData.clientId });
+        if (liveUpdateData.clientId != undefined) {
+            ns.cmseditor.liveUpdateService.deregister({ id: liveUpdateData.clientId });
+        }
     });
 
     var poll = function () {
@@ -51,9 +52,9 @@ var liveUpdatePoller = function () {
                     id: liveUpdateData.clientId
                 },
                 function(response) {
-                    if (response.updates && response.updates.length > 0) {
-                        for (let i = 0; i < response.updates.length; i++)
-                            liveUpdateData.add(response.updates[i]);
+                    if (response.messages && response.messages.length > 0) {
+                        for (let i = 0; i < response.messages.length; i++)
+                            liveUpdateData.add(response.messages[i]);
                     }
                 },
                 function() {

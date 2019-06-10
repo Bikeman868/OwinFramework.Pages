@@ -69,6 +69,7 @@
     <Compile Include="Configuration\Permissions.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CrudService.cs" />
     <Compile Include="Services\LiveUpdateService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -94,17 +95,27 @@
     <None Include="paket.template" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\LiveUpdateLog.html" />
-    <EmbeddedResource Include="Templates\LiveUpdateLog.js" />
+    <EmbeddedResource Include="Templates\LiveUpdate\LiveUpdateLog.html" />
+    <EmbeddedResource Include="Templates\LiveUpdate\LiveUpdateLog.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\LiveUpdateLog.less" />
+    <EmbeddedResource Include="Templates\LiveUpdate\LiveUpdateLog.less" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JavascriptModules\liveUpdateModule.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CssStyles\" />
+    <Folder Include="Templates\Selectors\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Crud\PageEditor.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Crud\PageEditor.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="JavascriptModules\pagesModule.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

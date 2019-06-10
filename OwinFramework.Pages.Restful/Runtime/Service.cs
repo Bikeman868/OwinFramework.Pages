@@ -342,7 +342,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                                 functionCall = formParameters.Count > 0 ? "ns.ajax.restModule.postForm(request)" : "ns.ajax.restModule.postJson(request)";
                                 break;
                             case Method.Put:
-                                functionCall = "ns.ajax.restModule.putJson(request)";
+                                functionCall = formParameters.Count > 0 ? "ns.ajax.restModule.putForm(request)" : "ns.ajax.restModule.putJson(request)";
                                 break;
                             case Method.Delete:
                                 functionCall = "ns.ajax.restModule.sendDelete(request)";

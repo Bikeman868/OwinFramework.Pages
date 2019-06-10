@@ -15,34 +15,46 @@ namespace OwinFramework.Pages.CMS.Editor.Configuration
         [JsonProperty("serviceBasePath")]
         public string ServiceBasePath { get; set; }
 
-        [JsonProperty("editorPath")]
-        public string EditorPath { get; set; }
+        [JsonProperty("managerPath")]
+        public string ManagerPath { get; set; }
 
-        #region Implementation details
-
-        private readonly IDisposable _configChange;
+        public const string Path = "/owinFramework/pages/cms/editor";
 
         /// <summary>
-        /// Note that this constructor is public for serialization
+        /// Default public constructor for serialization
         /// </summary>
         public EditorConfiguration()
         {
-            TemplateBasePath = "/cms/editor/";
-            ServiceBasePath = "/cms/api/";
-            EditorPath = "/cms";
+            Sanitize();
         }
 
-        public EditorConfiguration(IConfigurationStore configurationStore)
+        /// <summary>
+        /// Used to make the configuration valid
+        /// </summary>
+        public EditorConfiguration Sanitize()
         {
-            _configChange = configurationStore.Register(
-                "/owinFramework/pages/cms/editor",
-                c =>
-                {
-                    TemplateBasePath = c.TemplateBasePath;
-                    ServiceBasePath = c.ServiceBasePath;
-                    EditorPath = c.EditorPath;
-                },
-                new EditorConfiguration());
+            TemplateBasePath = FixBasePath(TemplateBasePath, "/cms/editor/");
+            ServiceBasePath = FixBasePath(ServiceBasePath, "/cms/api/");
+            ManagerPath = FixPath(ManagerPath, "/cms");
+            return this;
+        }
+
+        #region Implementation details
+
+        private string FixBasePath(string path, string defaultPath)
+        {
+            if (string.IsNullOrWhiteSpace(path)) path = defaultPath;
+            if (!path.StartsWith("/")) path = "/" + path;
+            if (path.Length > 1 && !path.EndsWith("/")) path = path + "/";
+            return path;
+        }
+
+        private string FixPath(string path, string defaultPath)
+        {
+            if (string.IsNullOrEmpty(path)) path = defaultPath;
+            if (!path.StartsWith("/")) path = "/" + path;
+            if (path.Length > 1 && path.EndsWith("/")) path = path.Substring(0, path.Length - 1);
+            return path;
         }
 
         #endregion

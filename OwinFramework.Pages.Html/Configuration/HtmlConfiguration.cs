@@ -22,10 +22,11 @@ namespace OwinFramework.Pages.Html.Configuration
 
         #region Implementation details
 
-        private readonly IDisposable _configChange;
+        public const string ConfigPath = "/owinFramework/pages/html";
+        private readonly IDisposable _changeNotifier;
 
         /// <summary>
-        /// Note that this constructor is public for serialization
+        /// This default public constructor is used by the JSON deserializer
         /// </summary>
         public HtmlConfiguration()
         {
@@ -36,15 +37,21 @@ namespace OwinFramework.Pages.Html.Configuration
 
         public HtmlConfiguration(IConfigurationStore configurationStore)
         {
-            _configChange = configurationStore.Register(
-                "/owinFramework/pages/html",
+            _changeNotifier = configurationStore.Register(
+                ConfigPath,
                 c =>
                 {
+                    c = c.Sanitize();
                     HtmlFormat = c.HtmlFormat;
                     IncludeComments = c.IncludeComments;
                     Indented = c.Indented;
                 },
                 new HtmlConfiguration());
+        }
+
+        public HtmlConfiguration Sanitize()
+        {
+            return this;
         }
 
         #endregion

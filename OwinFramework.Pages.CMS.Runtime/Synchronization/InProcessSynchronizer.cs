@@ -5,6 +5,12 @@ using OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate;
 
 namespace OwinFramework.Pages.CMS.Runtime.Synchronization
 {
+    /// <summary>
+    /// Provides an update synchronization mechanism that works within the
+    /// application to keep changes syncrhronized between clients that connect
+    /// to this machine. Will not work if you have multiple web servers, in that
+    /// situation use the database synchronizer or write your own implementation
+    /// </summary>
     public class InProcessSynchronizer: ILiveUpdateSender, ILiveUpdateReceiver
     {
         private readonly object _lock = new object();

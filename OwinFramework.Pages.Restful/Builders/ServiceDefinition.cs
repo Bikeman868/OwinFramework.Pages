@@ -154,7 +154,7 @@ namespace OwinFramework.Pages.Restful.Builders
             }
 
             _nameManager.AddResolutionHandler(
-                NameResolutionPhase.InitializeRunables,
+                NameResolutionPhase.CreateInstances,
                 () =>
                 {
                     _service.Initialize(_factory);

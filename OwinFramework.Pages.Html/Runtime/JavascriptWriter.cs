@@ -412,6 +412,9 @@ namespace OwinFramework.Pages.Html.Runtime
                 if (string.IsNullOrEmpty(Name))
                     throw new Exception("You can not add a JavaScript class with no name");
 
+                if (string.IsNullOrEmpty(Body))
+                    throw new Exception("You can not add a JavaScript class with no body");
+
                 stringBuilder.Append(indent);
 
                 stringBuilder.Append("var ");

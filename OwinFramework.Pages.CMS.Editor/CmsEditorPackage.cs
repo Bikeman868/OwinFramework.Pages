@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Interfaces;
 using System.Linq;
 using System.Reflection;
@@ -17,24 +18,26 @@ using OwinFramework.MiddlewareHelpers.EmbeddedResources;
 namespace OwinFramework.Pages.CMS.Editor
 {
     /// <summary>
-    /// This package exports a layout and a region called "cms:editor" that
-    /// you can refer to in your application to include the CMS editor into
+    /// This package exports a layout and a region called "cms:manager" that
+    /// you can refer to in your application to include the CMS manager into
     /// a page on your website.
     /// This package optionally adds a page to your website containing the
-    /// CMS editor. You can enable this page by setting a URL path in the
+    /// CMS manager. You can enable this page by setting a URL path in the
     /// Urchin configuration.
     /// </summary>
     public class CmsEditorPackage: IPackage
     {
         private readonly ITemplateBuilder _templateBuilder;
         private readonly INameManager _nameManager;
-        private readonly EditorConfiguration _configuration;
         private readonly ResourceManager _resourceManager;
+        private readonly IDisposable _configNotification;
 
         public string NamespaceName { get; set; }
         public IModule Module { get; set; }
         public ElementType ElementType { get { return ElementType.Package; } }
         public string Name { get; set; }
+
+        private EditorConfiguration _configuration;
 
         public CmsEditorPackage(
             IHostingEnvironment hostingEnvironment,
@@ -48,7 +51,11 @@ namespace OwinFramework.Pages.CMS.Editor
             Name = "cms_editor";
             NamespaceName = "cmseditor";
             _resourceManager = new ResourceManager(hostingEnvironment, new MimeTypeEvaluator());
-            _configuration = new EditorConfiguration(configurationStore);
+
+            _configNotification = configurationStore.Register(
+                EditorConfiguration.Path, 
+                c => _configuration = c.Sanitize(), 
+                new EditorConfiguration());
         }
 
         IPackage IPackage.Build(IFluentBuilder fluentBuilder)
@@ -62,18 +69,26 @@ namespace OwinFramework.Pages.CMS.Editor
                 .CreateComponent("liveUpdateClient")
                 .Build();
 
+            fluentBuilder.BuildUpService(null, typeof(CrudService))
+                .Name("crud")
+                .Route(_configuration.ServiceBasePath + "crud/", new []{ Method.Get, Method.Post, Method.Put, Method.Delete }, 0)
+                .CreateComponent("crudClient")
+                .Build();
+
             // Load templates and accumulate all of the CSS and JS assets
 
             var script = new StringBuilder();
             var less = new StringBuilder();
 
             var liveUpdateLogTemplate = AddVueTemplate(script, less, "LiveUpdateLog");
+            var pageEditorTemplate = AddVueTemplate(script, less, "PageEditor");
 
             // Load JavaScript modules and concatenate all the JavaScript
 
             var scriptModules = new List<string>();
 
             LoadScriptModule("liveUpdateModule", scriptModules);
+            LoadScriptModule("pagesModule", scriptModules);
 
             // Output JavaScript and CSS assets in a module asset
 
@@ -94,36 +109,60 @@ namespace OwinFramework.Pages.CMS.Editor
 
             var assetsComponent = assetsComponentBuilder.Build();
 
-            // Define the elements that applications can reference to
-            // include the CMS editor into a page on their website
-
-            var editorRegion = fluentBuilder.BuildUpRegion()
+            // This region of the CMS manager is for editing objects
+            var editorRegion = Build(module, assetsComponent, fluentBuilder.BuildUpRegion()
                 .Name("editor")
-                .AssetDeployment(AssetDeployment.PerModule)
-                .DeployIn(module)
-                .NeedsComponent("libraries:vue")
-                .NeedsComponent("ajax:ajax")
+                .NeedsComponent("crudClient")
+                .AddTemplate(pageEditorTemplate));
+
+            // This region of the CMS manager shows changes as they happen
+            var liveUpdateLogRegion = Build(module, assetsComponent, fluentBuilder.BuildUpRegion()
+                .Name("liveUpdateLog")
                 .NeedsComponent("liveUpdateClient")
-                .NeedsComponent(assetsComponent)
-                .AddTemplate(liveUpdateLogTemplate)
-                .Build();
+                .AddTemplate(liveUpdateLogTemplate));
 
-            var editorLayout = fluentBuilder.BuildUpLayout()
-                .Name("editor")
-                .ZoneNesting("main")
+            // To have the CMS manager fill the whole page make this the page layout
+            var managerLayout = fluentBuilder.BuildUpLayout()
+                .Name("manager")
+                .ZoneNesting("main,liveUpdate")
                 .Region("main", editorRegion)
+                .Region("liveUpdate", liveUpdateLogRegion)
                 .Build();
 
-            if (!string.IsNullOrEmpty(_configuration.EditorPath))
+            // To have the CMS manager occupy a region of the page put this region
+            // into a zone of the page layout
+            var managerRegion = fluentBuilder.BuildUpRegion()
+                .Name("manager")
+                .Layout(managerLayout)
+                .Build();
+
+            // If the ManagerPath is configured then add a page to the website that
+            // contains the CMS manager
+            if (!string.IsNullOrEmpty(_configuration.ManagerPath))
             {
                 fluentBuilder.BuildUpPage()
-                    .Name("editor")
-                    .Route(_configuration.EditorPath, 0, Method.Get)
-                    .Layout(editorLayout)
+                    .Name("cmsManager")
+                    .Route(_configuration.ManagerPath, 0, Method.Get)
+                    .Layout(managerLayout)
                     .Build();
             }
 
             return this;
+        }
+
+        private IRegion Build(IModule module, IComponent assetsComponent, IRegionDefinition regionDefinition)
+        {
+            return regionDefinition
+                .AssetDeployment(AssetDeployment.PerModule)
+                .DeployIn(module)
+#if DEBUG
+                .NeedsComponent("libraries:VueDevelopment")
+#else
+                .NeedsComponent("libraries:Vue")
+#endif
+                .NeedsComponent("ajax:ajax")
+                .NeedsComponent(assetsComponent)
+                .Build();
         }
 
         private string AddVueTemplate(
@@ -140,7 +179,7 @@ namespace OwinFramework.Pages.CMS.Editor
             var markupLines = GetEmbeddedTextFile(markupFileName);
             if (markupLines != null)
             {
-                foreach (var line in GetEmbeddedTextFile(markupFileName))
+                foreach (var line in markupLines)
                 {
                     templateDefinition.AddHtml(line);
                     templateDefinition.AddLineBreak();

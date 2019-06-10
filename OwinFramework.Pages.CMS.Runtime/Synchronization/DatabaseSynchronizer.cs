@@ -12,6 +12,14 @@ using Urchin.Client.Interfaces;
 
 namespace OwinFramework.Pages.CMS.Runtime.Synchronization
 {
+    /// <summary>
+    /// Provides an update synschornization mechanism using the database.
+    /// Updates to the website contents will be recorded in a database with
+    /// a sequence number. Each connected client will know the sequence number
+    /// of the last update they saw and will receive all updates appended
+    /// to the database since that time. Stale records are pruned from
+    /// the database automatically.
+    /// </summary>
     public class DatabaseSynchronizer: ILiveUpdateSender, ILiveUpdateReceiver
     {
         private readonly IContextFactory _contextFactory;
@@ -41,7 +49,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
             _contextFactory = contextFactory;
             _commandFactory = commandFactory;
 
-            configurationStore.Register("/owinFramework/pages/cms", c => _configuration = c, new CmsConfiguration());
+            _configReg = configurationStore.Register(
+                CmsConfiguration.Path, 
+                c => _configuration = c, 
+                new CmsConfiguration());
 
             _lastMessageId = GetLastMessageId();
             _idlePollInterval = TimeSpan.FromSeconds(5);

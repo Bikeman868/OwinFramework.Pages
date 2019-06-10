@@ -20,6 +20,11 @@
         /// </summary>
         public string EnvironmentName { get; set; }
 
+        /// <summary>
+        /// This is the path to this configuration data in the configuration file
+        /// </summary>
+        public const string Path = "/owinFramework/pages/cms";
+
         public CmsConfiguration()
         {
             CmsRepositoryName = "cms-website";

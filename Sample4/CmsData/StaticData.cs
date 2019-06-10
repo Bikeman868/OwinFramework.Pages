@@ -431,7 +431,7 @@ namespace Sample4.CmsData
                         {
                             ZoneName = "main",
                             ContentType = "Region",
-                            ContentName = "cmseditor:editor"
+                            ContentName = "cmseditor:manager"
                         }
                     }
                 }

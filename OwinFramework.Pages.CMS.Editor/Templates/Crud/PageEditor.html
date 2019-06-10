@@ -1,6 +1,6 @@
 ﻿<div id="cms_page_editor" class="panel">
-    <h2>Page Details</h2>
     <div v-if="mode === 'new'">
+        <h2>Create New Page</h2>
         <p><input v-model="editingPage.title" placeholder="Page title"></p>
         <p><input v-model="editingPage.description" placeholder="Page description">
         </p>
@@ -10,14 +10,16 @@
         </p>
     </div>
     <div v-if="mode === 'edit'">
+        <h2>Edit Page Details</h2>
         <p><input v-model="editingPage.title" placeholder="Page title"></p>
         <p><input v-model="editingPage.description" placeholder="Page description">
-<p>
+        <p>
             <button type="button" v-on:click="saveChanges">Save</button>
             <button type="button" v-on:click="cancelChanges">Cancel</button>
         </p>
     </div>
     <div v-if="mode === 'view'">
+        <h2>Page Details</h2>
         <p>Title: {{currentPage.title}}</p>
         <p>Description: {{currentPage.description}}</p>
         <p>
@@ -27,7 +29,7 @@
         </p>
     </div>
     <div v-if="mode === 'delete'">
-        <h3>Confirm page deletion</h3>
+        <h2>Confirm Page Deletion</h2>
         <p>This will delete all versions of this page in all versions of the website</p>
         <p>Title: {{currentPage.title}}</p>
         <p>Description: {{currentPage.description}}</p>

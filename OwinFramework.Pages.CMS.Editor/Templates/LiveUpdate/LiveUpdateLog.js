@@ -28,7 +28,7 @@
     created: function () {
         var vm = this;
         this.updates = [];
-        liveUpdateData.subscribe(function (update) {
+        liveUpdateStore.subscribe(function (update) {
             var updateData =
             {
                 when: update.when,

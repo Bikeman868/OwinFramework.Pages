@@ -1,4 +1,4 @@
-﻿var liveUpdateData = function() {
+﻿var liveUpdateStore = function() {
     var updates = [];
     var subscribers = [];
 
@@ -35,30 +35,28 @@
 var liveUpdatePoller = function () {
     ns.cmseditor.liveUpdateService.register(
         null,
-        function (response) { liveUpdateData.clientId = response.id });
+        function (response) { liveUpdateStore.clientId = response.id });
 
     window.addEventListener("beforeunload", function () {
-        if (liveUpdateData.clientId != undefined) {
-            ns.cmseditor.liveUpdateService.deregister({ id: liveUpdateData.clientId });
+        if (liveUpdateStore.clientId != undefined) {
+            ns.cmseditor.liveUpdateService.deregister({ id: liveUpdateStore.clientId });
         }
     });
 
     var poll = function () {
-        if (liveUpdateData.clientId == undefined) {
+        if (liveUpdateStore.clientId == undefined) {
             setTimeout(poll, 1000);
         } else {
             ns.cmseditor.liveUpdateService.poll(
-                {
-                    id: liveUpdateData.clientId
-                },
+                { id: liveUpdateStore.clientId },
                 function(response) {
                     if (response.messages && response.messages.length > 0) {
                         for (let i = 0; i < response.messages.length; i++)
-                            liveUpdateData.add(response.messages[i]);
+                            liveUpdateStore.add(response.messages[i]);
                     }
                 },
                 function() {
-                    liveUpdateData.prune();
+                    liveUpdateStore.prune();
                     setTimeout(poll, 3000);
                 }
             );
@@ -68,4 +66,4 @@ var liveUpdatePoller = function () {
     poll();
 }();
 
-exported.liveUpdateData = liveUpdateData;
+exported.liveUpdateStore = liveUpdateStore;

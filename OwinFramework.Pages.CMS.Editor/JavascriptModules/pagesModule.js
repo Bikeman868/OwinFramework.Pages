@@ -82,6 +82,20 @@
             });
     }
 
+    dispatcher.subscribe(function(message) {
+        if (message.propertyChanges != undefined) {
+            for (let i = 0; i < message.propertyChanges.length; i++) {
+                var propertyChange = message.propertyChanges[i];
+                if (propertyChange.elementType === "page") {
+                    var page = pages[propertyChange.versionId];
+                    if (page != undefined) {
+                        page[propertyChange.name] = propertyChange.value;
+                    }
+                }
+            }
+        }
+    });
+
     return {
         getEditablePage: getEditablePage,
         getNewPage: getNewPage,

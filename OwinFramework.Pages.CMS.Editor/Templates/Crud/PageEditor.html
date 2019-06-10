@@ -1,41 +1,49 @@
 ﻿<div id="cms_page_editor" class="panel">
-    <div v-if="mode === 'new'">
-        <h2>Create New Page</h2>
-        <p><input v-model="editingPage.title" placeholder="Page title"></p>
-        <p><input v-model="editingPage.description" placeholder="Page description">
-        </p>
-        <p>
-            <button type="button" v-on:click="createNew">Create</button>
-            <button type="button" v-on:click="cancelChanges">Cancel</button>
-        </p>
+    <div v-if="currentPage == undefined">
+        <p>No page currently selected for editing</p>
     </div>
-    <div v-if="mode === 'edit'">
-        <h2>Edit Page Details</h2>
-        <p><input v-model="editingPage.title" placeholder="Page title"></p>
-        <p><input v-model="editingPage.description" placeholder="Page description">
-        <p>
-            <button type="button" v-on:click="saveChanges">Save</button>
-            <button type="button" v-on:click="cancelChanges">Cancel</button>
-        </p>
-    </div>
-    <div v-if="mode === 'view'">
-        <h2>Page Details</h2>
-        <p>Title: {{currentPage.title}}</p>
-        <p>Description: {{currentPage.description}}</p>
-        <p>
-            <button type="button" v-on:click="editPage">Edit</button>
-            <button type="button" v-on:click="newPage">New</button>
-            <button type="button" v-on:click="deletePage">Delete</button>
-        </p>
-    </div>
-    <div v-if="mode === 'delete'">
-        <h2>Confirm Page Deletion</h2>
-        <p>This will delete all versions of this page in all versions of the website</p>
-        <p>Title: {{currentPage.title}}</p>
-        <p>Description: {{currentPage.description}}</p>
-        <p>
-            <button type="button" v-on:click="confirmDelete">Delete</button>
-            <button type="button" v-on:click="cancelChanges">Cancel</button>
-        </p>
+    <div v-else>
+        <div v-if="mode === 'new'">
+            <h2>Create New Page</h2>
+            <p>
+                <input v-model="editingPage.title" placeholder="Page title">
+            </p>
+            <p>
+                <input v-model="editingPage.description" placeholder="Page description">
+            </p>
+            <p>
+                <button type="button" v-on:click="createNew">Create</button>
+                <button type="button" v-on:click="cancelChanges">Cancel</button>
+            </p>
+        </div>
+        <div v-if="mode === 'edit'">
+            <h2>Edit Page Details</h2>
+            <p>
+                <input v-model="editingPage.title" placeholder="Page title">
+            </p>
+            <p><input v-model="editingPage.description" placeholder="Page description">
+            <p>
+                <button type="button" v-on:click="saveChanges">Save</button>
+                <button type="button" v-on:click="cancelChanges">Cancel</button>
+            </p>
+        </div>
+        <div v-if="mode === 'view'">
+            <h2>Page Details</h2>
+            <p>Title: {{currentPage.title}}</p>
+            <p>Description: {{currentPage.description}}</p>
+            <p>
+                <button type="button" v-on:click="editPage">Edit</button>
+                <button type="button" v-on:click="newPage">New</button>
+                <button type="button" v-on:click="deletePage">Delete</button>
+            </p>
+        </div>
+        <div v-if="mode === 'delete'">
+            <h2>Confirm Page Deletion</h2>
+            <p>This will delete all versions of the "{{currentPage.title}}" page in all versions of the website</p>
+            <p>
+                <button type="button" v-on:click="confirmDelete">Delete</button>
+                <button type="button" v-on:click="cancelChanges">Cancel</button>
+            </p>
+        </div>
     </div>
 </div>

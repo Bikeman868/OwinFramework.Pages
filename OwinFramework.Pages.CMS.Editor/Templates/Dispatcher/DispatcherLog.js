@@ -1,7 +1,7 @@
-﻿var live_update_log = new Vue({
-    el: "#cms_live_update_log",
+﻿var dispatcher_log = new Vue({
+    el: "#cms_dispatcher_log",
     data: {
-        updates: [
+        messages: [
             {
                 when: "2019-05-31",
                 from: "SHVANMHALLIDAY",
@@ -11,24 +11,25 @@
     },
     methods: {
         updateTimes: function () {
+            var vm = this;
             var date = new Date();
-            for (let i = 0; i < this.updates.length; i++) {
-                var updateDate = new Date(this.updates[i].when);
+            for (let i = 0; i < vm.messages.length; i++) {
+                var updateDate = new Date(vm.messages[i].when);
                 var secondsAgo = Math.trunc((date - updateDate) / 1000);
                 if (isNaN(secondsAgo) && secondsAgo > 1200) {
-                    this.updates.splice(i, 1);
+                    vm.messages.splice(i, 1);
                     i = i - 1;
                 } else {
-                    this.updates[i].elapsed = secondsAgo + "s ago";
+                    vm.messages[i].elapsed = secondsAgo + "s ago";
                 }
             }
-            setTimeout(this.updateTimes, 1000);
+            setTimeout(vm.updateTimes, 1000);
         }
     },
     created: function () {
         var vm = this;
-        this.updates = [];
-        liveUpdateStore.subscribe(function (update) {
+        vm.messages = [];
+        dispatcher.subscribe(function (update) {
             var updateData =
             {
                 when: update.when,
@@ -53,7 +54,7 @@
             if (update.deletedElementVersions && update.deletedElementVersions.length > 0) {
                 updateData.changes += "Deleted element versions. ";
             }
-            vm.updates.unshift(updateData);
+            vm.messages.unshift(updateData);
         });
         this.updateTimes();
     }

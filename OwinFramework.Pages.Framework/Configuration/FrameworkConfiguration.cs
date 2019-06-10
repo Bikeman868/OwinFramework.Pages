@@ -25,6 +25,9 @@ namespace OwinFramework.Pages.Framework.Configuration
 
         [JsonProperty("debugLogging")]
         public bool DebugLogging { get; private set; }
+        
+        [JsonProperty("debugLibraries")]
+        public bool DebugLibraries{ get; private set; }
 
         #region Implementation details
 
@@ -38,6 +41,7 @@ namespace OwinFramework.Pages.Framework.Configuration
             AssetCacheTime = TimeSpan.FromHours(1);
             AssetVersion = "1";
             DebugLogging = false;
+            DebugLibraries = false;
         }
 
         public FrameworkConfiguration(IConfigurationStore configurationStore)
@@ -53,6 +57,7 @@ namespace OwinFramework.Pages.Framework.Configuration
                     AssetCacheTime = c.AssetCacheTime;
                     AssetVersion = c.AssetVersion;
                     DebugLogging = c.DebugLogging;
+                    DebugLibraries = c.DebugLibraries;
 
                     lock(_subscribers)
                         foreach (var subscriber in _subscribers)

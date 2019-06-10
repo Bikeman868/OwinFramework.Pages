@@ -6,6 +6,7 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Framework.Interfaces;
 using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Runtime;
 
@@ -13,9 +14,14 @@ namespace OwinFramework.Pages.Standard
 {
     public class LibrariesPackage : Framework.Runtime.Package
     {
-        public LibrariesPackage(IPackageDependenciesFactory dependencies)
+        private readonly IFrameworkConfiguration _frameworkConfiguration;
+
+        public LibrariesPackage(
+            IPackageDependenciesFactory dependencies,
+            IFrameworkConfiguration frameworkConfiguration)
             : base(dependencies)
         {
+            _frameworkConfiguration = frameworkConfiguration;
             Name = "libraries";
             NamespaceName = "libraries";
         }
@@ -86,17 +92,13 @@ namespace OwinFramework.Pages.Standard
             builder.BuildUpComponent(
                 new LibraryComponent(
                     Dependencies.ComponentDependenciesFactory,
-                    "https://unpkg.com/react@16/umd/react.production.min.js",
-                    "https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"))
+                    _frameworkConfiguration.DebugLibraries 
+                        ? "https://unpkg.com/react@16/umd/react.development.js" 
+                        : "https://unpkg.com/react@16/umd/react.production.min.js",
+                    _frameworkConfiguration.DebugLibraries 
+                        ? "https://unpkg.com/react-dom@16/umd/react-dom.development.js" 
+                        : "https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"))
                 .Name("React")
-                .Build();
-
-            builder.BuildUpComponent(
-                new LibraryComponent(
-                    Dependencies.ComponentDependenciesFactory,
-                    "https://unpkg.com/react@16/umd/react.development.js",
-                    "https://unpkg.com/react-dom@16/umd/react-dom.development.js"))
-                .Name("ReactDevelopment")
                 .Build();
 
             builder.BuildUpComponent(
@@ -109,15 +111,10 @@ namespace OwinFramework.Pages.Standard
             builder.BuildUpComponent(
                 new LibraryComponent(
                     Dependencies.ComponentDependenciesFactory,
-                    "https://cdn.jsdelivr.net/npm/vue"))
+                    _frameworkConfiguration.DebugLibraries 
+                        ? "https://cdn.jsdelivr.net/npm/vue/dist/vue.js"
+                        : "https://cdn.jsdelivr.net/npm/vue"))
                 .Name("Vue")
-                .Build();
-
-            builder.BuildUpComponent(
-                new LibraryComponent(
-                    Dependencies.ComponentDependenciesFactory,
-                    "https://cdn.jsdelivr.net/npm/vue/dist/vue.js"))
-                .Name("VueDevelopment")
                 .Build();
 
             return this;

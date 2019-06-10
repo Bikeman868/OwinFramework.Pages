@@ -95,14 +95,14 @@
     <None Include="paket.template" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\LiveUpdate\LiveUpdateLog.html" />
-    <EmbeddedResource Include="Templates\LiveUpdate\LiveUpdateLog.js" />
+    <EmbeddedResource Include="Templates\Dispatcher\DispatcherLog.html" />
+    <EmbeddedResource Include="Templates\Dispatcher\DispatcherLog.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\LiveUpdate\LiveUpdateLog.less" />
+    <EmbeddedResource Include="Templates\Dispatcher\DispatcherLog.less" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JavascriptModules\liveUpdateModule.js" />
+    <EmbeddedResource Include="JavascriptModules\dispatcherModule.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CssStyles\" />

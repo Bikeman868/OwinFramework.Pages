@@ -32,6 +32,11 @@ namespace OwinFramework.Pages.Framework.Interfaces
         bool DebugLogging { get; }
 
         /// <summary>
+        /// Turn this on to reference debug versions of JavaScript libraries.
+        /// </summary>
+        bool DebugLibraries { get; }
+
+        /// <summary>
         /// Adds an action to perform when the framework configuration changes
         /// </summary>
         /// <param name="action"></param>

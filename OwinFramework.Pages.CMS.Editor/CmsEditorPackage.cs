@@ -80,14 +80,14 @@ namespace OwinFramework.Pages.CMS.Editor
             var script = new StringBuilder();
             var less = new StringBuilder();
 
-            var liveUpdateLogTemplate = AddVueTemplate(script, less, "LiveUpdateLog");
+            var liveUpdateLogTemplate = AddVueTemplate(script, less, "DispatcherLog");
             var pageEditorTemplate = AddVueTemplate(script, less, "PageEditor");
 
             // Load JavaScript modules and concatenate all the JavaScript
 
             var scriptModules = new List<string>();
 
-            LoadScriptModule("liveUpdateModule", scriptModules);
+            LoadScriptModule("dispatcherModule", scriptModules);
             LoadScriptModule("pagesModule", scriptModules);
 
             // Output JavaScript and CSS assets in a module asset
@@ -116,17 +116,17 @@ namespace OwinFramework.Pages.CMS.Editor
                 .AddTemplate(pageEditorTemplate));
 
             // This region of the CMS manager shows changes as they happen
-            var liveUpdateLogRegion = Build(module, assetsComponent, fluentBuilder.BuildUpRegion()
-                .Name("liveUpdateLog")
+            var dispatcherlogRegion = Build(module, assetsComponent, fluentBuilder.BuildUpRegion()
+                .Name("dispatcherLog")
                 .NeedsComponent("liveUpdateClient")
                 .AddTemplate(liveUpdateLogTemplate));
 
             // To have the CMS manager fill the whole page make this the page layout
             var managerLayout = fluentBuilder.BuildUpLayout()
                 .Name("manager")
-                .ZoneNesting("main,liveUpdate")
+                .ZoneNesting("main,dispatcherLog")
                 .Region("main", editorRegion)
-                .Region("liveUpdate", liveUpdateLogRegion)
+                .Region("dispatcherLog", dispatcherlogRegion)
                 .Build();
 
             // To have the CMS manager occupy a region of the page put this region
@@ -155,11 +155,7 @@ namespace OwinFramework.Pages.CMS.Editor
             return regionDefinition
                 .AssetDeployment(AssetDeployment.PerModule)
                 .DeployIn(module)
-#if DEBUG
-                .NeedsComponent("libraries:VueDevelopment")
-#else
                 .NeedsComponent("libraries:Vue")
-#endif
                 .NeedsComponent("ajax:ajax")
                 .NeedsComponent(assetsComponent)
                 .Build();

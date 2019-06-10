@@ -33,7 +33,8 @@
     "owinFramework": {
         "pages": {
             "framework": { 
-                "debugLogging":  false
+                "debugLogging":  false,
+                "debugLibraries":  true
             },
             "html": {
                 "includeComments": true,

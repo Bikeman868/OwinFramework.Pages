@@ -16,7 +16,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate
         /// not processed twice
         /// </summary>
         [JsonProperty("id")]
-        public Guid UniqueId { get; set; }
+        public string UniqueId { get; set; }
 
         /// <summary>
         /// The date/time in UTC when this message was generated. This can

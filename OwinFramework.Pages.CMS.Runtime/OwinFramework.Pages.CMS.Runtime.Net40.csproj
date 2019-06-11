@@ -66,6 +66,7 @@
     <Compile Include="Data\TestDatabaseReaderBase.cs" />
     <Compile Include="Data\TestDatabaseReader.cs" />
     <Compile Include="Interfaces\Database\AuditRecord.cs" />
+    <Compile Include="Interfaces\Database\DeleteResult.cs" />
     <Compile Include="Interfaces\Database\DataScopeRecord.cs" />
     <Compile Include="Interfaces\Database\DataTypeVersionRecord.cs" />
     <Compile Include="Interfaces\Database\DataTypeRecord.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Interfaces\Database\PageRouteRecord.cs" />
     <Compile Include="Interfaces\Database\PageVersionRecord.cs" />
     <Compile Include="Interfaces\Database\RegionRecord.cs" />
+    <Compile Include="Interfaces\Database\CreateResult.cs" />
     <Compile Include="Interfaces\Database\UpdateResult.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionDataTypeRecord.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionComponentRecord.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="Interfaces\Database\WebsiteVersionRecord.cs" />
     <Compile Include="Interfaces\IDatabaseReader.cs" />
     <Compile Include="Interfaces\IDatabaseUpdater.cs" />
+    <Compile Include="Interfaces\IDataLayer.cs" />
     <Compile Include="Interfaces\ILiveUpdateReceiver.cs" />
     <Compile Include="Interfaces\ILiveUpdateSender.cs" />
     <Compile Include="Interfaces\LiveUpdate\ElementVersionReference.cs" />

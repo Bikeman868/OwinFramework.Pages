@@ -67,6 +67,9 @@
     <Compile Include="CmsEditorPackage.cs" />
     <Compile Include="Configuration\EditorConfiguration.cs" />
     <Compile Include="Configuration\Permissions.cs" />
+    <Compile Include="Data\DataLayer.cs" />
+    <Compile Include="Data\TestDatabaseUpdater.cs" />
+    <Compile Include="Data\TestDatabaseUpdaterBase.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CrudService.cs" />

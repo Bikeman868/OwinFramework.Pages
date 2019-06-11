@@ -16,10 +16,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate
         public string ElementType { get; set; }
 
         /// <summary>
-        /// The unique ID of the element version affected
+        /// The unique ID of the element or element version affected
         /// </summary>
-        [JsonProperty("versionId")]
-        public long ElementVersionId { get; set; }
+        [JsonProperty("id")]
+        public long Id { get; set; }
 
         /// <summary>
         /// The name of the property that was changed. This is

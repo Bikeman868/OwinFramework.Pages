@@ -323,7 +323,8 @@ namespace Sample4.CmsData
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Name = "master_page",
-                    Description = "Defailes page attributes that are inherited by other pages"
+                    DisplayName = "Master page",
+                    Description = "Defines page attributes that are inherited by other pages"
                 },
                 new PageRecord 
                 {
@@ -331,6 +332,7 @@ namespace Sample4.CmsData
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Name = "customers",
+                    DisplayName = "Customer list",
                     Description = "Displays a list of customers"
                 },
                 new PageRecord 
@@ -339,6 +341,7 @@ namespace Sample4.CmsData
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Name = "orders",
+                    DisplayName = "Order list",
                     Description = "Displays a list of orders"
                 },
                 new PageRecord 
@@ -346,8 +349,9 @@ namespace Sample4.CmsData
                     ElementId = elementId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
-                    Name = "cms_editor",
-                    Description = "Displays the CMS editor"
+                    Name = "cms_manager",
+                    DisplayName = "CMS manager",
+                    Description = "Displays the CMS manager UI"
                 }
             };
 

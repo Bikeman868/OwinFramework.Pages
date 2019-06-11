@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using OwinFramework.Pages.CMS.Editor.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
-using OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate;
+using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Restful.Interfaces;
@@ -14,110 +13,71 @@ namespace OwinFramework.Pages.CMS.Editor.Services
     /// </summary>
     internal class CrudService
     {
-        private readonly ILiveUpdateSender _liveUpdateSender;
+        private readonly IDataLayer _dataLayer;
 
-        public CrudService(
-            ILiveUpdateSender liveUpdateSender)
+        public CrudService(IDataLayer dataLater)
         {
-            _liveUpdateSender = liveUpdateSender;
+            _dataLayer = dataLater;
         }
 
-        [Endpoint(Methods = new[] {Method.Post})]
-        [EndpointParameter("title", typeof(string), EndpointParameterType.FormField)]
-        [EndpointParameter("description", typeof(string), EndpointParameterType.FormField)]
+        [Endpoint(Methods = new[] {Method.Post}, RequiredPermission = Permissions.EditPage)]
         private void CreatePage(IEndpointRequest request)
         {
-            _liveUpdateSender.Send(new MessageDto
-            {
-                WhenUtc = DateTime.UtcNow,
-                UniqueId = Guid.NewGuid(),
-                MachineName = Environment.MachineName,
-                NewElements = new List<ElementReference> { new ElementReference{ElementType = "page", ElementId = 1} },
-            });
+            var page = request.Body<PageRecord>();
+            var result = _dataLayer.CreatePage(page);
 
-            request.Success(new
+            if (result.Success)
             {
-                id = 1,
-                title = "New Page Title",
-                description = "New page description"
-            });
+                page = _dataLayer.GetPage(result.NewRecordId, (p, v) => p);
+                request.Success(page);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
         }
 
-        [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Get})]
+        [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
         [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
         private void RetrievePage(IEndpointRequest request)
         {
-            request.Success(new
-            {
-                id = 1,
-                title = "Some Title",
-                description = "Some description"
-            });
+            var id = request.Parameter<long>("id");
+            var page = _dataLayer.GetPage(id, (p, v) => p);
+
+            if (page == null)
+                request.NotFound("No page with ID " + id);
+            else
+                request.Success(page);
         }
 
-        [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Put})]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
-        [EndpointParameter("title", typeof(string), EndpointParameterType.FormField)]
-        [EndpointParameter("description", typeof(string), EndpointParameterType.FormField)]
+        [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
         private void UpdatePage(IEndpointRequest request)
         {
-            var id = request.Parameter<long>("id");
-            var title = request.Parameter<string>("title");
-            var description = request.Parameter<string>("description");
+            var page = request.Body<PageRecord>();
+            var result = _dataLayer.UpdatePage(page);
 
-            _liveUpdateSender.Send(new MessageDto
+            if (result.Success)
             {
-                WhenUtc = DateTime.UtcNow,
-                UniqueId = Guid.NewGuid(),
-                MachineName = Environment.MachineName,
-                PropertyChanges = new List<PropertyChange>
-                {
-                    new PropertyChange
-                    {
-                        ElementType = "page", 
-                        ElementVersionId = id, 
-                        PropertyName = "title", 
-                        PropertyValue = title
-                    },
-                    new PropertyChange
-                    {
-                        ElementType = "page", 
-                        ElementVersionId = id, 
-                        PropertyName = "description", 
-                        PropertyValue = description
-                    }
-                }
-            });
-
-            request.Success(new
+                page = _dataLayer.GetPage(page.ElementId, (p, v) => p);
+                request.Success(page);
+            }
+            else
             {
-                id,
-                title,
-                description
-            });
+                request.BadRequest(result.DebugMessage);
+            }
         }
 
-        [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Delete})]
+        [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Delete}, RequiredPermission = Permissions.EditPage)]
         [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
         private void DeletePage(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
+            var result = _dataLayer.DeletePage(id);
 
-            _liveUpdateSender.Send(new MessageDto
-            {
-                WhenUtc = DateTime.UtcNow,
-                UniqueId = Guid.NewGuid(),
-                MachineName = Environment.MachineName,
-                DeletedElements = new List<ElementReference>
-                {
-                    new ElementReference{ElementType = "page", ElementId = request.Parameter<long>("id")}
-                },
-            });
-
-            request.Success(new
-            {
-                id
-            });
+            if (result.Success)
+                request.Success(new { id });
+            else
+                request.BadRequest(result.DebugMessage);
         }
 
     }

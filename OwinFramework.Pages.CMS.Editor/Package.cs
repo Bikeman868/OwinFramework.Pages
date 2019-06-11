@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Ioc.Modules;
+using OwinFramework.Pages.CMS.Editor.Data;
+using OwinFramework.Pages.CMS.Runtime.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Collections;
@@ -23,6 +25,11 @@ namespace OwinFramework.Pages.CMS.Editor
             {
                 return new List<IocRegistration>
                 {
+                    // These are provided by this package
+                    new IocRegistration().Init<IDatabaseUpdater, TestDatabaseUpdater>(), 
+                    new IocRegistration().Init(container => (ILiveUpdateReceiver)container.Resolve<ILiveUpdateSender>()),
+                    new IocRegistration().Init<IDataLayer, DataLayer>(),
+
                     // These are the external dependencies for this package
                     new IocRegistration().Init<ILiveUpdateReceiver>(),
                 };

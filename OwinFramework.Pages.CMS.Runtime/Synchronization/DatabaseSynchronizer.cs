@@ -33,8 +33,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
         private ILiveUpdateRecipient[] _subscribers;
         private long _lastMessageId;
 
-        private HashSet<Guid> _sentMessagesCurrent;
-        private HashSet<Guid> _sentMessagesPrior;
+        private HashSet<string> _sentMessagesCurrent;
+        private HashSet<string> _sentMessagesPrior;
         private DateTime _nextHashSetSwap;
         private readonly int _hashSetSwapMinutes;
 
@@ -57,8 +57,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
             _lastMessageId = GetLastMessageId();
             _idlePollInterval = TimeSpan.FromSeconds(5);
 
-            _sentMessagesCurrent = new HashSet<Guid>();
-            _sentMessagesPrior = new HashSet<Guid>();
+            _sentMessagesCurrent = new HashSet<string>();
+            _sentMessagesPrior = new HashSet<string>();
             _hashSetSwapMinutes = 5;
             _nextHashSetSwap = DateTime.UtcNow.AddMinutes(_hashSetSwapMinutes);
 
@@ -121,7 +121,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
                     if (DateTime.UtcNow > _nextHashSetSwap)
                     {
                         _sentMessagesPrior = _sentMessagesCurrent;
-                        _sentMessagesCurrent = new HashSet<Guid>();
+                        _sentMessagesCurrent = new HashSet<string>();
                         _nextHashSetSwap = DateTime.UtcNow.AddMinutes(_hashSetSwapMinutes);
                     }
 

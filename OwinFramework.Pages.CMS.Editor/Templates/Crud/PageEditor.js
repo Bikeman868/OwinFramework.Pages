@@ -8,7 +8,7 @@
     created: function () {
         var vm = this;
         ns.cmseditor.pageStore.retrievePage(
-            1, 
+            12, 
             function(page) { vm.currentPage = page; });
     },
     methods: {

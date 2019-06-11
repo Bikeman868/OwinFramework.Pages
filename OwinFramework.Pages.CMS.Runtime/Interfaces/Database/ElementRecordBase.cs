@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
@@ -14,6 +15,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// This is done so that audit records for example do not need to know the element type.
         /// </summary>
         [Mapping("elementId")]
+        [JsonProperty("elementId")]
         public long ElementId { get; set; }
 
         /// <summary>
@@ -23,6 +25,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// details table instead.
         /// </summary>
         [Mapping("elementType")]
+        [JsonProperty("elementType")]
         public string ElementType { get; set; }
     }
 }

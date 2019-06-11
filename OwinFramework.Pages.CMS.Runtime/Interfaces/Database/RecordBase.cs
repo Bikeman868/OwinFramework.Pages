@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
@@ -16,12 +17,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// 'cart_checkout_1'
         /// </summary>
         [Mapping("name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// The name to show users in the CMS UI
         /// </summary>
         [Mapping("displayName")]
+        [JsonProperty("displayName")]
         public string DisplayName { get; set; }
 
         /// <summary>
@@ -29,12 +32,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// why they created this element in the CMS editor
         /// </summary>
         [Mapping("description")]
+        [JsonProperty("description")]
         public string Description { get; set; }
 
         /// <summary>
         /// The identity of the user/application/system that created this element
         /// </summary>
         [Mapping("createdBy")]
+        [JsonProperty("createdBy")]
         public string CreatedBy { get; set; }
 
         /// <summary>
@@ -42,6 +47,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// of the changes that were made since then
         /// </summary>
         [Mapping("createdWhen")]
+        [JsonProperty("createdWhen")]
         public DateTime CreatedWhen { get; set; }
     }
 }

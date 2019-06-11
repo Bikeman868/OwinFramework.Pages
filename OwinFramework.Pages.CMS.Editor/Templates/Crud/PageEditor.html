@@ -6,7 +6,16 @@
         <div v-if="mode === 'new'">
             <h2>Create New Page</h2>
             <p>
-                <input v-model="editingPage.title" placeholder="Page title">
+                <input v-model="editingPage.name" placeholder="Page name">
+            </p>
+            <p>
+                <input v-model="editingPage.createdBy" placeholder="Created by">
+            </p>
+            <p>
+                <input v-model="editingPage.createdWhen" placeholder="Created when">
+            </p>
+            <p>
+                <input v-model="editingPage.displayName" placeholder="Display name">
             </p>
             <p>
                 <input v-model="editingPage.description" placeholder="Page description">
@@ -19,9 +28,20 @@
         <div v-if="mode === 'edit'">
             <h2>Edit Page Details</h2>
             <p>
-                <input v-model="editingPage.title" placeholder="Page title">
+                <input v-model="editingPage.name" placeholder="Page name">
             </p>
-            <p><input v-model="editingPage.description" placeholder="Page description">
+            <p>
+                <input v-model="editingPage.createdBy" placeholder="Created by">
+            </p>
+            <p>
+                <input v-model="editingPage.createdWhen" placeholder="Created when">
+            </p>
+            <p>
+                <input v-model="editingPage.displayName" placeholder="Display name">
+            </p>
+            <p>
+                <input v-model="editingPage.description" placeholder="Page description">
+            </p>
             <p>
                 <button type="button" v-on:click="saveChanges">Save</button>
                 <button type="button" v-on:click="cancelChanges">Cancel</button>
@@ -29,7 +49,9 @@
         </div>
         <div v-if="mode === 'view'">
             <h2>Page Details</h2>
-            <p>Title: {{currentPage.title}}</p>
+            <p>Name: {{currentPage.name}}</p>
+            <p>Created: {{currentPage.createdWhen}} by {{currentPage.createdBy}}</p>
+            <p>Show as: {{currentPage.displayName}}</p>
             <p>Description: {{currentPage.description}}</p>
             <p>
                 <button type="button" v-on:click="editPage">Edit</button>
@@ -39,7 +61,7 @@
         </div>
         <div v-if="mode === 'delete'">
             <h2>Confirm Page Deletion</h2>
-            <p>This will delete all versions of the "{{currentPage.title}}" page in all versions of the website</p>
+            <p>This will delete all versions of the "{{currentPage.name}}" page in all versions of the website</p>
             <p>
                 <button type="button" v-on:click="confirmDelete">Delete</button>
                 <button type="button" v-on:click="cancelChanges">Cancel</button>

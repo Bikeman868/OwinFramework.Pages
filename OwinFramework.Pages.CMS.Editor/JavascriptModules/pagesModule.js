@@ -2,8 +2,12 @@
     var pages = {};
     var pageVersions = {};
 
-    var pageProperties = ["id", "title", "description"];
-    var pageVersionProperties = ["id", "title", "description"];
+    var pageProperties = [
+        "name", "displayName", "description", "createdBy", "createdWhen", "elementType", "elementId"];
+
+    var pageVersionProperties = ["name", "displayName", "description", "createdBy", "createdWhen",
+        "elementVersionId", "elementId", "version", "moduleName", "assetDeployment", "masterPageId",
+        "layoutName", "layoutVersionId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath"];
 
     var copyObject = function (properties, from, to) {
         to = to || {};
@@ -31,7 +35,7 @@
 
     var createPage = function (page, onsuccess) {
         ns.cmseditor.crudService.createPage(
-            page, 
+            { body: page }, 
             function (response) {
                 pages[response.id] = response;
                 if (onsuccess != undefined) onsuccess(response);
@@ -53,7 +57,7 @@
         var page = pages[pageId];
         if (page == undefined) {
             ns.cmseditor.crudService.retrievePage(
-                { pageId: pageId },
+                { id: pageId },
                 function (response) {
                     pages[response.id] = response;
                     if (onsuccess != undefined) onsuccess(response);
@@ -66,7 +70,7 @@
     var updatePage = function (page, onsuccess) {
         var original = pages[page.id];
         ns.cmseditor.crudService.updatePage(
-            page, 
+            { body: page }, 
             function (response) {
                 if (original != undefined) copyObject(pageProperties, response, original);
                 if (onsuccess != undefined) onsuccess(response);
@@ -86,11 +90,19 @@
         if (message.propertyChanges != undefined) {
             for (let i = 0; i < message.propertyChanges.length; i++) {
                 var propertyChange = message.propertyChanges[i];
-                if (propertyChange.elementType === "page") {
-                    var page = pages[propertyChange.versionId];
+                if (propertyChange.elementType === "Page") {
+                    var page = pages[propertyChange.id];
                     if (page != undefined) {
                         page[propertyChange.name] = propertyChange.value;
                     }
+                }
+            }
+        }
+        if (message.deletedElements != undefined) {
+            for (let i = 0; i < message.deletedElements.length; i++) {
+                var deletedElement = message.deletedElements[i];
+                if (deletedElement.elementType === "Page") {
+                    delete pages[deletedElement.id];
                 }
             }
         }

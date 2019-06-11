@@ -277,6 +277,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     var methodName = char.ToLower(method.Name[0]) + method.Name.Substring(1);
                     clientScript.AppendLine("  " + methodName + ": function(params, onSuccess, onDone) {");
                     clientScript.AppendLine("    var request = { isSuccess: function(ajax){ return ajax.status === 200; } };");
+                    clientScript.AppendLine("    if (params != undefined && params.body != undefined) request.body = params.body;");
 
                     if (pathParameters.Count > 0)
                     {

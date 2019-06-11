@@ -117,7 +117,7 @@
                 if (request.body == undefined)
                     request.body = JSON.stringify(null);
                 else
-                    request.body = JSON.stringify(body);
+                    request.body = JSON.stringify(request.body);
             }
         } else {
             if (request.body == undefined) request.body = "";

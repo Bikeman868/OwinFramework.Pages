@@ -9,12 +9,6 @@
                 <input v-model="editingPage.name" placeholder="Page name">
             </p>
             <p>
-                <input v-model="editingPage.createdBy" placeholder="Created by">
-            </p>
-            <p>
-                <input v-model="editingPage.createdWhen" placeholder="Created when">
-            </p>
-            <p>
                 <input v-model="editingPage.displayName" placeholder="Display name">
             </p>
             <p>
@@ -31,9 +25,6 @@
                 <input v-model="editingPage.name" placeholder="Page name">
             </p>
             <p>
-                <input v-model="editingPage.createdBy" placeholder="Created by">
-            </p>
-            <p>
                 <input v-model="editingPage.createdWhen" placeholder="Created when">
             </p>
             <p>
@@ -42,6 +33,7 @@
             <p>
                 <input v-model="editingPage.description" placeholder="Page description">
             </p>
+            <p>Created: {{currentPage.createdWhen}} by {{currentPage.createdBy}}</p>
             <p>
                 <button type="button" v-on:click="saveChanges">Save</button>
                 <button type="button" v-on:click="cancelChanges">Cancel</button>

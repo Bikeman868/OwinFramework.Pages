@@ -2,6 +2,7 @@
     el: "#cms_page_editor",
     data: {
         mode: "view",
+        originalPage: {},
         editingPage: {},
         currentPage: {}
     },
@@ -20,6 +21,7 @@
         editPage: function() {
             var vm = this;
             vm.editingPage = ns.cmseditor.pageStore.getEditablePage(vm.currentPage);
+            Object.assign(vm.originalPage, vm.editingPage);
             vm.mode = "edit";
         },
         deletePage: function () {
@@ -29,6 +31,7 @@
         saveChanges: function () {
             var vm = this;
             ns.cmseditor.pageStore.updatePage(
+                vm.originalPage,
                 vm.editingPage,
                 function () { vm.mode = "view"; });
         },

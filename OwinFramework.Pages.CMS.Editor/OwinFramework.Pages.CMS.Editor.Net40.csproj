@@ -108,7 +108,6 @@
     <EmbeddedResource Include="JavascriptModules\dispatcherModule.js" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CssStyles\" />
     <Folder Include="Templates\Selectors\" />
   </ItemGroup>
   <ItemGroup>

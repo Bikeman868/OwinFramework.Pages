@@ -9,8 +9,12 @@ using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate;
 
+
 namespace OwinFramework.Pages.CMS.Editor.Data
 {
+    using LiveUpdatePropertyChange = Runtime.Interfaces.LiveUpdate.PropertyChange;
+    using DatabasePropertyChange = Runtime.Interfaces.Database.PropertyChange;
+
     internal class DataLayer : IDataLayer
     {
         private readonly ILiveUpdateSender _liveUpdateSender;
@@ -72,7 +76,7 @@ namespace OwinFramework.Pages.CMS.Editor.Data
                     DeletedElements = new List<ElementReference>(),
                     NewElementVersions = new List<ElementVersionReference>(),
                     NewElements = new List<ElementReference>(),
-                    PropertyChanges = new List<PropertyChange>(),
+                    PropertyChanges = new List<LiveUpdatePropertyChange>(),
                     WebsiteVersionChanges = new List<WebsiteVersionChange>()
                 };
             }
@@ -116,19 +120,12 @@ namespace OwinFramework.Pages.CMS.Editor.Data
             return result;
         }
 
-        UpdateResult IDatabaseUpdater.UpdatePage(PageRecord page)
+        UpdateResult IDatabaseUpdater.UpdatePage(long pageId, List<DatabasePropertyChange> changes)
         {
-            var oldPage = _databaseReader.GetPage(page.ElementId, (p, v) => p);
-
-            if (oldPage == null)
-                return new UpdateResult(
-                    "original_page_not_found", 
-                    "You attempted to update a page but the original page was not found");
-
-            var result = _databaseUpdater.UpdatePage(page);
+            var result = _databaseUpdater.UpdatePage(pageId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate(oldPage, page);
+            AddChangesToLiveUpdate("Page", pageId, changes);
 
             return result;
         }
@@ -153,9 +150,25 @@ namespace OwinFramework.Pages.CMS.Editor.Data
 
         #endregion
 
-        #region Adding changes to the live update log
+        #region Adding property changes to the live update log
 
         private readonly Dictionary<Type, TypeDefinition> _typeDefinitions = new Dictionary<Type, TypeDefinition>();
+
+        private void AddChangesToLiveUpdate(string elementType, long elementId, List<DatabasePropertyChange> changes)
+        {
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.PropertyChanges.AddRange(
+                    changes
+                        .Select(property => new LiveUpdatePropertyChange
+                        {
+                            ElementType = elementType,
+                            Id = elementId,
+                            PropertyName = property.PropertyName,
+                            PropertyValue = property.PropertyValue
+                        }));
+            }
+        }
 
         private void AddChangesToLiveUpdate(ElementRecordBase oldElement, ElementRecordBase newElement)
         {
@@ -163,9 +176,10 @@ namespace OwinFramework.Pages.CMS.Editor.Data
 
             lock (_liveUpdateLock)
             {
-                _nextMessage.PropertyChanges.AddRange(typeDefinition.Properties
-                    .Select(property => property.BuildChange(oldElement, newElement, newElement.ElementType, newElement.ElementId))
-                    .Where(change => change != null));
+                _nextMessage.PropertyChanges.AddRange(
+                    typeDefinition.Properties
+                        .Select(property => property.BuildChange(oldElement, newElement, newElement.ElementType, newElement.ElementId))
+                        .Where(change => change != null));
             }
         }
 
@@ -185,7 +199,7 @@ namespace OwinFramework.Pages.CMS.Editor.Data
 
         private class TypeDefinition
         {
-            public PropertyDefinition[] Properties;
+            public readonly PropertyDefinition[] Properties;
 
             public TypeDefinition(Type type)
             {
@@ -215,7 +229,7 @@ namespace OwinFramework.Pages.CMS.Editor.Data
             public PropertyInfo Property;
             public string Name;
 
-            public PropertyChange BuildChange(
+            public LiveUpdatePropertyChange BuildChange(
                 object originalObject, 
                 object newObject, 
                 string elementType, 
@@ -232,12 +246,14 @@ namespace OwinFramework.Pages.CMS.Editor.Data
                 else if (originalValue.Equals(newValue))
                     return null;
 
-                return new PropertyChange
+                return new LiveUpdatePropertyChange
                 {
                     ElementType = elementType,
                     Id = elementId,
                     PropertyName = Name,
-                    PropertyValue = newValue.ToString()
+                    PropertyValue = ReferenceEquals(newValue, null) 
+                        ? null 
+                        : newValue.ToString()
                 };
             }
         }

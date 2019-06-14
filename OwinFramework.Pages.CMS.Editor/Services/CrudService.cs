@@ -1,10 +1,13 @@
-﻿using OwinFramework.Pages.CMS.Editor.Configuration;
+﻿using System.Collections.Generic;
+using OwinFramework.Pages.CMS.Editor.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
+using OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Restful.Interfaces;
 using OwinFramework.Pages.Restful.Parameters;
+using PropertyChange = OwinFramework.Pages.CMS.Runtime.Interfaces.Database.PropertyChange;
 
 namespace OwinFramework.Pages.CMS.Editor.Services
 {
@@ -51,14 +54,17 @@ namespace OwinFramework.Pages.CMS.Editor.Services
         }
 
         [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
         private void UpdatePage(IEndpointRequest request)
         {
-            var page = request.Body<PageRecord>();
-            var result = _dataLayer.UpdatePage(page);
+            var pageId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            var result = _dataLayer.UpdatePage(pageId, changes);
 
             if (result.Success)
             {
-                page = _dataLayer.GetPage(page.ElementId, (p, v) => p);
+                var page = _dataLayer.GetPage(pageId, (p, v) => p);
                 request.Success(page);
             }
             else

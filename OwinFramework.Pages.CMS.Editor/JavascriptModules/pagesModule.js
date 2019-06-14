@@ -17,6 +17,21 @@
         return to;
     }
 
+    var findChanges = function (properties, original, modified) {
+        var changes = [];
+        if (original == undefined) {
+            properties.forEach(function (prop) {
+                changes.push({ name: prop, value: modified[prop] });
+            });
+        } else {
+            properties.forEach(function(prop) {
+                if (original[prop] !== modified[prop])
+                    changes.push({ name: prop, value: modified[prop] });
+            });
+        }
+        return changes;
+    }
+
     var getEditablePage = function (page) {
         return copyObject(pageProperties, page);
     }
@@ -68,15 +83,19 @@
         }
     }
 
-    var updatePage = function (page, onsuccess) {
-        var original = pages[page.elementId];
+    var updatePage = function (originalPage, updatedPage, onsuccess) {
+        var changes = findChanges(pageProperties, originalPage, updatedPage);
+        if (changes.length === 0) return;
         ns.cmseditor.crudService.updatePage(
-            { body: page }, 
+            {
+                id: updatedPage.elementId,
+                body: changes
+            },
             function (response) {
-                if (original == undefined)
-                    pages[response.elementId] = response;
-                else
-                    copyObject(pageProperties, response, original);
+                var cached = pages[updatedPage.elementId];
+                if (cached != undefined) {
+                    copyObject(pageProperties, response, cached);
+                }
                 if (onsuccess != undefined) onsuccess(response);
             });
     }

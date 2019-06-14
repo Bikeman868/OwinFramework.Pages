@@ -1,4 +1,5 @@
-﻿using OwinFramework.Pages.CMS.Runtime.Data;
+﻿using System.Collections.Generic;
+using OwinFramework.Pages.CMS.Runtime.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 
@@ -6,17 +7,17 @@ namespace OwinFramework.Pages.CMS.Editor.Data
 {
     public class TestDatabaseUpdaterBase: TestDatabaseReaderBase, IDatabaseUpdater
     {
-        public CreateResult CreatePage(PageRecord page)
+        CreateResult IDatabaseUpdater.CreatePage(PageRecord page)
         {
             return new CreateResult(1);
         }
 
-        public UpdateResult UpdatePage(PageRecord page)
+        UpdateResult IDatabaseUpdater.UpdatePage(long pageId, List<PropertyChange> changes)
         {
             return new UpdateResult();
         }
 
-        public DeleteResult DeletePage(long pageId)
+        DeleteResult IDatabaseUpdater.DeletePage(long pageId)
         {
             return new DeleteResult();
         }

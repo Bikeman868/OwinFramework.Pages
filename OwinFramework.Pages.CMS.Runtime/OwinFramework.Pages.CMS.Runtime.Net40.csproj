@@ -74,6 +74,7 @@
     <Compile Include="Interfaces\Database\ComponentRecord.cs" />
     <Compile Include="Interfaces\Database\ComponentVersionRecord.cs" />
     <Compile Include="Interfaces\Database\ElementPropertyValueRecord.cs" />
+    <Compile Include="Interfaces\Database\PropertyChange.cs" />
     <Compile Include="Interfaces\Database\RecordBase.cs" />
     <Compile Include="Interfaces\Database\ModuleVersionRecord.cs" />
     <Compile Include="Interfaces\Database\RegionTemplateRecord.cs" />

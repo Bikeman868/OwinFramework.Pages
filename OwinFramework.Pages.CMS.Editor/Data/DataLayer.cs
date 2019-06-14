@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
+using Newtonsoft.Json;
 using OwinFramework.Builder;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
@@ -117,71 +120,15 @@ namespace OwinFramework.Pages.CMS.Editor.Data
         {
             var oldPage = _databaseReader.GetPage(page.ElementId, (p, v) => p);
 
+            if (oldPage == null)
+                return new UpdateResult(
+                    "original_page_not_found", 
+                    "You attempted to update a page but the original page was not found");
+
             var result = _databaseUpdater.UpdatePage(page);
             if (!result.Success) return result;
 
-            lock (_liveUpdateLock)
-            {
-                if (oldPage.Name != page.Name)
-                {
-                    _nextMessage.PropertyChanges.Add(
-                        new PropertyChange
-                        {
-                            ElementType = page.ElementType,
-                            Id = page.ElementId,
-                            PropertyName = "name",
-                            PropertyValue = page.Name
-                        });
-                }
-
-                if (oldPage.DisplayName != page.DisplayName)
-                {
-                    _nextMessage.PropertyChanges.Add(
-                        new PropertyChange
-                        {
-                            ElementType = page.ElementType,
-                            Id = page.ElementId,
-                            PropertyName = "displayName",
-                            PropertyValue = page.DisplayName
-                        });
-                }
-
-                if (oldPage.Description != page.Description)
-                {
-                    _nextMessage.PropertyChanges.Add(
-                        new PropertyChange
-                        {
-                            ElementType = page.ElementType,
-                            Id = page.ElementId,
-                            PropertyName = "description",
-                            PropertyValue = page.Description
-                        });
-                }
-
-                if (oldPage.CreatedBy != page.CreatedBy)
-                {
-                    _nextMessage.PropertyChanges.Add(
-                        new PropertyChange
-                        {
-                            ElementType = page.ElementType,
-                            Id = page.ElementId,
-                            PropertyName = "createdBy",
-                            PropertyValue = page.CreatedBy
-                        });
-                }
-
-                if (oldPage.CreatedWhen != page.CreatedWhen)
-                {
-                    _nextMessage.PropertyChanges.Add(
-                        new PropertyChange
-                        {
-                            ElementType = page.ElementType,
-                            Id = page.ElementId,
-                            PropertyName = "createdWhen",
-                            PropertyValue = page.CreatedWhen.ToString("r")
-                        });
-                }
-            }
+            AddChangesToLiveUpdate(oldPage, page);
 
             return result;
         }
@@ -202,6 +149,97 @@ namespace OwinFramework.Pages.CMS.Editor.Data
             }
 
             return result;
+        }
+
+        #endregion
+
+        #region Adding changes to the live update log
+
+        private readonly Dictionary<Type, TypeDefinition> _typeDefinitions = new Dictionary<Type, TypeDefinition>();
+
+        private void AddChangesToLiveUpdate(ElementRecordBase oldElement, ElementRecordBase newElement)
+        {
+            var typeDefinition = GetTypeDefinition(newElement.GetType());
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.PropertyChanges.AddRange(typeDefinition.Properties
+                    .Select(property => property.BuildChange(oldElement, newElement, newElement.ElementType, newElement.ElementId))
+                    .Where(change => change != null));
+            }
+        }
+
+        private TypeDefinition GetTypeDefinition(Type type)
+        {
+            lock (_typeDefinitions)
+            {
+                TypeDefinition typeDefinition;
+                if (!_typeDefinitions.TryGetValue(type, out typeDefinition))
+                {
+                    typeDefinition = new TypeDefinition(type);
+                    _typeDefinitions.Add(type, typeDefinition);
+                }
+                return typeDefinition;
+            }
+        }
+
+        private class TypeDefinition
+        {
+            public PropertyDefinition[] Properties;
+
+            public TypeDefinition(Type type)
+            {
+                Properties = type
+                    .GetProperties()
+                    .Select(p => new
+                    {
+                        p, 
+                        a = p
+                            .GetCustomAttributes(true)
+                            .Where(a => a is JsonPropertyAttribute)
+                            .Cast<JsonPropertyAttribute>()
+                            .FirstOrDefault()
+                    })
+                    .Where(o => !ReferenceEquals(o.a, null))
+                    .Select(o => new PropertyDefinition
+                    {
+                        Property = o.p, 
+                        Name = o.a.PropertyName
+                    })
+                    .ToArray();
+            }
+        }
+
+        private class PropertyDefinition
+        {
+            public PropertyInfo Property;
+            public string Name;
+
+            public PropertyChange BuildChange(
+                object originalObject, 
+                object newObject, 
+                string elementType, 
+                long elementId)
+            {
+                var originalValue = Property.GetValue(originalObject, null);
+                var newValue = Property.GetValue(newObject, null);
+
+                if (ReferenceEquals(originalValue, null) )
+                {
+                    if (ReferenceEquals(newValue, null))
+                        return null;
+                }
+                else if (originalValue.Equals(newValue))
+                    return null;
+
+                return new PropertyChange
+                {
+                    ElementType = elementType,
+                    Id = elementId,
+                    PropertyName = Name,
+                    PropertyValue = newValue.ToString()
+                };
+            }
         }
 
         #endregion

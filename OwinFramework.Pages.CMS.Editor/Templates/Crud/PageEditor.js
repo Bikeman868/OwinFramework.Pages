@@ -41,7 +41,7 @@
         confirmDelete: function () {
             var vm = this;
             ns.cmseditor.pageStore.deletePage(
-                vm.currentPage,
+                vm.currentPage.elementId,
                 function () {
                     vm.currentPage = null;
                     vm.mode = "view";

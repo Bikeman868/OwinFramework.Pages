@@ -37,7 +37,7 @@
         ns.cmseditor.crudService.createPage(
             { body: page }, 
             function (response) {
-                pages[response.id] = response;
+                pages[response.elementId] = response;
                 if (onsuccess != undefined) onsuccess(response);
             });
     }
@@ -47,19 +47,20 @@
         ns.cmseditor.crudService.createPageVersion(
             page,
             function (response) {
-                pageVersions[response.id] = response;
+                pageVersions[response.elementVersionId] = response;
                 if (onsuccess != undefined) onsuccess(response);
             });
         */
     }
 
     var retrievePage = function (pageId, onsuccess) {
+        if (pageId == undefined) return;
         var page = pages[pageId];
         if (page == undefined) {
             ns.cmseditor.crudService.retrievePage(
                 { id: pageId },
                 function (response) {
-                    pages[response.id] = response;
+                    pages[response.elementId] = response;
                     if (onsuccess != undefined) onsuccess(response);
                 });
         } else {
@@ -68,20 +69,23 @@
     }
 
     var updatePage = function (page, onsuccess) {
-        var original = pages[page.id];
+        var original = pages[page.elementId];
         ns.cmseditor.crudService.updatePage(
             { body: page }, 
             function (response) {
-                if (original != undefined) copyObject(pageProperties, response, original);
+                if (original == undefined)
+                    pages[response.elementId] = response;
+                else
+                    copyObject(pageProperties, response, original);
                 if (onsuccess != undefined) onsuccess(response);
             });
     }
 
-    var deletePage = function (page, onsuccess) {
+    var deletePage = function (pageId, onsuccess) {
         ns.cmseditor.crudService.deletePage(
-            page,
+            { id: pageId },
             function (response) {
-                delete pages[page.id];
+                delete pages[pageId];
                 if (onsuccess != undefined) onsuccess(response);
             });
     }

@@ -169,7 +169,6 @@ namespace OwinFramework.Pages.CMS.Editor
                 .DeployIn(module)
                 .NeedsComponent("libraries:Vue")
                 .NeedsComponent("ajax:ajax")
-                .NeedsComponent("templates:service")
                 .NeedsComponent("templates:library")
                 .NeedsComponent(assetsComponent)
                 .Build();

@@ -563,7 +563,7 @@ namespace OwinFramework.Pages.Html.Templates
                 else
                 {
                     if (isPreFormatted)
-                        html.WritePrefotmatted(localizedString);
+                        html.WritePreformatted(localizedString);
                     else
                         html.WriteText(localizedString);
                 }

@@ -191,6 +191,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// indentation or add/remove line breaks, but will escape special characters
         /// </summary>
         /// <param name="text">The preformatted text</param>
-        IHtmlWriter WritePrefotmatted(string text);
+        IHtmlWriter WritePreformatted(string text);
     }
 }

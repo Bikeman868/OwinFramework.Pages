@@ -499,7 +499,7 @@ namespace OwinFramework.Pages.Html.Runtime
             return this;
         }
 
-        IHtmlWriter IHtmlWriter.WritePrefotmatted(string text)
+        IHtmlWriter IHtmlWriter.WritePreformatted(string text)
         {
             var wasIndented = Indented;
             var originalState = _characterStream.State;

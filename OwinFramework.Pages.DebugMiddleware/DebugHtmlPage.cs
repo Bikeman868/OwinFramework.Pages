@@ -337,7 +337,7 @@ namespace OwinFramework.Pages.DebugMiddleware
                         {
                             html.WriteOpenTag("pre");
                             html.WriteLine();
-                            html.WritePrefotmatted(ex.StackTrace);
+                            html.WritePreformatted(ex.StackTrace);
                             html.WriteLine();
                             html.WriteCloseTag("pre");
                             html.WriteLine();

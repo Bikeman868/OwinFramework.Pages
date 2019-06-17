@@ -137,7 +137,7 @@
     // onSuccess = a function to call if the request succeeds
     var getJson = function (request) {
         request.method = "GET";
-        request.responsetype = "json";
+        request.responseType = "json";
         request.accept = "application/json";
         var ajax = buildAjax(request);
 
@@ -149,7 +149,7 @@
     // onSuccess = a function to call if the request succeeds
     var getDocument = function (request) {
         request.method = "GET";
-        request.responsetype = "document";
+        request.responseType = "document";
         request.accept = "text/html";
         var ajax = buildAjax(request);
 
@@ -161,8 +161,20 @@
     // onSuccess = a function to call if the request succeeds
     var getXml = function (request) {
         request.method = "GET";
-        request.responsetype = "document";
+        request.responseType = "document";
         request.accept = "application/xml";
+        var ajax = buildAjax(request);
+
+        sendAjax(ajax, request);
+    }
+
+    // The passed in request object must have the following properties:
+    // url = The URL of the endpoint to call
+    // onSuccess = a function to call if the request succeeds
+    var getHtml = function (request) {
+        request.method = "GET";
+        request.responseType = "text";
+        request.accept = "text/html";
         var ajax = buildAjax(request);
 
         sendAjax(ajax, request);
@@ -173,7 +185,7 @@
     // body = The JSON object to send with the request
     var putJson = function (request) {
         request.method = "PUT";
-        request.responsetype = "json";
+        request.responseType = "json";
         request.accept = "application/json";
         request.contentType = "application/json";
         var ajax = buildAjax(request);
@@ -187,7 +199,7 @@
     //        name=value&name=value&name=value
     var putForm = function (request) {
         request.method = "PUT";
-        request.responsetype = "json";
+        request.responseType = "json";
         request.accept = "application/json";
         request.contentType = "application/x-www-form-urlencoded";
         var ajax = buildAjax(request);
@@ -200,7 +212,7 @@
     // body = The JSON object to send with the request
     var postJson = function (request) {
         request.method = "POST";
-        request.responsetype = "json";
+        request.responseType = "json";
         request.accept = "application/json";
         request.contentType = "application/json";
         var ajax = buildAjax(request);
@@ -214,7 +226,7 @@
     //        name=value&name=value&name=value
     var postForm = function (request) {
         request.method = "POST";
-        request.responsetype = "json";
+        request.responseType = "json";
         request.accept = "application/json";
         request.contentType = "application/x-www-form-urlencoded";
         var ajax = buildAjax(request);
@@ -238,6 +250,7 @@
         getJson: getJson, // Performs a GET request and returns the results as a JavaScript object
         getDocument: getDocument, // Performs a GET request and returns the results as a Document object
         getXml: getXml, // Performs a GET request and returns the results as a XMLDocument object
+        getHtml: getHtml, // Performs a GET request and returns the results as a string containing an html fragment
         putJson: putJson, // Performs a PUT request passing a JavaScript object
         postJson: postJson, // Performs a PUT request passing a JavaScript object
         putForm: putForm, // Performs a PUT request passing a url encoded form

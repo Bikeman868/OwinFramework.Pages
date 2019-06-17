@@ -10,11 +10,20 @@
         }
 
         var parent = document.getElementById("cms_view");
-        ns.templates.templateLibrary.getTemplate(parent, templatePath, function() {
-            view = document.getElementById(elementId);
-            views[elementId] = view;
-            onSuccess(view);
-        });
+        ns.templates.templateLibrary.getTemplate(
+            parent,
+            templatePath,
+            function() {
+                view = document.getElementById(elementId);
+                views[elementId] = view;
+                onSuccess(view);
+            },
+            function() {
+                view = document.getElementById(elementId);
+                views[elementId] = view;
+                onSuccess(view);
+            }
+        );
     }
 
     var pageEditor = function (onSuccess) {

@@ -21,6 +21,7 @@ namespace OwinFramework.Pages.Standard
     public class TemplatesPackage: IPackage
     {
         private readonly ResourceManager _resourceManager;
+        private readonly TemplateLibraryComponent _templateLibraryComponent;
 
         public string NamespaceName { get; set; }
         public IModule Module { get; set; }
@@ -31,13 +32,22 @@ namespace OwinFramework.Pages.Standard
 
         public TemplatesPackage(
             IFrameworkConfiguration frameworkConfiguration,
-            IHostingEnvironment hostingEnvironment)
+            IHostingEnvironment hostingEnvironment,
+            IComponentDependenciesFactory componentDependencies)
         {
             Name = "templates";
             NamespaceName = "templates";
 
             _resourceManager = new ResourceManager(hostingEnvironment, new MimeTypeEvaluator());
-            frameworkConfiguration.Subscribe(c => _servicePath = c.ServicesRootPath + "/templates");
+            _templateLibraryComponent = new TemplateLibraryComponent(componentDependencies);
+
+            frameworkConfiguration.Subscribe(c =>
+            {
+                _servicePath = c.ServicesRootPath + "/templates";
+                _templateLibraryComponent.Configure(
+                    NamespaceName, 
+                    _servicePath + "/template?path=");
+            });
         }
 
         IPackage IPackage.Build(IFluentBuilder fluentBuilder)
@@ -45,21 +55,58 @@ namespace OwinFramework.Pages.Standard
             fluentBuilder.BuildUpService(null, typeof (TemplateService))
                 .Name("templates")
                 .Route(_servicePath, new[] { Method.Get }, 0)
-                .CreateComponent("service")
                 .Build();
 
-            var resource = _resourceManager.GetResource(Assembly.GetExecutingAssembly(), "templatesLibrary.js");
-            if (resource.Content == null) return this;
+            var templateLibraryJs = _resourceManager.GetResource(Assembly.GetExecutingAssembly(), "templatesLibrary.js");
+            if (templateLibraryJs.Content == null) return this;
 
-            var javaScript = Encoding.UTF8.GetString(resource.Content);
-
-           fluentBuilder.BuildUpComponent(null)
+            var javaScript = Encoding.UTF8.GetString(templateLibraryJs.Content);
+            
+           fluentBuilder.BuildUpComponent(_templateLibraryComponent)
                 .Name("library")
                 .AssetDeployment(AssetDeployment.PerWebsite)
                 .DeployScript(javaScript)
                 .Build();
 
             return this;
+        }
+
+        private class TemplateLibraryComponent : Html.Elements.Component
+        {
+            private string _javaScript;
+
+            public TemplateLibraryComponent(IComponentDependenciesFactory dependencies) 
+                : base(dependencies)
+            {
+                PageAreas = new []{PageArea.Initialization};
+            }
+
+            public void Configure(string namespaceName, string templateServiceUrl)
+            {
+                var js = new StringBuilder();
+                js.Append("ns.");
+                js.Append(namespaceName);
+                js.Append(".templateLibrary.init({templateServiceUrl: \"");
+                js.Append(templateServiceUrl);
+                js.Append("\"});");
+
+                _javaScript = js.ToString();
+            }
+
+            public override IWriteResult WritePageArea(IRenderContext context, PageArea pageArea)
+            {
+                if (pageArea == PageArea.Initialization)
+                {
+                    context.Html.WriteScriptOpen();
+                    context.Html.WriteLine();
+
+                    context.Html.WriteLine(_javaScript);
+
+                    context.Html.WriteScriptClose();
+                    context.Html.WriteLine();
+                }
+                return base.WritePageArea(context, pageArea);
+            }
         }
 
         private class TemplateService

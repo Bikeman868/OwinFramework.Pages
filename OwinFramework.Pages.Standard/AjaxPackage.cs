@@ -38,7 +38,7 @@ namespace OwinFramework.Pages.Standard
 
         IPackage IPackage.Build(IFluentBuilder fluentBuilder)
         {
-            var resource = _resourceManager.GetResource(Assembly.GetExecutingAssembly(), "ajaxLibrary.js");
+            var resource = _resourceManager.GetResource(Assembly.GetExecutingAssembly(), "restModule.js");
             if (resource.Content == null) return this;
 
             var javaScript = Encoding.UTF8.GetString(resource.Content);

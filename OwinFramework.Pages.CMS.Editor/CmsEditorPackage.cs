@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Interfaces;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using OwinFramework.Pages.CMS.Editor.Configuration;
@@ -9,7 +8,6 @@ using OwinFramework.Pages.CMS.Editor.Services;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 using Urchin.Client.Interfaces;
 using OwinFramework.Interfaces.Utility;
@@ -24,6 +22,7 @@ namespace OwinFramework.Pages.CMS.Editor
     /// This package optionally adds a page to your website containing the
     /// CMS manager. You can enable this page by setting a URL path in the
     /// Urchin configuration.
+    /// This package needs the Ajax package and the Templates package.
     /// </summary>
     public class CmsEditorPackage: IPackage
     {
@@ -75,13 +74,24 @@ namespace OwinFramework.Pages.CMS.Editor
                 .CreateComponent("crudClient")
                 .Build();
 
+            fluentBuilder.BuildUpService(null, typeof(ListService))
+                .Name("list")
+                .Route(_configuration.ServiceBasePath + "list/", new []{ Method.Get, Method.Post }, 0)
+                .CreateComponent("listClient")
+                .Build();
+
             // Load templates and accumulate all of the CSS and JS assets
 
             var script = new StringBuilder();
             var less = new StringBuilder();
 
+            // Load templates that are references by the page layout directly
             var liveUpdateLogTemplate = AddVueTemplate(script, less, "DispatcherLog");
-            var pageEditorTemplate = AddVueTemplate(script, less, "PageEditor");
+            var cmsManagerTemplate = AddVueTemplate(script, less, "CmsManager");
+
+            // Load templates that are dynamically added to the browser through
+            // the template loader service
+            AddVueTemplate(script, less, "PageEditor");
 
             // Load JavaScript modules and concatenate all the JavaScript
 
@@ -89,6 +99,7 @@ namespace OwinFramework.Pages.CMS.Editor
 
             LoadScriptModule("dispatcherModule", scriptModules);
             LoadScriptModule("pagesModule", scriptModules);
+            LoadScriptModule("viewsModule", scriptModules);
 
             // Output JavaScript and CSS assets in a module asset
 
@@ -109,11 +120,12 @@ namespace OwinFramework.Pages.CMS.Editor
 
             var assetsComponent = assetsComponentBuilder.Build();
 
-            // This region of the CMS manager is for editing objects
+            // This region of the CMS manager is for editing pages
             var editorRegion = Build(module, assetsComponent, fluentBuilder.BuildUpRegion()
                 .Name("editor")
                 .NeedsComponent("crudClient")
-                .AddTemplate(pageEditorTemplate));
+                .NeedsComponent("listClient")
+                .AddTemplate(cmsManagerTemplate));
 
             // This region of the CMS manager shows changes as they happen
             var dispatcherlogRegion = Build(module, assetsComponent, fluentBuilder.BuildUpRegion()
@@ -157,6 +169,8 @@ namespace OwinFramework.Pages.CMS.Editor
                 .DeployIn(module)
                 .NeedsComponent("libraries:Vue")
                 .NeedsComponent("ajax:ajax")
+                .NeedsComponent("templates:service")
+                .NeedsComponent("templates:library")
                 .NeedsComponent(assetsComponent)
                 .Build();
         }

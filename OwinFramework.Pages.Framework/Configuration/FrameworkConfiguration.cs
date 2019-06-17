@@ -17,6 +17,9 @@ namespace OwinFramework.Pages.Framework.Configuration
         [JsonProperty("assetRootPath")]
         public string AssetRootPath { get; private set; }
 
+        [JsonProperty("servicesRootPath")]
+        public string ServicesRootPath { get; private set; }
+
         [JsonProperty("assetCacheTime")]
         public TimeSpan AssetCacheTime { get; private set; }
 
@@ -38,6 +41,7 @@ namespace OwinFramework.Pages.Framework.Configuration
         {
             DefaultLanguage = "en-US";
             AssetRootPath = "/assets";
+            ServicesRootPath = "/services";
             AssetCacheTime = TimeSpan.FromHours(1);
             AssetVersion = "1";
             DebugLogging = false;
@@ -54,6 +58,7 @@ namespace OwinFramework.Pages.Framework.Configuration
                 {
                     DefaultLanguage = c.DefaultLanguage;
                     AssetRootPath = c.AssetRootPath;
+                    ServicesRootPath = c.ServicesRootPath;
                     AssetCacheTime = c.AssetCacheTime;
                     AssetVersion = c.AssetVersion;
                     DebugLogging = c.DebugLogging;

@@ -4,23 +4,19 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using OwinFramework.Pages.Core.Exceptions;
-using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Restful.Interfaces;
 
 namespace OwinFramework.Pages.Restful.Serializers
 {
     /// <summary>
-    /// This serializes to plain text format. This is mostly useful for debugging
+    /// This serializes strings to html format
     /// </summary>
-    public class PlainText : SerializerBase, IResponseSerializer, IRequestDeserializer
+    public class Html : SerializerBase, IResponseSerializer, IRequestDeserializer
     {
         public T Body<T>(IOwinContext context)
         {
             if (!(typeof(T) is string))
-                throw new NotImplementedException("The plain text request deserializer can only return the request body as a string");
+                throw new NotImplementedException("The html request deserializer can only return the request body as a string");
 
             using (var reader = new StreamReader(context.Request.Body))
             {
@@ -30,13 +26,13 @@ namespace OwinFramework.Pages.Restful.Serializers
 
         public Task Success(IOwinContext context)
         {
-            context.Response.ContentType = "text/plain";
-            return context.Response.WriteAsync("Success");
+            context.Response.ContentType = "text/html";
+            return context.Response.WriteAsync("");
         }
 
         public Task Success<T>(IOwinContext context, T data)
         {
-            context.Response.ContentType = "text/plain";
+            context.Response.ContentType = "text/html";
             return context.Response.WriteAsync(data.ToString());
         }
 
@@ -46,8 +42,9 @@ namespace OwinFramework.Pages.Restful.Serializers
 
             context.Response.StatusCode = (int)statusCode;
             context.Response.ReasonPhrase = message;
-            context.Response.ContentType = "text/plain";
+            context.Response.ContentType = "text/html";
             return context.Response.WriteAsync(message);
         }
+
     }
 }

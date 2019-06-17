@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -73,7 +74,7 @@ namespace OwinFramework.Pages.Restful.Serializers
             if (type.IsValueType || (type == typeof(string) || (type == typeof(DateTime))))
             {
                 var value = new JValue(data);
-                json = value.ToString();
+                json = value.ToString(CultureInfo.InvariantCulture);
             }
             else if (type.IsArray || typeof(IList).IsAssignableFrom(type))
             {

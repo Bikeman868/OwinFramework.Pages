@@ -50,6 +50,7 @@
     <Compile Include="Interfaces\IResponseSerializer.cs" />
     <Compile Include="Interfaces\IRequestDeserializer.cs" />
     <Compile Include="Package.cs" />
+    <Compile Include="Parameters\RequiredString.cs" />
     <Compile Include="Parameters\ParameterParser.cs" />
     <Compile Include="Parameters\NonZeroValue.cs" />
     <Compile Include="Parameters\PositiveNumber.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Runtime\ServiceDependenciesFactory.cs" />
     <Compile Include="Runtime\ServiceDependencies.cs" />
     <Compile Include="Runtime\ServiceEndpoint.cs" />
+    <Compile Include="Serializers\Html.cs" />
     <Compile Include="Serializers\SerializerBase.cs" />
     <Compile Include="Serializers\PlainText.cs" />
     <Compile Include="Serializers\Json.cs" />

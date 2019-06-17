@@ -10,6 +10,11 @@ namespace OwinFramework.Pages.Framework.Interfaces
         string AssetRootPath { get; }
 
         /// <summary>
+        /// The URL path on the website where services should be served, for example '/service'
+        /// </summary>
+        string ServicesRootPath { get; }
+
+        /// <summary>
         /// If the user agent is only requesting languages we do not support or is not specifying
         /// which languages it wants then use this language by default. For example 'en-US'
         /// </summary>

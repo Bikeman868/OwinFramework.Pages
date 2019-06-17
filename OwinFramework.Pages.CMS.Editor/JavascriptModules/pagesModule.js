@@ -85,7 +85,10 @@
 
     var updatePage = function (originalPage, updatedPage, onsuccess) {
         var changes = findChanges(pageProperties, originalPage, updatedPage);
-        if (changes.length === 0) return;
+        if (changes.length === 0) {
+            if (onsuccess != undefined) onsuccess(originalPage);
+            return;
+        }
         ns.cmseditor.crudService.updatePage(
             {
                 id: updatedPage.elementId,

@@ -97,6 +97,7 @@ namespace Sample4
             fluentBuilder.RegisterPackage(ninject.Get<MenuPackage>(), "menus", factory);
             fluentBuilder.RegisterPackage(ninject.Get<LayoutsPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<LibrariesPackage>(), factory);
+            fluentBuilder.RegisterPackage(ninject.Get<TemplatesPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<AjaxPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<CmsStaticRuntimePackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<CmsEditorPackage>(), factory);

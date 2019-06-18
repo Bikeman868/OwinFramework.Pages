@@ -85,21 +85,22 @@ namespace OwinFramework.Pages.CMS.Editor
             var script = new StringBuilder();
             var less = new StringBuilder();
 
-            // Load templates that are references by the page layout directly
+            // Load templates that are referenced by the page layout directly
+
             var liveUpdateLogTemplate = AddVueTemplate(script, less, "DispatcherLog");
             var cmsManagerTemplate = AddVueTemplate(script, less, "CmsManager");
 
-            // Load templates that are dynamically added to the browser through
-            // the template loader service
-            AddVueTemplate(script, less, "PageEditor");
-
-            // Load JavaScript modules and concatenate all the JavaScript
+            // Load JavaScript modules
 
             var scriptModules = new List<string>();
 
             LoadScriptModule("dispatcherModule", scriptModules);
             LoadScriptModule("pagesModule", scriptModules);
             LoadScriptModule("viewsModule", scriptModules);
+
+            // Load Vue temlates that are dynamically constructed in JavaScript
+
+            AddVueTemplate(script, less, "PageEditor", scriptModules);
 
             // Output JavaScript and CSS assets in a module asset
 
@@ -177,7 +178,8 @@ namespace OwinFramework.Pages.CMS.Editor
         private string AddVueTemplate(
             StringBuilder script, 
             StringBuilder less,
-            string baseName)
+            string baseName,
+            List<string> modules = null)
         {
             var templateDefinition = _templateBuilder.BuildUpTemplate();
 
@@ -195,11 +197,18 @@ namespace OwinFramework.Pages.CMS.Editor
                 }
             }
 
-            var viewModel = GetEmbeddedTextFile(viewModelFileName);
-            if (viewModel != null)
+            if (modules == null)
             {
-                foreach (var line in viewModel)
-                    script.AppendLine(line);
+                var viewModel = GetEmbeddedTextFile(viewModelFileName);
+                if (viewModel != null)
+                {
+                    foreach (var line in viewModel)
+                        script.AppendLine(line);
+                }
+            }
+            else
+            {
+                LoadScriptModule(baseName, modules);
             }
 
             var styles = GetEmbeddedTextFile(stylesheetFileName);

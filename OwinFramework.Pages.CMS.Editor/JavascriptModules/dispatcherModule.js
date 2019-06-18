@@ -1,4 +1,4 @@
-﻿var dispatcher = function() {
+﻿exported.dispatcher = function() {
     var messages = [];
     var subscribers = [];
     var clientId = null;
@@ -61,5 +61,3 @@
         subscribe: subscribe
     }
 }();
-
-exported.dispatcher = dispatcher;

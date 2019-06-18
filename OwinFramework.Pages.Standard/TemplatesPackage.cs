@@ -16,7 +16,10 @@ using OwinFramework.Pages.Restful.Parameters;
 namespace OwinFramework.Pages.Standard
 {
     /// <summary>
-    /// Returns HTML templates so that pages can be built dynamically on the browser
+    /// A service and a client-side javascript library that allows you to 
+    /// dynamically add templates to your web pages on the client. Note that
+    /// templates are sent directly to the browser and added to the DOM so
+    /// data binding expressions within the template will not work.
     /// </summary>
     public class TemplatesPackage: IPackage
     {
@@ -57,7 +60,7 @@ namespace OwinFramework.Pages.Standard
                 .Route(_servicePath, new[] { Method.Get }, 0)
                 .Build();
 
-            var templateLibraryJs = _resourceManager.GetResource(Assembly.GetExecutingAssembly(), "templatesLibrary.js");
+            var templateLibraryJs = _resourceManager.GetResource(Assembly.GetExecutingAssembly(), "templateLibrary.js");
             if (templateLibraryJs.Content == null) return this;
 
             var javaScript = Encoding.UTF8.GetString(templateLibraryJs.Content);
@@ -98,10 +101,7 @@ namespace OwinFramework.Pages.Standard
                 if (pageArea == PageArea.Initialization)
                 {
                     context.Html.WriteScriptOpen();
-                    context.Html.WriteLine();
-
-                    context.Html.WriteLine(_javaScript);
-
+                    context.Html.Write(_javaScript);
                     context.Html.WriteScriptClose();
                     context.Html.WriteLine();
                 }

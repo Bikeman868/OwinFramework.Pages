@@ -1,4 +1,4 @@
-﻿var page_editor = function() {
+﻿exported.page_editor_vm = function() {
     return new Vue({
         el: "#cms_page_editor",
         data: {

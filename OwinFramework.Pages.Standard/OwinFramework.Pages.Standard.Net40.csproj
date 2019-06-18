@@ -81,7 +81,7 @@
     <EmbeddedResource Include="Assets\restModule.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\templatesLibrary.js" />
+    <EmbeddedResource Include="Assets\templateLibrary.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

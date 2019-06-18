@@ -31,7 +31,7 @@
     created: function () {
         var vm = this;
         vm.messages = [];
-        dispatcher.subscribe(function (message) {
+        exported.dispatcher.subscribe(function (message) {
             var updateData =
             {
                 when: message.when,

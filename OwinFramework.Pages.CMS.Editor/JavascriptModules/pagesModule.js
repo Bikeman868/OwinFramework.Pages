@@ -1,4 +1,4 @@
-﻿var pageStore = function() {
+﻿exported.pageStore = function() {
     var pages = {};
     var pageVersions = {};
 
@@ -112,7 +112,7 @@
             });
     }
 
-    dispatcher.subscribe(function(message) {
+    exported.dispatcher.subscribe(function(message) {
         if (message.propertyChanges != undefined) {
             for (let i = 0; i < message.propertyChanges.length; i++) {
                 var propertyChange = message.propertyChanges[i];
@@ -152,5 +152,3 @@
         //deletePageVersion: deletePageVersion,
     }
 }();
-
-exported.pageStore = pageStore;

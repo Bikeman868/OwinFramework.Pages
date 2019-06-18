@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using OwinFramework.Pages.Core.Interfaces;
 using System.Reflection;
 using System.Text;
-using OwinFramework.Pages.CMS.Editor.Configuration;
-using OwinFramework.Pages.CMS.Editor.Services;
+using OwinFramework.Interfaces.Utility;
+using OwinFramework.MiddlewareHelpers.EmbeddedResources;
+using OwinFramework.Pages.CMS.Manager.Configuration;
+using OwinFramework.Pages.CMS.Manager.Services;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 using Urchin.Client.Interfaces;
-using OwinFramework.Interfaces.Utility;
-using OwinFramework.MiddlewareHelpers.EmbeddedResources;
 
-namespace OwinFramework.Pages.CMS.Editor
+namespace OwinFramework.Pages.CMS.Manager
 {
     /// <summary>
     /// This package exports a layout and a region called "cms:manager" that
@@ -24,7 +24,7 @@ namespace OwinFramework.Pages.CMS.Editor
     /// Urchin configuration.
     /// This package needs the Ajax package and the Templates package.
     /// </summary>
-    public class CmsEditorPackage: IPackage
+    public class CmsManagerPackage: IPackage
     {
         private readonly ITemplateBuilder _templateBuilder;
         private readonly INameManager _nameManager;
@@ -36,9 +36,9 @@ namespace OwinFramework.Pages.CMS.Editor
         public ElementType ElementType { get { return ElementType.Package; } }
         public string Name { get; set; }
 
-        private EditorConfiguration _configuration;
+        private ManagerConfiguration _configuration;
 
-        public CmsEditorPackage(
+        public CmsManagerPackage(
             IHostingEnvironment hostingEnvironment,
             ITemplateBuilder templateBuilder,
             INameManager nameManager,
@@ -47,14 +47,14 @@ namespace OwinFramework.Pages.CMS.Editor
             _templateBuilder = templateBuilder;
             _nameManager = nameManager;
 
-            Name = "cms_editor";
-            NamespaceName = "cmseditor";
+            Name = "cms_manager";
+            NamespaceName = "cmsmanager";
             _resourceManager = new ResourceManager(hostingEnvironment, new MimeTypeEvaluator());
 
             _configNotification = configurationStore.Register(
-                EditorConfiguration.Path, 
+                ManagerConfiguration.Path, 
                 c => _configuration = c.Sanitize(), 
-                new EditorConfiguration());
+                new ManagerConfiguration());
         }
 
         IPackage IPackage.Build(IFluentBuilder fluentBuilder)
@@ -82,16 +82,7 @@ namespace OwinFramework.Pages.CMS.Editor
 
             // Load templates and accumulate all of the CSS and JS assets
 
-            var script = new StringBuilder();
             var less = new StringBuilder();
-
-            // Load templates that are referenced by the page layout directly
-
-            var liveUpdateLogTemplate = AddVueTemplate(script, less, "DispatcherLog");
-            var cmsManagerTemplate = AddVueTemplate(script, less, "CmsManager");
-
-            // Load JavaScript modules
-
             var scriptModules = new List<string>();
 
             LoadScriptModule("dispatcherModule", scriptModules);
@@ -100,20 +91,25 @@ namespace OwinFramework.Pages.CMS.Editor
 
             // Load Vue temlates that are dynamically constructed in JavaScript
 
-            AddVueTemplate(script, less, "PageEditor", scriptModules);
+            AddTemplate("DispatcherLog", less, scriptModules);
+            AddTemplate("PageEditor", less, scriptModules);
+
+            // Load templates that are directly loaded into regions
+
+            var cmsManagerTemplatePath = AddTemplate("CmsManager", less, scriptModules);
+            var debugToolsTemplatePath = AddTemplate("DebugTools", less, scriptModules);
 
             // Output JavaScript and CSS assets in a module asset
 
             var module = fluentBuilder.BuildUpModule()
-                .Name("cms_editor")
+                .Name("cms_manager")
                 .AssetDeployment(AssetDeployment.PerModule)
                 .Build();
 
             var assetsComponentBuilder = fluentBuilder.BuildUpComponent(null)
                 .Name("assets")
                 .DeployIn(module)
-                .DeployFunction(null, "initVue", null, script.ToString(), true)
-                .RenderInitialization("cms-editor-init", "<script>ns." + NamespaceName + ".initVue();</script>")
+                .RenderInitialization("cms-manager-init", "<script>setTimeout(ns." + NamespaceName + ".init, 10);</script>")
                 .DeployLess(less.ToString());
 
             foreach (var scriptModule in scriptModules)
@@ -121,25 +117,24 @@ namespace OwinFramework.Pages.CMS.Editor
 
             var assetsComponent = assetsComponentBuilder.Build();
 
-            // This region of the CMS manager is for editing pages
+            // This region of the CMS manager is for editing pages of the website
             var editorRegion = Build(module, assetsComponent, fluentBuilder.BuildUpRegion()
                 .Name("editor")
                 .NeedsComponent("crudClient")
                 .NeedsComponent("listClient")
-                .AddTemplate(cmsManagerTemplate));
+                .AddTemplate(cmsManagerTemplatePath));
 
-            // This region of the CMS manager shows changes as they happen
-            var dispatcherlogRegion = Build(module, assetsComponent, fluentBuilder.BuildUpRegion()
-                .Name("dispatcherLog")
-                .NeedsComponent("liveUpdateClient")
-                .AddTemplate(liveUpdateLogTemplate));
+            // This region of the CMS manager is for debug tools
+            var toolsRegion = Build(module, assetsComponent, fluentBuilder.BuildUpRegion()
+                .Name("tools")
+                .AddTemplate(debugToolsTemplatePath));
 
             // To have the CMS manager fill the whole page make this the page layout
             var managerLayout = fluentBuilder.BuildUpLayout()
                 .Name("manager")
-                .ZoneNesting("main,dispatcherLog")
-                .Region("main", editorRegion)
-                .Region("dispatcherLog", dispatcherlogRegion)
+                .ZoneNesting("editor,tools")
+                .Region("editor", editorRegion)
+                .Region("tools", toolsRegion)
                 .Build();
 
             // To have the CMS manager occupy a region of the page put this region
@@ -171,20 +166,21 @@ namespace OwinFramework.Pages.CMS.Editor
                 .NeedsComponent("libraries:Vue")
                 .NeedsComponent("ajax:ajax")
                 .NeedsComponent("templates:library")
+                .NeedsComponent("liveUpdateClient")
                 .NeedsComponent(assetsComponent)
                 .Build();
         }
 
-        private string AddVueTemplate(
-            StringBuilder script, 
-            StringBuilder less,
+        private string AddTemplate(
             string baseName,
-            List<string> modules = null)
+            StringBuilder less,
+            List<string> modules)
         {
+            LoadScriptModule(baseName, modules);
+
             var templateDefinition = _templateBuilder.BuildUpTemplate();
 
             var markupFileName = baseName + ".html";
-            var viewModelFileName = baseName + ".js";
             var stylesheetFileName = baseName + ".less";
 
             var markupLines = GetEmbeddedTextFile(markupFileName);
@@ -195,20 +191,6 @@ namespace OwinFramework.Pages.CMS.Editor
                     templateDefinition.AddHtml(line);
                     templateDefinition.AddLineBreak();
                 }
-            }
-
-            if (modules == null)
-            {
-                var viewModel = GetEmbeddedTextFile(viewModelFileName);
-                if (viewModel != null)
-                {
-                    foreach (var line in viewModel)
-                        script.AppendLine(line);
-                }
-            }
-            else
-            {
-                LoadScriptModule(baseName, modules);
             }
 
             var styles = GetEmbeddedTextFile(stylesheetFileName);

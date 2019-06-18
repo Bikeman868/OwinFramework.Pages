@@ -8,7 +8,7 @@ using Owin;
 using OwinFramework.Builder;
 using OwinFramework.Interfaces.Builder;
 using OwinFramework.Interfaces.Utility;
-using OwinFramework.Pages.CMS.Editor;
+using OwinFramework.Pages.CMS.Manager;
 using OwinFramework.Pages.CMS.Runtime;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.DebugMiddleware;
@@ -100,7 +100,7 @@ namespace Sample4
             fluentBuilder.RegisterPackage(ninject.Get<TemplatesPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<AjaxPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<CmsStaticRuntimePackage>(), factory);
-            fluentBuilder.RegisterPackage(ninject.Get<CmsEditorPackage>(), factory);
+            fluentBuilder.RegisterPackage(ninject.Get<CmsManagerPackage>(), factory);
 
             // Register all of the elements defined in this assembly
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));

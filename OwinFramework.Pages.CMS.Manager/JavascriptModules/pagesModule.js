@@ -49,7 +49,7 @@
     }
 
     var createPage = function (page, onsuccess) {
-        ns.cmseditor.crudService.createPage(
+        ns.cmsmanager.crudService.createPage(
             { body: page }, 
             function (response) {
                 pages[response.elementId] = response;
@@ -59,7 +59,7 @@
 
     var createPageVersion = function (pageVersion, onsuccess) {
         /*
-        ns.cmseditor.crudService.createPageVersion(
+        ns.cmsmanager.crudService.createPageVersion(
             page,
             function (response) {
                 pageVersions[response.elementVersionId] = response;
@@ -72,7 +72,7 @@
         if (pageId == undefined) return;
         var page = pages[pageId];
         if (page == undefined) {
-            ns.cmseditor.crudService.retrievePage(
+            ns.cmsmanager.crudService.retrievePage(
                 { id: pageId },
                 function (response) {
                     pages[response.elementId] = response;
@@ -89,7 +89,7 @@
             if (onsuccess != undefined) onsuccess(originalPage);
             return;
         }
-        ns.cmseditor.crudService.updatePage(
+        ns.cmsmanager.crudService.updatePage(
             {
                 id: updatedPage.elementId,
                 body: changes
@@ -104,7 +104,7 @@
     }
 
     var deletePage = function (pageId, onsuccess) {
-        ns.cmseditor.crudService.deletePage(
+        ns.cmsmanager.crudService.deletePage(
             { id: pageId },
             function (response) {
                 delete pages[pageId];

@@ -3,7 +3,7 @@ using OwinFramework.Pages.CMS.Runtime.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 
-namespace OwinFramework.Pages.CMS.Editor.Data
+namespace OwinFramework.Pages.CMS.Manager.Data
 {
     public class TestDatabaseUpdaterBase: TestDatabaseReaderBase, IDatabaseUpdater
     {

@@ -88,9 +88,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OwinFramework.Pages.CMS.Editor\OwinFramework.Pages.CMS.Editor.Net40.csproj">
+    <ProjectReference Include="..\OwinFramework.Pages.CMS.Manager\OwinFramework.Pages.CMS.Manager.Net40.csproj">
       <Project>{60c824df-d107-4441-ad21-dbe2ce0d6829}</Project>
-      <Name>OwinFramework.Pages.CMS.Editor.Net40</Name>
+      <Name>OwinFramework.Pages.CMS.Manager.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\OwinFramework.Pages.CMS.Runtime\OwinFramework.Pages.CMS.Runtime.Net40.csproj">
       <Project>{e22ad442-d30e-4ece-a856-dca49ce9e9b9}</Project>

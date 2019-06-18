@@ -1,15 +1,9 @@
 ﻿using System.Collections.Generic;
 using Ioc.Modules;
-using OwinFramework.Pages.CMS.Editor.Data;
-using OwinFramework.Pages.CMS.Runtime.Data;
+using OwinFramework.Pages.CMS.Manager.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
-using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.Collections;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
-using OwinFramework.Pages.Core.Interfaces.Managers;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
 
-namespace OwinFramework.Pages.CMS.Editor
+namespace OwinFramework.Pages.CMS.Manager
 {
     /// <summary>
     /// Defines the IoC needs of this assembly
@@ -17,7 +11,7 @@ namespace OwinFramework.Pages.CMS.Editor
     [Ioc.Modules.Package]
     public class Package: Ioc.Modules.IPackage
     {
-        string Ioc.Modules.IPackage.Name { get { return "Owin Framework Pages CMS editor"; } }
+        string Ioc.Modules.IPackage.Name { get { return "Owin Framework Pages CMS manager"; } }
 
         IList<IocRegistration> Ioc.Modules.IPackage.IocRegistrations
         {

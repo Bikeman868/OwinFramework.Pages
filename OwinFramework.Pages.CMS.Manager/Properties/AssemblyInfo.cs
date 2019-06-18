@@ -2,4 +2,4 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("OwinFramework.Pages.CMS.Editor")]
+[assembly: AssemblyTitle("OwinFramework.Pages.CMS.Manager")]

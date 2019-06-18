@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
-using OwinFramework.Pages.CMS.Editor.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate;
 using OwinFramework.Pages.Core.Attributes;
@@ -11,7 +10,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Restful.Interfaces;
 using OwinFramework.Pages.Restful.Parameters;
 
-namespace OwinFramework.Pages.CMS.Editor.Services
+namespace OwinFramework.Pages.CMS.Manager.Services
 {
     internal class LiveUpdateService
     {

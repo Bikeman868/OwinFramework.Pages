@@ -1,13 +1,11 @@
-﻿using System;
-using Newtonsoft.Json;
-using Urchin.Client.Interfaces;
+﻿using Newtonsoft.Json;
 
-namespace OwinFramework.Pages.CMS.Editor.Configuration
+namespace OwinFramework.Pages.CMS.Manager.Configuration
 {
     /// <summary>
     /// Defines the configuration options for the Html assembly
     /// </summary>
-    internal class EditorConfiguration
+    internal class ManagerConfiguration
     {
         [JsonProperty("templateBasePath")]
         public string TemplateBasePath { get; set; }
@@ -18,12 +16,12 @@ namespace OwinFramework.Pages.CMS.Editor.Configuration
         [JsonProperty("managerPath")]
         public string ManagerPath { get; set; }
 
-        public const string Path = "/owinFramework/pages/cms/editor";
+        public const string Path = "/owinFramework/pages/cms/manager";
 
         /// <summary>
         /// Default public constructor for serialization
         /// </summary>
-        public EditorConfiguration()
+        public ManagerConfiguration()
         {
             Sanitize();
         }
@@ -31,9 +29,9 @@ namespace OwinFramework.Pages.CMS.Editor.Configuration
         /// <summary>
         /// Used to make the configuration valid
         /// </summary>
-        public EditorConfiguration Sanitize()
+        public ManagerConfiguration Sanitize()
         {
-            TemplateBasePath = FixBasePath(TemplateBasePath, "/cms/editor/");
+            TemplateBasePath = FixBasePath(TemplateBasePath, "/cms/manager/");
             ServiceBasePath = FixBasePath(ServiceBasePath, "/cms/api/");
             ManagerPath = FixPath(ManagerPath, "/cms");
             return this;

@@ -9,8 +9,7 @@ using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate;
 
-
-namespace OwinFramework.Pages.CMS.Editor.Data
+namespace OwinFramework.Pages.CMS.Manager.Data
 {
     using LiveUpdatePropertyChange = Runtime.Interfaces.LiveUpdate.PropertyChange;
     using DatabasePropertyChange = Runtime.Interfaces.Database.PropertyChange;

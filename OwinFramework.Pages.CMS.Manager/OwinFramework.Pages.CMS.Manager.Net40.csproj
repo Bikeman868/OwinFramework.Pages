@@ -7,8 +7,8 @@
     <ProjectGuid>{60C824DF-D107-4441-AD21-DBE2CE0D6829}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OwinFramework.Pages.CMS.Editor</RootNamespace>
-    <AssemblyName>OwinFramework.Pages.CMS.Editor</AssemblyName>
+    <RootNamespace>OwinFramework.Pages.CMS.Manager</RootNamespace>
+    <AssemblyName>OwinFramework.Pages.CMS.Manager</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseIntermediateOutputPath>obj\Net40\</BaseIntermediateOutputPath>
@@ -30,7 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\net40\Release\OwinFramework.Pages.CMS.Editor.XML</DocumentationFile>
+    <DocumentationFile>bin\net40\Release\OwinFramework.Pages.CMS.Manager.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ioc.Modules">
@@ -64,8 +64,8 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CmsEditorPackage.cs" />
-    <Compile Include="Configuration\EditorConfiguration.cs" />
+    <Compile Include="CmsManagerPackage.cs" />
+    <Compile Include="Configuration\ManagerConfiguration.cs" />
     <Compile Include="Configuration\Permissions.cs" />
     <Compile Include="Data\DataLayer.cs" />
     <Compile Include="Data\TestDatabaseUpdater.cs" />
@@ -79,7 +79,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.CMS.Runtime\OwinFramework.Pages.CMS.Runtime.Net40.csproj">
       <Project>{e22ad442-d30e-4ece-a856-dca49ce9e9b9}</Project>
-      <Name>OwinFramework.Pages.CMS.Runtime</Name>
+      <Name>OwinFramework.Pages.CMS.Runtime.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.Net40.csproj">
       <Project>{4c9f34b2-19f9-4c14-ad99-12f63273fd5a}</Project>
@@ -95,7 +95,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="OwinFramework.Pages.CMS.Editor.Net40.paket.references" />
+    <None Include="OwinFramework.Pages.CMS.Manager.Net40.paket.references" />
     <None Include="paket.template" />
   </ItemGroup>
   <ItemGroup>

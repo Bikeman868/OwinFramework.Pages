@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using OwinFramework.Pages.CMS.Editor.Configuration;
+using OwinFramework.Pages.CMS.Manager.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Attributes;
@@ -8,7 +8,7 @@ using OwinFramework.Pages.Restful.Interfaces;
 using OwinFramework.Pages.Restful.Parameters;
 using PropertyChange = OwinFramework.Pages.CMS.Runtime.Interfaces.Database.PropertyChange;
 
-namespace OwinFramework.Pages.CMS.Editor.Services
+namespace OwinFramework.Pages.CMS.Manager.Services
 {
     /// <summary>
     /// Provides create, retrieve, update and delete methods foreach entity type

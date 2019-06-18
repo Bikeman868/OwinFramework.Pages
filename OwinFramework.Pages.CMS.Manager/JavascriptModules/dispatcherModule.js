@@ -21,13 +21,13 @@
         }
     }
 
-    ns.cmseditor.liveUpdateService.register(
+    ns.cmsmanager.liveUpdateService.register(
         null,
         function (response) { clientId = response.id });
 
     window.addEventListener("beforeunload", function () {
         if (clientId != undefined) {
-            ns.cmseditor.liveUpdateService.deregister({ id: clientId });
+            ns.cmsmanager.liveUpdateService.deregister({ id: clientId });
         }
     });
 
@@ -35,7 +35,7 @@
         if (clientId == undefined) {
             setTimeout(poll, 1000);
         } else {
-            ns.cmseditor.liveUpdateService.poll(
+            ns.cmsmanager.liveUpdateService.poll(
                 { id: clientId },
                 function (response) {
                     if (response.messages && response.messages.length > 0) {

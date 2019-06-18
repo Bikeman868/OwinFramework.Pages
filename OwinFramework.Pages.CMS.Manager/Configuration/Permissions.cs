@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OwinFramework.Pages.CMS.Editor.Configuration
+﻿namespace OwinFramework.Pages.CMS.Manager.Configuration
 {
     public class Permissions
     {
         /// <summary>
-        /// Allow users to view the CMS Editor
+        /// Allow users to view the CMS Manager
         /// </summary>
         public const string View = "cms:view";
 

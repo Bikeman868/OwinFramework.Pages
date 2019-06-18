@@ -62,9 +62,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Standar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.CMS.Runtime.Net40", "OwinFramework.Pages.CMS.Runtime\OwinFramework.Pages.CMS.Runtime.Net40.csproj", "{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.CMS.Editor.Net40", "OwinFramework.Pages.CMS.Editor\OwinFramework.Pages.CMS.Editor.Net40.csproj", "{60C824DF-D107-4441-AD21-DBE2CE0D6829}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample4", "Sample4\Sample4.csproj", "{B655A239-7C79-414B-8107-D5DD765919C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.CMS.Manager.Net40", "OwinFramework.Pages.CMS.Manager\OwinFramework.Pages.CMS.Manager.Net40.csproj", "{60C824DF-D107-4441-AD21-DBE2CE0D6829}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -120,14 +120,14 @@ Global
 		{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B655A239-7C79-414B-8107-D5DD765919C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B655A239-7C79-414B-8107-D5DD765919C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B655A239-7C79-414B-8107-D5DD765919C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B655A239-7C79-414B-8107-D5DD765919C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60C824DF-D107-4441-AD21-DBE2CE0D6829}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

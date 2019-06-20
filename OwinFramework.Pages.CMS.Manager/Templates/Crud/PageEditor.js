@@ -2,7 +2,7 @@
     return new Vue({
         el: "#cms_page_editor",
         data: {
-            hidden: false,
+            visible: true,
             mode: "view",
             originalPage: {},
             editingPage: {},

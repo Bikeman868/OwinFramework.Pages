@@ -1,0 +1,135 @@
+﻿@break-small-mobile: 320px;
+@break-large-mobile: 414px;
+@break-tablet: 768px;
+@break-desktop: 1024px;
+
+@anchor-color: #0000b3;
+@anchor-hover-color: #1a1aff;
+@field-label-color: navy;
+
+@selector-background: whitesmoke;
+@panel-background: transparent;
+@panel-border: 1px solid whitesmoke;
+@menu-background: whitesmoke;
+
+@base-font-size: 16px;
+@heading-font-family: Arial, sans-serif;
+@body-font-family: Arial, sans-serif;
+
+div.cms_main {
+    overflow: hidden;
+    * { 
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    ul { 
+        list-style: none; padding: 0;
+    }
+    p { 
+        font-size: @base-font-size; 
+        font-family: @body-font-family; 
+    }
+    h1 { 
+        font-size: @base-font-size * 1.8; 
+        font-family: @heading-font-family;
+    }
+    h2 { 
+        font-size: @base-font-size * 1.6; 
+        font-family: @heading-font-family;
+    }
+    h3 { 
+        font-size: @base-font-size * 1.3; 
+        font-family: @heading-font-family;
+    }
+    h4 { 
+        font-size: @base-font-size * 1.15; 
+        font-family: @heading-font-family;
+    }
+    h5 { 
+        font-size: @base-font-size * 1.1; 
+        font-family: @heading-font-family;
+    }
+    h6 { 
+        font-size: @base-font-size; 
+        font-family: @heading-font-family;
+    }
+    a, a:visited { 
+        text-decoration: none; 
+        color: @anchor-color;
+    }
+    a:hover { 
+        color: @anchor-hover-color
+    }
+    div.cms_left_panel {
+        float: left; 
+        width: 100px; 
+        margin: 2px; 
+        padding: 4px;
+        background: whitesmoke;
+    }
+    div.cms_right_panel {
+        margin-left: 100px;
+        margin-right: 2px;
+        margin-bottom: 2px;
+        margin-top: 2px;
+        padding: 4px;
+    }
+    div.cms_panel {
+        border: @panel-border;
+        background: @panel-background;
+    }
+    @media only screen and (min-width: @break-small-mobile){
+        div.cms_left_panel {
+            float: left; width: 150px;
+        }
+        div.cms_right_panel {
+            margin-left: 150px;
+        }
+    }
+    @media only screen and (min-width: @break-large-mobile){
+        div.cms_left_panel {
+            float: left; width: 250px;
+        }
+        div.cms_right_panel {
+            margin-left: 250px;
+        }
+    }
+    @media only screen and (min-width: @break-tablet){
+        div.cms_left_panel {
+            float: left; width: 250px;
+        }
+        div.cms_right_panel {
+            margin-left: 250px;
+        }
+    }
+    @media only screen and (min-width: @break-desktop){
+        div.cms_left_panel {
+            float: left; width: 350px;
+        }
+        div.cms_right_panel {
+            margin-left: 350px;
+            max-width: 1200px;
+        }
+    }
+    label.cms_field {
+        display: block;
+        font-size: x-small;
+        margin-left: 5px;
+        margin-top: 4px;
+        margin-bottom: 2px;
+        color: @field-label-color;
+    }
+    p.cms_field {
+        display: block;
+        font-size: larger;
+        margin-left: 5px;
+        margin-top: 2px;
+        margin-bottom: 4px;
+        padding: 2px;
+        border: 1px inset whitesmoke;
+    }
+    div.cms_button_bar {
+        background: @menu-background;
+    }
+}

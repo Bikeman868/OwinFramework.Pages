@@ -1,4 +1,4 @@
-﻿<div id="cms_page_editor" class="panel">
+﻿<div id="cms_page_editor" class="cms_panel" v-if="visible">
     <div v-if="currentPage == undefined">
         <p>No page currently selected for editing</p>
     </div>
@@ -41,15 +41,19 @@
         </div>
         <div v-if="mode === 'view'">
             <h2>Page Details</h2>
-            <p>Name: {{currentPage.name}}</p>
-            <p>Created: {{currentPage.createdWhen}} by {{currentPage.createdBy}}</p>
-            <p>Show as: {{currentPage.displayName}}</p>
-            <p>Description: {{currentPage.description}}</p>
-            <p>
+            <label class="cms_field">Name</label>
+            <p class="cms_field">{{currentPage.name}}</p>
+            <label class="cms_field">Created</label>
+            <p class="cms_field">{{currentPage.createdWhen}} by {{currentPage.createdBy}}</p>
+            <label class="cms_field">Show as</label>
+            <p class="cms_field">{{currentPage.displayName}}</p>
+            <label class="cms_field">Description</label>
+            <p class="cms_field">{{currentPage.description}}</p>
+            <div class="cms_button_bar">
                 <button type="button" v-on:click="editPage">Edit</button>
                 <button type="button" v-on:click="newPage">New</button>
                 <button type="button" v-on:click="deletePage">Delete</button>
-            </p>
+            </div>
         </div>
         <div v-if="mode === 'delete'">
             <h2>Confirm Page Deletion</h2>

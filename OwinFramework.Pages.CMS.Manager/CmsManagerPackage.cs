@@ -82,22 +82,27 @@ namespace OwinFramework.Pages.CMS.Manager
 
             // Load templates and accumulate all of the CSS and JS assets
 
-            var less = new StringBuilder();
             var scriptModules = new List<string>();
 
             LoadScriptModule("dispatcherModule", scriptModules);
             LoadScriptModule("pagesModule", scriptModules);
             LoadScriptModule("viewsModule", scriptModules);
 
-            // Load Vue temlates that are dynamically constructed in JavaScript
-
-            AddTemplate("DispatcherLog", less, scriptModules);
-            AddTemplate("PageEditor", less, scriptModules);
-
             // Load templates that are directly loaded into regions
+
+            var less = new StringBuilder();
 
             var cmsManagerTemplatePath = AddTemplate("CmsManager", less, scriptModules);
             var debugToolsTemplatePath = AddTemplate("DebugTools", less, scriptModules);
+
+            // Load Vue temlates that are dynamically constructed in JavaScript
+
+            AddTemplate("EnvironmentSelector", less, scriptModules);
+            AddTemplate("PageSelector", less, scriptModules);
+            
+            AddTemplate("PageEditor", less, scriptModules);
+
+            AddTemplate("DispatcherLog", less, scriptModules);
 
             // Output JavaScript and CSS assets in a module asset
 

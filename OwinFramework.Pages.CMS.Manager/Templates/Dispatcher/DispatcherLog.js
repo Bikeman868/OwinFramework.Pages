@@ -2,7 +2,7 @@
     return new Vue({
         el: "#cms_dispatcher_log",
         data: {
-            hidden: false,
+            visible: true,
             messages: [
                 {
                     when: "2019-05-31",

@@ -1,4 +1,4 @@
-﻿<div id="cms_dispatcher_log" class="panel">
+﻿<div id="cms_dispatcher_log" class="cms_panel" v-if="visible">
     <h3>Dispatcher Message Log</h3>
     <div v-for="message in messages">
         <span class="elapsed">{{message.elapsed}}</span>

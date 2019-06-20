@@ -97,6 +97,7 @@
   <ItemGroup>
     <None Include="OwinFramework.Pages.CMS.Manager.Net40.paket.references" />
     <None Include="paket.template" />
+    <EmbeddedResource Include="Templates\CmsManager.less" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\Dispatcher\DispatcherLog.html" />
@@ -109,7 +110,7 @@
     <EmbeddedResource Include="JavascriptModules\dispatcherModule.js" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Templates\Selectors\" />
+    <EmbeddedResource Include="Templates\Selectors\EnvironmentSelector.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\Crud\PageEditor.html" />
@@ -128,6 +129,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\CmsManager.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\PageSelector.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\PageSelector.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\EnvironmentSelector.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

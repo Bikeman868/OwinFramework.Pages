@@ -2,13 +2,21 @@
     <h1>CMS Manager</h1>
     <div class="cms_main">
         <div class="cms_left_panel">
-            <div class="cms_view_selector"></div>
-            <div class="cms_record_list"></div>
+            <select onchange="ns.cmsmanager.viewStore.viewSelectChanged(this);">
+                <option value="environments">Environments</option>
+                <option value="versions">Website versions</option>
+                <option value="pages" selected="selected">Pages</option>
+                <option value="layouts">Layouts</option>
+                <option value="regions">Regions</option>
+                <option value="components">Components</option>
+                <option value="dataScopes">Scopes</option>
+                <option value="dataTypes">Types</option>
+            </select>
+            <div id="cms_select_view" class="cms_panel"></div>
         </div>
         <div class="cms_right_panel">
-            <div class="cms_view_tabs"></div>
-            <div id="cms_edit_view" class="cms_view"></div>
+            <div id="cms_edit_view" class="cms_panel"></div>
         </div>
     </div>
-    <div id="cms_tool_view" class="panel"></div>
+    <div id="cms_tool_view" class="cms_panel"></div>
 </div>

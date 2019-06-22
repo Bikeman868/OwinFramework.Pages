@@ -1,15 +1,18 @@
-﻿@break-small-mobile: 320px;
-@break-large-mobile: 414px;
-@break-tablet: 768px;
-@break-desktop: 1024px;
+﻿@break-small-mobile: 414px;
+@break-large-mobile: 768px;
+@break-tablet: 1024px;
+@break-desktop: 1200px;
 
 @anchor-color: #0000b3;
 @anchor-hover-color: #1a1aff;
 @field-label-color: navy;
+@button-color: white;
+@button-background: cornflowerblue;
+@button-shadow-color: #e0e0ff;
 
 @selector-background: whitesmoke;
 @panel-background: transparent;
-@panel-border: 1px solid whitesmoke;
+@panel-border: none;
 @menu-background: whitesmoke;
 
 @base-font-size: 16px;
@@ -62,63 +65,106 @@ div.cms_main {
         color: @anchor-hover-color
     }
     div.cms_left_panel {
-        float: left; 
-        width: 100px; 
-        margin: 2px; 
-        padding: 4px;
-        background: whitesmoke;
+        background: @selector-background;
+        padding: 2px;
     }
     div.cms_right_panel {
-        margin-left: 100px;
-        margin-right: 2px;
         margin-bottom: 2px;
         margin-top: 2px;
-        padding: 4px;
+        padding: 2px;
     }
     div.cms_panel {
         border: @panel-border;
         background: @panel-background;
+        h1 {
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-bottom: 15px;
+        }
+        h3 {
+            margin-bottom: 10px;
+        }
     }
     @media only screen and (min-width: @break-small-mobile){
         div.cms_left_panel {
-            float: left; width: 150px;
+            float: left;
+            margin: 2px; 
+            width: 150px;
+            padding: 5px;
         }
         div.cms_right_panel {
             margin-left: 150px;
+            margin-right: 2px;
+            margin-bottom: 2px;
+            margin-top: 2px;
+            padding: 5px;
         }
     }
     @media only screen and (min-width: @break-large-mobile){
         div.cms_left_panel {
-            float: left; width: 250px;
+            width: 250px;
+            padding: 6px;
         }
         div.cms_right_panel {
             margin-left: 250px;
+            padding: 6px;
         }
     }
     @media only screen and (min-width: @break-tablet){
         div.cms_left_panel {
-            float: left; width: 250px;
+            width: 250px;
+            padding: 8px;
         }
         div.cms_right_panel {
             margin-left: 250px;
+            padding: 8px;
         }
     }
     @media only screen and (min-width: @break-desktop){
         div.cms_left_panel {
-            float: left; width: 350px;
+            width: 350px;
+            padding: 10px;
         }
         div.cms_right_panel {
             margin-left: 350px;
             max-width: 1200px;
+            padding: 10px;
         }
     }
     label.cms_field {
         display: block;
         font-size: x-small;
-        margin-left: 5px;
         margin-top: 4px;
         margin-bottom: 2px;
         color: @field-label-color;
+    }
+    input[type=text] {
+        display: block;
+        font: inherit;
+        font-family: @body-font-family;
+        font-size: larger;
+        margin-left: 5px;
+        margin-top: 2px;
+        margin-bottom: 12px;
+        box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , .1);
+		border: 0;
+		outline: 0;
+		padding: 10px 6px;
+    }
+    textarea {
+        display: block;
+        font: inherit;
+        font-family: @body-font-family;
+        font-size: larger;
+        line-height:1.5;
+        margin-left: 5px;
+        margin-top: 2px;
+        margin-bottom: 12px;
+        box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , .1);
+		border: 0;
+		outline: 0;
+		padding: 10px 6px;
     }
     p.cms_field {
         display: block;
@@ -127,9 +173,73 @@ div.cms_main {
         margin-top: 2px;
         margin-bottom: 4px;
         padding: 2px;
-        border: 1px inset whitesmoke;
     }
     div.cms_button_bar {
-        background: @menu-background;
+        background: lighten(@button-background, 30%);
+        padding: 4px 10px;
+        margin-top: 15px;
+        border-radius: 5px;
+        button {
+            color: @button-color;
+            background: @button-background;
+            padding: 4px 6px;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            box-shadow: 3px 3px @button-shadow-color;
+            margin: 6px 3px;
+            font-size: larger;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: darken(@button-background, 10%);
+        }
+        button:active {
+            background-color: darken(@button-background, 10%);
+            box-shadow: 2px 2px darken(@button-shadow-color, 10%);
+            transform: translateY(1px) translateX(1px);
+        }
+    }
+    .cms_field__name {
+        width: 150px;
+    }
+    .cms_field__display_name {
+        width: 250px;
+    }
+    .cms_field__description {
+        width: 300px;
+        height: 150px;
+    }
+    @media only screen and (min-width: @break-large-mobile){
+        .cms_field__name {
+            width: 150px;
+        }
+        .cms_field__display_name {
+            width: 250px;
+        }
+        .cms_field__description {
+            width: 450px;
+            height: 250px;
+        }
+    }
+    .cms_spacer_thin {
+        height: 5px;
+    }
+    .cms_spacer_medium {
+        height: 10px;
+    }
+    .cms_spacer_thick {
+        height: 20px;
+    }
+    @media only screen and (min-width: @break-large-mobile){
+        .cms_spacer_thin {
+            height: 10px;
+        }
+        .cms_spacer_medium {
+            height: 15px;
+        }
+        .cms_spacer_thick {
+            height: 30px;
+        }
     }
 }

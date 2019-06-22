@@ -15,6 +15,7 @@ namespace Sample4.Elements
     public class MessageComponent: Component
     {
         public string Message { get; set; }
+        public string Style { get; set; }
 
         public MessageComponent(
             IComponentDependenciesFactory dependencies) 
@@ -29,7 +30,7 @@ namespace Sample4.Elements
                 context.Html.WriteComment("message component");
                 context.Html.WriteUnclosedElement("hr");
                 context.Html.WriteLine();
-                context.Html.WriteElementLine("p", Message);
+                context.Html.WriteElementLine("p", Message, "style", Style);
             }
 
             return WriteResult.Continue();

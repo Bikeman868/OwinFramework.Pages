@@ -128,6 +128,16 @@ namespace Sample4.CmsData
                     Type = typeof(string),
                     DisplayName = "Message",
                     Description = "The message to output onto the page"
+                },
+                new ElementPropertyRecord
+                {
+                    ElementId = _components[0].ElementId,
+                    ElementPropertyId = propertyId++,
+                    Name = "Style",
+                    TypeName = "System.String",
+                    Type = typeof(string),
+                    DisplayName = "Style",
+                    Description = "The inline style to apply to the message"
                 }
             };
 
@@ -299,15 +309,22 @@ namespace Sample4.CmsData
                 {
                     ElementPropertyId = _properties[0].ElementPropertyId,
                     ElementVersionId = _regionVersions[1].ElementVersionId,
-                    ValueText = "This is the footer",
-                    Value = "This is the footer"
+                    ValueText = "Copyright Martin Halliday 2018-2019",
+                    Value = "Copyright Martin Halliday 2018-2019"
                 },
                 new ElementPropertyValueRecord
                 {
                     ElementPropertyId = _properties[0].ElementPropertyId,
                     ElementVersionId = _regionVersions[4].ElementVersionId,
-                    ValueText = "This is the title",
-                    Value = "This is the title"
+                    ValueText = "Sample 4",
+                    Value = "Sample 4"
+                },
+                new ElementPropertyValueRecord
+                {
+                    ElementPropertyId = _properties[1].ElementPropertyId,
+                    ElementVersionId = _regionVersions[4].ElementVersionId,
+                    ValueText = "font-size: 4vw;padding: 15px 0px 0px 30px;margin: 0;letter-spacing: 1px;font-family: sans-serif;color:whitesmoke;background:gray;",
+                    Value = "font-size: 4vw;padding: 15px 0px 0px 30px;margin: 0;letter-spacing: 1px;font-family: sans-serif;color:whitesmoke;background:gray;"
                 }
             };
 

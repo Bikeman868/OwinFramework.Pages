@@ -31,21 +31,34 @@ namespace OwinFramework.Pages.Standard
         /// </summary>
         private class LibraryComponent : Component
         {
-            public string[] Urls { get; set; }
+            private readonly string[] _scriptUrls;
+            private readonly string[] _styleUrls;
 
-            public LibraryComponent(IComponentDependenciesFactory dependencies, params string[] urls)
+            public LibraryComponent(
+                IComponentDependenciesFactory dependencies, 
+                string[] scriptUrls, 
+                string[] styleUrls = null)
                 : base(dependencies)
             {
                 PageAreas = new[] { PageArea.Head };
-                Urls = urls;
+                _scriptUrls = scriptUrls;
+                _styleUrls = styleUrls;
             }
 
             public override IWriteResult WritePageArea(IRenderContext context, PageArea pageArea)
             {
                 if (pageArea == PageArea.Head)
                 {
-                    foreach (var url in Urls)
-                        context.Html.WriteElementLine("script", string.Empty, "src", url);
+                    if (_styleUrls != null)
+                    {
+                        foreach (var url in _styleUrls)
+                            context.Html.WriteElementLine("link", string.Empty, "rel", "stylesheet", "href", url);
+                    }
+                    if (_scriptUrls != null)
+                    {
+                        foreach (var url in _scriptUrls)
+                            context.Html.WriteElementLine("script", string.Empty, "src", url);
+                    }
                 }
 
                 return WriteResult.Continue();
@@ -56,36 +69,36 @@ namespace OwinFramework.Pages.Standard
         {
             builder.BuildUpComponent(
                 new LibraryComponent(
-                    Dependencies.ComponentDependenciesFactory, 
-                    "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"))
+                    Dependencies.ComponentDependenciesFactory, new[]{
+                    "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"}))
                 .Name("jQuery1")
                 .Build();
 
             builder.BuildUpComponent(
                 new LibraryComponent(
-                    Dependencies.ComponentDependenciesFactory,
-                    "https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"))
+                    Dependencies.ComponentDependenciesFactory, new[]{
+                    "https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"}))
                 .Name("jQuery2")
                 .Build();
 
             builder.BuildUpComponent(
                 new LibraryComponent(
-                    Dependencies.ComponentDependenciesFactory,
-                    "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"))
+                    Dependencies.ComponentDependenciesFactory, new[]{
+                    "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"}))
                 .Name("jQuery3")
                 .Build();
 
             builder.BuildUpComponent(
                 new LibraryComponent(
-                    Dependencies.ComponentDependenciesFactory,
-                    "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"))
+                    Dependencies.ComponentDependenciesFactory, new[]{
+                    "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"}))
                 .Name("jQuery")
                 .Build();
 
             builder.BuildUpComponent(
                 new LibraryComponent(
-                    Dependencies.ComponentDependenciesFactory,
-                    "https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"))
+                    Dependencies.ComponentDependenciesFactory, new[]{
+                    "https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"}))
                 .Name("AngularJS")
                 .Build();
 
@@ -93,28 +106,45 @@ namespace OwinFramework.Pages.Standard
                 new LibraryComponent(
                     Dependencies.ComponentDependenciesFactory,
                     _frameworkConfiguration.DebugLibraries 
-                        ? "https://unpkg.com/react@16/umd/react.development.js" 
-                        : "https://unpkg.com/react@16/umd/react.production.min.js",
-                    _frameworkConfiguration.DebugLibraries 
-                        ? "https://unpkg.com/react-dom@16/umd/react-dom.development.js" 
-                        : "https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"))
+                        ? new[]
+                        {
+                            "https://unpkg.com/react@16/umd/react.development.js", 
+                            "https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+                        }
+                        : new[]
+                        {
+                            "https://unpkg.com/react@16/umd/react.production.min.js",
+                            "https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"
+                        }))
                 .Name("React")
                 .Build();
 
             builder.BuildUpComponent(
                 new LibraryComponent(
-                    Dependencies.ComponentDependenciesFactory,
-                    "https://unpkg.com/redux@4.0.1/dist/redux.js"))
+                    Dependencies.ComponentDependenciesFactory, new[]{
+                    "https://unpkg.com/redux@4.0.1/dist/redux.js"}))
                 .Name("Redux")
                 .Build();
 
             builder.BuildUpComponent(
                 new LibraryComponent(
-                    Dependencies.ComponentDependenciesFactory,
+                    Dependencies.ComponentDependenciesFactory,new[]{
                     _frameworkConfiguration.DebugLibraries 
                         ? "https://cdn.jsdelivr.net/npm/vue/dist/vue.js"
-                        : "https://cdn.jsdelivr.net/npm/vue"))
+                        : "https://cdn.jsdelivr.net/npm/vue"}))
                 .Name("Vue")
+                .Build();
+
+            builder.BuildUpComponent(
+                new LibraryComponent(
+                    Dependencies.ComponentDependenciesFactory,
+                    new[]{ "https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js" },
+                    new[]
+                    {
+                        "https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css",
+                        "https://fonts.googleapis.com/icon?family=Material+Icons"
+                    }))
+                .Name("Material")
                 .Build();
 
             return this;

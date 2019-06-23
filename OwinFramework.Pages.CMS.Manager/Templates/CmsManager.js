@@ -9,15 +9,15 @@
             if (month < 10) month = "0" + month;
             else month = month + "";
 
-            var day = date.getDay() + 1;
+            var day = date.getDate();
             if (day < 10) day = "0" + day;
             else day = day + "";
 
-            var hours = date.getHours() + 1;
+            var hours = date.getHours();
             if (hours < 10) hours = "0" + hours;
             else hours = hours + "";
 
-            var minutes = date.getMinutes() + 1;
+            var minutes = date.getMinutes();
             if (minutes < 10) minutes = "0" + minutes;
             else minutes = minutes + "";
 
@@ -28,7 +28,7 @@
 
     Vue.filter("cms_formatUserUrn", function(value) {
         if (value) {
-            return value;
+            return "user " + value.match(/[^:]*$/g); // TODO: Look up user display name
         }
         return "";
     });

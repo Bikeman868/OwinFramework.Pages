@@ -4,6 +4,8 @@
         data: {
             visible: true,
             mode: "view",
+            namePattern: "",
+            displayNamePattern: "",
             errors: [],
             originalPage: {},
             editingPage: {},
@@ -11,6 +13,8 @@
         },
         created: function() {
             var vm = this;
+            vm.namePattern = exported.validation.namePattern.source;
+            vm.displayNamePattern = exported.validation.displayNamePattern.source;
             ns.cmsmanager.pageStore.retrievePage(
                 12,
                 function(page) { vm.currentPage = page; });
@@ -51,7 +55,7 @@
                     ns.cmsmanager.pageStore.createPage(
                         vm.editingPage,
                         function() { vm.mode = "view"; },
-                        function(msg) { vm.errors=[msg]});
+                        function(msg) { vm.errors = [msg]});
                 }
             },
             confirmDelete: function() {
@@ -69,15 +73,8 @@
             validate: function() {
                 var vm = this;
                 var errors = [];
-                if (vm.editingPage.displayName == undefined || vm.editingPage.displayName.length < 3)
-                    errors.push("Page display name must be at least 3 characters");
-                if (vm.editingPage.name == undefined || vm.editingPage.name.length < 2)
-                    errors.push("Page name must be at least 2 characters");
-                else {
-                    var nameRegwx = new RegExp("^[a-zA-Z][0-9a-zA-Z_]*$");
-                    if (!nameRegwx.test(vm.editingPage.name))
-                        errors.push("Page name can only contain letters, numbers and underscore. The first character must be a letter");
-                }
+                exported.validation.displayName(vm.editingPage.displayName, errors);
+                exported.validation.name(vm.editingPage.name, errors);
                 vm.errors = errors;
             }
         }

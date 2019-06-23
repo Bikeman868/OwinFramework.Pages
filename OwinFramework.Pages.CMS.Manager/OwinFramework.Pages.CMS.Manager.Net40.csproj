@@ -119,7 +119,7 @@
     <EmbeddedResource Include="Templates\Crud\PageEditor.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JavascriptModules\pagesModule.js" />
+    <EmbeddedResource Include="JavascriptModules\dataModule.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\CmsManager.html" />
@@ -138,6 +138,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\Selectors\EnvironmentSelector.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="JavascriptModules\validationModule.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

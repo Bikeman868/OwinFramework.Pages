@@ -85,7 +85,8 @@ namespace OwinFramework.Pages.CMS.Manager
             var scriptModules = new List<string>();
 
             LoadScriptModule("dispatcherModule", scriptModules);
-            LoadScriptModule("pagesModule", scriptModules);
+            LoadScriptModule("dataModule", scriptModules);
+            LoadScriptModule("validationModule", scriptModules);
             LoadScriptModule("viewsModule", scriptModules);
 
             // Load templates that are directly loaded into regions

@@ -3,35 +3,21 @@
         <p>No page currently selected for editing</p>
     </div>
     <div v-else>
-        <div v-if="mode === 'new'">
-            <h2>Create New Page</h2>
+        <div v-if="mode === 'new' || mode === 'edit'">
+            <h2 v-if="mode === 'new'">Create New Page</h2>
+            <h2 v-if="mode === 'edit'">Edit Page Details</h2>
             <label class="cms_field">Show as</label>
-            <input type="text" class="cms_field__display_name" v-model="editingPage.displayName" placeholder="Display name" required minlength="3">
+            <input type="text" class="cms_field__display_name" v-model="editingPage.displayName" placeholder="Display name" v-bind:pattern="displayNamePattern" required>
             <label class="cms_field">Name</label>
-            <input type="text" class="cms_field__name" v-model="editingPage.name" placeholder="Page name" required pattern="[a-zA-Z][0-9a-zA-Z_]*">
+            <input type="text" class="cms_field__name" v-model="editingPage.name" placeholder="unique_name" v-bind:pattern="namePattern" required>
             <label class="cms_field">Description</label>
-            <textarea class="cms_field__description" v-model="editingPage.description" placeholder="Page description"></textarea>
+            <textarea class="cms_field__description" v-model="editingPage.description" placeholder="Optional description"></textarea>
             <div class="cms_validation_error_list" v-if="errors.length > 0">
                 <p v-for="error in errors">{{error}}</p>
             </div>
             <div class="cms_button_bar">
-                <button type="button" v-on:click="createNew">Create</button>
-                <button type="button" v-on:click="cancelChanges">Cancel</button>
-            </div>
-        </div>
-        <div v-if="mode === 'edit'">
-            <h2>Edit Page Details</h2>
-            <label class="cms_field">Show as</label>
-            <input type="text" class="cms_field__display_name" v-model="editingPage.displayName" placeholder="Display name" required minlength="3">
-            <label class="cms_field">Name</label>
-            <input type="text" class="cms_field__name" v-model="editingPage.name" placeholder="Page name" required pattern="[a-zA-Z][0-9a-zA-Z_]*">
-            <label class="cms_field">Description</label>
-            <textarea class="cms_field__description" v-model="editingPage.description" placeholder="Page description"></textarea>
-            <div class="cms_validation_error_list" v-if="errors.length > 0">
-                <p v-for="error in errors">{{error}}</p>
-            </div>
-            <div class="cms_button_bar">
-                <button type="button" v-on:click="saveChanges">Save</button>
+                <button v-if="mode === 'new'" type="button" v-on:click="createNew">Create</button>
+                <button v-if="mode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
                 <button type="button" v-on:click="cancelChanges">Cancel</button>
             </div>
         </div>

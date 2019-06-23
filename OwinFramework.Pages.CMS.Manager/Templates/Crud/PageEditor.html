@@ -5,12 +5,15 @@
     <div v-else>
         <div v-if="mode === 'new'">
             <h2>Create New Page</h2>
-            <label class="cms_field">Name</label>
-            <input type="text" class="cms_field__name" v-model="editingPage.name" placeholder="Page name">
             <label class="cms_field">Show as</label>
-            <input type="text" class="cms_field__display_name" v-model="editingPage.displayName" placeholder="Display name">
+            <input type="text" class="cms_field__display_name" v-model="editingPage.displayName" placeholder="Display name" required minlength="3">
+            <label class="cms_field">Name</label>
+            <input type="text" class="cms_field__name" v-model="editingPage.name" placeholder="Page name" required pattern="[a-zA-Z][0-9a-zA-Z_]*">
             <label class="cms_field">Description</label>
             <textarea class="cms_field__description" v-model="editingPage.description" placeholder="Page description"></textarea>
+            <div class="cms_validation_error_list" v-if="errors.length > 0">
+                <p v-for="error in errors">{{error}}</p>
+            </div>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="createNew">Create</button>
                 <button type="button" v-on:click="cancelChanges">Cancel</button>
@@ -18,12 +21,15 @@
         </div>
         <div v-if="mode === 'edit'">
             <h2>Edit Page Details</h2>
-            <label class="cms_field">Name</label>
-            <input type="text" class="cms_field__name" v-model="editingPage.name" placeholder="Page name">
             <label class="cms_field">Show as</label>
-            <input type="text" class="cms_field__display_name" v-model="editingPage.displayName" placeholder="Display name">
+            <input type="text" class="cms_field__display_name" v-model="editingPage.displayName" placeholder="Display name" required minlength="3">
+            <label class="cms_field">Name</label>
+            <input type="text" class="cms_field__name" v-model="editingPage.name" placeholder="Page name" required pattern="[a-zA-Z][0-9a-zA-Z_]*">
             <label class="cms_field">Description</label>
             <textarea class="cms_field__description" v-model="editingPage.description" placeholder="Page description"></textarea>
+            <div class="cms_validation_error_list" v-if="errors.length > 0">
+                <p v-for="error in errors">{{error}}</p>
+            </div>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="saveChanges">Save</button>
                 <button type="button" v-on:click="cancelChanges">Cancel</button>
@@ -34,7 +40,7 @@
             <label class="cms_field">Name</label>
             <p class="cms_field">{{currentPage.name}}</p>
             <label class="cms_field">Created</label>
-            <p class="cms_field">{{currentPage.createdWhen}} by {{currentPage.createdBy}}</p>
+            <p class="cms_field">{{currentPage.createdWhen | cms_formatDate}} by {{currentPage.createdBy | cms_formatUserUrn}}</p>
             <label class="cms_field">Description</label>
             <p class="cms_field">{{currentPage.description}}</p>
             <div class="cms_button_bar">

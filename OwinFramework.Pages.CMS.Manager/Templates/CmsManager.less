@@ -147,10 +147,15 @@ div.cms_main {
         margin-left: 5px;
         margin-top: 2px;
         margin-bottom: 12px;
-        box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , .1);
 		border: 0;
 		outline: 0;
 		padding: 10px 6px;
+    }
+    input:valid {
+        box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , 0.1)
+    }
+    input:invalid {
+        box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
     }
     textarea {
         display: block;
@@ -161,10 +166,15 @@ div.cms_main {
         margin-left: 5px;
         margin-top: 2px;
         margin-bottom: 12px;
-        box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , .1);
 		border: 0;
 		outline: 0;
 		padding: 10px 6px;
+    }
+    textarea:valid {
+        box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , .1)
+    }
+    textarea:invalid {
+        box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
     }
     p.cms_field {
         display: block;
@@ -173,6 +183,23 @@ div.cms_main {
         margin-top: 2px;
         margin-bottom: 4px;
         padding: 2px;
+    }
+    ::placeholder{
+        font-size: smaller;
+        color: lightgray;
+    }
+    .cms_validation_error_list {
+        display: block;
+        font: inherit;
+        font-family: @body-font-family;
+        font-size: larger;
+        color: red;
+        margin-left: 5px;
+        margin-top: 2px;
+        margin-bottom: 12px;
+		border: 1px solid red;
+		outline: 0;
+		padding: 10px 6px;
     }
     div.cms_button_bar {
         background: lighten(@button-background, 30%);

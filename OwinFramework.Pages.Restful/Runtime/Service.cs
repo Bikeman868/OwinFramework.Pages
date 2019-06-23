@@ -275,7 +275,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         .ToList();
 
                     var methodName = char.ToLower(method.Name[0]) + method.Name.Substring(1);
-                    clientScript.AppendLine("  " + methodName + ": function(params, onSuccess, onDone) {");
+                    clientScript.AppendLine("  " + methodName + ": function(params, onSuccess, onDone, onFail) {");
                     clientScript.AppendLine("    var request = { isSuccess: function(ajax){ return ajax.status === 200; } };");
                     clientScript.AppendLine("    if (params != undefined && params.body != undefined) request.body = params.body;");
 
@@ -327,6 +327,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     }
 
                     clientScript.AppendLine("    if (onSuccess != undefined) request.onSuccess = function(ajax){ onSuccess(ajax.response); }");
+                    clientScript.AppendLine("    if (onFail != undefined) request.onFail = onFail;");
                     clientScript.AppendLine("    if (onDone != undefined) request.onDone = onDone;");
 
                     for (var i = httpMethods.Length - 1; i >= 0; i--)

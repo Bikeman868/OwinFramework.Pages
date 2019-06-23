@@ -48,16 +48,28 @@
         return {};
     }
 
-    var createPage = function (page, onsuccess) {
+    var createPage = function (page, onsuccess, onfail) {
         ns.cmsmanager.crudService.createPage(
             { body: page }, 
             function (response) {
-                pages[response.elementId] = response;
-                if (onsuccess != undefined) onsuccess(response);
+                if (response == undefined) {
+                    if (onfail != undefined) onfail("No response was received from the server, the page might not have been created");
+                } else if (response.elementId == undefined) {
+                    if (onfail != undefined) onfail("The server failed to return an ID for the new page");
+                } else {
+                    pages[response.elementId] = response;
+                    if (onsuccess != undefined) onsuccess(response);
+                }
+            },
+            null,
+            function(ajax) {
+                if (onfail != undefined) {
+                    onfail("Failed to create new page");
+                }
             });
     }
 
-    var createPageVersion = function (pageVersion, onsuccess) {
+    var createPageVersion = function (pageVersion, onsuccess, onfail) {
         /*
         ns.cmsmanager.crudService.createPageVersion(
             page,
@@ -83,7 +95,7 @@
         }
     }
 
-    var updatePage = function (originalPage, updatedPage, onsuccess) {
+    var updatePage = function (originalPage, updatedPage, onsuccess, onfail) {
         var changes = findChanges(pageProperties, originalPage, updatedPage);
         if (changes.length === 0) {
             if (onsuccess != undefined) onsuccess(originalPage);
@@ -95,21 +107,33 @@
                 body: changes
             },
             function (response) {
-                var cached = pages[updatedPage.elementId];
-                if (cached != undefined) {
-                    copyObject(pageProperties, response, cached);
+                if (response == undefined) {
+                    if (onfail != undefined) onfail("No response was received from the server, the page might not have been updated");
+                } else {
+                    var cached = pages[updatedPage.elementId];
+                    if (cached != undefined) {
+                        copyObject(pageProperties, response, cached);
+                    }
+                    if (onsuccess != undefined) onsuccess(response);
                 }
-                if (onsuccess != undefined) onsuccess(response);
+            },
+            null,
+            function(ajax) {
+                if (onfail != undefined) {
+                    onfail("Failed to update the page");
+                }
             });
     }
 
-    var deletePage = function (pageId, onsuccess) {
+    var deletePage = function (pageId, onsuccess, onfail) {
         ns.cmsmanager.crudService.deletePage(
             { id: pageId },
             function (response) {
                 delete pages[pageId];
                 if (onsuccess != undefined) onsuccess(response);
-            });
+            },
+            null,
+            onfail);
     }
 
     exported.dispatcher.subscribe(function(message) {

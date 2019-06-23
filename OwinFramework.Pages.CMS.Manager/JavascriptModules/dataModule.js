@@ -28,11 +28,58 @@
     }
 }();
 
+var websiteStore = function() {
+    return{
+    };
+}();
+
+var websiteVersionStore = function () {
+    var getPages = function (websiteVersionId, onsuccess, onfail) {
+        ns.cmsmanager.listService.websiteVersionPages(
+            { id: websiteVersionId },
+            function (response) {
+                if (response == undefined) {
+                    if (onfail != undefined) onfail("No response was returned by the server");
+                } else {
+                    if (onsuccess != undefined) onsuccess(response);
+                }
+            },
+            null,
+            function (ajax) {
+                if (onfail != undefined) {
+                    onfail("Failed to retrieve a list of website pages");
+                }
+            });
+    }
+
+    return {
+        getPages: getPages
+    };
+}();
+
 var pageStore = function () {
     var pages = {};
 
     var pageProperties = [
         "name", "displayName", "description", "createdBy", "createdWhen", "elementType", "elementId"];
+
+    var getAllPages = function(onsuccess, onfail) {
+        ns.cmsmanager.listService.allPages(
+            {},
+            function(response) {
+                if (response == undefined) {
+                    if (onfail != undefined) onfail("No pages were returned by the server");
+                } else {
+                    if (onsuccess != undefined) onsuccess(response);
+                }
+            },
+            null,
+            function(ajax) {
+                if (onfail != undefined) {
+                    onfail("Failed to retrieve a list of pages");
+                }
+            });
+    }
 
     var getEditablePage = function (page) {
         return dataUtilities.copyObject(pageProperties, page);
@@ -149,6 +196,8 @@ var pageStore = function () {
         retrievePage: retrievePage,
         updatePage: updatePage,
         deletePage: deletePage,
+
+        getAllPages: getAllPages
     }
 }();
 
@@ -278,5 +327,7 @@ var pageVersionStore = function () {
     }
 }();
 
+exported.websiteStore = websiteStore;
+exported.websiteVersionStore = websiteVersionStore;
 exported.pageStore = pageStore;
 exported.pageVersionStore = pageVersionStore;

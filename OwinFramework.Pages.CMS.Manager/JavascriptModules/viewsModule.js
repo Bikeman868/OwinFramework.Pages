@@ -26,20 +26,20 @@
     }
 
     // Selectors
-    var pageSelector = function () { selectView("cms_select_view", "/cms/manager/PageSelector", "page_selector", exported.page_selector_vm); }
-    var environmentSelector = function () { selectView("cms_select_view", "/cms/manager/EnvironmentSelector", "environment_selector", exported.environment_selector_vm); }
+    var showPageSelector = function () { selectView("cms_select_view", "/cms/manager/PageSelector", "page_selector", exported.page_selector_vm); }
+    var showEnvironmentSelector = function () { selectView("cms_select_view", "/cms/manager/EnvironmentSelector", "environment_selector", exported.environment_selector_vm); }
 
     // Editors
-    var pageEditor = function () { selectView("cms_edit_view", "/cms/manager/PageEditor", "page_editor", exported.page_editor_vm); }
+    var showPageEditor = function () { selectView("cms_edit_view", "/cms/manager/PageEditor", "page_editor", exported.page_editor_vm); }
 
     // Tools
-    var dispatcherLog = function () { selectView("cms_tool_view", "/cms/manager/DispatcherLog", "log_dispatcher", exported.dispatcher_log_vm); }
+    var showDispatcherLog = function () { selectView("cms_tool_view", "/cms/manager/DispatcherLog", "log_dispatcher", exported.dispatcher_log_vm); }
 
     var viewSelectChanged = function(e) {
         var viewName = (e.value || e.options[e.selectedIndex].value);
-        if (viewName === "environments") environmentSelector();
+        if (viewName === "environments") showEnvironmentSelector();
         else if (viewName === "versions");
-        else if (viewName === "pages") pageSelector();
+        else if (viewName === "pages") showPageSelector();
         else if (viewName === "layouts");
         else if (viewName === "regions");
         else if (viewName === "components");
@@ -48,12 +48,12 @@
     }
 
     return {
-        environmentSelector: environmentSelector,
-        pageSelector: pageSelector,
+        showEnvironmentSelector: showEnvironmentSelector,
+        showPageSelector: showPageSelector,
 
-        pageEditor: pageEditor,
+        showPageEditor: showPageEditor,
 
-        dispatcherLog: dispatcherLog,
+        showDispatcherLog: showDispatcherLog,
 
         viewSelectChanged: viewSelectChanged
     }

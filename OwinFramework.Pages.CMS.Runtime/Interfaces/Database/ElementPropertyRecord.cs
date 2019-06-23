@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
@@ -14,12 +15,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// Primary key that uniquely identifies this element property in the database.
         /// </summary>
         [Mapping("elementPropertyId")]
+        [JsonProperty("elementPropertyId")]
         public long ElementPropertyId { get; set; }
 
         /// <summary>
         /// The element that has this property available
         /// </summary>
         [Mapping("elementId")]
+        [JsonProperty("elementId")]
         public long ElementId { get; set; }
 
         /// <summary>
@@ -30,6 +33,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// Type.
         /// </summary>
         [Mapping("editRegionName")]
+        [JsonProperty("editRegionName")]
         public string EditRegionName { get; set; }
 
         /// <summary>
@@ -38,6 +42,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// a display UI based on the Type.
         /// </summary>
         [Mapping("displayRegionName")]
+        [JsonProperty("displayRegionName")]
         public string DisplayRegionName { get; set; }
 
         /// <summary>
@@ -45,6 +50,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// parsing property values
         /// </summary>
         [Mapping("typeName")]
+        [JsonProperty("typeName")]
         public string TypeName { get; set; }
 
         /// <summary>

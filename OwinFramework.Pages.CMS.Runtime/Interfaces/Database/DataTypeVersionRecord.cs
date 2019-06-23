@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
@@ -13,12 +14,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The name of the .Net Assembly that contains this type
         /// </summary>
         [Mapping("assembly")]
+        [JsonProperty("assembly")]
         public string AssemblyName { get; set; }
 
         /// <summary>
         /// The fully qualified name of the C# class
         /// </summary>
         [Mapping("typeName")]
+        [JsonProperty("typeName")]
         public string TypeName { get; set; }
 
         /// <summary>

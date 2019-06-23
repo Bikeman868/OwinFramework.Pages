@@ -33,7 +33,7 @@
         return "";
     });
         
-    exported.viewStore.pageSelector();
-    exported.viewStore.pageEditor();
-    exported.viewStore.dispatcherLog();
+    exported.viewStore.showPageSelector();
+    exported.viewStore.showPageEditor();
+    exported.viewStore.showDispatcherLog();
 }

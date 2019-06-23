@@ -21,25 +21,25 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             _dataLayer = dataLater;
         }
 
-        [Endpoint(UrlPath = "pages/all", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
-        private void AllPages(IEndpointRequest request)
+        [Endpoint(UrlPath = "websiteversion/{id}/pages", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment, 
+            Description = "The ID of the website version to get pages for")]
+        private void WebsiteVersionPages(IEndpointRequest request)
         {
-            var page = request.Body<PageRecord>();
-            var result = _dataLayer.CreatePage(page);
-
-            if (result.Success)
-            {
-                page = _dataLayer.GetPage(result.NewRecordId, (p, v) => p);
-                request.Success(page);
-            }
-            else
-            {
-                request.BadRequest(result.DebugMessage);
-            }
+            var id = request.Parameter<long>("id");
+            var records = _dataLayer.GetWebsitePages(id, wvp => wvp);
+            request.Success(records);
         }
 
-        [Endpoint(UrlPath = "page/{pageid}/versions", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
-        [EndpointParameter("pageId", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(UrlPath = "page/{id}/versions", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the page to get a list of versions for")]
         private void PageVersions(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");

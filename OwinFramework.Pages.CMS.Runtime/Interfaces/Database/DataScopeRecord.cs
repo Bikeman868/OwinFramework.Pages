@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
@@ -13,19 +14,15 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The unique ID of this data scope
         /// </summary>
         [Mapping("dataScopeId")]
+        [JsonProperty("dataScopeId")]
         public long DataScopeId { get; set; }
-
-        /// <summary>
-        /// The name to show users in the CMS UI
-        /// </summary>
-        [Mapping("displayName")]
-        public string DisplayName { get; set; }
 
         /// <summary>
         /// Optional data type specifier. If this is missing then the Name
         /// property is assumed to be the name of a data provider
         /// </summary>
         [Mapping("dataTypeId")]
+        [JsonProperty("dataTypeId")]
         public long? DataTypeId { get; set; }
     }
 }

@@ -7,13 +7,13 @@
         },
         methods: {
         },
-        created: function() {
-            this.pages = [
-                { displayName: "Page 1" },
-                { displayName: "Page 2" },
-                { displayName: "Page 3" },
-                { displayName: "Page 4" }
-            ];
+        created: function () {
+            var vm = this;
+            exported.websiteVersionStore.getPages(
+                1,
+                function(response) {
+                    vm.pages = response;
+                });
         }
     });
 }

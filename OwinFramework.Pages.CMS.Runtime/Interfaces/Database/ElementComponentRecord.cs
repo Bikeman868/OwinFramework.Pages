@@ -1,4 +1,5 @@
-﻿using Prius.Contracts.Attributes;
+﻿using Newtonsoft.Json;
+using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -8,6 +9,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The ID of the elemment that this component should be rendered onto
         /// </summary>
         [Mapping("elementVersionId")]
+        [JsonProperty("elementVersionId")]
         public long ElementVersionId { get; set; }
 
         /// <summary>

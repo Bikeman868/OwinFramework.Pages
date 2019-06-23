@@ -1,4 +1,6 @@
-﻿namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
+﻿using Newtonsoft.Json;
+
+namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
     /// <summary>
     /// POCO that returns results from a database create record
@@ -8,6 +10,7 @@
         /// <summary>
         /// The ID of the newly created record
         /// </summary>
+        [JsonProperty("newRecordId")]
         public long NewRecordId { get; private set; }
         
         /// <summary>

@@ -33,7 +33,29 @@
         return "";
     });
 
+    var areaSelectorVm = new Vue({
+        el: "#cms_area_selector",
+        data: {
+            areas: [
+                { name: "versions", displayName: "Website versions" },
+                { name: "environments", displayName: "Environments" },
+                { name: "pages", displayName:"Pages" },
+                { name: "layouts", displayName:"Layouts" },
+                { name: "regions", displayName:"Regions" },
+                { name: "components", displayName:"Components" },
+                { name: "dataScopes", displayName:"Scopes" },
+                { name: "dataTypes", displayName:"Types" }
+            ]
+        },
+        methods: {
+            show: function (context) { this._context = context; },
+            selectArea: function (e) { ns.cmsmanager.viewStore.viewSelectChanged(e.target, this._context); }
+        }
+    });
+
     var rootContext = exported.selectionContext.root;
+    areaSelectorVm.show(rootContext);
+
     rootContext.selected("websiteVersionId", 1);
 
     exported.viewStore.showPageSelector(rootContext);

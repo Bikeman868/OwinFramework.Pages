@@ -1,5 +1,3 @@
 ﻿<div id="cms_page_selector" class="cms_selector" v-if="visible">
-    <div v-for="page in pages">
-        <p class="display_name">{{page.pageId}}</p>
-    </div>
+    <a v-for="page in pages" href="javescript:void(0)" v-on:click="selectPage(page.elementId)">{{page.displayName}}</a>
 </div>

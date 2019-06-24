@@ -31,8 +31,20 @@
                 } else {
                     exported.websiteVersionStore.getPages(
                         vm.websiteVersionId,
-                        function(response) { vm.pages = response; });
+                        function (response) {
+                            var pages = [];
+                            for (var i = 0; i < response.length; i++) {
+                                exported.pageStore.retrievePage(response[i].pageId, function(page) {
+                                    pages.push(page);
+                                });
+                            }
+                            vm.pages = pages;
+                        });
                 }
+            },
+            selectPage: function(pageId) {
+                var vm = this;
+                vm._context.selected("pageId", pageId);
             }
         }
     });

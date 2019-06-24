@@ -2,15 +2,8 @@
     <h1>CMS Manager</h1>
     <div class="cms_main">
         <div class="cms_left_panel">
-            <select onchange="ns.cmsmanager.viewStore.viewSelectChanged(this, ns.cmsmanager.selectionContext.root);">
-                <option value="environments">Environments</option>
-                <option value="versions">Website versions</option>
-                <option value="pages" selected="selected">Pages</option>
-                <option value="layouts">Layouts</option>
-                <option value="regions">Regions</option>
-                <option value="components">Components</option>
-                <option value="dataScopes">Scopes</option>
-                <option value="dataTypes">Types</option>
+            <select id="cms_area_selector" v-on:change="selectArea($event)">
+                <option v-for="area in areas" v-bind:value="area.name">{{area.displayName}}</option>
             </select>
             <div id="cms_select_view" class="cms_panel"></div>
         </div>

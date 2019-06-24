@@ -6,15 +6,23 @@
             environments: []
         },
         methods: {
-            show: function (context) { this.visible = true; },
+            show: function (context) {
+                var vm = this;
+                vm.visible = true;
+                vm._context = context;
+            },
             hide: function () { this.visible = false; },
+            selectEnvironment: function (environmentId) {
+                var vm = this;
+                vm._context.selected("environmentId", environmentId);
+            }
         },
         created: function() {
             this.environments = [
-                { displayName: "Production" },
-                { displayName: "Staging" },
-                { displayName: "Test" },
-                { displayName: "Integration" }
+                { elementId: 1, displayName: "Production" },
+                { elementId: 2, displayName: "Staging" },
+                { elementId: 3, displayName: "Test" },
+                { elementId: 4, displayName: "Integration" }
             ];
         }
     });

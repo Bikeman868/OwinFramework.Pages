@@ -2,7 +2,7 @@
     <h1>CMS Manager</h1>
     <div class="cms_main">
         <div class="cms_left_panel">
-            <select onchange="ns.cmsmanager.viewStore.viewSelectChanged(this);">
+            <select onchange="ns.cmsmanager.viewStore.viewSelectChanged(this, ns.cmsmanager.selectionContext.root);">
                 <option value="environments">Environments</option>
                 <option value="versions">Website versions</option>
                 <option value="pages" selected="selected">Pages</option>

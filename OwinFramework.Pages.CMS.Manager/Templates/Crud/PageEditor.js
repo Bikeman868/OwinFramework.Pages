@@ -15,11 +15,30 @@
             var vm = this;
             vm.namePattern = exported.validation.namePattern.source;
             vm.displayNamePattern = exported.validation.displayNamePattern.source;
-            ns.cmsmanager.pageStore.retrievePage(
-                12,
-                function(page) { vm.currentPage = page; });
         },
         methods: {
+            show: function (context) {
+                var vm = this;
+                vm._context = context;
+                vm._unsubscribe = context.subscribe("pageId", function (pageId) {
+                    if (pageId == undefined) {
+                        vm.currentPage = null;
+                    } else {
+                        ns.cmsmanager.pageStore.retrievePage(
+                            pageId,
+                            function (page) { vm.currentPage = page; });
+                    }
+                });
+                this.visible = true;
+            },
+            hide: function() {
+                var vm = this;
+                vm.visible = false;
+                if (vm._unsubscribe != undefined) {
+                    vm._unsubscribe();
+                    vm._unsubscribe = null;
+                }
+            },
             newPage: function() {
                 var vm = this;
                 vm.errors = [];

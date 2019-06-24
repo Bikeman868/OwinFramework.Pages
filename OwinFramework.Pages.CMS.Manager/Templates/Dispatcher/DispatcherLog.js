@@ -3,14 +3,7 @@
         el: "#cms_dispatcher_log",
         data: {
             visible: true,
-            messages: [
-                {
-                    when: "2019-05-31",
-                    elapsed: "",
-                    from: "SHVANMHALLIDAY",
-                    changes: "Description of changes"
-                }
-            ]
+            messages: []
         },
         methods: {
             updateTimes: function() {
@@ -28,6 +21,12 @@
                     }
                 }
                 setTimeout(vm.updateTimes, 1000);
+            },
+            show: function(context) {
+                this.visible = true;
+            },
+            hide: function() {
+                this.visible = false;
             }
         },
         created: function() {

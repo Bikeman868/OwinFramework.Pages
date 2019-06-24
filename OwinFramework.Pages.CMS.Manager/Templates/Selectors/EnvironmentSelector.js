@@ -6,6 +6,8 @@
             environments: []
         },
         methods: {
+            show: function (context) { this.visible = true; },
+            hide: function () { this.visible = false; },
         },
         created: function() {
             this.environments = [

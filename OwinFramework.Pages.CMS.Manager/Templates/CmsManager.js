@@ -32,8 +32,11 @@
         }
         return "";
     });
-        
-    exported.viewStore.showPageSelector();
-    exported.viewStore.showPageEditor();
-    exported.viewStore.showDispatcherLog();
+
+    var rootContext = exported.selectionContext.root;
+    rootContext.selected("websiteVersionId", 1);
+
+    exported.viewStore.showPageSelector(rootContext);
+    exported.viewStore.showPageEditor(rootContext);
+    exported.viewStore.showDispatcherLog(rootContext);
 }

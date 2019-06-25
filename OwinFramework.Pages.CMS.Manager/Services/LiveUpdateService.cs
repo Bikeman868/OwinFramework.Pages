@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
@@ -25,6 +26,11 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             _liveUpdateReceiver = liveUpdateReceiver;
             _connectedClients = new Dictionary<long, Client>();
 
+            // Randomize nextid so that if the server is restarted previously
+            // connected clients will not likely kill sessions from newly
+            // connected clients
+            _nextId = new Random().Next();
+
             _expiryThread = new Thread(() =>
             {
                 var count = 60;
@@ -44,6 +50,9 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                                     var client = _connectedClients[id];
                                     if (client.Expired)
                                     {
+#if DEBUG
+                                        Trace.WriteLine("Removing expired LiveUpdate session #" + id);
+#endif
                                         _connectedClients.Remove(id);
                                         client.Dispose();
                                     }
@@ -57,7 +66,8 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             })
             {
                 IsBackground = true,
-                Priority = ThreadPriority.BelowNormal
+                Priority = ThreadPriority.BelowNormal,
+                Name = "LiveUpdate expiry"
             };
 
             _expiryThread.Start();
@@ -71,6 +81,10 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 Id = Interlocked.Increment(ref _nextId),
                 Success = true
             };
+
+#if DEBUG
+            Trace.WriteLine("New LiveUpdate registration #" + response.Id);
+#endif
 
             lock (_connectedClients)
             {
@@ -93,6 +107,9 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 Success = true
             };
 
+#if DEBUG
+            Trace.WriteLine("LiveUpdate de-registration #" + id);
+#endif
             lock (_connectedClients)
             {
                 Client client;
@@ -170,7 +187,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 _id = id;
                 _responseEvent = new ManualResetEventSlim(false);
                 _maximumWaitTime = TimeSpan.FromSeconds(60);
-                _expiryTime = TimeSpan.FromMinutes(10);
+                _expiryTime = TimeSpan.FromMinutes(30);
                 _lock = new object();
 
                 _subscription = liveUpdateReceiver.Subscribe(OnMessageReceived);

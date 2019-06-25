@@ -27,7 +27,11 @@
 
     window.addEventListener("beforeunload", function () {
         if (clientId != undefined) {
-            ns.cmsmanager.liveUpdateService.deregister({ id: clientId });
+            /* Due to a weird bug where beforeunload is called multiple times 
+               even though the page was not reloaded, this line is being commented
+               out. The session will expire on the server side anyway so this
+               housekeeping is a nice to have */
+            //ns.cmsmanager.liveUpdateService.deregister({ id: clientId });
         }
     });
 

@@ -1,25 +1,29 @@
 ﻿exported.selectionContext = function () {
     var create = function() {
-        var subscribers = {};
-        var values = {};
+        var ids = {};
 
         var subscribe = function(name, onchange) {
-            if (subscribers[name] == undefined) {
-                subscribers[name] = [onchange];
-            } else {
-                subscribers[name].push(onchange);
+            var id = ids[name];
+            if (id == undefined) {
+                id = { subscribers:[], value: null };
+                ids[name] = id;
             }
-            onchange(values[name]);
-            return function() {}; // Unsubscribe function
+            id.subscribers.push(onchange);
+            onchange(id.value);
+            return function() {
+                id.subscribers = id.subscribers.filter(function(e) { return e !== onchange; });
+            };
         }
 
         var selected = function(name, value) {
-            values[name] = value;
-            var subscriptions = subscribers[name];
-            if (subscriptions != undefined) {
-                for (let i = 0; i < subscriptions.length; i++) {
-                    subscriptions[i](value);
-                }
+            var id = ids[name];
+            if (id == undefined) {
+                id = { subscribers: [], value: null };
+                ids[name] = id;
+            }
+            id.value = value;
+            for (let i = 0; i < id.subscribers.length; i++) {
+                id.subscribers[i](value);
             }
         }
 

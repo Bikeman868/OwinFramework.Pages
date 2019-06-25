@@ -142,6 +142,15 @@
   <ItemGroup>
     <EmbeddedResource Include="JavascriptModules\validationModule.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\WebsiteVersionDropdownSelector.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\WebsiteVersionSelector.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\WebsiteVersionListSelector.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

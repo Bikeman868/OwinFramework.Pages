@@ -57,6 +57,9 @@
 
     var subscribe = function (subscriber) {
         subscribers.push(subscriber);
+        return function() {
+            subscribers = subscribers.filter(function(e) { return e !== subscriber; });
+        }
     }
 
     poll();

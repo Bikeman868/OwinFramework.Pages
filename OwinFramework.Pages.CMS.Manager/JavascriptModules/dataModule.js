@@ -166,7 +166,7 @@ var pageStore = function () {
             onfail);
     }
 
-    exported.dispatcher.subscribe(function(message) {
+    var dispatcherUnsubscribe = exported.dispatcher.subscribe(function(message) {
         if (message.propertyChanges != undefined) {
             for (let i = 0; i < message.propertyChanges.length; i++) {
                 var propertyChange = message.propertyChanges[i];
@@ -293,7 +293,7 @@ var pageVersionStore = function () {
             onfail);
     }
 
-    exported.dispatcher.subscribe(function (message) {
+    var dispatcherUnsubscribe = exported.dispatcher.subscribe(function (message) {
         if (message.propertyChanges != undefined) {
             for (let i = 0; i < message.propertyChanges.length; i++) {
                 var propertyChange = message.propertyChanges[i];

@@ -1,9 +1,9 @@
-﻿exported.environment_selector_vm = function (eId) {
+﻿exported.website_version_selector_vm = function(eId) {
     return new Vue({
         el: "#" + eId,
         data: {
             visible: true,
-            environments: []
+            versions: []
         },
         methods: {
             show: function (childContext, parentContext) {
@@ -14,17 +14,16 @@
                 vm.visible = true;
             },
             hide: function () { this.visible = false; },
-            selectEnvironment: function (environmentId) {
+            selectVersion: function (websiteVersionId) {
                 var vm = this;
-                vm._childContext.selected("environmentId", environmentId);
+                vm._childContext.selected("websiteVersionId", websiteVersionId);
             }
         },
         created: function() {
-            this.environments = [
-                { elementId: 1, displayName: "Production" },
-                { elementId: 2, displayName: "Staging" },
-                { elementId: 3, displayName: "Test" },
-                { elementId: 4, displayName: "Integration" }
+            this.versions = [
+                { elementId: 1, displayName: "Sprint 223" },
+                { elementId: 2, displayName: "Sprint 224" },
+                { elementId: 3, displayName: "Sprint 225" },
             ];
         }
     });

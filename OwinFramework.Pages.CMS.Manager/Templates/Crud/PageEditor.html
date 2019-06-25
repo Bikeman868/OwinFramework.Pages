@@ -22,7 +22,7 @@
             </div>
         </div>
         <div v-if="mode === 'view'">
-            <h2>{{currentPage.displayName}}</h2>
+            <h2>{{currentPage.displayName}} page</h2>
             <label class="cms_field">Name</label>
             <p class="cms_field">{{currentPage.name}}</p>
             <label class="cms_field">Created</label>
@@ -35,7 +35,7 @@
                 <button type="button" v-on:click="deletePage">Delete</button>
             </div>
             <div class="cms_spacer_medium">&nbsp;</div>
-            <h2>{{currentPage.displayName}} versions</h2>
+            <h2>{{currentPage.displayName}} page versions</h2>
         </div>
         <div v-if="mode === 'delete'">
             <h2>Confirm Page Deletion</h2>

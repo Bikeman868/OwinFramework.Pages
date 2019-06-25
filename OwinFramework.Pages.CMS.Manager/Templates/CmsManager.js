@@ -53,12 +53,14 @@
         }
     });
 
-    var rootContext = exported.selectionContext.root;
-    areaSelectorVm.show(rootContext);
+    var uiContext = exported.selectionContext.create();
+    var editorContext = exported.selectionContext.create();
 
-    rootContext.selected("websiteVersionId", 1);
+    areaSelectorVm.show(editorContext);
 
-    exported.viewStore.showPageSelector(rootContext);
-    exported.viewStore.showPageEditor(rootContext);
-    exported.viewStore.showDispatcherLog(rootContext);
+    uiContext.selected("websiteVersionId", 1);
+
+    exported.viewStore.showPageSelector(editorContext, uiContext);
+    exported.viewStore.showPageEditor(editorContext);
+    exported.viewStore.showDispatcherLog(editorContext);
 }

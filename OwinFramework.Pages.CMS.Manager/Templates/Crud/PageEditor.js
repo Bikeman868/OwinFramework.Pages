@@ -1,6 +1,6 @@
-﻿exported.page_editor_vm = function() {
+﻿exported.page_editor_vm = function (eId) {
     return new Vue({
-        el: "#cms_page_editor",
+        el: "#" + eId,
         data: {
             visible: true,
             mode: "view",

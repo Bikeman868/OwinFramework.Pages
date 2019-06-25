@@ -1,27 +1,40 @@
-﻿exported.page_selector_vm = function() {
+﻿exported.page_selector_vm = function (eId) {
     return new Vue({
-        el: "#cms_page_selector",
+        el: "#" + eId,
         data: {
             visible: true,
             websiteVersionId: 1,
             pages: []
         },
         methods: {
-            show: function (context) {
+            show: function (childContext, parentContext) {
                 var vm = this;
                 vm.visible = true;
-                vm._context = context;
-                vm._unsubscribe = context.subscribe("websiteVersionId", function (value) {
+                if (childContext != undefined) vm._childContext = childContext;
+                if (parentContext != undefined) vm._parentContext = parentContext;
+                if (vm._parentContext == undefined) vm._parentContext = vm._childContext;
+                vm._unsubscribeWebsiteVersionId = vm._parentContext.subscribe("websiteVersionId", function (value) {
                     vm.websiteVersionId = value;
                     vm.refresh();
+                });
+                vm._unsubscribeDispatcher = exported.dispatcher.subscribe(function(message) {
+                    if ((message.websiteVersionChanges && message.websiteVersionChanges.length > 0) ||
+                        (message.newElements && message.newElements.length > 0) ||
+                        (message.deletedElements && message.deletedElements.length > 0)) {
+                        vm.refresh();
+                    }
                 });
             },
             hide: function() {
                 var vm = this;
                 vm.visible = false;
-                if (vm._unsubscribe != undefined) {
-                    vm._unsubscribe();
-                    vm._unsubscribe = null;
+                if (vm._unsubscribeWebsiteVersionId != undefined) {
+                    vm._unsubscribeWebsiteVersionId();
+                    vm._unsubscribeWebsiteVersionId = null;
+                }
+                if (vm._unsubscribeDispatcher != undefined) {
+                    vm._unsubscribeDispatcher();
+                    vm._unsubscribeDispatcher = null;
                 }
             },
             refresh: function() {
@@ -44,7 +57,7 @@
             },
             selectPage: function(pageId) {
                 var vm = this;
-                vm._context.selected("pageId", pageId);
+                vm._childContext.selected("pageId", pageId);
             }
         }
     });

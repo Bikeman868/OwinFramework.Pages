@@ -17,6 +17,14 @@
             selectVersion: function (websiteVersionId) {
                 var vm = this;
                 vm._childContext.selected("websiteVersionId", websiteVersionId);
+            },
+            selectDropdown: function (e) {
+                var vm = this;
+                var dropdown = e.target;
+                var websiteVersionId = (dropdown.value || dropdown.options[dropdown.selectedIndex].value);
+                if (websiteVersionId != undefined) {
+                    vm.selectVersion(parseInt(websiteVersionId));
+                }
             }
         },
         created: function() {

@@ -39,7 +39,7 @@
             areas: [
                 { name: "versions", displayName: "Website versions" },
                 { name: "environments", displayName: "Environments" },
-                { name: "pages", displayName:"Pages" },
+                { name: "pages", displayName:"Pages", selected: true },
                 { name: "layouts", displayName:"Layouts" },
                 { name: "regions", displayName:"Regions" },
                 { name: "components", displayName:"Components" },
@@ -55,6 +55,9 @@
 
     var uiContext = exported.selectionContext.create();
     var editorContext = exported.selectionContext.create();
+
+    var websiteVersionSelectorVm = exported.website_version_selector_vm("cms_website_version_dropdown_selector");
+    websiteVersionSelectorVm.show(uiContext);
 
     areaSelectorVm.show(editorContext);
 

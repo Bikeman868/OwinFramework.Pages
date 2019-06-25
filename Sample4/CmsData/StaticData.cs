@@ -339,8 +339,8 @@ namespace Sample4.CmsData
                     ElementId = elementId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
-                    Name = "master_page",
-                    DisplayName = "Master page",
+                    Name = "root",
+                    DisplayName = "Root",
                     Description = "Defines page attributes that are inherited by other pages"
                 },
                 new PageRecord 

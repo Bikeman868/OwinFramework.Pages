@@ -1,5 +1,10 @@
 ﻿<div id="cms_manager" class="cms_manager">
-    <h1>CMS Manager</h1>
+    <p>Manage website version
+        <select id="cms_website_version_dropdown_selector" v-on:change="selectDropdown($event)">
+            <option v-for="version in versions" v-bind:value="version.elementId">{{version.displayName}}</option>
+        </select>
+    </p>
+    <hr/>
     <div class="cms_main">
         <div class="cms_left_panel">
             <select id="cms_area_selector" v-on:change="selectArea($event)">
@@ -10,6 +15,8 @@
         <div class="cms_right_panel">
             <div id="cms_edit_view" class="cms_panel"></div>
         </div>
+        <div class="cms_clear"></div>
     </div>
+    <hr />
     <div id="cms_tool_view" class="cms_panel"></div>
 </div>

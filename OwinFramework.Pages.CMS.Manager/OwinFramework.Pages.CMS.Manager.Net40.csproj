@@ -143,9 +143,6 @@
     <EmbeddedResource Include="JavascriptModules\validationModule.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\Selectors\WebsiteVersionDropdownSelector.html" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Templates\Selectors\WebsiteVersionSelector.js" />
   </ItemGroup>
   <ItemGroup>

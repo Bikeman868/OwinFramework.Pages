@@ -14,7 +14,7 @@
 @heading-font-family: Arial, sans-serif;
 @body-font-family: Arial, sans-serif;
 
-div.cms_main {
+div.cms_manager {
     overflow: hidden;
     * { 
         box-sizing: border-box;
@@ -78,6 +78,13 @@ div.cms_main {
     select:focus {
         outline: none;
     }    
+    hr {
+        border: 1px solid whitesmoke;
+    }
+    hr.thick {
+        border: 6px solid whitesmoke;
+        border-radius: 3px;
+    }
     div.cms_left_panel {
         padding: 2px;
     }
@@ -86,6 +93,9 @@ div.cms_main {
         margin-top: 2px;
         padding: 2px;
         border-left: 1px solid lightgray;
+    }
+    div.cms_clear {
+        clear: both;
     }
     div.cms_panel {
         h1 {
@@ -298,5 +308,10 @@ div.cms_main {
         .cms_spacer_thick {
             height: 30px;
         }
+    }
+    #cms_website_version_dropdown_selector {
+        display: inline-block;
+        width: 300px;
+        margin: 4px;
     }
 }

@@ -247,7 +247,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 : elementVersions.Select(map).ToArray();
         }
 
-        T IDatabaseReader.GetPage<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
+        T IDatabaseReader.GetPageVersion<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
         {
             var page = _pages.FirstOrDefault(p => p.ElementId == pageId);
             if (page == null) return default(T);
@@ -258,7 +258,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(page, pageVersion);
         }
 
-        T IDatabaseReader.GetLayout<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map)
+        T IDatabaseReader.GetLayoutVersion<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
             var layout = _layouts.FirstOrDefault(l => l.ElementId == layoutId);
             if (layout == null) return default(T);
@@ -269,7 +269,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(layout, layoutVersion);
         }
 
-        T IDatabaseReader.GetRegion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map)
+        T IDatabaseReader.GetRegionVersion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map)
         {
             var region = _regions.FirstOrDefault(r => r.ElementId == regionId);
             if (region == null) return default(T);
@@ -280,7 +280,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(region, regionVersion);
         }
 
-        T IDatabaseReader.GetPage<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map)
+        T IDatabaseReader.GetPageVersion<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map)
         {
             var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ElementVersionId == pageVersionId);
             if (pageVersion == null) return default(T);
@@ -291,7 +291,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(page, pageVersion);
         }
 
-        T IDatabaseReader.GetLayout<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map)
+        T IDatabaseReader.GetLayoutVersion<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
             var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ElementVersionId == layoutVersionId);
             if (layoutVersion == null) return default(T);
@@ -302,7 +302,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(layout, layoutVersion);
         }
 
-        T IDatabaseReader.GetRegion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map)
+        T IDatabaseReader.GetRegionVersion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map)
         {
             var regionVersion = _regionVersions.FirstOrDefault(lv => lv.ElementVersionId == regionVersionId);
             if (regionVersion == null) return default(T);
@@ -313,7 +313,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(region, regionVersion);
         }
 
-        T IDatabaseReader.GetComponent<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map)
+        T IDatabaseReader.GetComponentVersion<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map)
         {
             var componentVersion = _componentVersions.FirstOrDefault(lv => lv.ElementVersionId == componentVersionId);
             if (componentVersion == null) return default(T);
@@ -324,7 +324,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(component, componentVersion);
         }
 
-        T IDatabaseReader.GetDataType<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map)
+        T IDatabaseReader.GetDataTypeVersion<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map)
         {
             var dataTypeVersion = _dataTypeVersions.FirstOrDefault(v => v.ElementVersionId == dataTypeVersionId);
             if (dataTypeVersion == null) return default(T);

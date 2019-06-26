@@ -6,17 +6,17 @@
             environments: []
         },
         methods: {
-            show: function (childContext, parentContext) {
+            show: function (context, managerContext) {
                 var vm = this;
-                if (childContext != undefined) vm._childContext = childContext;
-                if (parentContext != undefined) vm._parentContext = parentContext;
-                if (vm._parentContext == undefined) vm._parentContext = vm._childContext;
+                if (context != undefined) vm._context = context;
+                if (managerContext != undefined) vm._managerContext = managerContext;
+                if (vm._managerContext == undefined) vm._managerContext = vm._context;
                 vm.visible = true;
             },
             hide: function () { this.visible = false; },
             selectEnvironment: function (environmentId) {
                 var vm = this;
-                vm._childContext.selected("environmentId", environmentId);
+                vm._context.selected("environmentId", environmentId);
             }
         },
         created: function() {

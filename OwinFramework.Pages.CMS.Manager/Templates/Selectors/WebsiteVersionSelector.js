@@ -6,17 +6,17 @@
             versions: []
         },
         methods: {
-            show: function (childContext, parentContext) {
+            show: function (context, managerContext) {
                 var vm = this;
-                if (childContext != undefined) vm._childContext = childContext;
-                if (parentContext != undefined) vm._parentContext = parentContext;
-                if (vm._parentContext == undefined) vm._parentContext = vm._childContext;
+                if (context != undefined) vm._context = context;
+                if (managerContext != undefined) vm._managerContext = managerContext;
+                if (vm._managerContext == undefined) vm._managerContext = vm._context;
                 vm.visible = true;
             },
             hide: function () { this.visible = false; },
             selectVersion: function (websiteVersionId) {
                 var vm = this;
-                vm._childContext.selected("websiteVersionId", websiteVersionId);
+                vm._context.selected("websiteVersionId", websiteVersionId);
             },
             selectDropdown: function (e) {
                 var vm = this;
@@ -32,6 +32,8 @@
                 { elementId: 1, displayName: "Sprint 223" },
                 { elementId: 2, displayName: "Sprint 224" },
                 { elementId: 3, displayName: "Sprint 225" },
+                { elementId: 4, displayName: "Sprint 226" },
+                { elementId: 5, displayName: "Sprint 227" }
             ];
         }
     });

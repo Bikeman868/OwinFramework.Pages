@@ -16,6 +16,13 @@ namespace OwinFramework.Pages.Restful.Interfaces
         /// </summary>
         IOwinContext OwinContext { get; }
 
+        /// <summary>
+        /// If the request was not anonymous and there is identiication middleware
+        /// in the owin pipeline then this returns the identity of the caller
+        /// otherwise returns an empty string
+        /// </summary>
+        string Identity { get; }
+
         /********************************************************************
          * 
          * This section provides methods for reading the request.

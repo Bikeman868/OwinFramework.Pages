@@ -17,10 +17,9 @@
             vm.displayNamePattern = exported.validation.displayNamePattern.source;
         },
         methods: {
-            show: function (context) {
+            show: function (context, managerContext) {
                 var vm = this;
-                vm._context = context;
-                vm._unsubscribe = context.subscribe("pageId", function (pageId) {
+                vm._unsubscribePageId = context.subscribe("pageId", function (pageId) {
                     if (pageId == undefined) {
                         vm.currentPage = null;
                     } else {
@@ -29,14 +28,21 @@
                             function (page) { vm.currentPage = page; });
                     }
                 });
+                vm._unsubscribeWebsiteVersionId = managerContext.subscribe("websiteVersionId", function (value) {
+                    vm.websiteVersionId = value;
+                });
                 this.visible = true;
             },
             hide: function() {
                 var vm = this;
                 vm.visible = false;
-                if (vm._unsubscribe != undefined) {
-                    vm._unsubscribe();
-                    vm._unsubscribe = null;
+                if (vm._unsubscribeWebsiteVersionId != undefined) {
+                    vm._unsubscribeWebsiteVersionId();
+                    vm._unsubscribeWebsiteVersionId = null;
+                }
+                if (vm._unsubscribePageId != undefined) {
+                    vm._unsubscribePageId();
+                    vm._unsubscribePageId = null;
                 }
             },
             newPage: function() {
@@ -73,6 +79,7 @@
                 if (vm.errors.length === 0) {
                     ns.cmsmanager.pageStore.createPage(
                         vm.editingPage,
+                        vm.websiteVersionId,
                         function() { vm.mode = "view"; },
                         function(msg) { vm.errors = [msg]});
                 }

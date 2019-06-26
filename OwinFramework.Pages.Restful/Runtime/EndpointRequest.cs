@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.Builder;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
@@ -66,6 +68,16 @@ namespace OwinFramework.Pages.Restful.Runtime
         public IOwinContext OwinContext
         {
             get { return _context; }
+        }
+
+        public string Identity
+        {
+            get
+            {
+                var identification = _context.GetFeature<IIdentification>();
+                if (identification == null) return string.Empty;
+                return identification.Identity;
+            }
         }
 
         #region Request processing

@@ -53,17 +53,17 @@
         }
     });
 
-    var uiContext = exported.selectionContext.create();
-    var editorContext = exported.selectionContext.create();
+    var managerContext = exported.selectionContext.create();
+    var viewContext = exported.selectionContext.create();
 
     var websiteVersionSelectorVm = exported.website_version_selector_vm("cms_website_version_dropdown_selector");
-    websiteVersionSelectorVm.show(uiContext);
+    websiteVersionSelectorVm.show(managerContext, managerContext);
 
-    areaSelectorVm.show(editorContext);
+    areaSelectorVm.show(viewContext, managerContext);
 
-    uiContext.selected("websiteVersionId", 1);
+    managerContext.selected("websiteVersionId", 1);
 
-    exported.viewStore.showPageSelector(editorContext, uiContext);
-    exported.viewStore.showPageEditor(editorContext);
-    exported.viewStore.showDispatcherLog(editorContext);
+    exported.viewStore.showPageSelector(viewContext, managerContext);
+    exported.viewStore.showPageEditor(viewContext, managerContext);
+    exported.viewStore.showDispatcherLog(viewContext, managerContext);
 }

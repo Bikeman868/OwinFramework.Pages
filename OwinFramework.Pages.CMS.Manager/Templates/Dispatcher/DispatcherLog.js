@@ -22,7 +22,7 @@
                 }
                 setTimeout(vm.updateTimes, 1000);
             },
-            show: function (context) {
+            show: function (context, managerContext) {
                 var vm = this;
                 vm._dispatcherUnsubscribe = exported.dispatcher.subscribe(function (message) {
                     var updateData =

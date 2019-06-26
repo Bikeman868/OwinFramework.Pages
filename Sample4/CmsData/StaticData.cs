@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using OwinFramework.Pages.CMS.Runtime.Data;
+using OwinFramework.Pages.CMS.Manager.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Enums;
 using Sample4.ViewModels;
 
 namespace Sample4.CmsData
 {
-    internal class StaticData: TestDatabaseReaderBase
+    internal class StaticData: TestDatabaseUpdaterBase
     {
         public StaticData()
         {

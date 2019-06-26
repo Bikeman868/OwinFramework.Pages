@@ -43,7 +43,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void PageVersions(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var page = _dataLayer.GetPage(id, (p, v) => p);
+            var page = _dataLayer.GetPageVersion(id, (p, v) => p);
 
             if (page == null)
                 request.NotFound("No page with ID " + id);

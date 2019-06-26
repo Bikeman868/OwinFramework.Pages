@@ -91,7 +91,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             _dataTypes = _database
                 .GetWebsiteDataTypes(
                     websiteVersion.WebsiteVersionId, 
-                    wd => _database.GetDataType(wd.DataTypeVersionId, (dt, dtv) => dtv))
+                    wd => _database.GetDataTypeVersion(wd.DataTypeVersionId, (dt, dtv) => dtv))
                 .ToDictionary(dtv => dtv.ElementId, dtv => dtv);
 
             _componentVersions = _database
@@ -133,7 +133,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             if (_masterPages.TryGetValue(pageVersionId, out pageRecord))
                 return pageRecord;
 
-            var data = _database.GetPage(pageVersionId, (p, v) => new Tuple<PageRecord, PageVersionRecord>(p, v));
+            var data = _database.GetPageVersion(pageVersionId, (p, v) => new Tuple<PageRecord, PageVersionRecord>(p, v));
             var page = data.Item1;
             var pageVersion = data.Item2;
 
@@ -312,7 +312,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             if (!_layoutVersions.TryGetValue(layoutId, out layoutVersionId))
                 throw new Exception("The website version does not define which version of layout ID " + layoutId + " to use");
 
-            var data = _database.GetLayout(layoutVersionId, (l, v) => new Tuple<LayoutRecord, LayoutVersionRecord>(l, v));
+            var data = _database.GetLayoutVersion(layoutVersionId, (l, v) => new Tuple<LayoutRecord, LayoutVersionRecord>(l, v));
             var layout = data.Item1;
             var layoutVersion = data.Item2;
 
@@ -360,7 +360,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             if (!_regionVersions.TryGetValue(regionId, out regionVersionId))
                 throw new Exception("The website version does not define which version of region ID " + regionId + " to use");
 
-            var data = _database.GetRegion(regionVersionId, (l, v) => new Tuple<RegionRecord, RegionVersionRecord>(l, v));
+            var data = _database.GetRegionVersion(regionVersionId, (l, v) => new Tuple<RegionRecord, RegionVersionRecord>(l, v));
             var region = data.Item1;
             var regionVersion = data.Item2;
 
@@ -395,7 +395,7 @@ namespace OwinFramework.Pages.CMS.Runtime
                         " references component ID " + regionVersion.ComponentId.Value + 
                         " but this component has no version defined for this version of the website");
 
-                var componentRecord = _database.GetComponent(componentVersionId, (c, v) => c);
+                var componentRecord = _database.GetComponentVersion(componentVersionId, (c, v) => c);
                 var componentName = componentRecord.Name;
 
                 var regionProperties = _database.GetElementPropertyValues(regionVersion.ElementVersionId);

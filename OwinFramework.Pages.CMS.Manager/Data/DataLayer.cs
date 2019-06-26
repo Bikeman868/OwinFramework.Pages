@@ -101,9 +101,9 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         #region IDatabaseUpdater
 
-        CreateResult IDatabaseUpdater.CreatePage(PageRecord page)
+        CreateResult IDatabaseUpdater.CreatePage(string identity, PageRecord page)
         {
-            var result = _databaseUpdater.CreatePage(page);
+            var result = _databaseUpdater.CreatePage(identity, page);
             if (!result.Success) return result;
 
             lock (_liveUpdateLock)
@@ -119,9 +119,9 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
-        UpdateResult IDatabaseUpdater.UpdatePage(long pageId, List<DatabasePropertyChange> changes)
+        UpdateResult IDatabaseUpdater.UpdatePage(string identity, long pageId, List<DatabasePropertyChange> changes)
         {
-            var result = _databaseUpdater.UpdatePage(pageId, changes);
+            var result = _databaseUpdater.UpdatePage(identity, pageId, changes);
             if (!result.Success) return result;
 
             AddChangesToLiveUpdate("Page", pageId, changes);
@@ -129,9 +129,9 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
-        DeleteResult IDatabaseUpdater.DeletePage(long pageId)
+        DeleteResult IDatabaseUpdater.DeletePage(string identity, long pageId)
         {
-            var result = _databaseUpdater.DeletePage(pageId);
+            var result = _databaseUpdater.DeletePage(identity, pageId);
             if (!result.Success) return result;
 
             lock (_liveUpdateLock)
@@ -141,6 +141,48 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     {
                         ElementType = new PageRecord().ElementType,
                         ElementId = pageId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageId, int version, long websiteVersionId)
+        {
+            var result = _databaseUpdater.AddPageToWebsiteVersion(identity, pageId, version, websiteVersionId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = new PageRecord().ElementType,
+                        ElementId = pageId,
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = 0 // TODO: find correct value
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageVersionId, long websiteVersionId)
+        {
+            var result = _databaseUpdater.AddPageToWebsiteVersion(identity, pageVersionId, websiteVersionId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = new PageRecord().ElementType,
+                        ElementId = 0, // TODO: find correct value
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = pageVersionId
                     });
             }
 
@@ -331,46 +373,47 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return _databaseReader.GetElementVersions(elementId, map);
         }
 
-        T IDatabaseReader.GetPage<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
+        T IDatabaseReader.GetPageVersion<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
         {
-            return _databaseReader.GetPage(pageId, version, map);
+            return _databaseReader.GetPageVersion(pageId, version, map);
         }
 
-        T IDatabaseReader.GetLayout<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map)
+        T IDatabaseReader.GetLayoutVersion<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
-            return _databaseReader.GetLayout(layoutId, version, map);
+            return _databaseReader.GetLayoutVersion(layoutId, version, map);
         }
 
-        T IDatabaseReader.GetRegion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map)
+        T IDatabaseReader.GetRegionVersion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map)
         {
-            return _databaseReader.GetRegion(regionId, version, map);
+            return _databaseReader.GetRegionVersion(regionId, version, map);
         }
 
-        T IDatabaseReader.GetPage<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map)
+        T IDatabaseReader.GetPageVersion<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map)
         {
-            return _databaseReader.GetPage(pageVersionId, map);
+            return _databaseReader.GetPageVersion(pageVersionId, map);
         }
 
-        T IDatabaseReader.GetLayout<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map)
+        T IDatabaseReader.GetLayoutVersion<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
-            return _databaseReader.GetLayout(layoutVersionId, map);
+            return _databaseReader.GetLayoutVersion(layoutVersionId, map);
         }
 
-        T IDatabaseReader.GetRegion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map)
+        T IDatabaseReader.GetRegionVersion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map)
         {
-            return _databaseReader.GetRegion(regionVersionId, map);
+            return _databaseReader.GetRegionVersion(regionVersionId, map);
         }
 
-        T IDatabaseReader.GetDataType<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map)
+        T IDatabaseReader.GetDataTypeVersion<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map)
         {
-            return _databaseReader.GetDataType(dataTypeVersionId, map);
+            return _databaseReader.GetDataTypeVersion(dataTypeVersionId, map);
         }
 
-        T IDatabaseReader.GetComponent<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map)
+        T IDatabaseReader.GetComponentVersion<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map)
         {
-            return _databaseReader.GetComponent(componentVersionId, map);
+            return _databaseReader.GetComponentVersion(componentVersionId, map);
         }
 
         #endregion
+
     }
 }

@@ -34,7 +34,9 @@ namespace Sample4
                     new IocRegistration().Init<Prius.Contracts.Interfaces.External.IErrorReporter, PriusIntegration.PriusErrorReporter>(),
 
                     new IocRegistration().Init<IDatabaseReader, StaticData>(),
+                    new IocRegistration().Init(container => (IDatabaseUpdater)container.Resolve<IDatabaseReader>()),
                     new IocRegistration().Init<ILiveUpdateSender, OwinFramework.Pages.CMS.Runtime.Synchronization.DatabaseSynchronizer>(), 
+
                 };
             }
         }

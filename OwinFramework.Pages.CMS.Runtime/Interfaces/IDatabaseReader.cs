@@ -161,7 +161,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <param name="pageId">The unique ID of the page to return</param>
         /// <param name="version">The version of the page to get</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetPage<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map);
+        T GetPageVersion<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single layout version by its ID number
@@ -170,7 +170,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <param name="layoutId">The unique ID of the layout to return</param>
         /// <param name="version">The version of the layout to get</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetLayout<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map);
+        T GetLayoutVersion<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single layout version by its ID number
@@ -179,7 +179,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <param name="regionId">The unique ID of the region to return</param>
         /// <param name="version">The version of the region to get</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetRegion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map);
+        T GetRegionVersion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single page version by its ID number
@@ -187,7 +187,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="pageVersionId">The unique ID of the page version to return</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetPage<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map);
+        T GetPageVersion<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single layout version by its ID number
@@ -195,7 +195,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="layoutVersionId">The unique ID of the layout version to return</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetLayout<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map);
+        T GetLayoutVersion<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single layout version by its ID number
@@ -203,7 +203,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="regionVersionId">The unique ID of the region version to return</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetRegion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map);
+        T GetRegionVersion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single layout version by its ID number
@@ -211,7 +211,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="dataTypeVersionId">The unique ID of the data type version to return</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetDataType<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map);
+        T GetDataTypeVersion<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map);
 
         /// <summary>
         /// Retrieves a single layout version by its ID number
@@ -219,7 +219,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="componentVersionId">The unique ID of the component version to return</param>
         /// <param name="map">A function that maps database records onto the return type</param>
-        T GetComponent<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map);
+        T GetComponentVersion<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map);
 
         #endregion
     }

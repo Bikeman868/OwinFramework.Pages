@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using OwinFramework.Pages.CMS.Manager.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
@@ -23,20 +24,34 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         }
 
         [Endpoint(Methods = new[] {Method.Post}, RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter("websiteVersionId", typeof(PositiveNumber<long?>))]
         private void CreatePage(IEndpointRequest request)
         {
             var page = request.Body<PageRecord>();
-            var result = _dataLayer.CreatePage(page);
+            var websiteVersionId = request.Parameter<long?>("websiteVersionId");
 
-            if (result.Success)
-            {
-                page = _dataLayer.GetPage(result.NewRecordId, (p, v) => p);
-                request.Success(page);
-            }
-            else
+            var result = _dataLayer.CreatePage(request.Identity, page);
+
+            if (!result.Success)
             {
                 request.BadRequest(result.DebugMessage);
+                return;
             }
+
+            page = _dataLayer.GetPageVersion(result.NewRecordId, 1, (p, v) => p);
+            if (page == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError, 
+                    "After creating the new page it could not be found in the database");
+                return;
+            }
+
+            if (websiteVersionId.HasValue)
+            {
+                _dataLayer.AddPageToWebsiteVersion(request.Identity, page.ElementId, 1, websiteVersionId.Value);
+            }
+            request.Success(page);
         }
 
         [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
@@ -44,7 +59,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void RetrievePage(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var page = _dataLayer.GetPage(id, (p, v) => p);
+            var page = _dataLayer.GetPageVersion(id, (p, v) => p);
 
             if (page == null)
                 request.NotFound("No page with ID " + id);
@@ -59,11 +74,11 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             var pageId = request.Parameter<long>("id");
             var changes = request.Body<List<PropertyChange>>();
 
-            var result = _dataLayer.UpdatePage(pageId, changes);
+            var result = _dataLayer.UpdatePage(request.Identity, pageId, changes);
 
             if (result.Success)
             {
-                var page = _dataLayer.GetPage(pageId, (p, v) => p);
+                var page = _dataLayer.GetPageVersion(pageId, (p, v) => p);
                 request.Success(page);
             }
             else
@@ -77,7 +92,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void DeletePage(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var result = _dataLayer.DeletePage(id);
+            var result = _dataLayer.DeletePage(request.Identity, id);
 
             if (result.Success)
                 request.Success(new { id });

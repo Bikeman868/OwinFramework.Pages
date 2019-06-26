@@ -7,13 +7,13 @@
             pages: []
         },
         methods: {
-            show: function (childContext, parentContext) {
+            show: function (context, managerContext) {
                 var vm = this;
+                if (context != undefined) vm._context = context;
+                if (managerContext != undefined) vm._managerContext = managerContext;
+                if (vm._managerContext == undefined) vm._managerContext = vm._context;
                 vm.visible = true;
-                if (childContext != undefined) vm._childContext = childContext;
-                if (parentContext != undefined) vm._parentContext = parentContext;
-                if (vm._parentContext == undefined) vm._parentContext = vm._childContext;
-                vm._unsubscribeWebsiteVersionId = vm._parentContext.subscribe("websiteVersionId", function (value) {
+                vm._unsubscribeWebsiteVersionId = vm._managerContext.subscribe("websiteVersionId", function (value) {
                     vm.websiteVersionId = value;
                     vm.refresh();
                 });
@@ -57,7 +57,7 @@
             },
             selectPage: function(pageId) {
                 var vm = this;
-                vm._childContext.selected("pageId", pageId);
+                vm._context.selected("pageId", pageId);
             }
         }
     });

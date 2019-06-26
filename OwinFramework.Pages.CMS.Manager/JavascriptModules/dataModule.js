@@ -89,9 +89,9 @@ var pageStore = function () {
         return {};
     }
 
-    var createPage = function (page, onsuccess, onfail) {
+    var createPage = function (page, websiteVersionId, onsuccess, onfail) {
         ns.cmsmanager.crudService.createPage(
-            { body: page }, 
+            { body: page, websiteversionid: websiteVersionId }, 
             function (response) {
                 if (response == undefined) {
                     if (onfail != undefined) onfail("No response was received from the server, the page might not have been created");

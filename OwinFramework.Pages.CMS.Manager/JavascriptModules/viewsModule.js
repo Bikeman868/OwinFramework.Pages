@@ -70,7 +70,7 @@ exported.viewStore = function () {
         selectView("cms_select_view", "/cms/manager/PageSelector", "cms_page_selector", exported.page_selector_vm, context, managerContext);
     }
     var showEnvironmentSelector = function(context, managerContext) {
-        selectView("cms_select_view", "/cms/manager/EnvironmentSelector", "cms_environment_selector", exported.environment_selector_vm, ccontext, managerContext);
+        selectView("cms_select_view", "/cms/manager/EnvironmentSelector", "cms_environment_selector", exported.environment_selector_vm, context, managerContext);
     }
     var showWebsiteVersionSelector = function (context, managerContext) {
         selectView("cms_select_view", "/cms/manager/WebsiteVersionListSelector", "cms_website_version_list_selector", exported.website_version_selector_vm, context, managerContext);

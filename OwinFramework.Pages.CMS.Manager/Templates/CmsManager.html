@@ -1,14 +1,12 @@
 ﻿<div id="cms_manager" class="cms_manager">
-    <p>Manage website version
-        <select id="cms_website_version_dropdown_selector" v-on:change="selectDropdown($event)">
-            <option v-for="version in versions" v-bind:value="version.elementId">{{version.displayName}}</option>
-        </select>
-    </p>
+    <select id="cms_website_version_dropdown_selector" v-on:change="selectDropdown($event)">
+        <option v-for="version in versions" v-bind:value="version.elementId">{{version.displayName}}</option>
+    </select>
     <hr/>
     <div class="cms_main">
         <div class="cms_left_panel">
             <select id="cms_area_selector" v-on:change="selectArea($event)">
-                <option v-for="area in areas" v-bind:value="area.name">{{area.displayName}}</option>
+                <option v-for="area in areas" v-bind:value="area.name" v-bind:selected="area.selected">{{area.displayName}}</option>
             </select>
             <div id="cms_select_view" class="cms_panel"></div>
         </div>

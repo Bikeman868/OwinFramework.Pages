@@ -11,6 +11,71 @@ namespace OwinFramework.Pages.CMS.Manager.Data
     {
         private readonly object _updateLock = new object();
 
+        #region Environments
+
+        CreateResult IDatabaseUpdater.CreateEnvironment(string identity, EnvironmentRecord environment)
+        {
+            lock (_updateLock)
+            {
+                environment.EnvironmentId = _environments.OrderByDescending(e => e.EnvironmentId).First().EnvironmentId + 1;
+                environment.CreatedWhen = DateTime.UtcNow;
+                environment.CreatedBy = identity;
+
+                var environments = _environments.ToList();
+                environments.Add(environment);
+                _environments = environments.ToArray();
+
+                return new CreateResult(environment.EnvironmentId);
+            }
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateEnvironment(string identity, long environmentId, List<PropertyChange> changes)
+        {
+            var environment = _environments.FirstOrDefault(p => p.EnvironmentId == environmentId);
+            if (environment == null) return new UpdateResult("environment_not_found", "No environment found with id " + environmentId);
+
+            foreach (var change in changes)
+            {
+                switch (change.PropertyName.ToLower())
+                {
+                    case "name":
+                        environment.Name = change.PropertyValue;
+                        break;
+                    case "displayname":
+                        environment.DisplayName = change.PropertyValue;
+                        break;
+                    case "description":
+                        environment.Description = change.PropertyValue;
+                        break;
+                    case "baseurl":
+                        environment.BaseUrl = change.PropertyValue;
+                        break;
+                    case "websiteversionid":
+                        environment.WebsiteVersionId = long.Parse(change.PropertyValue);
+                        break;
+                }
+            }
+
+            return new UpdateResult();
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteEnvironment(string identity, long environmentId)
+        {
+            var environment = _environments.FirstOrDefault(p => p.EnvironmentId == environmentId);
+            if (environment == null) return new DeleteResult("environment_not_found", "No environment found with id " + environmentId);
+
+            lock (_updateLock)
+            {
+                _environments = _environments.Where(p => p.EnvironmentId != environmentId).ToArray();
+            }
+
+            return new DeleteResult();
+        }
+
+        #endregion
+
+        #region Pages
+
         CreateResult IDatabaseUpdater.CreatePage(string identity, PageRecord page)
         {
             lock (_updateLock)
@@ -77,7 +142,6 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return new DeleteResult();
         }
 
-
         UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageId, int version, long websiteVersionId)
         {
             var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ElementId == pageId && pv.Version == version);
@@ -135,5 +199,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
             return new UpdateResult();
         }
+
+        #endregion
     }
 }

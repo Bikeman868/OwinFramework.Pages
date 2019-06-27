@@ -23,6 +23,82 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             _dataLayer = dataLater;
         }
 
+        #region Environments
+
+        [Endpoint(Methods = new[] {Method.Post}, RequiredPermission = Permissions.EditEnvironment)]
+        private void CreateEnvironment(IEndpointRequest request)
+        {
+            var environment = request.Body<EnvironmentRecord>();
+            var result = _dataLayer.CreateEnvironment(request.Identity, environment);
+
+            if (!result.Success)
+            {
+                request.BadRequest(result.DebugMessage);
+                return;
+            }
+
+            environment = _dataLayer.GetEnvironment(result.NewRecordId, e => e);
+            if (environment == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError, 
+                    "After creating the new environment it could not be found in the database");
+                return;
+            }
+
+            request.Success(environment);
+        }
+
+        [Endpoint(UrlPath = "environment/{id}", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void RetrieveEnvironment(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var environment = _dataLayer.GetEnvironment(id, e => e);
+
+            if (environment == null)
+                request.NotFound("No environment with ID " + id);
+            else
+                request.Success(environment);
+        }
+
+        [Endpoint(UrlPath = "environment/{id}", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditEnvironment)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void UpdateEnvironment(IEndpointRequest request)
+        {
+            var environmentId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            var result = _dataLayer.UpdateEnvironment(request.Identity, environmentId, changes);
+
+            if (result.Success)
+            {
+                var environment = _dataLayer.GetEnvironment(environmentId, e => e);
+                request.Success(environment);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(UrlPath = "environment/{id}", Methods = new[] {Method.Delete}, RequiredPermission = Permissions.EditEnvironment)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void DeleteEnvironment(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var result = _dataLayer.DeleteEnvironment(request.Identity, id);
+
+            if (result.Success)
+                request.Success(new { id });
+            else
+                request.BadRequest(result.DebugMessage);
+        }
+
+        #endregion
+
+        #region Pages
+
         [Endpoint(Methods = new[] {Method.Post}, RequiredPermission = Permissions.EditPage)]
         [EndpointParameter("websiteVersionId", typeof(PositiveNumber<long?>))]
         private void CreatePage(IEndpointRequest request)
@@ -100,5 +176,6 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 request.BadRequest(result.DebugMessage);
         }
 
+        #endregion
     }
 }

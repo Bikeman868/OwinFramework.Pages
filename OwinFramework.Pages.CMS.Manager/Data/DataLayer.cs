@@ -101,6 +101,52 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         #region IDatabaseUpdater
 
+        CreateResult IDatabaseUpdater.CreateEnvironment(string identity, EnvironmentRecord environment)
+        {
+            var result = _databaseUpdater.CreateEnvironment(identity, environment);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.NewElements.Add(
+                    new ElementReference
+                    {
+                        ElementType = environment.ElementType,
+                        ElementId = result.NewRecordId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateEnvironment(string identity, long environmentId, List<DatabasePropertyChange> changes)
+        {
+            var result = _databaseUpdater.UpdateEnvironment(identity, environmentId, changes);
+            if (!result.Success) return result;
+
+            AddChangesToLiveUpdate(new EnvironmentRecord().ElementType, environmentId, changes);
+
+            return result;
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteEnvironment(string identity, long environmentId)
+        {
+            var result = _databaseUpdater.DeleteEnvironment(identity, environmentId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.DeletedElements.Add(
+                    new ElementReference
+                    {
+                        ElementType = new EnvironmentRecord().ElementType,
+                        ElementId = environmentId
+                    });
+            }
+
+            return result;
+        }
+
         CreateResult IDatabaseUpdater.CreatePage(string identity, PageRecord page)
         {
             var result = _databaseUpdater.CreatePage(identity, page);
@@ -124,7 +170,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var result = _databaseUpdater.UpdatePage(identity, pageId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate("Page", pageId, changes);
+            AddChangesToLiveUpdate(new PageRecord().ElementType, pageId, changes);
 
             return result;
         }
@@ -373,6 +419,11 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return _databaseReader.GetElementVersions(elementId, map);
         }
 
+        T IDatabaseReader.GetEnvironment<T>(long environmentId, Func<EnvironmentRecord, T> map)
+        {
+            return _databaseReader.GetEnvironment(environmentId, map);
+        }
+
         T IDatabaseReader.GetPageVersion<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
         {
             return _databaseReader.GetPageVersion(pageId, version, map);
@@ -414,6 +465,5 @@ namespace OwinFramework.Pages.CMS.Manager.Data
         }
 
         #endregion
-
     }
 }

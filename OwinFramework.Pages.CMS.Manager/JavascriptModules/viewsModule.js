@@ -92,6 +92,12 @@ exported.viewStore = function () {
     }
 
     // Editors
+    var showEnvironmentEditor = function (context, topContext) {
+        selectView("cms_top_edit_view", "/cms/manager/EnvironmentEditor", "cms_environment_editor", exported.environment_editor_vm, topContext, topContext);
+    }
+    var showWebsiteVersionEditor = function (context, topContext) {
+        selectView("cms_top_edit_view", "/cms/manager/WebsiteVersionEditor", "cms_website_version_editor", exported.website_version_editor_vm, topContext, topContext);
+    }
     var showPageEditor = function (context, topContext) {
         selectView("cms_bottom_edit_view", "/cms/manager/PageEditor", "cms_page_editor", exported.page_editor_vm, context, topContext);
     }
@@ -129,11 +135,23 @@ exported.viewStore = function () {
     }
 
     return {
+        showEnvironmentEditor: showEnvironmentEditor,
+        showWebsiteVersionEditor: showWebsiteVersionEditor,
         showEnvironmentSelector: showEnvironmentSelector,
         showWebsiteVersionSelector: showWebsiteVersionSelector,
         showPageSelector: showPageSelector,
+        showLayoutSelector: showLayoutSelector,
+        showRegionSelector: showRegionSelector,
+        showComponentSelector: showComponentSelector,
+        showDataScopeSelector: showDataScopeSelector,
+        showDataTypeSelector: showDataTypeSelector,
 
         showPageEditor: showPageEditor,
+        showLayoutEditor: showLayoutEditor,
+        showRegionEditor: showRegionEditor,
+        showComponentEditor: showComponentEditor,
+        showDataScopeEditor: showDataScopeEditor,
+        showDataTypeEditor: showDataTypeEditor,
 
         showDispatcherLog: showDispatcherLog,
 

@@ -9,6 +9,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class EnvironmentRecord: RecordBase
     {
+        [JsonProperty("elementType")]
+        public string ElementType 
+        { 
+            get { return "Environment"; }
+            set { }
+        }
+
         /// <summary>
         /// Primary key that uniquely identifies this environment
         /// </summary>

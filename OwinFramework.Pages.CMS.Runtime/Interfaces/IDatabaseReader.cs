@@ -17,6 +17,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// If null is passed then all environments are returned</param>
         T[] GetEnvironments<T>(Func<EnvironmentRecord, T> map, Func<EnvironmentRecord, bool> predicate = null);
 
+        /// <summary>
+        /// Retrieves a single environment record by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="environmentId">The unique ID of the environment to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetEnvironment<T>(long environmentId, Func<EnvironmentRecord, T> map);
+
         #endregion
 
         #region Website versions

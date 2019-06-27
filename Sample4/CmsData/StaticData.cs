@@ -507,7 +507,7 @@ namespace Sample4.CmsData
                 },
                 new EnvironmentRecord
                 {
-                    EnvironmentId = 2,
+                    EnvironmentId = 3,
                     Name = "uat",
                     DisplayName = "User acceptance",
                     CreatedBy = creator,

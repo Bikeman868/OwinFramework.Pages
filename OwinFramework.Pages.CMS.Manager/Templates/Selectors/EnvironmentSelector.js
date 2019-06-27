@@ -37,6 +37,15 @@
             },
             selectEnvironment: function (environmentId) {
                 var vm = this;
+                var websiteVersionId = null;
+                for (let i = 0; i < vm.environments.length; i++) {
+                    var environment = vm.environments[i];
+                    if (environment.environmentId === environmentId) {
+                        websiteVersionId = environment.websiteVersionId;
+                    }
+                }
+                if (websiteVersionId != undefined)
+                    vm._context.selected("websiteVersionId", websiteVersionId);
                 vm._context.selected("environmentId", environmentId);
             }
         }

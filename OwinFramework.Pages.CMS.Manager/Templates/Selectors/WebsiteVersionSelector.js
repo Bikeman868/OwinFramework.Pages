@@ -11,9 +11,30 @@
                 if (context != undefined) vm._context = context;
                 if (managerContext != undefined) vm._managerContext = managerContext;
                 if (vm._managerContext == undefined) vm._managerContext = vm._context;
+                vm._unsubscribeDispatcher = exported.dispatcher.subscribe(function (message) {
+                    if ((message.newElements && message.newElements.length > 0) ||
+                        (message.deletedElements && message.deletedElements.length > 0)) {
+                        vm.refresh(); // TODO: we only care about website versions being added/deleted
+                    }
+                });
+                vm.refresh();
                 vm.visible = true;
             },
-            hide: function () { this.visible = false; },
+            hide: function() {
+                var vm = this;
+                vm.visible = false;
+                if (vm._unsubscribeDispatcher != undefined) {
+                    vm._unsubscribeDispatcher();
+                    vm._unsubscribeDispatcher = null;
+                }
+            },
+            refresh: function () {
+                var vm = this;
+                exported.websiteVersionStore.getWebsiteVersions(
+                    function (response) {
+                        vm.versions = response;
+                    });
+            },
             selectVersion: function (websiteVersionId) {
                 var vm = this;
                 vm._context.selected("websiteVersionId", websiteVersionId);
@@ -26,15 +47,6 @@
                     vm.selectVersion(parseInt(websiteVersionId));
                 }
             }
-        },
-        created: function() {
-            this.versions = [
-                { elementId: 1, displayName: "Sprint 223" },
-                { elementId: 2, displayName: "Sprint 224" },
-                { elementId: 3, displayName: "Sprint 225" },
-                { elementId: 4, displayName: "Sprint 226" },
-                { elementId: 5, displayName: "Sprint 227" }
-            ];
         }
     });
 }

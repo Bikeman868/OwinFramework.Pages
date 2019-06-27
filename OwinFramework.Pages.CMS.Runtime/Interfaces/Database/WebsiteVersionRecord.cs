@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
@@ -12,6 +13,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// Primary key that uniquely identifies this version of the website
         /// </summary>
         [Mapping("websiteVersionId")]
+        [JsonProperty("websiteVersionId")]
         public long WebsiteVersionId { get; set; }
     }
 }

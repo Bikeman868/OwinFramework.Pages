@@ -99,9 +99,8 @@ namespace OwinFramework.Pages.CMS.Manager
             // Load Vue temlates that are dynamically constructed in JavaScript
 
             AddTemplate("EnvironmentSelector", less, scriptModules);
-            AddTemplate("PageSelector", less, scriptModules);
             AddTemplate("WebsiteVersionSelector", less, scriptModules);
-            AddTemplate("WebsiteVersionListSelector", less, scriptModules);
+            AddTemplate("PageSelector", less, scriptModules);
             
             AddTemplate("PageEditor", less, scriptModules);
 

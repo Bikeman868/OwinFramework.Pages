@@ -21,6 +21,15 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             _dataLayer = dataLater;
         }
 
+        #region Website versions
+
+        [Endpoint(UrlPath = "websiteversions", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        private void WebsiteVersions(IEndpointRequest request)
+        {
+            var records = _dataLayer.GetWebsiteVersions(wvp => wvp);
+            request.Success(records);
+        }
+
         [Endpoint(UrlPath = "websiteversion/{id}/pages", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
         [EndpointParameter(
             "id", 
@@ -33,6 +42,21 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             var records = _dataLayer.GetWebsitePages(id, wvp => wvp);
             request.Success(records);
         }
+
+        #endregion
+
+        #region Environments
+
+        [Endpoint(UrlPath = "environments", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        private void Environments(IEndpointRequest request)
+        {
+            var records = _dataLayer.GetEnvironments(e => e);
+            request.Success(records);
+        }
+
+        #endregion
+
+        #region Pages
 
         [Endpoint(UrlPath = "page/{id}/versions", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
         [EndpointParameter(
@@ -50,6 +74,8 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             else
                 request.Success(page);
         }
+
+        #endregion
 
     }
 }

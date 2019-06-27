@@ -67,7 +67,7 @@ exported.viewStore = function () {
 
     // Selectors
     var showWebsiteVersionSelector = function (context, topContext) {
-        selectView("cms_top_select_view", "/cms/manager/WebsiteVersionListSelector", "cms_website_version_list_selector", exported.website_version_selector_vm, topContext, topContext);
+        selectView("cms_top_select_view", "/cms/manager/WebsiteVersionSelector", "cms_website_version_selector", exported.website_version_selector_vm, topContext, topContext);
     }
     var showEnvironmentSelector = function (context, topContext) {
         selectView("cms_top_select_view", "/cms/manager/EnvironmentSelector", "cms_environment_selector", exported.environment_selector_vm, topContext, topContext);

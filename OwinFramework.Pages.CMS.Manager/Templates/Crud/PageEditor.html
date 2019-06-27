@@ -1,6 +1,13 @@
 ﻿<div id="cms_page_editor" class="cms_panel" v-if="visible">
-    <div v-if="currentPage == undefined">
-        <p>No page currently selected for editing</p>
+    <div v-if="currentPage == undefined && mode === 'view'">
+        <h2>No page selected</h2>
+        <p>
+            No page currently selected for editing. Choose a page from the list on the left. If the
+            list of pages is empty this is because the selected website version contains no pages.
+        </p>
+        <div class="cms_button_bar">
+            <button type="button" v-on:click="newPage">New</button>
+        </div>
     </div>
     <div v-else>
         <div v-if="mode === 'new' || mode === 'edit'">

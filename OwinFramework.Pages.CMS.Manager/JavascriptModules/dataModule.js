@@ -22,9 +22,25 @@
         return changes;
     }
 
+    var doSuccessGet = function(recordType, response, onSuccess, onFail) {
+        if (response == undefined) {
+            if (onFail != undefined) onFail("No " + recordType + " was returned by the server");
+        } else {
+            if (onSuccess != undefined) onSuccess(response);
+        }
+    }
+
+    var doFailGet = function(recordType, ajax, onFail) {
+        if (onFail != undefined) {
+            onFail("Failed to retrieve a " + recordType);
+        }
+    }
+
     return {
         copyObject: copyObject,
-        findChanges: findChanges
+        findChanges: findChanges,
+        doSuccessGet: doSuccessGet,
+        doFailGet: doFailGet
     }
 }();
 
@@ -32,30 +48,46 @@ var websiteStore = function() {
     return{
     };
 }();
+exported.websiteStore = websiteStore;
 
 var websiteVersionStore = function () {
-    var getPages = function (websiteVersionId, onsuccess, onfail) {
+    var getWebsiteVersions = function(onSuccess, onFail) {
+        ns.cmsmanager.listService.websiteVersions(
+            { },
+            function (response) { dataUtilities.doSuccessGet("list of vebsite versions", response, onSuccess, onFail); },
+            null,
+            function (ajax) { dataUtilities.doFailGet("list of vebsite versions", ajax, onFail); });
+    }
+
+    var getPages = function (websiteVersionId, onSuccess, onFail) {
         ns.cmsmanager.listService.websiteVersionPages(
             { id: websiteVersionId },
-            function (response) {
-                if (response == undefined) {
-                    if (onfail != undefined) onfail("No response was returned by the server");
-                } else {
-                    if (onsuccess != undefined) onsuccess(response);
-                }
-            },
+            function (response) { dataUtilities.doSuccessGet("list of vebsite version pages", response, onSuccess, onFail); },
             null,
-            function (ajax) {
-                if (onfail != undefined) {
-                    onfail("Failed to retrieve a list of website pages");
-                }
-            });
+            function (ajax) { dataUtilities.doFailGet("list of vebsite version pages", ajax, onFail); });
     }
 
     return {
+        getWebsiteVersions: getWebsiteVersions,
         getPages: getPages
     };
 }();
+exported.websiteVersionStore = websiteVersionStore;
+
+var environmentStore = function () {
+    var getEnvironments = function (onSuccess, onFail) {
+        ns.cmsmanager.listService.environments(
+            {},
+            function (response) { dataUtilities.doSuccessGet("list of environments", response, onSuccess, onFail); },
+            null,
+            function (ajax) { dataUtilities.doFailGet("list of environments", ajax, onFail); });
+    }
+
+    return {
+        getEnvironments: getEnvironments
+    };
+}();
+exported.environmentStore = environmentStore;
 
 var pageStore = function () {
     var pages = {};
@@ -63,22 +95,12 @@ var pageStore = function () {
     var pageProperties = [
         "name", "displayName", "description", "createdBy", "createdWhen", "elementType", "elementId"];
 
-    var getAllPages = function(onsuccess, onfail) {
+    var getAllPages = function (onSuccess, onFail) {
         ns.cmsmanager.listService.allPages(
             {},
-            function(response) {
-                if (response == undefined) {
-                    if (onfail != undefined) onfail("No pages were returned by the server");
-                } else {
-                    if (onsuccess != undefined) onsuccess(response);
-                }
-            },
+            function (response) { dataUtilities.doSuccess("list of pages", response, onSuccess, onFail); },
             null,
-            function(ajax) {
-                if (onfail != undefined) {
-                    onfail("Failed to retrieve a list of pages");
-                }
-            });
+            function (ajax) { dataUtilities.doFail("list of pages", ajax, onFail); });
     }
 
     var getEditablePage = function (page) {
@@ -200,6 +222,7 @@ var pageStore = function () {
         getAllPages: getAllPages
     }
 }();
+exported.pageStore = pageStore;
 
 var pageVersionStore = function () {
     var pageVersions = {};
@@ -326,8 +349,4 @@ var pageVersionStore = function () {
         //deletePageVersion: deletePageVersion,
     }
 }();
-
-exported.websiteStore = websiteStore;
-exported.websiteVersionStore = websiteVersionStore;
-exported.pageStore = pageStore;
 exported.pageVersionStore = pageVersionStore;

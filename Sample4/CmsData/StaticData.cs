@@ -16,7 +16,6 @@ namespace Sample4.CmsData
             var elementId = 1;
             var elementVersionId = 1;
             var propertyId = 1;
-            var websiteVersionId = 1;
             var dataScopeId = 1;
 
             #region Elements
@@ -466,8 +465,18 @@ namespace Sample4.CmsData
             {
                 new WebsiteVersionRecord
                 {
-                    WebsiteVersionId = websiteVersionId,
+                    WebsiteVersionId = 1,
                     Name = "1.0",
+                    DisplayName = "Sprint 224",
+                    Description = "First version",
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
+                },
+                new WebsiteVersionRecord
+                {
+                    WebsiteVersionId = 2,
+                    Name = "1.0",
+                    DisplayName = "Sprint 225",
                     Description = "First version",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
@@ -484,18 +493,35 @@ namespace Sample4.CmsData
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     BaseUrl = "http://sample4.localhost/",
-                    WebsiteVersionId = websiteVersionId
+                    WebsiteVersionId = 1
+                },
+                new EnvironmentRecord
+                {
+                    EnvironmentId = 2,
+                    Name = "stage",
+                    DisplayName = "Staging",
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
+                    BaseUrl = "http://staging.sample4.localhost/",
+                    WebsiteVersionId = 1
+                },
+                new EnvironmentRecord
+                {
+                    EnvironmentId = 2,
+                    Name = "uat",
+                    DisplayName = "User acceptance",
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
+                    BaseUrl = "http://uat.sample4.localhost/",
+                    WebsiteVersionId = 2
                 }
             };
-
-            // There is only 1 version of this website so all versions
-            // of all elements are included
 
             _websiteVersionPages = _pageVersions
                 .Select(pv => 
                     new WebsiteVersionPageRecord
                     {
-                        WebsiteVersionId = websiteVersionId,
+                        WebsiteVersionId = 1,
                         PageId = pv.ElementId,
                         PageVersionId = pv.ElementVersionId
                     
@@ -506,7 +532,7 @@ namespace Sample4.CmsData
                 .Select(lv => 
                     new WebsiteVersionLayoutRecord
                     {
-                        WebsiteVersionId = websiteVersionId,
+                        WebsiteVersionId = 1,
                         LayoutId = lv.ElementId,
                         LayoutVersionId = lv.ElementVersionId
                     })
@@ -516,7 +542,7 @@ namespace Sample4.CmsData
                 .Select(rv => 
                     new WebsiteVersionRegionRecord
                     {
-                        WebsiteVersionId = websiteVersionId,
+                        WebsiteVersionId = 1,
                         RegionId = rv.ElementId,
                         RegionVersionId = rv.ElementVersionId
                     })
@@ -526,7 +552,7 @@ namespace Sample4.CmsData
                 .Select(v => 
                     new WebsiteVersionComponentRecord
                     {
-                        WebsiteVersionId = websiteVersionId,
+                        WebsiteVersionId = 1,
                         ComponentId = v.ElementId,
                         ComponentVersionId = v.ElementVersionId
                     })
@@ -536,7 +562,7 @@ namespace Sample4.CmsData
                 .Select(v => 
                     new WebsiteVersionDataTypeRecord
                     {
-                        WebsiteVersionId = websiteVersionId,
+                        WebsiteVersionId = 1,
                         DataTypeVersionId = v.ElementVersionId,
                         DataTypeId = v.ElementId
                     })

@@ -33,37 +33,49 @@
         return "";
     });
 
-    var areaSelectorVm = new Vue({
-        el: "#cms_area_selector",
-        data: {
-            areas: [
-                { name: "versions", displayName: "Website versions" },
-                { name: "environments", displayName: "Environments" },
-                { name: "pages", displayName:"Pages", selected: true },
-                { name: "layouts", displayName:"Layouts" },
-                { name: "regions", displayName:"Regions" },
-                { name: "components", displayName:"Components" },
-                { name: "dataScopes", displayName:"Scopes" },
-                { name: "dataTypes", displayName:"Types" }
-            ]
-        },
-        methods: {
-            show: function (context) { this._context = context; },
-            selectArea: function (e) { ns.cmsmanager.viewStore.viewSelectChanged(e.target, this._context); }
-        }
-    });
+    var areaSelectorVm = function (eId, areas) {
+        return new Vue({
+            el: "#" + eId,
+            data: {
+                areas: areas
+            },
+            methods: {
+                show: function(context, managerContext) {
+                    this._context = context;
+                    this._managerContext = managerContext;
+                },
+                selectArea: function(e) {
+                    ns.cmsmanager.viewStore.viewSelectChanged(e.target, this._context, this._managerContext);
+                }
+            }
+        });
+    }
 
-    var managerContext = exported.selectionContext.create();
-    var viewContext = exported.selectionContext.create();
+    var topContext = exported.selectionContext.create();
+    var bottomContext = exported.selectionContext.create();
 
-    var websiteVersionSelectorVm = exported.website_version_selector_vm("cms_website_version_dropdown_selector");
-    websiteVersionSelectorVm.show(managerContext, managerContext);
+    var topAreaSelector = areaSelectorVm(
+        "cms_top_area_selector",
+        [
+            { name: "versions", displayName: "Website versions", selected: true },
+            { name: "environments", displayName: "Environments" }
+        ]);
+    topAreaSelector.show(topContext, topContext);
 
-    areaSelectorVm.show(viewContext, managerContext);
+    var bottomAreaSelector = areaSelectorVm(
+        "cms_bottom_area_selector",
+        [
+                { name: "pages", displayName: "Pages", selected: true },
+                { name: "layouts", displayName: "Layouts" },
+                { name: "regions", displayName: "Regions" },
+                { name: "components", displayName: "Components" },
+                { name: "dataScopes", displayName: "Scopes" },
+                { name: "dataTypes", displayName: "Types" }
+        ]);
+    bottomAreaSelector.show(bottomContext, topContext);
 
-    managerContext.selected("websiteVersionId", 1);
-
-    exported.viewStore.showPageSelector(viewContext, managerContext);
-    exported.viewStore.showPageEditor(viewContext, managerContext);
-    exported.viewStore.showDispatcherLog(viewContext, managerContext);
+    exported.viewStore.showWebsiteVersionSelector(bottomContext, topContext);
+    exported.viewStore.showPageSelector(bottomContext, topContext);
+    exported.viewStore.showPageEditor(bottomContext, topContext);
+    exported.viewStore.showDispatcherLog(bottomContext, topContext);
 }

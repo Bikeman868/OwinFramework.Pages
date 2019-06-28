@@ -44,11 +44,140 @@
     }
 }();
 
-var websiteStore = function() {
-    return{
+var environmentStore = function () {
+    var environments = {};
+
+    var environmentProperties = [
+        "name", "displayName", "description", "createdBy", "createdWhen", "environmentId", "baseUrl", "websiteVersionId"];
+
+    var getEnvironments = function (onSuccess, onFail) {
+        ns.cmsmanager.listService.environments(
+            {},
+            function (response) { dataUtilities.doSuccessGet("list of environments", response, onSuccess, onFail); },
+            null,
+            function (ajax) { dataUtilities.doFailGet("list of environments", ajax, onFail); });
+    }
+
+    var getEditableEnvironment = function (environment) {
+        return dataUtilities.copyObject(environmentProperties, environment);
+    }
+
+    var getNewEnvironment = function () {
+        return {};
+    }
+
+    var createEnvironment = function (environment, onsuccess, onfail) {
+        ns.cmsmanager.crudService.createEnvironment(
+            { body: environment },
+            function (response) {
+                if (response == undefined) {
+                    if (onfail != undefined) onfail("No response was received from the server, the environment might not have been created");
+                } else if (response.environmentId == undefined) {
+                    if (onfail != undefined) onfail("The server failed to return an ID for the new environment");
+                } else {
+                    environments[response.environmentId] = response;
+                    if (onsuccess != undefined) onsuccess(response);
+                }
+            },
+            null,
+            function (ajax) {
+                if (onfail != undefined) {
+                    onfail("Failed to create new environment");
+                }
+            });
+    }
+
+    var retrieveEnvironment = function (environmentId, onsuccess) {
+        if (environmentId == undefined) return;
+        var environment = environments[environmentId];
+        if (environment == undefined) {
+            ns.cmsmanager.crudService.retrieveEnvironment(
+                { id: environmentId },
+                function (response) {
+                    environments[response.environmentId] = response;
+                    if (onsuccess != undefined) onsuccess(response);
+                });
+        } else {
+            if (onsuccess != undefined) onsuccess(environment);
+        }
+    }
+
+    var updateEnvironment = function (originalEnvironment, updatedEnvironment, onsuccess, onfail) {
+        var changes = dataUtilities.findChanges(environmentProperties, originalEnvironment, updatedEnvironment);
+        if (changes.length === 0) {
+            if (onsuccess != undefined) onsuccess(originalEnvironment);
+            return;
+        }
+        ns.cmsmanager.crudService.updateEnvironment(
+            {
+                id: updatedEnvironment.environmentId,
+                body: changes
+            },
+            function (response) {
+                if (response == undefined) {
+                    if (onfail != undefined) onfail("No response was received from the server, the environment might not have been updated");
+                } else {
+                    var cached = environments[updatedEnvironment.environmentId];
+                    if (cached != undefined) {
+                        dataUtilities.copyObject(environmentProperties, response, cached);
+                    }
+                    if (onsuccess != undefined) onsuccess(response);
+                }
+            },
+            null,
+            function (ajax) {
+                if (onfail != undefined) {
+                    onfail("Failed to update the environment");
+                }
+            });
+    }
+
+    var deleteEnvironment = function (environmentId, onsuccess, onfail) {
+        ns.cmsmanager.crudService.deleteEnvironment(
+            { id: environmentId },
+            function (response) {
+                delete environments[environmentId];
+                if (onsuccess != undefined) onsuccess(response);
+            },
+            null,
+            onfail);
+    }
+
+    var dispatcherUnsubscribe = exported.dispatcher.subscribe(function (message) {
+        if (message.propertyChanges != undefined) {
+            for (let i = 0; i < message.propertyChanges.length; i++) {
+                var propertyChange = message.propertyChanges[i];
+                if (propertyChange.elementType === "Environment") {
+                    var environment = environments[propertyChange.id];
+                    if (environment != undefined) {
+                        environment[propertyChange.name] = propertyChange.value;
+                    }
+                }
+            }
+        }
+        if (message.deletedElements != undefined) {
+            for (let i = 0; i < message.deletedElements.length; i++) {
+                var deletedElement = message.deletedElements[i];
+                if (deletedElement.elementType === "Environment") {
+                    delete environments[deletedElement.id];
+                }
+            }
+        }
+    });
+
+    return {
+        getEditableEnvironment: getEditableEnvironment,
+        getNewEnvironment: getNewEnvironment,
+
+        createEnvironment: createEnvironment,
+        retrieveEnvironment: retrieveEnvironment,
+        updateEnvironment: updateEnvironment,
+        deleteEnvironment: deleteEnvironment,
+
+        getEnvironments: getEnvironments
     };
 }();
-exported.websiteStore = websiteStore;
+exported.environmentStore = environmentStore;
 
 var websiteVersionStore = function () {
     var getWebsiteVersions = function(onSuccess, onFail) {
@@ -73,21 +202,6 @@ var websiteVersionStore = function () {
     };
 }();
 exported.websiteVersionStore = websiteVersionStore;
-
-var environmentStore = function () {
-    var getEnvironments = function (onSuccess, onFail) {
-        ns.cmsmanager.listService.environments(
-            {},
-            function (response) { dataUtilities.doSuccessGet("list of environments", response, onSuccess, onFail); },
-            null,
-            function (ajax) { dataUtilities.doFailGet("list of environments", ajax, onFail); });
-    }
-
-    return {
-        getEnvironments: getEnvironments
-    };
-}();
-exported.environmentStore = environmentStore;
 
 var pageStore = function () {
     var pages = {};

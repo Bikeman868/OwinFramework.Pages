@@ -1,0 +1,65 @@
+﻿<div id="cms_environment_editor" class="cms_panel" v-if="visible">
+    <div v-if="currentEnvironment == undefined && mode === 'view'">
+        <h2>No environment selected</h2>
+        <p>
+            No environment currently selected for editing. Choose a environment from the list on the left. If the
+            list of environments is empty this is because you have not created any environments yet.
+        </p>
+        <div class="cms_button_bar">
+            <button type="button" v-on:click="newEnvironment">New</button>
+        </div>
+    </div>
+    <div v-else>
+        <div v-if="mode === 'new' || mode === 'edit'">
+            <h2 v-if="mode === 'new'">Create New Environment</h2>
+            <h2 v-if="mode === 'edit'">Edit Environment Details</h2>
+            <label class="cms_field">Show as</label>
+            <input type="text" class="cms_field__display_name" v-model="editingEnvironment.displayName" placeholder="Display name" v-bind:pattern="displayNamePattern" required>
+            <label class="cms_field">Name</label>
+            <input type="text" class="cms_field__name" v-model="editingEnvironment.name" placeholder="unique_name" v-bind:pattern="namePattern" required>
+            <label class="cms_field">Base URL</label>
+            <input type="text" class="cms_field__base_url" v-model="editingEnvironment.baseUrl" placeholder="http://environment.mycompany.com/" v-bind:pattern="urlPattern" required>
+            <label class="cms_field">Website version</label>
+            <input type="text" class="cms_field__website_version" v-model="editingEnvironment.websiteVersionId" placeholder="Website version id" v-bind:pattern="idPattern" required>
+            <label class="cms_field">Description</label>
+            <textarea class="cms_field__description" v-model="editingEnvironment.description" placeholder="Optional description"></textarea>
+            <div class="cms_validation_error_list" v-if="errors.length > 0">
+                <p v-for="error in errors">{{error}}</p>
+            </div>
+            <div class="cms_button_bar">
+                <button v-if="mode === 'new'" type="button" v-on:click="createNew">Create</button>
+                <button v-if="mode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
+                <button type="button" v-on:click="cancelChanges">Cancel</button>
+            </div>
+        </div>
+        <div v-if="mode === 'view'">
+            <h2>{{currentEnvironment.displayName}} environment</h2>
+            <label class="cms_field">Name</label>
+            <p class="cms_field">{{currentEnvironment.name}}</p>
+            <label class="cms_field">Created</label>
+            <p class="cms_field">{{currentEnvironment.createdWhen | cms_formatDate}} by {{currentEnvironment.createdBy | cms_formatUserUrn}}</p>
+            <label class="cms_field">Base URL</label>
+            <p class="cms_field">{{currentEnvironment.baseUrl}}</p>
+            <label class="cms_field">Website version</label>
+            <p class="cms_field">{{currentEnvironment.websiteVersionId}}</p>
+            <label class="cms_field">Description</label>
+            <p class="cms_field">{{currentEnvironment.description}}</p>
+            <div class="cms_button_bar">
+                <button type="button" v-on:click="editEnvironment">Edit</button>
+                <button type="button" v-on:click="newEnvironment">New</button>
+                <button type="button" v-on:click="deleteEnvironment">Delete</button>
+            </div>
+        </div>
+        <div v-if="mode === 'delete'">
+            <h2>Confirm Environment Deletion</h2>
+            <p>
+                This will delete the "{{currentEnvironment.name}}" environment. 
+                The website will no longer be available in the "{{currentEnvironment.name}}" environment. Are you sure?
+            </p>
+            <div class="cms_button_bar">
+                <button type="button" v-on:click="confirmDelete">Delete</button>
+                <button type="button" v-on:click="cancelChanges">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

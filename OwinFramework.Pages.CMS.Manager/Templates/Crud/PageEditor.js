@@ -99,8 +99,8 @@
             validate: function() {
                 var vm = this;
                 var errors = [];
-                exported.validation.displayName(vm.editingPage.displayName, errors);
-                exported.validation.name(vm.editingPage.name, errors);
+                exported.validation.displayName(vm.editingPage.displayName, "display name", errors);
+                exported.validation.name(vm.editingPage.name, "name", errors);
                 vm.errors = errors;
             }
         }

@@ -57,8 +57,8 @@
     var topAreaSelector = areaSelectorVm(
         "cms_top_area_selector",
         [
-            { name: "versions", displayName: "Website versions", selected: true },
-            { name: "environments", displayName: "Environments" }
+            { name: "versions", displayName: "Website versions" },
+            { name: "environments", displayName: "Environments", selected: true }
         ]);
     topAreaSelector.show(topContext, topContext);
 
@@ -74,8 +74,9 @@
         ]);
     bottomAreaSelector.show(bottomContext, topContext);
 
-    exported.viewStore.showWebsiteVersionSelector(bottomContext, topContext);
+    exported.viewStore.showEnvironmentSelector(bottomContext, topContext);
     exported.viewStore.showPageSelector(bottomContext, topContext);
     exported.viewStore.showPageEditor(bottomContext, topContext);
+    exported.viewStore.showEnvironmentEditor(bottomContext, topContext);
     exported.viewStore.showDispatcherLog(bottomContext, topContext);
 }

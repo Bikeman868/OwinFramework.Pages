@@ -124,14 +124,33 @@ exported.viewStore = function () {
 
     var viewSelectChanged = function(e, context, managerContext) {
         var viewName = (e.value || e.options[e.selectedIndex].value);
-        if (viewName === "environments") showEnvironmentSelector(managerContext, managerContext);
-        else if (viewName === "versions") showWebsiteVersionSelector(managerContext, managerContext);
-        else if (viewName === "pages") showPageSelector(context, managerContext);
-        else if (viewName === "layouts") showLayoutSelector(context, managerContext);
-        else if (viewName === "regions") showRegionSelector(context, managerContext);
-        else if (viewName === "components") showComponentSelector(context, managerContext);
-        else if (viewName === "dataScopes") showDataScopeSelector(context, managerContext);
-        else if (viewName === "dataTypes") showDataTypeSelector(context, managerContext);
+        if (viewName === "environments") {
+            showEnvironmentSelector(managerContext, managerContext);
+            showEnvironmentEditor(managerContext, managerContext);
+        }
+        else if (viewName === "versions") {
+            showWebsiteVersionSelector(managerContext, managerContext);
+            showWebsiteVersionEditor(managerContext, managerContext);
+        }
+        else if (viewName === "pages") {
+            showPageSelector(context, managerContext);
+            showPageEditor(context, managerContext);
+        }
+        else if (viewName === "layouts") {
+            showLayoutSelector(context, managerContext);
+        }
+        else if (viewName === "regions") {
+            showRegionSelector(context, managerContext);
+        }
+        else if (viewName === "components") {
+            showComponentSelector(context, managerContext);
+        }
+        else if (viewName === "dataScopes") {
+            showDataScopeSelector(context, managerContext);
+        }
+        else if (viewName === "dataTypes") {
+            showDataTypeSelector(context, managerContext);
+        }
     }
 
     return {

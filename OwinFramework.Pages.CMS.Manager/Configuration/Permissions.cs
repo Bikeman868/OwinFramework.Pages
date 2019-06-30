@@ -11,6 +11,7 @@
         // so that you can grant editing permissions on individual elements
 
         public const string EditEnvironment = "cms:edit/environment";
+        public const string EditWebsiteVersion = "cms:edit/version";
         public const string EditComponent = "cms:edit/component";
         public const string EditDataScope = "cms:edit/datascope";
         public const string EditDataType = "cms:edit/datatype";

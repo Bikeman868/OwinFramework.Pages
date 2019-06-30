@@ -152,6 +152,12 @@
     <EmbeddedResource Include="Templates\Crud\EnvironmentEditor.html" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Templates\Crud\WebsiteVersionEditor.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Crud\WebsiteVersionEditor.html" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Templates\Crud\EnvironmentEditor.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

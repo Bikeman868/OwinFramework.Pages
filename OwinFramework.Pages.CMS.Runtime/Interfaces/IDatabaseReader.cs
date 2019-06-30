@@ -38,6 +38,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// If null is passed then all versions are returned</param>
         T[] GetWebsiteVersions<T>(Func<WebsiteVersionRecord, T> map, Func<WebsiteVersionRecord, bool> predicate = null);
 
+        /// <summary>
+        /// Retrieves a single website version record by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="websiteVersionId">The unique ID of the website version to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetWebsiteVersion<T>(long websiteVersionId, Func<WebsiteVersionRecord, T> map);
+
         #endregion
 
         #region Website version elements

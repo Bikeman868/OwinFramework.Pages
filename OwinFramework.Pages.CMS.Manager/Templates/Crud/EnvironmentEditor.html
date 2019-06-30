@@ -2,7 +2,7 @@
     <div v-if="currentEnvironment == undefined && mode === 'view'">
         <h2>No environment selected</h2>
         <p>
-            No environment currently selected for editing. Choose a environment from the list on the left. If the
+            No environment currently selected for editing. Choose an environment from the list on the left. If the
             list of environments is empty this is because you have not created any environments yet.
         </p>
         <div class="cms_button_bar">
@@ -53,9 +53,10 @@
         <div v-if="mode === 'delete'">
             <h2>Confirm Environment Deletion</h2>
             <p>
-                This will delete the "{{currentEnvironment.name}}" environment. 
-                The website will no longer be available in the "{{currentEnvironment.name}}" environment. Are you sure?
+                This will delete the "{{currentEnvironment.name}}" environment.
+                The website will no longer be available in the "{{currentEnvironment.name}}" environment.
             </p>
+            <p>This operation cannot be undone. Are you sure?</p>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="confirmDelete">Delete</button>
                 <button type="button" v-on:click="cancelChanges">Cancel</button>

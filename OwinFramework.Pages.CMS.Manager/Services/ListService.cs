@@ -21,6 +21,17 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             _dataLayer = dataLater;
         }
 
+        #region Environments
+
+        [Endpoint(UrlPath = "environments", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        private void Environments(IEndpointRequest request)
+        {
+            var records = _dataLayer.GetEnvironments(e => e);
+            request.Success(records);
+        }
+
+        #endregion
+
         #region Website versions
 
         [Endpoint(UrlPath = "websiteversions", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
@@ -40,17 +51,6 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         {
             var id = request.Parameter<long>("id");
             var records = _dataLayer.GetWebsitePages(id, wvp => wvp);
-            request.Success(records);
-        }
-
-        #endregion
-
-        #region Environments
-
-        [Endpoint(UrlPath = "environments", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
-        private void Environments(IEndpointRequest request)
-        {
-            var records = _dataLayer.GetEnvironments(e => e);
             request.Success(records);
         }
 

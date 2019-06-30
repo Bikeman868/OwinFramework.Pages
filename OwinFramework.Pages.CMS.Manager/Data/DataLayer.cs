@@ -147,6 +147,52 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
+        CreateResult IDatabaseUpdater.CreateWebsiteVersion(string identity, WebsiteVersionRecord websiteVersion)
+        {
+            var result = _databaseUpdater.CreateWebsiteVersion(identity, websiteVersion);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.NewElements.Add(
+                    new ElementReference
+                    {
+                        ElementType = websiteVersion.ElementType,
+                        ElementId = result.NewRecordId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateWebsiteVersion(string identity, long websiteVersionId, List<DatabasePropertyChange> changes)
+        {
+            var result = _databaseUpdater.UpdateWebsiteVersion(identity, websiteVersionId, changes);
+            if (!result.Success) return result;
+
+            AddChangesToLiveUpdate(new WebsiteVersionRecord().ElementType, websiteVersionId, changes);
+
+            return result;
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteWebsiteVersion(string identity, long websiteVersionId)
+        {
+            var result = _databaseUpdater.DeleteWebsiteVersion(identity, websiteVersionId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.DeletedElements.Add(
+                    new ElementReference
+                    {
+                        ElementType = new WebsiteVersionRecord().ElementType,
+                        ElementId = websiteVersionId
+                    });
+            }
+
+            return result;
+        }
+
         CreateResult IDatabaseUpdater.CreatePage(string identity, PageRecord page)
         {
             var result = _databaseUpdater.CreatePage(identity, page);
@@ -347,7 +393,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         #endregion
 
-        #region IDatabaseReader
+        #region IDatabaseReader MixIn
 
         T[] IDatabaseReader.GetEnvironments<T>(Func<EnvironmentRecord, T> map, Func<EnvironmentRecord, bool> predicate)
         {
@@ -424,6 +470,11 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return _databaseReader.GetEnvironment(environmentId, map);
         }
 
+        T IDatabaseReader.GetWebsiteVersion<T>(long websiteVersionId, Func<WebsiteVersionRecord, T> map)
+        {
+            return _databaseReader.GetWebsiteVersion(websiteVersionId, map);
+        }
+
         T IDatabaseReader.GetPageVersion<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
         {
             return _databaseReader.GetPageVersion(pageId, version, map);
@@ -465,5 +516,6 @@ namespace OwinFramework.Pages.CMS.Manager.Data
         }
 
         #endregion
+
     }
 }

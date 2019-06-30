@@ -215,12 +215,129 @@ var environmentStore = function () {
 exported.environmentStore = environmentStore;
 
 var websiteVersionStore = function () {
-    var getWebsiteVersions = function(onSuccess, onFail) {
-        ns.cmsmanager.listService.websiteVersions(
-            { },
-            function (response) { dataUtilities.doSuccessGet("list of vebsite versions", response, onSuccess, onFail); },
+    var websiteVersionList = null;
+    var websiteVersionsById = {};
+
+    var websiteVersionProperties = [
+        "name", "displayName", "description", "createdBy", "createdWhen", "websiteVersionId"];
+
+    var add = function (websiteVersion) {
+        if (websiteVersionList != undefined) websiteVersionList.push(websiteVersion);
+        websiteVersionsById[websiteVersion.websiteVersionId] = websiteVersion;
+    }
+
+    var remove = function (websiteVersionId) {
+        delete websiteVersionsById[websiteVersionId];
+        if (websiteVersionList != undefined) {
+            var index = -1;
+            websiteVersionList.forEach(function (v, i) { if (v.websiteVersionId === websiteVersionId) index = i; });
+            if (index >= 0) websiteVersionList.splice(index, 1);
+        }
+    }
+
+    var getEditableWebsiteVersion = function (websiteVersion) {
+        return dataUtilities.copyObject(websiteVersionProperties, websiteVersion);
+    }
+
+    var getNewWebsiteVersion = function () {
+        return {};
+    }
+
+    var createWebsiteVersion = function (websiteVersion, onsuccess, onfail) {
+        ns.cmsmanager.crudService.createWebsiteVersion(
+            { body: websiteVersion },
+            function (response) {
+                if (response == undefined) {
+                    if (onfail != undefined) onfail("No response was received from the server, the website version might not have been created");
+                } else if (response.websiteVersionId == undefined) {
+                    if (onfail != undefined) onfail("The server failed to return an ID for the new website version");
+                } else {
+                    add(response);
+                    if (onsuccess != undefined) onsuccess(response);
+                }
+            },
             null,
-            function (ajax) { dataUtilities.doFailGet("list of vebsite versions", ajax, onFail); });
+            function (ajax) {
+                if (onfail != undefined) {
+                    onfail("Failed to create new website version");
+                }
+            });
+    }
+
+    var retrieveWebsiteVersion = function (websiteVersionId, onsuccess) {
+        if (websiteVersionId == undefined) return;
+        var websiteVersion = websiteVersionsById[websiteVersionId];
+        if (websiteVersion == undefined) {
+            ns.cmsmanager.crudService.retrieveWebsiteVersion(
+                { id: websiteVersionId },
+                function (response) {
+                    add(response);
+                    if (onsuccess != undefined) onsuccess(response);
+                });
+        } else {
+            if (onsuccess != undefined) onsuccess(websiteVersion);
+        }
+    }
+
+    var updateWebsiteVersion = function (originalWebsiteVersion, updatedWebsiteVersion, onsuccess, onfail) {
+        var changes = dataUtilities.findChanges(websiteVersionProperties, originalWebsiteVersion, updatedWebsiteVersion);
+        if (changes.length === 0) {
+            if (onsuccess != undefined) onsuccess(originalWebsiteVersion);
+            return;
+        }
+        ns.cmsmanager.crudService.updateWebsiteVersion(
+            {
+                id: updatedWebsiteVersion.websiteVersionId,
+                body: changes
+            },
+            function (response) {
+                if (response == undefined) {
+                    if (onfail != undefined) onfail("No response was received from the server, the websiteVersion might not have been updated");
+                } else {
+                    var cached = websiteVersionsById[updatedWebsiteVersion.websiteVersionId];
+                    if (cached != undefined) {
+                        dataUtilities.copyObject(websiteVersionProperties, response, cached);
+                    }
+                    if (onsuccess != undefined) onsuccess(response);
+                }
+            },
+            null,
+            function (ajax) {
+                if (onfail != undefined) {
+                    onfail("Failed to update the websiteVersion");
+                }
+            });
+    }
+
+    var deleteWebsiteVersion = function (websiteVersionId, onsuccess, onfail) {
+        ns.cmsmanager.crudService.deleteWebsiteVersion(
+            { id: websiteVersionId },
+            function (response) {
+                remove(websiteVersionId);
+                if (onsuccess != undefined) onsuccess(response);
+            },
+            null,
+            onfail);
+    }
+
+    var getWebsiteVersions = function (onSuccess, onFail) {
+        if (websiteVersionList == undefined) {
+            ns.cmsmanager.listService.websiteVersions(
+                {},
+                function (response) {
+                    if (response != undefined) {
+                        websiteVersionList = response;
+                        for (let i = 0; i < response.length; i++) {
+                            websiteVersionsById[response[i].websiteVersionId] = response[i];
+                        }
+                    }
+                    dataUtilities.doSuccessGet("list of website versions", response, onSuccess, onFail);
+                },
+                null,
+                function (ajax) { dataUtilities.doFailGet("list of website versions", ajax, onFail); });
+        } else {
+            if (onSuccess != undefined) onSuccess(websiteVersionList);
+        }
     }
 
     var getPages = function (websiteVersionId, onSuccess, onFail) {
@@ -231,7 +348,45 @@ var websiteVersionStore = function () {
             function (ajax) { dataUtilities.doFailGet("list of vebsite version pages", ajax, onFail); });
     }
 
+    var dispatcherUnsubscribe = exported.dispatcher.subscribe(function (message) {
+        if (message.propertyChanges != undefined) {
+            for (let i = 0; i < message.propertyChanges.length; i++) {
+                var propertyChange = message.propertyChanges[i];
+                if (propertyChange.elementType === "WebsiteVersion") {
+                    var websiteVersion = websiteVersionsById[propertyChange.id];
+                    if (websiteVersion != undefined) {
+                        websiteVersion[propertyChange.name] = propertyChange.value;
+                    }
+                }
+            }
+        }
+        if (message.deletedElements != undefined) {
+            for (let i = 0; i < message.deletedElements.length; i++) {
+                var deletedElement = message.deletedElements[i];
+                if (deletedElement.elementType === "WebsiteVersion") {
+                    remove(deletedElement.id);
+                }
+            }
+        }
+        if (message.newElements != undefined) {
+            for (let i = 0; i < message.newElements.length; i++) {
+                var newElement = message.newElements[i];
+                if (newElement.elementType === "WebsiteVersion") {
+                    retrieveWebsiteVersion(newElement.id);
+                }
+            }
+        }
+    });
+
     return {
+        getEditableWebsiteVersion: getEditableWebsiteVersion,
+        getNewWebsiteVersion: getNewWebsiteVersion,
+
+        createWebsiteVersion: createWebsiteVersion,
+        retrieveWebsiteVersion: retrieveWebsiteVersion,
+        updateWebsiteVersion: updateWebsiteVersion,
+        deleteWebsiteVersion: deleteWebsiteVersion,
+
         getWebsiteVersions: getWebsiteVersions,
         getPages: getPages
     };

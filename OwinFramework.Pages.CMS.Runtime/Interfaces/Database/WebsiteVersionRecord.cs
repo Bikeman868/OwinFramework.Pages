@@ -9,6 +9,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class WebsiteVersionRecord: RecordBase
     {
+        [JsonProperty("elementType")]
+        public string ElementType 
+        { 
+            get { return "WebsiteVersion"; }
+            set { }
+        }
+
         /// <summary>
         /// Primary key that uniquely identifies this version of the website
         /// </summary>

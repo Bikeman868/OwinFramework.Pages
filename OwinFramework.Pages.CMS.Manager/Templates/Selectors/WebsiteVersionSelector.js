@@ -3,7 +3,7 @@
         el: "#" + eId,
         data: {
             visible: true,
-            versions: []
+            websiteVersions: []
         },
         methods: {
             show: function (context, managerContext) {
@@ -11,12 +11,6 @@
                 if (context != undefined) vm._context = context;
                 if (managerContext != undefined) vm._managerContext = managerContext;
                 if (vm._managerContext == undefined) vm._managerContext = vm._context;
-                vm._unsubscribeDispatcher = exported.dispatcher.subscribe(function (message) {
-                    if ((message.newElements && message.newElements.length > 0) ||
-                        (message.deletedElements && message.deletedElements.length > 0)) {
-                        vm.refresh(); // TODO: we only care about website versions being added/deleted
-                    }
-                });
                 vm.refresh();
                 vm.visible = true;
             },
@@ -32,10 +26,10 @@
                 var vm = this;
                 exported.websiteVersionStore.getWebsiteVersions(
                     function (response) {
-                        vm.versions = response;
+                        vm.websiteVersions = response;
                     });
             },
-            selectVersion: function (websiteVersionId) {
+            selectWebsiteVersion: function (websiteVersionId) {
                 var vm = this;
                 vm._context.selected("websiteVersionId", websiteVersionId);
             },
@@ -44,7 +38,7 @@
                 var dropdown = e.target;
                 var websiteVersionId = (dropdown.value || dropdown.options[dropdown.selectedIndex].value);
                 if (websiteVersionId != undefined) {
-                    vm.selectVersion(parseInt(websiteVersionId));
+                    vm.selectWebsiteVersion(parseInt(websiteVersionId));
                 }
             }
         }

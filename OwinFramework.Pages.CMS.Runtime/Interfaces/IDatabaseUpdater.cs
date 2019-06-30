@@ -9,6 +9,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         UpdateResult UpdateEnvironment(string identity, long environmentId, List<PropertyChange> changes);
         DeleteResult DeleteEnvironment(string identity, long environmentId);
 
+        CreateResult CreateWebsiteVersion(string identity, WebsiteVersionRecord websiteVersion);
+        UpdateResult UpdateWebsiteVersion(string identity, long websiteVersionId, List<PropertyChange> changes);
+        DeleteResult DeleteWebsiteVersion(string identity, long websiteVersionId);
+
         CreateResult CreatePage(string identity, PageRecord page);
         UpdateResult UpdatePage(string identity, long pageId, List<PropertyChange> changes);
         DeleteResult DeletePage(string identity, long pageId);

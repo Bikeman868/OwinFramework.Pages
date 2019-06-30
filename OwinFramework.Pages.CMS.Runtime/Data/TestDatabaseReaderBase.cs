@@ -254,6 +254,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(environmant);
         }
 
+        T IDatabaseReader.GetWebsiteVersion<T>(long websiteVersionId, Func<WebsiteVersionRecord, T> map)
+        {
+            var websiteVersion = _websiteVersions.FirstOrDefault(e => e.WebsiteVersionId == websiteVersionId);
+            if (websiteVersion == null) return default(T);
+            return map(websiteVersion);
+        }
+
         T IDatabaseReader.GetPageVersion<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
         {
             var page = _pages.FirstOrDefault(p => p.ElementId == pageId);

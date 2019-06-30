@@ -74,6 +74,66 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         #endregion
 
+        #region Website Versions
+
+        CreateResult IDatabaseUpdater.CreateWebsiteVersion(string identity, WebsiteVersionRecord websiteVersion)
+        {
+            lock (_updateLock)
+            {
+                websiteVersion.WebsiteVersionId = _websiteVersions.OrderByDescending(e => e.WebsiteVersionId).First().WebsiteVersionId + 1;
+                websiteVersion.CreatedWhen = DateTime.UtcNow;
+                websiteVersion.CreatedBy = identity;
+
+                var websiteVersions = _websiteVersions.ToList();
+                websiteVersions.Add(websiteVersion);
+                _websiteVersions = websiteVersions.ToArray();
+
+                return new CreateResult(websiteVersion.WebsiteVersionId);
+            }
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateWebsiteVersion(string identity, long websiteVersionId, List<PropertyChange> changes)
+        {
+            var websiteVersion = _websiteVersions.FirstOrDefault(p => p.WebsiteVersionId == websiteVersionId);
+            if (websiteVersion == null) return new UpdateResult("website_version_not_found", "No website version found with id " + websiteVersionId);
+
+            foreach (var change in changes)
+            {
+                switch (change.PropertyName.ToLower())
+                {
+                    case "name":
+                        websiteVersion.Name = change.PropertyValue;
+                        break;
+                    case "displayname":
+                        websiteVersion.DisplayName = change.PropertyValue;
+                        break;
+                    case "description":
+                        websiteVersion.Description = change.PropertyValue;
+                        break;
+                    case "websiteversionid":
+                        websiteVersion.WebsiteVersionId = long.Parse(change.PropertyValue);
+                        break;
+                }
+            }
+
+            return new UpdateResult();
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteWebsiteVersion(string identity, long websiteVersionId)
+        {
+            var websiteVersion = _websiteVersions.FirstOrDefault(p => p.WebsiteVersionId == websiteVersionId);
+            if (websiteVersion == null) return new DeleteResult("website_version_not_found", "No website version found with id " + websiteVersionId);
+
+            lock (_updateLock)
+            {
+                _websiteVersions = _websiteVersions.Where(p => p.WebsiteVersionId != websiteVersionId).ToArray();
+            }
+
+            return new DeleteResult();
+        }
+
+        #endregion
+
         #region Pages
 
         CreateResult IDatabaseUpdater.CreatePage(string identity, PageRecord page)

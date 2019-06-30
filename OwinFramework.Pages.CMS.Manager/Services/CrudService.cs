@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using OwinFramework.Builder;
+using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.CMS.Manager.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
@@ -69,6 +72,19 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             var environmentId = request.Parameter<long>("id");
             var changes = request.Body<List<PropertyChange>>();
 
+            if (changes.Any(c => c.PropertyName == "websiteVersionId"))
+            {
+                var authorization = request.OwinContext.GetFeature<IAuthorization>();
+                if (authorization != null)
+                {
+                    if (!authorization.HasPermission(Permissions.ChangeEnvironmentVersion, environmentId.ToString()))
+                        request.HttpStatus(HttpStatusCode.Forbidden, 
+                            "You do not have permission '" + Permissions.ChangeEnvironmentVersion + 
+                            " on environment with id=" + environmentId);
+                    return;
+                }
+            }
+
             var result = _dataLayer.UpdateEnvironment(request.Identity, environmentId, changes);
 
             if (result.Success)
@@ -88,6 +104,80 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         {
             var id = request.Parameter<long>("id");
             var result = _dataLayer.DeleteEnvironment(request.Identity, id);
+
+            if (result.Success)
+                request.Success(new { id });
+            else
+                request.BadRequest(result.DebugMessage);
+        }
+
+        #endregion
+
+        #region WebsiteVersions
+
+        [Endpoint(Methods = new[] {Method.Post}, RequiredPermission = Permissions.EditWebsiteVersion)]
+        private void CreateWebsiteVersion(IEndpointRequest request)
+        {
+            var websiteVersion = request.Body<WebsiteVersionRecord>();
+            var result = _dataLayer.CreateWebsiteVersion(request.Identity, websiteVersion);
+
+            if (!result.Success)
+            {
+                request.BadRequest(result.DebugMessage);
+                return;
+            }
+
+            websiteVersion = _dataLayer.GetWebsiteVersion(result.NewRecordId, e => e);
+            if (websiteVersion == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError, 
+                    "After creating the new website version it could not be found in the database");
+                return;
+            }
+
+            request.Success(websiteVersion);
+        }
+
+        [Endpoint(UrlPath = "websiteversion/{id}", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void RetrieveWebsiteVersion(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var websiteVersion = _dataLayer.GetWebsiteVersion(id, e => e);
+
+            if (websiteVersion == null)
+                request.NotFound("No website version with ID " + id);
+            else
+                request.Success(websiteVersion);
+        }
+
+        [Endpoint(UrlPath = "websiteversion/{id}", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditWebsiteVersion)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void UpdateWebsiteVersion(IEndpointRequest request)
+        {
+            var websiteVersionId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            var result = _dataLayer.UpdateWebsiteVersion(request.Identity, websiteVersionId, changes);
+
+            if (result.Success)
+            {
+                var websiteVersion = _dataLayer.GetWebsiteVersion(websiteVersionId, e => e);
+                request.Success(websiteVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(UrlPath = "websiteversion/{id}", Methods = new[] {Method.Delete}, RequiredPermission = Permissions.EditWebsiteVersion)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void DeleteWebsiteVersion(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var result = _dataLayer.DeleteWebsiteVersion(request.Identity, id);
 
             if (result.Success)
                 request.Success(new { id });

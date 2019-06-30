@@ -78,7 +78,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                             }
                             else
                             {
-                                result.ErrorMessage = "Failed to parse as a byte";
+                                result.ErrorMessage = "Failed to parse '" + param + "' as a byte";
                             }
                         }
                     };
@@ -102,7 +102,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                             }
                             else
                             {
-                                result.ErrorMessage = "Failed to parse as an integer";
+                                result.ErrorMessage = "Failed to parse '" + param + "' as an integer";
                             }
                         }
                     };
@@ -126,7 +126,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                             }
                             else
                             {
-                                result.ErrorMessage = "Failed to parse as an integer";
+                                result.ErrorMessage = "Failed to parse '" + param + "' as an integer";
                             }
                         }
                     };
@@ -151,7 +151,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                             }
                             else
                             {
-                                result.ErrorMessage = "Failed to parse as a float";
+                                result.ErrorMessage = "Failed to parse '" + param + "' as a float";
                             }
                         }
                     };
@@ -176,7 +176,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                             }
                             else
                             {
-                                result.ErrorMessage = "Failed to parse as a double";
+                                result.ErrorMessage = "Failed to parse '" + param + "' as a double";
                             }
                         }
                     };
@@ -201,7 +201,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                             }
                             else
                             {
-                                result.ErrorMessage = "Failed to parse as a bool";
+                                result.ErrorMessage = "Failed to parse '" + param + "' as a bool";
                             }
                         }
                     };
@@ -226,7 +226,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                             }
                             else
                             {
-                                result.ErrorMessage = "Failed to parse as a DateTime";
+                                result.ErrorMessage = "Failed to parse '" + param + "' as a DateTime";
                             }
                         }
                     };
@@ -280,7 +280,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                         }
                         else
                         {
-                            result.ErrorMessage = "Failed to parse as a bool";
+                            result.ErrorMessage = "Failed to parse '" + param + "' as a bool";
                         }
                     };
                 }
@@ -296,7 +296,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                         }
                         else
                         {
-                            result.ErrorMessage = "Failed to parse as a int";
+                            result.ErrorMessage = "Failed to parse '" + param + "' as a int";
                         }
                     };
                 }
@@ -312,7 +312,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                         }
                         else
                         {
-                            result.ErrorMessage = "Failed to parse as a long";
+                            result.ErrorMessage = "Failed to parse '" + param + "' as a long";
                         }
                     };
                 }
@@ -329,7 +329,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                         }
                         else
                         {
-                            result.ErrorMessage = "Failed to parse as a float";
+                            result.ErrorMessage = "Failed to parse '" + param + "' as a float";
                         }
                     };
                 }
@@ -346,7 +346,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                         }
                         else
                         {
-                            result.ErrorMessage = "Failed to parse as a double";
+                            result.ErrorMessage = "Failed to parse '" + param + "' as a double";
                         }
                     };
                 }
@@ -363,7 +363,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                         }
                         else
                         {
-                            result.ErrorMessage = "Failed to parse as a bool";
+                            result.ErrorMessage = "Failed to parse '" + param + "' as a bool";
                         }
                     };
                 }
@@ -380,7 +380,7 @@ namespace OwinFramework.Pages.Restful.Parameters
                         }
                         else
                         {
-                            result.ErrorMessage = "Failed to parse as a DateTime";
+                            result.ErrorMessage = "Failed to parse '" + param + "' as a DateTime";
                         }
                     };
                 }

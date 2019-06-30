@@ -90,7 +90,7 @@
             confirmDelete: function() {
                 var vm = this;
                 ns.cmsmanager.environmentStore.deleteEnvironment(
-                    vm.currentEnvironment.elementId,
+                    vm.currentEnvironment.environmentId,
                     function() {
                         vm.currentEnvironment = null;
                         vm.mode = "view";

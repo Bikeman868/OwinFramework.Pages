@@ -24,7 +24,7 @@
                     if (websiteVersionId == undefined) {
                         vm.currentWebsiteVersion = null;
                     } else {
-                        exported.websiteVersionStore.retrieveWebsiteVersion(
+                        exported.websiteVersionStore.retrieveRecord(
                             websiteVersionId,
                             function (websiteVersion) { vm.currentWebsiteVersion = websiteVersion; });
                     }
@@ -42,13 +42,13 @@
             newWebsiteVersion: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingWebsiteVersion = exported.websiteVersionStore.getNewWebsiteVersion();
+                vm.editingWebsiteVersion = exported.websiteVersionStore.blankRecord();
                 vm.mode = "new";
             },
             editWebsiteVersion: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingWebsiteVersion = exported.websiteVersionStore.getEditableWebsiteVersion(vm.currentWebsiteVersion);
+                vm.editingWebsiteVersion = exported.websiteVersionStore.cloneForEditing(vm.currentWebsiteVersion);
                 Object.assign(vm.originalWebsiteVersion, vm.editingWebsiteVersion);
                 vm.mode = "edit";
             },
@@ -60,7 +60,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    exported.websiteVersionStore.updateWebsiteVersion(
+                    exported.websiteVersionStore.updateRecord(
                         vm.originalWebsiteVersion,
                         vm.editingWebsiteVersion,
                         function() {
@@ -74,7 +74,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    exported.websiteVersionStore.createWebsiteVersion(
+                    exported.websiteVersionStore.createRecord(
                         vm.editingWebsiteVersion,
                         function() {
                             vm.mode = "view";
@@ -85,7 +85,7 @@
             },
             confirmDelete: function() {
                 var vm = this;
-                exported.websiteVersionStore.deleteWebsiteVersion(
+                exported.websiteVersionStore.deleteRecord(
                     vm.currentWebsiteVersion.websiteVersionId,
                     function() {
                         vm.currentWebsiteVersion = null;

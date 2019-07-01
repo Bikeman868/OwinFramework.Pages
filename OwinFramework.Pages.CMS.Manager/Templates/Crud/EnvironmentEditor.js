@@ -121,7 +121,7 @@
                 var vm = this;
                 var websiteVersionId = vm.currentEnvironment.websiteVersionId;
                 vm._context.selected("websiteVersionId", websiteVersionId);
-                exported.websiteVersionStore.retrieveWebsiteVersion(
+                exported.websiteVersionStore.retrieveRecord(
                     websiteVersionId,
                     function (websiteVersion) { vm.websiteVersion = websiteVersion });
             }

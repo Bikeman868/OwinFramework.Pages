@@ -255,212 +255,73 @@
 }();
 
 var environmentStore = dataUtilities.newStore({
-        recordType: "Environment",
-        idField: "environmentId",
-        fields: ["name", "displayName", "description", "createdBy", "createdWhen", "environmentId", "baseUrl", "websiteVersionId"],
-        methods: {
-            createRecord: function(environment, onSuccess, onFail) {
-                exported.crudService.createEnvironment({ body: environment }, onSuccess, onFail)
+    recordType: "Environment",
+    name: "environment",
+    idField: "environmentId",
+    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "environmentId", "baseUrl", "websiteVersionId"],
+    methods: {
+        createRecord: function(environment, onSuccess, onFail) {
+            exported.crudService.createEnvironment({ body: environment }, onSuccess, onFail)
+        },
+        retrieveRecord: function(environmentId, onSuccess, onFail) {
+            exported.crudService.retrieveEnvironment({ id: environmentId }, onSuccess, null, onFail);
+        },
+        retrieveAllRecords: function(onSuccess, onFail) {
+            exported.listService.environments({}, onSuccess, null, onFail);
+        },
+        updateRecord: function(environmentId, changes, onSuccess, onFail) {
+            exported.crudService.updateEnvironment(
+            {
+                id: environmentId,
+                body: changes
             },
-            retrieveRecord: function(environmentId, onSuccess, onFail) {
-                exported.crudService.retrieveEnvironment({ id: environmentId }, onSuccess, null, onFail);
-            },
-            retrieveAllRecords: function(onSuccess, onFail) {
-                exported.listService.environments({}, onSuccess, null, onFail);
-            },
-            updateRecord: function(environmentId, changes, onSuccess, onFail) {
-                exported.crudService.updateEnvironment(
-                {
-                    id: environmentId,
-                    body: changes
-                },
-                onSuccess, null, onFail);
-            },
-            deleteRecord: function(environmentId, onSuccess, onFail) {
-                exported.crudService.deleteEnvironment({ id: environmentId }, onSuccess, null, onFail);
-            }
+            onSuccess, null, onFail);
+        },
+        deleteRecord: function(environmentId, onSuccess, onFail) {
+            exported.crudService.deleteEnvironment({ id: environmentId }, onSuccess, null, onFail);
         }
-    });
+    }
+});
 
 exported.environmentStore = environmentStore;
 
-var websiteVersionStore = function () {
-    var websiteVersionList = null;
-    var websiteVersionsById = {};
-
-    var websiteVersionProperties = [
-        "name", "displayName", "description", "createdBy", "createdWhen", "websiteVersionId"];
-
-    var add = function (websiteVersion) {
-        if (websiteVersionList != undefined) websiteVersionList.push(websiteVersion);
-        websiteVersionsById[websiteVersion.websiteVersionId] = websiteVersion;
-    }
-
-    var remove = function (websiteVersionId) {
-        delete websiteVersionsById[websiteVersionId];
-        if (websiteVersionList != undefined) {
-            var index = -1;
-            websiteVersionList.forEach(function (v, i) { if (v.websiteVersionId === websiteVersionId) index = i; });
-            if (index >= 0) websiteVersionList.splice(index, 1);
-        }
-    }
-
-    var getEditableWebsiteVersion = function (websiteVersion) {
-        return dataUtilities.copyObject(websiteVersionProperties, websiteVersion);
-    }
-
-    var getNewWebsiteVersion = function () {
-        return {};
-    }
-
-    var createWebsiteVersion = function (websiteVersion, onsuccess, onfail) {
-        exported.crudService.createWebsiteVersion(
-            { body: websiteVersion },
-            function (response) {
-                if (response == undefined) {
-                    if (onfail != undefined) onfail("No response was received from the server, the website version might not have been created");
-                } else if (response.websiteVersionId == undefined) {
-                    if (onfail != undefined) onfail("The server failed to return an ID for the new website version");
-                } else {
-                    add(response);
-                    if (onsuccess != undefined) onsuccess(response);
-                }
-            },
-            null,
-            function (ajax) {
-                if (onfail != undefined) {
-                    onfail("Failed to create new website version");
-                }
-            });
-    }
-
-    var retrieveWebsiteVersion = function (websiteVersionId, onsuccess) {
-        if (websiteVersionId == undefined) return;
-        var websiteVersion = websiteVersionsById[websiteVersionId];
-        if (websiteVersion == undefined) {
-            exported.crudService.retrieveWebsiteVersion(
-                { id: websiteVersionId },
-                function (response) {
-                    if (websiteVersionsById[websiteVersionId] == undefined) add(response);
-                    if (onsuccess != undefined) onsuccess(response);
-                });
-        } else {
-            if (onsuccess != undefined) onsuccess(websiteVersion);
-        }
-    }
-
-    var updateWebsiteVersion = function (originalWebsiteVersion, updatedWebsiteVersion, onsuccess, onfail) {
-        var changes = dataUtilities.findChanges(websiteVersionProperties, originalWebsiteVersion, updatedWebsiteVersion);
-        if (changes.length === 0) {
-            if (onsuccess != undefined) onsuccess(originalWebsiteVersion);
-            return;
-        }
-        exported.crudService.updateWebsiteVersion(
+var websiteVersionStore = dataUtilities.newStore({
+    recordType: "WebsiteVersion",
+    name: "website version",
+    idField: "websiteVersionId",
+    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "websiteVersionId"],
+    methods: {
+        createRecord: function (websiteVersion, onSuccess, onFail) {
+            exported.crudService.createWebsiteVersion({ body: websiteVersion }, onSuccess, onFail)
+        },
+        retrieveRecord: function (websiteVersionId, onSuccess, onFail) {
+            exported.crudService.retrieveWebsiteVersion({ id: websiteVersionId }, onSuccess, null, onFail);
+        },
+        retrieveAllRecords: function (onSuccess, onFail) {
+            exported.listService.websiteVersions({}, onSuccess, null, onFail);
+        },
+        updateRecord: function (websiteVersionId, changes, onSuccess, onFail) {
+            exported.crudService.updateWebsiteVersion(
             {
-                id: updatedWebsiteVersion.websiteVersionId,
+                id: websiteVersionId,
                 body: changes
             },
-            function (response) {
-                if (response == undefined) {
-                    if (onfail != undefined) onfail("No response was received from the server, the websiteVersion might not have been updated");
-                } else {
-                    var cached = websiteVersionsById[updatedWebsiteVersion.websiteVersionId];
-                    if (cached != undefined) {
-                        dataUtilities.copyObject(websiteVersionProperties, response, cached);
-                    }
-                    if (onsuccess != undefined) onsuccess(response);
-                }
-            },
-            null,
-            function (ajax) {
-                if (onfail != undefined) {
-                    onfail("Failed to update the websiteVersion");
-                }
-            });
-    }
-
-    var deleteWebsiteVersion = function (websiteVersionId, onsuccess, onfail) {
-        exported.crudService.deleteWebsiteVersion(
-            { id: websiteVersionId },
-            function (response) {
-                remove(websiteVersionId);
-                if (onsuccess != undefined) onsuccess(response);
-            },
-            null,
-            onfail);
-    }
-
-    var getWebsiteVersions = function (onSuccess, onFail) {
-        if (websiteVersionList == undefined) {
-            exported.listService.websiteVersions(
-                {},
-                function (response) {
-                    if (response != undefined) {
-                        websiteVersionList = response;
-                        for (let i = 0; i < response.length; i++) {
-                            websiteVersionsById[response[i].websiteVersionId] = response[i];
-                        }
-                    }
-                    dataUtilities.doSuccessGet("list of website versions", response, onSuccess, onFail);
-                },
-                null,
-                function (ajax) { dataUtilities.doFailGet("list of website versions", ajax, onFail); });
-        } else {
-            if (onSuccess != undefined) onSuccess(websiteVersionList);
+            onSuccess, null, onFail);
+        },
+        deleteRecord: function (websiteVersionId, onSuccess, onFail) {
+            exported.crudService.deleteWebsiteVersion({ id: websiteVersionId }, onSuccess, null, onFail);
         }
     }
+});
 
-    var getPages = function (websiteVersionId, onSuccess, onFail) {
-        exported.listService.websiteVersionPages(
-            { id: websiteVersionId },
-            function (response) { dataUtilities.doSuccessGet("list of vebsite version pages", response, onSuccess, onFail); },
-            null,
-            function (ajax) { dataUtilities.doFailGet("list of vebsite version pages", ajax, onFail); });
-    }
+websiteVersionStore.getPages = function (websiteVersionId, onSuccess, onFail) {
+    exported.listService.websiteVersionPages(
+        { id: websiteVersionId },
+        function (response) { dataUtilities.doSuccessGet("list of vebsite version pages", response, onSuccess, onFail); },
+        null,
+        function (ajax) { dataUtilities.doFailGet("list of vebsite version pages", ajax, onFail); });
+}
 
-    var dispatcherUnsubscribe = exported.dispatcher.subscribe(function (message) {
-        if (message.propertyChanges != undefined) {
-            for (let i = 0; i < message.propertyChanges.length; i++) {
-                var propertyChange = message.propertyChanges[i];
-                if (propertyChange.elementType === "WebsiteVersion") {
-                    var websiteVersion = websiteVersionsById[propertyChange.id];
-                    if (websiteVersion != undefined) {
-                        websiteVersion[propertyChange.name] = propertyChange.value;
-                    }
-                }
-            }
-        }
-        if (message.deletedElements != undefined) {
-            for (let i = 0; i < message.deletedElements.length; i++) {
-                var deletedElement = message.deletedElements[i];
-                if (deletedElement.elementType === "WebsiteVersion") {
-                    remove(deletedElement.id);
-                }
-            }
-        }
-        if (message.newElements != undefined) {
-            for (let i = 0; i < message.newElements.length; i++) {
-                var newElement = message.newElements[i];
-                if (newElement.elementType === "WebsiteVersion") {
-                    retrieveWebsiteVersion(newElement.id);
-                }
-            }
-        }
-    });
-
-    return {
-        getEditableWebsiteVersion: getEditableWebsiteVersion,
-        getNewWebsiteVersion: getNewWebsiteVersion,
-
-        createWebsiteVersion: createWebsiteVersion,
-        retrieveWebsiteVersion: retrieveWebsiteVersion,
-        updateWebsiteVersion: updateWebsiteVersion,
-        deleteWebsiteVersion: deleteWebsiteVersion,
-
-        getWebsiteVersions: getWebsiteVersions,
-        getPages: getPages
-    };
-}();
 exported.websiteVersionStore = websiteVersionStore;
 
 var pageStore = function () {

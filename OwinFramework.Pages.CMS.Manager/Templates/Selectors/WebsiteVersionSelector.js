@@ -24,7 +24,7 @@
             },
             refresh: function () {
                 var vm = this;
-                exported.websiteVersionStore.getWebsiteVersions(
+                exported.websiteVersionStore.retrieveAllRecords(
                     function (response) {
                         vm.websiteVersions = response;
                     });

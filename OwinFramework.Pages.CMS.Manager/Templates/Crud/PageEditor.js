@@ -37,7 +37,7 @@
                     }
                 });
                 vm._unsubscribeWebsiteVersionId = managerContext.subscribe("websiteVersionId", function (value) {
-                    exported.websiteVersionStore.retrieveWebsiteVersion(
+                    exported.websiteVersionStore.retrieveRecord(
                         value,
                         function (websiteVersion) { vm.websiteVersion = websiteVersion });
                 });

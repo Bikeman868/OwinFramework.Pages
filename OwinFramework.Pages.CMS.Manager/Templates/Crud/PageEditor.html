@@ -1,5 +1,5 @@
 ﻿<div id="cms_page_editor" class="cms_panel" v-if="visible">
-    <div v-if="currentPage == undefined && mode === 'view'">
+    <div v-if="currentPage == undefined && pageMode === 'view'">
         <h2>No page selected</h2>
         <p>
             No page currently selected for editing. Choose a page from the list on the left. If the
@@ -10,9 +10,9 @@
         </div>
     </div>
     <div v-else>
-        <div v-if="mode === 'new' || mode === 'edit'">
-            <h2 v-if="mode === 'new'">Create New Page</h2>
-            <h2 v-if="mode === 'edit'">Edit Page Details</h2>
+        <div v-if="pageMode === 'new' || pageMode === 'edit'">
+            <h2 v-if="pageMode === 'new'">Create New Page</h2>
+            <h2 v-if="pageMode === 'edit'">Edit Page Details</h2>
             <label class="cms_field">Show as</label>
             <input type="text" class="cms_field__display_name" v-model="editingPage.displayName" placeholder="Display name" v-bind:pattern="displayNamePattern" required>
             <label class="cms_field">Name</label>
@@ -23,12 +23,12 @@
                 <p v-for="error in errors">{{error}}</p>
             </div>
             <div class="cms_button_bar">
-                <button v-if="mode === 'new'" type="button" v-on:click="createNew">Create</button>
-                <button v-if="mode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
+                <button v-if="pageMode === 'new'" type="button" v-on:click="createNew">Create</button>
+                <button v-if="pageMode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
                 <button type="button" v-on:click="cancelChanges">Cancel</button>
             </div>
         </div>
-        <div v-if="mode === 'view'">
+        <div v-if="pageMode === 'view'">
             <h2>{{currentPage.displayName}} page</h2>
             <label class="cms_field">Name</label>
             <p class="cms_field">{{currentPage.name}}</p>
@@ -42,14 +42,85 @@
                 <button type="button" v-on:click="deletePage">Delete</button>
             </div>
             <div class="cms_spacer_medium">&nbsp;</div>
-            <h2>{{currentPage.displayName}} page versions</h2>
         </div>
-        <div v-if="mode === 'delete'">
+        <div v-if="pageMode === 'delete'">
             <h2>Confirm Page Deletion</h2>
             <p>This will delete all versions of the "{{currentPage.name}}" page in all versions of the website</p>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="confirmDelete">Delete</button>
                 <button type="button" v-on:click="cancelChanges">Cancel</button>
+            </div>
+        </div>
+
+        <div v-if="currentPageVersion == undefined && pageVersionMode === 'view'">
+            <h2>No page version in website version</h2>
+            <p>
+                There is no version of this page in the selected website version. To
+                select a version of this page to use in this version of the website
+                tap on the 'Choose Version' button.
+            </p>
+            <div class="cms_button_bar">
+                <button type="button" v-on:click="choosePageVersion">Choose Version</button>
+            </div>
+        </div>
+        <div v-else>
+            <div v-if="pageVersionMode === 'new' || pageVersionMode === 'edit'">
+                <h2 v-if="pageVersionMode === 'new'">Create New Version</h2>
+                <h2 v-if="pageVersionMode === 'edit'">Edit Page Version</h2>
+                <label class="cms_field">Show as</label>
+                <input type="text" class="cms_field__display_name" v-model="editingPageVersion.displayName" placeholder="Display name" v-bind:pattern="displayNamePattern" required>
+                <label class="cms_field">Name</label>
+                <input type="text" class="cms_field__name" v-model="editingPageVersion.name" placeholder="unique_name" v-bind:pattern="namePattern" required>
+                <label class="cms_field">Description</label>
+                <textarea class="cms_field__description" v-model="editingPageVersion.description" placeholder="Optional description"></textarea>
+                <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
+                    <p v-for="error in versionErrors">{{error}}</p>
+                </div>
+                <div class="cms_button_bar">
+                    <button v-if="pageVersionMode === 'new'" type="button" v-on:click="createNewVersion">Create</button>
+                    <button v-if="pageVersionMode === 'edit'" type="button" v-on:click="saveVersionChanges">Save</button>
+                    <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                </div>
+            </div>
+            <div v-if="pageVersionMode === 'view'">
+                <h2>{{currentPageVersion.displayName}} version of {{currentPage.displayName}} page</h2>
+                <p>
+                    This version of the {{currentPage.displayName}} page is used in 
+                    the {{websiteVersion.displayName}} version of the website
+                </p>
+                <label class="cms_field">Name</label>
+                <p class="cms_field">{{currentPageVersion.name}}</p>
+                <label class="cms_field">Created</label>
+                <p class="cms_field">{{currentPageVersion.createdWhen | cms_formatDate}} by {{currentPageVersion.createdBy | cms_formatUserUrn}}</p>
+                <label class="cms_field">Description</label>
+                <p class="cms_field">{{currentPageVersion.description}}</p>
+                <div class="cms_button_bar">
+                    <button type="button" v-on:click="choosePageVersion">Choose Version</button>
+                    <button type="button" v-on:click="editPageVersion">Edit Version</button>
+                    <button type="button" v-on:click="newPageVersion">New Version</button>
+                    <button type="button" v-on:click="deletePageVersion">Delete Version</button>
+                </div>
+                <div class="cms_spacer_medium">&nbsp;</div>
+            </div>
+            <div v-if="pageVersionMode === 'delete'">
+                <h2>Confirm Page Version Deletion</h2>
+                <p>
+                    This will delete the {{currentPageVersion.displayName}} version of the {{currentPage.displayName}} page.
+                    This page will disapear from any versions of the website that use this version of
+                    the {{currentPage.displayName}} page.
+                </p>
+                <p>Are you sure?</p>
+                <div class="cms_button_bar">
+                    <button type="button" v-on:click="confirmDeleteVersion">Delete</button>
+                    <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                </div>
+            </div>
+            <div v-if="pageVersionMode === 'choose'">
+                <h2>Choose Page Version</h2>
+                <p>
+                    Which version of the {{currentPage.displayName}} page do you want to use for the
+                    {{}} version of the website?
+                </p>
             </div>
         </div>
     </div>

@@ -45,9 +45,9 @@
         <div v-if="mode === 'delete'">
             <h2>Confirm Website Version Deletion</h2>
             <p>
-                This will delete the "{{currentWebsiteVersion.name}}" website version.
-                You will not longer be able to choose the "{{currentWebsiteVersion.name}}" version
-                to use in an environment. Any environments that currently use this website
+                This will delete the "{{currentWebsiteVersion.name}}" version of the website.
+                You will not longer be able to choose the {{currentWebsiteVersion.displayName}} version
+                of the website for an environment, and any environments that currently use this website
                 version will become unusable.
             </p>
             <p>This operation cannot be undone. Are you sure?</p>

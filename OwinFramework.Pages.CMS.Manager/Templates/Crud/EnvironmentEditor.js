@@ -121,7 +121,9 @@
                 var vm = this;
                 var websiteVersionId = vm.currentEnvironment.websiteVersionId;
                 vm._context.selected("websiteVersionId", websiteVersionId);
-                exported.websiteVersionStore.retrieveWebsiteVersion(websiteVersionId, function (v) { vm.websiteVersion = v });
+                exported.websiteVersionStore.retrieveWebsiteVersion(
+                    websiteVersionId,
+                    function (websiteVersion) { vm.websiteVersion = websiteVersion });
             }
         }
     });

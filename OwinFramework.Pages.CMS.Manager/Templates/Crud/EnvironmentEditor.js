@@ -11,7 +11,8 @@
             errors: [],
             originalEnvironment: {},
             editingEnvironment: {},
-            currentEnvironment: {}
+            currentEnvironment: {},
+            websiteVersion: {}
         },
         created: function() {
             var vm = this;
@@ -27,10 +28,16 @@
                 vm._unsubscribeEnvironmentId = context.subscribe("environmentId", function (environmentId) {
                     if (environmentId == undefined) {
                         vm.currentEnvironment = null;
+                        vm.websiteVersion = null;
                     } else {
-                        ns.cmsmanager.environmentStore.retrieveEnvironment(
+                        exported.environmentStore.retrieveEnvironment(
                             environmentId,
-                            function (environment) { vm.currentEnvironment = environment; });
+                            function(environment) {
+                                 vm.currentEnvironment = environment;
+                                 exported.websiteVersionStore.retrieveWebsiteVersion(
+                                     environment.websiteVersionId,
+                                     function(v) {vm.websiteVersion = v});
+                            });
                     }
                 });
                 this.visible = true;
@@ -46,13 +53,13 @@
             newEnvironment: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingEnvironment = ns.cmsmanager.environmentStore.getNewEnvironment();
+                vm.editingEnvironment = exported.environmentStore.getNewEnvironment();
                 vm.mode = "new";
             },
             editEnvironment: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingEnvironment = ns.cmsmanager.environmentStore.getEditableEnvironment(vm.currentEnvironment);
+                vm.editingEnvironment = exported.environmentStore.getEditableEnvironment(vm.currentEnvironment);
                 Object.assign(vm.originalEnvironment, vm.editingEnvironment);
                 vm.mode = "edit";
             },
@@ -64,7 +71,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    ns.cmsmanager.environmentStore.updateEnvironment(
+                    exported.environmentStore.updateEnvironment(
                         vm.originalEnvironment,
                         vm.editingEnvironment,
                         function() {
@@ -78,7 +85,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    ns.cmsmanager.environmentStore.createEnvironment(
+                    exported.environmentStore.createEnvironment(
                         vm.editingEnvironment,
                         function() {
                             vm.mode = "view";
@@ -89,7 +96,7 @@
             },
             confirmDelete: function() {
                 var vm = this;
-                ns.cmsmanager.environmentStore.deleteEnvironment(
+                exported.environmentStore.deleteEnvironment(
                     vm.currentEnvironment.environmentId,
                     function() {
                         vm.currentEnvironment = null;
@@ -107,6 +114,9 @@
                 vm.editingEnvironment.baseUrl = exported.validation.url(vm.editingEnvironment.baseUrl, "base url", errors);
                 vm.editingEnvironment.websiteVersionId = exported.validation.id(vm.editingEnvironment.websiteVersionId, "website version id", errors);
                 vm.errors = errors;
+            },
+            websiteVersionSelected: function(websiteVersionId) {
+                this.editingEnvironment.websiteVersionId = websiteVersionId;
             }
         }
     });

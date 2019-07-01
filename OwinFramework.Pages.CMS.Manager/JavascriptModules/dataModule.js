@@ -121,7 +121,7 @@ var environmentStore = function () {
             ns.cmsmanager.crudService.retrieveEnvironment(
                 { id: environmentId },
                 function (response) {
-                    add(response);
+                    if (environmentsById[environmentId] == undefined) add(response);
                     if (onsuccess != undefined) onsuccess(response);
                 });
         } else {
@@ -271,7 +271,7 @@ var websiteVersionStore = function () {
             ns.cmsmanager.crudService.retrieveWebsiteVersion(
                 { id: websiteVersionId },
                 function (response) {
-                    add(response);
+                    if (websiteVersionsById[websiteVersionId] == undefined) add(response);
                     if (onsuccess != undefined) onsuccess(response);
                 });
         } else {

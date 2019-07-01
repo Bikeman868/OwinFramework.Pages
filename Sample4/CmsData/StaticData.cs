@@ -466,7 +466,7 @@ namespace Sample4.CmsData
                 new WebsiteVersionRecord
                 {
                     WebsiteVersionId = 1,
-                    Name = "1.0",
+                    Name = "v1",
                     DisplayName = "Sprint 224",
                     Description = "First version",
                     CreatedBy = creator,
@@ -475,9 +475,9 @@ namespace Sample4.CmsData
                 new WebsiteVersionRecord
                 {
                     WebsiteVersionId = 2,
-                    Name = "1.0",
+                    Name = "v2",
                     DisplayName = "Sprint 225",
-                    Description = "First version",
+                    Description = "Second version",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                 }

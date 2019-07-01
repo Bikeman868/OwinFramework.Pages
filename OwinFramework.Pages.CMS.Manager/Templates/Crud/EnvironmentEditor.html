@@ -20,7 +20,7 @@
             <label class="cms_field">Base URL</label>
             <input type="text" class="cms_field__base_url" v-model="editingEnvironment.baseUrl" placeholder="http://environment.mycompany.com/" v-bind:pattern="urlPattern" required>
             <label class="cms_field">Website version</label>
-            <input type="text" class="cms_field__website_version" v-model="editingEnvironment.websiteVersionId" placeholder="Website version id" v-bind:pattern="idPattern" required>
+            <websiteversiondropdown v-bind:website-version-id="editingEnvironment.websiteVersionId" @website-version-selected="websiteVersionSelected"></websiteversiondropdown>
             <label class="cms_field">Description</label>
             <textarea class="cms_field__description" v-model="editingEnvironment.description" placeholder="Optional description"></textarea>
             <div class="cms_validation_error_list" v-if="errors.length > 0">
@@ -41,7 +41,7 @@
             <label class="cms_field">Base URL</label>
             <p class="cms_field">{{currentEnvironment.baseUrl}}</p>
             <label class="cms_field">Website version</label>
-            <p class="cms_field">{{currentEnvironment.websiteVersionId}}</p>
+            <p class="cms_field">{{websiteVersion.displayName}}</p>
             <label class="cms_field">Description</label>
             <p class="cms_field">{{currentEnvironment.description}}</p>
             <div class="cms_button_bar">

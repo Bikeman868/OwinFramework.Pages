@@ -14,7 +14,7 @@
                     this._managerContext = managerContext;
                 },
                 selectArea: function(e) {
-                    ns.cmsmanager.viewStore.viewSelectChanged(e.target, this._context, this._managerContext);
+                    exported.viewStore.viewSelectChanged(e.target, this._context, this._managerContext);
                 }
             }
         });

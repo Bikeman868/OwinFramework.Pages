@@ -3,7 +3,7 @@
         el: "#" + eId,
         data: {
             visible: true,
-            mode: "view",
+            mode: "view", 
             namePattern: "",
             displayNamePattern: "",
             errors: [],
@@ -24,7 +24,7 @@
                     if (websiteVersionId == undefined) {
                         vm.currentWebsiteVersion = null;
                     } else {
-                        ns.cmsmanager.websiteVersionStore.retrieveWebsiteVersion(
+                        exported.websiteVersionStore.retrieveWebsiteVersion(
                             websiteVersionId,
                             function (websiteVersion) { vm.currentWebsiteVersion = websiteVersion; });
                     }
@@ -42,13 +42,13 @@
             newWebsiteVersion: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingWebsiteVersion = ns.cmsmanager.websiteVersionStore.getNewWebsiteVersion();
+                vm.editingWebsiteVersion = exported.websiteVersionStore.getNewWebsiteVersion();
                 vm.mode = "new";
             },
             editWebsiteVersion: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingWebsiteVersion = ns.cmsmanager.websiteVersionStore.getEditableWebsiteVersion(vm.currentWebsiteVersion);
+                vm.editingWebsiteVersion = exported.websiteVersionStore.getEditableWebsiteVersion(vm.currentWebsiteVersion);
                 Object.assign(vm.originalWebsiteVersion, vm.editingWebsiteVersion);
                 vm.mode = "edit";
             },
@@ -60,7 +60,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    ns.cmsmanager.websiteVersionStore.updateWebsiteVersion(
+                    exported.websiteVersionStore.updateWebsiteVersion(
                         vm.originalWebsiteVersion,
                         vm.editingWebsiteVersion,
                         function() {
@@ -74,7 +74,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    ns.cmsmanager.websiteVersionStore.createWebsiteVersion(
+                    exported.websiteVersionStore.createWebsiteVersion(
                         vm.editingWebsiteVersion,
                         function() {
                             vm.mode = "view";
@@ -85,7 +85,7 @@
             },
             confirmDelete: function() {
                 var vm = this;
-                ns.cmsmanager.websiteVersionStore.deleteWebsiteVersion(
+                exported.websiteVersionStore.deleteWebsiteVersion(
                     vm.currentWebsiteVersion.websiteVersionId,
                     function() {
                         vm.currentWebsiteVersion = null;

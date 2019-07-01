@@ -67,7 +67,7 @@ var environmentStore = function () {
 
     var getEnvironments = function (onSuccess, onFail) {
         if (environmentList == undefined) {
-            ns.cmsmanager.listService.environments(
+            exported.listService.environments(
                 {},
                 function (response) {
                     if (response != undefined) {
@@ -94,7 +94,7 @@ var environmentStore = function () {
     }
 
     var createEnvironment = function (environment, onsuccess, onfail) {
-        ns.cmsmanager.crudService.createEnvironment(
+        exported.crudService.createEnvironment(
             { body: environment },
             function (response) {
                 if (response == undefined) {
@@ -118,7 +118,7 @@ var environmentStore = function () {
         if (environmentId == undefined) return;
         var environment = environmentsById[environmentId];
         if (environment == undefined) {
-            ns.cmsmanager.crudService.retrieveEnvironment(
+            exported.crudService.retrieveEnvironment(
                 { id: environmentId },
                 function (response) {
                     if (environmentsById[environmentId] == undefined) add(response);
@@ -135,7 +135,7 @@ var environmentStore = function () {
             if (onsuccess != undefined) onsuccess(originalEnvironment);
             return;
         }
-        ns.cmsmanager.crudService.updateEnvironment(
+        exported.crudService.updateEnvironment(
             {
                 id: updatedEnvironment.environmentId,
                 body: changes
@@ -160,7 +160,7 @@ var environmentStore = function () {
     }
 
     var deleteEnvironment = function (environmentId, onsuccess, onfail) {
-        ns.cmsmanager.crudService.deleteEnvironment(
+        exported.crudService.deleteEnvironment(
             { id: environmentId },
             function (response) {
                 remove(environmentId);
@@ -244,7 +244,7 @@ var websiteVersionStore = function () {
     }
 
     var createWebsiteVersion = function (websiteVersion, onsuccess, onfail) {
-        ns.cmsmanager.crudService.createWebsiteVersion(
+        exported.crudService.createWebsiteVersion(
             { body: websiteVersion },
             function (response) {
                 if (response == undefined) {
@@ -268,7 +268,7 @@ var websiteVersionStore = function () {
         if (websiteVersionId == undefined) return;
         var websiteVersion = websiteVersionsById[websiteVersionId];
         if (websiteVersion == undefined) {
-            ns.cmsmanager.crudService.retrieveWebsiteVersion(
+            exported.crudService.retrieveWebsiteVersion(
                 { id: websiteVersionId },
                 function (response) {
                     if (websiteVersionsById[websiteVersionId] == undefined) add(response);
@@ -285,7 +285,7 @@ var websiteVersionStore = function () {
             if (onsuccess != undefined) onsuccess(originalWebsiteVersion);
             return;
         }
-        ns.cmsmanager.crudService.updateWebsiteVersion(
+        exported.crudService.updateWebsiteVersion(
             {
                 id: updatedWebsiteVersion.websiteVersionId,
                 body: changes
@@ -310,7 +310,7 @@ var websiteVersionStore = function () {
     }
 
     var deleteWebsiteVersion = function (websiteVersionId, onsuccess, onfail) {
-        ns.cmsmanager.crudService.deleteWebsiteVersion(
+        exported.crudService.deleteWebsiteVersion(
             { id: websiteVersionId },
             function (response) {
                 remove(websiteVersionId);
@@ -322,7 +322,7 @@ var websiteVersionStore = function () {
 
     var getWebsiteVersions = function (onSuccess, onFail) {
         if (websiteVersionList == undefined) {
-            ns.cmsmanager.listService.websiteVersions(
+            exported.listService.websiteVersions(
                 {},
                 function (response) {
                     if (response != undefined) {
@@ -341,7 +341,7 @@ var websiteVersionStore = function () {
     }
 
     var getPages = function (websiteVersionId, onSuccess, onFail) {
-        ns.cmsmanager.listService.websiteVersionPages(
+        exported.listService.websiteVersionPages(
             { id: websiteVersionId },
             function (response) { dataUtilities.doSuccessGet("list of vebsite version pages", response, onSuccess, onFail); },
             null,
@@ -400,7 +400,7 @@ var pageStore = function () {
         "name", "displayName", "description", "createdBy", "createdWhen", "elementType", "elementId"];
 
     var getAllPages = function (onSuccess, onFail) {
-        ns.cmsmanager.listService.allPages(
+        exported.listService.allPages(
             {},
             function (response) { dataUtilities.doSuccess("list of pages", response, onSuccess, onFail); },
             null,
@@ -416,7 +416,7 @@ var pageStore = function () {
     }
 
     var createPage = function (page, websiteVersionId, onsuccess, onfail) {
-        ns.cmsmanager.crudService.createPage(
+        exported.crudService.createPage(
             { body: page, websiteversionid: websiteVersionId }, 
             function (response) {
                 if (response == undefined) {
@@ -440,7 +440,7 @@ var pageStore = function () {
         if (pageId == undefined) return;
         var page = pages[pageId];
         if (page == undefined) {
-            ns.cmsmanager.crudService.retrievePage(
+            exported.crudService.retrievePage(
                 { id: pageId },
                 function (response) {
                     pages[response.elementId] = response;
@@ -457,7 +457,7 @@ var pageStore = function () {
             if (onsuccess != undefined) onsuccess(originalPage);
             return;
         }
-        ns.cmsmanager.crudService.updatePage(
+        exported.crudService.updatePage(
             {
                 id: updatedPage.elementId,
                 body: changes
@@ -482,7 +482,7 @@ var pageStore = function () {
     }
 
     var deletePage = function (pageId, onsuccess, onfail) {
-        ns.cmsmanager.crudService.deletePage(
+        exported.crudService.deletePage(
             { id: pageId },
             function (response) {
                 delete pages[pageId];
@@ -544,7 +544,7 @@ var pageVersionStore = function () {
     }
 /*
     var createPage = function (page, onsuccess, onfail) {
-        ns.cmsmanager.crudService.createPage(
+        exported.crudService.createPage(
             { body: page },
             function (response) {
                 if (response == undefined) {
@@ -568,7 +568,7 @@ var pageVersionStore = function () {
         if (pageId == undefined) return;
         var page = pages[pageId];
         if (page == undefined) {
-            ns.cmsmanager.crudService.retrievePage(
+            exported.crudService.retrievePage(
                 { id: pageId },
                 function (response) {
                     pages[response.elementId] = response;
@@ -585,7 +585,7 @@ var pageVersionStore = function () {
             if (onsuccess != undefined) onsuccess(originalPage);
             return;
         }
-        ns.cmsmanager.crudService.updatePage(
+        exported.crudService.updatePage(
             {
                 id: updatedPage.elementId,
                 body: changes
@@ -610,7 +610,7 @@ var pageVersionStore = function () {
     }
 
     var deletePage = function (pageId, onsuccess, onfail) {
-        ns.cmsmanager.crudService.deletePage(
+        exported.crudService.deletePage(
             { id: pageId },
             function (response) {
                 delete pages[pageId];

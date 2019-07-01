@@ -23,7 +23,7 @@
                     if (pageId == undefined) {
                         vm.currentPage = null;
                     } else {
-                        ns.cmsmanager.pageStore.retrievePage(
+                        exported.pageStore.retrievePage(
                             pageId,
                             function (page) { vm.currentPage = page; });
                     }
@@ -48,13 +48,13 @@
             newPage: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingPage = ns.cmsmanager.pageStore.getNewPage();
+                vm.editingPage = exported.pageStore.getNewPage();
                 vm.mode = "new";
             },
             editPage: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingPage = ns.cmsmanager.pageStore.getEditablePage(vm.currentPage);
+                vm.editingPage = exported.pageStore.getEditablePage(vm.currentPage);
                 Object.assign(vm.originalPage, vm.editingPage);
                 vm.mode = "edit";
             },
@@ -66,7 +66,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    ns.cmsmanager.pageStore.updatePage(
+                    exported.pageStore.updatePage(
                         vm.originalPage,
                         vm.editingPage,
                         function() { vm.mode = "view"; },
@@ -77,7 +77,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    ns.cmsmanager.pageStore.createPage(
+                    exported.pageStore.createPage(
                         vm.editingPage,
                         vm.websiteVersionId,
                         function() { vm.mode = "view"; },
@@ -86,7 +86,7 @@
             },
             confirmDelete: function() {
                 var vm = this;
-                ns.cmsmanager.pageStore.deletePage(
+                exported.pageStore.deletePage(
                     vm.currentPage.elementId,
                     function() {
                         vm.currentPage = null;

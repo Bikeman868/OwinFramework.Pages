@@ -28,15 +28,13 @@
                 vm._unsubscribeEnvironmentId = context.subscribe("environmentId", function (environmentId) {
                     if (environmentId == undefined) {
                         vm.currentEnvironment = null;
-                        vm.websiteVersion = null;
+                        vm.websiteVersion = {};
                     } else {
                         exported.environmentStore.retrieveEnvironment(
                             environmentId,
                             function(environment) {
-                                 vm.currentEnvironment = environment;
-                                 exported.websiteVersionStore.retrieveWebsiteVersion(
-                                     environment.websiteVersionId,
-                                     function(v) {vm.websiteVersion = v});
+                                vm.currentEnvironment = environment;
+                                vm.updateWebsiteVersion();
                             });
                     }
                 });
@@ -75,8 +73,9 @@
                         vm.originalEnvironment,
                         vm.editingEnvironment,
                         function() {
-                             vm.mode = "view";
-                             vm._context.selected("websiteVersionId", vm.editingEnvironment.websiteVersionId);
+                            vm.mode = "view";
+                            vm._context.selected("websiteVersionId", vm.editingEnvironment.websiteVersionId);
+                            vm.updateWebsiteVersion();
                         },
                         function(msg) { vm.errors = [msg] });
                 }
@@ -89,7 +88,7 @@
                         vm.editingEnvironment,
                         function() {
                             vm.mode = "view";
-                            vm._context.selected("websiteVersionId", vm.editingEnvironment.websiteVersionId);
+                            vm.updateWebsiteVersion();
                         },
                         function(msg) { vm.errors = [msg]});
                 }
@@ -117,6 +116,12 @@
             },
             websiteVersionSelected: function(websiteVersionId) {
                 this.editingEnvironment.websiteVersionId = websiteVersionId;
+            },
+            updateWebsiteVersion: function () {
+                var vm = this;
+                var websiteVersionId = vm.currentEnvironment.websiteVersionId;
+                vm._context.selected("websiteVersionId", websiteVersionId);
+                exported.websiteVersionStore.retrieveWebsiteVersion(websiteVersionId, function (v) { vm.websiteVersion = v });
             }
         }
     });

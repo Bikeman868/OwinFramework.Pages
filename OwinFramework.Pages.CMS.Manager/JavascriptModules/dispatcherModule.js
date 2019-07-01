@@ -21,7 +21,7 @@
         }
     }
 
-    ns.cmsmanager.liveUpdateService.register(
+    exported.liveUpdateService.register(
         null,
         function (response) { clientId = response.id });
 
@@ -31,7 +31,7 @@
                even though the page was not reloaded, this line is being commented
                out. The session will expire on the server side anyway so this
                housekeeping is a nice to have */
-            //ns.cmsmanager.liveUpdateService.deregister({ id: clientId });
+            //exported.liveUpdateService.deregister({ id: clientId });
         }
     });
 
@@ -39,7 +39,7 @@
         if (clientId == undefined) {
             setTimeout(poll, 1000);
         } else {
-            ns.cmsmanager.liveUpdateService.poll(
+            exported.liveUpdateService.poll(
                 { id: clientId },
                 function (response) {
                     if (response.messages && response.messages.length > 0) {

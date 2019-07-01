@@ -24,7 +24,7 @@
             },
             refresh: function () {
                 var vm = this;
-                exported.environmentStore.getEnvironments(
+                exported.environmentStore.retrieveAllRecords(
                     function (response) {
                         vm.environments = response;
                     });

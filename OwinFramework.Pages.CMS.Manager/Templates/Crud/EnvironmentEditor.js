@@ -30,7 +30,7 @@
                         vm.currentEnvironment = null;
                         vm.websiteVersion = {};
                     } else {
-                        exported.environmentStore.retrieveEnvironment(
+                        exported.environmentStore.retrieveRecord(
                             environmentId,
                             function(environment) {
                                 vm.currentEnvironment = environment;
@@ -51,13 +51,13 @@
             newEnvironment: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingEnvironment = exported.environmentStore.getNewEnvironment();
+                vm.editingEnvironment = exported.environmentStore.blankRecord();
                 vm.mode = "new";
             },
             editEnvironment: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingEnvironment = exported.environmentStore.getEditableEnvironment(vm.currentEnvironment);
+                vm.editingEnvironment = exported.environmentStore.cloneForEditing(vm.currentEnvironment);
                 Object.assign(vm.originalEnvironment, vm.editingEnvironment);
                 vm.mode = "edit";
             },
@@ -69,7 +69,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    exported.environmentStore.updateEnvironment(
+                    exported.environmentStore.updateRecord(
                         vm.originalEnvironment,
                         vm.editingEnvironment,
                         function() {
@@ -84,7 +84,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    exported.environmentStore.createEnvironment(
+                    exported.environmentStore.createRecord(
                         vm.editingEnvironment,
                         function() {
                             vm.mode = "view";
@@ -95,7 +95,7 @@
             },
             confirmDelete: function() {
                 var vm = this;
-                exported.environmentStore.deleteEnvironment(
+                exported.environmentStore.deleteRecord(
                     vm.currentEnvironment.environmentId,
                     function() {
                         vm.currentEnvironment = null;

@@ -3,7 +3,6 @@
         el: "#" + eId,
         data: {
             visible: true,
-            websiteVersionId: 1,
             pages: []
         },
         methods: {
@@ -12,48 +11,13 @@
                 if (context != undefined) vm._context = context;
                 if (managerContext != undefined) vm._managerContext = managerContext;
                 if (vm._managerContext == undefined) vm._managerContext = vm._context;
+                exported.pageStore.getAllPages(
+                    function (pages) { vm.pages = pages; });
                 vm.visible = true;
-                vm._unsubscribeWebsiteVersionId = vm._managerContext.subscribe("websiteVersionId", function (value) {
-                    vm.websiteVersionId = value;
-                    vm.refresh();
-                });
-                vm._unsubscribeDispatcher = exported.dispatcher.subscribe(function(message) {
-                    if ((message.websiteVersionChanges && message.websiteVersionChanges.length > 0) ||
-                        (message.newElements && message.newElements.length > 0) ||
-                        (message.deletedElements && message.deletedElements.length > 0)) {
-                        vm.refresh();
-                    }
-                });
             },
             hide: function() {
                 var vm = this;
                 vm.visible = false;
-                if (vm._unsubscribeWebsiteVersionId != undefined) {
-                    vm._unsubscribeWebsiteVersionId();
-                    vm._unsubscribeWebsiteVersionId = null;
-                }
-                if (vm._unsubscribeDispatcher != undefined) {
-                    vm._unsubscribeDispatcher();
-                    vm._unsubscribeDispatcher = null;
-                }
-            },
-            refresh: function() {
-                var vm = this;
-                if (vm.websiteVersionId == undefined) {
-                    vm.pages = [];
-                } else {
-                    exported.websiteVersionStore.getPages(
-                        vm.websiteVersionId,
-                        function (response) {
-                            var pages = [];
-                            for (var i = 0; i < response.length; i++) {
-                                exported.pageStore.retrievePage(response[i].pageId, function(page) {
-                                    pages.push(page);
-                                });
-                            }
-                            vm.pages = pages;
-                        });
-                }
             },
             selectPage: function(pageId) {
                 var vm = this;

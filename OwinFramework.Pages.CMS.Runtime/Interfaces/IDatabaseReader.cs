@@ -152,6 +152,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
 
         #endregion
 
+        #region All elements of a type
+
+        T[] GetPages<T>(Func<PageRecord, T> map, Func<PageRecord, bool> predicate = null);
+
+        #endregion
+
         #region Elements
 
         /// <summary>

@@ -194,6 +194,15 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.WebsiteVersionId, map, predicate);
         }
 
+        
+        T[] IDatabaseReader.GetPages<T>(Func<PageRecord, T> map, Func<PageRecord, bool> predicate)
+        {
+            if (predicate == null)
+                return _pages.Select(map).ToArray();
+
+            return _pages.Where(predicate).Select(map).ToArray();
+        }
+
         IDictionary<string, object> IDatabaseReader.GetElementPropertyValues(long elementVersionId)
         {
             return _propertyValues
@@ -353,5 +362,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return map(dataType, dataTypeVersion);
         }
+
     }
 }

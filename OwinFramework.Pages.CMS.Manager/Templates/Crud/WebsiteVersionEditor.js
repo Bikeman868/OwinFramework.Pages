@@ -80,7 +80,8 @@
                             vm.mode = "view";
                             vm._context.selected("websiteVersionId", vm.editingWebsiteVersion.websiteVersionId);
                         },
-                        function(msg) { vm.errors = [msg]});
+                        function(msg) { vm.errors = [msg]},
+                        {});
                 }
             },
             confirmDelete: function() {

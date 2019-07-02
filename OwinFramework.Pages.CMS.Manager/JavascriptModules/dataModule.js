@@ -91,7 +91,7 @@
         
         var get = function(id) { return dictionary[id]; }
 
-        var createRecord = function(newRecord, onSuccess, onFail) {
+        var createRecord = function(newRecord, onSuccess, onFail, params) {
             methods.createRecord(
                 newRecord,
                 function (response) {
@@ -106,7 +106,8 @@
                 },
                 function(ajax) {
                     if (onFail != undefined) onFail("Failed to create a new " + name);                        
-                });
+                },
+                params);
         }
 
         var retrieveAllRecords = function(onSuccess, onFail) {
@@ -260,8 +261,8 @@ var environmentStore = dataUtilities.newStore({
     idField: "environmentId",
     fields: ["name", "displayName", "description", "createdBy", "createdWhen", "environmentId", "baseUrl", "websiteVersionId"],
     methods: {
-        createRecord: function(environment, onSuccess, onFail) {
-            exported.crudService.createEnvironment({ body: environment }, onSuccess, onFail)
+        createRecord: function(environment, onSuccess, onFail, params) {
+            exported.crudService.createEnvironment({ body: environment }, onSuccess, onFail);
         },
         retrieveRecord: function(environmentId, onSuccess, onFail) {
             exported.crudService.retrieveEnvironment({ id: environmentId }, onSuccess, null, onFail);
@@ -291,8 +292,8 @@ var websiteVersionStore = dataUtilities.newStore({
     idField: "websiteVersionId",
     fields: ["name", "displayName", "description", "createdBy", "createdWhen", "websiteVersionId"],
     methods: {
-        createRecord: function (websiteVersion, onSuccess, onFail) {
-            exported.crudService.createWebsiteVersion({ body: websiteVersion }, onSuccess, onFail)
+        createRecord: function (websiteVersion, onSuccess, onFail, params) {
+            exported.crudService.createWebsiteVersion({ body: websiteVersion }, onSuccess, onFail);
         },
         retrieveRecord: function (websiteVersionId, onSuccess, onFail) {
             exported.crudService.retrieveWebsiteVersion({ id: websiteVersionId }, onSuccess, null, onFail);
@@ -314,7 +315,7 @@ var websiteVersionStore = dataUtilities.newStore({
     }
 });
 
-websiteVersionStore.getPages = function (websiteVersionId, onSuccess, onFail) {
+websiteVersionStore.getWebsiteVersionPages = function (websiteVersionId, onSuccess, onFail) {
     exported.listService.websiteVersionPages(
         { id: websiteVersionId },
         function (response) { dataUtilities.doSuccessGet("list of vebsite version pages", response, onSuccess, onFail); },
@@ -324,279 +325,100 @@ websiteVersionStore.getPages = function (websiteVersionId, onSuccess, onFail) {
 
 exported.websiteVersionStore = websiteVersionStore;
 
-var pageStore = function () {
-    var pageList = null;
-    var pagesById = {};
-
-    var pageProperties = [
-        "name", "displayName", "description", "createdBy", "createdWhen", "elementType", "elementId"];
-
-    var add = function (page) {
-        if (pageList != undefined) pageList.push(page);
-        pagesById[page.environmentId] = page;
-    }
-
-    var remove = function (environmentId) {
-        delete environmentsById[environmentId];
-        if (environmentList != undefined) {
-            var index = -1;
-            environmentList.forEach(function (e, i) { if (e.environmentId === environmentId) index = i; });
-            if (index >= 0) environmentList.splice(index, 1);
-        }
-    }
-
-    var getAllPages = function (onSuccess, onFail) {
-        exported.listService.allPages(
-            {},
-            function (response) { dataUtilities.doSuccess("list of pages", response, onSuccess, onFail); },
-            null,
-            function (ajax) { dataUtilities.doFail("list of pages", ajax, onFail); });
-    }
-
-    var getEditablePage = function (page) {
-        return dataUtilities.copyObject(pageProperties, page);
-    }
-
-    var getNewPage = function() {
-        return {};
-    }
-
-    var createPage = function (page, websiteVersionId, onsuccess, onfail) {
-        exported.crudService.createPage(
-            { body: page, websiteversionid: websiteVersionId }, 
-            function (response) {
-                if (response == undefined) {
-                    if (onfail != undefined) onfail("No response was received from the server, the page might not have been created");
-                } else if (response.elementId == undefined) {
-                    if (onfail != undefined) onfail("The server failed to return an ID for the new page");
-                } else {
-                    pagesById[response.elementId] = response;
-                    if (onsuccess != undefined) onsuccess(response);
-                }
-            },
-            null,
-            function(ajax) {
-                if (onfail != undefined) {
-                    onfail("Failed to create new page");
-                }
-            });
-    }
-
-    var retrievePage = function (pageId, onsuccess) {
-        if (pageId == undefined) return;
-        var page = pagesById[pageId];
-        if (page == undefined) {
-            exported.crudService.retrievePage(
-                { id: pageId },
-                function (response) {
-                    pagesById[response.elementId] = response;
-                    if (onsuccess != undefined) onsuccess(response);
-                });
-        } else {
-            if (onsuccess != undefined) onsuccess(page);
-        }
-    }
-
-    var updatePage = function (originalPage, updatedPage, onsuccess, onfail) {
-        var changes = dataUtilities.findChanges(pageProperties, originalPage, updatedPage);
-        if (changes.length === 0) {
-            if (onsuccess != undefined) onsuccess(originalPage);
-            return;
-        }
-        exported.crudService.updatePage(
+var pageStore = dataUtilities.newStore({
+    recordType: "Page",
+    name: "page",
+    listName: "list of pages",
+    idField: "elementId",
+    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "elementType", "elementId"],
+    methods: {
+        createRecord: function(page, onSuccess, onFail, params) {
+            exported.crudService.createPage({ body: page, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
+        },
+        retrieveRecord: function(pageId, onSuccess, onFail) {
+            exported.crudService.retrievePage({ id: pageId }, onSuccess, null, onFail);
+        },
+        retrieveAllRecords: function(onSuccess, onFail) {
+            exported.listService.allPages({}, onSuccess, null, onFail);
+        },
+        updateRecord: function(pageId, changes, onSuccess, onFail) {
+            exported.crudService.updatePage(
             {
-                id: updatedPage.elementId,
+                id: pageId,
                 body: changes
             },
-            function (response) {
-                if (response == undefined) {
-                    if (onfail != undefined) onfail("No response was received from the server, the page might not have been updated");
-                } else {
-                    var cached = pagesById[updatedPage.elementId];
-                    if (cached != undefined) {
-                        dataUtilities.copyObject(pageProperties, response, cached);
-                    }
-                    if (onsuccess != undefined) onsuccess(response);
-                }
-            },
-            null,
-            function(ajax) {
-                if (onfail != undefined) {
-                    onfail("Failed to update the page");
-                }
-            });
-    }
-
-    var deletePage = function (pageId, onsuccess, onfail) {
-        exported.crudService.deletePage(
-            { id: pageId },
-            function (response) {
-                delete pagesById[pageId];
-                if (onsuccess != undefined) onsuccess(response);
-            },
-            null,
-            onfail);
-    }
-
-    var dispatcherUnsubscribe = exported.dispatcher.subscribe(function(message) {
-        if (message.propertyChanges != undefined) {
-            for (let i = 0; i < message.propertyChanges.length; i++) {
-                var propertyChange = message.propertyChanges[i];
-                if (propertyChange.elementType === "Page") {
-                    var page = pagesById[propertyChange.id];
-                    if (page != undefined) {
-                        page[propertyChange.name] = propertyChange.value;
-                    }
-                }
-            }
+            onSuccess, null, onFail);
+        },
+        deleteRecord: function(pageId, onSuccess, onFail) {
+            exported.crudService.deletePage({ id: pageId }, onSuccess, null, onFail);
         }
-        if (message.deletedElements != undefined) {
-            for (let i = 0; i < message.deletedElements.length; i++) {
-                var deletedElement = message.deletedElements[i];
-                if (deletedElement.elementType === "Page") {
-                    delete pagesById[deletedElement.id];
-                }
-            }
-        }
-    });
-
-    return {
-        getEditablePage: getEditablePage,
-        getNewPage: getNewPage,
-
-        createPage: createPage,
-        retrievePage: retrievePage,
-        updatePage: updatePage,
-        deletePage: deletePage,
-
-        getAllPages: getAllPages
     }
-}();
+});
 exported.pageStore = pageStore;
 
-var pageVersionStore = function () {
-    var pageVersions = {};
-
-    var pageVersionProperties = ["name", "displayName", "description", "createdBy", "createdWhen",
+var pageVersionStore = dataUtilities.newStore({
+    recordType: "PageVersion",
+    name: "page version",
+    listName: "list of page versions",
+    idField: "elementId",
+    fields: [
+        "name", "displayName", "description", "createdBy", "createdWhen",
         "elementVersionId", "elementId", "version", "moduleName", "assetDeployment", "masterPageId",
-        "layoutName", "layoutVersionId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath"];
-
-    var getEditablePageVersion = function (page) {
-        return dataUtilities.copyObject(pageVersionProperties, page);
-    }
-
-    var getNewPageVersion = function () {
-        return {};
-    }
-/*
-    var createPage = function (page, onsuccess, onfail) {
-        exported.crudService.createPage(
-            { body: page },
-            function (response) {
-                if (response == undefined) {
-                    if (onfail != undefined) onfail("No response was received from the server, the page might not have been created");
-                } else if (response.elementId == undefined) {
-                    if (onfail != undefined) onfail("The server failed to return an ID for the new page");
-                } else {
-                    pages[response.elementId] = response;
-                    if (onsuccess != undefined) onsuccess(response);
-                }
-            },
-            null,
-            function (ajax) {
-                if (onfail != undefined) {
-                    onfail("Failed to create new page");
-                }
-            });
-    }
-
-    var retrievePage = function (pageId, onsuccess) {
-        if (pageId == undefined) return;
-        var page = pages[pageId];
-        if (page == undefined) {
-            exported.crudService.retrievePage(
-                { id: pageId },
-                function (response) {
-                    pages[response.elementId] = response;
-                    if (onsuccess != undefined) onsuccess(response);
-                });
-        } else {
-            if (onsuccess != undefined) onsuccess(page);
-        }
-    }
-
-    var updatePage = function (originalPage, updatedPage, onsuccess, onfail) {
-        var changes = dataUtilities.findChanges(pageProperties, originalPage, updatedPage);
-        if (changes.length === 0) {
-            if (onsuccess != undefined) onsuccess(originalPage);
-            return;
-        }
-        exported.crudService.updatePage(
+        "layoutName", "layoutVersionId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath"],
+    methods: {
+        createRecord: function (pageVersion, onSuccess, onFail, params) {
+            exported.crudService.createPageVersion({ body: pageVersion, websiteVersionId: params.websiteVersionId }, onSuccess, onFail);
+        },
+        retrieveRecord: function (pageVersionId, onSuccess, onFail) {
+            exported.crudService.retrievePageVersion({ id: pageVersionId }, onSuccess, null, onFail);
+        },
+        retrieveAllRecords: function (onSuccess, onFail) {
+            exported.listService.allPageVersions({}, onSuccess, null, onFail);
+        },
+        updateRecord: function (pageVersionId, changes, onSuccess, onFail) {
+            exported.crudService.updatePageVersion(
             {
-                id: updatedPage.elementId,
+                id: pageVersionId,
                 body: changes
             },
-            function (response) {
-                if (response == undefined) {
-                    if (onfail != undefined) onfail("No response was received from the server, the page might not have been updated");
-                } else {
-                    var cached = pages[updatedPage.elementId];
-                    if (cached != undefined) {
-                        dataUtilities.copyObject(pageProperties, response, cached);
-                    }
-                    if (onsuccess != undefined) onsuccess(response);
-                }
-            },
-            null,
-            function (ajax) {
-                if (onfail != undefined) {
-                    onfail("Failed to update the page");
-                }
-            });
+            onSuccess, null, onFail);
+        },
+        deleteRecord: function (pageVersionId, onSuccess, onFail) {
+            exported.crudService.deletePage({ id: pageVersionId }, onSuccess, null, onFail);
+        }
     }
+});
 
-    var deletePage = function (pageId, onsuccess, onfail) {
-        exported.crudService.deletePage(
-            { id: pageId },
-            function (response) {
-                delete pages[pageId];
-                if (onsuccess != undefined) onsuccess(response);
-            },
-            null,
-            onfail);
-    }
+pageVersionStore.getPageVersions = function (pageId, onSuccess, onFail) {
+    exported.listService.pageVersions(
+        { id: pageId },
+        function (response) { dataUtilities.doSuccessGet("list of page versions", response, onSuccess, onFail); },
+        null,
+        function (ajax) { dataUtilities.doFailGet("list of page versions", ajax, onFail); });
+}
 
-    var dispatcherUnsubscribe = exported.dispatcher.subscribe(function (message) {
-        if (message.propertyChanges != undefined) {
-            for (let i = 0; i < message.propertyChanges.length; i++) {
-                var propertyChange = message.propertyChanges[i];
-                if (propertyChange.elementType === "Page") {
-                    var page = pages[propertyChange.id];
-                    if (page != undefined) {
-                        page[propertyChange.name] = propertyChange.value;
-                    }
+pageVersionStore.getWebsitePageVersion = function (websiteVersionId, pageId, onSuccess, onFail) {
+    exported.listService.websitePageVersion(
+        {
+            websiteVersionId: websiteVersionId,
+            pageId: pageId
+        },
+        function (response) {
+            if (response != undefined) {
+                var pageVersionId = response.pageVersionId;
+                if (pageVersionId != undefined) {
+                    pageVersionStore.retrieveRecord(pageVersionId, onSuccess, onFail);
+                    return;
                 }
             }
-        }
-        if (message.deletedElements != undefined) {
-            for (let i = 0; i < message.deletedElements.length; i++) {
-                var deletedElement = message.deletedElements[i];
-                if (deletedElement.elementType === "Page") {
-                    delete pages[deletedElement.id];
-                }
-            }
-        }
-    });
-    */
+            if (onFail != undefined) onFail("Failed to get page version for website version");
+        },
+        null,
+        function (ajax) {
+            if (onFail != undefined) onFail("Failed to get page version for website version");
+        });
+}
 
-    return {
-        getEditablePageVersion: getEditablePageVersion,
-        getNewPageVersion: getNewPageVersion,
+// TODO: add these to the 'methods' collection in a way that gives them access to internal methods
 
-        //createPageVersion: createPageVersion,
-        //retrievePageVersion: retrievePageVersion,
-        //updatePageVersion: updatePageVersion,
-        //deletePageVersion: deletePageVersion,
-    }
-}();
 exported.pageVersionStore = pageVersionStore;

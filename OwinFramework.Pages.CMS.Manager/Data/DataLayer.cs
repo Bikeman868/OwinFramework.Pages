@@ -515,7 +515,11 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return _databaseReader.GetComponentVersion(componentVersionId, map);
         }
 
-        #endregion
+        T[] IDatabaseReader.GetPages<T>(Func<PageRecord, T> map, Func<PageRecord, bool> predicate)
+        {
+            return _databaseReader.GetPages(map, predicate);
+        }
 
+        #endregion
     }
 }

@@ -54,6 +54,25 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             request.Success(records);
         }
 
+        [Endpoint(UrlPath = "websiteversion/{websiteVersionId}/page/{pageId}", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "websiteVersionId", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment, 
+            Description = "The ID of the website version to get information for")]
+        [EndpointParameter(
+            "pageId", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment, 
+            Description = "The ID of the page to get information for")]
+        private void WebsitePageVersion(IEndpointRequest request)
+        {
+            var websiteVersionId = request.Parameter<long>("websiteVersionId");
+            var pageId = request.Parameter<long>("pageId");
+            var pageVersions = _dataLayer.GetWebsitePages(websiteVersionId, pv => pv, pv => pv.PageId == pageId);
+            request.Success(pageVersions[0]);
+        }
+
         #endregion
 
         #region Pages
@@ -73,6 +92,13 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 request.NotFound("No page with ID " + id);
             else
                 request.Success(page);
+        }
+
+        [Endpoint(UrlPath = "pages", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        private void AllPages(IEndpointRequest request)
+        {
+            var pages = _dataLayer.GetPages(p => p);
+            request.Success(pages);
         }
 
         #endregion

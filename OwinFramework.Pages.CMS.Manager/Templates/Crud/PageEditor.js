@@ -31,15 +31,21 @@
                     if (pageId == undefined) {
                         vm.currentPage = null;
                     } else {
-                        exported.pageStore.retrievePage(
+                        exported.pageStore.retrieveRecord(
                             pageId,
-                            function (page) { vm.currentPage = page; });
+                            function(page) {
+                                vm.currentPage = page;
+                                vm.showPageVersion();
+                            });
                     }
                 });
                 vm._unsubscribeWebsiteVersionId = managerContext.subscribe("websiteVersionId", function (value) {
                     exported.websiteVersionStore.retrieveRecord(
                         value,
-                        function (websiteVersion) { vm.websiteVersion = websiteVersion });
+                        function(websiteVersion) {
+                            vm.websiteVersion = websiteVersion;
+                            vm.showPageVersion();
+                        });
                 });
                 this.visible = true;
             },
@@ -58,13 +64,13 @@
             newPage: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingPage = exported.pageStore.getNewPage();
+                vm.editingPage = exported.pageStore.blankRecord();
                 vm.pageMode = "new";
             },
             editPage: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingPage = exported.pageStore.getEditablePage(vm.currentPage);
+                vm.editingPage = exported.pageStore.cloneForEditing(vm.currentPage);
                 Object.assign(vm.originalPage, vm.editingPage);
                 vm.pageMode = "edit";
             },
@@ -76,7 +82,7 @@
                 var vm = this;
                 vm.validate();
                 if (vm.errors.length === 0) {
-                    exported.pageStore.updatePage(
+                    exported.pageStore.updateRecord(
                         vm.originalPage,
                         vm.editingPage,
                         function() { vm.pageMode = "view"; },
@@ -90,17 +96,19 @@
                 } else {
                     vm.validate();
                     if (vm.errors.length === 0) {
-                        exported.pageStore.createPage(
+                        exported.pageStore.createRecord(
                             vm.editingPage,
-                            vm.websiteVersion.websiteVersionId,
                             function() { vm.pageMode = "view"; },
-                            function(msg) { vm.errors = [msg] });
+                            function(msg) { vm.errors = [msg] },
+                            {
+                                websiteVersionId: vm.websiteVersion.websiteVersionId
+                            });
                     }
                 }
             },
             confirmDelete: function() {
                 var vm = this;
-                exported.pageStore.deletePage(
+                exported.pageStore.deleteRecord(
                     vm.currentPage.elementId,
                     function() {
                         vm.currentPage = null;
@@ -117,6 +125,18 @@
                 exported.validation.name(vm.editingPage.name, "name", errors);
                 vm.errors = errors;
             },
+            showPageVersion: function () {
+                var vm = this;
+                if (vm.currentPage == undefined || vm.websiteVersion == undefined) {
+                    vm.currentPageVersion = null;
+                } else {
+                    exported.pageVersionStore.getWebsitePageVersion(
+                        vm.websiteVersion.websiteVersionId,
+                        vm.currentPage.elementId,
+                        function(pageVersion) { vm.currentPageVersion = pageVersion; },
+                        function(msg) { vm.currentPageVersion = null; });
+                }
+            },
             choosePageVersion: function () {
                 var vm = this;
                 vm.pageVersionMode = "choose";
@@ -124,13 +144,13 @@
             newPageVersion: function () {
                 var vm = this;
                 vm.versionErrors = [];
-                vm.editingPageVersion = exported.pageStore.getNewPage();
+                vm.editingPageVersion = exported.pageVersionStore.blankRecord();
                 vm.pageVersionMode = "new";
             },
             editPageVersion: function () {
                 var vm = this;
                 vm.versionErrors = [];
-                vm.editingPageVersion = exported.pageStore.getEditablePage(vm.currentPageVersion);
+                vm.editingPageVersion = exported.pageVersionStore.cloneForEditing(vm.currentPageVersion);
                 Object.assign(vm.originalPageVersion, vm.editingPageVersion);
                 vm.pageVersionMode = "edit";
             },
@@ -140,9 +160,9 @@
             },
             saveVersionChanges: function () {
                 var vm = this;
-                vm.validate();
+                vm.validateVersion();
                 if (vm.versionErrors.length === 0) {
-                    exported.pageStore.updatePage(
+                    exported.pageVersionStore.updateRecord(
                         vm.originalPageVersion,
                         vm.editingPageVersion,
                         function () { vm.pageVersionMode = "view"; },
@@ -154,19 +174,22 @@
                 if (vm.websiteVersion == undefined) {
                     vm.versionErrors = ["You must select a website version before creating a new page"];
                 } else {
-                    vm.validate();
+                    vm.validateVersion();
                     if (vm.versionErrors.length === 0) {
-                        exported.pageStore.createPage(
+                        exported.pageVersionStore.createRecord(
                             vm.editingPageVersion,
-                            vm.websiteVersion.websiteVersionId,
                             function () { vm.pageVersionMode = "view"; },
-                            function (msg) { vm.versionErrors = [msg] });
+                            function (msg) { vm.versionErrors = [msg] },
+                            {
+                                websiteVersionId: vm.websiteVersion.websiteVersionId,
+                                pageId: vm.currentPage.elementId
+                            });
                     }
                 }
             },
             confirmDeleteVersion: function () {
                 var vm = this;
-                exported.pageStore.deletePage(
+                exported.pageVersionStore.deleteRecord(
                     vm.currentPageVersion.elementId,
                     function () {
                         vm.currentPageVersion = null;

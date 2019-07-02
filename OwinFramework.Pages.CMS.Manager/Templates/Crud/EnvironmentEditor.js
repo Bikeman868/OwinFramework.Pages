@@ -90,7 +90,8 @@
                             vm.mode = "view";
                             vm.updateWebsiteVersion();
                         },
-                        function(msg) { vm.errors = [msg]});
+                        function(msg) { vm.errors = [msg]},
+                        {});
                 }
             },
             confirmDelete: function() {

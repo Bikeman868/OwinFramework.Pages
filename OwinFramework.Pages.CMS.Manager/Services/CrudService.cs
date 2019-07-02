@@ -267,5 +267,87 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         }
 
         #endregion
+
+        #region Page versions
+
+        [Endpoint(Methods = new[] {Method.Post}, RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter("websiteVersionId", typeof(PositiveNumber<long?>))]
+        private void CreatePageVersion(IEndpointRequest request)
+        {
+            var pageVersion = request.Body<PageVersionRecord>();
+            var websiteVersionId = request.Parameter<long?>("websiteVersionId");
+
+            //var result = _dataLayer.CreatePageVersion(request.Identity, pageVersion);
+
+            //if (!result.Success)
+            //{
+            //    request.BadRequest(result.DebugMessage);
+            //    return;
+            //}
+
+            //page = _dataLayer.GetPageVersion(result.NewRecordId, 1, (p, v) => p);
+            //if (page == null)
+            //{
+            //    request.HttpStatus(
+            //        HttpStatusCode.InternalServerError, 
+            //        "After creating the new page it could not be found in the database");
+            //    return;
+            //}
+
+            //if (websiteVersionId.HasValue)
+            //{
+            //    _dataLayer.AddPageToWebsiteVersion(request.Identity, page.ElementId, 1, websiteVersionId.Value);
+            //}
+
+            request.Success(pageVersion);
+        }
+
+        [Endpoint(UrlPath = "pageversion/{id}", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void RetrievePageVersion(IEndpointRequest request)
+        {
+            var pageVersionId = request.Parameter<long>("id");
+            var pageVersion = _dataLayer.GetPageVersion(pageVersionId, (p, v) => v);
+
+            if (pageVersion == null)
+                request.NotFound("No page version with ID " + pageVersionId);
+            else
+                request.Success(pageVersion);
+        }
+
+        [Endpoint(UrlPath = "pageversion/{id}", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void UpdatePageVersion(IEndpointRequest request)
+        {
+            var pageVersionId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            //var result = _dataLayer.UpdatePageVersion(request.Identity, pageVersionId, changes);
+
+            //if (result.Success)
+            //{
+                var pageVersion = _dataLayer.GetPageVersion(pageVersionId, (p, v) => v);
+                request.Success(pageVersion);
+            //}
+            //else
+            //{
+            //    request.BadRequest(result.DebugMessage);
+            //}
+        }
+
+        [Endpoint(UrlPath = "pageversion/{id}", Methods = new[] {Method.Delete}, RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void DeletePageVersion(IEndpointRequest request)
+        {
+            //var pageVersionId = request.Parameter<long>("id");
+            //var result = _dataLayer.DeletePageVersion(request.Identity, pageVersionId);
+
+            //if (result.Success)
+            //    request.Success(new { pageVersionId });
+            //else
+            //    request.BadRequest(result.DebugMessage);
+        }
+
+        #endregion
     }
 }

@@ -256,22 +256,22 @@ namespace OwinFramework.Pages.Restful.Runtime
 
                     var queryStringParameters = parameterAttributes
                         .Where(p => (p.ParameterType & EndpointParameterType.QueryString) == EndpointParameterType.QueryString)
-                        .Select(p => p.ParameterName.ToLower())
+                        .Select(p => p.ParameterName)
                         .ToList();
 
                     var pathParameters = parameterAttributes
                         .Where(p => (p.ParameterType & (EndpointParameterType.PathSegment | EndpointParameterType.QueryString)) == EndpointParameterType.PathSegment)
-                        .Select(p => p.ParameterName.ToLower())
+                        .Select(p => p.ParameterName)
                         .ToList();
 
                     var headerParameters = parameterAttributes
                         .Where(p => (p.ParameterType & (EndpointParameterType.Header | EndpointParameterType.PathSegment | EndpointParameterType.QueryString)) == EndpointParameterType.Header)
-                        .Select(p => p.ParameterName.ToLower())
+                        .Select(p => p.ParameterName)
                         .ToList();
 
                     var formParameters = parameterAttributes
                         .Where(p => (p.ParameterType & (EndpointParameterType.FormField | EndpointParameterType.Header | EndpointParameterType.PathSegment | EndpointParameterType.QueryString)) == EndpointParameterType.FormField)
-                        .Select(p => p.ParameterName.ToLower())
+                        .Select(p => p.ParameterName)
                         .ToList();
 
                     var methodName = char.ToLower(method.Name[0]) + method.Name.Substring(1);
@@ -281,9 +281,9 @@ namespace OwinFramework.Pages.Restful.Runtime
 
                     if (pathParameters.Count > 0)
                     {
-                        var url = "\"" + path + "\"";
+                        var url = "\"" + path.ToLower() + "\"";
                         foreach (var parameter in pathParameters)
-                            url = url.Replace("{" + parameter + "}", "\" + encodeURIComponent(params." + parameter + ") + \"");
+                            url = url.Replace("{" + parameter.ToLower() + "}", "\" + encodeURIComponent(params." + parameter + ") + \"");
                         if (url.EndsWith(" + \"\"")) url = url.Substring(0, url.Length - 5);
                         if (url.StartsWith("\"\" + ")) url = url.Substring(5);
                         clientScript.AppendLine("    request.url = " + url + ";");

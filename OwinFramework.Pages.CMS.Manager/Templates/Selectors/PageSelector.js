@@ -11,7 +11,7 @@
                 if (context != undefined) vm._context = context;
                 if (managerContext != undefined) vm._managerContext = managerContext;
                 if (vm._managerContext == undefined) vm._managerContext = vm._context;
-                exported.pageStore.getAllPages(
+                exported.pageStore.retrieveAllRecords(
                     function (pages) { vm.pages = pages; });
                 vm.visible = true;
             },

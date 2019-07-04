@@ -32,10 +32,10 @@
             <h2>{{currentPage.displayName}} page</h2>
             <label class="cms_field">Name</label>
             <p class="cms_field">{{currentPage.name}}</p>
-            <label class="cms_field">Created</label>
-            <p class="cms_field">{{currentPage.createdWhen | cms_formatDate}} by {{currentPage.createdBy | cms_formatUserUrn}}</p>
             <label class="cms_field">Description</label>
             <p class="cms_field">{{currentPage.description}}</p>
+            <label class="cms_field">Created</label>
+            <p class="cms_field">{{currentPage.createdWhen | cms_formatDate}} by {{currentPage.createdBy | cms_formatUserUrn}}</p>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="editPage">Edit</button>
                 <button type="button" v-on:click="newPage">New</button>
@@ -83,17 +83,35 @@
                 </div>
             </div>
             <div v-if="pageVersionMode === 'view'">
-                <h2>{{currentPageVersion.displayName}} version of {{currentPage.displayName}} page</h2>
-                <p>
-                    This version of the {{currentPage.displayName}} page is used in 
-                    the {{websiteVersion.displayName}} version of the website
+                <h2>Version {{currentPageVersion.version}} of the {{currentPage.displayName}} page</h2>
+                <label class="cms_field">Page title</label>
+                <p class="cms_field">{{currentPageVersion.title}}</p>
+                <label class="cms_field">Canonical URL</label>
+                <p class="cms_field">{{currentPageVersion.canonicalUrl}}</p>
+                <label class="cms_field">Routes to this page</label>
+                <p v-for="route in currentPageVersion.routes" class="cms_field">{{route.path}}</p>
+                <label class="cms_field">Assets</label>
+                <p class="cms_field">{{currentPageVersion.assetDeployment}}<span v-if="currentPageVersion.assetDeployment==='PerModule'"> in the {{currentPageVersion.moduleName}} module</span></p>
+                <label v-if="currentPageVersion.masterPageId" class="cms_field">Inherits from master page</label>
+                <p v-if="currentPageVersion.masterPageId" class="cms_field">{{currentPageVersion.masterPageId | cms_lookupPageId}}</p>
+                <label class="cms_field">Page layout</label>
+                <p v-if="currentPageVersion.layoutName" class="cms_field">{{currentPageVersion.layoutName}}</p>
+                <p v-else class="cms_field">{{currentPageVersion.layoutId | cms_lookupLayoutId}}</p>
+                <label class="cms_field">Layout zones</label>
+                <p v-for="layoutZone in currentPageVersion.layoutZones" class="cms_field">
+                    {{layoutZone.zone}} = 
+                    <span v-if="layoutZone.regionId">{{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                    <span v-if="layoutZone.layoutId">{{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                    <span v-if="layoutZone.contentType">{{layoutZone.contentType}} {{layoutZone.contentName}}</span>
                 </p>
-                <label class="cms_field">Name</label>
-                <p class="cms_field">{{currentPageVersion.name}}</p>
-                <label class="cms_field">Created</label>
-                <p class="cms_field">{{currentPageVersion.createdWhen | cms_formatDate}} by {{currentPageVersion.createdBy | cms_formatUserUrn}}</p>
+                <label v-if="currentPageVersion.bodyStyle" class="cms_field">Body CSS style</label>
+                <p v-if="currentPageVersion.bodyStyle" class="cms_field">{{currentPageVersion.bodyStyle}}</p>
+                <label v-if="currentPageVersion.permission" class="cms_field">Requires permission</label>
+                <p v-if="currentPageVersion.permission" class="cms_field">{{currentPageVersion.permission}}<span v-if="currentPageVersion.assetPath"> on {{currentPageVersion.assetPath}}</span></p>
                 <label class="cms_field">Description</label>
                 <p class="cms_field">{{currentPageVersion.description}}</p>
+                <label class="cms_field">Created</label>
+                <p class="cms_field">{{currentPageVersion.createdWhen | cms_formatDate}} by {{currentPageVersion.createdBy | cms_formatUserUrn}}</p>
                 <div class="cms_button_bar">
                     <button type="button" v-on:click="choosePageVersion">Choose</button>
                     <button type="button" v-on:click="editPageVersion">Edit</button>
@@ -105,7 +123,7 @@
             <div v-if="pageVersionMode === 'delete'">
                 <h2>Confirm Page Version Deletion</h2>
                 <p>
-                    This will delete the {{currentPageVersion.displayName}} version of the {{currentPage.displayName}} page.
+                    This will delete the {{currentPageVersion.version}} version of the {{currentPage.displayName}} page.
                     This page will disapear from any versions of the website that use this version of
                     the {{currentPage.displayName}} page.
                 </p>
@@ -119,7 +137,7 @@
                 <h2>Choose Page Version</h2>
                 <p>
                     Which version of the {{currentPage.displayName}} page do you want to use for the
-                    {{}} version of the website?
+                    {{websiteVersion.displayName}} version of the website?
                 </p>
             </div>
         </div>

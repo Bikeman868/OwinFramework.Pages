@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Extensions;
@@ -23,10 +24,15 @@ namespace OwinFramework.Pages.Restful.Serializers
         public Json()
         {
             Settings = new JsonSerializerSettings();
-            Settings.DefaultValueHandling = DefaultValueHandling.Ignore;
+            Settings.DefaultValueHandling = DefaultValueHandling.Include;
             Settings.Formatting = Formatting.None;
             Settings.MissingMemberHandling = MissingMemberHandling.Ignore;
             Settings.NullValueHandling = NullValueHandling.Ignore;
+            Settings.Converters.Add(new StringEnumConverter
+            {
+                CamelCaseText = false, 
+                AllowIntegerValues = true
+            });
         }
 
         public T Body<T>(IOwinContext context)

@@ -37,6 +37,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// calculated from of the element name and element version number
         /// for example "twoColumnLayout_v3" and is not stored in the database
         /// </summary>
+        [JsonProperty("versionName")]
         public string VersionName { get; set; }
 
         /// <summary>

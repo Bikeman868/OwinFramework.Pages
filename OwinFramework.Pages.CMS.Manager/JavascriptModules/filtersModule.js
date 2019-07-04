@@ -32,4 +32,24 @@
         }
         return "";
     });
+
+    Vue.filter("cms_lookupElementVersionId", function (value) {
+        return "#" + value;
+    });
+
+    Vue.filter("cms_lookupElementId", function (value) {
+        return "#" + value;
+    });
+
+    Vue.filter("cms_lookupPageId", function (value) {
+        return "#" + value;
+    });
+
+    Vue.filter("cms_lookupLayoutId", function (value) {
+        return "#" + value;
+    });
+
+    Vue.filter("cms_lookupRegionId", function (value) {
+        return "#" + value;
+    });
 }

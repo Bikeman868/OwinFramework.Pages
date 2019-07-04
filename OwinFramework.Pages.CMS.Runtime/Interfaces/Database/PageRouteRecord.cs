@@ -1,4 +1,5 @@
-﻿using Prius.Contracts.Attributes;
+﻿using Newtonsoft.Json;
+using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -8,6 +9,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The page version that this route applies to
         /// </summary>
         [Mapping("pageVersionId")]
+        [JsonProperty("pageVersionId")]
         public long PageVersionId { get; set; }
 
         /// <summary>
@@ -17,6 +19,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// URL path of the page.
         /// </summary>
         [Mapping("path")]
+        [JsonProperty("path")]
         public string Path { get; set; }
 
         /// <summary>
@@ -25,6 +28,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// negative priorities so that fully specified URLs can override them.
         /// </summary>
         [Mapping("priority")]
+        [JsonProperty("priority")]
         public int Priority { get; set; }
     }
 }

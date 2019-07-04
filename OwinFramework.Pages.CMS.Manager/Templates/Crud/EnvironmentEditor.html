@@ -36,14 +36,14 @@
             <h2>{{currentEnvironment.displayName}} environment</h2>
             <label class="cms_field">Name</label>
             <p class="cms_field">{{currentEnvironment.name}}</p>
-            <label class="cms_field">Created</label>
-            <p class="cms_field">{{currentEnvironment.createdWhen | cms_formatDate}} by {{currentEnvironment.createdBy | cms_formatUserUrn}}</p>
             <label class="cms_field">Base URL</label>
             <p class="cms_field">{{currentEnvironment.baseUrl}}</p>
             <label class="cms_field">Website version</label>
             <p class="cms_field">{{websiteVersion.displayName}}</p>
             <label class="cms_field">Description</label>
             <p class="cms_field">{{currentEnvironment.description}}</p>
+            <label class="cms_field">Created</label>
+            <p class="cms_field">{{currentEnvironment.createdWhen | cms_formatDate}} by {{currentEnvironment.createdBy | cms_formatUserUrn}}</p>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="editEnvironment">Edit</button>
                 <button type="button" v-on:click="newEnvironment">New</button>

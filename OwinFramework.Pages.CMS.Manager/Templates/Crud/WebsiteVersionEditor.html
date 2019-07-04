@@ -32,10 +32,10 @@
             <h2>Version {{currentWebsiteVersion.displayName}} of the website</h2>
             <label class="cms_field">Name</label>
             <p class="cms_field">{{currentWebsiteVersion.name}}</p>
-            <label class="cms_field">Created</label>
-            <p class="cms_field">{{currentWebsiteVersion.createdWhen | cms_formatDate}} by {{currentWebsiteVersion.createdBy | cms_formatUserUrn}}</p>
             <label class="cms_field">Description</label>
             <p class="cms_field">{{currentWebsiteVersion.description}}</p>
+            <label class="cms_field">Created</label>
+            <p class="cms_field">{{currentWebsiteVersion.createdWhen | cms_formatDate}} by {{currentWebsiteVersion.createdBy | cms_formatUserUrn}}</p>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="editWebsiteVersion">Edit</button>
                 <button type="button" v-on:click="newWebsiteVersion">New</button>

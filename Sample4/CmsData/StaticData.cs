@@ -386,6 +386,8 @@ namespace Sample4.CmsData
                 {
                     ElementId = _pages[1].ElementId,
                     ElementVersionId = elementVersionId++,
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
                     Version = 1,
                     MasterPageId = _pages[0].ElementId,
                     Title = "Customers",
@@ -410,6 +412,8 @@ namespace Sample4.CmsData
                 {
                     ElementId = _pages[2].ElementId,
                     ElementVersionId = elementVersionId++,
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
                     Version = 1,
                     MasterPageId = _pages[0].ElementId,
                     Title = "Orders",
@@ -434,6 +438,8 @@ namespace Sample4.CmsData
                 {
                     ElementId = _pages[3].ElementId,
                     ElementVersionId = elementVersionId++,
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow,
                     Version = 1,
                     MasterPageId = _pages[0].ElementId,
                     Title = "CMS",

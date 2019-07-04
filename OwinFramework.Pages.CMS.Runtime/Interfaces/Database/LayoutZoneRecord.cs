@@ -1,4 +1,5 @@
-﻿using Prius.Contracts.Attributes;
+﻿using Newtonsoft.Json;
+using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -8,22 +9,28 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The name of the zone within the layout to configure
         /// </summary>
         [Mapping("zone")]
+        [JsonProperty("zone")]
         public string ZoneName { get; set; }
 
         /// <summary>
         /// The unique ID of the region to render into this region. 
         /// </summary>
+        [Mapping("regionId")]
+        [JsonProperty("regionId")]
         public long? RegionId { get; set; }
 
         /// <summary>
         /// The unique ID of the layout to render into this region. 
         /// </summary>
+        [Mapping("layoutId")]
+        [JsonProperty("layoutId")]
         public long? LayoutId { get; set; }
 
         /// <summary>
         /// Can be 'zone', 'Layout', 'Component', 'Html' or 'Template'
         /// </summary>
         [Mapping("contentType")]
+        [JsonProperty("contentType")]
         public string ContentType { get; set; }
 
         /// <summary>
@@ -32,6 +39,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// this is the name of a localizable asset.
         /// </summary>
         [Mapping("contentName")]
+        [JsonProperty("contentName")]
         public string ContentName { get; set; }
 
         /// <summary>
@@ -39,6 +47,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// is 'Html'
         /// </summary>
         [Mapping("contentValue")]
+        [JsonProperty("contentValue")]
         public string ContentValue { get; set; }
     }
 }

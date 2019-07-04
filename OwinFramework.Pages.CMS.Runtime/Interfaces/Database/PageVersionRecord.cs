@@ -1,4 +1,5 @@
-﻿using Prius.Contracts.Attributes;
+﻿using Newtonsoft.Json;
+using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -12,6 +13,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// are not defined within this page
         /// </summary>
         [Mapping("masterPageId")]
+        [JsonProperty("masterPageId")]
         public long? MasterPageId { get; set; }
 
         /// <summary>
@@ -20,12 +22,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// to use on this version of the page.
         /// </summary>
         [Mapping("layoutName")]
+        [JsonProperty("layoutName")]
         public string LayoutName { get; set; }
 
         /// <summary>
         /// The ID of a layout or NULL if the layout is defined in code
         /// </summary>
-        [Mapping("layoutVersionId")]
+        [Mapping("layoutId")]
+        [JsonProperty("layoutId")]
         public long? LayoutId { get; set; }
 
         /// <summary>
@@ -35,24 +39,28 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// URL of the target page and not one of the aliases
         /// </summary>
         [Mapping("canonicalUrl")]
+        [JsonProperty("canonicalUrl")]
         public string CanonicalUrl { get; set; }
 
         /// <summary>
         /// The title of this page
         /// </summary>
         [Mapping("title")]
+        [JsonProperty("title")]
         public string Title { get; set; }
 
         /// <summary>
         /// A CSS style definition to render on the body tag for the page
         /// </summary>
         [Mapping("bodyStyle")]
+        [JsonProperty("bodyStyle")]
         public string BodyStyle { get; set; }
 
         /// <summary>
         /// The name of a permission that is required to view this page
         /// </summary>
         [Mapping("permission")]
+        [JsonProperty("permission")]
         public string RequiredPermission { get; set; }
 
         /// <summary>
@@ -60,16 +68,19 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// security check.
         /// </summary>
         [Mapping("assetPath")]
+        [JsonProperty("assetPath")]
         public string AssetPath { get; set; }
 
         /// <summary>
         /// Defines which request URLs will render this page
         /// </summary>
+        [JsonProperty("routes")]
         public PageRouteRecord[] Routes { get; set; }
 
         /// <summary>
         /// Overrides the content of the page layout just for this page
         /// </summary>
+        [JsonProperty("layoutZones")]
         public LayoutZoneRecord[] LayoutZones { get; set; }
 
         /// <summary>
@@ -77,6 +88,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// These are typically non-visual components that do things like 
         /// render references to JavaScript libraries into the head of the page.
         /// </summary>
+        [JsonProperty("components")]
         public ElementComponentRecord[] Components { get; set; }
     }
 }

@@ -34,22 +34,67 @@
     });
 
     Vue.filter("cms_lookupElementVersionId", function (value) {
-        return "#" + value;
+        var id = parseInt(value);
+        if (isNaN(id)) { return ""; }
+
+        var elementName = "element version #" + id;
+        //exported.pageStore.retrieveRecord(
+        //    id,
+        //    function (page) {
+        //        pageName = page.displayName;
+        //    });
+        return elementName;
     });
 
     Vue.filter("cms_lookupElementId", function (value) {
-        return "#" + value;
+        var id = parseInt(value);
+        if (isNaN(id)) { return ""; }
+
+        var elementName = "element #" + id;
+        //exported.pageStore.retrieveRecord(
+        //    id,
+        //    function (page) {
+        //        pageName = page.displayName;
+        //    });
+        return elementName;
     });
 
     Vue.filter("cms_lookupPageId", function (value) {
-        return "#" + value;
+        var id = parseInt(value);
+        if (isNaN(id)) { return ""; }
+
+        var pageName = "page #" + id;
+        exported.pageStore.retrieveRecord(
+            id,
+            function (page) {
+                pageName = page.displayName;
+            });
+        return pageName;
     });
 
     Vue.filter("cms_lookupLayoutId", function (value) {
-        return "#" + value;
+        var id = parseInt(value);
+        if (isNaN(id)) { return ""; }
+
+        var layoutName = "layout #" + id;
+        //exported.pageStore.retrieveRecord(
+        //    id,
+        //    function (page) {
+        //        pageName = page.displayName;
+        //    });
+        return layoutName;
     });
 
     Vue.filter("cms_lookupRegionId", function (value) {
-        return "#" + value;
+        var id = parseInt(value);
+        if (isNaN(id)) { return ""; }
+
+        var regionName = "region #" + id;
+        //exported.pageStore.retrieveRecord(
+        //    id,
+        //    function (page) {
+        //        pageName = page.displayName;
+        //    });
+        return regionName;
     });
 }

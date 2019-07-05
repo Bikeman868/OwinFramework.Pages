@@ -5,6 +5,11 @@
             visible: true,
             namePattern: "",
             displayNamePattern: "",
+            titlePattern: "",
+            urlPathPattern: "",
+            cssPattern: "",
+            permissionPattern: "",
+            pathPattern: "",
             websiteVersion: {},
 
             pageMode: "view",
@@ -23,6 +28,11 @@
             var vm = this;
             vm.namePattern = exported.validation.namePattern.source;
             vm.displayNamePattern = exported.validation.displayNamePattern.source;
+            vm.titlePattern = exported.validation.titlePattern.source;
+            vm.cssPattern = exported.validation.cssPattern.source;
+            vm.urlPathPattern = exported.validation.urlPathPattern.source;
+            vm.permissionPattern = exported.validation.permissionPattern.source;
+            vm.pathPattern = exported.validation.pathPattern.source;
         },
         methods: {
             show: function (context, managerContext) {
@@ -121,8 +131,8 @@
             validate: function() {
                 var vm = this;
                 var errors = [];
-                exported.validation.displayName(vm.editingPage.displayName, "display name", errors);
-                exported.validation.name(vm.editingPage.name, "name", errors);
+                vm.editingPage.displayName = exported.validation.displayName(vm.editingPage.displayName, "display name", errors);
+                vm.editingPage.name = exported.validation.name(vm.editingPage.name, "name", errors);
                 vm.errors = errors;
             },
             showPageVersion: function () {
@@ -202,8 +212,49 @@
             validateVersion: function () {
                 var vm = this;
                 var errors = [];
-                exported.validation.displayName(vm.editingPageVersion.displayName, "display name", errors);
-                exported.validation.name(vm.editingPageVersion.name, "name", errors);
+                vm.editingPageVersion.title = exported.validation.title(vm.editingPageVersion.title, "title", errors);
+                if (vm.editingPageVersion.canonicalUrl) {
+                    vm.editingPageVersion.canonicalUrl = exported.validation.urlPath(vm.editingPageVersion.canonicalUrl, "canonical url path", errors);
+                }
+                if (vm.editingPageVersion.routes) {
+                    for (let i = 0; i < vm.editingPageVersion.routes.length; i++) {
+                        vm.editingPageVersion.routes[i].path = exported.validation.urlPath(vm.editingPageVersion.routes[i].path, "route path", errors);
+                    }
+                }
+                if (vm.editingPageVersion.assetDeployment) {
+                    vm.editingPageVersion.assetDeployment = exported.validation.assetDeployment(vm.editingPageVersion.assetDeployment, "asset deployment", errors);
+                    if (vm.editingPageVersion.assetDeployment === "PerModule") {
+                        vm.editingPageVersion.moduleName = exported.validation.name(vm.editingPageVersion.moduleName, "module name", errors);
+                    }
+                }
+                if (vm.editingPageVersion.layoutName) {
+                    vm.editingPageVersion.layoutName = exported.validation.name(vm.editingPageVersion.layoutName, "layout name", errors);
+                    if (vm.editingPageVersion.layoutId) errors.push("You cannot specify a layout name and a layout ID for the page");
+                } else {
+                    if (vm.editingPageVersion.layoutId)
+                        vm.editingPageVersion.layoutId = exported.validation.id(vm.editingPageVersion.layoutId, "layout id", errors);
+                }
+                if (vm.editingPageVersion.layoutZones) {
+                    for (let i = 0; i < vm.editingPageVersion.layoutZones.length; i++) {
+                        var layoutZone = vm.editingPageVersion.layoutZones[i];
+                        layoutZone.zone = exported.validation.name(layoutZone.zone, "zone name", errors);
+                        if (layoutZone.regionId)
+                            layoutZone.regionId = exported.validation.id(layoutZone.regionId, "zone region id", errors);
+                        if (layoutZone.layoutId)
+                            layoutZone.layoutId = exported.validation.id(layoutZone.layoutId, "zone layout id", errors);
+                        if (layoutZone.contentType) {
+                            layoutZone.contentType = exported.validation.elementType(layoutZone.contentType, "zone content type", errors);
+                            if (layoutZone.contentType === "Html") {
+                                // validtae html?
+                            } else {
+                                layoutZone.contentName = exported.validation.name(layoutZone.contentName, "zone content name", errors);
+                            }
+                        }
+                    }
+                }
+                if (vm.editingPageVersion.bodyStyle) {
+                    vm.editingPageVersion.bodyStyle = exported.validation.css(vm.editingPageVersion.bodyStyle, "body style", errors);
+                }
                 vm.versionErrors = errors;
             }
         }

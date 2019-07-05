@@ -67,10 +67,26 @@
             <div v-if="pageVersionMode === 'new' || pageVersionMode === 'edit'">
                 <h2 v-if="pageVersionMode === 'new'">Create New Version</h2>
                 <h2 v-if="pageVersionMode === 'edit'">Edit Page Version</h2>
-                <label class="cms_field">Show as</label>
-                <input type="text" class="cms_field__display_name" v-model="editingPageVersion.displayName" placeholder="Display name" v-bind:pattern="displayNamePattern" required>
-                <label class="cms_field">Name</label>
-                <input type="text" class="cms_field__name" v-model="editingPageVersion.name" placeholder="unique_name" v-bind:pattern="namePattern" required>
+                <label class="cms_field">Title</label>
+                <input type="text" class="cms_field__title" v-model="editingPageVersion.title" placeholder="Page title" v-bind:pattern="titlePattern">
+                <label class="cms_field">Canonical URL path</label>
+                <input type="text" class="cms_field__canonical_url" v-model="editingPageVersion.canonicalUrl" placeholder="/path/to/page" v-bind:pattern="urlPathPattern">
+                <label class="cms_field">Routes to this page</label>
+                <p>-- needs a component add/edit/delete routes --</p>
+                <label class="cms_field">Master page</label>
+                <p>-- needs a component choose page or none --</p>
+                <label class="cms_field">Asset deployment</label>
+                <p>-- needs a component drop down choose asset deployment or inherit from master page --</p>
+                <label class="cms_field">Page layout</label>
+                <p>-- needs a component choose layout or inherit from master page --</p>
+                <label class="cms_field">Layout zone contents</label>
+                <p>-- needs a component set zones or inherit from master page--</p>
+                <label class="cms_field">Body style</label>
+                <input type="text" class="cms_field__body_style" v-model="editingPageVersion.bodyStyle" placeholder="{font-size: large;}" v-bind:pattern="cssPattern">
+                <label class="cms_field">Permission required to view this page</label>
+                <input type="text" class="cms_field__permission" v-model="editingPageVersion.permission" placeholder="content:editor" v-bind:pattern="permissionPattern">
+                <label class="cms_field">Permission asset path</label>
+                <input type="text" class="cms_field__asset_path" v-model="editingPageVersion.assetPath" placeholder="/user/profile/image" v-bind:pattern="pathPattern">
                 <label class="cms_field">Description</label>
                 <textarea class="cms_field__description" v-model="editingPageVersion.description" placeholder="Optional description"></textarea>
                 <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
@@ -99,10 +115,10 @@
                 <p v-else class="cms_field">{{currentPageVersion.layoutId | cms_lookupLayoutId}}</p>
                 <label class="cms_field">Layout zones</label>
                 <p v-for="layoutZone in currentPageVersion.layoutZones" class="cms_field">
-                    {{layoutZone.zone}} = 
+                    The {{layoutZone.zone}} zone contains the
                     <span v-if="layoutZone.regionId">{{layoutZone.regionId | cms_lookupRegionId}} region</span>
                     <span v-if="layoutZone.layoutId">{{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                    <span v-if="layoutZone.contentType">{{layoutZone.contentType}} {{layoutZone.contentName}}</span>
+                    <span v-if="layoutZone.contentType">{{layoutZone.contentType.toLowerCase()}} defined in code as '{{layoutZone.contentName}}'</span>
                 </p>
                 <label v-if="currentPageVersion.bodyStyle" class="cms_field">Body CSS style</label>
                 <p v-if="currentPageVersion.bodyStyle" class="cms_field">{{currentPageVersion.bodyStyle}}</p>
@@ -123,7 +139,7 @@
             <div v-if="pageVersionMode === 'delete'">
                 <h2>Confirm Page Version Deletion</h2>
                 <p>
-                    This will delete the {{currentPageVersion.version}} version of the {{currentPage.displayName}} page.
+                    This will delete version {{currentPageVersion.version}} of the {{currentPage.displayName}} page.
                     This page will disapear from any versions of the website that use this version of
                     the {{currentPage.displayName}} page.
                 </p>

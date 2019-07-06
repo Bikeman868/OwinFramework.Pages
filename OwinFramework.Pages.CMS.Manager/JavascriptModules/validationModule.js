@@ -10,7 +10,7 @@
     var pathPattern = new RegExp("^(/[0-9a-z\-_]+)+$");
 
     var name = function (value, fieldName, errors) {
-        if (field == undefined || field.length < 2)
+        if (value == undefined || value.length < 2)
             errors.push("The " + fieldName + " field must contain at least 2 characters");
         else {
             if (!namePattern.test(value))

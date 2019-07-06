@@ -209,13 +209,11 @@
             cancelVersionChanges: function () {
                 this.pageVersionMode = "view";
             },
-            masterPageSelected: function(pageId) {
-                var vm = this;
-                vm.editingPageVersion.masterPageId = pageId;
-            },
-            assetDeploymentSelected: function (assetDeployment) {
-                var vm = this;
-                vm.editingPageVersion.assetDeployment = assetDeployment;
+            layoutInheritChanged: function(inherit) {
+                if (inherit) {
+                    editingPageVersion.layoutName = null;
+                    editingPageVersion.layoutId = null;
+                }
             },
             validateVersion: function () {
                 var vm = this;

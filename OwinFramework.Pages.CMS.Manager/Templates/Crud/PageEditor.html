@@ -77,16 +77,29 @@
                 <label class="cms_field">Routes to this page</label>
                 <p>-- needs a component add/edit/delete routes --</p>
 
-                <label class="cms_field">Master page</label>
-                <pagedropdown v-bind:page-id="editingPageVersion.masterPageId" v-bind:exclude="[editingPageVersion.elementId]" @page-selected="masterPageSelected"></pagedropdown>
+                <pagedropdown
+                    label="Master page"
+                    v-bind:page-id="editingPageVersion.masterPageId"
+                    v-bind:exclude="[editingPageVersion.elementId]"
+                    @page-id-changed="editingPageVersion.masterPageId=$event">
+                </pagedropdown>
 
-                <label class="cms_field">Asset deployment</label>
-                <assetdeploymentdropdown v-bind:asset-deployment="editingPageVersion.assetDeployment" @asset-deployment-selected="assetDeploymentSelected"></assetdeploymentdropdown>
-                <label v-if="editingPageVersion.assetDeployment==='PerModule'" class="cms_field">Module name</label>
-                <input v-if="editingPageVersion.assetDeployment==='PerModule'" type="text" class="cms_field__module" v-model="editingPageVersion.moduleName" placeholder="module_name" v-bind:pattern="namePattern">
+                <assetdeploymentdropdown
+                    inherit-option="Inherit master page asset deployment"
+                    v-bind:asset-deployment="editingPageVersion.assetDeployment"
+                    v-bind:module-name="editingPageVersion.moduleName"
+                    @asset-deployment-changed="editingPageVersion.assetDeployment=$event"
+                    @module-name-changed="editingPageVersion.moduleName=$event">
+                </assetdeploymentdropdown>
 
-                <label class="cms_field">Page layout</label>
-                <p>-- needs a component choose layout or inherit from master page --</p>
+                <layoutdropdown
+                    label="Page layout"
+                    v-bind:layout-id="editingPageVersion.layoutId"
+                    v-bind:layout-name="editingPageVersion.layoutName"
+                    @layout-id-changed="editingPageVersion.layoutId=$event"
+                    @layout-name-changed="editingPageVersion.layoutName=$event"
+                    inherit-changed="layoutInheritChanged($event)">
+                </layoutdropdown>
 
                 <label class="cms_field">Layout zone contents</label>
                 <p>-- needs a component set zones or inherit from master page--</p>

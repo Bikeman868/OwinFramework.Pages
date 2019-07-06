@@ -209,6 +209,14 @@
             cancelVersionChanges: function () {
                 this.pageVersionMode = "view";
             },
+            masterPageSelected: function(pageId) {
+                var vm = this;
+                vm.editingPageVersion.masterPageId = pageId;
+            },
+            assetDeploymentSelected: function (assetDeployment) {
+                var vm = this;
+                vm.editingPageVersion.assetDeployment = assetDeployment;
+            },
             validateVersion: function () {
                 var vm = this;
                 var errors = [];
@@ -254,6 +262,17 @@
                 }
                 if (vm.editingPageVersion.bodyStyle) {
                     vm.editingPageVersion.bodyStyle = exported.validation.css(vm.editingPageVersion.bodyStyle, "body style", errors);
+                }
+                var masterPageId = vm.editingPageVersion.masterPageId;
+                while (masterPageId != undefined) {
+                    if (masterPageId === vm.editingPageVersion.elementId) {
+                        errors.push("Master pages must be in a tree-like heirachy, you cannot create loops");
+                        masterPageId = null;
+                    } else {
+                        masterPageId = null;
+                        // exported.pageStore.retrieveRecord(masterPageId, function(page) { masterPageId = page.elementId; });
+                        // TODO: The masterPageId is a property of the page version which is specific to eacg website version
+                    }
                 }
                 vm.versionErrors = errors;
             }

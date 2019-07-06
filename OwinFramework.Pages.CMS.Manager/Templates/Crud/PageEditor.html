@@ -67,28 +67,42 @@
             <div v-if="pageVersionMode === 'new' || pageVersionMode === 'edit'">
                 <h2 v-if="pageVersionMode === 'new'">Create New Version</h2>
                 <h2 v-if="pageVersionMode === 'edit'">Edit Page Version</h2>
+
                 <label class="cms_field">Title</label>
                 <input type="text" class="cms_field__title" v-model="editingPageVersion.title" placeholder="Page title" v-bind:pattern="titlePattern">
+
                 <label class="cms_field">Canonical URL path</label>
                 <input type="text" class="cms_field__canonical_url" v-model="editingPageVersion.canonicalUrl" placeholder="/path/to/page" v-bind:pattern="urlPathPattern">
+
                 <label class="cms_field">Routes to this page</label>
                 <p>-- needs a component add/edit/delete routes --</p>
+
                 <label class="cms_field">Master page</label>
-                <p>-- needs a component choose page or none --</p>
+                <pagedropdown v-bind:page-id="editingPageVersion.masterPageId" v-bind:exclude="[editingPageVersion.elementId]" @page-selected="masterPageSelected"></pagedropdown>
+
                 <label class="cms_field">Asset deployment</label>
-                <p>-- needs a component drop down choose asset deployment or inherit from master page --</p>
+                <assetdeploymentdropdown v-bind:asset-deployment="editingPageVersion.assetDeployment" @asset-deployment-selected="assetDeploymentSelected"></assetdeploymentdropdown>
+                <label v-if="editingPageVersion.assetDeployment==='PerModule'" class="cms_field">Module name</label>
+                <input v-if="editingPageVersion.assetDeployment==='PerModule'" type="text" class="cms_field__module" v-model="editingPageVersion.moduleName" placeholder="module_name" v-bind:pattern="namePattern">
+
                 <label class="cms_field">Page layout</label>
                 <p>-- needs a component choose layout or inherit from master page --</p>
+
                 <label class="cms_field">Layout zone contents</label>
                 <p>-- needs a component set zones or inherit from master page--</p>
+
                 <label class="cms_field">Body style</label>
-                <input type="text" class="cms_field__body_style" v-model="editingPageVersion.bodyStyle" placeholder="{font-size: large;}" v-bind:pattern="cssPattern">
+                <input type="text" class="cms_field__body_style" v-model="editingPageVersion.bodyStyle" placeholder="font-family: arial; font-size: large;" v-bind:pattern="cssPattern">
+
                 <label class="cms_field">Permission required to view this page</label>
                 <input type="text" class="cms_field__permission" v-model="editingPageVersion.permission" placeholder="content:editor" v-bind:pattern="permissionPattern">
+
                 <label class="cms_field">Permission asset path</label>
                 <input type="text" class="cms_field__asset_path" v-model="editingPageVersion.assetPath" placeholder="/user/profile/image" v-bind:pattern="pathPattern">
+
                 <label class="cms_field">Description</label>
                 <textarea class="cms_field__description" v-model="editingPageVersion.description" placeholder="Optional description"></textarea>
+
                 <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
                     <p v-for="error in versionErrors">{{error}}</p>
                 </div>
@@ -129,7 +143,7 @@
                 <label class="cms_field">Created</label>
                 <p class="cms_field">{{currentPageVersion.createdWhen | cms_formatDate}} by {{currentPageVersion.createdBy | cms_formatUserUrn}}</p>
                 <div class="cms_button_bar">
-                    <button type="button" v-on:click="choosePageVersion">Choose</button>
+                    <button type="button" v-on:click="choosePageVersion">Versions</button>
                     <button type="button" v-on:click="editPageVersion">Edit</button>
                     <button type="button" v-on:click="newPageVersion">New</button>
                     <button type="button" v-on:click="deletePageVersion">Delete</button>
@@ -155,6 +169,9 @@
                     Which version of the {{currentPage.displayName}} page do you want to use for the
                     {{websiteVersion.displayName}} version of the website?
                 </p>
+                <div class="cms_button_bar">
+                    <button type="button" v-on:click="cancelVersionChanges">Done</button>
+                </div>
             </div>
         </div>
     </div>

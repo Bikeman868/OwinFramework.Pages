@@ -19,7 +19,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// When the layout is defined in code this is the name of the
         /// layout. Otherwise the LayoutVersionId determines the layout
-        /// to use on this version of the page.
+        /// to use on this version of the page. If the layout id and the
+        /// layout name are not defined then the layout is inherited from
+        /// the master page.
         /// </summary>
         [Mapping("layoutName")]
         [JsonProperty("layoutName")]

@@ -62,7 +62,7 @@
             if (!idPattern.test(value)) {
                 errors.push("The " + fieldName + " must be a number");
             } else {
-                var id = parseInt(fivalueeld);
+                var id = parseInt(value);
                 if (id === NaN) {
                     errors.push("The " + fieldName + " must be a whole number");
                 } else {

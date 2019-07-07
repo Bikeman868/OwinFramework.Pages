@@ -13,12 +13,19 @@
         <div v-if="pageMode === 'new' || pageMode === 'edit'">
             <h2 v-if="pageMode === 'new'">Create New Page</h2>
             <h2 v-if="pageMode === 'edit'">Edit Page Details</h2>
-            <label class="cms_field">Show as</label>
-            <input type="text" class="cms_field__display_name" v-model="editingPage.displayName" placeholder="Display name" v-bind:pattern="displayNamePattern" required>
-            <label class="cms_field">Name</label>
-            <input type="text" class="cms_field__name" v-model="editingPage.name" placeholder="unique_name" v-bind:pattern="namePattern" required>
-            <label class="cms_field">Description</label>
-            <textarea class="cms_field__description" v-model="editingPage.description" placeholder="Optional description"></textarea>
+            <cms-display-name-field-editor label="Show page in CMS manager as"
+                                           placeholder="My page"
+                                           v-bind:display-name="editingPage.displayName"
+                                           @display-name-changed="editingPage.displayName=$event">
+            </cms-display-name-field-editor>
+            <cms-element-name-field-editor label="Page name"
+                                           placeholder="unique_page_name"
+                                           v-bind:element-name="editingPage.name"
+                                           @element-name-changed="editingPage.name=$event">
+            </cms-element-name-field-editor>
+            <cms-description-field-editor v-bind:description="editingPage.description"
+                                          @description-changed="editingPage.description=$event">
+            </cms-description-field-editor>
             <div class="cms_validation_error_list" v-if="errors.length > 0">
                 <p v-for="error in errors">{{error}}</p>
             </div>
@@ -30,12 +37,12 @@
         </div>
         <div v-if="pageMode === 'view'">
             <h2>{{currentPage.displayName}} page</h2>
-            <label class="cms_field">Name</label>
-            <p class="cms_field">{{currentPage.name}}</p>
-            <label class="cms_field">Description</label>
-            <p class="cms_field">{{currentPage.description}}</p>
-            <label class="cms_field">Created</label>
-            <p class="cms_field">{{currentPage.createdWhen | cms_formatDate}} by {{currentPage.createdBy | cms_formatUserUrn}}</p>
+            <div class="cms_field"><label>Name</label><p>{{currentPage.name}}</p></div>
+            <div class="cms_field"><label>Description</label><p>{{currentPage.description}}</p></div>
+            <div class="cms_field">
+                <label>Created</label>
+                <p>{{currentPage.createdWhen | cms_formatDate}} by {{currentPage.createdBy | cms_formatUserUrn}}</p>
+            </div>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="editPage">Edit</button>
                 <button type="button" v-on:click="newPage">New</button>
@@ -65,56 +72,58 @@
         </div>
         <div v-else>
             <div v-if="pageVersionMode === 'new' || pageVersionMode === 'edit'">
-                <h2 v-if="pageVersionMode === 'new'">Create New Version</h2>
+                <h2 v-if="pageVersionMode === 'new'">Create New Page Version</h2>
                 <h2 v-if="pageVersionMode === 'edit'">Edit Page Version</h2>
 
-                <label class="cms_field">Title</label>
-                <input type="text" class="cms_field__title" v-model="editingPageVersion.title" placeholder="Page title" v-bind:pattern="titlePattern">
+                <cms-title-field-editor label="Page title"
+                                        placeholder="My new page"
+                                        v-bind:title="editingPageVersion.title"
+                                        @title-changed="editingPageVersion.title=$event">
+                </cms-title-field-editor>
+                <cms-url-path-field-editor label="Canonical URL path"
+                                           v-bind:url-path="editingPageVersion.canonicalUrl"
+                                           @url-path-changed="editingPageVersion.canonicalUrl=$event">
+                </cms-url-path-field-editor>
+                <cms-routes-field-editor label="Routes to this page"
+                                         v-bind:routes="editingPageVersion.routes">
+                </cms-routes-field-editor>
+                <cms-page-field-editor label="Master page"
+                                       v-bind:page-id="editingPageVersion.masterPageId"
+                                       v-bind:exclude="[editingPageVersion.elementId]"
+                                       @page-id-changed="editingPageVersion.masterPageId=$event">
 
-                <label class="cms_field">Canonical URL path</label>
-                <input type="text" class="cms_field__canonical_url" v-model="editingPageVersion.canonicalUrl" placeholder="/path/to/page" v-bind:pattern="urlPathPattern">
-
-                <label class="cms_field">Routes to this page</label>
-                <p>-- needs a component add/edit/delete routes --</p>
-
-                <pagedropdown
-                    label="Master page"
-                    v-bind:page-id="editingPageVersion.masterPageId"
-                    v-bind:exclude="[editingPageVersion.elementId]"
-                    @page-id-changed="editingPageVersion.masterPageId=$event">
-                </pagedropdown>
-
-                <assetdeploymentdropdown
-                    inherit-option="Inherit master page asset deployment"
-                    v-bind:asset-deployment="editingPageVersion.assetDeployment"
-                    v-bind:module-name="editingPageVersion.moduleName"
-                    @asset-deployment-changed="editingPageVersion.assetDeployment=$event"
-                    @module-name-changed="editingPageVersion.moduleName=$event">
-                </assetdeploymentdropdown>
-
-                <layoutdropdown
-                    label="Page layout"
-                    v-bind:layout-id="editingPageVersion.layoutId"
-                    v-bind:layout-name="editingPageVersion.layoutName"
-                    @layout-id-changed="editingPageVersion.layoutId=$event"
-                    @layout-name-changed="editingPageVersion.layoutName=$event"
-                    inherit-changed="layoutInheritChanged($event)">
-                </layoutdropdown>
-
-                <label class="cms_field">Layout zone contents</label>
-                <p>-- needs a component set zones or inherit from master page--</p>
-
-                <label class="cms_field">Body style</label>
-                <input type="text" class="cms_field__body_style" v-model="editingPageVersion.bodyStyle" placeholder="font-family: arial; font-size: large;" v-bind:pattern="cssPattern">
-
-                <label class="cms_field">Permission required to view this page</label>
-                <input type="text" class="cms_field__permission" v-model="editingPageVersion.permission" placeholder="content:editor" v-bind:pattern="permissionPattern">
-
-                <label class="cms_field">Permission asset path</label>
-                <input type="text" class="cms_field__asset_path" v-model="editingPageVersion.assetPath" placeholder="/user/profile/image" v-bind:pattern="pathPattern">
-
-                <label class="cms_field">Description</label>
-                <textarea class="cms_field__description" v-model="editingPageVersion.description" placeholder="Optional description"></textarea>
+                </cms-page-field-editor>
+                <cms-asset-deployment-field-editor label="Asset deployment"
+                                                   inherit-option="Inherit master page asset deployment"
+                                                   v-bind:asset-deployment="editingPageVersion.assetDeployment"
+                                                   v-bind:module-name="editingPageVersion.moduleName"
+                                                   @asset-deployment-changed="editingPageVersion.assetDeployment=$event"
+                                                   @module-name-changed="editingPageVersion.moduleName=$event">
+                </cms-asset-deployment-field-editor>
+                <cms-layout-field-editor label="Page layout"
+                                         v-bind:layout-id="editingPageVersion.layoutId"
+                                         v-bind:layout-name="editingPageVersion.layoutName"
+                                         @layout-id-changed="editingPageVersion.layoutId=$event"
+                                         @layout-name-changed="editingPageVersion.layoutName=$event"
+                                         @inherit-changed="layoutInheritChanged($event)">
+                </cms-layout-field-editor>
+                <cms-layout-zones-field-editor label="Layout zone contents"
+                                               zone-nesting="zone1(zone2,zone3)"
+                                               v-bind:layout-zones="editingPageVersion.layoutZones">
+                </cms-layout-zones-field-editor>
+                <cms-style-field-editor label="Body style"
+                                        v-bind:css-style="editingPageVersion.bodyStyle"
+                                        @css-style-changed="editingPageVersion.bodyStyle=$event">
+                </cms-style-field-editor>
+                <cms-permisson-field-editor label="Permission required to view this page"
+                                            v-bind:permission="editingPageVersion.permission"
+                                            v-bind:asset-path="editingPageVersion.assetPath"
+                                            @permission-changed="editingPageVersion.permission=$event"
+                                            @asset-path-changed="editingPageVersion.assetPath=$event">
+                </cms-permisson-field-editor>
+                <cms-description-field-editor v-bind:description="editingPageVersion.description"
+                                              @description-changed="editingPageVersion.description=$event">
+                </cms-description-field-editor>
 
                 <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
                     <p v-for="error in versionErrors">{{error}}</p>
@@ -127,34 +136,38 @@
             </div>
             <div v-if="pageVersionMode === 'view'">
                 <h2>Version {{currentPageVersion.version}} of the {{currentPage.displayName}} page</h2>
-                <label class="cms_field">Page title</label>
-                <p class="cms_field">{{currentPageVersion.title}}</p>
-                <label class="cms_field">Canonical URL</label>
-                <p class="cms_field">{{currentPageVersion.canonicalUrl}}</p>
-                <label class="cms_field">Routes to this page</label>
-                <p v-for="route in currentPageVersion.routes" class="cms_field">{{route.path}}</p>
-                <label class="cms_field">Assets</label>
-                <p class="cms_field">{{currentPageVersion.assetDeployment}}<span v-if="currentPageVersion.assetDeployment==='PerModule'"> in the {{currentPageVersion.moduleName}} module</span></p>
-                <label v-if="currentPageVersion.masterPageId" class="cms_field">Inherits from master page</label>
-                <p v-if="currentPageVersion.masterPageId" class="cms_field">{{currentPageVersion.masterPageId | cms_lookupPageId}}</p>
-                <label class="cms_field">Page layout</label>
-                <p v-if="currentPageVersion.layoutName" class="cms_field">{{currentPageVersion.layoutName}}</p>
-                <p v-else class="cms_field">{{currentPageVersion.layoutId | cms_lookupLayoutId}}</p>
-                <label class="cms_field">Layout zones</label>
-                <p v-for="layoutZone in currentPageVersion.layoutZones" class="cms_field">
-                    The {{layoutZone.zone}} zone contains the
-                    <span v-if="layoutZone.regionId">{{layoutZone.regionId | cms_lookupRegionId}} region</span>
-                    <span v-if="layoutZone.layoutId">{{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                    <span v-if="layoutZone.contentType">{{layoutZone.contentType.toLowerCase()}} defined in code as '{{layoutZone.contentName}}'</span>
-                </p>
-                <label v-if="currentPageVersion.bodyStyle" class="cms_field">Body CSS style</label>
-                <p v-if="currentPageVersion.bodyStyle" class="cms_field">{{currentPageVersion.bodyStyle}}</p>
-                <label v-if="currentPageVersion.permission" class="cms_field">Requires permission</label>
-                <p v-if="currentPageVersion.permission" class="cms_field">{{currentPageVersion.permission}}<span v-if="currentPageVersion.assetPath"> on {{currentPageVersion.assetPath}}</span></p>
-                <label class="cms_field">Description</label>
-                <p class="cms_field">{{currentPageVersion.description}}</p>
-                <label class="cms_field">Created</label>
-                <p class="cms_field">{{currentPageVersion.createdWhen | cms_formatDate}} by {{currentPageVersion.createdBy | cms_formatUserUrn}}</p>
+                <div class="cms_field"><label>Page title</label><p>{{currentPageVersion.title}}</p></div>
+                <div class="cms_field"><label>Canonical URL</label><p class="cms_field">{{currentPageVersion.canonicalUrl}}</p></div>
+                <div class="cms_field"><label>Routes to this page</label><p v-for="route in currentPageVersion.routes">{{route.path}}</p></div>
+                <div class="cms_field"><label>Assets</label><p>{{currentPageVersion.assetDeployment}}<span v-if="currentPageVersion.assetDeployment==='PerModule'"> in the {{currentPageVersion.moduleName}} module</span></p></div>
+                <div class="cms_field" v-if="currentPageVersion.masterPageId"><label>Inherits from master page</label><p>{{currentPageVersion.masterPageId | cms_lookupPageId}}</p></div>
+                <div class="cms_field">
+                    <label>Page layout</label>
+                    <p v-if="currentPageVersion.layoutName" class="cms_field">{{currentPageVersion.layoutName}}</p>
+                    <p v-else class="cms_field">{{currentPageVersion.layoutId | cms_lookupLayoutId}}</p>
+                </div>
+                <div class="cms_field">
+                    <label>Layout zones</label>
+                    <p v-for="layoutZone in currentPageVersion.layoutZones" class="cms_field">
+                        The {{layoutZone.zone}} zone contains the
+                        <span v-if="layoutZone.regionId">{{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                        <span v-if="layoutZone.layoutId">{{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                        <span v-if="layoutZone.contentType">{{layoutZone.contentType.toLowerCase()}} defined in code as '{{layoutZone.contentName}}'</span>
+                    </p>
+                </div>
+                <div class="cms_field" v-if="currentPageVersion.bodyStyle">
+                    <label>Body CSS style</label>
+                    <p>{{currentPageVersion.bodyStyle}}</p>
+                </div>
+                <div class="cms_field" v-if="currentPageVersion.permission">
+                    <label>Requires permission</label>
+                    <p>{{currentPageVersion.permission}}<span v-if="currentPageVersion.assetPath"> on {{currentPageVersion.assetPath}}</span></p>
+                </div>
+                <div class="cms_field"><label>Description</label><p>{{currentPageVersion.description}}</p></div>
+                <div class="cms_field">
+                    <label>Created</label>
+                    <p>{{currentPageVersion.createdWhen | cms_formatDate}} by {{currentPageVersion.createdBy | cms_formatUserUrn}}</p>
+                </div>
                 <div class="cms_button_bar">
                     <button type="button" v-on:click="choosePageVersion">Versions</button>
                     <button type="button" v-on:click="editPageVersion">Edit</button>

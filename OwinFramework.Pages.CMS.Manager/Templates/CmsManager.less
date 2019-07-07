@@ -165,77 +165,79 @@ div.cms_manager {
             padding: 10px;
         }
     }
-    label.cms_field {
-        display: block;
-        font-size: x-small;
-        margin-top: 4px;
-        margin-bottom: 2px;
-        color: @field-label-color;
-    }
-    input[type=text] {
-        display: block;
-        font: inherit;
-        font-family: @body-font-family;
-        font-size: larger;
-        margin-left: 5px;
-        margin-top: 2px;
-        margin-bottom: 6px;
-		border: 0;
-		outline: 0;
-		padding: 10px 6px;
-    }
-    span.cms_checkbox {
-        display: block;
-        font: inherit;
-        font-family: @body-font-family;
-        font-size: larger;
-        margin-left: 5px;
-        margin-top: 2px;
-        margin-bottom: 6px;
-		border: 0;
-		outline: 0;
-		padding: 5px 0;
-
-        input[type=checkbox] {
-            display: inline;
+    div.cms_field {
+        label {
+            display: block;
+            font-size: x-small;
+            margin-top: 4px;
+            margin-bottom: 2px;
+            color: @field-label-color;
         }
-    }
-    input:valid {
-        box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , 0.1)
-    }
-    input:invalid {
-        box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
-    }
-    textarea {
-        display: block;
-        font: inherit;
-        font-family: @body-font-family;
-        font-size: larger;
-        line-height:1.5;
-        margin-left: 5px;
-        margin-top: 2px;
-        margin-bottom: 12px;
-		border: 0;
-		outline: 0;
-		padding: 10px 6px;
-    }
-    textarea:valid {
-        box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , .1)
-    }
-    textarea:invalid {
-        box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
-    }
-    p.cms_field {
-        display: block;
-        font-size: larger;
-        margin-left: 5px;
-        margin-top: 2px;
-        margin-bottom: 4px;
-        padding: 2px;
-    }
-    ::placeholder{
-        font-size: smaller;
-        color: lightgray;
+        p {
+            display: block;
+            font-size: larger;
+            margin-left: 5px;
+            margin-top: 2px;
+            margin-bottom: 4px;
+            padding: 2px;
+        }
+        input[type=text] {
+            display: block;
+            font: inherit;
+            font-family: @body-font-family;
+            font-size: larger;
+            margin-left: 5px;
+            margin-top: 2px;
+            margin-bottom: 6px;
+		    border: 0;
+		    outline: 0;
+		    padding: 10px 6px;
+        }
+        span.cms_checkbox {
+            display: block;
+            font: inherit;
+            font-family: @body-font-family;
+            font-size: larger;
+            margin-left: 5px;
+            margin-top: 2px;
+            margin-bottom: 6px;
+		    border: 0;
+		    outline: 0;
+		    padding: 5px 0;
+
+            input[type=checkbox] {
+                display: inline;
+            }
+        }
+        input:valid {
+            box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , 0.1)
+        }
+        input:invalid {
+            box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
+        }
+        textarea {
+            display: block;
+            font: inherit;
+            font-family: @body-font-family;
+            font-size: larger;
+            line-height:1.5;
+            margin-left: 5px;
+            margin-top: 2px;
+            margin-bottom: 12px;
+		    border: 0;
+		    outline: 0;
+		    padding: 10px 6px;
+        }
+        textarea:valid {
+            box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , .1)
+        }
+        textarea:invalid {
+            box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
+        }
+        ::placeholder{
+            font-size: smaller;
+            color: lightgray;
+        }
     }
     .cms_validation_error_list {
         display: block;

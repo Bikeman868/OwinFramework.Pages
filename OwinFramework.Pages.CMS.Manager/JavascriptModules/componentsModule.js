@@ -1,5 +1,5 @@
 ﻿exported.components = function() {
-    Vue.component("websiteversiondropdown",
+    Vue.component("cms-website-version-field-edior",
     {
         props: {
             label: {
@@ -12,8 +12,8 @@
             }
         },
         template:
-            "<div>" +
-            "  <label class=\"cms_field\">{{label}}</label>" +
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
             "  <select class=\"cms_field__website_version\" @change=\"selectWebsiteVersion($event)\">" +
             "    <option v-for=\"websiteVersion in websiteVersions\" v-bind:value=\"websiteVersion.websiteVersionId\" v-bind:selected=\"websiteVersion.websiteVersionId==websiteVersionId\">" +
             "      {{websiteVersion.displayName}}" +
@@ -42,7 +42,7 @@
         }
     });
 
-    Vue.component("pagedropdown",
+    Vue.component("cms-page-field-editor",
     {
         props: {
             label: {
@@ -54,7 +54,7 @@
                 required: false,
                 type: Boolean,
                 default: true
-},
+            },
             pageId: {
                 required: false,
                 type: Number
@@ -65,8 +65,8 @@
             }
         },
         template:
-            "<div>" +
-            "  <label class=\"cms_field\">{{label}}</label>" +
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
             "  <select class=\"cms_field__page\" @change=\"selectPage($event)\">" +
             "    <option v-for=\"page in pages\" v-bind:value=\"page.elementId\" v-bind:selected=\"page.elementId==pageId\">" +
             "      {{page.displayName}}" +
@@ -115,7 +115,7 @@
         }
     });
 
-    Vue.component("assetdeploymentdropdown",
+    Vue.component("cms-asset-deployment-field-editor",
     {
         props: {
             label: {
@@ -138,8 +138,8 @@
             }
         },
         template:
-            "<div>" +
-            "  <label class=\"cms_field\">{{label}}</label>" +
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
             "  <select class=\"cms_field__asset_deployment\" @change=\"selectAssetDeployment($event)\">" +
             "    <option value=\"Inherit\" v-bind:selected=\"assetDeployment==='Inherit'\">{{inheritOption}}</option>" +
             "    <option value=\"InPage\" v-bind:selected=\"assetDeployment==='InPage'\">Inline within page</option>" +
@@ -171,7 +171,7 @@
         }
     });
 
-    Vue.component("layoutdropdown",
+    Vue.component("cms-layout-field-editor",
     {
         props: {
             label: {
@@ -194,8 +194,8 @@
             }
         },
         template:
-            "<div>" +
-            "  <label class=\"cms_field\">{{label}}</label>" +
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
             "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
             "  <select v-if=\"!inherit\" class=\"cms_field__layout\" @change=\"selectLayout($event)\">" +
             "    <option v-for=\"layout in layouts\" v-bind:value=\"layout.elementId\" v-bind:selected=\"layout.elementId==layoutId\">" +
@@ -267,4 +267,312 @@
         }
     });
 
+    Vue.component("cms-layout-zones-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Layout zones"
+            },
+            zoneNesting: {
+                required: true,
+                type: String
+            },
+            layoutZones: {
+                required: true,
+                type: Array
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "</div>",
+        data: function () {
+            return {
+                layout: {}
+            }
+        },
+        created: function () {
+            var vm = this;
+        },
+        methods: {
+        }
+    });
+
+    Vue.component("cms-routes-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Routes to this asset"
+            },
+            routes: {
+                required: true,
+                type: Array
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "</div>",
+        data: function () {
+            return {
+                layout: {}
+            }
+        },
+        created: function () {
+            var vm = this;
+        },
+        methods: {
+        }
+    });
+
+    Vue.component("cms-style-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Style"
+            },
+            cssStyle: {
+                required: false,
+                type: String,
+                default: ""
+            }
+        },
+        template: 
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "  <input type=\"text\" class=\"cms_field__style\" placeholder=\"font-family: arial; font-size: large;\" :pattern=\"cssPattern\" @input=\"inputStyle\" :value=\"cssStyle\">" +
+            "</div>",
+        data: function () {
+            return {
+                cssPattern: exported.validation.cssPattern.source
+            }
+        },
+        methods: {
+            inputStyle: function(e) {
+                this.$emit("css-style-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-permisson-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Required permission"
+            },
+            permission: {
+                required: false,
+                type: String,
+                default: ""
+            },
+            assetPath: {
+                required: false,
+                type: String,
+                default: ""
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "  <input type=\"text\" class=\"cms_field__permission\" placeholder=\"content:editor\" :pattern=\"permissionPattern\" @input=\"inputPermission\" :value=\"permission\">" +
+            "  <input type=\"text\" class=\"cms_field__asset_path\" placeholder=\"/user/profile/image\" :pattern=\"pathPattern\" @input=\"inputAssetPath\" :value=\"assetPath\">" +
+            "</div>",
+        data: function () {
+            return {
+                editedStyle: this.style,
+                cssPattern: exported.validation.permissionPattern.source
+            }
+        },
+        methods: {
+            inputPermission: function (e) {
+                this.$emit("permission-changed", e.target.value);
+            },
+            inputAssetPath: function (e) {
+                this.$emit("asset-path-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-title-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Title"
+            },
+            placeholder: {
+                required: false,
+                type: String,
+                default: "My page"
+            },
+            title: {
+                required: false,
+                type: String,
+                default: ""
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "  <input type=\"text\" class=\"cms_field__title\" :placeholder=\"placeholder\" :pattern=\"titlePattern\" @input=\"inputTitle\" :value=\"title\">" +
+            "</div>",
+        data: function () {
+            return {
+                titlePattern: exported.validation.titlePattern.source
+            }
+        },
+        methods: {
+            inputTitle: function (e) {
+                this.$emit("title-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-element-name-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Name"
+            },
+            placeholder: {
+                required: false,
+                type: String,
+                default: "element_name"
+            },
+            elementName: {
+                required: false,
+                type: String,
+                default: ""
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "  <input type=\"text\" class=\"cms_field__name\" :placeholder=\"placeholder\" :pattern=\"namePattern\" @input=\"inputElementName\" :value=\"elementName\">" +
+            "</div>",
+        data: function () {
+            return {
+                namePattern: exported.validation.namePattern.source
+            }
+        },
+        methods: {
+            inputElementName: function (e) {
+                this.$emit("element-name-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-display-name-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Display name"
+            },
+            placeholder: {
+                required: false,
+                type: String,
+                default: "Element name"
+            },
+            displayName: {
+                required: false,
+                type: String,
+                default: ""
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "  <input type=\"text\" class=\"cms_field__display_name\" :placeholder=\"placeholder\" :pattern=\"displayNamePattern\" @input=\"inputDisplayName\" :value=\"displayName\">" +
+            "</div>",
+        data: function () {
+            return {
+                displayNamePattern: exported.validation.displayNamePattern.source
+            }
+        },
+        methods: {
+            inputDisplayName: function (e) {
+                this.$emit("display-name-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-url-path-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Title"
+            },
+            placeholder: {
+                required: false,
+                type: String,
+                default: "/path/to/asset"
+            },
+            urlPath: {
+                required: false,
+                type: String,
+                default: ""
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label class=\"cms_field\">{{label}}</label>" +
+            "  <input type=\"text\" class=\"cms_field__url_path\" :placeholder=\"placeholder\" :pattern=\"urlPathPattern\" @input=\"inputUrlPath\" :value=\"urlPath\">" +
+            "</div>",
+        data: function () {
+            return {
+                urlPathPattern: exported.validation.urlPathPattern.source
+            }
+        },
+        methods: {
+            inputUrlPath: function (e) {
+                this.$emit("url-path-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-description-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Description"
+            },
+            placeholder: {
+                required: false,
+                type: String,
+                default: "optional description"
+            },
+            description: {
+                required: false,
+                type: String,
+                default: ""
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "  <textarea class=\"cms_field__description\" :placeholder=\"placeholder\" @input=\"inputDescription\">{{description}}</textarea>" +
+            "</div>",
+        methods: {
+            inputDescription: function (e) {
+                this.$emit("description-changed", e.target.value);
+            }
+        }
+    });
 }

@@ -364,7 +364,8 @@ var pageVersionStore = dataUtilities.newStore({
     fields: [
         "name", "displayName", "description", "createdBy", "createdWhen",
         "elementVersionId", "elementId", "version", "moduleName", "assetDeployment", "masterPageId",
-        "layoutName", "layoutVersionId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath"],
+        "layoutName", "layoutId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath",
+        "routes", "layoutZones", "components"],
     methods: {
         createRecord: function (pageVersion, onSuccess, onFail, params) {
             exported.crudService.createPageVersion({ body: pageVersion, websiteVersionId: params.websiteVersionId }, onSuccess, onFail);

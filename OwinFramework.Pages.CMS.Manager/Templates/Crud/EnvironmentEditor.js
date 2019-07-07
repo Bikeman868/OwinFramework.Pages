@@ -115,9 +115,6 @@
                 vm.editingEnvironment.websiteVersionId = exported.validation.id(vm.editingEnvironment.websiteVersionId, "website version id", errors);
                 vm.errors = errors;
             },
-            websiteVersionSelected: function(websiteVersionId) {
-                this.editingEnvironment.websiteVersionId = websiteVersionId;
-            },
             updateWebsiteVersion: function () {
                 var vm = this;
                 var websiteVersionId = vm.currentEnvironment.websiteVersionId;

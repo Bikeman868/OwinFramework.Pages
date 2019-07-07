@@ -13,16 +13,27 @@
         <div v-if="mode === 'new' || mode === 'edit'">
             <h2 v-if="mode === 'new'">Create New Environment</h2>
             <h2 v-if="mode === 'edit'">Edit Environment Details</h2>
-            <label class="cms_field">Show as</label>
-            <input type="text" class="cms_field__display_name" v-model="editingEnvironment.displayName" placeholder="Display name" v-bind:pattern="displayNamePattern" required>
-            <label class="cms_field">Name</label>
-            <input type="text" class="cms_field__name" v-model="editingEnvironment.name" placeholder="unique_name" v-bind:pattern="namePattern" required>
-            <label class="cms_field">Base URL</label>
-            <input type="text" class="cms_field__base_url" v-model="editingEnvironment.baseUrl" placeholder="http://environment.mycompany.com/" v-bind:pattern="urlPattern" required>
-            <label class="cms_field">Website version</label>
-            <websiteversiondropdown v-bind:website-version-id="editingEnvironment.websiteVersionId" @website-version-selected="websiteVersionSelected"></websiteversiondropdown>
-            <label class="cms_field">Description</label>
-            <textarea class="cms_field__description" v-model="editingEnvironment.description" placeholder="Optional description"></textarea>
+            <cms-display-name-field-editor label="Show environment in CMS manager as"
+                                           placeholder="Production"
+                                           v-bind:display-name="editingEnvironment.displayName"
+                                           @display-name-changed="editingEnvironment.displayName=$event">
+            </cms-display-name-field-editor>
+            <cms-element-name-field-editor label="Environment name"
+                                           placeholder="unique_environment_name"
+                                           v-bind:element-name="editingEnvironment.name"
+                                           @element-name-changed="editingEnvironment.name=$event">
+            </cms-element-name-field-editor>
+            <cms-url-field-editor label="Base URL"
+                                  placeholder="https://environment.mycompany.com/"
+                                  v-bind:url="editingEnvironment.baseUrl"
+                                  @url-changed="editingEnvironment.baseUrl=$event">
+            </cms-url-field-editor>
+            <cms-website-version-field-edior v-bind:website-version-id="editingEnvironment.websiteVersionId"
+                                             @website-version-id-changed="editingEnvironment.websiteVersionId=$event">
+            </cms-website-version-field-edior>
+            <cms-description-field-editor v-bind:description="editingEnvironment.description"
+                                          @description-changed="editingEnvironment.description=$event">
+            </cms-description-field-editor>
             <div class="cms_validation_error_list" v-if="errors.length > 0">
                 <p v-for="error in errors">{{error}}</p>
             </div>
@@ -34,16 +45,11 @@
         </div>
         <div v-if="mode === 'view'">
             <h2>{{currentEnvironment.displayName}} environment</h2>
-            <label class="cms_field">Name</label>
-            <p class="cms_field">{{currentEnvironment.name}}</p>
-            <label class="cms_field">Base URL</label>
-            <p class="cms_field">{{currentEnvironment.baseUrl}}</p>
-            <label class="cms_field">Website version</label>
-            <p class="cms_field">{{websiteVersion.displayName}}</p>
-            <label class="cms_field">Description</label>
-            <p class="cms_field">{{currentEnvironment.description}}</p>
-            <label class="cms_field">Created</label>
-            <p class="cms_field">{{currentEnvironment.createdWhen | cms_formatDate}} by {{currentEnvironment.createdBy | cms_formatUserUrn}}</p>
+            <div class="cms_field"><label>Name</label><p>{{currentEnvironment.name}}</p></div>
+            <div class="cms_field"><label>Base URL</label><p>{{currentEnvironment.baseUrl}}</p></div>
+            <div class="cms_field"><label>Website version</label><p>{{websiteVersion.displayName}}</p></div>
+            <div class="cms_field"><label>Description</label><p>{{currentEnvironment.description}}</p></div>
+            <div class="cms_field"><label>Created</label><p>{{currentEnvironment.createdWhen | cms_formatDate}} by {{currentEnvironment.createdBy | cms_formatUserUrn}}</p></div>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="editEnvironment">Edit</button>
                 <button type="button" v-on:click="newEnvironment">New</button>

@@ -27,7 +27,7 @@
         },
         created: function () {
             var vm = this;
-            exported.websiteVersionStore.getWebsiteVersions(
+            exported.websiteVersionStore.retrieveAllRecords(
                 function (response) {
                     vm.websiteVersions = response;
                 });
@@ -388,7 +388,8 @@
         data: function () {
             return {
                 editedStyle: this.style,
-                cssPattern: exported.validation.permissionPattern.source
+                permissionPattern: exported.validation.permissionPattern.source,
+                pathPattern: exported.validation.pathPattern.source
             }
         },
         methods: {
@@ -515,7 +516,7 @@
             label: {
                 required: false,
                 type: String,
-                default: "Title"
+                default: "Url path"
             },
             placeholder: {
                 required: false,
@@ -530,7 +531,7 @@
         },
         template:
             "<div class=\"cms_field\">" +
-            "  <label class=\"cms_field\">{{label}}</label>" +
+            "  <label>{{label}}</label>" +
             "  <input type=\"text\" class=\"cms_field__url_path\" :placeholder=\"placeholder\" :pattern=\"urlPathPattern\" @input=\"inputUrlPath\" :value=\"urlPath\">" +
             "</div>",
         data: function () {
@@ -541,6 +542,42 @@
         methods: {
             inputUrlPath: function (e) {
                 this.$emit("url-path-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-url-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Url"
+            },
+            placeholder: {
+                required: false,
+                type: String,
+                default: "https://company.com/index.html"
+            },
+            url: {
+                required: false,
+                type: String,
+                default: ""
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "  <input type=\"text\" class=\"cms_field__url\" :placeholder=\"placeholder\" :pattern=\"urlPattern\" @input=\"inputUrl\" :value=\"url\">" +
+            "</div>",
+        data: function () {
+            return {
+                urlPattern: exported.validation.urlPattern.source
+            }
+        },
+        methods: {
+            inputUrl: function (e) {
+                this.$emit("url-changed", e.target.value);
             }
         }
     });

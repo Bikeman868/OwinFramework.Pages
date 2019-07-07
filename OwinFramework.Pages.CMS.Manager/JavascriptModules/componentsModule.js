@@ -35,9 +35,8 @@
         methods: {
             selectWebsiteVersion: function (e) {
                 var vm = this;
-                var dropDown = e.target;
-                var websiteVersionId = dropDown.value || dropDown.options[dropDown.selectedIndex].value;
-                websiteVersionId = parseInt(websiteVersionId);
+                var websiteVersionId = parseInt(e.target.value);
+                if (isNaN(websiteVersionId)) websiteVersionId = null;
                 vm.$emit("website-version-id-changed", websiteVersionId);
             }
         }
@@ -51,6 +50,11 @@
                 type: String,
                 default: "Page"
             },
+            allowNone: {
+                required: false,
+                type: Boolean,
+                default: true
+},
             pageId: {
                 required: false,
                 type: Number
@@ -78,16 +82,24 @@
             var vm = this;
             exported.pageStore.retrieveAllRecords(
                 function (response) {
-                    if (response != undefined && vm.exclude != undefined) {
-                        for (let i = 0; i < response.length; i++) {
-                            var excluded = false;
-                            for (let j = 0; j < vm.exclude.length; j++) {
-                                if (vm.exclude[j] == response[i].elementId) excluded = true;
+                    if (response != undefined) {
+                        if (vm.exclude != undefined) {
+                            for (let i = 0; i < response.length; i++) {
+                                var excluded = false;
+                                for (let j = 0; j < vm.exclude.length; j++) {
+                                    if (vm.exclude[j] == response[i].elementId) excluded = true;
+                                }
+                                if (excluded) {
+                                    response.splice(i, 1);
+                                    i--;
+                                }
                             }
-                            if (excluded) {
-                                response.splice(i, 1);
-                                i--;
-                            }
+                        }
+                        if (vm.allowNone) {
+                            response.unshift({
+                                elementId: null,
+                                displayName: ""
+                            });
                         }
                     }
                     vm.pages = response;
@@ -96,9 +108,8 @@
         methods: {
             selectPage: function (e) {
                 var vm = this;
-                var dropDown = e.target;
-                var pageId = dropDown.value || dropDown.options[dropDown.selectedIndex].value;
-                pageId = parseInt(pageId);
+                var pageId = parseInt(e.target.value);
+                if (isNaN(pageId)) pageId = null;
                 vm.$emit("page-id-changed", pageId);
             }
         }
@@ -144,7 +155,7 @@
                 namePattern: exported.validation.namePattern.source,
                 selectedAssetDeployment: this.assetDeployment,
                 editedModuleName: this.moduleName
-        }
+            }
         },
         methods: {
             selectAssetDeployment: function (e) {
@@ -185,7 +196,7 @@
         template:
             "<div>" +
             "  <label class=\"cms_field\">{{label}}</label>" +
-            "  <input type=\"checkbox\" v-if=\"inheritOption\" v-bind:value=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</checkbox>" +
+            "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
             "  <select v-if=\"!inherit\" class=\"cms_field__layout\" @change=\"selectLayout($event)\">" +
             "    <option v-for=\"layout in layouts\" v-bind:value=\"layout.elementId\" v-bind:selected=\"layout.elementId==layoutId\">" +
             "      {{layout.displayName}}" +
@@ -198,7 +209,7 @@
             return {
                 layouts: [],
                 namePattern: exported.validation.namePattern.source,
-                inherit: this.layoutId == undefined && (this.layoutName == undefined || this.layoutName.length === 0),
+                inherit: false,
                 selectedLayoutId: this.layoutId,
                 editedLayoutName: this.layoutName
             }
@@ -219,28 +230,40 @@
                 elementId: "",
                 displayName: "Defined in code"
             });
+            vm.recalculate(true);
         },
         methods: {
             selectLayout: function (e) {
                 var vm = this;
-                var value = e.target.value;
-                if (!value || !value.length) {
-                    vm.selectedLayoutId = null;
-                } else {
-                    vm.selectedLayoutId = parseInt(value);
-                }
+                var layoutId = parseInt(e.target.value);
+                if (isNaN(layoutId)) layoutId = null;
+                vm.selectedLayoutId = layoutId;
                 vm.$emit("layout-id-changed", vm.selectedLayoutId);
+                vm.recalculate();
             },
             inputLayoutName: function (e) {
                 var vm = this;
                 vm.editedLayoutName = e.target.value;
                 vm.$emit("layout-name-changed", vm.editedLayoutName);
+                vm.recalculate();
             },
             changeInherit: function(e) {
                 var vm = this;
-                vm.inherit = e.target.checked;
-                vm.$emit("inherit-changed", vm.inherit);
-            }
+                if (e.target.checked) {
+                    vm.selectedLayoutId = null;
+                    vm.editedLayoutName = null;
+                    vm.recalculate();
+                } else {
+                    vm.inherit = false;
+                }
+            },
+            recalculate: function(suppressNotification) {
+                var vm = this;
+                var oldValue = vm.inherit;
+                vm.inherit = vm.selectedLayoutId == undefined && (vm.editedLayoutName == undefined || vm.editedLayoutName.length === 0);
+                if (!suppressNotification && oldValue !== vm.inherit)
+                    vm.$emit("inherit-changed", vm.inherit);
+           }
         }
     });
 

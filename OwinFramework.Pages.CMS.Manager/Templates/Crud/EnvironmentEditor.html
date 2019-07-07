@@ -13,7 +13,7 @@
         <div v-if="mode === 'new' || mode === 'edit'">
             <h2 v-if="mode === 'new'">Create New Environment</h2>
             <h2 v-if="mode === 'edit'">Edit Environment Details</h2>
-            <cms-display-name-field-editor label="Show environment in CMS manager as"
+            <cms-display-name-field-editor label="Show this environment in CMS manager as"
                                            placeholder="Production"
                                            v-bind:display-name="editingEnvironment.displayName"
                                            @display-name-changed="editingEnvironment.displayName=$event">

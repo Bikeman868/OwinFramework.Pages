@@ -13,7 +13,7 @@
         <div v-if="pageMode === 'new' || pageMode === 'edit'">
             <h2 v-if="pageMode === 'new'">Create New Page</h2>
             <h2 v-if="pageMode === 'edit'">Edit Page Details</h2>
-            <cms-display-name-field-editor label="Show page in CMS manager as"
+            <cms-display-name-field-editor label="Display this page in CMS manager as"
                                            placeholder="My page"
                                            v-bind:display-name="editingPage.displayName"
                                            @display-name-changed="editingPage.displayName=$event">

@@ -10,6 +10,9 @@
 @button-background: cornflowerblue;
 @button-shadow-color: #e0e0ff;
 
+@table-heading-background: lighten(cornflowerblue, 30%);
+@table-background: white;
+
 @base-font-size: 12px;
 @heading-font-family: Arial, sans-serif;
 @body-font-family: Arial, sans-serif;
@@ -181,6 +184,12 @@ div.cms_manager {
             margin-bottom: 4px;
             padding: 2px;
         }
+        input:valid {
+            box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , 0.1)
+        }
+        input:invalid {
+            box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
+        }
         input[type=text] {
             display: block;
             font: inherit;
@@ -204,16 +213,47 @@ div.cms_manager {
 		    border: 0;
 		    outline: 0;
 		    padding: 5px 0;
+            box-shadow: none;
 
-            input[type=checkbox] {
+            input {
                 display: inline;
             }
+            input:valid {
+                box-shadow: none
+            }
+            input:invalid {
+                box-shadow: none
+            }
         }
-        input:valid {
-            box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , 0.1)
+        table {
+            border-collapse: collapse;
+            margin: 5px 0;
         }
-        input:invalid {
-            box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
+        th {
+            border: 1px solid darken(@table-heading-background, 5%);
+            background-color: @table-heading-background;
+            padding: 5px 10px;
+            font: inherit;
+        }
+        td {
+            border: 1px solid darken(@table-heading-background, 5%);
+            background-color: @table-background;
+            padding: 3px 5px;
+
+            input {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+            }
+            input:valid {
+                box-shadow: none;
+                border: 1px solid transparent;
+            }
+            input:invalid {
+                box-shadow: none;
+                border: 1px solid red;
+            }
         }
         textarea {
             display: block;
@@ -237,6 +277,26 @@ div.cms_manager {
         ::placeholder{
             font-size: smaller;
             color: lightgray;
+        }
+        button {
+            color: @button-color;
+            background: @button-background;
+            padding: 4px 6px;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            box-shadow: 3px 3px @button-shadow-color;
+            margin: 6px 3px;
+            font-size: larger;
+            font-weight: 500;
+        }
+        button:hover {
+            background-color: darken(@button-background, 10%);
+        }
+        button:active {
+            background-color: darken(@button-background, 10%);
+            box-shadow: 2px 2px darken(@button-shadow-color, 10%);
+            transform: translateY(1px) translateX(1px);
         }
     }
     .cms_validation_error_list {
@@ -315,6 +375,10 @@ div.cms_manager {
         width: 300px;
         height: 50px;
     }
+    .cms_field__html {
+        width: 300px;
+        height: 80px;
+    }
     .cms_field__page {
         width: 250px;
     }
@@ -339,6 +403,9 @@ div.cms_manager {
     .cms_field__asset_path {
         width: 200px;
     }
+    .cms_field__priority {
+        width: 80px;
+    }
     @media only screen and (min-width: @break-large-mobile){
         .cms_field__name {
             width: 150px;
@@ -349,6 +416,16 @@ div.cms_manager {
         .cms_field__description {
             width: 450px;
             height: 100px;
+        }
+        .cms_field__html {
+            width: 450px;
+            height: 120px;
+        }
+    }
+    @media only screen and (min-width: @break-tablet){
+        .cms_field__html {
+            width: 600px;
+            height: 160px;
         }
     }
     .cms_spacer_thin {
@@ -369,6 +446,14 @@ div.cms_manager {
         }
         .cms_spacer_thick {
             height: 30px;
+        }
+    }
+    @media only screen and (min-width: @break-tablet){
+        .cms_field__url {
+            width: 450px;
+        }
+        .cms_field__url_path {
+            width: 450px;
         }
     }
 }

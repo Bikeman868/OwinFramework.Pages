@@ -267,6 +267,66 @@
         }
     });
 
+    Vue.component("cms-layout-zone-editor",
+    {
+        props: {
+            layoutZone: {
+                required: true,
+                type: Object
+            }
+        },
+        template:
+            "<div>" +
+            "  <select v-model=\"mode\">" +
+            "    <option value=\"0\">Default content</option>" +
+            "    <option value=\"1\">CMS region</option>" +
+            "    <option value=\"2\">CMS layout</option>" +
+            "    <option value=\"3\">CMS component</option>" +
+            "    <option value=\"4\">Named element</option>" +
+            "    <option value=\"5\">Html</option>" +
+            "  </select>" +
+            "  <p v-if=\"mode==1\">-region-choosing-component-</p>" +
+            "  <p v-if=\"mode==2\">-layout-choosing-component-</p>" +
+            "  <p v-if=\"mode==3\">-component-choosing-component-</p>" +
+            "  <div v-if=\"mode==4\">" +
+            "    <select v-model=\"layoutZone.contentType\">" +
+            "      <option value=\"Region\">Region name</option>" +
+            "      <option value=\"Layout\">Layout name</option>" +
+            "      <option value=\"Component\">Component name</option>" +
+            "      <option value=\"Template\">Template path</option>" +
+            "    </select>" +
+            "    <input v-if=\"layoutZone.contentType=='Template'\" type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"/path/to/template\" :pattern=\"namePattern\">" +
+            "    <input v-else type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"element_name\" :pattern=\"pathPattern\">" +
+            "  </div>" +
+            "  <div v-if=\"mode==5\">" +
+            "    <textarea class=\"cms_field__html\" v-model=\"layoutZone.contentValue\" placeholder=\"<div></div>\" :pattern=\"htmlPattern\"></textarea>" +
+            "  </div>" +
+            "</div>",
+        data: function () {
+            return {
+                mode: 0,
+                namePattern: exported.validation.namePattern.source,
+                pathPattern: exported.validation.pathPattern.source,
+                htmlPattern: exported.validation.htmlPattern.source
+            }
+        },
+        created: function () {
+            if (this.layoutZone.regionId != undefined) {
+                this.mode = 1;
+            } else if (this.layoutZone.layoutId != undefined) {
+                this.mode = 2;
+            } else if (this.layoutZone.contentType === "Html") {
+                this.mode = 4;
+            } else if (this.layoutZone.contentType.length > 0) {
+                this.mode = 3;
+            } else {
+                this.mode = 0;
+            }
+        },
+        methods: {
+        }
+    });
+
     Vue.component("cms-layout-zones-field-editor",
     {
         props: {
@@ -287,14 +347,42 @@
         template:
             "<div class=\"cms_field\">" +
             "  <label>{{label}}</label>" +
+            "  <table>" +
+            "    <tr><th>Zone</th><th>Contents</th></tr>" +
+            "    <tr v-for=\"zone in zones\">" +
+            "      <td>{{zone.name}}</td>" +
+            "      <td><cms-layout-zone-editor :layout-zone=\"zone.layoutZone\"></cms-layout-zone-editor></td>" +
+            "    </tr>" +
+            "  </table>" +
             "</div>",
         data: function () {
             return {
-                layout: {}
+                zones: []
             }
         },
         created: function () {
-            var vm = this;
+            var zoneNames = this.zoneNesting.replace(/[(),]/g, " ").split(" ");
+            for (let i = 0; i < zoneNames.length; i++) {
+                var zoneName = zoneNames[i].trim();
+                if (zoneName.length > 0) {
+                    var zone = {
+                        name: zoneName,
+                        layoutZone: {
+                            zone: zoneName,
+                            regionId: null,
+                            layoutId: null,
+                            contentType: "",
+                            contentName: "",
+                            contentValue: ""
+                        }
+                    };
+                    for (var j = 0; j < this.layoutZones.length; j++) {
+                        if (this.layoutZones[j].zone === zoneName)
+                            zone.layoutZone = this.layoutZones[j];
+                    }
+                    this.zones.push(zone);
+                }
+            }
         },
         methods: {
         }
@@ -316,16 +404,40 @@
         template:
             "<div class=\"cms_field\">" +
             "  <label>{{label}}</label>" +
+            "  <table>" +
+            "    <tr><th>Priority</th><th>Url path</th><th>-</th></tr>" +
+            "    <tr v-for=\"route in routes\">" +
+            "      <td><input type=\"text\" class=\"cms_field__priority\" placeholder=\"100\" :pattern=\"idPattern\" v-model=\"route.priority\"></td>" +
+            "      <td><input type=\"text\" class=\"cms_field__url_path\" placeholder=\"/content/page.html\" :pattern=\"urlPathPattern\" v-model=\"route.path\"></td>" +
+            "      <td><button @click=\"removeRoute(route.id)\">-</button></td>" +
+            "    </tr>" +
+            "  </table>" +
+            "  <button @click=\"addRoute\">+</button>"+
             "</div>",
         data: function () {
             return {
-                layout: {}
+                nextId: 1
             }
         },
         created: function () {
-            var vm = this;
+            this.idPattern = exported.validation.idPattern.source;
+            this.urlPathPattern = exported.validation.urlPathPattern.source;
+            for (let id = 0; id < this.routes.length; id++) {
+                this.routes[id].id = id;
+            }
+            this.nextId = this.routes.length;
         },
         methods: {
+            addRoute: function() {
+                this.routes.push({ id: this.nextId });
+                this.nextId = this.nextId + 1;
+            },
+            removeRoute: function(id) {
+                for (let i = 0; i < this.routes.length; i++) {
+                    if (this.routes[i].id === id)
+                        this.routes.splice(i, 1);
+                }
+            }
         }
     });
 

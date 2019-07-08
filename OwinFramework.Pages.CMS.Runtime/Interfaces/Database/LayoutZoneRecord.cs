@@ -13,14 +13,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string ZoneName { get; set; }
 
         /// <summary>
-        /// The unique ID of the region to render into this region. 
+        /// The unique ID of the region to render into this zone. 
         /// </summary>
         [Mapping("regionId")]
         [JsonProperty("regionId")]
         public long? RegionId { get; set; }
 
         /// <summary>
-        /// The unique ID of the layout to render into this region. 
+        /// The unique ID of the layout to render into this zone. 
         /// </summary>
         [Mapping("layoutId")]
         [JsonProperty("layoutId")]

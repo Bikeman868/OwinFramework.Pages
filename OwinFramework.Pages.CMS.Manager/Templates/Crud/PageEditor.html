@@ -68,6 +68,7 @@
             </p>
             <div class="cms_button_bar">
                 <button type="button" v-on:click="choosePageVersion">Choose Version</button>
+                <button type="button" v-on:click="newPageVersion">New Version</button>
             </div>
         </div>
         <div v-else>
@@ -87,11 +88,14 @@
                 <cms-routes-field-editor label="Routes to this page"
                                          v-bind:routes="editingPageVersion.routes">
                 </cms-routes-field-editor>
+
+                <hr />
+                <div class="cms_spacer_thick"></div>
+
                 <cms-page-field-editor label="Master page"
                                        v-bind:page-id="editingPageVersion.masterPageId"
                                        v-bind:exclude="[editingPageVersion.elementId]"
                                        @page-id-changed="editingPageVersion.masterPageId=$event">
-
                 </cms-page-field-editor>
                 <cms-asset-deployment-field-editor label="Asset deployment"
                                                    inherit-option="Inherit from master page"
@@ -108,9 +112,13 @@
                                          @inherit-changed="layoutInheritChanged($event)">
                 </cms-layout-field-editor>
                 <cms-layout-zones-field-editor label="Layout zone contents"
-                                               zone-nesting="zone1(zone2,zone3)"
+                                               zone-nesting="header(left,main,right)footer"
                                                v-bind:layout-zones="editingPageVersion.layoutZones">
                 </cms-layout-zones-field-editor>
+
+                <hr/>
+                <div class="cms_spacer_thick"></div>
+
                 <cms-style-field-editor label="Body style"
                                         v-bind:css-style="editingPageVersion.bodyStyle"
                                         @css-style-changed="editingPageVersion.bodyStyle=$event">
@@ -136,9 +144,12 @@
             </div>
             <div v-if="pageVersionMode === 'view'">
                 <h2>Version {{currentPageVersion.version}} of the {{currentPage.displayName}} page</h2>
-                <div class="cms_field"><label>Page title</label><p>{{currentPageVersion.title}}</p></div>
-                <div class="cms_field"><label>Canonical URL</label><p class="cms_field">{{currentPageVersion.canonicalUrl}}</p></div>
-                <div class="cms_field"><label>Routes to this page</label><p v-for="route in currentPageVersion.routes">{{route.path}}</p></div>
+                <div class="cms_field" v-if="currentPageVersion.title"><label>Page title</label><p>{{currentPageVersion.title}}</p></div>
+                <div class="cms_field" v-if="currentPageVersion.canonicalUrl"><label>Canonical URL</label><p class="cms_field">{{currentPageVersion.canonicalUrl}}</p></div>
+                <div class="cms_field" v-if="currentPageVersion.routes && currentPageVersion.routes.length > 0">
+                    <label>Routes to this page</label>
+                    <p v-for="route in currentPageVersion.routes">{{route.path}}</p>
+                </div>
                 <div class="cms_field"><label>Assets</label><p>{{currentPageVersion.assetDeployment}}<span v-if="currentPageVersion.assetDeployment==='PerModule'"> in the {{currentPageVersion.moduleName}} module</span></p></div>
                 <div class="cms_field" v-if="currentPageVersion.masterPageId"><label>Inherits from master page</label><p>{{currentPageVersion.masterPageId | cms_lookupPageId}}</p></div>
                 <div class="cms_field">
@@ -163,7 +174,7 @@
                     <label>Requires permission</label>
                     <p>{{currentPageVersion.permission}}<span v-if="currentPageVersion.assetPath"> on {{currentPageVersion.assetPath}}</span></p>
                 </div>
-                <div class="cms_field"><label>Description</label><p>{{currentPageVersion.description}}</p></div>
+                <div class="cms_field" v-if="currentPageVersion.description"><label>Description</label><p>{{currentPageVersion.description}}</p></div>
                 <div class="cms_field">
                     <label>Created</label>
                     <p>{{currentPageVersion.createdWhen | cms_formatDate}} by {{currentPageVersion.createdBy | cms_formatUserUrn}}</p>

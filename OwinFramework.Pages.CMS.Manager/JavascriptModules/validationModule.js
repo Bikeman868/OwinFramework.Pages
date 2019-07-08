@@ -8,6 +8,7 @@
     var cssPattern = new RegExp("^( ?[a-z0-9_]+: ?[a-z0-9_\-]+; ?)*$");
     var permissionPattern = new RegExp("^.+$");
     var pathPattern = new RegExp("^(/[0-9a-z\-_]+)+$");
+    var htmlPattern = new RegExp("^<.+>$");
 
     var name = function (value, fieldName, errors) {
         if (value == undefined || value.length < 2)
@@ -126,7 +127,8 @@
         urlPathPattern: urlPathPattern,
         cssPattern: cssPattern,
         permissionPattern: permissionPattern,
-        pathPattern: pathPattern
+        pathPattern: pathPattern,
+        htmlPattern: htmlPattern
     }
 }();
 

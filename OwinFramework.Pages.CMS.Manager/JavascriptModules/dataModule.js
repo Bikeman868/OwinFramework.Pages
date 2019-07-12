@@ -39,90 +39,86 @@
         }
     }
 
-    var newStore = function (params) {
-        var idField = params.idField;
-        var fields = params.fields;
-        var recordType = params.recordType;
-        var methods = params.methods || {};
-        var name = params.name || recordType;
-        var listName = params.listName || "list of " + name;
-        var hasChildren = params.hasChildren || false;
+    var newStore = function (store) {
+        store.list = null;
+        store.dictionary = {};
+        store.dispatcherUnsubscribe = null;
+        store.mixin = store.mixin || {},
+        store.name = store.name || recordType,
+        store.listName = store.listName || "list of " + name,
+        store.hasChildren = store.hasChildren || false;
 
-        var list = null;
-        var dictionary = {};
-        var dispatcherUnsubscribe = null;
-
-        var dispose = function() {
-            if (dispatcherUnsubscribe != null) dispatcherUnsubscribe();
+        store.dispose = function() {
+            if (store.dispatcherUnsubscribe != null) store.dispatcherUnsubscribe();
         };
 
-        var add = function(record) {
-            if (list != undefined) list.push(record);
-            dictionary[record[idField]] = record;
+        store.add = function(record) {
+            if (store.list != undefined) store.list.push(record);
+            store.dictionary[record[store.idField]] = record;
         };
 
-        var remove = function(id) {
-            delete dictionary[id];
-            if (list != undefined) {
+        store.remove = function(id) {
+            delete store.dictionary[id];
+            if (store.list != undefined) {
                 var index = -1;
-                list.forEach(function(e, i) { if (e[idField] === id) index = i; });
-                if (index >= 0) list.splice(index, 1);
+                store.list.forEach(function (e, i) { if (e[store.idField] === id) index = i; });
+                if (index >= 0) store.list.splice(index, 1);
             }
         };
 
-        var setAll = function(records) {
+        store.setAll = function(records) {
             if (records == null) return;
-            list = records;
-            dictionary = {};
+            store.list = records;
+            store.dictionary = {};
             for (let i = 0; i < records.length; i++) {
-                dictionary[records[i][idField]] = records[i];
+                store.dictionary[records[i][store.idField]] = records[i];
             }
         };
 
-        var getAll = function() { return list; };
+        store.getAll = function () { return store.list; };
 
-        var set = function(record) {
+        store.set = function(record) {
             if (record == undefined) return;
-            var id = record[idField];
+            var id = record[store.idField];
             if (id == undefined) return;
-            var original = dictionary[id];
+            var original = store.dictionary[id];
             if (original == undefined) {
-                add(record);
+                store.add(record);
             } else {
-                copyObject(fields, record, original);
+                copyObject(store.fields, record, original);
             }
         };
         
-        var get = function(id) { return dictionary[id]; }
+        store.get = function (id) { return store.dictionary[id]; }
 
-        var createRecord = function(newRecord, onSuccess, onFail, params) {
-            methods.createRecord(
+        store.createRecord = function(newRecord, onSuccess, onFail, params) {
+            store.mixin.createRecord.call(store,
                 newRecord,
                 function (response) {
                     if (response == undefined) {
-                        if (onFail != undefined) onFail("No response was received from the server, the " + name + " might not have been created");
+                        if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been created");
                     } else if (response[idField] == undefined) {
-                        if (onFail != undefined) onFail("The server failed to return an ID for the new " + name);
+                        if (onFail != undefined) onFail("The server failed to return an ID for the new " + store.name);
                     } else {
-                        add(response);
+                        store.add(response);
                         if (onSuccess != undefined) onSuccess(response);
                     }
                 },
                 function(ajax) {
-                    if (onFail != undefined) onFail("Failed to create a new " + name);                        
+                    if (onFail != undefined) onFail("Failed to create a new " + store.name);
                 },
                 params);
         }
 
-        var retrieveAllRecords = function(onSuccess, onFail) {
-            var records = getAll();
+        store.retrieveAllRecords = function(onSuccess, onFail) {
+            var records = store.getAll();
             if (records == undefined) {
-                methods.retrieveAllRecords(
+                store.mixin.retrieveAllRecords.call(store,
                     function(response) {
                         if (response == undefined) {
-                            if (onFail != undefined) onFail("No " + listName + " was returned by the server");
+                            if (onFail != undefined) onFail("No " + store.listName + " was returned by the server");
                         } else {
-                            setAll(response);
+                            store.setAll(response);
                             if (onSuccess != undefined) onSuccess(response);
                         }
                     }, 
@@ -134,55 +130,55 @@
             }
         }
 
-        var retrieveRecord = function(id, onSuccess, onFail) {
+        store.retrieveRecord = function(id, onSuccess, onFail) {
             if (id == undefined) return;
-            var record = get(id);
+            var record = store.get(id);
             if (record == undefined) {
-                methods.retrieveRecord( 
+                store.mixin.retrieveRecord.call(store,
                     id,
                     function (response) {
-                        set(response);
+                        store.set(response);
                         if (onSuccess != undefined) onSuccess(response);
                     },
                     function(ajax) {
-                        if (onFail != undefined) onFail("Failed to retrieve " + name + " " + id);                        
+                        if (onFail != undefined) onFail("Failed to retrieve " + store.name + " " + id);
                     });
             } else {
                 if (onSuccess != undefined) onSuccess(record);
             }
         }
 
-        var updateRecord = function(originalRecord, updatedRecord, onSuccess, onFail) {
-            var changes = dataUtilities.findChanges(fields, originalRecord, updatedRecord);
-            if (changes.length === 0 && !hasChildren) {
+        store.updateRecord = function(originalRecord, updatedRecord, onSuccess, onFail) {
+            var changes = findChanges(fields, originalRecord, updatedRecord);
+            if (changes.length === 0 && !store.hasChildren) {
                 if (onSuccess != undefined) onSuccess(originalRecord);
             } else {
-                var id = originalRecord[idField];
-                if (updatedRecord[idField] !== id) {
+                var id = originalRecord[store.idField];
+                if (updatedRecord[store.idField] !== id) {
                     if (onFail != undefined) {
-                        onFail("Original and updated records must have the same id");
+                        onFail("Original and updated " + store.name + " must have the same id");
                     }
                     return;
                 }
-                methods.updateRecord(
+                store.mixin.updateRecord.call(store,
                     updatedRecord,
                     changes,
                     function(response) {
                         if (response == undefined) {
-                            if (onFail != undefined) onFail("No response was received from the server, the " + name + " might not have been updated");
+                            if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been updated");
                         } else {
                             set(response);
                             if (onSuccess != undefined) onSuccess(response);
                         }
                     },
                     function(ajax) {
-                        if (onFail != undefined) onFail("Failed to update " + name);                        
+                        if (onFail != undefined) onFail("Failed to update " + store.name);
                     });
             }
         }
 
-        var deleteRecord = function(id, onSuccess, onFail) {
-            methods.deleteRecord(
+        store.deleteRecord = function(id, onSuccess, onFail) {
+            store.mixin.deleteRecord(
                 id,
                 function(response) {
                     remove(id);
@@ -190,27 +186,27 @@
                 },
                 function(ajax) {
                     if (onFail != undefined) {
-                        if (ajax.status === 403) onFail("You do not have permission to delete " + name + " " + id);
-                        else onFail("Failed to delete " + name + " " + id);
+                        if (ajax.status === 403) onFail("You do not have permission to delete " + store.name + " " + id);
+                        else onFail("Failed to delete " + store.name + " " + id);
                     }
                 });
         }
 
-        var cloneForEditing = function(original) {
-            return dataUtilities.copyObject(fields, original);
+        store.cloneForEditing = function(original) {
+            return copyObject(store.fields, original);
         }
 
-        var blankRecord = function() {
+        store.blankRecord = function() {
              return {};
         }
 
-        if (recordType != undefined) {
-            dispatcherUnsubscribe = exported.dispatcher.subscribe(function(message) {
+        if (store.recordType != undefined) {
+            store.dispatcherUnsubscribe = exported.dispatcher.subscribe(function(message) {
                 if (message.propertyChanges != undefined) {
                     for (let i = 0; i < message.propertyChanges.length; i++) {
                         var propertyChange = message.propertyChanges[i];
-                        if (propertyChange.recordType === recordType) {
-                            var record = get(propertyChange.id);
+                        if (propertyChange.recordType === store.recordType) {
+                            var record = store.get(propertyChange.id);
                             if (record != undefined) {
                                 record[propertyChange.name] = propertyChange.value;
                             }
@@ -220,23 +216,23 @@
                 if (message.deletedRecords != undefined) {
                     for (let i = 0; i < message.deletedRecords.length; i++) {
                         var deletedElement = message.deletedRecords[i];
-                        if (deletedElement.recordType === recordType) {
-                            remove(deletedElement.id);
+                        if (deletedElement.recordType === store.recordType) {
+                            store.remove(deletedElement.id);
                         }
                     }
                 }
-                if (message.newRecords != undefined && methods.retrieveRecord != undefined) {
+                if (message.newRecords != undefined && store.mixin.retrieveRecord != undefined) {
                     for (let i = 0; i < message.newRecords.length; i++) {
                         var newRecord = message.newRecords[i];
-                        if (newRecord.recordType === recordType) {
-                            methods.retrieveRecord(newRecord.id, function (r) { set(r); });
+                        if (newRecord.recordType === store.recordType) {
+                            store.mixin.retrieveRecord.call(store, newRecord.id, function (r) { store.set(r); });
                         }
                     }
                 }
                 if (message.childListChanges != undefined) {
                     for (let i = 0; i < message.childListChanges.length; i++) {
                         var childListChange = message.childListChanges[i];
-                        if (childListChange.recordType === recordType) {
+                        if (childListChange.recordType === store.recordType) {
                             // TODO: refresh child list
                         }
                     }
@@ -244,18 +240,7 @@
             });
         }
 
-        return {
-            idField: idField,
-            fields: fields,
-            dispose: dispose,
-            createRecord: createRecord,
-            retrieveAllRecords: retrieveAllRecords,
-            retrieveRecord: retrieveRecord,
-            updateRecord: updateRecord,
-            deleteRecord: deleteRecord,
-            cloneForEditing: cloneForEditing,
-            blankRecord: blankRecord
-        };
+        return store;
     }
 
     return {
@@ -267,12 +252,12 @@
     }
 }();
 
-var environmentStore = dataUtilities.newStore({
+exported.environmentStore = dataUtilities.newStore({
     recordType: "Environment",
     name: "environment",
     idField: "environmentId",
     fields: ["name", "displayName", "description", "createdBy", "createdWhen", "environmentId", "baseUrl", "websiteVersionId"],
-    methods: {
+    mixin: {
         createRecord: function(environment, onSuccess, onFail, params) {
             exported.crudService.createEnvironment({ body: environment }, onSuccess, onFail);
         },
@@ -296,14 +281,12 @@ var environmentStore = dataUtilities.newStore({
     }
 });
 
-exported.environmentStore = environmentStore;
-
-var websiteVersionStore = dataUtilities.newStore({
+exported.websiteVersionStore = dataUtilities.newStore({
     recordType: "WebsiteVersion",
     name: "website version",
     idField: "websiteVersionId",
     fields: ["name", "displayName", "description", "createdBy", "createdWhen", "websiteVersionId"],
-    methods: {
+    mixin: {
         createRecord: function (websiteVersion, onSuccess, onFail, params) {
             exported.crudService.createWebsiteVersion({ body: websiteVersion }, onSuccess, onFail);
         },
@@ -324,26 +307,24 @@ var websiteVersionStore = dataUtilities.newStore({
         deleteRecord: function (websiteVersionId, onSuccess, onFail) {
             exported.crudService.deleteWebsiteVersion({ id: websiteVersionId }, onSuccess, null, onFail);
         }
+    },
+    getWebsiteVersionPages: function (websiteVersionId, onSuccess, onFail) {
+        var store = this;
+        exported.listService.websiteVersionPages(
+            { id: websiteVersionId },
+            function (response) { dataUtilities.doSuccessGet("list of vebsite version pages", response, onSuccess, onFail); },
+            null,
+            function (ajax) { dataUtilities.doFailGet("list of vebsite version pages", ajax, onFail); });
     }
 });
 
-websiteVersionStore.getWebsiteVersionPages = function (websiteVersionId, onSuccess, onFail) {
-    exported.listService.websiteVersionPages(
-        { id: websiteVersionId },
-        function (response) { dataUtilities.doSuccessGet("list of vebsite version pages", response, onSuccess, onFail); },
-        null,
-        function (ajax) { dataUtilities.doFailGet("list of vebsite version pages", ajax, onFail); });
-}
-
-exported.websiteVersionStore = websiteVersionStore;
-
-var pageStore = dataUtilities.newStore({
+exported.pageStore = dataUtilities.newStore({
     recordType: "Page",
     name: "page",
     listName: "list of pages",
     idField: "elementId",
     fields: ["name", "displayName", "description", "createdBy", "createdWhen", "elementId"],
-    methods: {
+    mixin: {
         createRecord: function(page, onSuccess, onFail, params) {
             exported.crudService.createPage({ body: page, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
         },
@@ -366,9 +347,8 @@ var pageStore = dataUtilities.newStore({
         }
     }
 });
-exported.pageStore = pageStore;
 
-var pageVersionStore = dataUtilities.newStore({
+exported.pageVersionStore = dataUtilities.newStore({
     recordType: "PageVersion",
     name: "page version",
     listName: "list of page versions",
@@ -379,7 +359,7 @@ var pageVersionStore = dataUtilities.newStore({
         "elementVersionId", "elementId", "version", "moduleName", "assetDeployment", "masterPageId",
         "layoutName", "layoutId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath",
         "routes", "layoutZones", "components"],
-    methods: {
+    mixin: {
         createRecord: function (pageVersion, onSuccess, onFail, params) {
             exported.crudService.createPageVersion({ body: pageVersion, websiteVersionId: params.websiteVersionId }, onSuccess, onFail);
         },
@@ -426,39 +406,36 @@ var pageVersionStore = dataUtilities.newStore({
         deleteRecord: function (pageVersionId, onSuccess, onFail) {
             exported.crudService.deletePage({ id: pageVersionId }, onSuccess, null, onFail);
         }
+    },
+    getPageVersions: function (pageId, onSuccess, onFail) {
+        var store = this;
+        exported.listService.pageVersions(
+            { id: pageId },
+            function (response) { dataUtilities.doSuccessGet("list of page versions", response, onSuccess, onFail); },
+            null,
+            function (ajax) { dataUtilities.doFailGet("list of page versions", ajax, onFail); });
+    },
+
+    getWebsitePageVersion: function (websiteVersionId, pageId, onSuccess, onFail) {
+        var store = this;
+        exported.listService.websitePageVersion(
+            {
+                websiteVersionId: websiteVersionId,
+                pageId: pageId
+            },
+            function (response) {
+                if (response != undefined) {
+                    var pageVersionId = response.pageVersionId;
+                    if (pageVersionId != undefined) {
+                        store.retrieveRecord(pageVersionId, onSuccess, onFail);
+                        return;
+                    }
+                }
+                if (onFail != undefined) onFail("Failed to get page version for website version");
+            },
+            null,
+            function (ajax) {
+                if (onFail != undefined) onFail("Failed to get page version for website version");
+            });
     }
 });
-
-pageVersionStore.getPageVersions = function (pageId, onSuccess, onFail) {
-    exported.listService.pageVersions(
-        { id: pageId },
-        function (response) { dataUtilities.doSuccessGet("list of page versions", response, onSuccess, onFail); },
-        null,
-        function (ajax) { dataUtilities.doFailGet("list of page versions", ajax, onFail); });
-}
-
-pageVersionStore.getWebsitePageVersion = function (websiteVersionId, pageId, onSuccess, onFail) {
-    exported.listService.websitePageVersion(
-        {
-            websiteVersionId: websiteVersionId,
-            pageId: pageId
-        },
-        function (response) {
-            if (response != undefined) {
-                var pageVersionId = response.pageVersionId;
-                if (pageVersionId != undefined) {
-                    pageVersionStore.retrieveRecord(pageVersionId, onSuccess, onFail);
-                    return;
-                }
-            }
-            if (onFail != undefined) onFail("Failed to get page version for website version");
-        },
-        null,
-        function (ajax) {
-            if (onFail != undefined) onFail("Failed to get page version for website version");
-        });
-}
-
-// TODO: add these to the 'methods' collection in a way that gives them access to internal methods
-
-exported.pageVersionStore = pageVersionStore;

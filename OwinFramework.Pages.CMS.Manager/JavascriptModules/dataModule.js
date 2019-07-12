@@ -209,7 +209,7 @@
                 if (message.propertyChanges != undefined) {
                     for (let i = 0; i < message.propertyChanges.length; i++) {
                         var propertyChange = message.propertyChanges[i];
-                        if (propertyChange.elementType === recordType) {
+                        if (propertyChange.recordType === recordType) {
                             var record = get(propertyChange.id);
                             if (record != undefined) {
                                 record[propertyChange.name] = propertyChange.value;
@@ -220,7 +220,7 @@
                 if (message.deletedRecords != undefined) {
                     for (let i = 0; i < message.deletedRecords.length; i++) {
                         var deletedElement = message.deletedRecords[i];
-                        if (deletedElement.elementType === recordType) {
+                        if (deletedElement.recordType === recordType) {
                             remove(deletedElement.id);
                         }
                     }
@@ -228,13 +228,18 @@
                 if (message.newRecords != undefined && methods.retrieveRecord != undefined) {
                     for (let i = 0; i < message.newRecords.length; i++) {
                         var newRecord = message.newRecords[i];
-                        if (newRecord.elementType === recordType) {
+                        if (newRecord.recordType === recordType) {
                             methods.retrieveRecord(newRecord.id, function (r) { set(r); });
                         }
                     }
                 }
                 if (message.childListChanges != undefined) {
-                    // TODO: refresh child lists
+                    for (let i = 0; i < message.childListChanges.length; i++) {
+                        var childListChange = message.childListChanges[i];
+                        if (childListChange.recordType === recordType) {
+                            // TODO: refresh child list
+                        }
+                    }
                 }
             });
         }
@@ -337,7 +342,7 @@ var pageStore = dataUtilities.newStore({
     name: "page",
     listName: "list of pages",
     idField: "elementId",
-    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "elementType", "elementId"],
+    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "elementId"],
     methods: {
         createRecord: function(page, onSuccess, onFail, params) {
             exported.crudService.createPage({ body: page, websiteversionid: params.websiteVersionId }, onSuccess, onFail);

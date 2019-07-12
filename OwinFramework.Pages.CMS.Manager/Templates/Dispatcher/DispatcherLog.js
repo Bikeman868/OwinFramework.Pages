@@ -32,20 +32,32 @@
                         from: message.machine,
                         changes: ""
                     };
-                    if (message.propertyChanges && message.propertyChanges.length > 0) {
-                        updateData.changes += "Property changes. ";
+                    if (message.propertyChanges) {
+                        for (let i = 0; i < message.propertyChanges.length; i++) {
+                            var change = message.propertyChanges[i];
+                            updateData.changes += change.recordType + " #" + change.id + " " + change.name + "=\"" + change.value + "\" ";
+                        }
                     }
                     if (message.websiteVersionChanges && message.websiteVersionChanges.length > 0) {
                         updateData.changes += "Website version changes. ";
                     }
-                    if (message.newRecords && message.newRecords.length > 0) {
-                        updateData.changes += "New records. ";
+                    if (message.newRecords) {
+                        for (let i = 0; i < message.newRecords.length; i++) {
+                            var newRecord = message.newRecords[i];
+                            updateData.changes += "New " + newRecord.recordType + " #" + newRecord.id + " ";
+                        }
                     }
-                    if (message.deletedRecords && message.deletedRecords.length > 0) {
-                        updateData.changes += "Deleted records. ";
+                    if (message.deletedRecords) {
+                        for (let i = 0; i < message.deletedRecords.length; i++) {
+                            var deletedRecord = message.deletedRecords[i];
+                            updateData.changes += deletedRecord.recordType + " #" + deletedRecord.id + " deleted ";
+                        }
                     }
-                    if (message.childListChanges && message.childListChanges.length > 0) {
-                        updateData.changes += "Child list changes. ";
+                    if (message.childListChanges) {
+                        for (let i = 0; i < message.childListChanges.length; i++) {
+                            var childListChange = message.childListChanges[i];
+                            updateData.changes += childListChange.recordType + " #" + childListChange.id + " " + childListChange.childRecordType + "s changed ";
+                        }
                     }
                     vm.messages.unshift(updateData);
                 });

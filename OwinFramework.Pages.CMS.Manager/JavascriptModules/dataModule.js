@@ -11,12 +11,15 @@
         var changes = [];
         if (original == undefined) {
             properties.forEach(function (prop) {
-                changes.push({ name: prop, value: modified[prop] });
+                if (typeof(modified[prop]) !== "object")
+                    changes.push({ name: prop, value: modified[prop] });
             });
         } else {
-            properties.forEach(function(prop) {
-                if (original[prop] !== modified[prop])
-                    changes.push({ name: prop, value: modified[prop] });
+            properties.forEach(function (prop) {
+                var value = modified[prop];
+                if (original[prop] !== value)
+                    if (value == undefined || typeof(value) !== "object")
+                        changes.push({ name: prop, value: modified[prop] });
             });
         }
         return changes;
@@ -43,6 +46,7 @@
         var methods = params.methods || {};
         var name = params.name || recordType;
         var listName = params.listName || "list of " + name;
+        var hasChildren = params.hasChildren || false;
 
         var list = null;
         var dictionary = {};
@@ -150,7 +154,7 @@
 
         var updateRecord = function(originalRecord, updatedRecord, onSuccess, onFail) {
             var changes = dataUtilities.findChanges(fields, originalRecord, updatedRecord);
-            if (changes.length === 0) {
+            if (changes.length === 0 && !hasChildren) {
                 if (onSuccess != undefined) onSuccess(originalRecord);
             } else {
                 var id = originalRecord[idField];
@@ -161,7 +165,7 @@
                     return;
                 }
                 methods.updateRecord(
-                    id,
+                    updatedRecord,
                     changes,
                     function(response) {
                         if (response == undefined) {
@@ -213,21 +217,24 @@
                         }
                     }
                 }
-                if (message.deletedElements != undefined) {
-                    for (let i = 0; i < message.deletedElements.length; i++) {
-                        var deletedElement = message.deletedElements[i];
+                if (message.deletedRecords != undefined) {
+                    for (let i = 0; i < message.deletedRecords.length; i++) {
+                        var deletedElement = message.deletedRecords[i];
                         if (deletedElement.elementType === recordType) {
                             remove(deletedElement.id);
                         }
                     }
                 }
-                if (message.newElements != undefined && methods.retrieveRecord != undefined) {
-                    for (let i = 0; i < message.newElements.length; i++) {
-                        var newElement = message.newElements[i];
-                        if (newElement.elementType === recordType) {
-                            methods.retrieveRecord(newElement.id, function(r) { set(r); });
+                if (message.newRecords != undefined && methods.retrieveRecord != undefined) {
+                    for (let i = 0; i < message.newRecords.length; i++) {
+                        var newRecord = message.newRecords[i];
+                        if (newRecord.elementType === recordType) {
+                            methods.retrieveRecord(newRecord.id, function (r) { set(r); });
                         }
                     }
+                }
+                if (message.childListChanges != undefined) {
+                    // TODO: refresh child lists
                 }
             });
         }
@@ -270,10 +277,10 @@ var environmentStore = dataUtilities.newStore({
         retrieveAllRecords: function(onSuccess, onFail) {
             exported.listService.environments({}, onSuccess, null, onFail);
         },
-        updateRecord: function(environmentId, changes, onSuccess, onFail) {
+        updateRecord: function(updatedEnvironment, changes, onSuccess, onFail) {
             exported.crudService.updateEnvironment(
             {
-                id: environmentId,
+                id: updatedEnvironment.environmentId,
                 body: changes
             },
             onSuccess, null, onFail);
@@ -301,10 +308,10 @@ var websiteVersionStore = dataUtilities.newStore({
         retrieveAllRecords: function (onSuccess, onFail) {
             exported.listService.websiteVersions({}, onSuccess, null, onFail);
         },
-        updateRecord: function (websiteVersionId, changes, onSuccess, onFail) {
+        updateRecord: function (updatedWebsiteVersion, changes, onSuccess, onFail) {
             exported.crudService.updateWebsiteVersion(
             {
-                id: websiteVersionId,
+                id: updatedWebsiteVersion.websiteVersionId,
                 body: changes
             },
             onSuccess, null, onFail);
@@ -341,10 +348,10 @@ var pageStore = dataUtilities.newStore({
         retrieveAllRecords: function(onSuccess, onFail) {
             exported.listService.allPages({}, onSuccess, null, onFail);
         },
-        updateRecord: function(pageId, changes, onSuccess, onFail) {
+        updateRecord: function(updatedPage, changes, onSuccess, onFail) {
             exported.crudService.updatePage(
             {
-                id: pageId,
+                id: updatedPage.elementId,
                 body: changes
             },
             onSuccess, null, onFail);
@@ -361,6 +368,7 @@ var pageVersionStore = dataUtilities.newStore({
     name: "page version",
     listName: "list of page versions",
     idField: "elementId",
+    hasChildren: true,
     fields: [
         "name", "displayName", "description", "createdBy", "createdWhen",
         "elementVersionId", "elementId", "version", "moduleName", "assetDeployment", "masterPageId",
@@ -376,13 +384,39 @@ var pageVersionStore = dataUtilities.newStore({
         retrieveAllRecords: function (onSuccess, onFail) {
             exported.listService.allPageVersions({}, onSuccess, null, onFail);
         },
-        updateRecord: function (pageVersionId, changes, onSuccess, onFail) {
-            exported.crudService.updatePageVersion(
-            {
-                id: pageVersionId,
-                body: changes
-            },
-            onSuccess, null, onFail);
+        updateRecord: function (updatedPageVersion, changes, onSuccess, onFail) {
+            if (changes != undefined && changes.length > 0) {
+                exported.crudService.updatePageVersion(
+                    {
+                        id: updatedPageVersion.elementVersionId,
+                        body: changes
+                    },
+                    onSuccess, null, onFail);
+            }
+            if (updatedPageVersion.routes != undefined) {
+                exported.crudService.updatePageVersionRoutes(
+                    {
+                        id: updatedPageVersion.elementVersionId,
+                        body: updatedPageVersion.routes
+                    },
+                    onSuccess, null, onFail);
+            }
+            if (updatedPageVersion.layoutZones != null) {
+                exported.crudService.updatePageVersionZones(
+                    {
+                        id: updatedPageVersion.elementVersionId,
+                        body: updatedPageVersion.layoutZones
+                    },
+                    onSuccess, null, onFail);
+            }
+            if (updatedPageVersion.components != undefined) {
+                exported.crudService.updatePageVersionComponents(
+                    {
+                        id: updatedPageVersion.elementVersionId,
+                        body: updatedPageVersion.components
+                    },
+                    onSuccess, null, onFail);
+            }
         },
         deleteRecord: function (pageVersionId, onSuccess, onFail) {
             exported.crudService.deletePage({ id: pageVersionId }, onSuccess, null, onFail);

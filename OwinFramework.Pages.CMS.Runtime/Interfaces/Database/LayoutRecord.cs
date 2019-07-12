@@ -7,7 +7,7 @@
     {
         public LayoutRecord()
         {
-            ElementType = "Layout";
+            RecordType = "Layout";
         }
     }
 }

@@ -10,6 +10,16 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     public class RecordBase
     {
         /// <summary>
+        /// This can be used to determine which table to join to pull out the rest
+        /// of the record details. This is cumbersome but rarely required. Most often
+        /// you will start from a specific record type and join to the shared record
+        /// details table instead.
+        /// </summary>
+        [Mapping("recordType")]
+        [JsonProperty("recordType")]
+        public string RecordType { get; set; }
+
+        /// <summary>
         /// The name of this record. This name must be unique amongst records of the
         /// same type.
         /// For element named this must be a valid CSS class name and a valid JavaScript identifier.

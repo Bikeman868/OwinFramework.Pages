@@ -7,7 +7,7 @@
     {
         public ModuleRecord()
         {
-            ElementType = "Module";
+            RecordType = "Module";
         }
     }
 }

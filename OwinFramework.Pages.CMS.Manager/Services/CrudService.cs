@@ -277,27 +277,27 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             var pageVersion = request.Body<PageVersionRecord>();
             var websiteVersionId = request.Parameter<long?>("websiteVersionId");
 
-            //var result = _dataLayer.CreatePageVersion(request.Identity, pageVersion);
+            var result = _dataLayer.CreatePageVersion(request.Identity, pageVersion);
 
-            //if (!result.Success)
-            //{
-            //    request.BadRequest(result.DebugMessage);
-            //    return;
-            //}
+            if (!result.Success)
+            {
+                request.BadRequest(result.DebugMessage);
+                return;
+            }
 
-            //page = _dataLayer.GetPageVersion(result.NewRecordId, 1, (p, v) => p);
-            //if (page == null)
-            //{
-            //    request.HttpStatus(
-            //        HttpStatusCode.InternalServerError, 
-            //        "After creating the new page it could not be found in the database");
-            //    return;
-            //}
+            pageVersion = _dataLayer.GetPageVersion(result.NewRecordId, 1, (p, v) => v);
+            if (pageVersion == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError, 
+                    "After creating the new page version it could not be found in the database");
+                return;
+            }
 
-            //if (websiteVersionId.HasValue)
-            //{
-            //    _dataLayer.AddPageToWebsiteVersion(request.Identity, page.ElementId, 1, websiteVersionId.Value);
-            //}
+            if (websiteVersionId.HasValue)
+            {
+                _dataLayer.AddPageToWebsiteVersion(request.Identity, pageVersion.ElementVersionId, websiteVersionId.Value);
+            }
 
             request.Success(pageVersion);
         }
@@ -322,30 +322,90 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             var pageVersionId = request.Parameter<long>("id");
             var changes = request.Body<List<PropertyChange>>();
 
-            //var result = _dataLayer.UpdatePageVersion(request.Identity, pageVersionId, changes);
+            var result = _dataLayer.UpdatePageVersion(request.Identity, pageVersionId, changes);
 
-            //if (result.Success)
-            //{
+            if (result.Success)
+            {
                 var pageVersion = _dataLayer.GetPageVersion(pageVersionId, (p, v) => v);
                 request.Success(pageVersion);
-            //}
-            //else
-            //{
-            //    request.BadRequest(result.DebugMessage);
-            //}
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(UrlPath = "pageversion/{id}/routes", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void UpdatePageVersionRoutes(IEndpointRequest request)
+        {
+            var pageVersionId = request.Parameter<long>("id");
+            var routes = request.Body<List<PageRouteRecord>>();
+
+            var result = _dataLayer.UpdatePageVersionRoutes(request.Identity, pageVersionId, routes);
+
+            if (result.Success)
+            {
+                var pageVersion = _dataLayer.GetPageVersion(pageVersionId, (p, v) => v);
+                request.Success(pageVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(UrlPath = "pageversion/{id}/zones", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void UpdatePageVersionZones(IEndpointRequest request)
+        {
+            var pageVersionId = request.Parameter<long>("id");
+            var zones = request.Body<List<LayoutZoneRecord>>();
+
+            var result = _dataLayer.UpdatePageVersionLayoutZones(request.Identity, pageVersionId, zones);
+
+            if (result.Success)
+            {
+                var pageVersion = _dataLayer.GetPageVersion(pageVersionId, (p, v) => v);
+                request.Success(pageVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(UrlPath = "pageversion/{id}/components", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        private void UpdatePageVersionComponents(IEndpointRequest request)
+        {
+            var pageVersionId = request.Parameter<long>("id");
+            var components = request.Body<List<ElementComponentRecord>>();
+
+            var result = _dataLayer.UpdatePageVersionComponents(request.Identity, pageVersionId, components);
+
+            if (result.Success)
+            {
+                var pageVersion = _dataLayer.GetPageVersion(pageVersionId, (p, v) => v);
+                request.Success(pageVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
         }
 
         [Endpoint(UrlPath = "pageversion/{id}", Methods = new[] {Method.Delete}, RequiredPermission = Permissions.EditPage)]
         [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
         private void DeletePageVersion(IEndpointRequest request)
         {
-            //var pageVersionId = request.Parameter<long>("id");
-            //var result = _dataLayer.DeletePageVersion(request.Identity, pageVersionId);
+            var pageVersionId = request.Parameter<long>("id");
+            var result = _dataLayer.DeletePageVersion(request.Identity, pageVersionId);
 
-            //if (result.Success)
-            //    request.Success(new { pageVersionId });
-            //else
-            //    request.BadRequest(result.DebugMessage);
+            if (result.Success)
+                request.Success(new { pageVersionId });
+            else
+                request.BadRequest(result.DebugMessage);
         }
 
         #endregion

@@ -4,6 +4,7 @@ using System.Linq;
 using OwinFramework.Pages.CMS.Runtime.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
+using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.CMS.Manager.Data
 {
@@ -29,7 +30,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             }
         }
 
-        UpdateResult IDatabaseUpdater.UpdateEnvironment(string identity, long environmentId, List<PropertyChange> changes)
+        UpdateResult IDatabaseUpdater.UpdateEnvironment(string identity, long environmentId, IEnumerable<PropertyChange> changes)
         {
             var environment = _environments.FirstOrDefault(p => p.EnvironmentId == environmentId);
             if (environment == null) return new UpdateResult("environment_not_found", "No environment found with id " + environmentId);
@@ -92,7 +93,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             }
         }
 
-        UpdateResult IDatabaseUpdater.UpdateWebsiteVersion(string identity, long websiteVersionId, List<PropertyChange> changes)
+        UpdateResult IDatabaseUpdater.UpdateWebsiteVersion(string identity, long websiteVersionId, IEnumerable<PropertyChange> changes)
         {
             var websiteVersion = _websiteVersions.FirstOrDefault(p => p.WebsiteVersionId == websiteVersionId);
             if (websiteVersion == null) return new UpdateResult("website_version_not_found", "No website version found with id " + websiteVersionId);
@@ -165,7 +166,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             }
         }
 
-        UpdateResult IDatabaseUpdater.UpdatePage(string identity, long pageId, List<PropertyChange> changes)
+        UpdateResult IDatabaseUpdater.UpdatePage(string identity, long pageId, IEnumerable<PropertyChange> changes)
         {
             var page = _pages.FirstOrDefault(p => p.ElementId == pageId);
             if (page == null) return new UpdateResult("page_not_found", "No page found with id " + pageId);
@@ -255,6 +256,141 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 });
 
                 _websiteVersionPages = websiteVersionPages.ToArray();
+            }
+
+            return new UpdateResult();
+        }
+
+        #endregion
+
+        #region Page versions
+
+        CreateResult IDatabaseUpdater.CreatePageVersion(string identity, PageVersionRecord pageVersion)
+        {
+            lock (_updateLock)
+            {
+                pageVersion.ElementVersionId = _pageVersions.OrderByDescending(pv => pv.ElementVersionId).First().ElementVersionId + 1;
+                pageVersion.CreatedWhen = DateTime.UtcNow;
+                pageVersion.CreatedBy = identity;
+
+                var pageVersions = _pageVersions.ToList();
+                pageVersions.Add(pageVersion);
+                _pageVersions = pageVersions.ToArray();
+
+                return new CreateResult(pageVersion.ElementVersionId);
+            }
+        }
+
+        UpdateResult IDatabaseUpdater.UpdatePageVersion(string identity, long pageVersionId, IEnumerable<PropertyChange> changes)
+        {
+            var pageVersion = _pageVersions.FirstOrDefault(p => p.ElementVersionId == pageVersionId);
+            if (pageVersion == null) return new UpdateResult("page_version_not_found", "No page version found with id " + pageVersionId);
+
+            foreach (var change in changes)
+            {
+                switch (change.PropertyName.ToLower())
+                {
+                    case "name":
+                        pageVersion.Name = change.PropertyValue;
+                        break;
+                    case "displayname":
+                        pageVersion.DisplayName = change.PropertyValue;
+                        break;
+                    case "description":
+                        pageVersion.Description = change.PropertyValue;
+                        break;
+                    case "version":
+                        pageVersion.Version = int.Parse(change.PropertyValue);
+                        break;
+                    case "versionName":
+                        pageVersion.VersionName = change.PropertyValue;
+                        break;
+                    case "moduleName":
+                        pageVersion.ModuleName = change.PropertyValue;
+                        break;
+                    case "assetDeployment":
+                        pageVersion.AssetDeployment = (AssetDeployment)Enum.Parse(typeof(AssetDeployment), change.PropertyValue);
+                        break;
+                    case "masterPageId":
+                        pageVersion.MasterPageId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
+                        break;
+                    case "layoutId":
+                        pageVersion.LayoutId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
+                        break;
+                    case "layoutName":
+                        pageVersion.LayoutName = change.PropertyValue;
+                        break;
+                    case "canonicalUrl":
+                        pageVersion.CanonicalUrl = change.PropertyValue;
+                        break;
+                    case "title":
+                        pageVersion.Title = change.PropertyValue;
+                        break;
+                    case "bodyStyle":
+                        pageVersion.BodyStyle = change.PropertyValue;
+                        break;
+                    case "permission":
+                        pageVersion.RequiredPermission = change.PropertyValue;
+                        break;
+                    case "assetPath":
+                        pageVersion.AssetPath = change.PropertyValue;
+                        break;
+                }
+            }
+
+            return new UpdateResult();
+        }
+
+        UpdateResult IDatabaseUpdater.UpdatePageVersionRoutes(string identity, long pageVersionId, IEnumerable<PageRouteRecord> routes)
+        {
+            var pageVersion = _pageVersions.FirstOrDefault(p => p.ElementVersionId == pageVersionId);
+            if (pageVersion == null) return new UpdateResult("page_version_not_found", "No page version found with id " + pageVersionId);
+
+            pageVersion.Routes = routes.ToArray();
+
+            return new UpdateResult();
+        }
+
+        UpdateResult IDatabaseUpdater.UpdatePageVersionLayoutZones(string identity, long pageVersionId, IEnumerable<LayoutZoneRecord> layoutZones)
+        {
+            var pageVersion = _pageVersions.FirstOrDefault(p => p.ElementVersionId == pageVersionId);
+            if (pageVersion == null) return new UpdateResult("page_version_not_found", "No page version found with id " + pageVersionId);
+
+            pageVersion.LayoutZones = layoutZones.ToArray();
+
+            return new UpdateResult();
+        }
+
+        UpdateResult IDatabaseUpdater.UpdatePageVersionComponents(string identity, long pageVersionId, IEnumerable<ElementComponentRecord> components)
+        {
+            var pageVersion = _pageVersions.FirstOrDefault(p => p.ElementVersionId == pageVersionId);
+            if (pageVersion == null) return new UpdateResult("page_version_not_found", "No page version found with id " + pageVersionId);
+
+            pageVersion.Components = components.ToArray();
+
+            return new UpdateResult();
+        }
+
+        DeleteResult IDatabaseUpdater.DeletePageVersion(string identity, long pageVersionId)
+        {
+            var pageVersion = _pageVersions.FirstOrDefault(p => p.ElementVersionId == pageVersionId);
+            if (pageVersion == null) return new DeleteResult("page_version_not_found", "No page version found with id " + pageVersionId);
+
+            lock (_updateLock)
+            {
+                _pageVersions = _pageVersions.Where(p => p.ElementVersionId != pageVersionId).ToArray();
+            }
+
+            return new DeleteResult();
+        }
+
+        UpdateResult IDatabaseUpdater.RemovePageFromWebsite(string identity, long pageId, long websiteVersionId)
+        {
+            lock (_updateLock)
+            {
+                _websiteVersionPages =
+                    _websiteVersionPages.Where(p => p.WebsiteVersionId != websiteVersionId || p.PageId != pageId)
+                        .ToArray();
             }
 
             return new UpdateResult();

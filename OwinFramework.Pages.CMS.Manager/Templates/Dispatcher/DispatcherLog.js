@@ -38,17 +38,14 @@
                     if (message.websiteVersionChanges && message.websiteVersionChanges.length > 0) {
                         updateData.changes += "Website version changes. ";
                     }
-                    if (message.newElements && message.newElements.length > 0) {
-                        updateData.changes += "New elements. ";
+                    if (message.newRecords && message.newRecords.length > 0) {
+                        updateData.changes += "New records. ";
                     }
-                    if (message.deletedElements && message.deletedElements.length > 0) {
-                        updateData.changes += "Deleted elements. ";
+                    if (message.deletedRecords && message.deletedRecords.length > 0) {
+                        updateData.changes += "Deleted records. ";
                     }
-                    if (message.newVersions && message.newVersions.length > 0) {
-                        updateData.changes += "New element versions. ";
-                    }
-                    if (message.deletedElementVersions && message.deletedElementVersions.length > 0) {
-                        updateData.changes += "Deleted element versions. ";
+                    if (message.childListChanges && message.childListChanges.length > 0) {
+                        updateData.changes += "Child list changes. ";
                     }
                     vm.messages.unshift(updateData);
                 });

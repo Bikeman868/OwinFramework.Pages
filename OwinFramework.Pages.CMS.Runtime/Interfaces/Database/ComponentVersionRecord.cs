@@ -5,5 +5,9 @@
     /// </summary>
     public class ComponentVersionRecord: ElementVersionRecordBase
     {
+        public ComponentVersionRecord()
+        {
+            RecordType = "ComponentVersion";
+        }
     }
 }

@@ -6,16 +6,16 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate
     /// <summary>
     /// This is used to identify a specific element
     /// </summary>
-    public class ElementReference
+    public class RecordReference
     {
         /// <summary>
         /// The element type. Can be 'Layout', 'Region' etc
         /// </summary>
-        [JsonProperty("elementType")]
-        public string ElementType { get; set; }
+        [JsonProperty("recordType")]
+        public string RecordType { get; set; }
 
         /// <summary>
-        /// The unique ID of the element
+        /// The unique ID of the record
         /// </summary>
         [JsonProperty("id")]
         public long ElementId { get; set; }

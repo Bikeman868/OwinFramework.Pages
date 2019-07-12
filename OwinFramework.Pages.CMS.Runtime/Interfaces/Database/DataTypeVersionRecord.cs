@@ -10,6 +10,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class DataTypeVersionRecord: ElementVersionRecordBase
     {
+        public DataTypeVersionRecord()
+        {
+            RecordType = "DataTypeVersion";
+        }
+
         /// <summary>
         /// The name of the .Net Assembly that contains this type
         /// </summary>

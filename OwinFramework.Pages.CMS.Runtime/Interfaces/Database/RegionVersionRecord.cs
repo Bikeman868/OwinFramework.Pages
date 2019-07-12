@@ -10,6 +10,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class RegionVersionRecord: ElementVersionRecordBase
     {
+        public RegionVersionRecord()
+        {
+            RecordType = "RegionVersion";
+        }
+
         /// <summary>
         /// Specifies that the region contains a layout defined in code and
         /// referenced by name

@@ -71,21 +71,19 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 message = _nextMessage;
                 _nextMessage = new MessageDto
                 {
-                    DeletedElementVersions = new List<ElementVersionReference>(),
-                    DeletedElements = new List<ElementReference>(),
-                    NewElementVersions = new List<ElementVersionReference>(),
-                    NewElements = new List<ElementReference>(),
+                    DeletedRecords = new List<RecordReference>(),
+                    NewRecords = new List<RecordReference>(),
                     PropertyChanges = new List<LiveUpdatePropertyChange>(),
-                    WebsiteVersionChanges = new List<WebsiteVersionChange>()
+                    WebsiteVersionChanges = new List<WebsiteVersionChange>(),
+                    ChildListChanges = new List<RecordChildrenReference>()
                 };
             }
 
             if (message == null) return;
 
-            if (message.DeletedElementVersions.Count > 0 ||
-                message.DeletedElements.Count > 0 ||
-                message.NewElementVersions.Count > 0 ||
-                message.NewElements.Count > 0 ||
+            if (message.ChildListChanges.Count > 0 ||
+                message.DeletedRecords.Count > 0 ||
+                message.NewRecords.Count > 0 ||
                 message.PropertyChanges.Count > 0 ||
                 message.WebsiteVersionChanges.Count > 0)
             {
@@ -108,10 +106,10 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
             lock (_liveUpdateLock)
             {
-                _nextMessage.NewElements.Add(
-                    new ElementReference
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
                     {
-                        ElementType = environment.ElementType,
+                        RecordType = environment.RecordType,
                         ElementId = result.NewRecordId
                     });
             }
@@ -119,12 +117,12 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
-        UpdateResult IDatabaseUpdater.UpdateEnvironment(string identity, long environmentId, List<DatabasePropertyChange> changes)
+        UpdateResult IDatabaseUpdater.UpdateEnvironment(string identity, long environmentId, IEnumerable<DatabasePropertyChange> changes)
         {
             var result = _databaseUpdater.UpdateEnvironment(identity, environmentId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate(new EnvironmentRecord().ElementType, environmentId, changes);
+            AddChangesToLiveUpdate(new EnvironmentRecord().RecordType, environmentId, changes);
 
             return result;
         }
@@ -136,10 +134,10 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
             lock (_liveUpdateLock)
             {
-                _nextMessage.DeletedElements.Add(
-                    new ElementReference
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
                     {
-                        ElementType = new EnvironmentRecord().ElementType,
+                        RecordType = new EnvironmentRecord().RecordType,
                         ElementId = environmentId
                     });
             }
@@ -154,10 +152,10 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
             lock (_liveUpdateLock)
             {
-                _nextMessage.NewElements.Add(
-                    new ElementReference
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
                     {
-                        ElementType = websiteVersion.ElementType,
+                        RecordType = websiteVersion.RecordType,
                         ElementId = result.NewRecordId
                     });
             }
@@ -165,12 +163,12 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
-        UpdateResult IDatabaseUpdater.UpdateWebsiteVersion(string identity, long websiteVersionId, List<DatabasePropertyChange> changes)
+        UpdateResult IDatabaseUpdater.UpdateWebsiteVersion(string identity, long websiteVersionId, IEnumerable<DatabasePropertyChange> changes)
         {
             var result = _databaseUpdater.UpdateWebsiteVersion(identity, websiteVersionId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate(new WebsiteVersionRecord().ElementType, websiteVersionId, changes);
+            AddChangesToLiveUpdate(new WebsiteVersionRecord().RecordType, websiteVersionId, changes);
 
             return result;
         }
@@ -182,10 +180,10 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
             lock (_liveUpdateLock)
             {
-                _nextMessage.DeletedElements.Add(
-                    new ElementReference
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
                     {
-                        ElementType = new WebsiteVersionRecord().ElementType,
+                        RecordType = new WebsiteVersionRecord().RecordType,
                         ElementId = websiteVersionId
                     });
             }
@@ -200,10 +198,10 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
             lock (_liveUpdateLock)
             {
-                _nextMessage.NewElements.Add(
-                    new ElementReference
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
                     {
-                        ElementType = page.ElementType,
+                        RecordType = page.RecordType,
                         ElementId = result.NewRecordId
                     });
             }
@@ -211,12 +209,12 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
-        UpdateResult IDatabaseUpdater.UpdatePage(string identity, long pageId, List<DatabasePropertyChange> changes)
+        UpdateResult IDatabaseUpdater.UpdatePage(string identity, long pageId, IEnumerable<DatabasePropertyChange> changes)
         {
             var result = _databaseUpdater.UpdatePage(identity, pageId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate(new PageRecord().ElementType, pageId, changes);
+            AddChangesToLiveUpdate(new PageRecord().RecordType, pageId, changes);
 
             return result;
         }
@@ -228,11 +226,116 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
             lock (_liveUpdateLock)
             {
-                _nextMessage.DeletedElements.Add(
-                    new ElementReference
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
                     {
-                        ElementType = new PageRecord().ElementType,
+                        RecordType = new PageRecord().RecordType,
                         ElementId = pageId
+                    });
+            }
+
+            return result;
+        }
+
+        CreateResult IDatabaseUpdater.CreatePageVersion(string identity, PageVersionRecord pageVersion)
+        {
+            var result = _databaseUpdater.CreatePageVersion(identity, pageVersion);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = pageVersion.RecordType,
+                        ElementId = result.NewRecordId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdatePageVersion(string identity, long pageVersionId, IEnumerable<DatabasePropertyChange> changes)
+        {
+            var result = _databaseUpdater.UpdatePageVersion(identity, pageVersionId, changes);
+            if (!result.Success) return result;
+
+            AddChangesToLiveUpdate(new PageVersionRecord().RecordType, pageVersionId, changes);
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdatePageVersionRoutes(string identity, long pageVersionId, IEnumerable<PageRouteRecord> routes)
+        {
+            var result = _databaseUpdater.UpdatePageVersionRoutes(identity, pageVersionId, routes);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.ChildListChanges.Add(
+                    new RecordChildrenReference
+                    {
+                        RecordType = new PageVersionRecord().RecordType,
+                        ElementId = pageVersionId,
+                        ChildRecordType = "Route"
+                    });
+            }
+
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdatePageVersionLayoutZones(string identity, long pageVersionId, IEnumerable<LayoutZoneRecord> layoutZones)
+        {
+            var result = _databaseUpdater.UpdatePageVersionLayoutZones(identity, pageVersionId, layoutZones);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.ChildListChanges.Add(
+                    new RecordChildrenReference
+                    {
+                        RecordType = new PageVersionRecord().RecordType,
+                        ElementId = pageVersionId,
+                        ChildRecordType = "LayoutZone"
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdatePageVersionComponents(string identity, long pageVersionId, IEnumerable<ElementComponentRecord> components)
+        {
+            var result = _databaseUpdater.UpdatePageVersionComponents(identity, pageVersionId, components);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.ChildListChanges.Add(
+                    new RecordChildrenReference
+                    {
+                        RecordType = new PageVersionRecord().RecordType,
+                        ElementId = pageVersionId,
+                        ChildRecordType = "Component"
+                    });
+            }
+
+
+            return result;
+        }
+
+        DeleteResult IDatabaseUpdater.DeletePageVersion(string identity, long pageVersionId)
+        {
+            var result = _databaseUpdater.DeletePageVersion(identity, pageVersionId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = new PageVersionRecord().RecordType,
+                        ElementId = pageVersionId
                     });
             }
 
@@ -250,7 +353,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     new WebsiteVersionChange
                     {
                         WebsiteVersionId = websiteVersionId,
-                        ElementType = new PageRecord().ElementType,
+                        ElementType = new PageRecord().RecordType,
                         ElementId = pageId,
                         OldElementVersionId = 0, // TODO: find correct value
                         NewElementVersionId = 0 // TODO: find correct value
@@ -271,10 +374,30 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     new WebsiteVersionChange
                     {
                         WebsiteVersionId = websiteVersionId,
-                        ElementType = new PageRecord().ElementType,
+                        ElementType = new PageRecord().RecordType,
                         ElementId = 0, // TODO: find correct value
                         OldElementVersionId = 0, // TODO: find correct value
                         NewElementVersionId = pageVersionId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.RemovePageFromWebsite(string identity, long pageId, long websiteVersionId)
+        {
+            var result = _databaseUpdater.RemovePageFromWebsite(identity, pageId, websiteVersionId);
+            if (!result.Success) return result;
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = new PageRecord().RecordType,
+                        ElementId = pageId,
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = null
                     });
             }
 
@@ -287,7 +410,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         private readonly Dictionary<Type, TypeDefinition> _typeDefinitions = new Dictionary<Type, TypeDefinition>();
 
-        private void AddChangesToLiveUpdate(string elementType, long elementId, List<DatabasePropertyChange> changes)
+        private void AddChangesToLiveUpdate(string elementType, long elementId, IEnumerable<DatabasePropertyChange> changes)
         {
             lock (_liveUpdateLock)
             {
@@ -295,7 +418,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     changes
                         .Select(property => new LiveUpdatePropertyChange
                         {
-                            ElementType = elementType,
+                            RecordType = elementType,
                             Id = elementId,
                             PropertyName = property.PropertyName,
                             PropertyValue = property.PropertyValue
@@ -311,7 +434,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             {
                 _nextMessage.PropertyChanges.AddRange(
                     typeDefinition.Properties
-                        .Select(property => property.BuildChange(oldElement, newElement, newElement.ElementType, newElement.ElementId))
+                        .Select(property => property.BuildChange(oldElement, newElement, newElement.RecordType, newElement.ElementId))
                         .Where(change => change != null));
             }
         }
@@ -381,7 +504,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
                 return new LiveUpdatePropertyChange
                 {
-                    ElementType = elementType,
+                    RecordType = elementType,
                     Id = elementId,
                     PropertyName = Name,
                     PropertyValue = ReferenceEquals(newValue, null) 

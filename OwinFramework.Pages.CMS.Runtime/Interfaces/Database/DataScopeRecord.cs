@@ -10,6 +10,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class DataScopeRecord: RecordBase
     {
+        public DataScopeRecord()
+        {
+            RecordType = "DataScope";
+        }
+
         /// <summary>
         /// The unique ID of this data scope
         /// </summary>

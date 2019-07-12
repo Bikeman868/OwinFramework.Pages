@@ -11,6 +11,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class ElementPropertyRecord: RecordBase
     {
+        public ElementPropertyRecord()
+        {
+            RecordType = "ElementProperty";
+        }
+
         /// <summary>
         /// Primary key that uniquely identifies this element property in the database.
         /// </summary>

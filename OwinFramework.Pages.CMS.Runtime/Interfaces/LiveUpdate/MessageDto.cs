@@ -42,34 +42,28 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate
         public List<PropertyChange> PropertyChanges { get; set; }
 
         /// <summary>
-        /// A list of the elements whos live version was changed to a different
-        /// version of the element on a specific version of the website
+        /// A list of the records who's live version was changed to a different
+        /// version of the record on a specific version of the website
         /// </summary>
         [JsonProperty("websiteVersionChanges")]
         public List<WebsiteVersionChange> WebsiteVersionChanges { get; set; }
 
         /// <summary>
-        /// A list of the elements that were added to the website
+        /// A list of the records that were added to the database
         /// </summary>
-        [JsonProperty("newElements")]
-        public List<ElementReference> NewElements { get; set; }
+        [JsonProperty("newRecords")]
+        public List<RecordReference> NewRecords { get; set; }
 
         /// <summary>
-        /// A list of the elements that were deleted from the website
+        /// A list of the records that were deleted from the database
         /// </summary>
-        [JsonProperty("deletedElements")]
-        public List<ElementReference> DeletedElements { get; set; }
+        [JsonProperty("deletedRecords")]
+        public List<RecordReference> DeletedRecords { get; set; }
 
         /// <summary>
-        /// A list of the element versions that were added to the website
+        /// A list of the records whose list of children was changed
         /// </summary>
-        [JsonProperty("newVersions")]
-        public List<ElementVersionReference> NewElementVersions { get; set; }
-
-        /// <summary>
-        /// A list of the element versions that were deleted from the website
-        /// </summary>
-        [JsonProperty("deletedElementVersions")]
-        public List<ElementVersionReference> DeletedElementVersions { get; set; }
+        [JsonProperty("childListChanges")]
+        public List<RecordChildrenReference> ChildListChanges { get; set; }
     }
 }

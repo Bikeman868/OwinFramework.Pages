@@ -27,14 +27,16 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate
 
         /// <summary>
         /// The unique id of the element version that was being 
-        /// used on this version of the website
+        /// used on this version of the website or null if this
+        /// is a new element for this version of the website
         /// </summary>
-        public long OldElementVersionId { get; set; }
+        public long? OldElementVersionId { get; set; }
 
         /// <summary>
         /// The unique id of the element version that should noe
-        /// be used  on this version of the website
+        /// be used  on this version of the website or null if this
+        /// element was removed from this version of the website
         /// </summary>
-        public long NewElementVersionId { get; set; }
+        public long? NewElementVersionId { get; set; }
     }
 }

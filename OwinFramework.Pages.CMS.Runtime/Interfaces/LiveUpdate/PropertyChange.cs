@@ -12,8 +12,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.LiveUpdate
         /// <summary>
         /// The element type. Can be 'Layout', 'Region' etc
         /// </summary>
-        [JsonProperty("elementType")]
-        public string ElementType { get; set; }
+        [JsonProperty("recordType")]
+        public string RecordType { get; set; }
 
         /// <summary>
         /// The unique ID of the element or element version affected

@@ -7,7 +7,7 @@
     {
         public ComponentRecord()
         {
-            ElementType = "Component";
+            RecordType = "Component";
         }
     }
 }

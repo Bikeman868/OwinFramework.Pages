@@ -11,7 +11,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     {
         public DataTypeRecord()
         {
-            ElementType = "DataType";
+            RecordType = "DataType";
         }
     }
 }

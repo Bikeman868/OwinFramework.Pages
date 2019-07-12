@@ -8,6 +8,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class PageVersionRecord: ElementVersionRecordBase
     {
+        public PageVersionRecord()
+        {
+            RecordType = "PageVersion";
+        }
+
         /// <summary>
         /// The PageId of a page to copy settings from where they
         /// are not defined within this page

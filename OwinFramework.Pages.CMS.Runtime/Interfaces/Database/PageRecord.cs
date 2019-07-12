@@ -7,7 +7,7 @@
     {
         public PageRecord()
         {
-            ElementType = "Page";
+            RecordType = "Page";
         }
     }
 }

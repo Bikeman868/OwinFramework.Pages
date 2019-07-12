@@ -105,9 +105,9 @@
     <Compile Include="Interfaces\IDataLayer.cs" />
     <Compile Include="Interfaces\ILiveUpdateReceiver.cs" />
     <Compile Include="Interfaces\ILiveUpdateSender.cs" />
-    <Compile Include="Interfaces\LiveUpdate\ElementVersionReference.cs" />
     <Compile Include="Interfaces\LiveUpdate\ILiveUpdateRecipient.cs" />
-    <Compile Include="Interfaces\LiveUpdate\ElementReference.cs" />
+    <Compile Include="Interfaces\LiveUpdate\RecordChildrenReference.cs" />
+    <Compile Include="Interfaces\LiveUpdate\RecordReference.cs" />
     <Compile Include="Interfaces\LiveUpdate\WebsiteVersionChange.cs" />
     <Compile Include="Interfaces\LiveUpdate\PropertyChange.cs" />
     <Compile Include="Synchronization\DatabaseSynchronizer.cs" />

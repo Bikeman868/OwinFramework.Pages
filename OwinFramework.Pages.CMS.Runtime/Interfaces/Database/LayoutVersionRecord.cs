@@ -7,6 +7,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class LayoutVersionRecord: ElementVersionRecordBase
     {
+        public LayoutVersionRecord()
+        {
+            RecordType = "LayoutVersion";
+        }
+
         /// <summary>
         /// The names of the regions within this layout separated by commas. 
         /// Regions can be grouped by enclusing them in round brackets. For

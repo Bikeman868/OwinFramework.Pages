@@ -5,5 +5,10 @@
     /// </summary>
     public class ModuleVersionRecord: ElementVersionRecordBase
     {
+        public ModuleVersionRecord()
+        {
+            RecordType = "ModuleVersion";
+        }
+
     }
 }

@@ -244,5 +244,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         T GetComponentVersion<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map);
 
         #endregion
+
+        #region Change history
+
+        HistoryPeriodRecord GetHistory(string recordType, long id, string bookmark);
+        HistoryEventRecord[] GetHistorySummary(long summaryId);
+
+        #endregion
     }
 }

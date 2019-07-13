@@ -80,6 +80,12 @@ namespace OwinFramework.Pages.CMS.Manager
                 .CreateComponent("listClient")
                 .Build();
 
+            fluentBuilder.BuildUpService(null, typeof(HistoryService))
+                .Name("history")
+                .Route(_configuration.ServiceBasePath + "history/", new []{ Method.Get }, 0)
+                .CreateComponent("historyClient")
+                .Build();
+
             // Load templates and accumulate all of the CSS and JS assets
 
             var scriptModules = new List<string>();
@@ -133,6 +139,7 @@ namespace OwinFramework.Pages.CMS.Manager
                 .Name("editor")
                 .NeedsComponent("crudClient")
                 .NeedsComponent("listClient")
+                .NeedsComponent("historyClient")
                 .AddTemplate(cmsManagerTemplatePath));
 
             // This region of the CMS manager is for debug tools

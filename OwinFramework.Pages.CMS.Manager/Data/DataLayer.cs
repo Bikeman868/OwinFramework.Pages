@@ -643,6 +643,16 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return _databaseReader.GetPages(map, predicate);
         }
 
+        HistoryPeriodRecord IDatabaseReader.GetHistory(string recordType, long id, string bookmark)
+        {
+            return _databaseReader.GetHistory(recordType, id, bookmark);
+        }
+
+        HistoryEventRecord[] IDatabaseReader.GetHistorySummary(long summaryId)
+        {
+            return _databaseReader.GetHistorySummary(summaryId);
+        }
+
         #endregion
     }
 }

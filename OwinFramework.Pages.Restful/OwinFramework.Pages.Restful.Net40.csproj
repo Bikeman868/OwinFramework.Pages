@@ -50,6 +50,7 @@
     <Compile Include="Interfaces\IResponseSerializer.cs" />
     <Compile Include="Interfaces\IRequestDeserializer.cs" />
     <Compile Include="Package.cs" />
+    <Compile Include="Parameters\OptionalString.cs" />
     <Compile Include="Parameters\RequiredString.cs" />
     <Compile Include="Parameters\ParameterParser.cs" />
     <Compile Include="Parameters\NonZeroValue.cs" />

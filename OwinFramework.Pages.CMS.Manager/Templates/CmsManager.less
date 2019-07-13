@@ -362,10 +362,11 @@ div.cms_manager {
     ul.cms_tabs {
         white-space: nowrap;
         background: lighten(@button-background, 32%);
+        border-radius: 5px;
         li {
             display: inline-block;
             border: 1px solid @button-shadow-color;
-            border-radius: 3px;
+            border-radius: 5px;
             padding: 10px 15px;
             font-size: larger;
             letter-spacing: 1px;
@@ -377,6 +378,7 @@ div.cms_manager {
         li.cms_is_active{
             border-bottom: 1px solid @tab-selected-color;
             background: @tab-selected-color;
+            border-radius: 0;
         }
     }
     .cms_field__name {

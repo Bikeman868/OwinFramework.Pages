@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Linq;
+using Newtonsoft.Json;
 using OwinFramework.Pages.CMS.Manager.Data;
+using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Enums;
 using Sample4.ViewModels;
 
 namespace Sample4.CmsData
 {
-    internal class StaticData: TestDatabaseUpdaterBase
+    internal class StaticData: TestDatabaseUpdaterBase, IDatabaseReader
     {
         public StaticData()
         {
@@ -577,5 +579,70 @@ namespace Sample4.CmsData
             #endregion
         }
 
+        HistoryPeriodRecord IDatabaseReader.GetHistory(string recordType, long id, string bookmark)
+        {
+            return new HistoryPeriodRecord
+            {
+                RecordType = recordType,
+                RecordId = id,
+                EndDateTime = DateTime.UtcNow,
+                StartDateTime = DateTime.UtcNow.AddDays(-1),
+                Bookmark = null,
+                Summaries = new[]
+                {
+                    new HistorySummaryRecord
+                    {
+                        SummaryId = 1,
+                        When = DateTime.UtcNow.AddMinutes(-1),
+                        Identity = "somebody",
+                        ChangeSummary = "Created a page and set the title field"
+                    }
+                }
+            };
+        }
+
+        HistoryEventRecord[] IDatabaseReader.GetHistorySummary(long summaryId)
+        {
+            if (summaryId != 1) return null;
+
+            var serializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Include
+            };
+
+            return new[]
+            {
+                new HistoryEventRecord
+                {
+                    EventId = 1,
+                    RecordType = "Page",
+                    RecordId = 1,
+                    When = DateTime.UtcNow,
+                    Identity = "somebody",
+                    ChangeDetails = JsonConvert.SerializeObject(
+                        new HistoryChangeDetails
+                        {
+                            ChangeType = "Created"
+                        }, Formatting.None, serializerSettings)
+                },
+                new HistoryEventRecord
+                {
+                    EventId = 2,
+                    RecordType = "Page",
+                    RecordId = 1,
+                    When = DateTime.UtcNow,
+                    Identity = "somebody",
+                    ChangeDetails = JsonConvert.SerializeObject(
+                        new HistoryChangeDetails
+                        {
+                            ChangeType = "Modified",
+                            FieldName = "title",
+                            OldValue = "Page 1",
+                            NewValue = "Customer orders"
+                        }, Formatting.None, serializerSettings)
+                }
+            };
+        }
     }
 }

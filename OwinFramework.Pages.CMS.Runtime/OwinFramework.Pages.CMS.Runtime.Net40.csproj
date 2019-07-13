@@ -65,7 +65,8 @@
     <Compile Include="Configuration\CmsConfiguration.cs" />
     <Compile Include="Data\TestDatabaseReaderBase.cs" />
     <Compile Include="Data\TestDatabaseReader.cs" />
-    <Compile Include="Interfaces\Database\AuditRecord.cs" />
+    <Compile Include="Interfaces\Database\HistoryChangeDetails.cs" />
+    <Compile Include="Interfaces\Database\HistoryEventRecord.cs" />
     <Compile Include="Interfaces\Database\DeleteResult.cs" />
     <Compile Include="Interfaces\Database\DataScopeRecord.cs" />
     <Compile Include="Interfaces\Database\DataTypeVersionRecord.cs" />
@@ -74,6 +75,8 @@
     <Compile Include="Interfaces\Database\ComponentRecord.cs" />
     <Compile Include="Interfaces\Database\ComponentVersionRecord.cs" />
     <Compile Include="Interfaces\Database\ElementPropertyValueRecord.cs" />
+    <Compile Include="Interfaces\Database\HistorySummaryRecord.cs" />
+    <Compile Include="Interfaces\Database\HistoryPeriodRecord.cs" />
     <Compile Include="Interfaces\Database\PropertyChange.cs" />
     <Compile Include="Interfaces\Database\RecordBase.cs" />
     <Compile Include="Interfaces\Database\ModuleVersionRecord.cs" />

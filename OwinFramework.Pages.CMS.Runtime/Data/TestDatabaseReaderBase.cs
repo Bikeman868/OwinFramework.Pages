@@ -363,5 +363,19 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return map(dataType, dataTypeVersion);
         }
 
+        HistoryPeriodRecord IDatabaseReader.GetHistory(string recordType, long id, string bookmark)
+        {
+            return new HistoryPeriodRecord
+            {
+                RecordType = recordType,
+                RecordId = id,
+                EndDateTime = DateTime.UtcNow,
+            };
+        }
+
+        HistoryEventRecord[] IDatabaseReader.GetHistorySummary(long summaryId)
+        {
+            return null;
+        }
     }
 }

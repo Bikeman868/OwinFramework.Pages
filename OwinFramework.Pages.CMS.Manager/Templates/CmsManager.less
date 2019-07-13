@@ -9,6 +9,8 @@
 @button-color: white;
 @button-background: cornflowerblue;
 @button-shadow-color: #e0e0ff;
+@tab-text-color: navy;
+@tab-selected-color: white;
 
 @table-heading-background: lighten(cornflowerblue, 30%);
 @table-background: white;
@@ -328,6 +330,7 @@ div.cms_manager {
             margin: 6px 3px;
             font-size: larger;
             font-weight: 500;
+            letter-spacing: 1px;
         }
         button:hover {
             background-color: darken(@button-background, 10%);
@@ -354,6 +357,26 @@ div.cms_manager {
         a:hover {
             color: @button-color;
             background-color: @button-background;
+        }
+    }
+    ul.cms_tabs {
+        white-space: nowrap;
+        background: lighten(@button-background, 32%);
+        li {
+            display: inline-block;
+            border: 1px solid @button-shadow-color;
+            border-radius: 3px;
+            padding: 10px 15px;
+            font-size: larger;
+            letter-spacing: 1px;
+            a, a:visited, a:hover { 
+                text-decoration: none; 
+                color: @tab-text-color;
+            }
+        }
+        li.cms_is_active{
+            border-bottom: 1px solid @tab-selected-color;
+            background: @tab-selected-color;
         }
     }
     .cms_field__name {

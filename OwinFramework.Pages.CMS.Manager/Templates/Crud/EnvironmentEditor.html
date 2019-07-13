@@ -1,72 +1,78 @@
 ﻿<div id="cms_environment_editor" class="cms_panel" v-if="visible">
-    <div v-if="currentEnvironment == undefined && mode === 'view'">
-        <h2>No environment selected</h2>
-        <p>
-            No environment currently selected for editing. Choose an environment from the list on the left. If the
-            list of environments is empty this is because you have not created any environments yet.
-        </p>
-        <div class="cms_button_bar">
-            <button type="button" v-on:click="newEnvironment">New</button>
-        </div>
-    </div>
-    <div v-else>
-        <div v-if="mode === 'new' || mode === 'edit'">
-            <h2 v-if="mode === 'new'">Create New Environment</h2>
-            <h2 v-if="mode === 'edit'">Edit Environment Details</h2>
-            <cms-display-name-field-editor label="Show this environment in CMS manager as"
-                                           placeholder="Production"
-                                           v-bind:display-name="editingEnvironment.displayName"
-                                           @display-name-changed="editingEnvironment.displayName=$event">
-            </cms-display-name-field-editor>
-            <cms-element-name-field-editor label="Environment name"
-                                           placeholder="unique_environment_name"
-                                           v-bind:element-name="editingEnvironment.name"
-                                           @element-name-changed="editingEnvironment.name=$event">
-            </cms-element-name-field-editor>
-            <cms-url-field-editor label="Base URL"
-                                  placeholder="https://environment.mycompany.com/"
-                                  v-bind:url="editingEnvironment.baseUrl"
-                                  @url-changed="editingEnvironment.baseUrl=$event">
-            </cms-url-field-editor>
-            <cms-website-version-field-edior v-bind:website-version-id="editingEnvironment.websiteVersionId"
-                                             @website-version-id-changed="editingEnvironment.websiteVersionId=$event">
-            </cms-website-version-field-edior>
-            <cms-description-field-editor v-bind:description="editingEnvironment.description"
-                                          @description-changed="editingEnvironment.description=$event">
-            </cms-description-field-editor>
-            <div class="cms_validation_error_list" v-if="errors.length > 0">
-                <p v-for="error in errors">{{error}}</p>
+    <cms-tabs>
+        <cms-tab name="Details" selected="true">
+            <div v-if="currentEnvironment == undefined && mode === 'view'">
+                <h2>No environment selected</h2>
+                <p>
+                    No environment currently selected for editing. Choose an environment from the list on the left. If the
+                    list of environments is empty this is because you have not created any environments yet.
+                </p>
+                <div class="cms_button_bar">
+                    <button type="button" v-on:click="newEnvironment">New</button>
+                </div>
             </div>
-            <div class="cms_button_bar">
-                <button v-if="mode === 'new'" type="button" v-on:click="createNew">Create</button>
-                <button v-if="mode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
-                <button type="button" v-on:click="cancelChanges">Cancel</button>
+            <div v-else>
+                <div v-if="mode === 'new' || mode === 'edit'">
+                    <h2 v-if="mode === 'new'">Create New Environment</h2>
+                    <h2 v-if="mode === 'edit'">Edit Environment Details</h2>
+                    <cms-display-name-field-editor label="Show this environment in CMS manager as"
+                                                   placeholder="Production"
+                                                   v-bind:display-name="editingEnvironment.displayName"
+                                                   @display-name-changed="editingEnvironment.displayName=$event">
+                    </cms-display-name-field-editor>
+                    <cms-element-name-field-editor label="Environment name"
+                                                   placeholder="unique_environment_name"
+                                                   v-bind:element-name="editingEnvironment.name"
+                                                   @element-name-changed="editingEnvironment.name=$event">
+                    </cms-element-name-field-editor>
+                    <cms-url-field-editor label="Base URL"
+                                          placeholder="https://environment.mycompany.com/"
+                                          v-bind:url="editingEnvironment.baseUrl"
+                                          @url-changed="editingEnvironment.baseUrl=$event">
+                    </cms-url-field-editor>
+                    <cms-website-version-field-edior v-bind:website-version-id="editingEnvironment.websiteVersionId"
+                                                     @website-version-id-changed="editingEnvironment.websiteVersionId=$event">
+                    </cms-website-version-field-edior>
+                    <cms-description-field-editor v-bind:description="editingEnvironment.description"
+                                                  @description-changed="editingEnvironment.description=$event">
+                    </cms-description-field-editor>
+                    <div class="cms_validation_error_list" v-if="errors.length > 0">
+                        <p v-for="error in errors">{{error}}</p>
+                    </div>
+                    <div class="cms_button_bar">
+                        <button v-if="mode === 'new'" type="button" v-on:click="createNew">Create</button>
+                        <button v-if="mode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
+                        <button type="button" v-on:click="cancelChanges">Cancel</button>
+                    </div>
+                </div>
+                <div v-if="mode === 'view'">
+                    <h2>{{currentEnvironment.displayName}} environment</h2>
+                    <div class="cms_field"><label>Name</label><p>{{currentEnvironment.name}}</p></div>
+                    <div class="cms_field"><label>Base URL</label><p>{{currentEnvironment.baseUrl}}</p></div>
+                    <div class="cms_field"><label>Website version</label><p>{{websiteVersion.displayName}}</p></div>
+                    <div class="cms_field"><label>Description</label><p>{{currentEnvironment.description}}</p></div>
+                    <div class="cms_field"><label>Created</label><p>{{currentEnvironment.createdWhen | cms_formatDate}} by {{currentEnvironment.createdBy | cms_formatUserUrn}}</p></div>
+                    <div class="cms_button_bar">
+                        <button type="button" v-on:click="editEnvironment">Edit</button>
+                        <button type="button" v-on:click="newEnvironment">New</button>
+                        <button type="button" v-on:click="deleteEnvironment">Delete</button>
+                    </div>
+                </div>
+                <div v-if="mode === 'delete'">
+                    <h2>Confirm Environment Deletion</h2>
+                    <p>
+                        This will delete the "{{currentEnvironment.name}}" environment.
+                        The website will no longer be available in the {{currentEnvironment.displayName}} environment.
+                    </p>
+                    <p>This operation cannot be undone. Are you sure?</p>
+                    <div class="cms_button_bar">
+                        <button type="button" v-on:click="confirmDelete">Delete</button>
+                        <button type="button" v-on:click="cancelChanges">Cancel</button>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div v-if="mode === 'view'">
-            <h2>{{currentEnvironment.displayName}} environment</h2>
-            <div class="cms_field"><label>Name</label><p>{{currentEnvironment.name}}</p></div>
-            <div class="cms_field"><label>Base URL</label><p>{{currentEnvironment.baseUrl}}</p></div>
-            <div class="cms_field"><label>Website version</label><p>{{websiteVersion.displayName}}</p></div>
-            <div class="cms_field"><label>Description</label><p>{{currentEnvironment.description}}</p></div>
-            <div class="cms_field"><label>Created</label><p>{{currentEnvironment.createdWhen | cms_formatDate}} by {{currentEnvironment.createdBy | cms_formatUserUrn}}</p></div>
-            <div class="cms_button_bar">
-                <button type="button" v-on:click="editEnvironment">Edit</button>
-                <button type="button" v-on:click="newEnvironment">New</button>
-                <button type="button" v-on:click="deleteEnvironment">Delete</button>
-            </div>
-        </div>
-        <div v-if="mode === 'delete'">
-            <h2>Confirm Environment Deletion</h2>
-            <p>
-                This will delete the "{{currentEnvironment.name}}" environment.
-                The website will no longer be available in the {{currentEnvironment.displayName}} environment.
-            </p>
-            <p>This operation cannot be undone. Are you sure?</p>
-            <div class="cms_button_bar">
-                <button type="button" v-on:click="confirmDelete">Delete</button>
-                <button type="button" v-on:click="cancelChanges">Cancel</button>
-            </div>
-        </div>
-    </div>
+        </cms-tab>
+        <cms-tab name="History">
+        </cms-tab>
+    </cms-tabs>
 </div>

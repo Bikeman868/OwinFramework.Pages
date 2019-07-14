@@ -36,6 +36,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         protected ElementPropertyRecord[] _properties;
         protected ElementPropertyValueRecord[] _propertyValues;
 
+        protected HistoryEventRecord[] _historyEvents;
+        protected HistoryPeriodRecord[] _historyPeriods;
+
         T[] IDatabaseReader.GetEnvironments<T>(Func<EnvironmentRecord, T> map, Func<EnvironmentRecord, bool> predicate)
         {
             if (predicate == null)
@@ -365,17 +368,19 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         HistoryPeriodRecord IDatabaseReader.GetHistory(string recordType, long id, string bookmark)
         {
-            return new HistoryPeriodRecord
-            {
-                RecordType = recordType,
-                RecordId = id,
-                EndDateTime = DateTime.UtcNow,
-            };
+            if (_historyPeriods == null) return null;
+
+            return _historyPeriods
+                .Where(p => string.Equals(p.RecordType, recordType, StringComparison.OrdinalIgnoreCase))
+                .Where(p => p.RecordId == id)
+                .OrderByDescending(p => p.EndDateTime)
+                .FirstOrDefault();
         }
 
         HistoryEventRecord[] IDatabaseReader.GetHistorySummary(long summaryId)
         {
-            return null;
+            if (_historyEvents == null) return null;
+            return _historyEvents.Where(e => e.SummaryId == summaryId).ToArray();
         }
     }
 }

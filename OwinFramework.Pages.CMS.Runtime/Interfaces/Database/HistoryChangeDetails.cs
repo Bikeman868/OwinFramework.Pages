@@ -29,7 +29,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// If this is a modification then this contains the new value
         /// </summary>
-        [JsonProperty("newvalue")]
+        [JsonProperty("newValue")]
         public string NewValue { get; set; }
 
         /// <summary>

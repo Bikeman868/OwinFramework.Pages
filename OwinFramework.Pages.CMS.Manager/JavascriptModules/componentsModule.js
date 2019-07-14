@@ -775,12 +775,57 @@
                 type: Object
             }
         },
+        watch: {
+            summary: "clearEvents"
+        },
         template:
             "<tr class=\"cms_history_summary\">" +
             "  <td class=\"cms_history__when\">{{summary.when|cms_formatDate}}</td>" +
             "  <td class=\"cms_history__identity\">{{summary.identity|cms_formatUserUrn}}</td>" +
-            "  <td class=\"cms_history__changes\">{{summary.changes}}</td>" +
-            "</tr>"
+            "  <td v-if=\"events==undefined\" class=\"cms_history__changes\">" +
+            "    {{summary.changes}}" +
+            "    <button @click=\"retrieveEvents\">...</button>" +
+            "  </td>" +
+            "  <td v-else class=\"cms_history__changes\">" +
+            "    <table class=\"cms_history_events\">" +
+            "      <tr class=\"cms_history_events\" v-for=\"event in events\">" +
+            "        <td class=\"cms_history__when\">{{event.when|cms_formatDateTime}}</td>" +
+            "        <td class=\"cms_history__changes\">" +
+            "          <div v-for=\"change in event.changes\">"+
+            "            <span v-if=\"change.changeType==='Created'\">Created this {{event.recordType|cms_lowercase}}</span>" +
+            "            <span v-if=\"change.changeType==='Deleted'\">Deleted this {{event.recordType|cms_lowercase}}</span>" +
+            "            <span v-if=\"change.changeType==='Modified'\">Changed the {{change.field}} from \"{{change.oldValue}}\" to \"{{change.newValue}}\"</span>" +
+            "            <span v-if=\"change.changeType==='ChildAdded'\">Added {{change.childType}} with ID={{change.childId}}</span>" +
+            "            <span v-if=\"change.changeType==='ChildRemoved'\">Removed {{change.childType}} with ID={{change.childId}}</span>" +
+            "          </div>" +
+            "        </td>" +
+            "      </tr>" +
+            "    </table>" +
+            "  </td>" +
+            "</tr>",
+        data: function () {
+            return {
+                events: null
+            }
+        },
+        methods: {
+            retrieveEvents: function () {
+                var vm = this;
+                exported.historyService.summary(
+                { id: vm.summary.id },
+                function(response) {
+                    if (response != undefined) {
+                        response.forEach(function(e) {
+                            e.changes = JSON.parse(e.changeDetails);
+                        });
+                    }
+                    vm.events = response;
+                });
+            },
+            clearEvents: function() {
+                this.events = null;
+            }
+        }
     });
 
     Vue.component("cms-history-period",

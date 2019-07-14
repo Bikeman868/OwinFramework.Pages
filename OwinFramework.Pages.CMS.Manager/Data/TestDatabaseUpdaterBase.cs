@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Newtonsoft.Json;
 using OwinFramework.Pages.CMS.Runtime.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
@@ -11,6 +13,123 @@ namespace OwinFramework.Pages.CMS.Manager.Data
     public class TestDatabaseUpdaterBase: TestDatabaseReaderBase, IDatabaseUpdater
     {
         private readonly object _updateLock = new object();
+        private long _nextHistoryEventId;
+        private long _nextHistorySummaryId;
+
+        #region History
+
+        protected HistoryEventRecord AddHistory(
+            RecordBase record, 
+            string identity,
+            params HistoryChangeDetails[] details)
+        {
+            HistoryPeriodRecord period;
+            lock (_updateLock)
+            {
+                if (_historyPeriods == null)
+                {
+                    period = new HistoryPeriodRecord
+                    {
+                        RecordType = record.RecordType,
+                        RecordId = record.RecordId,
+                        StartDateTime = DateTime.UtcNow,
+                    };
+                    _historyPeriods = new[] { period };
+                }
+                else
+                {
+                    period = _historyPeriods.FirstOrDefault(p => 
+                        p.RecordId == record.RecordId &&
+                        string.Equals(p.RecordType, record.RecordType, StringComparison.OrdinalIgnoreCase));
+                    if (period == null)
+                    {
+                        period = new HistoryPeriodRecord
+                        {
+                            RecordType = record.RecordType,
+                            RecordId = record.RecordId,
+                            StartDateTime = DateTime.UtcNow,
+                        };
+                        var list = _historyPeriods.ToList();
+                        list.Add(period);
+                        _historyPeriods = list.ToArray();
+                    }
+                }
+            }
+            period.EndDateTime = DateTime.UtcNow;
+
+            HistorySummaryRecord summary;
+            lock (_updateLock)
+            {
+                if (period.Summaries == null)
+                {
+                    summary = new HistorySummaryRecord
+                    {
+                        SummaryId = Interlocked.Increment(ref _nextHistorySummaryId),
+                        Identity = identity,
+                        When = DateTime.UtcNow
+                    };
+                    period.Summaries = new[] {summary};
+                }
+                else
+                {
+                    summary = period.Summaries.FirstOrDefault(s => s.Identity == identity);
+                    if (summary == null)
+                    {
+                        summary = new HistorySummaryRecord
+                        {
+                            SummaryId = Interlocked.Increment(ref _nextHistorySummaryId),
+                            Identity = identity,
+                            When = DateTime.UtcNow
+                        };
+                        var list = period.Summaries.ToList();
+                        list.Add(summary);
+                        period.Summaries = list.ToArray();
+                    }
+                }
+            }
+
+            var serializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Include
+            };
+
+            var historyEvent = new HistoryEventRecord
+            {
+                EventId = Interlocked.Increment(ref _nextHistoryEventId),
+                When = DateTime.UtcNow,
+                RecordType = record.RecordType,
+                RecordId = record.RecordId,
+                Identity = identity,
+                SummaryId = summary.SummaryId,
+                ChangeDetails = JsonConvert.SerializeObject(
+                    details, 
+                    Formatting.None, 
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        DefaultValueHandling = DefaultValueHandling.Include
+                    })
+                };
+
+            lock (_updateLock)
+            {
+                if (_historyEvents == null)
+                    _historyEvents = new[] { historyEvent };
+                else
+                {
+                    var list = _historyEvents.ToList();
+                    list.Add(historyEvent);
+                    _historyEvents = list.ToArray();
+                }
+            }
+
+            summary.ChangeSummary = _historyEvents.Count(e => e.SummaryId == summary.SummaryId) + " changes";
+
+            return historyEvent;
+        }
+
+        #endregion
 
         #region Environments
 
@@ -26,6 +145,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 environments.Add(environment);
                 _environments = environments.ToArray();
 
+                AddHistory(
+                    environment, 
+                    identity, 
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "Created"
+                    });
+
                 return new CreateResult(environment.RecordId);
             }
         }
@@ -35,27 +162,46 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var environment = _environments.FirstOrDefault(p => p.RecordId == environmentId);
             if (environment == null) return new UpdateResult("environment_not_found", "No environment found with id " + environmentId);
 
+            var details = new List<HistoryChangeDetails>();
+
             foreach (var change in changes)
             {
+                var changeDetails = new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = change.PropertyName,
+                    OldValue = environment.Name,
+                    NewValue = change.PropertyValue
+                };
+
                 switch (change.PropertyName.ToLower())
                 {
                     case "name":
+                        changeDetails.OldValue = environment.Name;
                         environment.Name = change.PropertyValue;
                         break;
                     case "displayname":
+                        changeDetails.OldValue = environment.DisplayName;
                         environment.DisplayName = change.PropertyValue;
                         break;
                     case "description":
+                        changeDetails.OldValue = environment.Description;
                         environment.Description = change.PropertyValue;
                         break;
                     case "baseurl":
+                        changeDetails.OldValue = environment.BaseUrl;
                         environment.BaseUrl = change.PropertyValue;
                         break;
                     case "websiteversionid":
+                        // TODO: record website version name
+                        changeDetails.OldValue = environment.WebsiteVersionId.ToString();
                         environment.WebsiteVersionId = long.Parse(change.PropertyValue);
                         break;
                 }
+                details.Add(changeDetails);
             }
+
+            AddHistory(environment, identity, details.ToArray());
 
             return new UpdateResult();
         }
@@ -88,6 +234,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 var websiteVersions = _websiteVersions.ToList();
                 websiteVersions.Add(websiteVersion);
                 _websiteVersions = websiteVersions.ToArray();
+
+                AddHistory(
+                    websiteVersion, 
+                    identity, 
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "Created"
+                    });
 
                 return new CreateResult(websiteVersion.RecordId);
             }
@@ -149,6 +303,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 pages.Add(page);
                 _pages = pages.ToArray();
 
+                AddHistory(
+                    page, 
+                    identity, 
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "Created"
+                    });
+
                 var pageVersion = new PageVersionRecord
                 {
                     RecordId = _pageVersions.OrderByDescending(pv => pv.RecordId).First().RecordId + 1,
@@ -161,6 +323,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 var pageVersions = _pageVersions.ToList();
                 pageVersions.Add(pageVersion);
                 _pageVersions = pageVersions.ToArray();
+
+                AddHistory(
+                    pageVersion, 
+                    identity, 
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "Created"
+                    });
 
                 return new CreateResult(page.RecordId);
             }
@@ -276,6 +446,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 var pageVersions = _pageVersions.ToList();
                 pageVersions.Add(pageVersion);
                 _pageVersions = pageVersions.ToArray();
+
+                AddHistory(
+                    pageVersion, 
+                    identity, 
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "Created"
+                    });
 
                 return new CreateResult(pageVersion.RecordId);
             }

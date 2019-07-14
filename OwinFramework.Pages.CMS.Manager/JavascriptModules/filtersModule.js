@@ -45,6 +45,11 @@
         return "";
     });
 
+    Vue.filter("cms_lowercase", function (value) {
+        if (value == undefined) return "";
+        return value.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, "$1 $2").toLowerCase();
+    })
+
     Vue.filter("cms_formatUserUrn", function (value) {
         var name = value || "";
         if (value) exported.userStore.retrieveRecord(value, function(user) { name = user.name });
@@ -54,27 +59,13 @@
     Vue.filter("cms_lookupElementVersionId", function (value) {
         var id = parseInt(value);
         if (isNaN(id)) { return ""; }
-
-        var elementName = "element version #" + id;
-        //exported.pageStore.retrieveRecord(
-        //    id,
-        //    function (page) {
-        //        pageName = page.displayName;
-        //    });
-        return elementName;
+        return "element version #" + id;
     });
 
     Vue.filter("cms_lookupElementId", function (value) {
         var id = parseInt(value);
         if (isNaN(id)) { return ""; }
-
-        var elementName = "element #" + id;
-        //exported.pageStore.retrieveRecord(
-        //    id,
-        //    function (page) {
-        //        pageName = page.displayName;
-        //    });
-        return elementName;
+        return "element #" + id;
     });
 
     Vue.filter("cms_lookupPageId", function (value) {

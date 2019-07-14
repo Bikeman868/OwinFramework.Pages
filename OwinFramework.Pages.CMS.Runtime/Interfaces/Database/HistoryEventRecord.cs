@@ -17,6 +17,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long EventId { get; set; }
 
         /// <summary>
+        /// Foreign key that identifies the record where this event is summarized
+        /// </summary>
+        [Mapping("summaryId")]
+        [JsonProperty("summaryId")]
+        public long SummaryId { get; set; }
+
+        /// <summary>
         /// The type of record that was changed
         /// </summary>
         [Mapping("recordType")]

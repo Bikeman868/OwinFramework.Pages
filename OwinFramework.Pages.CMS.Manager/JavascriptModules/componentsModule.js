@@ -871,6 +871,7 @@
         methods: {
             loadData: function () {
                 var vm = this;
+                vm.summaries = null;
                 exported.historyService.period(
                     { type: vm.recordType, id: vm.recordId },
                     function(result) {

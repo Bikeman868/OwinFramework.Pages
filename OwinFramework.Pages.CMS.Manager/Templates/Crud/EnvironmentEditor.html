@@ -4,8 +4,9 @@
             <div v-if="currentEnvironment == undefined && mode === 'view'">
                 <h2>No environment selected</h2>
                 <p>
-                    No environment currently selected for editing. Choose an environment from the list on the left. If the
-                    list of environments is empty this is because you have not created any environments yet.
+                    No environment currently selected for editing.
+                    Choose an environment from the list on the left. 
+                    If the list of environments is empty this is because you have not created any environments yet.
                 </p>
                 <div class="cms_button_bar">
                     <button type="button" v-on:click="newEnvironment">New</button>
@@ -73,6 +74,18 @@
             </div>
         </cms-tab>
         <cms-tab name="History">
+            <div v-if="currentEnvironment == undefined || currentEnvironment.recordId == undefined">
+                <p>
+                    No environment currently selected for history view.
+                    Choose an environment from the list on the left.
+                    If the list of environments is empty this is because you have not created any environments yet.
+                </p>
+            </div>
+            <cms-history-period v-else
+                                v-bind:label="currentEnvironment.displayName + ' environment history'"
+                                v-bind:record-type="currentEnvironment.recordType"
+                                v-bind:record-id="currentEnvironment.recordId">
+            </cms-history-period>
         </cms-tab>
     </cms-tabs>
 </div>

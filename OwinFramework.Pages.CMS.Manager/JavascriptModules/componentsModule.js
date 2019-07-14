@@ -766,4 +766,58 @@
             }
         }
     });
+
+
+    Vue.component("cms-history-period",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "History"
+            },
+            recordType: {
+                required: true,
+                type: String
+            },
+            recordId: {
+                required: true,
+                type: Number
+            }
+        },
+        watch: {
+            recordType: "loadData",
+            recordId: "loadData"
+        },
+        template:
+            "<div>" +
+            "  <h2>{{label}}</h2>" +
+            "  <table class=\"cms_history_period\">" +
+            "    <tr class=\"cms_history_summary\"><th></th><th></th><th></th></tr>" +
+            "    <tr class=\"cms_history_summary\" v-for=\"summary in summaries\">" +
+            "      <td class=\"cms_history__when\">{{summary.when}}</td>" +
+            "      <td class=\"cms_history__identity\">{{summary.identity}}</td>" +
+            "      <td class=\"cms_history__changes\">{{summary.changes}}</td>" +
+            "    </tr>" +
+            "  </table>" +
+            "</div>",
+        data: function () {
+            return {
+                summaries: []
+            }
+        },
+        created: function() {
+            this.loadData();
+        },
+        methods: {
+            loadData: function () {
+                var vm = this;
+                exported.historyService.period(
+                    { type: vm.recordType, id: vm.recordId },
+                    function(result) {
+                        vm.summaries = result.summaries;
+                    });
+            }
+        }
+    });
 }

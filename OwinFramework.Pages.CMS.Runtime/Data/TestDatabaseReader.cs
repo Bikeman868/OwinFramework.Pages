@@ -34,14 +34,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new RegionRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "example_region_1",
                     CreatedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow
                 },
                 new RegionRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "example_region_2",
                     CreatedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow
@@ -52,7 +52,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new LayoutRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "page_layout",
                     CreatedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow
@@ -63,15 +63,15 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new RegionVersionRecord
                 {
-                    ElementId = _regions[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _regions[0].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     LayoutName = "layouts:col_2_left_fixed"
                 },
                 new RegionVersionRecord
                 {
-                    ElementId = _regions[1].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _regions[1].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     RegionTemplates = new []
                     {
@@ -83,8 +83,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             _layoutVersions = new []
             {
                 new LayoutVersionRecord {
-                    ElementId = _layouts[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _layouts[0].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "header,main,footer",
@@ -107,8 +107,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     }
                 },
                 new LayoutVersionRecord {
-                    ElementId = _layouts[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _layouts[0].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 2,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "header,main,footer",
@@ -117,12 +117,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                         new LayoutZoneRecord
                         {
                             ZoneName = "header",
-                            RegionId = _regions[0].ElementId
+                            RegionId = _regions[0].RecordId
                         },
                         new LayoutZoneRecord
                         {
                             ZoneName = "footer",
-                            RegionId = _regions[1].ElementId
+                            RegionId = _regions[1].RecordId
                         }
                     }
                 }
@@ -132,14 +132,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new PageRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     CreatedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow,
                     Name = "page_1"
                 },
                 new PageRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     CreatedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow,
                     Name = "page_2"
@@ -150,10 +150,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new PageVersionRecord
                 {
-                    ElementId = _pages[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _pages[0].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
-                    LayoutId = _layouts[0].ElementId,
+                    LayoutId = _layouts[0].RecordId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "First CMS Page",
                     Routes = new []
@@ -182,11 +182,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 },
                 new PageVersionRecord
                 {
-                    ElementId = _pages[1].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _pages[1].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.PerWebsite,
-                    LayoutId = _layouts[0].ElementId,
+                    LayoutId = _layouts[0].RecordId,
                     Title = "Second CMS Page",
                     Routes = new []
                     {
@@ -209,10 +209,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 },
                 new PageVersionRecord
                 {
-                    ElementId = _pages[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _pages[0].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 2,
-                    LayoutId = _layouts[0].ElementId,
+                    LayoutId = _layouts[0].RecordId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "First CMS Page",
                     Routes = new []
@@ -241,10 +241,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 },
                 new PageVersionRecord
                 {
-                    ElementId = _pages[1].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _pages[1].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 2,
-                    LayoutId = _layouts[0].ElementId,
+                    LayoutId = _layouts[0].RecordId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "Second CMS Page",
                     Routes = new []
@@ -272,7 +272,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new WebsiteVersionRecord
                 {
-                    WebsiteVersionId = websiteVersionId++,
+                    RecordId = websiteVersionId++,
                     Name = "1.0",
                     Description = "First version",
                     CreatedBy = "urn:user:1234",
@@ -280,7 +280,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 },
                 new WebsiteVersionRecord
                 {
-                    WebsiteVersionId = websiteVersionId++,
+                    RecordId = websiteVersionId++,
                     Name = "1.1",
                     Description = "Modified layout",
                     CreatedBy = "urn:user:1234",
@@ -292,23 +292,23 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new EnvironmentRecord
                 {
-                    EnvironmentId = 1,
+                    RecordId = 1,
                     Name = "prod",
                     CreatedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow,
                     DisplayName = "Production",
                     BaseUrl = "http://sample1.localhost/",
-                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId
+                    WebsiteVersionId = _websiteVersions[0].RecordId
                 },
                 new EnvironmentRecord
                 {
-                    EnvironmentId = 1,
+                    RecordId = 1,
                     Name = "stage",
                     CreatedBy = "urn:user:1234",
                     CreatedWhen = DateTime.UtcNow,
                     DisplayName = "Staging",
                     BaseUrl = "http://staging.sample1.localhost/",
-                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId
+                    WebsiteVersionId = _websiteVersions[1].RecordId
                 }
             };
 
@@ -316,27 +316,27 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new WebsiteVersionPageRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
-                    PageId = _pageVersions[0].ElementId,
-                    PageVersionId = _pageVersions[0].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[0].RecordId,
+                    PageId = _pageVersions[0].ParentRecordId,
+                    PageVersionId = _pageVersions[0].RecordId
                 },
                 new WebsiteVersionPageRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
-                    PageId = _pageVersions[1].ElementId,
-                    PageVersionId = _pageVersions[1].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[0].RecordId,
+                    PageId = _pageVersions[1].ParentRecordId,
+                    PageVersionId = _pageVersions[1].RecordId
                 },
                 new WebsiteVersionPageRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
-                    PageId = _pageVersions[2].ElementId,
-                    PageVersionId = _pageVersions[2].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[1].RecordId,
+                    PageId = _pageVersions[2].ParentRecordId,
+                    PageVersionId = _pageVersions[2].RecordId
                 },
                 new WebsiteVersionPageRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
-                    PageId = _pageVersions[3].ElementId,
-                    PageVersionId = _pageVersions[3].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[1].RecordId,
+                    PageId = _pageVersions[3].ParentRecordId,
+                    PageVersionId = _pageVersions[3].RecordId
                 }
             };
 
@@ -344,15 +344,15 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new WebsiteVersionLayoutRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
-                    LayoutId = _layoutVersions[0].ElementId,
-                    LayoutVersionId = _layoutVersions[0].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[0].RecordId,
+                    LayoutId = _layoutVersions[0].ParentRecordId,
+                    LayoutVersionId = _layoutVersions[0].RecordId
                 },
                 new WebsiteVersionLayoutRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
-                    LayoutId = _layoutVersions[1].ElementId,
-                    LayoutVersionId = _layoutVersions[1].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[1].RecordId,
+                    LayoutId = _layoutVersions[1].ParentRecordId,
+                    LayoutVersionId = _layoutVersions[1].RecordId
                 }
             };
 
@@ -360,27 +360,27 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             {
                 new WebsiteVersionRegionRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
-                    RegionId = _regionVersions[0].ElementId,
-                    RegionVersionId = _regionVersions[0].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[0].RecordId,
+                    RegionId = _regionVersions[0].ParentRecordId,
+                    RegionVersionId = _regionVersions[0].RecordId
                 },
                 new WebsiteVersionRegionRecord
                 {
-                    WebsiteVersionId = _websiteVersions[0].WebsiteVersionId,
-                    RegionId = _regionVersions[1].ElementId,
-                    RegionVersionId = _regionVersions[1].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[0].RecordId,
+                    RegionId = _regionVersions[1].ParentRecordId,
+                    RegionVersionId = _regionVersions[1].RecordId
                 },
                 new WebsiteVersionRegionRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
-                    RegionId = _regionVersions[0].ElementId,
-                    RegionVersionId = _regionVersions[0].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[1].RecordId,
+                    RegionId = _regionVersions[0].ParentRecordId,
+                    RegionVersionId = _regionVersions[0].RecordId
                 },
                 new WebsiteVersionRegionRecord
                 {
-                    WebsiteVersionId = _websiteVersions[1].WebsiteVersionId,
-                    RegionId = _regionVersions[1].ElementId,
-                    RegionVersionId = _regionVersions[1].ElementVersionId
+                    WebsiteVersionId = _websiteVersions[1].RecordId,
+                    RegionId = _regionVersions[1].ParentRecordId,
+                    RegionVersionId = _regionVersions[1].RecordId
                 }
             };
 

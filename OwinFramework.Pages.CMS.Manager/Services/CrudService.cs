@@ -215,7 +215,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
             if (websiteVersionId.HasValue)
             {
-                _dataLayer.AddPageToWebsiteVersion(request.Identity, page.ElementId, 1, websiteVersionId.Value);
+                _dataLayer.AddPageToWebsiteVersion(request.Identity, page.RecordId, 1, websiteVersionId.Value);
             }
             request.Success(page);
         }
@@ -296,7 +296,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
             if (websiteVersionId.HasValue)
             {
-                _dataLayer.AddPageToWebsiteVersion(request.Identity, pageVersion.ElementVersionId, websiteVersionId.Value);
+                _dataLayer.AddPageToWebsiteVersion(request.Identity, pageVersion.RecordId, websiteVersionId.Value);
             }
 
             request.Success(pageVersion);

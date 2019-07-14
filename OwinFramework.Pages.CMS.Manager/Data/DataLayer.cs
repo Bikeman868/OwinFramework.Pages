@@ -434,7 +434,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             {
                 _nextMessage.PropertyChanges.AddRange(
                     typeDefinition.Properties
-                        .Select(property => property.BuildChange(oldElement, newElement, newElement.RecordType, newElement.ElementId))
+                        .Select(property => property.BuildChange(oldElement, newElement, newElement.RecordType, newElement.RecordId))
                         .Where(change => change != null));
             }
         }

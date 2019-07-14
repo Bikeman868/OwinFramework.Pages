@@ -20,6 +20,15 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string RecordType { get; set; }
 
         /// <summary>
+        /// Primary key that uniquely identifies this record in the database. All records
+        /// have unique ids. For example there are no pages with the same ID as a layout etc.
+        /// This is done so that audit records for example do not need to know the element type.
+        /// </summary>
+        [Mapping("recordId")]
+        [JsonProperty("recordId")]
+        public long RecordId { get; set; }
+
+        /// <summary>
         /// The name of this record. This name must be unique amongst records of the
         /// same type.
         /// For element named this must be a valid CSS class name and a valid JavaScript identifier.

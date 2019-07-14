@@ -17,18 +17,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         }
 
         /// <summary>
-        /// Primary key that uniquely identifies this element property in the database.
-        /// </summary>
-        [Mapping("elementPropertyId")]
-        [JsonProperty("elementPropertyId")]
-        public long ElementPropertyId { get; set; }
-
-        /// <summary>
         /// The element that has this property available
         /// </summary>
-        [Mapping("elementId")]
-        [JsonProperty("elementId")]
-        public long ElementId { get; set; }
+        [Mapping("parentRecordId")]
+        [JsonProperty("parentRecordId")]
+        public long ParentRecordId { get; set; }
 
         /// <summary>
         /// The name of a region defined in code that is an editor for this

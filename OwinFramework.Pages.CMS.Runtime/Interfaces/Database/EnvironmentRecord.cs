@@ -15,13 +15,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         }
 
         /// <summary>
-        /// Primary key that uniquely identifies this environment
-        /// </summary>
-        [Mapping("environmentId")]
-        [JsonProperty("environmentId")]
-        public long EnvironmentId { get; set; }
-
-        /// <summary>
         /// This is used to construct the Canonical URL of pages in the website
         /// for this environment
         /// </summary>

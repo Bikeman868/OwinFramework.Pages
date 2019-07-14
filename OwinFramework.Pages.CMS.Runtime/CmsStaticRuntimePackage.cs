@@ -77,33 +77,33 @@ namespace OwinFramework.Pages.CMS.Runtime
 
             var websiteVersions = _database.GetWebsiteVersions(
                 v => v, 
-                v => v.WebsiteVersionId == environment.WebsiteVersionId);
+                v => v.RecordId == environment.WebsiteVersionId);
 
             if (websiteVersions.Length != 1)
                 throw new Exception("There is no website version ID " + environment.WebsiteVersionId + " in the database");
 
             var websiteVersion = websiteVersions[0];
-            var websiteVersionPages = _database.GetWebsitePages(websiteVersion.WebsiteVersionId, vp => vp);
+            var websiteVersionPages = _database.GetWebsitePages(websiteVersion.RecordId, vp => vp);
 
             _pageVersions = websiteVersionPages
                 .ToDictionary(vp => vp.PageId, vp => vp.PageVersionId);
 
             _dataTypes = _database
                 .GetWebsiteDataTypes(
-                    websiteVersion.WebsiteVersionId, 
+                    websiteVersion.RecordId, 
                     wd => _database.GetDataTypeVersion(wd.DataTypeVersionId, (dt, dtv) => dtv))
-                .ToDictionary(dtv => dtv.ElementId, dtv => dtv);
+                .ToDictionary(dtv => dtv.ParentRecordId, dtv => dtv);
 
             _componentVersions = _database
-                .GetWebsiteComponents(websiteVersion.WebsiteVersionId, v => new { v.ComponentId, v.ComponentVersionId})
+                .GetWebsiteComponents(websiteVersion.RecordId, v => new { v.ComponentId, v.ComponentVersionId})
                 .ToDictionary(v => v.ComponentId, v => v.ComponentVersionId);
 
             _layoutVersions = _database
-                .GetWebsiteLayouts(websiteVersion.WebsiteVersionId, v => new { v.LayoutId, v.LayoutVersionId})
+                .GetWebsiteLayouts(websiteVersion.RecordId, v => new { v.LayoutId, v.LayoutVersionId})
                 .ToDictionary(v => v.LayoutId, v => v.LayoutVersionId);
 
             _regionVersions = _database
-                .GetWebsiteRegions(websiteVersion.WebsiteVersionId, v => new { v.RegionId, v.RegionVersionId})
+                .GetWebsiteRegions(websiteVersion.RecordId, v => new { v.RegionId, v.RegionVersionId})
                 .ToDictionary(v => v.RegionId, v => v.RegionVersionId);
 
             foreach (var regionId in _regionVersions.Keys.ToList())
@@ -181,7 +181,7 @@ namespace OwinFramework.Pages.CMS.Runtime
             {
                 long masterPageVersionId;
                 if (!_pageVersions.TryGetValue(pageVersion.MasterPageId.Value, out masterPageVersionId))
-                    throw new Exception("Page with version ID "+ pageVersion.ElementVersionId + 
+                    throw new Exception("Page with version ID "+ pageVersion.RecordId + 
                         " has a master page ID of " + pageVersion.MasterPageId.Value + 
                         " but there is no version of that page configured for this version of the website");
 
@@ -391,14 +391,14 @@ namespace OwinFramework.Pages.CMS.Runtime
             {
                 long componentVersionId;
                 if (!_componentVersions.TryGetValue(regionVersion.ComponentId.Value, out componentVersionId))
-                    throw new Exception("zone version ID " + regionVersion.ElementVersionId + 
+                    throw new Exception("zone version ID " + regionVersion.RecordId + 
                         " references component ID " + regionVersion.ComponentId.Value + 
                         " but this component has no version defined for this version of the website");
 
                 var componentRecord = _database.GetComponentVersion(componentVersionId, (c, v) => c);
                 var componentName = componentRecord.Name;
 
-                var regionProperties = _database.GetElementPropertyValues(regionVersion.ElementVersionId);
+                var regionProperties = _database.GetElementPropertyValues(regionVersion.RecordId);
                 if (regionProperties != null && regionProperties.Count > 0)
                 {
                     _dependencies.NameManager.AddResolutionHandler(

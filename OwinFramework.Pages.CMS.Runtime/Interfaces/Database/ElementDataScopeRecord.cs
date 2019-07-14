@@ -13,9 +13,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// Primary key that uniquely identifies this element property in the database.
         /// </summary>
-        [Mapping("elementDataScopeId")]
-        [JsonProperty("elementDataScopeId")]
-        public long Id { get; set; }
+        [Mapping("recordId")]
+        [JsonProperty("recordId")]
+        public long RecordId { get; set; }
 
         /// <summary>
         /// The element version to apply this property value to

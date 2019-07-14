@@ -90,7 +90,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsitePages(websiteVersion.WebsiteVersionId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsitePages(websiteVersion.RecordId, map, predicate);
         }
 
         T[] IDatabaseReader.GetWebsiteComponents<T>(long websiteVersionId, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate)
@@ -115,7 +115,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteComponents(websiteVersion.WebsiteVersionId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteComponents(websiteVersion.RecordId, map, predicate);
         }
 
         T[] IDatabaseReader.GetWebsiteLayouts<T>(long websiteVersionId, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate)
@@ -140,7 +140,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteLayouts(websiteVersion.WebsiteVersionId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteLayouts(websiteVersion.RecordId, map, predicate);
         }
 
         T[] IDatabaseReader.GetWebsiteRegions<T>(long websiteVersionId, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate)
@@ -165,7 +165,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteRegions(websiteVersion.WebsiteVersionId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteRegions(websiteVersion.RecordId, map, predicate);
         }
 
         
@@ -191,7 +191,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.WebsiteVersionId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.RecordId, map, predicate);
         }
 
         
@@ -206,13 +206,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         IDictionary<string, object> IDatabaseReader.GetElementPropertyValues(long elementVersionId)
         {
             return _propertyValues
-                .Where(pv => pv.ElementVersionId == elementVersionId)
+                .Where(pv => pv.ParentRecordId == elementVersionId)
                 .Select(pv =>
                     {
-                        var property = _properties.FirstOrDefault(p => p.ElementPropertyId == pv.ElementPropertyId);
+                        var property = _properties.FirstOrDefault(p => p.RecordId == pv.RecordId);
                         if (property == null)
-                            throw new Exception("Property value on element version " + pv.ElementVersionId +
-                                                " references non-existent property " + pv.ElementPropertyId);
+                            throw new Exception("Property value on element version " + pv.ParentRecordId +
+                                                " references non-existent property " + pv.RecordId);
                         return new {property.Name, pv.Value};
                     } )
                 .ToDictionary(p => p.Name, p => p.Value);
@@ -226,28 +226,28 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             if (elementVersions == null)
             {
-                var page = _pages.FirstOrDefault(p => p.ElementId == elementId);
+                var page = _pages.FirstOrDefault(p => p.RecordId == elementId);
                 if (page != null)
                 {
-                    elementVersions = _pageVersions.Where(pv => pv.ElementId == page.ElementId);
+                    elementVersions = _pageVersions.Where(pv => pv.ParentRecordId == page.RecordId);
                 }
             }
 
             if (elementVersions == null)
             {
-                var layout = _layouts.FirstOrDefault(l => l.ElementId == elementId);
+                var layout = _layouts.FirstOrDefault(l => l.RecordId == elementId);
                 if (layout != null)
                 {
-                    elementVersions = _layoutVersions.Where(lv => lv.ElementId == layout.ElementId);
+                    elementVersions = _layoutVersions.Where(lv => lv.ParentRecordId == layout.RecordId);
                 }
             }
             
             if (elementVersions == null)
             {
-                var region = _regions.FirstOrDefault(r => r.ElementId == elementId);
+                var region = _regions.FirstOrDefault(r => r.RecordId == elementId);
                 if (region != null)
                 {
-                    elementVersions = _layoutVersions.Where(lv => lv.ElementId == region.ElementId);
+                    elementVersions = _layoutVersions.Where(lv => lv.ParentRecordId == region.RecordId);
                 }
             }
             
@@ -258,24 +258,24 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T IDatabaseReader.GetEnvironment<T>(long environmentId, Func<EnvironmentRecord, T> map)
         {
-            var environmant = _environments.FirstOrDefault(e => e.EnvironmentId == environmentId);
+            var environmant = _environments.FirstOrDefault(e => e.RecordId == environmentId);
             if (environmant == null) return default(T);
             return map(environmant);
         }
 
         T IDatabaseReader.GetWebsiteVersion<T>(long websiteVersionId, Func<WebsiteVersionRecord, T> map)
         {
-            var websiteVersion = _websiteVersions.FirstOrDefault(e => e.WebsiteVersionId == websiteVersionId);
+            var websiteVersion = _websiteVersions.FirstOrDefault(e => e.RecordId == websiteVersionId);
             if (websiteVersion == null) return default(T);
             return map(websiteVersion);
         }
 
         T IDatabaseReader.GetPageVersion<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
         {
-            var page = _pages.FirstOrDefault(p => p.ElementId == pageId);
+            var page = _pages.FirstOrDefault(p => p.RecordId == pageId);
             if (page == null) return default(T);
 
-            var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ElementId == page.ElementId && pv.Version == version);
+            var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ParentRecordId == page.RecordId && pv.Version == version);
             if (pageVersion == null) return default(T);
 
             return map(page, pageVersion);
@@ -283,10 +283,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T IDatabaseReader.GetLayoutVersion<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
-            var layout = _layouts.FirstOrDefault(l => l.ElementId == layoutId);
+            var layout = _layouts.FirstOrDefault(l => l.RecordId == layoutId);
             if (layout == null) return default(T);
 
-            var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ElementId == layout.ElementId && lv.Version == version);
+            var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ParentRecordId == layout.RecordId && lv.Version == version);
             if (layoutVersion == null) return default(T);
 
             return map(layout, layoutVersion);
@@ -294,10 +294,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T IDatabaseReader.GetRegionVersion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map)
         {
-            var region = _regions.FirstOrDefault(r => r.ElementId == regionId);
+            var region = _regions.FirstOrDefault(r => r.RecordId == regionId);
             if (region == null) return default(T);
 
-            var regionVersion = _regionVersions.FirstOrDefault(rv => rv.ElementId == region.ElementId && rv.Version == version);
+            var regionVersion = _regionVersions.FirstOrDefault(rv => rv.ParentRecordId == region.RecordId && rv.Version == version);
             if (regionVersion == null) return default(T);
 
             return map(region, regionVersion);
@@ -305,10 +305,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T IDatabaseReader.GetPageVersion<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map)
         {
-            var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ElementVersionId == pageVersionId);
+            var pageVersion = _pageVersions.FirstOrDefault(pv => pv.RecordId == pageVersionId);
             if (pageVersion == null) return default(T);
 
-            var page = _pages.FirstOrDefault(p => p.ElementId == pageVersion.ElementId);
+            var page = _pages.FirstOrDefault(p => p.RecordId == pageVersion.ParentRecordId);
             if (page == null) return default(T);
 
             return map(page, pageVersion);
@@ -316,10 +316,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T IDatabaseReader.GetLayoutVersion<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
-            var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ElementVersionId == layoutVersionId);
+            var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.RecordId == layoutVersionId);
             if (layoutVersion == null) return default(T);
 
-            var layout = _layouts.FirstOrDefault(l => l.ElementId == layoutVersion.ElementId);
+            var layout = _layouts.FirstOrDefault(l => l.RecordId == layoutVersion.ParentRecordId);
             if (layout == null) return default(T);
 
             return map(layout, layoutVersion);
@@ -327,10 +327,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T IDatabaseReader.GetRegionVersion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map)
         {
-            var regionVersion = _regionVersions.FirstOrDefault(lv => lv.ElementVersionId == regionVersionId);
+            var regionVersion = _regionVersions.FirstOrDefault(lv => lv.RecordId == regionVersionId);
             if (regionVersion == null) return default(T);
 
-            var region = _regions.FirstOrDefault(r => r.ElementId == regionVersion.ElementId);
+            var region = _regions.FirstOrDefault(r => r.RecordId == regionVersion.ParentRecordId);
             if (region == null) return default(T);
 
             return map(region, regionVersion);
@@ -338,10 +338,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T IDatabaseReader.GetComponentVersion<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map)
         {
-            var componentVersion = _componentVersions.FirstOrDefault(lv => lv.ElementVersionId == componentVersionId);
+            var componentVersion = _componentVersions.FirstOrDefault(lv => lv.RecordId == componentVersionId);
             if (componentVersion == null) return default(T);
 
-            var component = _components.FirstOrDefault(r => r.ElementId == componentVersion.ElementId);
+            var component = _components.FirstOrDefault(r => r.RecordId == componentVersion.ParentRecordId);
             if (component == null) return default(T);
 
             return map(component, componentVersion);
@@ -349,15 +349,15 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T IDatabaseReader.GetDataTypeVersion<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map)
         {
-            var dataTypeVersion = _dataTypeVersions.FirstOrDefault(v => v.ElementVersionId == dataTypeVersionId);
+            var dataTypeVersion = _dataTypeVersions.FirstOrDefault(v => v.RecordId == dataTypeVersionId);
             if (dataTypeVersion == null) return default(T);
 
-            var dataType = _dataTypes.FirstOrDefault(r => r.ElementId == dataTypeVersion.ElementId);
+            var dataType = _dataTypes.FirstOrDefault(r => r.RecordId == dataTypeVersion.ParentRecordId);
             if (dataType == null) return default(T);
 
             dataTypeVersion.ScopeIds = _dataScopes
-                .Where(s => s.DataTypeId == dataType.ElementId)
-                .Select(r => r.DataScopeId)
+                .Where(s => s.DataTypeId == dataType.RecordId)
+                .Select(r => r.RecordId)
                 .ToArray();
 
             return map(dataType, dataTypeVersion);

@@ -13,16 +13,16 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// Primary key that uniquely identifies this element property in the database
         /// </summary>
-        [Mapping("elementPropertyId")]
-        [JsonProperty("elementPropertyId")]
-        public long ElementPropertyId { get; set; }
+        [Mapping("recordId")]
+        [JsonProperty("recordId")]
+        public long RecordId { get; set; }
 
         /// <summary>
         /// The element version to apply this property value to
         /// </summary>
-        [Mapping("elementVersionId")]
-        [JsonProperty("elementVersionId")]
-        public long ElementVersionId { get; set; }
+        [Mapping("parentRecordId")]
+        [JsonProperty("parentRecordId")]
+        public long ParentRecordId { get; set; }
 
         /// <summary>
         /// The value text from the database to parse

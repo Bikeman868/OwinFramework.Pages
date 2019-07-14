@@ -16,13 +16,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         }
 
         /// <summary>
-        /// The unique ID of this data scope
-        /// </summary>
-        [Mapping("dataScopeId")]
-        [JsonProperty("dataScopeId")]
-        public long DataScopeId { get; set; }
-
-        /// <summary>
         /// Optional data type specifier. If this is missing then the Name
         /// property is assumed to be the name of a data provider
         /// </summary>

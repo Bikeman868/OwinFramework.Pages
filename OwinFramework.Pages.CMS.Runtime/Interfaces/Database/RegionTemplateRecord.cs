@@ -1,4 +1,6 @@
-﻿using OwinFramework.Pages.Core.Enums;
+﻿using Newtonsoft.Json;
+using OwinFramework.Pages.Core.Enums;
+using Prius.Contracts.Attributes;
 using Prius.Contracts.Interfaces;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
@@ -8,16 +10,22 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// The region version that this template should be rendered into
         /// </summary>
+        [Mapping("regionVersionId")]
+        [JsonProperty("regionVersionId")]
         public long RegionVersionId { get; set; }
 
         /// <summary>
         /// The path of the template to render
         /// </summary>
+        [Mapping("templatePath")]
+        [JsonProperty("templatePath")]
         public string TemplatePath { get; set; }
 
         /// <summary>
         /// The area of the page where this template should be rendered
         /// </summary>
+        [Mapping("pageArea")]
+        [JsonProperty("pageArea")]
         public PageArea PageArea { get; set; }
 
         public void AddMappings(ITypeDefinition<RegionTemplateRecord> typeDefinition, string dataSetName)

@@ -26,7 +26,7 @@ namespace Sample4.CmsData
             {
                 new ComponentRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "message",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
@@ -38,35 +38,35 @@ namespace Sample4.CmsData
             {
                 new RegionRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "header",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new RegionRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "footer",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new RegionRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "customer_list",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new RegionRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "order_list",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new RegionRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "title",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
@@ -77,21 +77,21 @@ namespace Sample4.CmsData
             {
                 new LayoutRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "page",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new LayoutRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "header",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new LayoutRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     Name = "footer",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
@@ -104,14 +104,14 @@ namespace Sample4.CmsData
             {
                 new DataTypeRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     DisplayName = "Customer",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
                 new DataTypeRecord
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     DisplayName = "Order",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
@@ -122,8 +122,8 @@ namespace Sample4.CmsData
             {
                 new ElementPropertyRecord
                 {
-                    ElementId = _components[0].ElementId,
-                    ElementPropertyId = propertyId++,
+                    ParentRecordId = _components[0].RecordId,
+                    RecordId = propertyId++,
                     Name = "Message",
                     TypeName = "System.String",
                     Type = typeof(string),
@@ -132,8 +132,8 @@ namespace Sample4.CmsData
                 },
                 new ElementPropertyRecord
                 {
-                    ElementId = _components[0].ElementId,
-                    ElementPropertyId = propertyId++,
+                    ParentRecordId = _components[0].RecordId,
+                    RecordId = propertyId++,
                     Name = "Style",
                     TypeName = "System.String",
                     Type = typeof(string),
@@ -150,8 +150,8 @@ namespace Sample4.CmsData
             {
                 new DataTypeVersionRecord
                 {
-                    ElementId = _dataTypes[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _dataTypes[0].RecordId,
+                    RecordId = elementVersionId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     AssemblyName = typeof(CustomerViewModel).Assembly.FullName,
@@ -160,8 +160,8 @@ namespace Sample4.CmsData
                 },
                 new DataTypeVersionRecord
                 {
-                    ElementId = _dataTypes[1].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _dataTypes[1].RecordId,
+                    RecordId = elementVersionId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     AssemblyName = typeof(OrderViewModel).Assembly.FullName,
@@ -174,8 +174,8 @@ namespace Sample4.CmsData
             {
                 new ComponentVersionRecord
                 {
-                    ElementId = _components[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _components[0].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1
                 }
             };
@@ -185,50 +185,50 @@ namespace Sample4.CmsData
                 // header region
                 new RegionVersionRecord
                 {
-                    ElementId = _regions[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _regions[0].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     LayoutName = "layouts:col_2_left_fixed"
                 },
                 // footer region
                 new RegionVersionRecord
                 {
-                    ElementId = _regions[1].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _regions[1].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
-                    ComponentId = _components[0].ElementId
+                    ComponentId = _components[0].RecordId
                 },
                 // customer_list region
                 new RegionVersionRecord
                 {
-                    ElementId = _regions[2].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _regions[2].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     RegionTemplates = new []
                     {
                         new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/customer"}
                     },
-                    RepeatDataTypeId = _dataTypes[0].ElementId
+                    RepeatDataTypeId = _dataTypes[0].RecordId
                 },
                 // order_list region
                 new RegionVersionRecord
                 {
-                    ElementId = _regions[3].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _regions[3].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     RegionTemplates = new []
                     {
                         new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/order"}
                     },
-                    RepeatDataTypeId = _dataTypes[1].ElementId
+                    RepeatDataTypeId = _dataTypes[1].RecordId
                 },
                 // title region
                 new RegionVersionRecord
                 {
-                    ElementId = _regions[4].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _regions[4].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
-                    ComponentId = _components[0].ElementId
+                    ComponentId = _components[0].RecordId
                 },
             };
 
@@ -236,8 +236,8 @@ namespace Sample4.CmsData
             {
                 // page layout
                 new LayoutVersionRecord {
-                    ElementId = _layouts[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _layouts[0].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "header,main,footer",
@@ -246,20 +246,20 @@ namespace Sample4.CmsData
                         new LayoutZoneRecord
                         {
                             ZoneName = "header",
-                            LayoutId = _layouts[1].ElementId
+                            LayoutId = _layouts[1].RecordId
                         },
                         new LayoutZoneRecord
                         {
                             ZoneName = "footer",
-                            LayoutId = _layouts[2].ElementId
+                            LayoutId = _layouts[2].RecordId
                         }
                     }
                 },
 
                 // header layout
                 new LayoutVersionRecord {
-                    ElementId = _layouts[1].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _layouts[1].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "title,menu",
@@ -268,7 +268,7 @@ namespace Sample4.CmsData
                         new LayoutZoneRecord
                         {
                             ZoneName = "title",
-                            RegionId = _regions[4].ElementId
+                            RegionId = _regions[4].RecordId
                         },
                         new LayoutZoneRecord
                         {
@@ -288,8 +288,8 @@ namespace Sample4.CmsData
 
                 // footer layout
                 new LayoutVersionRecord {
-                    ElementId = _layouts[2].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _layouts[2].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "footer",
@@ -298,7 +298,7 @@ namespace Sample4.CmsData
                         new LayoutZoneRecord
                         {
                             ZoneName = "footer",
-                            RegionId = _regions[1].ElementId
+                            RegionId = _regions[1].RecordId
                         }
                     }
                 }
@@ -308,22 +308,22 @@ namespace Sample4.CmsData
             {
                 new ElementPropertyValueRecord
                 {
-                    ElementPropertyId = _properties[0].ElementPropertyId,
-                    ElementVersionId = _regionVersions[1].ElementVersionId,
+                    RecordId = _properties[0].RecordId,
+                    ParentRecordId = _regionVersions[1].RecordId,
                     ValueText = "Copyright Martin Halliday 2018-2019",
                     Value = "Copyright Martin Halliday 2018-2019"
                 },
                 new ElementPropertyValueRecord
                 {
-                    ElementPropertyId = _properties[0].ElementPropertyId,
-                    ElementVersionId = _regionVersions[4].ElementVersionId,
+                    RecordId = _properties[0].RecordId,
+                    ParentRecordId = _regionVersions[4].RecordId,
                     ValueText = "Sample 4",
                     Value = "Sample 4"
                 },
                 new ElementPropertyValueRecord
                 {
-                    ElementPropertyId = _properties[1].ElementPropertyId,
-                    ElementVersionId = _regionVersions[4].ElementVersionId,
+                    RecordId = _properties[1].RecordId,
+                    ParentRecordId = _regionVersions[4].RecordId,
                     ValueText = "font-size: 4vw;padding: 15px 0px 0px 30px;margin: 0;letter-spacing: 1px;font-family: sans-serif;color:whitesmoke;background:gray;",
                     Value = "font-size: 4vw;padding: 15px 0px 0px 30px;margin: 0;letter-spacing: 1px;font-family: sans-serif;color:whitesmoke;background:gray;"
                 }
@@ -337,7 +337,7 @@ namespace Sample4.CmsData
             {
                 new PageRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Name = "root",
@@ -346,7 +346,7 @@ namespace Sample4.CmsData
                 },
                 new PageRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Name = "customers",
@@ -355,7 +355,7 @@ namespace Sample4.CmsData
                 },
                 new PageRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Name = "orders",
@@ -364,7 +364,7 @@ namespace Sample4.CmsData
                 },
                 new PageRecord 
                 {
-                    ElementId = elementId++,
+                    RecordId = elementId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Name = "cms_manager",
@@ -377,21 +377,21 @@ namespace Sample4.CmsData
             {
                 new PageVersionRecord
                 {
-                    ElementId = _pages[0].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _pages[0].RecordId,
+                    RecordId = elementVersionId++,
                     Version = 1,
-                    LayoutId = _layouts[0].ElementId,
+                    LayoutId = _layouts[0].RecordId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "Sample 4",
                 },
                 new PageVersionRecord
                 {
-                    ElementId = _pages[1].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _pages[1].RecordId,
+                    RecordId = elementVersionId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Version = 1,
-                    MasterPageId = _pages[0].ElementId,
+                    MasterPageId = _pages[0].RecordId,
                     Title = "Customers",
                     Routes = new []
                     {
@@ -406,18 +406,18 @@ namespace Sample4.CmsData
                         new LayoutZoneRecord
                         {
                             ZoneName = "main",
-                            RegionId = _regions[2].ElementId
+                            RegionId = _regions[2].RecordId
                         }
                     }
                 },
                 new PageVersionRecord
                 {
-                    ElementId = _pages[2].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _pages[2].RecordId,
+                    RecordId = elementVersionId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Version = 1,
-                    MasterPageId = _pages[0].ElementId,
+                    MasterPageId = _pages[0].RecordId,
                     Title = "Orders",
                     Routes = new []
                     {
@@ -432,18 +432,18 @@ namespace Sample4.CmsData
                         new LayoutZoneRecord
                         {
                             ZoneName = "main",
-                            RegionId = _regions[3].ElementId
+                            RegionId = _regions[3].RecordId
                         }
                     }
                 },
                 new PageVersionRecord
                 {
-                    ElementId = _pages[3].ElementId,
-                    ElementVersionId = elementVersionId++,
+                    ParentRecordId = _pages[3].RecordId,
+                    RecordId = elementVersionId++,
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Version = 1,
-                    MasterPageId = _pages[0].ElementId,
+                    MasterPageId = _pages[0].RecordId,
                     Title = "CMS",
                     Routes = new []
                     {
@@ -473,7 +473,7 @@ namespace Sample4.CmsData
             {
                 new WebsiteVersionRecord
                 {
-                    WebsiteVersionId = 1,
+                    RecordId = 1,
                     Name = "v1",
                     DisplayName = "Sprint 224",
                     Description = "First version",
@@ -482,7 +482,7 @@ namespace Sample4.CmsData
                 },
                 new WebsiteVersionRecord
                 {
-                    WebsiteVersionId = 2,
+                    RecordId = 2,
                     Name = "v2",
                     DisplayName = "Sprint 225",
                     Description = "Second version",
@@ -495,7 +495,7 @@ namespace Sample4.CmsData
             {
                 new EnvironmentRecord
                 {
-                    EnvironmentId = 1,
+                    RecordId = 1,
                     Name = "prod",
                     DisplayName = "Production",
                     CreatedBy = creator,
@@ -505,7 +505,7 @@ namespace Sample4.CmsData
                 },
                 new EnvironmentRecord
                 {
-                    EnvironmentId = 2,
+                    RecordId = 2,
                     Name = "stage",
                     DisplayName = "Staging",
                     CreatedBy = creator,
@@ -515,7 +515,7 @@ namespace Sample4.CmsData
                 },
                 new EnvironmentRecord
                 {
-                    EnvironmentId = 3,
+                    RecordId = 3,
                     Name = "uat",
                     DisplayName = "User acceptance",
                     CreatedBy = creator,
@@ -530,8 +530,8 @@ namespace Sample4.CmsData
                     new WebsiteVersionPageRecord
                     {
                         WebsiteVersionId = 1,
-                        PageId = pv.ElementId,
-                        PageVersionId = pv.ElementVersionId
+                        PageId = pv.ParentRecordId,
+                        PageVersionId = pv.RecordId
                     
                     })
                 .ToArray();
@@ -541,8 +541,8 @@ namespace Sample4.CmsData
                     new WebsiteVersionLayoutRecord
                     {
                         WebsiteVersionId = 1,
-                        LayoutId = lv.ElementId,
-                        LayoutVersionId = lv.ElementVersionId
+                        LayoutId = lv.ParentRecordId,
+                        LayoutVersionId = lv.RecordId
                     })
                 .ToArray();
 
@@ -551,8 +551,8 @@ namespace Sample4.CmsData
                     new WebsiteVersionRegionRecord
                     {
                         WebsiteVersionId = 1,
-                        RegionId = rv.ElementId,
-                        RegionVersionId = rv.ElementVersionId
+                        RegionId = rv.ParentRecordId,
+                        RegionVersionId = rv.RecordId
                     })
                 .ToArray();
 
@@ -561,8 +561,8 @@ namespace Sample4.CmsData
                     new WebsiteVersionComponentRecord
                     {
                         WebsiteVersionId = 1,
-                        ComponentId = v.ElementId,
-                        ComponentVersionId = v.ElementVersionId
+                        ComponentId = v.ParentRecordId,
+                        ComponentVersionId = v.RecordId
                     })
                 .ToArray();
 
@@ -571,8 +571,8 @@ namespace Sample4.CmsData
                     new WebsiteVersionDataTypeRecord
                     {
                         WebsiteVersionId = 1,
-                        DataTypeVersionId = v.ElementVersionId,
-                        DataTypeId = v.ElementId
+                        DataTypeVersionId = v.RecordId,
+                        DataTypeId = v.ParentRecordId
                     })
                 .ToArray();
 

@@ -1,5 +1,5 @@
 ﻿exported.filters = function() {
-    Vue.filter("cms_formatDate", function (value) {
+    Vue.filter("cms_formatDateTime", function (value) {
         if (value) {
             var date = new Date(value);
 
@@ -26,11 +26,29 @@
         return "";
     });
 
-    Vue.filter("cms_formatUserUrn", function (value) {
+    Vue.filter("cms_formatDate", function (value) {
         if (value) {
-            return "user " + value.match(/[^:]*$/g); // TODO: Look up user display name
+            var date = new Date(value);
+
+            var year = date.getFullYear() + "";
+
+            var month = date.getMonth() + 1;
+            if (month < 10) month = "0" + month;
+            else month = month + "";
+
+            var day = date.getDate();
+            if (day < 10) day = "0" + day;
+            else day = day + "";
+
+            return year + "-" + month + "-" + day;
         }
         return "";
+    });
+
+    Vue.filter("cms_formatUserUrn", function (value) {
+        var name = value || "";
+        if (value) exported.userStore.retrieveRecord(value, function(user) { name = user.name });
+        return name;
     });
 
     Vue.filter("cms_lookupElementVersionId", function (value) {

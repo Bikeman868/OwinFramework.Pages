@@ -91,7 +91,8 @@
         
         store.get = function (id) { return store.dictionary[id]; }
 
-        store.createRecord = function(newRecord, onSuccess, onFail, params) {
+        store.createRecord = function (newRecord, onSuccess, onFail, params) {
+            if (store.mixin.createRecord == undefined) return;
             store.mixin.createRecord.call(store,
                 newRecord,
                 function (response) {
@@ -111,6 +112,7 @@
         }
 
         store.retrieveAllRecords = function(onSuccess, onFail) {
+            if (store.mixin.retrieveAllRecords == undefined) return;
             var records = store.getAll();
             if (records == undefined) {
                 store.mixin.retrieveAllRecords.call(store,
@@ -131,6 +133,7 @@
         }
 
         store.retrieveRecord = function(id, onSuccess, onFail) {
+            if (store.mixin.retrieveRecord == undefined) return;
             if (id == undefined) return;
             var record = store.get(id);
             if (record == undefined) {
@@ -148,8 +151,9 @@
             }
         }
 
-        store.updateRecord = function(originalRecord, updatedRecord, onSuccess, onFail) {
-            var changes = findChanges(fields, originalRecord, updatedRecord);
+        store.updateRecord = function (originalRecord, updatedRecord, onSuccess, onFail) {
+            if (store.mixin.updateRecord == undefined) return;
+            var changes = findChanges(store.fields, originalRecord, updatedRecord);
             if (changes.length === 0 && !store.hasChildren) {
                 if (onSuccess != undefined) onSuccess(originalRecord);
             } else {
@@ -167,7 +171,7 @@
                         if (response == undefined) {
                             if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been updated");
                         } else {
-                            set(response);
+                            store.set(response);
                             if (onSuccess != undefined) onSuccess(response);
                         }
                     },
@@ -178,10 +182,11 @@
         }
 
         store.deleteRecord = function(id, onSuccess, onFail) {
+            if (store.mixin.deleteRecord == undefined) return;
             store.mixin.deleteRecord(
                 id,
                 function(response) {
-                    remove(id);
+                    store.remove(id);
                     if (onSuccess != undefined) onSuccess(response);
                 },
                 function(ajax) {
@@ -415,7 +420,6 @@ exported.pageVersionStore = dataUtilities.newStore({
             null,
             function (ajax) { dataUtilities.doFailGet("list of page versions", ajax, onFail); });
     },
-
     getWebsitePageVersion: function (websiteVersionId, pageId, onSuccess, onFail) {
         var store = this;
         exported.listService.websitePageVersion(
@@ -437,5 +441,21 @@ exported.pageVersionStore = dataUtilities.newStore({
             function (ajax) {
                 if (onFail != undefined) onFail("Failed to get page version for website version");
             });
+    }
+});
+
+exported.userStore = dataUtilities.newStore({
+    recordType: "User",
+    name: "user",
+    listName: "list of users",
+    idField: "userUrn",
+    fields: ["name", "userUrn"],
+    mixin: {
+        retrieveRecord: function (userUrn, onSuccess, onFail) {
+            onSuccess({userUrn: userUrn, name: "bikeman"});
+        },
+        retrieveAllRecords: function (onSuccess, onFail) {
+            onSuccess([]);
+        }
     }
 });

@@ -12,7 +12,7 @@
 @tab-text-color: navy;
 @tab-selected-color: white;
 
-@table-heading-background: lighten(cornflowerblue, 30%);
+@table-heading-background: #e5e5ff;
 @table-background: white;
 
 @base-font-size: 12px;
@@ -63,6 +63,21 @@ div.cms_manager {
     }
     a:hover { 
         color: @anchor-hover-color
+    }
+    table {
+        border-collapse: collapse;
+        margin: 5px 0;
+    }
+    th {
+        border: 1px solid darken(@table-heading-background, 5%);
+        background-color: @table-heading-background;
+        padding: 5px 10px;
+        font: inherit;
+    }
+    td {
+        border: 1px solid darken(@table-heading-background, 5%);
+        background-color: @table-background;
+        padding: 3px 5px;
     }
     select {
         display: block;
@@ -227,21 +242,7 @@ div.cms_manager {
                 box-shadow: none
             }
         }
-        table {
-            border-collapse: collapse;
-            margin: 5px 0;
-        }
-        th {
-            border: 1px solid darken(@table-heading-background, 5%);
-            background-color: @table-heading-background;
-            padding: 5px 10px;
-            font: inherit;
-        }
         td {
-            border: 1px solid darken(@table-heading-background, 5%);
-            background-color: @table-background;
-            padding: 3px 5px;
-
             input {
                 box-shadow: none;
                 border: none;

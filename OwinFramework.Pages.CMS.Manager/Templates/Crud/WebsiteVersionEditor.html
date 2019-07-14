@@ -4,8 +4,9 @@
             <div v-if="currentWebsiteVersion == undefined && mode === 'view'">
                 <h2>No website version selected</h2>
                 <p>
-                    No website version currently selected for editing. Choose a website version from the list on the left. If the
-                    list of website versions is empty this is because you have not created any versions of the website yet.
+                    No website version currently selected for editing.
+                    Choose a website version from the list on the left.
+                    If the list of website versions is empty this is because you have not created any versions of the website yet.
                 </p>
                 <div class="cms_button_bar">
                     <button type="button" v-on:click="newWebsiteVersion">New</button>
@@ -49,7 +50,7 @@
                     </div>
                     <div class="cms_field">
                         <label>Created</label>
-                        <p>{{currentWebsiteVersion.createdWhen | cms_formatDate}} by {{currentWebsiteVersion.createdBy | cms_formatUserUrn}}</p>
+                        <p>{{currentWebsiteVersion.createdWhen|cms_formatDateTime}} by {{currentWebsiteVersion.createdBy|cms_formatUserUrn}}</p>
                     </div>
                     <div class="cms_button_bar">
                         <button type="button" v-on:click="editWebsiteVersion">Edit</button>
@@ -74,6 +75,18 @@
             </div>
         </cms-tab>
         <cms-tab name="History">
+            <div v-if="currentWebsiteVersion == undefined || currentWebsiteVersion.recordId == undefined">
+                <p>
+                    No website version currently selected for history view.
+                    Choose a website version from the list on the left.
+                    If the list of website versions is empty this is because you have not created any versions of the website yet.
+                </p>
+            </div>
+            <cms-history-period v-else
+                                v-bind:label="currentWebsiteVersion.displayName + ' version history'"
+                                v-bind:record-type="currentWebsiteVersion.recordType"
+                                v-bind:record-id="currentWebsiteVersion.recordId">
+            </cms-history-period>
         </cms-tab>
     </cms-tabs>
 </div>

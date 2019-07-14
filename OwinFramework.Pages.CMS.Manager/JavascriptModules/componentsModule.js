@@ -767,6 +767,21 @@
         }
     });
 
+    Vue.component("cms-history-summary",
+    {
+        props: {
+            summary: {
+                required: true,
+                type: Object
+            }
+        },
+        template:
+            "<tr class=\"cms_history_summary\">" +
+            "  <td class=\"cms_history__when\">{{summary.when|cms_formatDate}}</td>" +
+            "  <td class=\"cms_history__identity\">{{summary.identity|cms_formatUserUrn}}</td>" +
+            "  <td class=\"cms_history__changes\">{{summary.changes}}</td>" +
+            "</tr>"
+    });
 
     Vue.component("cms-history-period",
     {
@@ -793,12 +808,11 @@
             "<div>" +
             "  <h2>{{label}}</h2>" +
             "  <table class=\"cms_history_period\">" +
-            "    <tr class=\"cms_history_summary\"><th></th><th></th><th></th></tr>" +
-            "    <tr class=\"cms_history_summary\" v-for=\"summary in summaries\">" +
-            "      <td class=\"cms_history__when\">{{summary.when}}</td>" +
-            "      <td class=\"cms_history__identity\">{{summary.identity}}</td>" +
-            "      <td class=\"cms_history__changes\">{{summary.changes}}</td>" +
+            "    <tr class=\"cms_history_summary\">" +
+            "      <th>When</th><th>Who</th><th>What</th>" +
             "    </tr>" +
+            "    <cms-history-summary v-for=\"summary in summaries\" :key=\"summary.id\" :summary=\"summary\">" +
+            "    </cms-history-summary>" +
             "  </table>" +
             "</div>",
         data: function () {

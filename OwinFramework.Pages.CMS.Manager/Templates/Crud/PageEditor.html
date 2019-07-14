@@ -4,8 +4,9 @@
             <div v-if="currentPage == undefined && pageMode === 'view'">
                 <h2>No page selected</h2>
                 <p>
-                    No page currently selected for editing. Choose a page from the list on the left. If the
-                    list of pages is empty this is because the selected website version contains no pages.
+                    No page currently selected for editing.
+                    Choose a page from the list on the left. 
+                    If the list of pages is empty this is because the selected website version contains no pages.
                 </p>
                 <div class="cms_button_bar">
                     <button type="button" v-on:click="newPage">New</button>
@@ -49,7 +50,7 @@
                     </div>
                     <div class="cms_field">
                         <label>Created</label>
-                        <p>{{currentPage.createdWhen | cms_formatDate}} by {{currentPage.createdBy | cms_formatUserUrn}}</p>
+                        <p>{{currentPage.createdWhen|cms_formatDateTime}} by {{currentPage.createdBy|cms_formatUserUrn}}</p>
                     </div>
                     <div class="cms_button_bar">
                         <button type="button" v-on:click="editPage">Edit</button>
@@ -200,7 +201,7 @@
                         </div>
                         <div class="cms_field">
                             <label>Created</label>
-                            <p>{{currentPageVersion.createdWhen | cms_formatDate}} by {{currentPageVersion.createdBy | cms_formatUserUrn}}</p>
+                            <p>{{currentPageVersion.createdWhen|cms_formatDateTime}} by {{currentPageVersion.createdBy|cms_formatUserUrn}}</p>
                         </div>
                         <div class="cms_button_bar">
                             <button type="button" v-on:click="choosePageVersion">Versions</button>
@@ -241,6 +242,25 @@
         <cms-tab name="Versions">
         </cms-tab>
         <cms-tab name="History">
+            <div v-if="currentPage == undefined || currentPage.recordId == undefined">
+                <p>
+                    No page currently selected for history.
+                    Choose a page from the list on the left.
+                    If the list of pages is empty this is because the selected website version contains no pages.
+                </p>
+            </div>
+            <div v-else>
+                <cms-history-period v-if="currentPageVersion == undefined || currentPageVersion.recordId == undefined"
+                                    v-bind:label="currentPage.displayName + ' page change history'"
+                                    v-bind:record-type="currentPage.recordType"
+                                    v-bind:record-id="currentPage.recordId">
+                </cms-history-period>
+                <cms-history-period v-else
+                                    v-bind:label="currentPage.displayName + ' page version ' + currentPageVersion.version + ' change history'"
+                                    v-bind:record-type="currentPageVersion.recordType"
+                                    v-bind:record-id="currentPageVersion.recordId">
+                </cms-history-period>
+            </div>
         </cms-tab>
     </cms-tabs>
 </div>

@@ -52,7 +52,7 @@
                     <div class="cms_field"><label>Base URL</label><p>{{currentEnvironment.baseUrl}}</p></div>
                     <div class="cms_field"><label>Website version</label><p>{{websiteVersion.displayName}}</p></div>
                     <div class="cms_field"><label>Description</label><p>{{currentEnvironment.description}}</p></div>
-                    <div class="cms_field"><label>Created</label><p>{{currentEnvironment.createdWhen | cms_formatDate}} by {{currentEnvironment.createdBy | cms_formatUserUrn}}</p></div>
+                    <div class="cms_field"><label>Created</label><p>{{currentEnvironment.createdWhen|cms_formatDateTime}} by {{currentEnvironment.createdBy|cms_formatUserUrn}}</p></div>
                     <div class="cms_button_bar">
                         <button type="button" v-on:click="editEnvironment">Edit</button>
                         <button type="button" v-on:click="newEnvironment">New</button>

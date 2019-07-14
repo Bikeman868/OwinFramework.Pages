@@ -101,11 +101,11 @@
     <EmbeddedResource Include="Templates\CmsManager.less" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\Dispatcher\DispatcherLog.html" />
-    <EmbeddedResource Include="Templates\Dispatcher\DispatcherLog.js" />
+    <EmbeddedResource Include="Templates\Tools\DispatcherLog.html" />
+    <EmbeddedResource Include="Templates\Tools\DispatcherLog.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\Dispatcher\DispatcherLog.less" />
+    <EmbeddedResource Include="Templates\Tools\DispatcherLog.less" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JavascriptModules\dispatcherModule.js" />

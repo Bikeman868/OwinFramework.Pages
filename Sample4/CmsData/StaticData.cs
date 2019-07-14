@@ -594,7 +594,7 @@ namespace Sample4.CmsData
                     {
                         SummaryId = 1,
                         When = DateTime.UtcNow.AddMinutes(-1),
-                        Identity = "somebody",
+                        Identity = "urn:user:34",
                         ChangeSummary = "Created a page and set the title field"
                     }
                 }
@@ -618,8 +618,8 @@ namespace Sample4.CmsData
                     EventId = 1,
                     RecordType = "Page",
                     RecordId = 1,
-                    When = DateTime.UtcNow,
-                    Identity = "somebody",
+                    When = DateTime.UtcNow.AddMinutes(-1),
+                    Identity = "urn:user:34",
                     ChangeDetails = JsonConvert.SerializeObject(
                         new HistoryChangeDetails
                         {
@@ -632,7 +632,7 @@ namespace Sample4.CmsData
                     RecordType = "Page",
                     RecordId = 1,
                     When = DateTime.UtcNow,
-                    Identity = "somebody",
+                    Identity = "urn:user:23",
                     ChangeDetails = JsonConvert.SerializeObject(
                         new HistoryChangeDetails
                         {

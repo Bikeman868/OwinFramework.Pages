@@ -101,7 +101,7 @@
             },
             createNew: function() {
                 var vm = this;
-                if (vm.websiteVersion == undefined) {
+                if (vm.websiteVersion == undefined || vm.websiteVersion.recordId == undefined) {
                     vm.errors = ["You must select a website version before creating a new page"];
                 } else {
                     vm.validate();
@@ -137,7 +137,7 @@
             },
             showPageVersion: function () {
                 var vm = this;
-                if (vm.currentPage == undefined || vm.websiteVersion == undefined) {
+                if (vm.currentPage == undefined || vm.currentPage.recordId == undefined || vm.websiteVersion == undefined || vm.websiteVersion.recordId == undefined) {
                     vm.currentPageVersion = null;
                 } else {
                     exported.pageVersionStore.getWebsitePageVersion(
@@ -181,7 +181,7 @@
             },
             createNewVersion: function () {
                 var vm = this;
-                if (vm.websiteVersion == undefined) {
+                if (vm.websiteVersion == undefined || vm.websiteVersion.recordId == undefined) {
                     vm.versionErrors = ["You must select a website version before creating a new page"];
                 } else {
                     vm.validateVersion();

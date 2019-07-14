@@ -255,8 +255,8 @@
 exported.environmentStore = dataUtilities.newStore({
     recordType: "Environment",
     name: "environment",
-    idField: "environmentId",
-    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "environmentId", "baseUrl", "websiteVersionId"],
+    idField: "recordId",
+    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "recordId", "baseUrl", "websiteVersionId"],
     mixin: {
         createRecord: function(environment, onSuccess, onFail, params) {
             exported.crudService.createEnvironment({ body: environment }, onSuccess, onFail);
@@ -270,7 +270,7 @@ exported.environmentStore = dataUtilities.newStore({
         updateRecord: function(updatedEnvironment, changes, onSuccess, onFail) {
             exported.crudService.updateEnvironment(
             {
-                id: updatedEnvironment.environmentId,
+                id: updatedEnvironment.recordId,
                 body: changes
             },
             onSuccess, null, onFail);
@@ -284,8 +284,8 @@ exported.environmentStore = dataUtilities.newStore({
 exported.websiteVersionStore = dataUtilities.newStore({
     recordType: "WebsiteVersion",
     name: "website version",
-    idField: "websiteVersionId",
-    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "websiteVersionId"],
+    idField: "recordId",
+    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "recordId"],
     mixin: {
         createRecord: function (websiteVersion, onSuccess, onFail, params) {
             exported.crudService.createWebsiteVersion({ body: websiteVersion }, onSuccess, onFail);
@@ -299,7 +299,7 @@ exported.websiteVersionStore = dataUtilities.newStore({
         updateRecord: function (updatedWebsiteVersion, changes, onSuccess, onFail) {
             exported.crudService.updateWebsiteVersion(
             {
-                id: updatedWebsiteVersion.websiteVersionId,
+                id: updatedWebsiteVersion.recordId,
                 body: changes
             },
             onSuccess, null, onFail);
@@ -322,8 +322,8 @@ exported.pageStore = dataUtilities.newStore({
     recordType: "Page",
     name: "page",
     listName: "list of pages",
-    idField: "elementId",
-    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "elementId"],
+    idField: "recordId",
+    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "recordId"],
     mixin: {
         createRecord: function(page, onSuccess, onFail, params) {
             exported.crudService.createPage({ body: page, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
@@ -337,7 +337,7 @@ exported.pageStore = dataUtilities.newStore({
         updateRecord: function(updatedPage, changes, onSuccess, onFail) {
             exported.crudService.updatePage(
             {
-                id: updatedPage.elementId,
+                id: updatedPage.recordId,
                 body: changes
             },
             onSuccess, null, onFail);
@@ -352,11 +352,11 @@ exported.pageVersionStore = dataUtilities.newStore({
     recordType: "PageVersion",
     name: "page version",
     listName: "list of page versions",
-    idField: "elementId",
+    idField: "recordId",
     hasChildren: true,
     fields: [
         "name", "displayName", "description", "createdBy", "createdWhen",
-        "elementVersionId", "elementId", "version", "moduleName", "assetDeployment", "masterPageId",
+        "recordId", "parentRecordId", "version", "moduleName", "assetDeployment", "masterPageId",
         "layoutName", "layoutId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath",
         "routes", "layoutZones", "components"],
     mixin: {
@@ -373,7 +373,7 @@ exported.pageVersionStore = dataUtilities.newStore({
             if (changes != undefined && changes.length > 0) {
                 exported.crudService.updatePageVersion(
                     {
-                        id: updatedPageVersion.elementVersionId,
+                        id: updatedPageVersion.recordId,
                         body: changes
                     },
                     onSuccess, null, onFail);
@@ -381,7 +381,7 @@ exported.pageVersionStore = dataUtilities.newStore({
             if (updatedPageVersion.routes != undefined) {
                 exported.crudService.updatePageVersionRoutes(
                     {
-                        id: updatedPageVersion.elementVersionId,
+                        id: updatedPageVersion.recordId,
                         body: updatedPageVersion.routes
                     },
                     onSuccess, null, onFail);
@@ -389,7 +389,7 @@ exported.pageVersionStore = dataUtilities.newStore({
             if (updatedPageVersion.layoutZones != null) {
                 exported.crudService.updatePageVersionZones(
                     {
-                        id: updatedPageVersion.elementVersionId,
+                        id: updatedPageVersion.recordId,
                         body: updatedPageVersion.layoutZones
                     },
                     onSuccess, null, onFail);
@@ -397,7 +397,7 @@ exported.pageVersionStore = dataUtilities.newStore({
             if (updatedPageVersion.components != undefined) {
                 exported.crudService.updatePageVersionComponents(
                     {
-                        id: updatedPageVersion.elementVersionId,
+                        id: updatedPageVersion.recordId,
                         body: updatedPageVersion.components
                     },
                     onSuccess, null, onFail);

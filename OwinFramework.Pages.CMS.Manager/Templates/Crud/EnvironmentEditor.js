@@ -74,7 +74,7 @@
                         vm.editingEnvironment,
                         function() {
                             vm.mode = "view";
-                            vm._context.selected("websiteVersionId", vm.editingEnvironment.websiteVersionId);
+                            vm._context.selected("websiteVersionId", vm.editingEnvironment.recordId);
                             vm.updateWebsiteVersion();
                         },
                         function(msg) { vm.errors = [msg] });
@@ -117,7 +117,7 @@
             },
             updateWebsiteVersion: function () {
                 var vm = this;
-                var websiteVersionId = vm.currentEnvironment.websiteVersionId;
+                var websiteVersionId = vm.currentEnvironment.recordId;
                 vm._context.selected("websiteVersionId", websiteVersionId);
                 exported.websiteVersionStore.retrieveRecord(
                     websiteVersionId,

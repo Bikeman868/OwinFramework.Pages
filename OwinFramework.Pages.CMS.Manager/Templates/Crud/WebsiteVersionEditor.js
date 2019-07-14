@@ -65,7 +65,7 @@
                         vm.editingWebsiteVersion,
                         function() {
                              vm.mode = "view";
-                             vm._context.selected("websiteVersionId", vm.editingWebsiteVersion.websiteVersionId);
+                             vm._context.selected("websiteVersionId", vm.editingWebsiteVersion.recordId);
                         },
                         function(msg) { vm.errors = [msg] });
                 }
@@ -78,7 +78,7 @@
                         vm.editingWebsiteVersion,
                         function() {
                             vm.mode = "view";
-                            vm._context.selected("websiteVersionId", vm.editingWebsiteVersion.websiteVersionId);
+                            vm._context.selected("websiteVersionId", vm.editingWebsiteVersion.recordId);
                         },
                         function(msg) { vm.errors = [msg]},
                         {});
@@ -87,7 +87,7 @@
             confirmDelete: function() {
                 var vm = this;
                 exported.websiteVersionStore.deleteRecord(
-                    vm.currentWebsiteVersion.websiteVersionId,
+                    vm.currentWebsiteVersion.recordId,
                     function() {
                         vm.currentWebsiteVersion = null;
                         vm.mode = "view";

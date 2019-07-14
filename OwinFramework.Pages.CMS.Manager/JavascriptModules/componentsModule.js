@@ -57,7 +57,7 @@
             "<div class=\"cms_field\">" +
             "  <label>{{label}}</label>" +
             "  <select class=\"cms_field__website_version\" @change=\"selectWebsiteVersion($event)\">" +
-            "    <option v-for=\"websiteVersion in websiteVersions\" v-bind:value=\"websiteVersion.websiteVersionId\" v-bind:selected=\"websiteVersion.websiteVersionId==websiteVersionId\">" +
+            "    <option v-for=\"websiteVersion in websiteVersions\" v-bind:value=\"websiteVersion.recordId\" v-bind:selected=\"websiteVersion.recordId==websiteVersionId\">" +
             "      {{websiteVersion.displayName}}" +
             "    </option>" +
             "  </select>" +
@@ -110,7 +110,7 @@
             "<div class=\"cms_field\">" +
             "  <label>{{label}}</label>" +
             "  <select class=\"cms_field__page\" @change=\"selectPage($event)\">" +
-            "    <option v-for=\"page in pages\" v-bind:value=\"page.elementId\" v-bind:selected=\"page.elementId==pageId\">" +
+            "    <option v-for=\"page in pages\" v-bind:value=\"page.recordId\" v-bind:selected=\"page.recordId==pageId\">" +
             "      {{page.displayName}}" +
             "    </option>" +
             "  </select>" +
@@ -129,7 +129,7 @@
                             for (let i = 0; i < response.length; i++) {
                                 var excluded = false;
                                 for (let j = 0; j < vm.exclude.length; j++) {
-                                    if (vm.exclude[j] == response[i].elementId) excluded = true;
+                                    if (vm.exclude[j] == response[i].recordId) excluded = true;
                                 }
                                 if (excluded) {
                                     response.splice(i, 1);
@@ -139,7 +139,7 @@
                         }
                         if (vm.allowNone) {
                             response.unshift({
-                                elementId: null,
+                                recordId: null,
                                 displayName: ""
                             });
                         }
@@ -240,7 +240,7 @@
             "  <label>{{label}}</label>" +
             "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
             "  <select v-if=\"!inherit\" class=\"cms_field__layout\" @change=\"selectLayout($event)\">" +
-            "    <option v-for=\"layout in layouts\" v-bind:value=\"layout.elementId\" v-bind:selected=\"layout.elementId==layoutId\">" +
+            "    <option v-for=\"layout in layouts\" v-bind:value=\"layout.recordId\" v-bind:selected=\"layout.recordId==layoutId\">" +
             "      {{layout.displayName}}" +
             "    </option>" +
             "  </select>" +
@@ -259,17 +259,17 @@
         created: function () {
             var vm = this;
             vm.layouts = [
-                { elementId: 7, displayName: "Layout 1" },
-                { elementId: 8, displayName: "Layout 2" },
-                { elementId: 9, displayName: "Layout 3" },
-                { elementId: 10, displayName: "Layout 4" }
+                { recordId: 7, displayName: "Layout 1" },
+                { recordId: 8, displayName: "Layout 2" },
+                { recordId: 9, displayName: "Layout 3" },
+                { recordId: 10, displayName: "Layout 4" }
             ];
             //exported.layoutStore.retrieveAllRecords(
             //    function (response) {
             //        vm.layouts = response;
             //    });
             vm.layouts.unshift({
-                elementId: "",
+                recordId: "",
                 displayName: "Defined in code"
             });
             vm.recalculate(true);

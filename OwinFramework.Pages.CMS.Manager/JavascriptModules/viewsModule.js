@@ -42,11 +42,11 @@ exported.viewStore = function () {
     var viewModels = {};
     var currentViewModel = {};
 
-    var selectView = function (container, templatePath, elementId, buildViewModel, context, topContext) {
+    var selectView = function (container, templatePath, recordId, buildViewModel, context, topContext) {
         if (currentViewModel[container] != undefined) {
             currentViewModel[container].hide();
         }
-        var viewModel = viewModels[elementId];
+        var viewModel = viewModels[recordId];
         if (viewModel != undefined) {
             viewModel.show(context, topContext);
             currentViewModel[container] = viewModel;
@@ -57,8 +57,8 @@ exported.viewStore = function () {
             viewContainer,
             templatePath,
             function () {
-                viewModel = buildViewModel(elementId);
-                viewModels[elementId] = viewModel;
+                viewModel = buildViewModel(recordId);
+                viewModels[recordId] = viewModel;
                 currentViewModel[container] = viewModel;
                 viewModel.show(context, topContext);
             }

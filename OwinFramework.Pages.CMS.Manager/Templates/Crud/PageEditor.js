@@ -111,7 +111,7 @@
                             function() { vm.pageMode = "view"; },
                             function(msg) { vm.errors = [msg] },
                             {
-                                websiteVersionId: vm.websiteVersion.websiteVersionId
+                                websiteVersionId: vm.websiteVersion.recordId
                             });
                     }
                 }
@@ -119,7 +119,7 @@
             confirmDelete: function() {
                 var vm = this;
                 exported.pageStore.deleteRecord(
-                    vm.currentPage.elementId,
+                    vm.currentPage.recordId,
                     function() {
                         vm.currentPage = null;
                         vm.pageMode = "view";
@@ -141,8 +141,8 @@
                     vm.currentPageVersion = null;
                 } else {
                     exported.pageVersionStore.getWebsitePageVersion(
-                        vm.websiteVersion.websiteVersionId,
-                        vm.currentPage.elementId,
+                        vm.websiteVersion.recordId,
+                        vm.currentPage.recordId,
                         function(pageVersion) { vm.currentPageVersion = pageVersion; },
                         function(msg) { vm.currentPageVersion = null; });
                 }
@@ -191,8 +191,8 @@
                             function () { vm.pageVersionMode = "view"; },
                             function (msg) { vm.versionErrors = [msg] },
                             {
-                                websiteVersionId: vm.websiteVersion.websiteVersionId,
-                                pageId: vm.currentPage.elementId
+                                websiteVersionId: vm.websiteVersion.recordId,
+                                pageId: vm.currentPage.recordId
                             });
                     }
                 }
@@ -200,7 +200,7 @@
             confirmDeleteVersion: function () {
                 var vm = this;
                 exported.pageVersionStore.deleteRecord(
-                    vm.currentPageVersion.elementId,
+                    vm.currentPageVersion.recordId,
                     function () {
                         vm.currentPageVersion = null;
                         vm.pageVersionMode = "view";
@@ -263,13 +263,13 @@
                 }
                 var masterPageId = vm.editingPageVersion.masterPageId;
                 while (masterPageId != undefined) {
-                    if (masterPageId === vm.editingPageVersion.elementId) {
+                    if (masterPageId === vm.editingPageVersion.recordId) {
                         errors.push("Master pages must be in a tree-like heirachy, you cannot create loops");
                         masterPageId = null;
                     } else {
                         masterPageId = null;
-                        // exported.pageStore.retrieveRecord(masterPageId, function(page) { masterPageId = page.elementId; });
-                        // TODO: The masterPageId is a property of the page version which is specific to eacg website version
+                        // exported.pageStore.retrieveRecord(masterPageId, function(page) { masterPageId = page.recordId; });
+                        // TODO: The masterPageId is a property of the page version which is specific to each website version
                     }
                 }
                 vm.versionErrors = errors;

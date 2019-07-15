@@ -170,7 +170,6 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 {
                     ChangeType = "Modified",
                     FieldName = change.PropertyName,
-                    OldValue = environment.Name,
                     NewValue = change.PropertyValue
                 };
 
@@ -216,6 +215,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _environments = _environments.Where(p => p.RecordId != environmentId).ToArray();
             }
 
+            AddHistory(
+                environment, 
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Deleted"
+                });
+
             return new DeleteResult();
         }
 
@@ -252,24 +259,36 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var websiteVersion = _websiteVersions.FirstOrDefault(p => p.RecordId == websiteVersionId);
             if (websiteVersion == null) return new UpdateResult("website_version_not_found", "No website version found with id " + websiteVersionId);
 
+            var details = new List<HistoryChangeDetails>();
+
             foreach (var change in changes)
             {
+                var changeDetails = new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = change.PropertyName,
+                    NewValue = change.PropertyValue
+                };
+
                 switch (change.PropertyName.ToLower())
                 {
                     case "name":
+                        changeDetails.OldValue = websiteVersion.Name;
                         websiteVersion.Name = change.PropertyValue;
                         break;
                     case "displayname":
+                        changeDetails.OldValue = websiteVersion.DisplayName;
                         websiteVersion.DisplayName = change.PropertyValue;
                         break;
                     case "description":
+                        changeDetails.OldValue = websiteVersion.Description;
                         websiteVersion.Description = change.PropertyValue;
                         break;
-                    case "websiteversionid":
-                        websiteVersion.RecordId = long.Parse(change.PropertyValue);
-                        break;
                 }
+                details.Add(changeDetails);
             }
+
+            AddHistory(websiteVersion, identity, details.ToArray());
 
             return new UpdateResult();
         }
@@ -283,6 +302,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             {
                 _websiteVersions = _websiteVersions.Where(p => p.RecordId != websiteVersionId).ToArray();
             }
+
+            AddHistory(
+                websiteVersion, 
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Deleted"
+                });
 
             return new DeleteResult();
         }
@@ -341,17 +368,29 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var page = _pages.FirstOrDefault(p => p.RecordId == pageId);
             if (page == null) return new UpdateResult("page_not_found", "No page found with id " + pageId);
 
+            var details = new List<HistoryChangeDetails>();
+
             foreach (var change in changes)
             {
+                var changeDetails = new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = change.PropertyName,
+                    NewValue = change.PropertyValue
+                };
+
                 switch (change.PropertyName.ToLower())
                 {
                     case "name":
+                        changeDetails.OldValue = page.Name;
                         page.Name = change.PropertyValue;
                         break;
                     case "displayname":
+                        changeDetails.OldValue = page.DisplayName;
                         page.DisplayName = change.PropertyValue;
                         break;
                     case "description":
+                        changeDetails.OldValue = page.Description;
                         page.Description = change.PropertyValue;
                         break;
                 }
@@ -369,6 +408,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             {
                 _pages = _pages.Where(p => p.RecordId != pageId).ToArray();
             }
+
+            AddHistory(
+                page, 
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Deleted"
+                });
 
             return new DeleteResult();
         }
@@ -399,6 +446,16 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _websiteVersionPages = websiteVersionPages.ToArray();
             }
 
+            AddHistory(
+                new WebsiteVersionRecord { RecordId = websiteVersionId },
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "ChildAdded",
+                    ChildType = pageVersion.RecordType,
+                    ChildId = pageVersion.RecordId
+                });
+
             return new UpdateResult();
         }
 
@@ -427,6 +484,16 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
                 _websiteVersionPages = websiteVersionPages.ToArray();
             }
+
+            AddHistory(
+                new WebsiteVersionRecord { RecordId = websiteVersionId },
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "ChildAdded",
+                    ChildType = pageVersion.RecordType,
+                    ChildId = pageVersion.RecordId
+                });
 
             return new UpdateResult();
         }
@@ -464,57 +531,84 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var pageVersion = _pageVersions.FirstOrDefault(p => p.RecordId == pageVersionId);
             if (pageVersion == null) return new UpdateResult("page_version_not_found", "No page version found with id " + pageVersionId);
 
+            var details = new List<HistoryChangeDetails>();
+
             foreach (var change in changes)
             {
+                var changeDetails = new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = change.PropertyName,
+                    NewValue = change.PropertyValue
+                };
+
                 switch (change.PropertyName.ToLower())
                 {
                     case "name":
+                        changeDetails.OldValue = pageVersion.Name;
                         pageVersion.Name = change.PropertyValue;
                         break;
                     case "displayname":
+                        changeDetails.OldValue = pageVersion.DisplayName;
                         pageVersion.DisplayName = change.PropertyValue;
                         break;
                     case "description":
+                        changeDetails.OldValue = pageVersion.Description;
                         pageVersion.Description = change.PropertyValue;
                         break;
                     case "version":
+                        changeDetails.OldValue = pageVersion.Version.ToString();
                         pageVersion.Version = int.Parse(change.PropertyValue);
                         break;
                     case "versionName":
+                        changeDetails.OldValue = pageVersion.VersionName;
                         pageVersion.VersionName = change.PropertyValue;
                         break;
                     case "moduleName":
+                        changeDetails.OldValue = pageVersion.ModuleName;
                         pageVersion.ModuleName = change.PropertyValue;
                         break;
                     case "assetDeployment":
+                        changeDetails.OldValue = pageVersion.AssetDeployment.ToString();
                         pageVersion.AssetDeployment = (AssetDeployment)Enum.Parse(typeof(AssetDeployment), change.PropertyValue);
                         break;
                     case "masterPageId":
+                        changeDetails.OldValue = pageVersion.MasterPageId.ToString();
                         pageVersion.MasterPageId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
                         break;
                     case "layoutId":
+                        changeDetails.OldValue = pageVersion.LayoutId.ToString();
                         pageVersion.LayoutId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
                         break;
                     case "layoutName":
+                        changeDetails.OldValue = pageVersion.LayoutName;
                         pageVersion.LayoutName = change.PropertyValue;
                         break;
                     case "canonicalUrl":
+                        changeDetails.OldValue = pageVersion.CanonicalUrl;
                         pageVersion.CanonicalUrl = change.PropertyValue;
                         break;
                     case "title":
+                        changeDetails.OldValue = pageVersion.Title;
                         pageVersion.Title = change.PropertyValue;
                         break;
                     case "bodyStyle":
+                        changeDetails.OldValue = pageVersion.BodyStyle;
                         pageVersion.BodyStyle = change.PropertyValue;
                         break;
                     case "permission":
+                        changeDetails.OldValue = pageVersion.RequiredPermission;
                         pageVersion.RequiredPermission = change.PropertyValue;
                         break;
                     case "assetPath":
+                        changeDetails.OldValue = pageVersion.AssetPath;
                         pageVersion.AssetPath = change.PropertyValue;
                         break;
                 }
+                details.Add(changeDetails);
             }
+
+            AddHistory(pageVersion, identity, details.ToArray());
 
             return new UpdateResult();
         }
@@ -524,7 +618,32 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var pageVersion = _pageVersions.FirstOrDefault(p => p.RecordId == pageVersionId);
             if (pageVersion == null) return new UpdateResult("page_version_not_found", "No page version found with id " + pageVersionId);
 
-            pageVersion.Routes = routes.ToArray();
+            var oldRoutes = pageVersion.Routes;
+            var newRoutes = routes.ToArray();
+
+            if (oldRoutes != null && oldRoutes.Length == newRoutes.Length)
+            {
+                var hasChanged = false;
+                for (var i = 0; i < oldRoutes.Length; i++)
+                {
+                    if (oldRoutes[i].Priority != newRoutes[i].Priority) hasChanged = true;
+                    if (oldRoutes[i].Path != newRoutes[i].Path) hasChanged = true;
+                }
+                if (!hasChanged) return new UpdateResult();
+            }
+
+            pageVersion.Routes = newRoutes;
+
+            AddHistory(
+                pageVersion, 
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = "routes",
+                    OldValue = JsonConvert.SerializeObject(oldRoutes),
+                    NewValue = JsonConvert.SerializeObject(newRoutes)
+                });
 
             return new UpdateResult();
         }
@@ -534,7 +653,36 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var pageVersion = _pageVersions.FirstOrDefault(p => p.RecordId == pageVersionId);
             if (pageVersion == null) return new UpdateResult("page_version_not_found", "No page version found with id " + pageVersionId);
 
-            pageVersion.LayoutZones = layoutZones.ToArray();
+            var oldZones = pageVersion.LayoutZones;
+            var newZones = layoutZones.ToArray();
+
+            if (oldZones != null && oldZones.Length == newZones.Length)
+            {
+                var hasChanged = false;
+                for (var i = 0; i < oldZones.Length; i++)
+                {
+                    if (oldZones[i].ZoneName != newZones[i].ZoneName) hasChanged = true;
+                    if (oldZones[i].ContentName != newZones[i].ContentName) hasChanged = true;
+                    if (oldZones[i].ContentType != newZones[i].ContentType) hasChanged = true;
+                    if (oldZones[i].ContentValue != newZones[i].ContentValue) hasChanged = true;
+                    if (oldZones[i].LayoutId != newZones[i].LayoutId) hasChanged = true;
+                    if (oldZones[i].RegionId != newZones[i].RegionId) hasChanged = true;
+                }
+                if (!hasChanged) return new UpdateResult();
+            }
+
+            pageVersion.LayoutZones = newZones;
+
+            AddHistory(
+                pageVersion, 
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = "layoutZones",
+                    OldValue = JsonConvert.SerializeObject(oldZones),
+                    NewValue = JsonConvert.SerializeObject(newZones)
+                });
 
             return new UpdateResult();
         }
@@ -544,7 +692,31 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var pageVersion = _pageVersions.FirstOrDefault(p => p.RecordId == pageVersionId);
             if (pageVersion == null) return new UpdateResult("page_version_not_found", "No page version found with id " + pageVersionId);
 
-            pageVersion.Components = components.ToArray();
+            var oldComponents = pageVersion.Components;
+            var newComponents = components.ToArray();
+
+            if (oldComponents != null && oldComponents.Length == newComponents.Length)
+            {
+                var hasChanged = false;
+                for (var i = 0; i < oldComponents.Length; i++)
+                {
+                    if (oldComponents[i].ComponentName != newComponents[i].ComponentName) hasChanged = true;
+                }
+                if (!hasChanged) return new UpdateResult();
+            }
+
+            pageVersion.Components = newComponents;
+
+            AddHistory(
+                pageVersion, 
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = "components",
+                    OldValue = JsonConvert.SerializeObject(oldComponents),
+                    NewValue = JsonConvert.SerializeObject(newComponents)
+                });
 
             return new UpdateResult();
         }
@@ -559,6 +731,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _pageVersions = _pageVersions.Where(p => p.RecordId != pageVersionId).ToArray();
             }
 
+            AddHistory(
+                pageVersion, 
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Deleted"
+                });
+
             return new DeleteResult();
         }
 
@@ -570,6 +750,16 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     _websiteVersionPages.Where(p => p.WebsiteVersionId != websiteVersionId || p.PageId != pageId)
                         .ToArray();
             }
+
+            AddHistory(
+                new WebsiteVersionRecord { RecordId = websiteVersionId }, 
+                identity, 
+                new HistoryChangeDetails
+                {
+                    ChangeType = "ChildRemoved",
+                    ChildType = new PageRecord().RecordType,
+                    ChildId = pageId
+                });
 
             return new UpdateResult();
         }

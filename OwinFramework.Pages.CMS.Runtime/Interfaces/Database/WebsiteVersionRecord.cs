@@ -13,12 +13,5 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         {
             RecordType = "WebsiteVersion";
         }
-
-        /// <summary>
-        /// Primary key that uniquely identifies this version of the website
-        /// </summary>
-        [Mapping("recordId")]
-        [JsonProperty("recordId")]
-        public long RecordId { get; set; }
     }
 }

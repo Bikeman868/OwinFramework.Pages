@@ -97,7 +97,7 @@
             confirmDelete: function() {
                 var vm = this;
                 exported.environmentStore.deleteRecord(
-                    vm.currentEnvironment.environmentId,
+                    vm.currentEnvironment.recordId,
                     function() {
                         vm.currentEnvironment = null;
                         vm.mode = "view";

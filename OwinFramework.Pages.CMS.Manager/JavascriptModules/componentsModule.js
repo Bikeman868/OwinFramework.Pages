@@ -57,7 +57,7 @@
             "<div class=\"cms_field\">" +
             "  <label>{{label}}</label>" +
             "  <select class=\"cms_field__website_version\" @change=\"selectWebsiteVersion($event)\">" +
-            "    <option v-for=\"websiteVersion in websiteVersions\" v-bind:value=\"websiteVersion.recordId\" v-bind:selected=\"websiteVersion.recordId==websiteVersionId\">" +
+            "    <option v-for=\"websiteVersion in websiteVersions\" :value=\"websiteVersion.recordId\" :selected=\"websiteVersion.recordId==websiteVersionId\">" +
             "      {{websiteVersion.displayName}}" +
             "    </option>" +
             "  </select>" +
@@ -71,6 +71,7 @@
             var vm = this;
             exported.websiteVersionStore.retrieveAllRecords(
                 function (response) {
+                    response.unshift({recordId: null, displayName: ""});
                     vm.websiteVersions = response;
                 });
         },
@@ -470,7 +471,7 @@
             this.nextId = this.routes.length;
         },
         methods: {
-            addRoute: function() {
+            addRoute: function () {
                 this.routes.push({ id: this.nextId });
                 this.nextId = this.nextId + 1;
             },

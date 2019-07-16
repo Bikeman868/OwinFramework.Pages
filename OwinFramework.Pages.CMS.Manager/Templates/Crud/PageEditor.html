@@ -120,6 +120,10 @@
                                                  @layout-name-changed="editingPageVersion.layoutName=$event"
                                                  @inherit-changed="layoutInheritChanged($event)">
                         </cms-layout-field-editor>
+
+                        // TODO: When the layout is changed adjust the layout zones
+                        // TODO: Zone nesting must be defined by the selected layout
+
                         <cms-layout-zones-field-editor label="Layout zone contents"
                                                        zone-nesting="header(left,main,right)footer"
                                                        v-bind:layout-zones="editingPageVersion.layoutZones">

@@ -135,6 +135,9 @@
                 vm.editingPage.name = exported.validation.name(vm.editingPage.name, "name", errors);
                 vm.errors = errors;
             },
+            //
+            //===============================================================================================================
+            //
             showPageVersion: function () {
                 var vm = this;
                 if (vm.currentPage == undefined || vm.currentPage.recordId == undefined || vm.websiteVersion == undefined || vm.websiteVersion.recordId == undefined) {
@@ -155,6 +158,8 @@
                 var vm = this;
                 vm.versionErrors = [];
                 vm.editingPageVersion = exported.pageVersionStore.blankRecord();
+                vm.editingPageVersion.routes = [];
+                vm.editingPageVersion.layoutZones = [];
                 vm.pageVersionMode = "new";
             },
             editPageVersion: function () {

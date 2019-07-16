@@ -88,6 +88,7 @@
                         vm.editingEnvironment,
                         function() {
                             vm.mode = "view";
+                            vm._context.selected("environmentId", vm.editingEnvironment.recordId);
                             vm.updateWebsiteVersion();
                         },
                         function(msg) { vm.errors = [msg]},

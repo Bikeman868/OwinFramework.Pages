@@ -24,6 +24,18 @@
             editingPageVersion: {},
             currentPageVersion: {}
         },
+        computed: {
+            editingZoneNesting: function () {
+                if (this.editingPageVersion.layoutName == undefined || this.editingPageVersion.layoutName.length === 0) {
+                    if (this.editingPageVersion.layoutId === 7) return "main";
+                    if (this.editingPageVersion.layoutId === 8) return "left,right";
+                    if (this.editingPageVersion.layoutId === 9) return "header,body,footer";
+                    return "";
+                } else {
+                    return null;
+                }
+            }
+        },
         created: function() {
             var vm = this;
             vm.namePattern = exported.validation.namePattern.source;
@@ -216,8 +228,8 @@
             },
             layoutInheritChanged: function(inherit) {
                 if (inherit) {
-                    editingPageVersion.layoutName = null;
-                    editingPageVersion.layoutId = null;
+                    this.editingPageVersion.layoutName = null;
+                    this.editingPageVersion.layoutId = null;
                 }
             },
             validateVersion: function () {

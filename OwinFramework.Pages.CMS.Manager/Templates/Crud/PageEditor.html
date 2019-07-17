@@ -90,6 +90,11 @@
                                                 v-bind:title="editingPageVersion.title"
                                                 @title-changed="editingPageVersion.title=$event">
                         </cms-title-field-editor>
+
+                        <hr />
+                        <div class="cms_spacer_thick"></div>
+                        <h3>Page URLs</h3>
+
                         <cms-url-path-field-editor label="Canonical URL path"
                                                    v-bind:url-path="editingPageVersion.canonicalUrl"
                                                    @url-path-changed="editingPageVersion.canonicalUrl=$event">
@@ -100,6 +105,7 @@
 
                         <hr />
                         <div class="cms_spacer_thick"></div>
+                        <h3>Master page</h3>
 
                         <cms-page-field-editor label="Master page"
                                                v-bind:page-id="editingPageVersion.masterPageId"
@@ -113,6 +119,11 @@
                                                            @asset-deployment-changed="editingPageVersion.assetDeployment=$event"
                                                            @module-name-changed="editingPageVersion.moduleName=$event">
                         </cms-asset-deployment-field-editor>
+
+                        <hr />
+                        <div class="cms_spacer_thick"></div>
+                        <h3>Page layout</h3>
+
                         <cms-layout-field-editor label="Page layout"
                                                  v-bind:layout-id="editingPageVersion.layoutId"
                                                  v-bind:layout-name="editingPageVersion.layoutName"
@@ -120,17 +131,14 @@
                                                  @layout-name-changed="editingPageVersion.layoutName=$event"
                                                  @inherit-changed="layoutInheritChanged($event)">
                         </cms-layout-field-editor>
-
-                        // TODO: When the layout is changed adjust the layout zones
-                        // TODO: Zone nesting must be defined by the selected layout
-
                         <cms-layout-zones-field-editor label="Layout zone contents"
-                                                       zone-nesting="header(left,main,right)footer"
+                                                       v-bind:zone-nesting="editingZoneNesting"
                                                        v-bind:layout-zones="editingPageVersion.layoutZones">
                         </cms-layout-zones-field-editor>
 
                         <hr />
                         <div class="cms_spacer_thick"></div>
+                        <h3>Page features</h3>
 
                         <cms-style-field-editor label="Body style"
                                                 v-bind:css-style="editingPageVersion.bodyStyle"

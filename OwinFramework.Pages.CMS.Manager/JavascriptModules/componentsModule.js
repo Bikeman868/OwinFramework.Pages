@@ -338,10 +338,13 @@
             "      <option value=\"Component\">Component name</option>" +
             "      <option value=\"Template\">Template path</option>" +
             "    </select>" +
-            "    <input v-if=\"layoutZone.contentType=='Template'\" type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"/path/to/template\" :pattern=\"namePattern\">" +
-            "    <input v-else type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"element_name\" :pattern=\"pathPattern\">" +
+            "    <input v-if=\"layoutZone.contentType=='Template'\" type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"/path/to/template\" :pattern=\"pathPattern\">" +
+            "    <input v-else type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"element_name\" :pattern=\"namePattern\">" +
             "  </div>" +
             "  <div v-if=\"mode==5\">" +
+            "    <label>Localizable asset name</label>" +
+            "    <input type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"localizable_asset_name\" :pattern=\"namePattern\">" +
+            "    <label>Default language Html</label>" +
             "    <textarea class=\"cms_field__html\" v-model=\"layoutZone.contentValue\" placeholder=\"<div></div>\" :pattern=\"htmlPattern\"></textarea>" +
             "  </div>" +
             "</div>",
@@ -379,7 +382,7 @@
                 default: "Layout zones"
             },
             zoneNesting: {
-                required: true,
+                required: false,
                 type: String
             },
             layoutZones: {
@@ -387,47 +390,93 @@
                 type: Array
             }
         },
+        watch: {
+            zoneNesting: "setZones",
+            layoutZones: "setZones"
+        },
         template:
             "<div class=\"cms_field\">" +
             "  <label>{{label}}</label>" +
-            "  <table>" +
+            "  <table v-if=\"mode==='fixed'\">" +
             "    <tr><th>Zone</th><th>Contents</th></tr>" +
             "    <tr v-for=\"zone in zones\">" +
             "      <td>{{zone.name}}</td>" +
             "      <td><cms-layout-zone-editor :layout-zone=\"zone.layoutZone\"></cms-layout-zone-editor></td>" +
             "    </tr>" +
             "  </table>" +
+            "  <div v-else>" +
+            "    <table>" +
+            "      <tr><th>Zone</th><th>Contents</th><th>-</th></tr>" +
+            "      <tr v-for=\"zone in zones\">" +
+            "        <td><input type=\"text\" class=\"cms_field__name\" placeholder=\"zone_name\" :pattern=\"namePattern\" v-model=\"zone.name\"></td>" +
+            "        <td><cms-layout-zone-editor :layout-zone=\"zone.layoutZone\"></cms-layout-zone-editor></td>" +
+            "        <td><button @click=\"removeZone(zone.name)\">-</button></td>" +
+            "      </tr>" +
+            "    </table>" +
+            "    <button @click=\"addZone\">+</button>" +
+            "  </div>" +
             "</div>",
         data: function () {
             return {
-                zones: []
+                mode: "fixed",
+                zones: [],
+                namePattern: exported.validation.namePattern.source
             }
         },
         created: function () {
-            var zoneNames = this.zoneNesting.replace(/[(),]/g, " ").split(" ");
-            for (let i = 0; i < zoneNames.length; i++) {
-                var zoneName = zoneNames[i].trim();
-                if (zoneName.length > 0) {
-                    var zone = {
-                        name: zoneName,
-                        layoutZone: {
-                            zone: zoneName,
-                            regionId: null,
-                            layoutId: null,
-                            contentType: "",
-                            contentName: "",
-                            contentValue: ""
-                        }
-                    };
-                    for (var j = 0; j < this.layoutZones.length; j++) {
-                        if (this.layoutZones[j].zone === zoneName)
-                            zone.layoutZone = this.layoutZones[j];
-                    }
-                    this.zones.push(zone);
-                }
-            }
+            this.setZones();
         },
         methods: {
+            setZones: function () {
+                var zones = [];
+                if (this.zoneNesting == undefined) {
+                    this.mode = "flexible";
+                    zones = [];
+                } else {
+                    this.mode = "fixed";
+                    var zoneNames = this.zoneNesting.replace(/[(),]/g, " ").split(" ");
+                    for (let i = 0; i < zoneNames.length; i++) {
+                        var zoneName = zoneNames[i].trim();
+                        if (zoneName.length > 0) {
+                            var zone = {
+                                name: zoneName,
+                                layoutZone: {
+                                    zone: zoneName,
+                                    regionId: null,
+                                    layoutId: null,
+                                    contentType: "",
+                                    contentName: "",
+                                    contentValue: ""
+                                }
+                            };
+                            for (var j = 0; j < this.layoutZones.length; j++) {
+                                if (this.layoutZones[j].zone === zoneName)
+                                    zone.layoutZone = this.layoutZones[j];
+                            }
+                            zones.push(zone);
+                        }
+                    }
+                }
+                this.zones = zones;
+            },
+            addZone: function () {
+                this.zones.push({
+                    zone: "",
+                    layoutZone: {
+                        regionId: null,
+                        layoutId: null,
+                        contentType: "Html",
+                        contentName: "",
+                        contentValue: ""
+                    }
+                });
+            },
+            removeZone: function (name) {
+                for (let i = 0; i < this.zones.length; i++) {
+                    if (this.zones[i].name === name)
+                        this.routes.splice(i, 1);
+                }
+            }
         }
     });
 

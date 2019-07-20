@@ -220,7 +220,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                             : GetResponseSerializer(endpointAttribute.ResponseSerializer),
                     };
 
-                    AddAnalysable(endpoint);
+                    AddAnalysable(endpoint, endpointAttribute.UserSegmentKey);
 
                     var runable = (IRunable)endpoint;
                     runable.Name = method.Name;
@@ -249,7 +249,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         endpoint.AddParameter(parameter.ParameterName, parameter.ParameterType, parameterParser);
                     }
 
-                    Register(endpoint, httpMethods, relativePath);
+                    Register(endpoint, httpMethods, relativePath, endpointAttribute.UserSegmentKey);
 
                     if (!firstEndpoint) clientScript.AppendLine("  },");
                     firstEndpoint = false;
@@ -480,7 +480,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             }
         }
 
-        private void Register(ServiceEndpoint endpoint, Method[] methods, bool relativePath)
+        private void Register(ServiceEndpoint endpoint, Method[] methods, bool relativePath, string userSegmentKey)
         {
             var requestRouter = _serviceDependenciesFactory.RequestRouter;
 
@@ -515,7 +515,8 @@ namespace OwinFramework.Pages.Restful.Runtime
                     endpoint, 
                     new FilterByPath(pathFilter), 
                     RoutingPriority, 
-                    endpoint.MethodInfo);
+                    endpoint.MethodInfo,
+                    userSegmentKey);
             }
             else
             {
@@ -525,7 +526,8 @@ namespace OwinFramework.Pages.Restful.Runtime
                         new FilterByMethod(methods),
                         new FilterByPath(pathFilter)),
                     RoutingPriority,
-                    endpoint.MethodInfo);
+                    endpoint.MethodInfo,
+                    userSegmentKey);
             }
         }
 
@@ -534,7 +536,7 @@ namespace OwinFramework.Pages.Restful.Runtime
         private readonly List<IAnalysable> _analysableEndpoints = new List<IAnalysable>();
         private readonly Dictionary<string, IAnalysable> _endpointStatistics = new Dictionary<string, IAnalysable>();
 
-        private void AddAnalysable(IAnalysable analysable)
+        private void AddAnalysable(IAnalysable analysable, string userSegmentKey)
         {
             if (analysable == null) return;
 
@@ -545,7 +547,10 @@ namespace OwinFramework.Pages.Restful.Runtime
             {
                 foreach (var stat in analysable.AvailableStatistics)
                 {
-                    _endpointStatistics.Add(stat.Id, analysable);
+                    var key = stat.Id;
+                    if (!string.IsNullOrEmpty(userSegmentKey))
+                        key += "_" + userSegmentKey.ToLower();
+                    _endpointStatistics.Add(key, analysable);
                 }
             }
         }

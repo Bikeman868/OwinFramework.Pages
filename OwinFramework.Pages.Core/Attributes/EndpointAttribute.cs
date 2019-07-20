@@ -78,5 +78,14 @@ namespace OwinFramework.Pages.Core.Attributes
         /// or endpoints
         /// </summary>
         public bool EndpointSpecificPermission { get; set; }
+
+        /// <summary>
+        /// Allows you to specify that this endpoint should be called for a specific segment
+        /// of the user base only in A/B tests. Traditionally A/B testing was just a UI thing
+        /// but in this framework you can also A/B test service endpoints.
+        /// The segment key values are determined by your implementation of the IUserSegmenter
+        /// interface.
+        /// </summary>
+        public string UserSegmentKey { get; set; }
     }
 }

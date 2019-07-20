@@ -83,6 +83,7 @@
     <Compile Include="SampleServices\ExceptionTestService.cs" />
     <Compile Include="SampleServices\MathFormComponent.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="UserSegmenter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

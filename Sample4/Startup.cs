@@ -26,7 +26,6 @@ namespace Sample4
     public class Startup
     {
         private static IDisposable _configurationFileSource;
-        private static IDisposable _updateSyncronizer;
 
         public void Configuration(IAppBuilder app)
         {

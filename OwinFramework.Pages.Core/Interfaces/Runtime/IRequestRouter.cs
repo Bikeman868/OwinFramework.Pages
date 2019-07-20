@@ -33,7 +33,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// </summary>
         /// <param name="filter">The filter that matches the request</param>
         /// <param name="priority">Filters are run in ascending order of priority</param>
-        IRequestRouter Add(IRequestFilter filter, int priority = 0);
+        /// <param name="userSegmentKey">Optional key that identifies the specific segment
+        /// of users that this route applies to. This key shold be one of the ones returned
+        /// by the IUserSegmenter implementation</param>
+        IRequestRouter Add(IRequestFilter filter, int priority = 0, string userSegmentKey = null);
 
         /// <summary>
         /// Registers a handler for requests that match a filter
@@ -45,7 +48,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// This is used to find attributes that contain documentation</param>
         /// <returns>A disposable instance. Disposing of this instance will de-register
         /// this route. The router keeps a reference to this instance so you don't need to</returns>
-        IDisposable Register(IRunable runable, IRequestFilter filter, int priority = 0, Type declaringType = null);
+        /// <param name="userSegmentKey">Optional key that identifies the specific segment
+        /// of users that this route applies to. This key shold be one of the ones returned
+        /// by the IUserSegmenter implementation</param>
+        IDisposable Register(IRunable runable, IRequestFilter filter, int priority = 0, Type declaringType = null, string userSegmentKey = null);
 
         /// <summary>
         /// Registers a handler for requests that match a filter
@@ -56,7 +62,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="methodInfo">A method that is decorated with custom documentation attributes</param>
         /// <returns>A disposable instance. Disposing of this instance will de-register
         /// this route. The router keeps a reference to this instance so you don't need to</returns>
-        IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo);
+        /// <param name="userSegmentKey">Optional key that identifies the specific segment
+        /// of users that this route applies to. This key shold be one of the ones returned
+        /// by the IUserSegmenter implementation</param>
+        IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo, string userSegmentKey);
 
         /// <summary>
         /// Registers a nested router. Nesting routers makes routing more efficient
@@ -67,7 +76,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="priority">Filters are run in ascending order of priority</param>
         /// <returns>A disposable instance. Disposing of this instance will de-register
         /// this route. The router keeps a reference to this instance so you don't need to</returns>
-        IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority = 0);
+        /// <param name="userSegmentKey">Optional key that identifies the specific segment
+        /// of users that this route applies to. This key shold be one of the ones returned
+        /// by the IUserSegmenter implementation</param>
+        IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority = 0, string userSegmentKey = null);
 
         /// <summary>
         /// Returns documentation about the endpoints that are registered with the router

@@ -11,13 +11,18 @@ namespace OwinFramework.Pages.Framework.Runtime
     /// <summary>
     /// The default segmenter just separates out logged in users. Application developers
     /// should write their own version of this interface and provide application specific
-    /// logic to segment users
+    /// logic to segment users then register their implementation with IoC instead of this 
+    /// one
     /// </summary>
     internal class UserSegmenter: IUserSegmenter
     {
-        private readonly UserSegment[] _segments = new[]
-        {
-            new UserSegment { Name = "A", Description = "Logged in users" },
+        private readonly UserSegment[] _segments = {
+            new UserSegment
+            {
+                Name = "Logged in", 
+                Description = "Users that are logged into the website", 
+                Key = "s0"
+            }
         };
 
         UserSegment[] IUserSegmenter.GetSegments()
@@ -25,14 +30,14 @@ namespace OwinFramework.Pages.Framework.Runtime
             return _segments;
         }
 
-        string IUserSegmenter.GetSegment(Microsoft.Owin.IOwinContext owinContext)
+        int? IUserSegmenter.GetSegmentIndex(Microsoft.Owin.IOwinContext owinContext)
         {
             var identification = owinContext.GetFeature<IIdentification>();
 
             if (identification == null || identification.IsAnonymous) 
-                return string.Empty; // Defaut website behaviour
+                return null; // Defaut website behaviour
 
-            return "A"; // Different UX for logged in users
+            return 0; // Different UX for logged in users
         }
     }
 }

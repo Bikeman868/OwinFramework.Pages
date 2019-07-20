@@ -30,6 +30,8 @@ namespace Sample1
 
                     new IocRegistration().Init<Prius.Contracts.Interfaces.External.IFactory, PriusIntegration.PriusFactory>(),
                     new IocRegistration().Init<Prius.Contracts.Interfaces.External.IErrorReporter, PriusIntegration.PriusErrorReporter>(),
+
+                    new IocRegistration().Init<IUserSegmenter, UserSegmenter>(),
                 };
             }
         }

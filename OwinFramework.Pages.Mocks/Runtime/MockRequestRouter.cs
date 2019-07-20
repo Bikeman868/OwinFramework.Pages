@@ -18,6 +18,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
         public int Priority;
         public Type DeclaringType;
         public MethodInfo MethodInfo;
+        public string UserSegmentKey;
 
         protected override IRequestRouter GetImplementation(IMockProducer mockProducer)
         {
@@ -28,25 +29,27 @@ namespace OwinFramework.Pages.Mocks.Runtime
         { }
 
 
-        public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType)
+        public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType, string userSegmentKey)
         {
             Runable = runable;
             Filter = filter;
             Priority = priority;
             DeclaringType = declaringType;
+            UserSegmentKey = userSegmentKey;
             return this;
         }
 
-        public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo)
+        public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo, string userSegmentKey)
         {
             Runable = runable;
             Filter = filter;
             Priority = priority;
             MethodInfo = methodInfo;
+            UserSegmentKey = userSegmentKey;
             return this;
         }
 
-        public IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority = 0)
+        public IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority, string userSegmentKey)
         {
             return this;
         }
@@ -56,7 +59,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return null;
         }
 
-        public IRequestRouter Add(IRequestFilter filter, int priority)
+        public IRequestRouter Add(IRequestFilter filter, int priority, string userSegmentKey)
         {
             return this;
         }

@@ -13,12 +13,22 @@ namespace Sample1.SampleServices
     public class HelloService: Service
     {
         private readonly string _helloMessage;
+        private readonly string _helloMessageA;
+        private readonly string _helloMessageB;
 
         public HelloService(IServiceDependenciesFactory serviceDependenciesFactory) 
             : base(serviceDependenciesFactory)
         {
             _helloMessage =
                 "Hello from version " + Assembly.GetExecutingAssembly().GetName().Version + 
+                " running on " + Environment.MachineName;
+
+            _helloMessageA =
+                "Hello group A. This is version " + Assembly.GetExecutingAssembly().GetName().Version + 
+                " running on " + Environment.MachineName;
+            
+            _helloMessageB =
+                "Hello group B. This is version " + Assembly.GetExecutingAssembly().GetName().Version + 
                 " running on " + Environment.MachineName;
         }
 
@@ -27,6 +37,18 @@ namespace Sample1.SampleServices
         private void Hello(IEndpointRequest request)
         {
             request.Success(_helloMessage);
+        }
+
+        [Endpoint(UrlPath = "/hello", Methods = new []{ Method.Get }, ResponseSerializer = typeof(PlainText), UserSegmentKey = "A")]
+        private void HelloA(IEndpointRequest request)
+        {
+            request.Success(_helloMessageA);
+        }
+
+        [Endpoint(UrlPath = "/hello", Methods = new []{ Method.Get }, ResponseSerializer = typeof(PlainText), UserSegmentKey = "B")]
+        private void HelloB(IEndpointRequest request)
+        {
+            request.Success(_helloMessageB);
         }
     }
 }

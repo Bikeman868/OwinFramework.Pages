@@ -12,91 +12,241 @@
 @tab-text-color: navy;
 @tab-selected-color: white;
 
+@sub-panel-background: whitesmoke;
+@sub-panel-border: 1px solid lightgrey;
+
 @table-heading-background: #e5e5ff;
 @table-background: white;
 
-@base-font-size: 12px;
+@base-font-px: 12px;
+@base-font-vmin: 2vmin;
 @heading-font-family: Arial, sans-serif;
 @body-font-family: Arial, sans-serif;
 
 div.cms_manager {
-    overflow: hidden;
+    /* Basics */
+
     * { 
+        overflow: hidden;
         box-sizing: border-box;
         margin: 0;
         padding: 0;
     }
     ul { 
-        list-style: none; padding: 0;
-    }
-    p { 
-        font-size: @base-font-size; 
-        font-family: @body-font-family; 
-    }
-    h1 { 
-        font-size: @base-font-size * 1.8; 
-        font-family: @heading-font-family;
-    }
-    h2 { 
-        font-size: @base-font-size * 1.6; 
-        font-family: @heading-font-family;
-    }
-    h3 { 
-        font-size: @base-font-size * 1.3; 
-        font-family: @heading-font-family;
-    }
-    h4 { 
-        font-size: @base-font-size * 1.15; 
-        font-family: @heading-font-family;
-    }
-    h5 { 
-        font-size: @base-font-size * 1.1; 
-        font-family: @heading-font-family;
-    }
-    h6 { 
-        font-size: @base-font-size; 
-        font-family: @heading-font-family;
+        list-style: none;
+        padding: 0;
     }
     a, a:visited { 
         text-decoration: none; 
-        color: @anchor-color;
-    }
-    a:hover { 
-        color: @anchor-hover-color
     }
     table {
         border-collapse: collapse;
         margin: 5px 0;
     }
     th {
-        border: 1px solid darken(@table-heading-background, 5%);
-        background-color: @table-heading-background;
         padding: 5px 10px;
-        font: inherit;
     }
     td {
-        border: 1px solid darken(@table-heading-background, 5%);
-        background-color: @table-background;
         padding: 3px 5px;
     }
     select {
         display: block;
         width: 100%;
         max-width: 300px;
-        border: 1px solid #aaa;
-        box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
         border-radius: 5px;
         padding: 8px;
-        font: inherit;
-        font-size: large;
-        option {
-            font: inherit;
-            font-size:initial;
-        }
     }
     select:focus {
         outline: none;
     }    
+
+    /* Typography */
+
+    p { 
+        font-size: @base-font-vmin; 
+        font-family: @body-font-family; 
+    }
+    h1 { 
+        font-size: @base-font-vmin * 1.6;
+        font-family: @heading-font-family;
+    }
+    h2 { 
+        font-size: @base-font-vmin * 1.3; 
+        font-family: @heading-font-family;
+    }
+    h3 { 
+        font-size: @base-font-vmin * 1.2; 
+        font-family: @heading-font-family;
+    }
+    h4 { 
+        font-size: @base-font-vmin * 1.1; 
+        font-family: @heading-font-family;
+    }
+    h5 { 
+        font-size: @base-font-vmin * 1.1; 
+        font-family: @heading-font-family;
+    }
+    h6 { 
+        font-size: @base-font-vmin * 1.1; 
+        font-family: @heading-font-family;
+    }
+    th {
+        font-size: @base-font-vmin * 1.1; 
+        font-family: @heading-font-family;
+    }
+    select {
+        font: inherit;
+        font-size: @base-font-vmin * 1.3; 
+        option {
+            font: inherit;
+            font-size: @base-font-vmin * 1.3; 
+        }
+    }
+    div.cms_field {
+        label {
+            font-size: @base-font-vmin * 1.2; 
+        }
+        p {
+            font-size: @base-font-vmin;
+        }
+        input[type=text] {
+            font: inherit;
+            font-family: @body-font-family;
+            font-size: @base-font-vmin * 1.8;
+        }
+        span.cms_checkbox {
+            font: inherit;
+            font-family: @body-font-family;
+            font-size: @base-font-vmin * 1.8;
+        }
+        textarea {
+            font: inherit;
+            font-family: @body-font-family;
+            font-size: @base-font-vmin * 1.8;
+            line-height: @base-font-vmin *2;
+        }
+        ::placeholder{
+            font-size: @base-font-vmin * 1.4;
+        }
+        button {
+            font-size: @base-font-vmin * 2.2;
+            font-weight: 500;
+        }
+    }
+    div.cms_selector {
+        font: inherit;
+        font-family: @body-font-family;
+        font-size: @base-font-vmin * 1.2;
+        a {
+            font: inherit;
+            font-family: @body-font-family;
+            font-size: @base-font-vmin * 1.8;
+        }
+    }
+    @media only screen and (min-width: @break-tablet){
+        p { 
+            font-size: @base-font-px; 
+        }
+        h1 { 
+            font-size: @base-font-px * 1.4; 
+        }
+        h2 { 
+            font-size: @base-font-px * 1.3; 
+        }
+        h3 { 
+            font-size: @base-font-px * 1.2; 
+        }
+        h4 { 
+            font-size: @base-font-px * 1.15; 
+        }
+        h5 { 
+            font-size: @base-font-px * 1.1; 
+        }
+        h6 { 
+            font-size: @base-font-px; 
+        }
+        th { 
+            font-size: @base-font-px * 1.2; 
+        }
+        select {
+            font: inherit;
+            font-size: @base-font-px;
+            option {
+                font: inherit;
+                font-size: @base-font-px;
+            }
+        }
+        input[type=text] {
+            font-size: large;
+        }
+        span.cms_checkbox {
+            font-size: large;
+        }
+        textarea {
+            font-size: large;
+        }
+        button {
+            font-size: large;
+        }
+        div.cms_field {
+            label {
+                font-size: x-small;
+            }
+            p {
+                font-size: small;
+            }
+            input[type=text] {
+                font: inherit;
+                font-family: @body-font-family;
+                font-size: small;
+            }
+            span.cms_checkbox {
+                font: inherit;
+                font-family: @body-font-family;
+                font-size: small;
+            }
+            textarea {
+                font: inherit;
+                font-family: @body-font-family;
+                font-size: small;
+                line-height:1.5;
+            }
+            ::placeholder{
+                font-size: smaller;
+            }
+            button {
+                font-size: large;
+                font-weight: 500;
+            }
+        }
+        div.cms_selector {
+            font-size: @base-font-px * 1.2;
+            a {
+                font-size: @base-font-px * 1.2;
+            }
+        }
+    }
+
+    /* Colors and backgrounds */
+
+    a, a:visited { 
+        color: @anchor-color;
+    }
+    a:hover { 
+        color: @anchor-hover-color
+    }
+    th {
+        border: 1px solid darken(@table-heading-background, 5%);
+        background-color: @table-heading-background;
+    }
+    td {
+        border: 1px solid darken(@table-heading-background, 5%);
+        background-color: @table-background;
+    }
+    select {
+        border: 1px solid #aaa;
+        box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    }
     hr {
         border: 1px solid whitesmoke;
     }
@@ -185,17 +335,23 @@ div.cms_manager {
             padding: 10px;
         }
     }
+    div.cms_sub_panel{
+        background-color: @sub-panel-background;
+        border-radius: 5px;
+        padding: 10px;
+        max-width: 800px;
+        margin: 10px 0px;
+        border: @sub-panel-border;
+    }
     div.cms_field {
         label {
             display: block;
-            font-size: x-small;
             margin-top: 4px;
             margin-bottom: 2px;
             color: @field-label-color;
         }
         p {
             display: block;
-            font-size: larger;
             margin-left: 5px;
             margin-top: 2px;
             margin-bottom: 4px;
@@ -209,9 +365,6 @@ div.cms_manager {
         }
         input[type=text] {
             display: block;
-            font: inherit;
-            font-family: @body-font-family;
-            font-size: larger;
             margin-left: 5px;
             margin-top: 2px;
             margin-bottom: 6px;
@@ -221,9 +374,6 @@ div.cms_manager {
         }
         span.cms_checkbox {
             display: block;
-            font: inherit;
-            font-family: @body-font-family;
-            font-size: larger;
             margin-left: 5px;
             margin-top: 2px;
             margin-bottom: 6px;
@@ -260,10 +410,6 @@ div.cms_manager {
         }
         textarea {
             display: block;
-            font: inherit;
-            font-family: @body-font-family;
-            font-size: larger;
-            line-height:1.5;
             margin-left: 5px;
             margin-top: 2px;
             margin-bottom: 12px;
@@ -290,8 +436,6 @@ div.cms_manager {
             border-radius: 5px;
             box-shadow: 3px 3px @button-shadow-color;
             margin: 6px 3px;
-            font-size: larger;
-            font-weight: 500;
         }
         button:hover {
             background-color: darken(@button-background, 10%);
@@ -302,6 +446,7 @@ div.cms_manager {
             transform: translateY(1px) translateX(1px);
         }
     }
+
     .cms_validation_error_list {
         display: block;
         font: inherit;
@@ -345,14 +490,11 @@ div.cms_manager {
     div.cms_selector {
         overflow: hidden;
         white-space: nowrap;
-        font: inherit;
-        font-size: larger;
         a {
             text-decoration: none;
             display: block;
             text-align: left;
             padding: 8px 5px;
-            font: inherit;
             color: inherit;
         }
         a:hover {

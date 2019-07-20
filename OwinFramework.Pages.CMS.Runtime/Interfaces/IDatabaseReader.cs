@@ -55,100 +55,110 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionId">The unique ID of this website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsitePages<T>(long websiteVersionId, Func<WebsiteVersionPageRecord, T> map, Func<WebsiteVersionPageRecord, bool> predicate = null);
+        T[] GetWebsitePages<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionPageRecord, T> map, Func<WebsiteVersionPageRecord, bool> predicate = null);
 
         /// <summary>
         /// Retrieves a list of page versions for a website version
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionName">The name of the website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsitePages<T>(string websiteVersionName, Func<WebsiteVersionPageRecord, T> map, Func<WebsiteVersionPageRecord, bool> predicate = null);
+        T[] GetWebsitePages<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionPageRecord, T> map, Func<WebsiteVersionPageRecord, bool> predicate = null);
 
         /// <summary>
         /// Retrieves a list of layout versions for a website version
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionId">The unique ID of this website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsiteLayouts<T>(long websiteVersionId, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate = null);
+        T[] GetWebsiteLayouts<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate = null);
 
         /// <summary>
         /// Retrieves a list of layout versions for a website version
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionName">The name of the website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsiteLayouts<T>(string websiteVersionName, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate = null);
+        T[] GetWebsiteLayouts<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate = null);
 
         /// <summary>
         /// Retrieves a list of region versions for a website version
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionId">The unique ID of this website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsiteRegions<T>(long websiteVersionId, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate = null);
+        T[] GetWebsiteRegions<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate = null);
 
         /// <summary>
         /// Retrieves a list of region versions for a website version
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionName">The name of the website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsiteRegions<T>(string websiteVersionName, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate = null);
+        T[] GetWebsiteRegions<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate = null);
 
         /// <summary>
         /// Retrieves a list of bindable data types for a website version
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionId">The unique ID of this website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsiteDataTypes<T>(long websiteVersionId, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate = null);
+        T[] GetWebsiteDataTypes<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate = null);
 
         /// <summary>
         /// Retrieves a list of bindable data types for a website version
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionName">The name of the website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsiteDataTypes<T>(string websiteVersionName, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate = null);
+        T[] GetWebsiteDataTypes<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate = null);
 
         /// <summary>
         /// Retrieves a list of bindable data types for a website version
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionId">The unique ID of this website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsiteComponents<T>(long websiteVersionId, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate = null);
+        T[] GetWebsiteComponents<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate = null);
 
         /// <summary>
         /// Retrieves a list of bindable data types for a website version
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="websiteVersionName">The name of the website version to retrieve</param>
+        /// <param name="userSegment">For A/B testing this is the segment that the user is in</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         /// <param name="predicate">A function that determines which records to return. 
         /// If null is passed then all records are returned</param>
-        T[] GetWebsiteComponents<T>(string websiteVersionName, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate = null);
+        T[] GetWebsiteComponents<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate = null);
 
         #endregion
 

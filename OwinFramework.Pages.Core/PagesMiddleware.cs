@@ -36,15 +36,18 @@ namespace OwinFramework.Pages.Core
         IList<IDependency> IMiddleware.Dependencies { get { return _dependencies; } }
 
         private readonly IRequestRouter _requestRouter;
+        private readonly IUserSegmenter _userSegmenter;
         private readonly TimeSpan _maximumCacheTime = TimeSpan.FromHours(1);
 
         /// <summary>
         /// Constructor for IoC dependency injection
         /// </summary>
         public PagesMiddleware(
-            IRequestRouter requestRouter)
+            IRequestRouter requestRouter,
+            IUserSegmenter userSegmenter)
         {
             _requestRouter = requestRouter;
+            _userSegmenter = userSegmenter;
 
             this.RunAfter<IOutputCache>(null, false);
             this.RunAfter<IRequestRewriter>(null, false);
@@ -54,6 +57,9 @@ namespace OwinFramework.Pages.Core
 
         Task IRoutingProcessor.RouteRequest(IOwinContext context, Func<Task> next)
         {
+            var segment = _userSegmenter.GetSegment(context) ?? string.Empty;
+            context.Set(EnvironmentKeys.UserSegment, segment);
+
             var runable = _requestRouter.Route(context, Trace);
 
             if (runable == null)

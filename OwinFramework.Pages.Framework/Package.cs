@@ -36,6 +36,7 @@ namespace OwinFramework.Pages.Framework
                     new IocRegistration().Init<IDataProviderDependenciesFactory, DataProviderDependenciesFactory>(),
                     new IocRegistration().Init<IPackageDependencies, PackageDependencies>(IocLifetime.MultiInstance),
                     new IocRegistration().Init<IDataProviderDependencies, DataProviderDependencies>(IocLifetime.MultiInstance),
+                    new IocRegistration().Init<IUserSegmenter, UserSegmenter>(),
 
                     // These classes are the data model
                     new IocRegistration().Init<IDataCatalog, DataCatalog>(),

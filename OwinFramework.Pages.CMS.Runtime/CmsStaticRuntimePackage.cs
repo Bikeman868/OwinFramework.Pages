@@ -17,6 +17,7 @@ namespace OwinFramework.Pages.CMS.Runtime
     /// the website is running. This is a very efficient and scaleable way
     /// of running a CMS website, but any changes to website pages will
     /// not be reflected on the website until the webservers are recylced.
+    /// This runtime does not support A/B testing
     /// </summary>
     public class CmsStaticRuntimePackage : IPackage
     {
@@ -83,7 +84,7 @@ namespace OwinFramework.Pages.CMS.Runtime
                 throw new Exception("There is no website version ID " + environment.WebsiteVersionId + " in the database");
 
             var websiteVersion = websiteVersions[0];
-            var websiteVersionPages = _database.GetWebsitePages(websiteVersion.RecordId, vp => vp);
+            var websiteVersionPages = _database.GetWebsitePages(websiteVersion.RecordId, null, vp => vp);
 
             _pageVersions = websiteVersionPages
                 .ToDictionary(vp => vp.PageId, vp => vp.PageVersionId);
@@ -91,19 +92,20 @@ namespace OwinFramework.Pages.CMS.Runtime
             _dataTypes = _database
                 .GetWebsiteDataTypes(
                     websiteVersion.RecordId, 
+                    null,
                     wd => _database.GetDataTypeVersion(wd.DataTypeVersionId, (dt, dtv) => dtv))
                 .ToDictionary(dtv => dtv.ParentRecordId, dtv => dtv);
 
             _componentVersions = _database
-                .GetWebsiteComponents(websiteVersion.RecordId, v => new { v.ComponentId, v.ComponentVersionId})
+                .GetWebsiteComponents(websiteVersion.RecordId, null, v => new { v.ComponentId, v.ComponentVersionId})
                 .ToDictionary(v => v.ComponentId, v => v.ComponentVersionId);
 
             _layoutVersions = _database
-                .GetWebsiteLayouts(websiteVersion.RecordId, v => new { v.LayoutId, v.LayoutVersionId})
+                .GetWebsiteLayouts(websiteVersion.RecordId, null, v => new { v.LayoutId, v.LayoutVersionId})
                 .ToDictionary(v => v.LayoutId, v => v.LayoutVersionId);
 
             _regionVersions = _database
-                .GetWebsiteRegions(websiteVersion.RecordId, v => new { v.RegionId, v.RegionVersionId})
+                .GetWebsiteRegions(websiteVersion.RecordId, null, v => new { v.RegionId, v.RegionVersionId})
                 .ToDictionary(v => v.RegionId, v => v.RegionVersionId);
 
             foreach (var regionId in _regionVersions.Keys.ToList())

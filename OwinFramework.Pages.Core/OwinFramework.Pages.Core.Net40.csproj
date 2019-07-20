@@ -134,6 +134,7 @@
     <Compile Include="Enums\HtmlFormat.cs" />
     <Compile Include="Enums\NameResolutionPhase.cs" />
     <Compile Include="Enums\PageArea.cs" />
+    <Compile Include="EnvironmentKeys.cs" />
     <Compile Include="Exceptions\BodyDeserializationException.cs" />
     <Compile Include="Exceptions\EndpointParameterException.cs" />
     <Compile Include="Exceptions\NotFoundException.cs" />
@@ -261,6 +262,7 @@
     <Compile Include="Interfaces\Runtime\IRequestFilter.cs" />
     <Compile Include="Interfaces\Runtime\IRequestRouter.cs" />
     <Compile Include="Interfaces\Runtime\IRunable.cs" />
+    <Compile Include="Interfaces\Runtime\IUserSegmenter.cs" />
     <Compile Include="Interfaces\Runtime\IWriteResult.cs" />
     <Compile Include="Interfaces\Templates\IDataFieldFormatter.cs" />
     <Compile Include="Interfaces\Templates\ITemplateDefinition.cs" />

@@ -67,6 +67,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T[] IDatabaseReader.GetWebsitePages<T>(
             long websiteVersionId, 
+            string userSegment,
             Func<WebsiteVersionPageRecord, T> map,
             Func<WebsiteVersionPageRecord, bool> predicate)
         {
@@ -85,6 +86,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T[] IDatabaseReader.GetWebsitePages<T>(
             string websiteVersionName, 
+            string userSegment,
             Func<WebsiteVersionPageRecord, T> map,
             Func<WebsiteVersionPageRecord, bool> predicate)
         {
@@ -93,10 +95,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsitePages(websiteVersion.RecordId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsitePages(websiteVersion.RecordId, userSegment, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteComponents<T>(long websiteVersionId, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteComponents<T>(
+            long websiteVersionId, 
+            string userSegment,
+            Func<WebsiteVersionComponentRecord, T> map, 
+            Func<WebsiteVersionComponentRecord, bool> predicate)
         {
             if (predicate == null)
                 return _websiteVersionComponents
@@ -111,17 +117,25 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 .ToArray();
         }
 
-        T[] IDatabaseReader.GetWebsiteComponents<T>(string websiteVersionName, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteComponents<T>(
+            string websiteVersionName, 
+            string userSegment,
+            Func<WebsiteVersionComponentRecord, T> map, 
+            Func<WebsiteVersionComponentRecord, bool> predicate)
         {
             var websiteVersion = _websiteVersions
                 .FirstOrDefault(v => string.Equals(v.Name, websiteVersionName, StringComparison.OrdinalIgnoreCase));
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteComponents(websiteVersion.RecordId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteComponents(websiteVersion.RecordId, userSegment, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteLayouts<T>(long websiteVersionId, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteLayouts<T>(
+            long websiteVersionId, 
+            string userSegment,
+            Func<WebsiteVersionLayoutRecord, T> map, 
+            Func<WebsiteVersionLayoutRecord, bool> predicate)
         {
             if (predicate == null)
                 return _websiteVersionLayouts
@@ -136,17 +150,25 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 .ToArray();
         }
 
-        T[] IDatabaseReader.GetWebsiteLayouts<T>(string websiteVersionName, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteLayouts<T>(
+            string websiteVersionName, 
+            string userSegment,
+            Func<WebsiteVersionLayoutRecord, T> map, 
+            Func<WebsiteVersionLayoutRecord, bool> predicate)
         {
             var websiteVersion = _websiteVersions
                 .FirstOrDefault(v => string.Equals(v.Name, websiteVersionName, StringComparison.OrdinalIgnoreCase));
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteLayouts(websiteVersion.RecordId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteLayouts(websiteVersion.RecordId, userSegment, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteRegions<T>(long websiteVersionId, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteRegions<T>(
+            long websiteVersionId, 
+            string userSegment,
+            Func<WebsiteVersionRegionRecord, T> map, 
+            Func<WebsiteVersionRegionRecord, bool> predicate)
         {
             if (predicate == null)
                 return _websiteVersionRegions
@@ -161,18 +183,26 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 .ToArray();
         }
 
-        T[] IDatabaseReader.GetWebsiteRegions<T>(string websiteVersionName, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteRegions<T>(
+            string websiteVersionName, 
+            string userSegment,
+            Func<WebsiteVersionRegionRecord, T> map, 
+            Func<WebsiteVersionRegionRecord, bool> predicate)
         {
             var websiteVersion = _websiteVersions
                 .FirstOrDefault(v => string.Equals(v.Name, websiteVersionName, StringComparison.OrdinalIgnoreCase));
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteRegions(websiteVersion.RecordId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteRegions(websiteVersion.RecordId, userSegment, map, predicate);
         }
 
         
-        T[] IDatabaseReader.GetWebsiteDataTypes<T>(long websiteVersionId, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteDataTypes<T>(
+            long websiteVersionId, 
+            string userSegment,
+            Func<WebsiteVersionDataTypeRecord, T> map, 
+            Func<WebsiteVersionDataTypeRecord, bool> predicate)
         {
             if (predicate == null)
                 return _websiteVersionDataTypes
@@ -187,14 +217,18 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 .ToArray();
         }
 
-        T[] IDatabaseReader.GetWebsiteDataTypes<T>(string websiteVersionName, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteDataTypes<T>(
+            string websiteVersionName, 
+            string userSegment,
+            Func<WebsiteVersionDataTypeRecord, T> map, 
+            Func<WebsiteVersionDataTypeRecord, bool> predicate)
         {
             var websiteVersion = _websiteVersions
                 .FirstOrDefault(v => string.Equals(v.Name, websiteVersionName, StringComparison.OrdinalIgnoreCase));
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.RecordId, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.RecordId, userSegment, map, predicate);
         }
 
         

@@ -47,12 +47,19 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             typeof(PositiveNumber<long>), 
             EndpointParameterType.PathSegment, 
             Description = "The ID of the website version to get pages for")]
+        [EndpointParameter(
+            "segment", 
+            typeof(OptionalString), 
+            Description = "The user segment to get pages for")]
         private void WebsiteVersionPages(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var records = _dataLayer.GetWebsitePages(id, wvp => wvp);
+            var segment = request.Parameter<string>("segment") ?? string.Empty;
+
+            var records = _dataLayer.GetWebsitePages(id, segment, wvp => wvp);
+
             if (records == null)
-                request.NotFound("There are no pages in website version #" + id);
+                request.NotFound("There are no pages in website version #" + id + " for '" + segment + "' users");
             else
                 request.Success(records);
         }
@@ -68,11 +75,17 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             typeof(PositiveNumber<long>), 
             EndpointParameterType.PathSegment, 
             Description = "The ID of the page to get information for")]
+        [EndpointParameter(
+            "segment", 
+            typeof(OptionalString), 
+            Description = "The user segment to get a page version for")]
         private void WebsitePageVersion(IEndpointRequest request)
         {
             var websiteVersionId = request.Parameter<long>("websiteVersionId");
             var pageId = request.Parameter<long>("pageId");
-            var pageVersions = _dataLayer.GetWebsitePages(websiteVersionId, pv => pv, pv => pv.PageId == pageId);
+            var segment = request.Parameter<string>("segment") ?? string.Empty;
+
+            var pageVersions = _dataLayer.GetWebsitePages(websiteVersionId, segment, pv => pv, pv => pv.PageId == pageId);
             if (pageVersions == null || pageVersions.Length == 0)
                 request.NotFound(
                     "There is no version of page #" + pageId + 

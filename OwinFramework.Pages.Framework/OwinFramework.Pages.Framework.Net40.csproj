@@ -87,6 +87,7 @@
     <Compile Include="Runtime\PackageDependenciesFactory.cs" />
     <Compile Include="Runtime\RequestRouter.cs" />
     <Compile Include="Runtime\RequestRouterFactory.cs" />
+    <Compile Include="Runtime\UserSegmenter.cs" />
     <Compile Include="Utility\DependencyListSorter.cs" />
   </ItemGroup>
   <ItemGroup>

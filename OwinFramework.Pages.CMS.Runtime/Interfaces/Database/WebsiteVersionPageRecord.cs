@@ -6,15 +6,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// <summary>
     /// A POCO that defines the database fields of layout records
     /// </summary>
-    public class WebsiteVersionPageRecord
+    public class WebsiteVersionPageRecord: WebsiteVersionRecordBase
     {
-        /// <summary>
-        /// Primary key that uniquely identifies this version of the website
-        /// </summary>
-        [Mapping("websiteVersionId")]
-        [JsonProperty("websiteVersionId")]
-        public long WebsiteVersionId { get; set; }
-
         /// <summary>
         /// The ID of a page to include in this version of the website
         /// </summary>

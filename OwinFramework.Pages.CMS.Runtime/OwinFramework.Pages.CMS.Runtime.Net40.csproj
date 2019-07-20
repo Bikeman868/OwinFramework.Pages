@@ -96,6 +96,7 @@
     <Compile Include="Interfaces\Database\RegionRecord.cs" />
     <Compile Include="Interfaces\Database\CreateResult.cs" />
     <Compile Include="Interfaces\Database\UpdateResult.cs" />
+    <Compile Include="Interfaces\Database\WebsiteVersionRecordBase.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionDataTypeRecord.cs" />
     <Compile Include="Interfaces\Database\WebsiteVersionComponentRecord.cs" />
     <Compile Include="Interfaces\Database\EnvironmentRecord.cs" />

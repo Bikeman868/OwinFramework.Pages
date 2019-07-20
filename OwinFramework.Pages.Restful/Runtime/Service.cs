@@ -207,6 +207,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         httpMethods,
                         action,
                         m,
+                        endpointAttribute.UserSegmentKey,
                         endpointAttribute.Analytics,
                         _serviceDependenciesFactory.DataCatalog,
                         _serviceDependenciesFactory.DataDependencyFactory,
@@ -220,7 +221,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                             : GetResponseSerializer(endpointAttribute.ResponseSerializer),
                     };
 
-                    AddAnalysable(endpoint, endpointAttribute.UserSegmentKey);
+                    AddAnalysable(endpoint);
 
                     var runable = (IRunable)endpoint;
                     runable.Name = method.Name;
@@ -536,7 +537,7 @@ namespace OwinFramework.Pages.Restful.Runtime
         private readonly List<IAnalysable> _analysableEndpoints = new List<IAnalysable>();
         private readonly Dictionary<string, IAnalysable> _endpointStatistics = new Dictionary<string, IAnalysable>();
 
-        private void AddAnalysable(IAnalysable analysable, string userSegmentKey)
+        private void AddAnalysable(IAnalysable analysable)
         {
             if (analysable == null) return;
 
@@ -547,10 +548,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             {
                 foreach (var stat in analysable.AvailableStatistics)
                 {
-                    var key = stat.Id;
-                    if (!string.IsNullOrEmpty(userSegmentKey))
-                        key += "_" + userSegmentKey.ToLower();
-                    _endpointStatistics.Add(key, analysable);
+                    _endpointStatistics.Add(stat.Id, analysable);
                 }
             }
         }

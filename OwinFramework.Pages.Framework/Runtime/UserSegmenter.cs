@@ -19,6 +19,7 @@ namespace OwinFramework.Pages.Framework.Runtime
         private readonly UserSegment[] _segments = {
             new UserSegment
             {
+                Index = 0,
                 Name = "Logged in", 
                 Description = "Users that are logged into the website", 
                 Key = "s0"

@@ -56,16 +56,17 @@ namespace OwinFramework.Pages.Core
                 var hash = new HashSet<string>();
                 for (var i = 0; i < _userSegments.Length; i++)
                 {
-                    _userSegments[i].Index = i;
+                    if (_userSegments[i].Index != i)
+                        throw new Exception("The user segmenter implementation must set index values equal to the position of the segment within the array");
 
                     if (string.IsNullOrEmpty(_userSegments[i].Key))
-                        throw new Exception("The user segmenter implementation can not return empty suffixes for segments");
+                        throw new Exception("The user segmenter implementation can not return empty keys for segments");
 
                     if (string.IsNullOrEmpty(_userSegments[i].Name))
                         throw new Exception("The user segmenter implementation can not return empty names for segments");
 
                     if (!hash.Add(_userSegments[i].Key))
-                        throw new Exception("The user segmenter implementation must return unique suffixes for each segment");
+                        throw new Exception("The user segmenter implementation must return unique keys for each segment");
                 }
                 if (_userSegments.Length == 0)
                     _userSegments = null;

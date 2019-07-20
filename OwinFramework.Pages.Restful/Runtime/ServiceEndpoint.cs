@@ -25,6 +25,7 @@ namespace OwinFramework.Pages.Restful.Runtime
     {
         public readonly string Path;
         public readonly MethodInfo MethodInfo;
+        private readonly string _userSegmentKey;
 
         ElementType INamed.ElementType { get { return ElementType.Service; } }
         string INamed.Name { get; set; }
@@ -54,6 +55,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             Method[] methods,
             Action<IEndpointRequest> method,
             MethodInfo methodInfo,
+            string userSegmentKey,
             AnalyticsLevel analytics,
             IDataCatalog dataCatalog,
             IDataDependencyFactory dataDependencyFactory,
@@ -61,6 +63,7 @@ namespace OwinFramework.Pages.Restful.Runtime
         {
             Path = path;
             MethodInfo = methodInfo;
+            _userSegmentKey = userSegmentKey;
             _method = method;
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;
@@ -376,12 +379,17 @@ namespace OwinFramework.Pages.Restful.Runtime
             var baseId = path + "+";
 
             if (methods != null && methods.Length > 0)
-                baseId = string.Join("", methods) + baseId;
+                baseId = string.Join("", methods) + baseId + "+";
+
+            if (!string.IsNullOrEmpty(_userSegmentKey))
+                baseId += _userSegmentKey + "+";
 
             var name = path;
             if (methods != null && methods.Length > 0)
                 name = string.Join(" or ", methods) + " " + name;
 
+            if (!string.IsNullOrEmpty(_userSegmentKey))
+                name += " for '" + _userSegmentKey + "' users";
 
             if (level == AnalyticsLevel.Basic || level == AnalyticsLevel.Full)
             {

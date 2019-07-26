@@ -1,0 +1,15 @@
+﻿<div id="cms_user_segment_display" class="cms_panel" v-if="visible">
+    <div v-if="currentUserSegment == undefined">
+        <h2>No segment selected</h2>
+        <p>
+            No segment is currently selected.
+            Choose a segment from the list on the left. 
+            If the list of segments is empty this is because you have not registered an implemetion of IUserSegmenter in your application.
+        </p>
+    </div>
+    <div v-else>
+        <h2>{{currentUserSegment.name}}</h2>
+        <div class="cms_field" v-if="currentUserSegment.key"><label>Key</label><p>{{currentUserSegment.key}}</p></div>
+        <div class="cms_field"><label>Description</label><p>{{currentUserSegment.description}}</p></div>
+    </div>
+</div>

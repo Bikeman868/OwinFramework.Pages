@@ -1,8 +1,10 @@
-﻿using OwinFramework.Pages.CMS.Manager.Configuration;
+﻿using System.Linq;
+using OwinFramework.Pages.CMS.Manager.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Restful.Interfaces;
 using OwinFramework.Pages.Restful.Parameters;
 
@@ -15,10 +17,14 @@ namespace OwinFramework.Pages.CMS.Manager.Services
     internal class ListService
     {
         private readonly IDataLayer _dataLayer;
+        private readonly IUserSegmenter _userSegmenter;
 
-        public ListService(IDataLayer dataLater)
+        public ListService(
+            IDataLayer dataLater,
+            IUserSegmenter userSegmenter)
         {
             _dataLayer = dataLater;
+            _userSegmenter = userSegmenter;
         }
 
         #region Environments
@@ -59,7 +65,8 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             var records = _dataLayer.GetWebsitePages(id, segment, wvp => wvp);
 
             if (records == null)
-                request.NotFound("There are no pages in website version #" + id + " for '" + segment + "' users");
+                request.NotFound("There are no pages in website version #" + id + 
+                    (string.IsNullOrEmpty(segment) ? "" : " for '" + segment + "' users"));
             else
                 request.Success(records);
         }
@@ -89,9 +96,28 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             if (pageVersions == null || pageVersions.Length == 0)
                 request.NotFound(
                     "There is no version of page #" + pageId + 
-                    " in version #" + websiteVersionId + " of the website");
+                    " in version #" + websiteVersionId + " of the website" +
+                    (string.IsNullOrEmpty(segment) ? "" : " for '" + segment + "' users"));
             else
                 request.Success(pageVersions[0]);
+        }
+
+        #endregion
+
+        #region User segments
+
+        [Endpoint(UrlPath = "usersegments", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
+        private void UserSegments(IEndpointRequest request)
+        {
+            var segments = _userSegmenter
+                .GetSegments()
+                .Select(s => new
+                {
+                    key = s.Key,
+                    name = s.Name,
+                    description = s.Description
+                });
+            request.Success(segments);
         }
 
         #endregion

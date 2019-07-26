@@ -1,9 +1,9 @@
-﻿exported.environment_selector_vm = function (eId) {
+﻿exported.user_segment_selector_vm = function (eId) {
     return new Vue({
         el: "#" + eId,
         data: {
             visible: true,
-            environments: []
+            userSegments: []
         },
         methods: {
             show: function (context, managerContext) {
@@ -20,23 +20,25 @@
             },
             refresh: function () {
                 var vm = this;
-                exported.environmentStore.retrieveAllRecords(
+                exported.listService.userSegments(
+                    {},
                     function (response) {
-                        vm.environments = response;
+                        vm.userSegments = response;
+                        vm.userSegments.unshift({
+                            key: null,
+                            name: "Everyone else",
+                            description: "All other users"
+                        });
                     });
             },
-            selectEnvironment: function (environmentId) {
+            selectUserSegment: function (key) {
                 var vm = this;
-                var websiteVersionId = null;
-                for (let i = 0; i < vm.environments.length; i++) {
-                    var environment = vm.environments[i];
-                    if (environment.recordId === environmentId) {
-                        websiteVersionId = environment.websiteVersionId;
-                    }
+                var segment = null;
+                for (let i = 0; i < vm.userSegments.length; i++) {
+                    if (vm.userSegments[i].key === key)
+                        segment = vm.userSegments[i];
                 }
-                if (websiteVersionId != undefined)
-                    vm._context.selected("websiteVersionId", websiteVersionId);
-                vm._context.selected("environmentId", environmentId);
+                vm._context.selected("userSegment", segment);
             }
         }
     });

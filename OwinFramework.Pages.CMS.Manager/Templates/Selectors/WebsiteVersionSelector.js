@@ -17,10 +17,6 @@
             hide: function() {
                 var vm = this;
                 vm.visible = false;
-                if (vm._unsubscribeDispatcher != undefined) {
-                    vm._unsubscribeDispatcher();
-                    vm._unsubscribeDispatcher = null;
-                }
             },
             refresh: function () {
                 var vm = this;

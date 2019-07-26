@@ -108,8 +108,11 @@ namespace OwinFramework.Pages.CMS.Manager
 
             AddTemplate("EnvironmentSelector", less, scriptModules);
             AddTemplate("WebsiteVersionSelector", less, scriptModules);
+            AddTemplate("UserSegmentSelector", less, scriptModules);
             AddTemplate("PageSelector", less, scriptModules);
             
+            AddTemplate("UserSegmentDisplay", less, scriptModules);
+
             AddTemplate("EnvironmentEditor", less, scriptModules);
             AddTemplate("WebsiteVersionEditor", less, scriptModules);
             AddTemplate("PageEditor", less, scriptModules);

@@ -27,8 +27,9 @@
         "cms_top_area_selector",
         [
             { name: "versions", displayName: "Website versions" },
-            { name: "environments", displayName: "Environments", selected: true }
-        ]);
+            { name: "environments", displayName: "Environments", selected: true },
+            { name: "segments", displayName: "User segments" }
+    ]);
     topAreaSelector.show(topContext, topContext);
 
     var bottomAreaSelector = areaSelectorVm(

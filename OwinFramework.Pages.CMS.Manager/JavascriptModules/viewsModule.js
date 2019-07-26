@@ -72,7 +72,10 @@ exported.viewStore = function () {
     var showEnvironmentSelector = function (context, topContext) {
         selectView("cms_top_select_view", "/cms/manager/EnvironmentSelector", "cms_environment_selector", exported.environment_selector_vm, topContext, topContext);
     }
-    var showPageSelector = function(context, topContext) {
+    var showUserSegmentSelector = function (context, topContext) {
+        selectView("cms_top_select_view", "/cms/manager/UserSegmentSelector", "cms_user_segment_selector", exported.user_segment_selector_vm, topContext, topContext);
+    }
+    var showPageSelector = function (context, topContext) {
         selectView("cms_bottom_select_view", "/cms/manager/PageSelector", "cms_page_selector", exported.page_selector_vm, context, topContext);
     }
     var showLayoutSelector = function (context, topContext) {
@@ -117,6 +120,11 @@ exported.viewStore = function () {
         selectView("cms_bottom_edit_view", "/cms/manager/DataTypeEditor", "cms_data_type_editor", exported.data_type_editor_vm, context, topContext);
     }
 
+    // Display only views
+    var showUserSegmentDisplay = function (context, topContext) {
+        selectView("cms_top_edit_view", "/cms/manager/UserSegmentDisplay", "cms_user_segment_display", exported.user_segment_display_vm, topContext, topContext);
+    }
+
     // Tools
     var showDispatcherLog = function (context, topContext) {
         selectView("cms_tool_view", "/cms/manager/DispatcherLog", "cms_dispatcher_log", exported.dispatcher_log_vm, context, topContext);
@@ -131,6 +139,10 @@ exported.viewStore = function () {
         else if (viewName === "versions") {
             showWebsiteVersionSelector(managerContext, managerContext);
             showWebsiteVersionEditor(managerContext, managerContext);
+        }
+        else if (viewName === "segments") {
+            showUserSegmentSelector(managerContext, managerContext);
+            showUserSegmentDisplay(managerContext, managerContext);
         }
         else if (viewName === "pages") {
             showPageSelector(context, managerContext);
@@ -158,6 +170,7 @@ exported.viewStore = function () {
         showWebsiteVersionEditor: showWebsiteVersionEditor,
         showEnvironmentSelector: showEnvironmentSelector,
         showWebsiteVersionSelector: showWebsiteVersionSelector,
+        showUserSegmentSelector: showUserSegmentSelector,
         showPageSelector: showPageSelector,
         showLayoutSelector: showLayoutSelector,
         showRegionSelector: showRegionSelector,

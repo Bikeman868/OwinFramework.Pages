@@ -268,12 +268,12 @@
             //exported.layoutStore.retrieveAllRecords(
             //    function (response) {
             //        vm.layouts = response;
+                    vm.layouts.unshift({
+                        recordId: "",
+                        displayName: "Defined in code"
+                    });
             //    });
-            vm.layouts.unshift({
-                recordId: "",
-                displayName: "Defined in code"
-            });
-            vm.recalculate(true);
+            vm.inherit = vm.selectedLayoutId == undefined && (vm.editedLayoutName == undefined || vm.editedLayoutName.length === 0);
         },
         methods: {
             selectLayout: function (e) {
@@ -282,31 +282,20 @@
                 if (isNaN(layoutId)) layoutId = null;
                 vm.selectedLayoutId = layoutId;
                 vm.$emit("layout-id-changed", vm.selectedLayoutId);
-                vm.recalculate();
             },
             inputLayoutName: function (e) {
                 var vm = this;
                 vm.editedLayoutName = e.target.value;
                 vm.$emit("layout-name-changed", vm.editedLayoutName);
-                vm.recalculate();
             },
             changeInherit: function(e) {
                 var vm = this;
-                if (e.target.checked) {
+                vm.inherit = e.target.checked;
+                if (vm.inherit) {
                     vm.selectedLayoutId = null;
                     vm.editedLayoutName = null;
-                    vm.recalculate();
-                } else {
-                    vm.inherit = false;
                 }
             },
-            recalculate: function(suppressNotification) {
-                var vm = this;
-                var oldValue = vm.inherit;
-                vm.inherit = vm.selectedLayoutId == undefined && (vm.editedLayoutName == undefined || vm.editedLayoutName.length === 0);
-                if (!suppressNotification && oldValue !== vm.inherit)
-                    vm.$emit("inherit-changed", vm.inherit);
-           }
         }
     });
 

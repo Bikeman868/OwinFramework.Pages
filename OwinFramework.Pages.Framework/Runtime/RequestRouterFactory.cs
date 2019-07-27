@@ -11,16 +11,9 @@ namespace OwinFramework.Pages.Framework.Runtime
     /// </summary>
     public class RequestRouterFactory : IRequestRouterFactory
     {
-        private readonly IUserSegmenter _userSegmenter;
-
-        public RequestRouterFactory(IUserSegmenter userSegmenter)
-        {
-            _userSegmenter = userSegmenter;
-        }
-
         public IRequestRouter Create()
         {
-            return new RequestRouter(_userSegmenter);
+            return new RequestRouter();
         }
     }
 }

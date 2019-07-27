@@ -36,41 +36,18 @@ namespace OwinFramework.Pages.Core
         IList<IDependency> IMiddleware.Dependencies { get { return _dependencies; } }
 
         private readonly IRequestRouter _requestRouter;
-        private readonly IUserSegmenter _userSegmenter;
+        private readonly ISegmentTestingFramework _segmentTestingFramework;
         private readonly TimeSpan _maximumCacheTime = TimeSpan.FromHours(1);
-        private readonly UserSegment[] _userSegments;
 
         /// <summary>
         /// Constructor for IoC dependency injection
         /// </summary>
         public PagesMiddleware(
             IRequestRouter requestRouter,
-            IUserSegmenter userSegmenter)
+            ISegmentTestingFramework segmentTestingFramework)
         {
             _requestRouter = requestRouter;
-            _userSegmenter = userSegmenter;
-            _userSegments = userSegmenter.GetSegments();
-
-            if (_userSegments != null)
-            {
-                var hash = new HashSet<string>();
-                for (var i = 0; i < _userSegments.Length; i++)
-                {
-                    if (_userSegments[i].Index != i)
-                        throw new Exception("The user segmenter implementation must set index values equal to the position of the segment within the array");
-
-                    if (string.IsNullOrEmpty(_userSegments[i].Key))
-                        throw new Exception("The user segmenter implementation can not return empty keys for segments");
-
-                    if (string.IsNullOrEmpty(_userSegments[i].Name))
-                        throw new Exception("The user segmenter implementation can not return empty names for segments");
-
-                    if (!hash.Add(_userSegments[i].Key))
-                        throw new Exception("The user segmenter implementation must return unique keys for each segment");
-                }
-                if (_userSegments.Length == 0)
-                    _userSegments = null;
-            }
+            _segmentTestingFramework = segmentTestingFramework;
 
             this.RunAfter<IOutputCache>(null, false);
             this.RunAfter<IRequestRewriter>(null, false);
@@ -80,12 +57,7 @@ namespace OwinFramework.Pages.Core
 
         Task IRoutingProcessor.RouteRequest(IOwinContext context, Func<Task> next)
         {
-            if (_userSegments != null)
-            {
-                var segmentIndex = _userSegmenter.GetSegmentIndex(context);
-                if (segmentIndex.HasValue && segmentIndex.Value >= 0 && segmentIndex.Value <= _userSegments.Length)
-                    context.Set(EnvironmentKeys.UserSegment, _userSegments[segmentIndex.Value]);
-            }
+            _segmentTestingFramework.SegmentRequest(context);
 
             var runable = _requestRouter.Route(context, Trace);
 

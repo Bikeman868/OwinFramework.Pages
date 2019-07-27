@@ -4,13 +4,13 @@
         data: {
             visible: true,
             websiteVersion: {},
-            currentUserSegment: {}
+            userSegment: {}
         },
         methods: {
             show: function (context, managerContext) {
                 var vm = this;
                 vm._context = context;
-                vm._unsubscribeSegment = context.subscribe("userSegment", function (segment) {vm.currentUserSegment = segment;});
+                vm._unsubscribeSegment = context.subscribe("userSegment", function (segment) { vm.userSegment = segment; });
                 vm._unsubscribeWebsiteVersionId = managerContext.subscribe("websiteVersionId", function (value) {
                     exported.websiteVersionStore.retrieveRecord(
                         value,

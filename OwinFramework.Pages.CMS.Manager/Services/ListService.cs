@@ -17,14 +17,14 @@ namespace OwinFramework.Pages.CMS.Manager.Services
     internal class ListService
     {
         private readonly IDataLayer _dataLayer;
-        private readonly IUserSegmenter _userSegmenter;
+        private readonly ISegmentTestingFramework _segmentTestingFramework;
 
         public ListService(
             IDataLayer dataLater,
-            IUserSegmenter userSegmenter)
+            ISegmentTestingFramework segmentTestingFramework)
         {
             _dataLayer = dataLater;
-            _userSegmenter = userSegmenter;
+            _segmentTestingFramework = segmentTestingFramework;
         }
 
         #region Environments
@@ -109,15 +109,20 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         [Endpoint(UrlPath = "usersegments", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
         private void UserSegments(IEndpointRequest request)
         {
-            var segments = _userSegmenter
-                .GetSegments()
-                .Select(s => new
+            var segments = _segmentTestingFramework.GetSegments();
+            if (segments == null)
+            {
+                request.Success(new object[0]);
+            }
+            else
+            {
+                request.Success(segments.Select(s => new
                 {
                     key = s.Key,
                     name = s.Name,
                     description = s.Description
-                });
-            request.Success(segments);
+                }));
+            }
         }
 
         #endregion

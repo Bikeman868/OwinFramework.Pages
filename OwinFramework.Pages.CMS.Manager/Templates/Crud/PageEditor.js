@@ -11,6 +11,7 @@
             permissionPattern: "",
             pathPattern: "",
             websiteVersion: {},
+            userSegment: { key: "" },
 
             pageMode: "view",
             errors: [],
@@ -70,11 +71,21 @@
                             vm.showPageVersion();
                         });
                 });
+                vm._unsubscribeSegment = context.subscribe("userSegment", function (segment) {
+                    if (segment == undefined)
+                        vm.userSegment = { key: "" }
+                    else
+                        vm.userSegment = segment;
+                });
                 this.visible = true;
             },
             hide: function() {
                 var vm = this;
                 vm.visible = false;
+                if (vm._unsubscribeSegment != undefined) {
+                    vm._unsubscribeSegment();
+                    vm._unsubscribeSegment = null;
+                }
                 if (vm._unsubscribeWebsiteVersionId != undefined) {
                     vm._unsubscribeWebsiteVersionId();
                     vm._unsubscribeWebsiteVersionId = null;
@@ -158,6 +169,7 @@
                 } else {
                     exported.pageVersionStore.getWebsitePageVersion(
                         vm.websiteVersion.recordId,
+                        vm.userSegment.key,
                         vm.currentPage.recordId,
                         function(pageVersion) { vm.currentPageVersion = pageVersion; },
                         function(msg) { vm.currentPageVersion = null; });
@@ -170,9 +182,13 @@
             newPageVersion: function () {
                 var vm = this;
                 vm.versionErrors = [];
-                vm.editingPageVersion = exported.pageVersionStore.blankRecord();
-                vm.editingPageVersion.routes = [];
-                vm.editingPageVersion.layoutZones = [];
+                if (vm.currentPageVersion == undefined) {
+                    vm.editingPageVersion = exported.pageVersionStore.blankRecord();
+                    vm.editingPageVersion.routes = [];
+                    vm.editingPageVersion.layoutZones = [];
+                } else {
+                    vm.editingPageVersion = Object.assign(exported.pageVersionStore.blankRecord(), vm.currentPageVersion);
+                }
                 vm.pageVersionMode = "new";
             },
             editPageVersion: function () {
@@ -200,7 +216,7 @@
             createNewVersion: function () {
                 var vm = this;
                 if (vm.websiteVersion == undefined || vm.websiteVersion.recordId == undefined) {
-                    vm.versionErrors = ["You must select a website version before creating a new page"];
+                    vm.versionErrors = ["You must select a website version before creating a new version of the page"];
                 } else {
                     vm.validateVersion();
                     if (vm.versionErrors.length === 0) {
@@ -210,6 +226,7 @@
                             function (msg) { vm.versionErrors = [msg] },
                             {
                                 websiteVersionId: vm.websiteVersion.recordId,
+                                segment: vm.userSegment.key,
                                 pageId: vm.currentPage.recordId
                             });
                     }

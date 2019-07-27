@@ -17,16 +17,8 @@ namespace OwinFramework.Pages.Framework.Runtime
 {
     internal class RequestRouter: IRequestRouter, IAnalysable
     {
-        private readonly IUserSegmenter _userSegmenter;
         private Registration[] _registrations = new Registration[0];
-        private UserSegment[] _userSegments;
         private readonly object _registrationlock = new object();
-
-        public RequestRouter(IUserSegmenter userSegmenter)
-        {
-            _userSegmenter = userSegmenter;
-            _userSegments = userSegmenter.GetSegments();
-        }
 
         IRunable IRequestRouter.Route(
             IOwinContext context, 
@@ -52,13 +44,18 @@ namespace OwinFramework.Pages.Framework.Runtime
                 trace(context, () => "Rewriting the request to " + method + " " + rewritePath);
             }
 
-            var segment = context.Get<UserSegment>(EnvironmentKeys.UserSegment);
-            if (segment != null)
-                trace(context, () => "Routing for users in the '" + segment.Name + "' test group");
+            Registration registration;
 
-            var registration = segment == null 
-                ? _registrations.FirstOrDefault(r => !r.UserSegmentIndex.HasValue && r.Filter.IsMatch(context, url, method))
-                : _registrations.FirstOrDefault(r => (r.UserSegmentIndex == segment.Index || !r.UserSegmentIndex.HasValue) && r.Filter.IsMatch(context, url, method));
+            var segment = context.Get<UserSegment>(EnvironmentKeys.UserSegment);
+            if (segment == null)
+            {
+                registration = _registrations.FirstOrDefault(r => r.UserSegmentKey == null && r.Filter.IsMatch(context, url, method));
+            }
+            else
+            {
+                trace(context, () => "Routing for users in the '" + segment.Name + "' segment");
+                registration = _registrations.FirstOrDefault(r => (r.UserSegmentKey == segment.Key || r.UserSegmentKey == null) && r.Filter.IsMatch(context, url, method));
+            }
 
             if (registration == null)
             {
@@ -84,7 +81,7 @@ namespace OwinFramework.Pages.Framework.Runtime
 
         IRequestRouter IRequestRouter.Add(IRequestFilter filter, int priority, string userSegmentKey)
         {
-            var router = new RequestRouter(_userSegmenter);
+            var router = new RequestRouter();
             ((IRequestRouter)this).Register(router, filter, priority, userSegmentKey);
             return router;
         }
@@ -100,21 +97,10 @@ namespace OwinFramework.Pages.Framework.Runtime
                 {
                     Priority = priority,
                     Filter = filter,
-                    UserSegmentIndex = GetSegmentIndex(userSegmentKey),
+                    UserSegmentKey = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
                     Runable = runable,
                     DeclaringType = declaringType ?? runable.GetType()
                 });
-        }
-
-        private int? GetSegmentIndex(string userSegmentKey)
-        {
-            int? segmentIndex = null;
-            if (_userSegments != null && !string.IsNullOrEmpty(userSegmentKey))
-            {
-                var segment = _userSegments.FirstOrDefault(s => string.Equals(s.Key, userSegmentKey));
-                if (segment != null) segmentIndex = segment.Index;
-            }
-            return segmentIndex;
         }
 
         IDisposable IRequestRouter.Register(
@@ -128,7 +114,7 @@ namespace OwinFramework.Pages.Framework.Runtime
                 {
                     Priority = priority,
                     Filter = filter,
-                    UserSegmentIndex = GetSegmentIndex(userSegmentKey),
+                    UserSegmentKey = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
                     Runable = runable,
                     DeclaringType = runable.GetType(),
                     Method = methodInfo
@@ -145,7 +131,7 @@ namespace OwinFramework.Pages.Framework.Runtime
                 {
                     Priority = priority,
                     Filter = filter,
-                    UserSegmentIndex = GetSegmentIndex(userSegmentKey),
+                    UserSegmentKey = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
                     Router = router
                 });
         }
@@ -158,7 +144,7 @@ namespace OwinFramework.Pages.Framework.Runtime
 
             var endpoints = new List<IEndpointDocumentation>();
 
-            foreach (var registration in registrations.Where(r => !r.UserSegmentIndex.HasValue))
+            foreach (var registration in registrations.Where(r => r.UserSegmentKey == null))
             {
                 var endpointDocumentation = new EndpointDocumentation
                 {
@@ -385,7 +371,7 @@ namespace OwinFramework.Pages.Framework.Runtime
 
         private Registration Add(Registration registration)
         {
-            if (registration.UserSegmentIndex.HasValue)
+            if (registration.UserSegmentKey != null)
                 registration.Priority += 1;
 
             lock (_registrationlock)
@@ -402,7 +388,7 @@ namespace OwinFramework.Pages.Framework.Runtime
         private class Registration : IComparable, IDisposable
         {
             public int Priority;
-            public int? UserSegmentIndex;
+            public string UserSegmentKey;
             public IRequestFilter Filter;
             public IRunable Runable;
             public Type DeclaringType;

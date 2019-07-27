@@ -5,6 +5,7 @@ using System.Text;
 using OwinFramework.Builder;
 using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces.Segmentation;
 
 namespace OwinFramework.Pages.Framework.Runtime
 {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Microsoft.Owin;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces.Segmentation;
 
 namespace Sample1
 {

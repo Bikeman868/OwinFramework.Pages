@@ -11,6 +11,7 @@ using OwinFramework.InterfacesV1.Capability;
 using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.InterfacesV1.Upstream;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces.Segmentation;
 
 namespace OwinFramework.Pages.Core
 {

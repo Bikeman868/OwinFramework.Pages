@@ -11,6 +11,7 @@ using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.Capability;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces.Segmentation;
 using OwinFramework.Pages.Framework.Analytics;
 
 namespace OwinFramework.Pages.Framework.Runtime
@@ -46,15 +47,15 @@ namespace OwinFramework.Pages.Framework.Runtime
 
             Registration registration;
 
-            var segment = context.Get<UserSegment>(EnvironmentKeys.UserSegment);
-            if (segment == null)
+            var testScenario = context.Get<ISegmentTestingScenario>(EnvironmentKeys.TestScenario);
+            if (testScenario == null)
             {
-                registration = _registrations.FirstOrDefault(r => r.UserSegmentKey == null && r.Filter.IsMatch(context, url, method));
+                registration = _registrations.FirstOrDefault(r => r.TestScenarioName == null && r.Filter.IsMatch(context, url, method));
             }
             else
             {
-                trace(context, () => "Routing for users in the '" + segment.Name + "' segment");
-                registration = _registrations.FirstOrDefault(r => (r.UserSegmentKey == segment.Key || r.UserSegmentKey == null) && r.Filter.IsMatch(context, url, method));
+                trace(context, () => "Routing to the '" + testScenario.Name + "' test scenario");
+                registration = _registrations.FirstOrDefault(r => (r.TestScenarioName == testScenario.Name || r.TestScenarioName == null) && r.Filter.IsMatch(context, url, method));
             }
 
             if (registration == null)
@@ -97,7 +98,7 @@ namespace OwinFramework.Pages.Framework.Runtime
                 {
                     Priority = priority,
                     Filter = filter,
-                    UserSegmentKey = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
+                    TestScenarioName = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
                     Runable = runable,
                     DeclaringType = declaringType ?? runable.GetType()
                 });
@@ -114,7 +115,7 @@ namespace OwinFramework.Pages.Framework.Runtime
                 {
                     Priority = priority,
                     Filter = filter,
-                    UserSegmentKey = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
+                    TestScenarioName = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
                     Runable = runable,
                     DeclaringType = runable.GetType(),
                     Method = methodInfo
@@ -131,7 +132,7 @@ namespace OwinFramework.Pages.Framework.Runtime
                 {
                     Priority = priority,
                     Filter = filter,
-                    UserSegmentKey = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
+                    TestScenarioName = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
                     Router = router
                 });
         }
@@ -144,7 +145,7 @@ namespace OwinFramework.Pages.Framework.Runtime
 
             var endpoints = new List<IEndpointDocumentation>();
 
-            foreach (var registration in registrations.Where(r => r.UserSegmentKey == null))
+            foreach (var registration in registrations.Where(r => r.TestScenarioName == null))
             {
                 var endpointDocumentation = new EndpointDocumentation
                 {
@@ -371,7 +372,7 @@ namespace OwinFramework.Pages.Framework.Runtime
 
         private Registration Add(Registration registration)
         {
-            if (registration.UserSegmentKey != null)
+            if (registration.TestScenarioName != null)
                 registration.Priority += 1;
 
             lock (_registrationlock)
@@ -388,7 +389,7 @@ namespace OwinFramework.Pages.Framework.Runtime
         private class Registration : IComparable, IDisposable
         {
             public int Priority;
-            public string UserSegmentKey;
+            public string TestScenarioName;
             public IRequestFilter Filter;
             public IRunable Runable;
             public Type DeclaringType;

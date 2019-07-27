@@ -5,6 +5,7 @@ using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces.Segmentation;
 using OwinFramework.Pages.Restful.Interfaces;
 using OwinFramework.Pages.Restful.Parameters;
 

@@ -5,6 +5,7 @@ using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces.Segmentation;
 using OwinFramework.Pages.Framework.Builders;
 using OwinFramework.Pages.Framework.Configuration;
 using OwinFramework.Pages.Framework.DataModel;
@@ -39,6 +40,7 @@ namespace OwinFramework.Pages.Framework
                     new IocRegistration().Init<IUserSegmenter, UserSegmenter>(),
                     new IocRegistration().Init<ISegmentTestRecorder, SegmentTestRecorder>(),
                     new IocRegistration().Init<ISegmentTestingFramework, SegmentTestingFramework>(),
+                    new IocRegistration().Init<ISegmentTestingData, SegmentTestingData>(),
 
                     // These classes are the data model
                     new IocRegistration().Init<IDataCatalog, DataCatalog>(),

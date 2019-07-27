@@ -262,9 +262,12 @@
     <Compile Include="Interfaces\Runtime\IRequestFilter.cs" />
     <Compile Include="Interfaces\Runtime\IRequestRouter.cs" />
     <Compile Include="Interfaces\Runtime\IRunable.cs" />
-    <Compile Include="Interfaces\Runtime\ISegmentTestingFramework.cs" />
-    <Compile Include="Interfaces\Runtime\ISegmentTestRecorder.cs" />
-    <Compile Include="Interfaces\Runtime\IUserSegmenter.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestingData.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestingFramework.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestingScenario.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestingTest.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestRecorder.cs" />
+    <Compile Include="Interfaces\Segmentation\IUserSegmenter.cs" />
     <Compile Include="Interfaces\Runtime\IWriteResult.cs" />
     <Compile Include="Interfaces\Templates\IDataFieldFormatter.cs" />
     <Compile Include="Interfaces\Templates\ITemplateDefinition.cs" />

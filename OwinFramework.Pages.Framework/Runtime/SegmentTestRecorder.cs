@@ -7,6 +7,7 @@ using Microsoft.Owin;
 using OwinFramework.Builder;
 using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Interfaces.Segmentation;
 
 namespace OwinFramework.Pages.Framework.Runtime
 {
@@ -16,9 +17,10 @@ namespace OwinFramework.Pages.Framework.Runtime
         /// Records a request by a segmented user
         /// </summary>
         /// <param name="context">The request that the user made</param>
-        /// <param name="testId">The database ID of the segmentation test that is running</param>
+        /// <param name="test">The segmentation test that is running</param>
         /// <param name="segmentKey">The key that identifies the user's segment</param>
-        void ISegmentTestRecorder.Record(IOwinContext context, long testId, string segmentKey)
+        /// <param name="scenario">The test scenario that is being presented to this user</param>
+        void ISegmentTestRecorder.Record(IOwinContext context, ISegmentTestingTest test, string segmentKey, ISegmentTestingScenario scenario)
         {
             var identification = context.GetFeature<IIdentification>();
             var identity = identification == null ? "unknown" : (identification.IsAnonymous ? "anonymous" : identification.Identity);

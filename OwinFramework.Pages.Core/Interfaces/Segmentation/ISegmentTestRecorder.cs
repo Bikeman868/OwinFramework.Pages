@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 
-namespace OwinFramework.Pages.Core.Interfaces.Runtime
+namespace OwinFramework.Pages.Core.Interfaces.Segmentation
 {
     /// <summary>
     /// Records analytics about user journeys for different segments of
@@ -19,8 +15,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// journeys can be compared for different segments of users
         /// </summary>
         /// <param name="context">The request that the user made</param>
-        /// <param name="testId">The databse ID of the active segmentation test</param>
+        /// <param name="test">The active segmentation test</param>
         /// <param name="segmentKey">The unique identifier for the users segment</param>
-        void Record(IOwinContext context, long testId, string segmentKey);
+        /// <param name="scenario">The test scenario to enact for this segment of users</param>
+        void Record(IOwinContext context, ISegmentTestingTest test, string segmentKey, ISegmentTestingScenario scenario);
     }
 }

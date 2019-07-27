@@ -1,6 +1,6 @@
 ﻿using Microsoft.Owin;
 
-namespace OwinFramework.Pages.Core.Interfaces.Runtime
+namespace OwinFramework.Pages.Core.Interfaces.Segmentation
 {
     /// <summary>
     /// A singleton user segmentation algorithm for A/B testing. This would normally

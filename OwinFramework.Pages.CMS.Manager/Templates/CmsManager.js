@@ -49,4 +49,5 @@
     exported.viewStore.showPageEditor(bottomContext, topContext);
     exported.viewStore.showEnvironmentEditor(bottomContext, topContext);
     exported.viewStore.showDispatcherLog(bottomContext, topContext);
+    exported.viewStore.showContextDisplay(bottomContext, topContext);
 }

@@ -26,8 +26,8 @@
                         vm.userSegments = response;
                         vm.userSegments.unshift({
                             key: null,
-                            name: "Everyone else",
-                            description: "All other users"
+                            name: "All other",
+                            description: "All users that are not in any other segment"
                         });
                     });
             },

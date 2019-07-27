@@ -26,6 +26,7 @@
         },
         computed: {
             editingZoneNesting: function () {
+                // TODO: Look up in the layoutStore
                 if (this.editingPageVersion.layoutName == undefined || this.editingPageVersion.layoutName.length === 0) {
                     if (this.editingPageVersion.layoutId === 7) return "main";
                     if (this.editingPageVersion.layoutId === 8) return "left,right";

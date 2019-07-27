@@ -125,6 +125,10 @@ exported.viewStore = function () {
         selectView("cms_top_edit_view", "/cms/manager/UserSegmentDisplay", "cms_user_segment_display", exported.user_segment_display_vm, topContext, topContext);
     }
 
+    var showContextDisplay = function (context, topContext) {
+        selectView("cms_bottom_context_display", "/cms/manager/ContextDisplay", "cms_context_display", exported.context_display_vm, topContext, topContext);
+    }
+
     // Tools
     var showDispatcherLog = function (context, topContext) {
         selectView("cms_tool_view", "/cms/manager/DispatcherLog", "cms_dispatcher_log", exported.dispatcher_log_vm, context, topContext);
@@ -168,6 +172,7 @@ exported.viewStore = function () {
     return {
         showEnvironmentEditor: showEnvironmentEditor,
         showWebsiteVersionEditor: showWebsiteVersionEditor,
+
         showEnvironmentSelector: showEnvironmentSelector,
         showWebsiteVersionSelector: showWebsiteVersionSelector,
         showUserSegmentSelector: showUserSegmentSelector,
@@ -184,6 +189,9 @@ exported.viewStore = function () {
         showComponentEditor: showComponentEditor,
         showDataScopeEditor: showDataScopeEditor,
         showDataTypeEditor: showDataTypeEditor,
+
+        showUserSegmentDisplay:showUserSegmentDisplay,
+        showContextDisplay: showContextDisplay,
 
         showDispatcherLog: showDispatcherLog,
 

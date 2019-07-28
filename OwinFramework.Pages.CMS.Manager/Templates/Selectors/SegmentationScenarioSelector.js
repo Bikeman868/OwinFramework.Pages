@@ -23,7 +23,6 @@
                 exported.segmentScenarioStore.retrieveAllRecords(
                     function(response) {
                         vm.scenarios = response;
-                        vm.scenarios.unshift(null);
                     });
             },
             selectScenario: function (name) {

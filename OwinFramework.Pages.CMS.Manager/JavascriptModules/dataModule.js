@@ -61,7 +61,7 @@
             delete store.dictionary[id];
             if (store.list != undefined) {
                 var index = -1;
-                store.list.forEach(function (e, i) { if (e && e[store.idField] === id) index = i; });
+                store.list.forEach(function (e, i) { if (e != undefined && e[store.idField] === id) index = i; });
                 if (index >= 0) store.list.splice(index, 1);
             }
         };
@@ -71,7 +71,8 @@
             store.list = records;
             store.dictionary = {};
             for (let i = 0; i < records.length; i++) {
-                store.dictionary[records[i][store.idField]] = records[i];
+                if (records[i] != undefined && records[i][store.idField] != undefined)
+                    store.dictionary[records[i][store.idField]] = records[i];
             }
         };
 
@@ -500,7 +501,14 @@ exported.segmentScenarioStore = dataUtilities.newStore({
             exported.segmentTestingService.retrieveScenario({ name: name }, onSuccess, null, onFail);
         },
         retrieveAllRecords: function (onSuccess, onFail) {
-            exported.segmentTestingService.allScenarios({}, onSuccess, null, onFail);
+            exported.segmentTestingService.allScenarios(
+                {},
+                function (response) {
+                    response.unshift(null);
+                    onSuccess(response);
+                },
+                null,
+                onFail);
         },
         updateRecord: function (updatedScenario, changes, onSuccess, onFail) {
             exported.segmentTestingService.updateScenario({ body: updatedScenario }, onSuccess, null, onFail);

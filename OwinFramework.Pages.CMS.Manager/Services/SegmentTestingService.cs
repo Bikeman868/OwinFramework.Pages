@@ -48,8 +48,8 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void CreateScenario(IEndpointRequest request)
         {
             var scenario = request.Body<Scenario>();
-            var scenarioName = _segmentTestingFramework.CreateScenario(scenario);
-            request.Success(scenarioName);
+            scenario.Name = _segmentTestingFramework.CreateScenario(scenario);
+            request.Success(scenario);
         }
 
         [Endpoint(
@@ -80,6 +80,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         {
             var scenario = request.Body<Scenario>();
             _segmentTestingFramework.UpdateScenario(scenario);
+            request.Success(scenario);
         }
 
         [Endpoint(
@@ -126,8 +127,8 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             if (test.SerializableScenarioMap != null)
                 test.ScenarioMap = test.SerializableScenarioMap.Select(m => new Tuple<string, string>(m.SegmentKey, m.ScenarioName)).ToArray();
 
-            var testName = _segmentTestingFramework.CreateTest(test);
-            request.Success(testName);
+            test.Name = _segmentTestingFramework.CreateTest(test);
+            request.Success(test);
         }
 
         [Endpoint(
@@ -170,6 +171,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 test.ScenarioMap = test.SerializableScenarioMap.Select(m => new Tuple<string, string>(m.SegmentKey, m.ScenarioName)).ToArray();
 
             _segmentTestingFramework.UpdateTest(test);
+            request.Success(test);
         }
 
         [Endpoint(

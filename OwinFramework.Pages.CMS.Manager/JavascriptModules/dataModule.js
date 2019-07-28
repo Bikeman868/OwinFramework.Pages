@@ -61,7 +61,7 @@
             delete store.dictionary[id];
             if (store.list != undefined) {
                 var index = -1;
-                store.list.forEach(function (e, i) { if (e[store.idField] === id) index = i; });
+                store.list.forEach(function (e, i) { if (e && e[store.idField] === id) index = i; });
                 if (index >= 0) store.list.splice(index, 1);
             }
         };
@@ -469,13 +469,7 @@ exported.segmentTestStore = dataUtilities.newStore({
     fields: ["name", "displayName", "description", "start", "end", "environment", "pages", "map"],
     mixin: {
         createRecord: function (test, onSuccess, onFail, params) {
-            exported.segmentTestingService.createTest(
-                { body: test },
-                function(response) {
-                    test.name = response;
-                    onSuccess();
-                },
-                onFail);
+            exported.segmentTestingService.createTest({ body: test }, onSuccess, onFail);
         },
         retrieveRecord: function (name, onSuccess, onFail) {
             exported.segmentTestingService.retrieveTest({ name: name }, onSuccess, null, onFail);
@@ -500,13 +494,7 @@ exported.segmentScenarioStore = dataUtilities.newStore({
     fields: ["name", "displayName", "description"],
     mixin: {
         createRecord: function (scenario, onSuccess, onFail, params) {
-            exported.segmentTestingService.createScenario(
-                { body: scenario },
-                function (response) {
-                    scenario.name = response;
-                    onSuccess();
-                },
-                onFail);
+            exported.segmentTestingService.createScenario({ body: scenario }, onSuccess, onFail);
         },
         retrieveRecord: function (name, onSuccess, onFail) {
             exported.segmentTestingService.retrieveScenario({ name: name }, onSuccess, null, onFail);

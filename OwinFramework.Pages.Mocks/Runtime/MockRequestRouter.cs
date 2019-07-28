@@ -29,27 +29,27 @@ namespace OwinFramework.Pages.Mocks.Runtime
         { }
 
 
-        public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType, string userSegmentKey)
+        public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, Type declaringType, string scenarioName)
         {
             Runable = runable;
             Filter = filter;
             Priority = priority;
             DeclaringType = declaringType;
-            UserSegmentKey = userSegmentKey;
+            UserSegmentKey = scenarioName;
             return this;
         }
 
-        public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo, string userSegmentKey)
+        public IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo, string scenarioName)
         {
             Runable = runable;
             Filter = filter;
             Priority = priority;
             MethodInfo = methodInfo;
-            UserSegmentKey = userSegmentKey;
+            UserSegmentKey = scenarioName;
             return this;
         }
 
-        public IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority, string userSegmentKey)
+        public IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority, string scenarioName)
         {
             return this;
         }
@@ -59,7 +59,7 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return null;
         }
 
-        public IRequestRouter Add(IRequestFilter filter, int priority, string userSegmentKey)
+        public IRequestRouter Add(IRequestFilter filter, int priority, string scenarioName)
         {
             return this;
         }

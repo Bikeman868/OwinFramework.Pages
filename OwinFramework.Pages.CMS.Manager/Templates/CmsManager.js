@@ -28,7 +28,7 @@
         [
             { name: "versions", displayName: "Website versions" },
             { name: "environments", displayName: "Environments", selected: true },
-            { name: "segments", displayName: "User segments" }
+            { name: "scenarios", displayName: "A/B test scenarios" }
     ]);
     topAreaSelector.show(topContext, topContext);
 

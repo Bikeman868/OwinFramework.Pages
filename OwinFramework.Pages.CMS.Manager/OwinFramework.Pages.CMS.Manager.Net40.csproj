@@ -72,6 +72,7 @@
     <Compile Include="Data\TestDatabaseUpdaterBase.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\SegmentTestingService.cs" />
     <Compile Include="Services\HistoryService.cs" />
     <Compile Include="Services\ListService.cs" />
     <Compile Include="Services\CrudService.cs" />
@@ -182,6 +183,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\Display\ContextDisplay.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\SegmentationScenarioSelector.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\SegmentationScenarioSelector.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\SegmentationTestSelector.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\SegmentationTestSelector.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -33,10 +33,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// </summary>
         /// <param name="filter">The filter that matches the request</param>
         /// <param name="priority">Filters are run in ascending order of priority</param>
-        /// <param name="userSegmentKey">Optional key that identifies the specific segment
-        /// of users that this route applies to. This key shold be one of the ones returned
-        /// by the IUserSegmenter implementation</param>
-        IRequestRouter Add(IRequestFilter filter, int priority = 0, string userSegmentKey = null);
+        /// <param name="scenarioName">Optional name that identifies the A/B testing scenario that
+        /// this route applies to</param>
+        IRequestRouter Add(IRequestFilter filter, int priority = 0, string scenarioName = null);
 
         /// <summary>
         /// Registers a handler for requests that match a filter
@@ -46,12 +45,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="priority">Filters are run in ascending order of priority</param>
         /// <param name="declaringType">The type from which this runable was derrived. 
         /// This is used to find attributes that contain documentation</param>
+        /// <param name="scenarioName">Optional name that identifies the A/B testing scenario that
+        /// this route applies to</param>
         /// <returns>A disposable instance. Disposing of this instance will de-register
         /// this route. The router keeps a reference to this instance so you don't need to</returns>
-        /// <param name="userSegmentKey">Optional key that identifies the specific segment
-        /// of users that this route applies to. This key shold be one of the ones returned
-        /// by the IUserSegmenter implementation</param>
-        IDisposable Register(IRunable runable, IRequestFilter filter, int priority = 0, Type declaringType = null, string userSegmentKey = null);
+        IDisposable Register(IRunable runable, IRequestFilter filter, int priority = 0, Type declaringType = null, string scenarioName = null);
 
         /// <summary>
         /// Registers a handler for requests that match a filter
@@ -60,12 +58,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="filter">The filter that matches the request</param>
         /// <param name="priority">Filters are run in ascending order of priority</param>
         /// <param name="methodInfo">A method that is decorated with custom documentation attributes</param>
+        /// <param name="scenarioName">Optional name that identifies the A/B testing scenario that
+        /// this route applies to</param>
         /// <returns>A disposable instance. Disposing of this instance will de-register
         /// this route. The router keeps a reference to this instance so you don't need to</returns>
-        /// <param name="userSegmentKey">Optional key that identifies the specific segment
-        /// of users that this route applies to. This key shold be one of the ones returned
-        /// by the IUserSegmenter implementation</param>
-        IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo, string userSegmentKey);
+        IDisposable Register(IRunable runable, IRequestFilter filter, int priority, MethodInfo methodInfo, string scenarioName);
 
         /// <summary>
         /// Registers a nested router. Nesting routers makes routing more efficient
@@ -74,12 +71,11 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// <param name="router">The router to run when the filter is matched</param>
         /// <param name="filter">The filter that matches the request</param>
         /// <param name="priority">Filters are run in ascending order of priority</param>
+        /// <param name="scenarioName">Optional name that identifies the A/B testing scenario that
+        /// this route applies to</param>
         /// <returns>A disposable instance. Disposing of this instance will de-register
         /// this route. The router keeps a reference to this instance so you don't need to</returns>
-        /// <param name="userSegmentKey">Optional key that identifies the specific segment
-        /// of users that this route applies to. This key shold be one of the ones returned
-        /// by the IUserSegmenter implementation</param>
-        IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority = 0, string userSegmentKey = null);
+        IDisposable Register(IRequestRouter router, IRequestFilter filter, int priority = 0, string scenarioName = null);
 
         /// <summary>
         /// Returns documentation about the endpoints that are registered with the router

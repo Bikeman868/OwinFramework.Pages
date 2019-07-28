@@ -1,1 +1,1 @@
-﻿<h1 id="cms_context_display" v-if="visible">{{websiteVersion.displayName}} version<span v-if="userSegment != undefined"> for {{userSegment.name|cms_lowercase}} users</span><span v-else> for unsegmented users</span></h1>
+﻿<h1 id="cms_context_display" v-if="visible">{{websiteVersion.displayName}} version<span v-if="scenario != undefined"> for the {{scenario.displayName|cms_lowercase}} a/b testing scenario</span><span v-else> for unsegmented users</span></h1>

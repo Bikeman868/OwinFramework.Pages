@@ -30,5 +30,10 @@
         public const string ChangeLayoutVersion = "cms:version/layout";
         public const string ChangePageVersion = "cms:version/page";
         public const string ChangeRegionVersion = "cms:version/region";
+
+        // These permissions relate to A/B testing
+
+        public const string EditSegmentTest = "cms:edit/segmentation/test";
+        public const string EditSegmentScenario = "cms:edit/segmentation/scenario";
     }
 }

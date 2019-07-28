@@ -460,3 +460,66 @@ exported.userStore = dataUtilities.newStore({
         }
     }
 });
+
+exported.segmentTestStore = dataUtilities.newStore({
+    recordType: "SegmentationTest",
+    name: "segmentation test",
+    listName: "list of segmentation tests",
+    idField: "name",
+    fields: ["name", "displayName", "description", "start", "end", "environment", "pages", "map"],
+    mixin: {
+        createRecord: function (test, onSuccess, onFail, params) {
+            exported.segmentTestingService.createTest(
+                { body: test },
+                function(response) {
+                    test.name = response;
+                    onSuccess();
+                },
+                onFail);
+        },
+        retrieveRecord: function (name, onSuccess, onFail) {
+            exported.segmentTestingService.retrieveTest({ name: name }, onSuccess, null, onFail);
+        },
+        retrieveAllRecords: function (onSuccess, onFail) {
+            exported.segmentTestingService.allTests({}, onSuccess, null, onFail);
+        },
+        updateRecord: function (updatedTest, changes, onSuccess, onFail) {
+            exported.segmentTestingService.updateTest({ body: updatedTest }, onSuccess, null, onFail);
+        },
+        deleteRecord: function (name, onSuccess, onFail) {
+            exported.segmentTestingService.deleteTest({ name: name }, onSuccess, null, onFail);
+        }
+    }
+});
+
+exported.segmentScenarioStore = dataUtilities.newStore({
+    recordType: "SegmentationScenario",
+    name: "segmentation scenario",
+    listName: "list of segmentation scenarios",
+    idField: "name",
+    fields: ["name", "displayName", "description"],
+    mixin: {
+        createRecord: function (scenario, onSuccess, onFail, params) {
+            exported.segmentTestingService.createScenario(
+                { body: scenario },
+                function (response) {
+                    scenario.name = response;
+                    onSuccess();
+                },
+                onFail);
+        },
+        retrieveRecord: function (name, onSuccess, onFail) {
+            exported.segmentTestingService.retrieveScenario({ name: name }, onSuccess, null, onFail);
+        },
+        retrieveAllRecords: function (onSuccess, onFail) {
+            exported.segmentTestingService.allScenarios({}, onSuccess, null, onFail);
+        },
+        updateRecord: function (updatedScenario, changes, onSuccess, onFail) {
+            exported.segmentTestingService.updateScenario({ body: updatedScenario }, onSuccess, null, onFail);
+        },
+        deleteRecord: function (name, onSuccess, onFail) {
+            exported.segmentTestingService.deleteScenario({ name: name }, onSuccess, null, onFail);
+        }
+    }
+});
+

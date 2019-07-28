@@ -80,10 +80,10 @@ namespace OwinFramework.Pages.Framework.Runtime
             return registration.Router.Route(context, trace, rewritePath, rewriteMethod);
         }
 
-        IRequestRouter IRequestRouter.Add(IRequestFilter filter, int priority, string userSegmentKey)
+        IRequestRouter IRequestRouter.Add(IRequestFilter filter, int priority, string scenarioName)
         {
             var router = new RequestRouter();
-            ((IRequestRouter)this).Register(router, filter, priority, userSegmentKey);
+            ((IRequestRouter)this).Register(router, filter, priority, scenarioName);
             return router;
         }
 
@@ -92,13 +92,13 @@ namespace OwinFramework.Pages.Framework.Runtime
             IRequestFilter filter, 
             int priority, 
             Type declaringType,
-            string userSegmentKey)
+            string scenarioName)
         {
             return Add(new Registration
                 {
                     Priority = priority,
                     Filter = filter,
-                    TestScenarioName = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
+                    TestScenarioName = string.IsNullOrWhiteSpace(scenarioName) ? null : scenarioName,
                     Runable = runable,
                     DeclaringType = declaringType ?? runable.GetType()
                 });
@@ -109,13 +109,13 @@ namespace OwinFramework.Pages.Framework.Runtime
             IRequestFilter filter, 
             int priority, 
             MethodInfo methodInfo,
-            string userSegmentKey)
+            string scenarioName)
         {
             return Add(new Registration
                 {
                     Priority = priority,
                     Filter = filter,
-                    TestScenarioName = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
+                    TestScenarioName = string.IsNullOrWhiteSpace(scenarioName) ? null : scenarioName,
                     Runable = runable,
                     DeclaringType = runable.GetType(),
                     Method = methodInfo
@@ -126,13 +126,13 @@ namespace OwinFramework.Pages.Framework.Runtime
             IRequestRouter router, 
             IRequestFilter filter, 
             int priority,
-            string userSegmentKey)
+            string scenarioName)
         {
             return Add(new Registration
                 {
                     Priority = priority,
                     Filter = filter,
-                    TestScenarioName = string.IsNullOrWhiteSpace(userSegmentKey) ? null : userSegmentKey,
+                    TestScenarioName = string.IsNullOrWhiteSpace(scenarioName) ? null : scenarioName,
                     Router = router
                 });
         }

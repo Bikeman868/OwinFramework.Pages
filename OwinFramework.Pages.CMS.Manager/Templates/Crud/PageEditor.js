@@ -11,7 +11,7 @@
             permissionPattern: "",
             pathPattern: "",
             websiteVersion: {},
-            userSegment: { key: "" },
+            scenario: {},
 
             pageMode: "view",
             errors: [],
@@ -71,20 +71,17 @@
                             vm.showPageVersion();
                         });
                 });
-                vm._unsubscribeSegment = context.subscribe("userSegment", function (segment) {
-                    if (segment == undefined)
-                        vm.userSegment = { key: "" }
-                    else
-                        vm.userSegment = segment;
+                vm._unsubscribeScenario = context.subscribe("segmentationScenario", function (scenario) {
+                    vm.scenario = scenario;
                 });
                 this.visible = true;
             },
             hide: function() {
                 var vm = this;
                 vm.visible = false;
-                if (vm._unsubscribeSegment != undefined) {
-                    vm._unsubscribeSegment();
-                    vm._unsubscribeSegment = null;
+                if (vm._unsubscribeScenario != undefined) {
+                    vm._unsubscribeScenario();
+                    vm._unsubscribeScenario = null;
                 }
                 if (vm._unsubscribeWebsiteVersionId != undefined) {
                     vm._unsubscribeWebsiteVersionId();
@@ -169,7 +166,7 @@
                 } else {
                     exported.pageVersionStore.getWebsitePageVersion(
                         vm.websiteVersion.recordId,
-                        vm.userSegment.key,
+                        vm.scenario ? vm.scenario.name : null,
                         vm.currentPage.recordId,
                         function(pageVersion) { vm.currentPageVersion = pageVersion; },
                         function(msg) { vm.currentPageVersion = null; });
@@ -226,7 +223,7 @@
                             function (msg) { vm.versionErrors = [msg] },
                             {
                                 websiteVersionId: vm.websiteVersion.recordId,
-                                segment: vm.userSegment.key,
+                                scenario: vm.scenario ? vm.scenario.name : null,
                                 pageId: vm.currentPage.recordId
                             });
                     }

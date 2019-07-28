@@ -16,7 +16,8 @@ namespace Sample1.SampleServices
         private readonly string _helloMessageA;
         private readonly string _helloMessageB;
 
-        public HelloService(IServiceDependenciesFactory serviceDependenciesFactory) 
+        public HelloService(
+            IServiceDependenciesFactory serviceDependenciesFactory) 
             : base(serviceDependenciesFactory)
         {
             _helloMessage =
@@ -39,13 +40,13 @@ namespace Sample1.SampleServices
             request.Success(_helloMessage);
         }
 
-        [Endpoint(UrlPath = "/hello", Methods = new []{ Method.Get }, ResponseSerializer = typeof(PlainText), UserSegmentKey = "A")]
+        [Endpoint(UrlPath = "/hello", Methods = new []{ Method.Get }, ResponseSerializer = typeof(PlainText), ScenarioName = "A")]
         private void HelloA(IEndpointRequest request)
         {
             request.Success(_helloMessageA);
         }
 
-        [Endpoint(UrlPath = "/hello", Methods = new []{ Method.Get }, ResponseSerializer = typeof(PlainText), UserSegmentKey = "B")]
+        [Endpoint(UrlPath = "/hello", Methods = new []{ Method.Get }, ResponseSerializer = typeof(PlainText), ScenarioName = "B")]
         private void HelloB(IEndpointRequest request)
         {
             request.Success(_helloMessageB);

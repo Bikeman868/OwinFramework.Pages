@@ -20,14 +20,14 @@ namespace OwinFramework.Pages.Framework.Runtime
                 new Scenario
                 {
                     Name = "a",
-                    DisplayName = "Scenario A",
-                    Description = "A test scenario"
+                    DisplayName = "Blue theme",
+                    Description = "Uses the blue color scheme"
                 },
                 new Scenario
                 {
                     Name = "b",
-                    DisplayName = "Scenario B",
-                    Description = "A test scenario"
+                    DisplayName = "Yellow theme",
+                    Description = "Uses the yellow color scheme"
                 }
             };
 
@@ -38,7 +38,7 @@ namespace OwinFramework.Pages.Framework.Runtime
                     Name = "test1",
                     DisplayName = "Test 1",
                     Description = "First test",
-                    StartUtc = DateTime.UtcNow.AddMinutes(2),
+                    StartUtc = DateTime.UtcNow.AddMinutes(1),
                     EndUtc = DateTime.UtcNow.AddMinutes(10),
                     EnvironmentName = "production",
                     PageNames = new[]

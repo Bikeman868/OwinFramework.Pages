@@ -207,7 +207,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         httpMethods,
                         action,
                         m,
-                        endpointAttribute.UserSegmentKey,
+                        endpointAttribute.ScenarioName,
                         endpointAttribute.Analytics,
                         _serviceDependenciesFactory.DataCatalog,
                         _serviceDependenciesFactory.DataDependencyFactory,
@@ -250,7 +250,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         endpoint.AddParameter(parameter.ParameterName, parameter.ParameterType, parameterParser);
                     }
 
-                    Register(endpoint, httpMethods, relativePath, endpointAttribute.UserSegmentKey);
+                    Register(endpoint, httpMethods, relativePath, endpointAttribute.ScenarioName);
 
                     if (!firstEndpoint) clientScript.AppendLine("  },");
                     firstEndpoint = false;
@@ -481,7 +481,7 @@ namespace OwinFramework.Pages.Restful.Runtime
             }
         }
 
-        private void Register(ServiceEndpoint endpoint, Method[] methods, bool relativePath, string userSegmentKey)
+        private void Register(ServiceEndpoint endpoint, Method[] methods, bool relativePath, string scenarioName)
         {
             var requestRouter = _serviceDependenciesFactory.RequestRouter;
 
@@ -517,7 +517,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                     new FilterByPath(pathFilter), 
                     RoutingPriority, 
                     endpoint.MethodInfo,
-                    userSegmentKey);
+                    scenarioName);
             }
             else
             {
@@ -528,7 +528,7 @@ namespace OwinFramework.Pages.Restful.Runtime
                         new FilterByPath(pathFilter)),
                     RoutingPriority,
                     endpoint.MethodInfo,
-                    userSegmentKey);
+                    scenarioName);
             }
         }
 

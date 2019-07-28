@@ -75,6 +75,9 @@ exported.viewStore = function () {
     var showUserSegmentSelector = function (context, topContext) {
         selectView("cms_top_select_view", "/cms/manager/UserSegmentSelector", "cms_user_segment_selector", exported.user_segment_selector_vm, topContext, topContext);
     }
+    var showSegmentationScenarioSelector = function (context, topContext) {
+        selectView("cms_top_select_view", "/cms/manager/SegmentationScenarioSelector", "cms_segmentation_scenario_selector", exported.segmentation_scenario_selector_vm, topContext, topContext);
+    }
     var showPageSelector = function (context, topContext) {
         selectView("cms_bottom_select_view", "/cms/manager/PageSelector", "cms_page_selector", exported.page_selector_vm, context, topContext);
     }
@@ -148,6 +151,10 @@ exported.viewStore = function () {
             showUserSegmentSelector(managerContext, managerContext);
             showUserSegmentDisplay(managerContext, managerContext);
         }
+        else if (viewName === "scenarios") {
+            showSegmentationScenarioSelector(managerContext, managerContext);
+            //showSegmentationScenarioEditor(managerContext, managerContext);
+        }
         else if (viewName === "pages") {
             showPageSelector(context, managerContext);
             showPageEditor(context, managerContext);
@@ -176,6 +183,7 @@ exported.viewStore = function () {
         showEnvironmentSelector: showEnvironmentSelector,
         showWebsiteVersionSelector: showWebsiteVersionSelector,
         showUserSegmentSelector: showUserSegmentSelector,
+        showSegmentationScenarioSelector: showSegmentationScenarioSelector,
         showPageSelector: showPageSelector,
         showLayoutSelector: showLayoutSelector,
         showRegionSelector: showRegionSelector,

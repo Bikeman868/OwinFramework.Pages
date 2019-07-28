@@ -86,6 +86,12 @@ namespace OwinFramework.Pages.CMS.Manager
                 .CreateComponent("historyClient")
                 .Build();
 
+            fluentBuilder.BuildUpService(null, typeof(SegmentTestingService))
+                .Name("segmentTesting")
+                .Route(_configuration.ServiceBasePath + "segment-testing/", new []{ Method.Get }, 0)
+                .CreateComponent("segmentTestingClient")
+                .Build();
+
             // Load templates and accumulate all of the CSS and JS assets
 
             var scriptModules = new List<string>();
@@ -109,6 +115,8 @@ namespace OwinFramework.Pages.CMS.Manager
             AddTemplate("EnvironmentSelector", less, scriptModules);
             AddTemplate("WebsiteVersionSelector", less, scriptModules);
             AddTemplate("UserSegmentSelector", less, scriptModules);
+            AddTemplate("SegmentationScenarioSelector", less, scriptModules);
+            AddTemplate("SegmentationTestSelector", less, scriptModules);
             AddTemplate("PageSelector", less, scriptModules);
             
             AddTemplate("UserSegmentDisplay", less, scriptModules);
@@ -144,6 +152,7 @@ namespace OwinFramework.Pages.CMS.Manager
                 .NeedsComponent("crudClient")
                 .NeedsComponent("listClient")
                 .NeedsComponent("historyClient")
+                .NeedsComponent("segmentTestingClient")
                 .AddTemplate(cmsManagerTemplatePath));
 
             // This region of the CMS manager is for debug tools

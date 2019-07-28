@@ -5,7 +5,7 @@
                 <h2>No page selected</h2>
                 <p>
                     No page currently selected for editing.
-                    Choose a page from the list on the left. 
+                    Choose a page from the list on the left.
                     If the list of pages is empty this is because the selected website version contains no pages.
                 </p>
                 <div class="cms_button_bar">
@@ -71,12 +71,21 @@
                 </div>
 
                 <div v-if="currentPageVersion == undefined && pageVersionMode === 'view'">
-                    <h2>No page version in website version</h2>
-                    <p>
-                        There is no version of this page in the selected website version. To
-                        select a version of this page to use in this version of the website
-                        tap on the 'Choose Version' button.
-                    </p>
+                    <div v-if="scenario == undefined">
+                        <h2>No version of this page in this version of the website</h2>
+                        <p>
+                            There is no version of this page in the selected website version.</p>
+                        <p>To select a version of this page to use in this version of the website
+                            tap on the 'Choose Version' button.</p>
+                    </div>
+                    <div v-else>
+                        <h2>This a/b test scenario does not change the page version</h2>
+                        <p>
+                            This page uses the page version defined for the website version for the '{{scenario.displayName}}'
+                            a/b testing scenario.</p>
+                        <p>If you want to change the page version that should be used for the
+                            '{{scenario.displayName}}' a/b testing scenario, tap on the 'Choose Version' button.</p>
+                    </div>
                     <div class="cms_button_bar">
                         <button type="button" v-on:click="choosePageVersion">Choose Version</button>
                         <button type="button" v-on:click="newPageVersion">New Version</button>

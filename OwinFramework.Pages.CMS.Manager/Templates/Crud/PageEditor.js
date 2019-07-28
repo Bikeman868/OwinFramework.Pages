@@ -71,7 +71,7 @@
                             vm.showPageVersion();
                         });
                 });
-                vm._unsubscribeScenario = context.subscribe("segmentationScenario", function (scenario) {
+                vm._unsubscribeScenario = managerContext.subscribe("segmentationScenario", function (scenario) {
                     vm.scenario = scenario;
                 });
                 this.visible = true;

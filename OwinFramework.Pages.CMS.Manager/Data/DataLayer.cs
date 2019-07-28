@@ -528,54 +528,54 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return _databaseReader.GetWebsiteVersions(map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsitePages<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionPageRecord, T> map, Func<WebsiteVersionPageRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsitePages<T>(long websiteVersionId, string scenarioName, Func<WebsiteVersionPageRecord, T> map, Func<WebsiteVersionPageRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsitePages(websiteVersionId, userSegment, map, predicate);
+            return _databaseReader.GetWebsitePages(websiteVersionId, scenarioName, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsitePages<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionPageRecord, T> map, Func<WebsiteVersionPageRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsitePages<T>(string websiteVersionName, string scenarioName, Func<WebsiteVersionPageRecord, T> map, Func<WebsiteVersionPageRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsitePages(websiteVersionName, userSegment, map, predicate);
+            return _databaseReader.GetWebsitePages(websiteVersionName, scenarioName, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteLayouts<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteLayouts<T>(long websiteVersionId, string scenarioName, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsiteLayouts(websiteVersionId, userSegment, map, predicate);
+            return _databaseReader.GetWebsiteLayouts(websiteVersionId, scenarioName, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteLayouts<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteLayouts<T>(string websiteVersionName, string scenarioName, Func<WebsiteVersionLayoutRecord, T> map, Func<WebsiteVersionLayoutRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsiteLayouts(websiteVersionName, userSegment, map, predicate);
+            return _databaseReader.GetWebsiteLayouts(websiteVersionName, scenarioName, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteRegions<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteRegions<T>(long websiteVersionId, string scenarioName, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsiteRegions(websiteVersionId, userSegment, map, predicate);
+            return _databaseReader.GetWebsiteRegions(websiteVersionId, scenarioName, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteRegions<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteRegions<T>(string websiteVersionName, string scenarioName, Func<WebsiteVersionRegionRecord, T> map, Func<WebsiteVersionRegionRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsiteRegions(websiteVersionName, userSegment, map, predicate);
+            return _databaseReader.GetWebsiteRegions(websiteVersionName, scenarioName, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteDataTypes<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteDataTypes<T>(long websiteVersionId, string scenarioName, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsiteDataTypes(websiteVersionId, userSegment, map, predicate);
+            return _databaseReader.GetWebsiteDataTypes(websiteVersionId, scenarioName, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteDataTypes<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteDataTypes<T>(string websiteVersionName, string scenarioName, Func<WebsiteVersionDataTypeRecord, T> map, Func<WebsiteVersionDataTypeRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsiteDataTypes(websiteVersionName, userSegment, map, predicate);
+            return _databaseReader.GetWebsiteDataTypes(websiteVersionName, scenarioName, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteComponents<T>(long websiteVersionId, string userSegment, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteComponents<T>(long websiteVersionId, string scenarioName, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsiteComponents(websiteVersionId, userSegment, map, predicate);
+            return _databaseReader.GetWebsiteComponents(websiteVersionId, scenarioName, map, predicate);
         }
 
-        T[] IDatabaseReader.GetWebsiteComponents<T>(string websiteVersionName, string userSegment, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate)
+        T[] IDatabaseReader.GetWebsiteComponents<T>(string websiteVersionName, string scenarioName, Func<WebsiteVersionComponentRecord, T> map, Func<WebsiteVersionComponentRecord, bool> predicate)
         {
-            return _databaseReader.GetWebsiteComponents(websiteVersionName, userSegment, map, predicate);
+            return _databaseReader.GetWebsiteComponents(websiteVersionName, scenarioName, map, predicate);
         }
 
         IDictionary<string, object> IDatabaseReader.GetElementPropertyValues(long elementVersionId)

@@ -420,12 +420,12 @@ exported.pageVersionStore = dataUtilities.newStore({
             null,
             function (ajax) { dataUtilities.doFailGet("list of page versions", ajax, onFail); });
     },
-    getWebsitePageVersion: function (websiteVersionId, userSegment, pageId, onSuccess, onFail) {
+    getWebsitePageVersion: function (websiteVersionId, segmentationScenarioName, pageId, onSuccess, onFail) {
         var store = this;
         exported.listService.websitePageVersion(
             {
                 websiteVersionId: websiteVersionId,
-                segment: userSegment,
+                scenario: segmentationScenarioName,
                 pageId: pageId
             },
             function (response) {

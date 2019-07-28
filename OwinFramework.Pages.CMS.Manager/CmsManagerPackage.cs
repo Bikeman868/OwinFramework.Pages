@@ -88,7 +88,7 @@ namespace OwinFramework.Pages.CMS.Manager
 
             fluentBuilder.BuildUpService(null, typeof(SegmentTestingService))
                 .Name("segmentTesting")
-                .Route(_configuration.ServiceBasePath + "segment-testing/", new []{ Method.Get }, 0)
+                .Route(_configuration.ServiceBasePath + "segment-testing/", new []{ Method.Get, Method.Post, Method.Put, Method.Delete }, 0)
                 .CreateComponent("segmentTestingClient")
                 .Build();
 
@@ -124,6 +124,7 @@ namespace OwinFramework.Pages.CMS.Manager
 
             AddTemplate("EnvironmentEditor", less, scriptModules);
             AddTemplate("WebsiteVersionEditor", less, scriptModules);
+            AddTemplate("SegmentationScenarioEditor", less, scriptModules);
             AddTemplate("PageEditor", less, scriptModules);
 
             AddTemplate("DispatcherLog", less, scriptModules);

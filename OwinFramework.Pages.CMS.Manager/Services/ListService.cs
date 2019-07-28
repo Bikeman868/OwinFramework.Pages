@@ -84,21 +84,21 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             EndpointParameterType.PathSegment, 
             Description = "The ID of the page to get information for")]
         [EndpointParameter(
-            "segment", 
+            "scenario", 
             typeof(OptionalString), 
-            Description = "The user segment to get a page version for")]
+            Description = "The name of the segmentation scenario to get a page version for")]
         private void WebsitePageVersion(IEndpointRequest request)
         {
             var websiteVersionId = request.Parameter<long>("websiteVersionId");
             var pageId = request.Parameter<long>("pageId");
-            var segment = request.Parameter<string>("segment") ?? string.Empty;
+            var scenarioName = request.Parameter<string>("scenario") ?? string.Empty;
 
-            var pageVersions = _dataLayer.GetWebsitePages(websiteVersionId, segment, pv => pv, pv => pv.PageId == pageId);
+            var pageVersions = _dataLayer.GetWebsitePages(websiteVersionId, scenarioName, pv => pv, pv => pv.PageId == pageId);
             if (pageVersions == null || pageVersions.Length == 0)
                 request.NotFound(
                     "There is no version of page #" + pageId + 
                     " in version #" + websiteVersionId + " of the website" +
-                    (string.IsNullOrEmpty(segment) ? "" : " for '" + segment + "' users"));
+                    (string.IsNullOrEmpty(scenarioName) ? "" : " in the '" + scenarioName + "' test scenario"));
             else
                 request.Success(pageVersions[0]);
         }

@@ -67,7 +67,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T[] IDatabaseReader.GetWebsitePages<T>(
             long websiteVersionId, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionPageRecord, T> map,
             Func<WebsiteVersionPageRecord, bool> predicate)
         {
@@ -86,7 +86,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T[] IDatabaseReader.GetWebsitePages<T>(
             string websiteVersionName, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionPageRecord, T> map,
             Func<WebsiteVersionPageRecord, bool> predicate)
         {
@@ -95,12 +95,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsitePages(websiteVersion.RecordId, userSegment, map, predicate);
+                : ((IDatabaseReader)this).GetWebsitePages(websiteVersion.RecordId, scenarioName, map, predicate);
         }
 
         T[] IDatabaseReader.GetWebsiteComponents<T>(
             long websiteVersionId, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionComponentRecord, T> map, 
             Func<WebsiteVersionComponentRecord, bool> predicate)
         {
@@ -119,7 +119,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T[] IDatabaseReader.GetWebsiteComponents<T>(
             string websiteVersionName, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionComponentRecord, T> map, 
             Func<WebsiteVersionComponentRecord, bool> predicate)
         {
@@ -128,12 +128,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteComponents(websiteVersion.RecordId, userSegment, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteComponents(websiteVersion.RecordId, scenarioName, map, predicate);
         }
 
         T[] IDatabaseReader.GetWebsiteLayouts<T>(
             long websiteVersionId, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionLayoutRecord, T> map, 
             Func<WebsiteVersionLayoutRecord, bool> predicate)
         {
@@ -152,7 +152,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T[] IDatabaseReader.GetWebsiteLayouts<T>(
             string websiteVersionName, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionLayoutRecord, T> map, 
             Func<WebsiteVersionLayoutRecord, bool> predicate)
         {
@@ -161,12 +161,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteLayouts(websiteVersion.RecordId, userSegment, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteLayouts(websiteVersion.RecordId, scenarioName, map, predicate);
         }
 
         T[] IDatabaseReader.GetWebsiteRegions<T>(
             long websiteVersionId, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionRegionRecord, T> map, 
             Func<WebsiteVersionRegionRecord, bool> predicate)
         {
@@ -185,7 +185,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T[] IDatabaseReader.GetWebsiteRegions<T>(
             string websiteVersionName, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionRegionRecord, T> map, 
             Func<WebsiteVersionRegionRecord, bool> predicate)
         {
@@ -194,13 +194,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteRegions(websiteVersion.RecordId, userSegment, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteRegions(websiteVersion.RecordId, scenarioName, map, predicate);
         }
 
         
         T[] IDatabaseReader.GetWebsiteDataTypes<T>(
             long websiteVersionId, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionDataTypeRecord, T> map, 
             Func<WebsiteVersionDataTypeRecord, bool> predicate)
         {
@@ -219,7 +219,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
         T[] IDatabaseReader.GetWebsiteDataTypes<T>(
             string websiteVersionName, 
-            string userSegment,
+            string scenarioName,
             Func<WebsiteVersionDataTypeRecord, T> map, 
             Func<WebsiteVersionDataTypeRecord, bool> predicate)
         {
@@ -228,7 +228,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
 
             return websiteVersion == null 
                 ? null 
-                : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.RecordId, userSegment, map, predicate);
+                : ((IDatabaseReader)this).GetWebsiteDataTypes(websiteVersion.RecordId, scenarioName, map, predicate);
         }
 
         

@@ -104,6 +104,9 @@ exported.viewStore = function () {
     var showWebsiteVersionEditor = function (context, topContext) {
         selectView("cms_top_edit_view", "/cms/manager/WebsiteVersionEditor", "cms_website_version_editor", exported.website_version_editor_vm, topContext, topContext);
     }
+    var showSegmentationScenarioEditor = function (context, topContext) {
+        selectView("cms_top_edit_view", "/cms/manager/SegmentationScenarioEditor", "cms_segmentation_scenario_editor", exported.segmentation_scenario_editor_vm, topContext, topContext);
+    }
     var showPageEditor = function (context, topContext) {
         selectView("cms_bottom_edit_view", "/cms/manager/PageEditor", "cms_page_editor", exported.page_editor_vm, context, topContext);
     }
@@ -153,7 +156,7 @@ exported.viewStore = function () {
         }
         else if (viewName === "scenarios") {
             showSegmentationScenarioSelector(managerContext, managerContext);
-            //showSegmentationScenarioEditor(managerContext, managerContext);
+            showSegmentationScenarioEditor(managerContext, managerContext);
         }
         else if (viewName === "pages") {
             showPageSelector(context, managerContext);
@@ -179,6 +182,7 @@ exported.viewStore = function () {
     return {
         showEnvironmentEditor: showEnvironmentEditor,
         showWebsiteVersionEditor: showWebsiteVersionEditor,
+        showSegmentationScenarioEditor: showSegmentationScenarioEditor,
 
         showEnvironmentSelector: showEnvironmentSelector,
         showWebsiteVersionSelector: showWebsiteVersionSelector,

@@ -16,7 +16,7 @@
                 <div v-if="mode === 'new' || mode === 'edit'">
                     <h2 v-if="mode === 'new'">Create New Website Version</h2>
                     <h2 v-if="mode === 'edit'">Edit Website Version Details</h2>
-                    <div class="cms_sub_panel">
+                    <div class="cms_edit_panel">
                         <cms-display-name-field-editor label="Display this version in CMS manager as"
                                                        placeholder="My website version"
                                                        v-bind:display-name="editingWebsiteVersion.displayName"

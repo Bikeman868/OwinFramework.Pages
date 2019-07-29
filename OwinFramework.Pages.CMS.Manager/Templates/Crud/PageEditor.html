@@ -16,7 +16,7 @@
                 <div v-if="pageMode === 'new' || pageMode === 'edit'">
                     <h2 v-if="pageMode === 'new'">Create New Page</h2>
                     <h2 v-if="pageMode === 'edit'">Edit Page Details</h2>
-                    <div class="cms_sub_panel">
+                    <div class="cms_edit_panel">
                         <cms-display-name-field-editor label="Display this page in CMS manager as"
                                                        placeholder="My page"
                                                        v-bind:display-name="editingPage.displayName"
@@ -96,14 +96,14 @@
                         <h2 v-if="pageVersionMode === 'new'">Create New Page Version</h2>
                         <h2 v-if="pageVersionMode === 'edit'">Edit Page Version</h2>
 
-                        <div class="cms_sub_panel">
+                        <div class="cms_edit_panel">
                             <cms-title-field-editor label="Page title"
                                                     placeholder="My new page"
                                                     v-bind:title="editingPageVersion.title"
                                                     @title-changed="editingPageVersion.title=$event">
                             </cms-title-field-editor>
                         </div>
-                        <div class="cms_sub_panel">
+                        <div class="cms_edit_panel">
                             <h3>Page URLs</h3>
 
                             <cms-url-path-field-editor label="Canonical URL path"
@@ -115,7 +115,7 @@
                             </cms-routes-field-editor>
                         </div>
 
-                        <div class="cms_sub_panel">
+                        <div class="cms_edit_panel">
                             <h3>Master page</h3>
 
                             <cms-page-field-editor label="Master page"
@@ -133,7 +133,7 @@
 
                         </div>
 
-                        <div class="cms_sub_panel">
+                        <div class="cms_edit_panel">
                             <h3>Page layout</h3>
 
                             <cms-layout-field-editor label="Page layout"
@@ -149,7 +149,7 @@
                             </cms-layout-zones-field-editor>
                         </div>
 
-                        <div class="cms_sub_panel">
+                        <div class="cms_edit_panel">
                             <h3>Page features</h3>
 
                             <cms-style-field-editor label="Body style"

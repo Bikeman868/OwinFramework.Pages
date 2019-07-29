@@ -14,7 +14,7 @@
         <div v-if="mode === 'new' || mode === 'edit'">
             <h2 v-if="mode === 'new'">Create New Scenario</h2>
             <h2 v-if="mode === 'edit'">Edit Scenario Details</h2>
-            <div class="cms_sub_panel">
+            <div class="cms_edit_panel">
                 <cms-display-name-field-editor label="Show this scenario in CMS manager as"
                                                 placeholder="Blue color scheme"
                                                 v-bind:display-name="editingScenario.displayName"

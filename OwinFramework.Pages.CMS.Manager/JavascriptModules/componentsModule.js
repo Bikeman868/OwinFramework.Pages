@@ -241,7 +241,7 @@
             "  <label>{{label}}</label>" +
             "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
             "  <select v-if=\"!inherit\" class=\"cms_field__layout\" @change=\"selectLayout($event)\">" +
-            "    <option v-for=\"layout in layouts\" v-bind:value=\"layout.recordId\" v-bind:selected=\"layout.recordId==layoutId\">" +
+            "    <option v-for=\"layout in layouts\" v-bind:value=\"layout.recordId\" v-bind:selected=\"layout.recordId==selectedLayoutId\">" +
             "      {{layout.displayName}}" +
             "    </option>" +
             "  </select>" +
@@ -291,11 +291,9 @@
             changeInherit: function(e) {
                 var vm = this;
                 vm.inherit = e.target.checked;
-                if (vm.inherit) {
-                    vm.selectedLayoutId = null;
-                    vm.editedLayoutName = null;
-                }
-            },
+                vm.$emit("inherit-changed", vm.inherit);
+                if (!vm.inherit) vm.$emit("layout-id-changed", vm.selectedLayoutId);
+            }
         }
     });
 
@@ -305,6 +303,23 @@
             layoutZone: {
                 required: true,
                 type: Object
+            }
+        },
+        watch: {
+            layoutZone: function() {
+                 this.mode = this.calculateMode();
+            },
+            mode: function (newMode, oldMode) {
+                if (oldMode === newMode) return;
+                if (oldMode === "0")
+                    this.$emit("default-changed", { isDefault: false, layoutZone: this.layoutZone });
+                if (newMode === "0")
+                    this.$emit("default-changed", { isDefault: true, layoutZone: this.layoutZone });
+                this.layoutZone.regionId = null;
+                this.layoutZone.layoutId = null;
+                this.layoutZone.contentType = "";
+                this.layoutZone.contentName = "";
+                this.layoutZone.contentValue = "";
             }
         },
         template:
@@ -339,26 +354,20 @@
             "</div>",
         data: function () {
             return {
-                mode: 0,
+                mode: this.calculateMode(),
                 namePattern: exported.validation.namePattern.source,
                 pathPattern: exported.validation.pathPattern.source,
                 htmlPattern: exported.validation.htmlPattern.source
             }
         },
-        created: function () {
-            if (this.layoutZone.regionId != undefined) {
-                this.mode = 1;
-            } else if (this.layoutZone.layoutId != undefined) {
-                this.mode = 2;
-            } else if (this.layoutZone.contentType === "Html") {
-                this.mode = 4;
-            } else if (this.layoutZone.contentType.length > 0) {
-                this.mode = 3;
-            } else {
-                this.mode = 0;
-            }
-        },
         methods: {
+            calculateMode: function () {
+                if (this.layoutZone.regionId != undefined) return "1";
+                if (this.layoutZone.layoutId != undefined) return "2";
+                if (this.layoutZone.contentType === "Html") return "5";
+                if (this.layoutZone.contentType.length > 0) return "4";
+                return "0";
+            }
         }
     });
 
@@ -390,7 +399,7 @@
             "    <tr><th>Zone</th><th>Contents</th></tr>" +
             "    <tr v-for=\"zone in zones\">" +
             "      <td>{{zone.name}}</td>" +
-            "      <td><cms-layout-zone-editor :layout-zone=\"zone.layoutZone\"></cms-layout-zone-editor></td>" +
+            "      <td><cms-layout-zone-editor :layout-zone=\"zone.layoutZone\" @default-changed=\"setZoneDefault($event)\"></cms-layout-zone-editor></td>" +
             "    </tr>" +
             "  </table>" +
             "  <div v-else>" +
@@ -398,7 +407,7 @@
             "      <tr><th>Zone</th><th>Contents</th><th>-</th></tr>" +
             "      <tr v-for=\"zone in zones\">" +
             "        <td><input type=\"text\" class=\"cms_field__name\" placeholder=\"zone_name\" :pattern=\"namePattern\" v-model=\"zone.name\"></td>" +
-            "        <td><cms-layout-zone-editor :layout-zone=\"zone.layoutZone\"></cms-layout-zone-editor></td>" +
+            "        <td><cms-layout-zone-editor :layout-zone=\"zone.layoutZone\" @default-changed=\"setZoneDefault($event)\"></cms-layout-zone-editor></td>" +
             "        <td><button @click=\"removeZone(zone.name)\">-</button></td>" +
             "      </tr>" +
             "    </table>" +
@@ -417,19 +426,32 @@
         },
         methods: {
             setZones: function () {
-                var zones = [];
-                if (this.zoneNesting == undefined) {
-                    this.mode = "flexible";
-                    zones = [];
+                var vm = this;
+                if (vm.zoneNesting == undefined) {
+                    vm.mode = "flexible";
+                    vm.zones = [];
                 } else {
                     this.mode = "fixed";
+                    if (vm.zones == undefined) vm.zones = [];
                     var zoneNames = this.zoneNesting.replace(/[(),]/g, " ").split(" ");
+                    var zoneIndex = 0;
                     for (let i = 0; i < zoneNames.length; i++) {
                         var zoneName = zoneNames[i].trim();
                         if (zoneName.length > 0) {
-                            var zone = {
-                                name: zoneName,
-                                layoutZone: {
+                            if (zoneIndex < vm.zones.length) {
+                                vm.zones[zoneIndex].name = zoneName;
+                            } else {
+                                vm.zones.push({name: zoneName });
+                            }
+                            var isConfigured = false;
+                            for (var j = 0; j < vm.layoutZones.length; j++) {
+                                if (vm.layoutZones[j].zone === zoneName) {
+                                    vm.zones[zoneIndex].layoutZone = vm.layoutZones[j];
+                                    isConfigured = true;
+                                }
+                            }
+                            if (!isConfigured) {
+                                vm.zones[zoneIndex].layoutZone = {
                                     zone: zoneName,
                                     regionId: null,
                                     layoutId: null,
@@ -437,16 +459,26 @@
                                     contentName: "",
                                     contentValue: ""
                                 }
-                            };
-                            for (var j = 0; j < this.layoutZones.length; j++) {
-                                if (this.layoutZones[j].zone === zoneName)
-                                    zone.layoutZone = this.layoutZones[j];
                             }
-                            zones.push(zone);
+                            zoneIndex++;
                         }
                     }
+                    if (vm.zones.length > zoneIndex)
+                        vm.zones.splice(zoneIndex, vm.zones.length - zoneIndex);
                 }
-                this.zones = zones;
+            },
+            setZoneDefault: function (e) {
+                var vm = this;
+                if (e.isDefault) {
+                    for (let i = 0; i < vm.layoutZones.length; i++) {
+                        if (vm.layoutZones[i].zone === e.layoutZone.zone) {
+                            vm.layoutZones.splice(i, 1);
+                            break;
+                        }
+                    }
+                } else {
+                    vm.layoutZones.push(e.layoutZone);
+                }
             },
             addZone: function () {
                 this.zones.push({
@@ -463,7 +495,7 @@
             removeZone: function (name) {
                 for (let i = 0; i < this.zones.length; i++) {
                     if (this.zones[i].name === name)
-                        this.routes.splice(i, 1);
+                        this.zones.splice(i, 1);
                 }
             }
         }

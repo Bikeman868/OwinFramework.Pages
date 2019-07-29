@@ -29,10 +29,15 @@
             editingZoneNesting: function () {
                 // TODO: Look up in the layoutStore
                 if (this.editingPageVersion.layoutName == undefined || this.editingPageVersion.layoutName.length === 0) {
-                    if (this.editingPageVersion.layoutId === 7) return "main";
-                    if (this.editingPageVersion.layoutId === 8) return "left,right";
-                    if (this.editingPageVersion.layoutId === 9) return "header,body,footer";
-                    return "";
+                    if (this.editingPageVersion.layoutId == undefined) {
+                        // TODO: Lookup the master page layout
+                        return "master1,master2";
+                    } else {
+                        if (this.editingPageVersion.layoutId === 7) return "main";
+                        if (this.editingPageVersion.layoutId === 8) return "left,right";
+                        if (this.editingPageVersion.layoutId === 9) return "header,body,footer";
+                        return "";
+                    }
                 } else {
                     return null;
                 }
@@ -193,6 +198,27 @@
                 vm.versionErrors = [];
                 vm.editingPageVersion = exported.pageVersionStore.cloneForEditing(vm.currentPageVersion);
                 Object.assign(vm.originalPageVersion, vm.editingPageVersion);
+                vm.editingPageVersion.layoutZones = [];
+                if (vm.originalPageVersion.layoutZones != undefined) {
+                    vm.originalPageVersion.layoutZones.forEach(function(z) {
+                        var layoutZone = Object.assign({}, z);
+                        vm.editingPageVersion.layoutZones.push(layoutZone);
+                    });
+                }
+                vm.editingPageVersion.routes = [];
+                if (vm.originalPageVersion.routes != undefined) {
+                    vm.originalPageVersion.routes.forEach(function(r) {
+                        var route = Object.assign({}, r);
+                        vm.editingPageVersion.routes.push(route);
+                    });
+                }
+                vm.editingPageVersion.components = [];
+                if (vm.originalPageVersion.components != undefined) {
+                    vm.originalPageVersion.components.forEach(function(c) {
+                        var component = Object.assign({}, c);
+                        vm.editingPageVersion.components.push(component);
+                    });
+                }
                 vm.pageVersionMode = "edit";
             },
             deletePageVersion: function () {
@@ -245,6 +271,7 @@
                 if (inherit) {
                     this.editingPageVersion.layoutName = null;
                     this.editingPageVersion.layoutId = null;
+                    this.editingPageVersion.layoutZones.splice(0, this.editingPageVersion.layoutZones.length);
                 }
             },
             validateVersion: function () {

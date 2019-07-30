@@ -297,7 +297,7 @@
                             layoutZone.contentType = exported.validation.elementType(layoutZone.contentType, "zone content type", errors);
                             if (layoutZone.contentType === "Html") {
                                 layoutZone.contentName = exported.validation.name(layoutZone.contentName, "zone html localization name", errors);
-                                layoutZone.contentValue = exported.validation.html(layoutZone.contentName, "zone html", errors);
+                                layoutZone.contentValue = exported.validation.html(layoutZone.contentValue, "zone html", errors);
                             } else if (layoutZone.contentType === "Template") {
                                 layoutZone.contentName = exported.validation.path(layoutZone.contentName, "zone template path", errors);
                             } else {

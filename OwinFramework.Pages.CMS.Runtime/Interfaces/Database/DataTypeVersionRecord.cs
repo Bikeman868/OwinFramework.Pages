@@ -32,11 +32,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// The .Net Type that this record represents
         /// </summary>
+        [JsonIgnore]
         public Type Type { get; set; }
 
         /// <summary>
         /// Ids of the data scope records for this type of data
         /// </summary>
+        [JsonProperty]
         public long[] ScopeIds { get; set; }
     }
 }

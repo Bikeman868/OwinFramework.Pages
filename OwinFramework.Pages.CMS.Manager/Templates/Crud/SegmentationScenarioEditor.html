@@ -1,58 +1,79 @@
 ﻿<div id="cms_segmentation_scenario_editor" class="cms_panel" v-if="visible">
-    <div v-if="currentScenario == undefined && mode === 'view'">
-        <h2>No A/B testing scenario selected</h2>
-        <p>
-            No A/B testing scenario is currently selected for editing.
-            Choose a scenario from the list on the left. 
-            If the list of scenarios is empty this is because you have not created any scenarios yet.
-        </p>
-        <div class="cms_button_bar">
-            <button type="button" v-on:click="newScenario">New</button>
-        </div>
-    </div>
-    <div v-else>
-        <div v-if="mode === 'new' || mode === 'edit'">
-            <h2 v-if="mode === 'new'">Create New Scenario</h2>
-            <h2 v-if="mode === 'edit'">Edit Scenario Details</h2>
-            <div class="cms_edit_panel">
-                <cms-display-name-field-editor label="Show this scenario in CMS manager as"
-                                                placeholder="Blue color scheme"
-                                                v-bind:display-name="editingScenario.displayName"
-                                                @display-name-changed="editingScenario.displayName=$event">
-                </cms-display-name-field-editor>
-                <cms-description-field-editor v-bind:description="editingScenario.description"
-                                                @description-changed="editingScenario.description=$event">
-                </cms-description-field-editor>
+    <cms-tabs>
+        <cms-tab name="Details" selected="true">
+            <div v-if="currentScenario == undefined && mode === 'view'">
+                <h2>No A/B testing scenario selected</h2>
+                <p>
+                    No A/B testing scenario is currently selected for editing.
+                    Choose a scenario from the list on the left.
+                    If the list of scenarios is empty this is because you have not created any scenarios yet.
+                </p>
+                <div class="cms_button_bar">
+                    <button type="button" v-on:click="newScenario">New</button>
+                </div>
             </div>
-            <div class="cms_validation_error_list" v-if="errors.length > 0">
-                <p v-for="error in errors">{{error}}</p>
+            <div v-else>
+                <div v-if="mode === 'new' || mode === 'edit'">
+                    <h2 v-if="mode === 'new'">Create New Scenario</h2>
+                    <h2 v-if="mode === 'edit'">Edit Scenario Details</h2>
+                    <div class="cms_edit_panel">
+                        <cms-display-name-field-editor label="Show this scenario in CMS manager as"
+                                                       placeholder="Blue color scheme"
+                                                       v-bind:display-name="editingScenario.displayName"
+                                                       @display-name-changed="editingScenario.displayName=$event">
+                        </cms-display-name-field-editor>
+                        <cms-description-field-editor v-bind:description="editingScenario.description"
+                                                      @description-changed="editingScenario.description=$event">
+                        </cms-description-field-editor>
+                    </div>
+                    <div class="cms_validation_error_list" v-if="errors.length > 0">
+                        <p v-for="error in errors">{{error}}</p>
+                    </div>
+                    <div class="cms_button_bar">
+                        <button v-if="mode === 'new'" type="button" v-on:click="createNew">Create</button>
+                        <button v-if="mode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
+                        <button type="button" v-on:click="cancelChanges">Cancel</button>
+                    </div>
+                </div>
+                <div v-if="mode === 'view'">
+                    <h2>{{currentScenario.displayName}} a/b testing scenario</h2>
+                    <div class="cms_field"><label>Name</label><p>{{currentScenario.name}}</p></div>
+                    <div class="cms_field"><label>Description</label><p>{{currentScenario.description}}</p></div>
+                    <div class="cms_button_bar">
+                        <button type="button" v-on:click="editScenario">Edit</button>
+                        <button type="button" v-on:click="newScenario">New</button>
+                        <button type="button" v-on:click="deleteScenario">Delete</button>
+                    </div>
+                </div>
+                <div v-if="mode === 'delete'">
+                    <h2>Confirm Scenario Deletion</h2>
+                    <p>
+                        This will delete the "{{currentScenario.name}}" a/b testing scenario.
+                    </p>
+                    <p>This operation cannot be undone. Are you sure?</p>
+                    <div class="cms_button_bar">
+                        <button type="button" v-on:click="confirmDelete">Delete</button>
+                        <button type="button" v-on:click="cancelChanges">Cancel</button>
+                    </div>
+                </div>
             </div>
-            <div class="cms_button_bar">
-                <button v-if="mode === 'new'" type="button" v-on:click="createNew">Create</button>
-                <button v-if="mode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
-                <button type="button" v-on:click="cancelChanges">Cancel</button>
+        </cms-tab>
+        <cms-tab name="Changes">
+            <div v-if="currentScenario == undefined">
+                <h2>No A/B testing scenario selected</h2>
+                <p>
+                    No A/B testing scenario is currently selected.
+                    Choose a scenario from the list on the left.
+                    If the list of scenarios is empty this is because you have not created any scenarios yet.
+                </p>
+                <div class="cms_button_bar">
+                    <button type="button" v-on:click="newScenario">New</button>
+                </div>
             </div>
-        </div>
-        <div v-if="mode === 'view'">
-            <h2>{{currentScenario.displayName}} a/b testing scenario</h2>
-            <div class="cms_field"><label>Name</label><p>{{currentScenario.name}}</p></div>
-            <div class="cms_field"><label>Description</label><p>{{currentScenario.description}}</p></div>
-            <div class="cms_button_bar">
-                <button type="button" v-on:click="editScenario">Edit</button>
-                <button type="button" v-on:click="newScenario">New</button>
-                <button type="button" v-on:click="deleteScenario">Delete</button>
+            <div v-else>
+                <h2>Website changes for the {{currentScenario.displayName}} a/b testing scenario</h2>
+                <p>This feature is not yet implemented</p>
             </div>
-        </div>
-        <div v-if="mode === 'delete'">
-            <h2>Confirm Scenario Deletion</h2>
-            <p>
-                This will delete the "{{currentScenario.name}}" a/b testing scenario.
-            </p>
-            <p>This operation cannot be undone. Are you sure?</p>
-            <div class="cms_button_bar">
-                <button type="button" v-on:click="confirmDelete">Delete</button>
-                <button type="button" v-on:click="cancelChanges">Cancel</button>
-            </div>
-        </div>
-    </div>
+        </cms-tab>
+    </cms-tabs>
 </div>

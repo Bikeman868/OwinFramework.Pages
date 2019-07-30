@@ -86,10 +86,10 @@
         if (isNaN(id)) { return ""; }
 
         var layoutName = "layout #" + id;
-        //exported.pageStore.retrieveRecord(
+        //exported.layoutStore.retrieveRecord(
         //    id,
-        //    function (page) {
-        //        pageName = page.displayName;
+        //    function (layout) {
+        //        layoutName = layout.displayName;
         //    });
         return layoutName;
     });
@@ -99,11 +99,24 @@
         if (isNaN(id)) { return ""; }
 
         var regionName = "region #" + id;
-        //exported.pageStore.retrieveRecord(
+        //exported.regionStore.retrieveRecord(
         //    id,
-        //    function (page) {
-        //        pageName = page.displayName;
+        //    function (region) {
+        //        regionName = region.displayName;
         //    });
         return regionName;
+    });
+
+    Vue.filter("cms_lookupComponentId", function (value) {
+        var id = parseInt(value);
+        if (isNaN(id)) { return ""; }
+
+        var componentName = "component #" + id;
+        //exported.componentStore.retrieveRecord(
+        //    id,
+        //    function (component) {
+        //        componentName = component.displayName;
+        //    });
+        return componentName;
     });
 }

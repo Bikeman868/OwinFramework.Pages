@@ -1,4 +1,5 @@
-﻿using Prius.Contracts.Attributes;
+﻿using Newtonsoft.Json;
+using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -20,6 +21,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// referenced by name
         /// </summary>
         [Mapping("layoutName")]
+        [JsonProperty("layoutName")]
         public string LayoutName { get; set; }
 
         /// <summary>
@@ -27,6 +29,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// the CMS
         /// </summary>
         [Mapping("layoutId")]
+        [JsonProperty("layoutId")]
         public long? LayoutId { get; set; }
 
         /// <summary>
@@ -34,6 +37,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// code and referenced by name
         /// </summary>
         [Mapping("componentName")]
+        [JsonProperty("componentName")]
         public string ComponentName { get; set; }
 
         /// <summary>
@@ -41,6 +45,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// the CMS
         /// </summary>
         [Mapping("componentId")]
+        [JsonProperty("componentId")]
         public long? ComponentId { get; set; }
 
         /// <summary>
@@ -48,6 +53,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// property contains the asset name of the text asset to localize
         /// </summary>
         [Mapping("assetName")]
+        [JsonProperty("assetName")]
         public string AssetName { get; set; }
 
         /// <summary>
@@ -55,65 +61,76 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// version of the asset that matches the browser locale.
         /// </summary>
         [Mapping("assetValue")]
+        [JsonProperty("assetValue")]
         public string AssetValue { get; set; }
 
         /// <summary>
         /// Optional ID of the type of data to repeat in this region
         /// </summary>
         [Mapping("repeatDataTypeId")]
+        [JsonProperty("repeatDataTypeId")]
         public long? RepeatDataTypeId { get; set; }
 
         /// <summary>
         /// Optional ID of the scope to use when resolving the list of data to repeat
         /// </summary>
         [Mapping("repeatDataScopeId")]
+        [JsonProperty("repeatDataScopeId")]
         public long? RepeatDataScopeId { get; set; }
 
         /// <summary>
         /// Optional name of the scope to use when resolving the list of data to repeat
         /// </summary>
         [Mapping("repeatDataScopeName")]
+        [JsonProperty("repeatDataScoeName")]
         public string RepeatDataScopeName { get; set; }
 
         /// <summary>
         /// Optional ID of the scope to use for data that is repeated
         /// </summary>
         [Mapping("listDataScopeId")]
+        [JsonProperty("listDataScopeId")]
         public long? ListDataScopeId { get; set; }
 
         /// <summary>
         /// Optional name of the scope to use for data that is repeated
         /// </summary>
         [Mapping("listDataScopeName")]
+        [JsonProperty("listDataScopeName")]
         public string ListDataScopeName { get; set; }
 
         /// <summary>
         /// Optional HTML tag to wrap repeated child elements in
         /// </summary>
         [Mapping("listElementTag")]
+        [JsonProperty("listElementTag")]
         public string ListElementTag { get; set; }
 
         /// <summary>
         /// Optional HTML style to apply to child elements
         /// </summary>
         [Mapping("listElementStyle")]
+        [JsonProperty("listElementStyle")]
         public string ListElementStyle { get; set; }
 
         /// <summary>
         /// Optional comma separated list of CSS class names to apply to child elements
         /// </summary>
         [Mapping("listElementStyle")]
+        [JsonProperty("listElementClasses")]
         public string ListElementClasses { get; set; }
 
         /// <summary>
         /// When the region contains a layout this property can be used to
         /// override the zones of the layout for this region version.
         /// </summary>
+        [JsonProperty("layoutZones")]
         public LayoutZoneRecord[] LayoutZones { get; set; }
 
         /// <summary>
         /// A list of the templates to render into this region.
         /// </summary>
+        [JsonProperty("regionTemplates")]
         public RegionTemplateRecord[] RegionTemplates { get; set; }
 
         /// <summary>
@@ -122,11 +139,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// These are typically non-visual components that do things like 
         /// render references to JavaScript libraries into the head of the page.
         /// </summary>
+        [JsonProperty("components")]
         public ElementComponentRecord[] Components { get; set; }
 
         /// <summary>
         /// A list of the data scopes to use to resolve data binding within this region
         /// </summary>
+        [JsonProperty("dataScopes")]
         public ElementDataScopeRecord[] DataScopes { get; set; }
     }
 }

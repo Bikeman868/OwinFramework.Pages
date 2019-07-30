@@ -1,5 +1,6 @@
 ﻿var validation = function() {
     var namePattern = new RegExp("^[a-z][0-9a-z_]+$");
+    var nameRefPattern = new RegExp("^[a-z][0-9a-z_]+(:[a-z][0-9a-z_]+)?$");
     var displayNamePattern = new RegExp("^...+$");
     var urlPattern = new RegExp("^http(s)?://[0-9a-z_-]+\.[0-9a-z_.-]+/$");
     var idPattern = new RegExp("^[0-9]+$");
@@ -16,6 +17,16 @@
         else {
             if (!namePattern.test(value))
                 errors.push("The " + fieldName + " field can only contain lower-case letters, numbers and underscore. The first character must be a lower-case letter");
+        }
+        return value;
+    }
+
+    var nameRef = function (value, fieldName, errors) {
+        if (value == undefined || value.length < 2)
+            errors.push("The " + fieldName + " field must contain at least 2 characters");
+        else {
+            if (!namePattern.test(value))
+                errors.push("The " + fieldName + " field can only contain lower-case letters, numbers and underscore. The first character must be a lower-case letter. You can slo use a a pckage name qualifier in front of the name separated with a colon");
         }
         return value;
     }
@@ -107,8 +118,15 @@
         return value;
     }
 
+    var html = function (value, fieldName, errors) {
+        if (value == undefined || value.length < 4)
+            errors.push("The " + fieldName + " must contain at least 4 characters");
+        return value;
+    }
+
     return {
         name: name,
+        nameRef: nameRef,
         displayName: displayName,
         url: url,
         urlPath: urlPath,
@@ -118,8 +136,10 @@
         assetDeployment: assetDeployment,
         elementType: elementType,
         css: css,
+        html: html,
 
         namePattern: namePattern,
+        nameRefPattern: nameRefPattern,
         displayNamePattern: displayNamePattern,
         urlPattern: urlPattern,
         idPattern: idPattern,

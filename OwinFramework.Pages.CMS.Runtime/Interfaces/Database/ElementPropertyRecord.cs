@@ -54,6 +54,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// The .Net type of this property
         /// </summary>
+        [JsonIgnore]
         public Type Type { get; set; }
     }
 }

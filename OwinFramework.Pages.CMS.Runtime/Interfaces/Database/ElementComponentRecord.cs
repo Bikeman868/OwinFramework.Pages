@@ -16,6 +16,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The name of a component to render on the page
         /// </summary>
         [Mapping("component")]
+        [JsonProperty("component")]
         public string ComponentName { get; set; }
     }
 }

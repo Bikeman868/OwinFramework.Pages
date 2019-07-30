@@ -27,6 +27,13 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long? LayoutId { get; set; }
 
         /// <summary>
+        /// The unique ID of the component to render into this zone. 
+        /// </summary>
+        [Mapping("componentId")]
+        [JsonProperty("componentId")]
+        public long? ComponentId { get; set; }
+
+        /// <summary>
         /// Can be 'Region', 'Layout', 'Component', 'Html' or 'Template'
         /// </summary>
         [Mapping("contentType")]

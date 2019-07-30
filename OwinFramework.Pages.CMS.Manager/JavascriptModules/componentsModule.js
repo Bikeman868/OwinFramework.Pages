@@ -317,9 +317,12 @@
                     this.$emit("default-changed", { isDefault: true, layoutZone: this.layoutZone });
                 this.layoutZone.regionId = null;
                 this.layoutZone.layoutId = null;
-                this.layoutZone.contentType = "";
                 this.layoutZone.contentName = "";
                 this.layoutZone.contentValue = "";
+                if (newMode === "4") this.layoutZone.contentType = "Region";
+                else if (newMode === "5") this.layoutZone.contentType = "Html";
+                else if (newMode === "6") this.layoutZone.contentType = "Template";
+                else this.layoutZone.contentType = "";
             }
         },
         template:
@@ -330,7 +333,8 @@
             "    <option value=\"2\">CMS layout</option>" +
             "    <option value=\"3\">CMS component</option>" +
             "    <option value=\"4\">Named element</option>" +
-            "    <option value=\"5\">Html</option>" +
+            "    <option value=\"5\">Static HTML</option>" +
+            "    <option value=\"6\">HTML template</option>" +
             "  </select>" +
             "  <p v-if=\"mode==1\">-region-choosing-component-</p>" +
             "  <p v-if=\"mode==2\">-layout-choosing-component-</p>" +
@@ -340,10 +344,8 @@
             "      <option value=\"Region\">Region name</option>" +
             "      <option value=\"Layout\">Layout name</option>" +
             "      <option value=\"Component\">Component name</option>" +
-            "      <option value=\"Template\">Template path</option>" +
             "    </select>" +
-            "    <input v-if=\"layoutZone.contentType=='Template'\" type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"/path/to/template\" :pattern=\"pathPattern\">" +
-            "    <input v-else type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"element_name\" :pattern=\"namePattern\">" +
+            "    <input type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"package:element_name\" :pattern=\"nameRefPattern\">" +
             "  </div>" +
             "  <div v-if=\"mode==5\">" +
             "    <label>Localizable asset name</label>" +
@@ -351,11 +353,15 @@
             "    <label>Default language Html</label>" +
             "    <textarea class=\"cms_field__html\" v-model=\"layoutZone.contentValue\" placeholder=\"<div></div>\" :pattern=\"htmlPattern\"></textarea>" +
             "  </div>" +
+            "  <div v-if=\"mode==6\">" +
+            "    <input type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"/path/to/template\" :pattern=\"pathPattern\">" +
+            "  </div>" +
             "</div>",
         data: function () {
             return {
                 mode: this.calculateMode(),
                 namePattern: exported.validation.namePattern.source,
+                nameRefPattern: exported.validation.nameRefPattern.source,
                 pathPattern: exported.validation.pathPattern.source,
                 htmlPattern: exported.validation.htmlPattern.source
             }
@@ -364,7 +370,9 @@
             calculateMode: function () {
                 if (this.layoutZone.regionId != undefined) return "1";
                 if (this.layoutZone.layoutId != undefined) return "2";
+                if (this.layoutZone.componentId != undefined) return "3";
                 if (this.layoutZone.contentType === "Html") return "5";
+                if (this.layoutZone.contentType === "Template") return "6";
                 if (this.layoutZone.contentType.length > 0) return "4";
                 return "0";
             }
@@ -465,6 +473,19 @@
                     }
                     if (vm.zones.length > zoneIndex)
                         vm.zones.splice(zoneIndex, vm.zones.length - zoneIndex);
+                    for (let i = 0; i < vm.layoutZones.length; i++) {
+                        var exists = false;
+                        for (let j = 0; j < zoneNames.length; j++) {
+                            if (vm.layoutZones[i].zone === zoneNames[j]) {
+                                exists = true;
+                                break;
+                            }
+                        }
+                        if (!exists) {
+                            vm.layoutZones.splice(i, 1);
+                            i--;
+                        }
+                    }
                 }
             },
             setZoneDefault: function (e) {

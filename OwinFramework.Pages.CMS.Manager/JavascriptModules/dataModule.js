@@ -1,25 +1,41 @@
 ﻿var dataUtilities = function() {
-    var copyObject = function (properties, from, to) {
+    var copyObject = function (props, arrayProps, from, to) {
         to = to || {};
-        properties.forEach(function (prop) {
-            to[prop] = from[prop];
+        props.forEach(function (prop) {
+            if (typeof(from[prop]) === "object") {
+                to[prop] = Object.assign({}, from[prop]);
+            } else {
+                to[prop] = from[prop];
+            }
+        });
+        arrayProps.forEach(function (prop) {
+            to[prop] = [];
+            if (from[prop] != undefined) {
+                from[prop].forEach(function (e) {
+                    if (typeof (e) === "object")
+                        to[prop].push(Object.assign({}, e));
+                    else
+                        to[prop].push(e);
+                });
+            }
         });
         return to;
     }
 
-    var findChanges = function (properties, original, modified) {
+    var findChanges = function (props, arrayProps, original, modified) {
         var changes = [];
         if (original == undefined) {
-            properties.forEach(function (prop) {
-                if (typeof(modified[prop]) !== "object")
-                    changes.push({ name: prop, value: modified[prop] });
+            props.forEach(function(prop) {
+                var value = modified[prop];
+                if (value != undefined)
+                    changes.push({ name: prop, value: value });
             });
         } else {
-            properties.forEach(function (prop) {
+            props.forEach(function (prop) {
                 var value = modified[prop];
                 if (original[prop] !== value)
                     if (value == undefined || typeof(value) !== "object")
-                        changes.push({ name: prop, value: modified[prop] });
+                        changes.push({ name: prop, value: value });
             });
         }
         return changes;
@@ -46,7 +62,7 @@
         store.mixin = store.mixin || {},
         store.name = store.name || recordType,
         store.listName = store.listName || "list of " + name,
-        store.hasChildren = store.hasChildren || false;
+        store.arrayFields = store.arrayFields || [];
 
         store.dispose = function() {
             if (store.dispatcherUnsubscribe != null) store.dispatcherUnsubscribe();
@@ -86,7 +102,7 @@
             if (original == undefined) {
                 store.add(record);
             } else {
-                copyObject(store.fields, record, original);
+                copyObject(store.fields, store.arrayFields, record, original);
             }
         };
         
@@ -107,6 +123,7 @@
                     }
                 },
                 function(ajax) {
+                    if (ajax.status === 403) onFail("You do not have permission to create " + store.name);
                     if (onFail != undefined) onFail("Failed to create a new " + store.name);
                 },
                 params);
@@ -126,7 +143,8 @@
                         }
                     }, 
                     function(ajax) {
-                        if (onFail != undefined) onFail("Failed to retrieve a " + listName);                        
+                        if (ajax.status === 403) onFail("You do not have permission to retrieve " + store.listName);
+                        if (onFail != undefined) onFail("Failed to retrieve a " + store.listName);
                     });
             } else {
                 if (onSuccess != undefined) onSuccess(records);
@@ -145,6 +163,7 @@
                         if (onSuccess != undefined) onSuccess(response);
                     },
                     function(ajax) {
+                        if (ajax.status === 403) onFail("You do not have permission to retrieve " + store.name + " " + id);
                         if (onFail != undefined) onFail("Failed to retrieve " + store.name + " " + id);
                     });
             } else {
@@ -154,8 +173,8 @@
 
         store.updateRecord = function (originalRecord, updatedRecord, onSuccess, onFail) {
             if (store.mixin.updateRecord == undefined) return;
-            var changes = findChanges(store.fields, originalRecord, updatedRecord);
-            if (changes.length === 0 && !store.hasChildren) {
+            var changes = findChanges(store.fields, store.arrayFields, originalRecord, updatedRecord);
+            if (changes.length === 0 && store.arrayFields.length === 0) {
                 if (onSuccess != undefined) onSuccess(originalRecord);
             } else {
                 var id = originalRecord[store.idField];
@@ -166,6 +185,7 @@
                     return;
                 }
                 store.mixin.updateRecord.call(store,
+                    originalRecord,
                     updatedRecord,
                     changes,
                     function(response) {
@@ -176,8 +196,11 @@
                             if (onSuccess != undefined) onSuccess(response);
                         }
                     },
-                    function(ajax) {
-                        if (onFail != undefined) onFail("Failed to update " + store.name);
+                    function (ajax) {
+                        if (onFail != undefined) {
+                            if (ajax.status === 403) onFail("You do not have permission to update " + store.name);
+                            else onFail("Failed to update " + store.name);
+                        }
                     });
             }
         }
@@ -199,7 +222,7 @@
         }
 
         store.cloneForEditing = function(original) {
-            return copyObject(store.fields, original);
+            return copyObject(store.fields, store.arrayFields, original);
         }
 
         store.blankRecord = function() {
@@ -273,7 +296,7 @@ exported.environmentStore = dataUtilities.newStore({
         retrieveAllRecords: function(onSuccess, onFail) {
             exported.listService.environments({}, onSuccess, null, onFail);
         },
-        updateRecord: function(updatedEnvironment, changes, onSuccess, onFail) {
+        updateRecord: function(originalEnvironment, updatedEnvironment, changes, onSuccess, onFail) {
             exported.crudService.updateEnvironment(
             {
                 id: updatedEnvironment.recordId,
@@ -302,13 +325,15 @@ exported.websiteVersionStore = dataUtilities.newStore({
         retrieveAllRecords: function (onSuccess, onFail) {
             exported.listService.websiteVersions({}, onSuccess, null, onFail);
         },
-        updateRecord: function (updatedWebsiteVersion, changes, onSuccess, onFail) {
-            exported.crudService.updateWebsiteVersion(
-            {
-                id: updatedWebsiteVersion.recordId,
-                body: changes
-            },
-            onSuccess, null, onFail);
+        updateRecord: function (originalWebsiteVersion, updatedWebsiteVersion, changes, onSuccess, onFail) {
+            if (changes.length > 0) {
+                exported.crudService.updateWebsiteVersion(
+                    {
+                        id: updatedWebsiteVersion.recordId,
+                        body: changes
+                    },
+                    onSuccess, null, onFail);
+            }
         },
         deleteRecord: function (websiteVersionId, onSuccess, onFail) {
             exported.crudService.deleteWebsiteVersion({ id: websiteVersionId }, onSuccess, null, onFail);
@@ -340,13 +365,15 @@ exported.pageStore = dataUtilities.newStore({
         retrieveAllRecords: function(onSuccess, onFail) {
             exported.listService.allPages({}, onSuccess, null, onFail);
         },
-        updateRecord: function(updatedPage, changes, onSuccess, onFail) {
-            exported.crudService.updatePage(
-            {
-                id: updatedPage.recordId,
-                body: changes
-            },
-            onSuccess, null, onFail);
+        updateRecord: function(originalPage, updatedPage, changes, onSuccess, onFail) {
+            if (changes.length > 0) {
+                exported.crudService.updatePage(
+                    {
+                        id: updatedPage.recordId,
+                        body: changes
+                    },
+                    onSuccess, null, onFail);
+            }
         },
         deleteRecord: function(pageId, onSuccess, onFail) {
             exported.crudService.deletePage({ id: pageId }, onSuccess, null, onFail);
@@ -359,11 +386,11 @@ exported.pageVersionStore = dataUtilities.newStore({
     name: "page version",
     listName: "list of page versions",
     idField: "recordId",
-    hasChildren: true,
     fields: [
         "name", "displayName", "description", "createdBy", "createdWhen",
         "recordId", "parentRecordId", "version", "moduleName", "assetDeployment", "masterPageId",
-        "layoutName", "layoutId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath",
+        "layoutName", "layoutId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath"],
+    arrayFields: [
         "routes", "layoutZones", "components"],
     mixin: {
         createRecord: function (pageVersion, onSuccess, onFail, params) {
@@ -375,8 +402,8 @@ exported.pageVersionStore = dataUtilities.newStore({
         retrieveAllRecords: function (onSuccess, onFail) {
             exported.listService.allPageVersions({}, onSuccess, null, onFail);
         },
-        updateRecord: function (updatedPageVersion, changes, onSuccess, onFail) {
-            if (changes != undefined && changes.length > 0) {
+        updateRecord: function (originalPageVersion, updatedPageVersion, changes, onSuccess, onFail) {
+            if (changes.length > 0) {
                 exported.crudService.updatePageVersion(
                     {
                         id: updatedPageVersion.recordId,
@@ -390,7 +417,12 @@ exported.pageVersionStore = dataUtilities.newStore({
                         id: updatedPageVersion.recordId,
                         body: updatedPageVersion.routes
                     },
-                    onSuccess, null, onFail);
+                    function (response) {
+                        originalPageVersion.routes = updatedPageVersion.routes;
+                        if (onSuccess != undefined) onSuccess(response);
+                    },
+                    null,
+                    onFail);
             }
             if (updatedPageVersion.layoutZones != null) {
                 exported.crudService.updatePageVersionZones(
@@ -398,7 +430,12 @@ exported.pageVersionStore = dataUtilities.newStore({
                         id: updatedPageVersion.recordId,
                         body: updatedPageVersion.layoutZones
                     },
-                    onSuccess, null, onFail);
+                    function (response) {
+                        originalPageVersion.layoutZones = updatedPageVersion.layoutZones;
+                        if (onSuccess != undefined) onSuccess(response);
+                    },
+                    null,
+                    onFail);
             }
             if (updatedPageVersion.components != undefined) {
                 exported.crudService.updatePageVersionComponents(
@@ -406,7 +443,12 @@ exported.pageVersionStore = dataUtilities.newStore({
                         id: updatedPageVersion.recordId,
                         body: updatedPageVersion.components
                     },
-                    onSuccess, null, onFail);
+                    function (response) {
+                        originalPageVersion.components = updatedPageVersion.components;
+                        if (onSuccess != undefined) onSuccess(response);
+                    },
+                    null,
+                    onFail);
             }
         },
         deleteRecord: function (pageVersionId, onSuccess, onFail) {
@@ -478,8 +520,10 @@ exported.segmentTestStore = dataUtilities.newStore({
         retrieveAllRecords: function (onSuccess, onFail) {
             exported.segmentTestingService.allTests({}, onSuccess, null, onFail);
         },
-        updateRecord: function (updatedTest, changes, onSuccess, onFail) {
-            exported.segmentTestingService.updateTest({ body: updatedTest }, onSuccess, null, onFail);
+        updateRecord: function (originalTest, updatedTest, changes, onSuccess, onFail) {
+            if (changes.length > 0) {
+                exported.segmentTestingService.updateTest({ body: updatedTest }, onSuccess, null, onFail);
+            }
         },
         deleteRecord: function (name, onSuccess, onFail) {
             exported.segmentTestingService.deleteTest({ name: name }, onSuccess, null, onFail);
@@ -510,8 +554,10 @@ exported.segmentScenarioStore = dataUtilities.newStore({
                 null,
                 onFail);
         },
-        updateRecord: function (updatedScenario, changes, onSuccess, onFail) {
-            exported.segmentTestingService.updateScenario({ body: updatedScenario }, onSuccess, null, onFail);
+        updateRecord: function (originalScenario, updatedScenario, changes, onSuccess, onFail) {
+            if (changes.length > 0) {
+                exported.segmentTestingService.updateScenario({ body: updatedScenario }, onSuccess, null, onFail);
+            }
         },
         deleteRecord: function (name, onSuccess, onFail) {
             exported.segmentTestingService.deleteScenario({ name: name }, onSuccess, null, onFail);

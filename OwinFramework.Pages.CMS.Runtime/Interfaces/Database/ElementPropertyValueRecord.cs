@@ -34,6 +34,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// The value parsed from ValueText
         /// </summary>
+        [JsonIgnore]
         public object Value { get; set; }
     }
 }

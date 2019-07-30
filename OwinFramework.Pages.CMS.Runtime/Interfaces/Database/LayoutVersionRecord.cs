@@ -1,4 +1,5 @@
-﻿using Prius.Contracts.Attributes;
+﻿using Newtonsoft.Json;
+using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -18,12 +19,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// example "region1(region2,region3)"
         /// </summary>
         [Mapping("zoneNesting")]
+        [JsonProperty("zoneNesting")]
         public string ZoneNesting { get; set; }
 
         /// <summary>
         /// Specifies the defalt content for each zone named in the zoneNesting
         /// property. These zone assignments can be overriden for a page.
         /// </summary>
+        [JsonProperty("layoutZones")]
         public LayoutZoneRecord[] LayoutZones { get; set; }
 
         /// <summary>
@@ -31,6 +34,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// These are typically non-visual components that do things like 
         /// render references to JavaScript libraries into the head of the page.
         /// </summary>
+        [JsonProperty("components")]
         public ElementComponentRecord[] Components { get; set; }
     }
 }

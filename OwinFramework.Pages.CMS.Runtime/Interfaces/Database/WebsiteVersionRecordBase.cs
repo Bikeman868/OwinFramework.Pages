@@ -14,9 +14,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public long WebsiteVersionId { get; set; }
 
         /// <summary>
-        /// The segment of users that see this version
+        /// The name of the segmentation test scenario where this version mapping applies
         /// </summary>
-        [Mapping("segment")]
-        public string UserSegment { get; set; }
+        [Mapping("scenario")]
+        public string Scenario { get; set; }
     }
 }

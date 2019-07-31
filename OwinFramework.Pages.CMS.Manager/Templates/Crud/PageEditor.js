@@ -186,9 +186,9 @@
                 var vm = this;
                 vm.versionErrors = [];
                 if (vm.currentPageVersion == undefined) {
+                    if (vm.currentPage == undefined) return;
                     vm.editingPageVersion = exported.pageVersionStore.blankRecord();
-                    vm.editingPageVersion.routes = [];
-                    vm.editingPageVersion.layoutZones = [];
+                    vm.editingPageVersion.parentRecordId = vm.currentPage.recordId;
                 } else {
                     vm.editingPageVersion = Object.assign(exported.pageVersionStore.blankRecord(), vm.currentPageVersion);
                 }
@@ -225,8 +225,13 @@
                     if (vm.versionErrors.length === 0) {
                         exported.pageVersionStore.createRecord(
                             vm.editingPageVersion,
-                            function () { vm.pageVersionMode = "view"; },
-                            function (msg) { vm.versionErrors = [msg] },
+                            function() {
+                                 vm.pageVersionMode = "view";
+                                 vm.showPageVersion();
+                            },
+                            function(msg) {
+                                vm.versionErrors = [msg];
+                            },
                             {
                                 websiteVersionId: vm.websiteVersion.recordId,
                                 scenario: vm.scenario ? vm.scenario.name : null,

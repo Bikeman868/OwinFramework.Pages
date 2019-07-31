@@ -45,7 +45,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             var bookmark = request.Parameter<string>("bookmark");
             var history = _dataLayer.GetHistory(type, id, bookmark);
             if (history == null)
-                request.NotFound();
+                request.NoContent();
             else
                 request.Success(history);
         }

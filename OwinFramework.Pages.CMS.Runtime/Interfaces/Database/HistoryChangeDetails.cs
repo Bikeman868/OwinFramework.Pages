@@ -43,5 +43,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// </summary>
         [JsonProperty("childId")]
         public long? ChildId { get; set; }
+
+        /// <summary>
+        /// The segmentation testing scenario that this change applies to
+        /// </summary>
+        [JsonProperty("scenario")]
+        public string Scenario { get; set; }
     }
 }

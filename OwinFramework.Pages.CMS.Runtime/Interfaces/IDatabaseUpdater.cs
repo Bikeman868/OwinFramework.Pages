@@ -30,9 +30,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
 
         #region Many-many relationships
 
-        UpdateResult AddPageToWebsiteVersion(string identity, long pageId, int version, long websiteVersionId);
-        UpdateResult AddPageToWebsiteVersion(string identity, long pageVersionId, long websiteVersionId);
-        UpdateResult RemovePageFromWebsite(string identity, long pageId, long websiteVersionId);
+        UpdateResult AddPageToWebsiteVersion(string identity, long pageId, int version, long websiteVersionId, string scenario);
+        UpdateResult AddPageToWebsiteVersion(string identity, long pageVersionId, long websiteVersionId, string scenario);
+        UpdateResult RemovePageFromWebsite(string identity, long pageId, long websiteVersionId, string scenario);
 
         #endregion
     }

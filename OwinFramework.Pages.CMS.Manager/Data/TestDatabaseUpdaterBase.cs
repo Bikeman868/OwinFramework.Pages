@@ -420,7 +420,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return new DeleteResult();
         }
 
-        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageId, int version, long websiteVersionId)
+        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageId, int version, long websiteVersionId, string scenario)
         {
             var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ParentRecordId == pageId && pv.Version == version);
             if (pageVersion == null)
@@ -430,36 +430,12 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     "There is no version " + version + " of page id " + pageId);
             }
 
-            lock (_updateLock)
-            {
-                var websiteVersionPages = _websiteVersionPages
-                    .Where(p => p.WebsiteVersionId != websiteVersionId || p.PageId != pageId)
-                    .ToList();
-
-                websiteVersionPages.Add(new WebsiteVersionPageRecord
-                {
-                    WebsiteVersionId = websiteVersionId,
-                    PageId = pageId,
-                    PageVersionId = pageVersion.RecordId
-                });
-
-                _websiteVersionPages = websiteVersionPages.ToArray();
-            }
-
-            AddHistory(
-                new WebsiteVersionRecord { RecordId = websiteVersionId },
-                identity, 
-                new HistoryChangeDetails
-                {
-                    ChangeType = "ChildAdded",
-                    ChildType = pageVersion.RecordType,
-                    ChildId = pageVersion.RecordId
-                });
+            AddPageVersionToWebsiteVersion(identity, pageVersion, websiteVersionId, scenario);
 
             return new UpdateResult();
         }
 
-        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageVersionId, long websiteVersionId)
+        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageVersionId, long websiteVersionId, string scenario)
         {
             var pageVersion = _pageVersions.FirstOrDefault(pv => pv.RecordId == pageVersionId);
             if (pageVersion == null)
@@ -469,17 +445,29 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     "There is page version " + pageVersionId);
             }
 
+            AddPageVersionToWebsiteVersion(identity, pageVersion, websiteVersionId, scenario);
+
+            return new UpdateResult();
+        }
+
+        private void AddPageVersionToWebsiteVersion(string identity, PageVersionRecord pageVersion, long websiteVersionId, string scenario)
+        {
             lock (_updateLock)
             {
                 var websiteVersionPages = _websiteVersionPages
-                    .Where(p => p.WebsiteVersionId != websiteVersionId || p.PageId != pageVersion.ParentRecordId)
+                    .Where(p =>
+                        p.WebsiteVersionId != websiteVersionId ||
+                        p.PageId != pageVersion.ParentRecordId ||
+                        (string.IsNullOrEmpty(scenario) && !string.IsNullOrEmpty(p.Scenario)) ||
+                        (!string.IsNullOrEmpty(scenario) && !string.Equals(scenario, p.Scenario, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
 
                 websiteVersionPages.Add(new WebsiteVersionPageRecord
                 {
                     WebsiteVersionId = websiteVersionId,
                     PageId = pageVersion.ParentRecordId,
-                    PageVersionId = pageVersion.RecordId
+                    PageVersionId = pageVersion.RecordId,
+                    Scenario = scenario
                 });
 
                 _websiteVersionPages = websiteVersionPages.ToArray();
@@ -492,10 +480,9 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 {
                     ChangeType = "ChildAdded",
                     ChildType = pageVersion.RecordType,
-                    ChildId = pageVersion.RecordId
+                    ChildId = pageVersion.RecordId,
+                    Scenario = scenario
                 });
-
-            return new UpdateResult();
         }
 
         #endregion
@@ -507,6 +494,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             lock (_updateLock)
             {
                 pageVersion.RecordId = _pageVersions.OrderByDescending(pv => pv.RecordId).First().RecordId + 1;
+                pageVersion.Version = _pageVersions.OrderByDescending(pv => pv.Version).First().Version + 1;
                 pageVersion.CreatedWhen = DateTime.UtcNow;
                 pageVersion.CreatedBy = identity;
 
@@ -742,12 +730,16 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return new DeleteResult();
         }
 
-        UpdateResult IDatabaseUpdater.RemovePageFromWebsite(string identity, long pageId, long websiteVersionId)
+        UpdateResult IDatabaseUpdater.RemovePageFromWebsite(string identity, long pageId, long websiteVersionId, string scenario)
         {
             lock (_updateLock)
             {
                 _websiteVersionPages =
-                    _websiteVersionPages.Where(p => p.WebsiteVersionId != websiteVersionId || p.PageId != pageId)
+                    _websiteVersionPages.Where(p =>
+                        p.WebsiteVersionId != websiteVersionId ||
+                        p.PageId != pageId ||
+                        (string.IsNullOrEmpty(scenario) && !string.IsNullOrEmpty(p.Scenario)) ||
+                        (!string.IsNullOrEmpty(scenario) && !string.Equals(scenario, p.Scenario, StringComparison.OrdinalIgnoreCase)))
                         .ToArray();
             }
 
@@ -758,7 +750,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 {
                     ChangeType = "ChildRemoved",
                     ChildType = new PageRecord().RecordType,
-                    ChildId = pageId
+                    ChildId = pageId,
+                    Scenario = scenario
                 });
 
             return new UpdateResult();

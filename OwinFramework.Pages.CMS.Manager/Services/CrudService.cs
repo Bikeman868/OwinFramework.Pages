@@ -189,12 +189,23 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
         #region Pages
 
-        [Endpoint(Methods = new[] {Method.Post}, RequiredPermission = Permissions.EditPage)]
-        [EndpointParameter("websiteVersionId", typeof(PositiveNumber<long?>))]
+        [Endpoint(
+            Methods = new[] {Method.Post}, 
+            RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter(
+            "websiteVersionId", 
+            typeof(PositiveNumber<long?>),
+            Description = "Include the optional website version id to add the new page to a specific version of the website")]
+        [EndpointParameter(
+            "scenario", 
+            typeof(OptionalString),
+            Description = "Include the optional scenario name to make this the page to use in this segmentation test scenario")]
+        [Description("Creates a new page and optionally adds it to a specific version of the website")]
         private void CreatePage(IEndpointRequest request)
         {
             var page = request.Body<PageRecord>();
             var websiteVersionId = request.Parameter<long?>("websiteVersionId");
+            var scenario = request.Parameter<string>("scenario");
 
             var result = _dataLayer.CreatePage(request.Identity, page);
 
@@ -215,13 +226,19 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
             if (websiteVersionId.HasValue)
             {
-                _dataLayer.AddPageToWebsiteVersion(request.Identity, page.RecordId, 1, websiteVersionId.Value);
+                _dataLayer.AddPageToWebsiteVersion(request.Identity, page.RecordId, 1, websiteVersionId.Value, scenario);
             }
             request.Success(page);
         }
 
-        [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(
+            UrlPath = "page/{id}", 
+            Methods = new[] {Method.Get}, 
+            RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment)]
         private void RetrievePage(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
@@ -233,8 +250,14 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 request.Success(page);
         }
 
-        [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(
+            UrlPath = "page/{id}", 
+            Methods = new[] {Method.Put},
+            RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
         private void UpdatePage(IEndpointRequest request)
         {
             var pageId = request.Parameter<long>("id");
@@ -253,8 +276,14 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             }
         }
 
-        [Endpoint(UrlPath = "page/{id}", Methods = new[] {Method.Delete}, RequiredPermission = Permissions.EditPage)]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(
+            UrlPath = "page/{id}", 
+            Methods = new[] {Method.Delete}, 
+            RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment)]
         private void DeletePage(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
@@ -270,12 +299,23 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
         #region Page versions
 
-        [Endpoint(Methods = new[] {Method.Post}, RequiredPermission = Permissions.EditPage)]
-        [EndpointParameter("websiteVersionId", typeof(PositiveNumber<long?>))]
+        [Endpoint(
+            Methods = new[] {Method.Post}, 
+            RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter(
+            "websiteVersionId", 
+            typeof(PositiveNumber<long?>), 
+            Description = "Include the optional website version id to add the new page version to a specific version of the website")]
+        [EndpointParameter(
+            "scenario", 
+            typeof(OptionalString),
+            Description = "Include the optional scenario name to make this the page version to use in this segmentation test scenario")]
+        [Description("Creates a new version of a page and optionally adds it to a specific version of the website")]
         private void CreatePageVersion(IEndpointRequest request)
         {
             var pageVersion = request.Body<PageVersionRecord>();
             var websiteVersionId = request.Parameter<long?>("websiteVersionId");
+            var scenario = request.Parameter<string>("scenario");
 
             var result = _dataLayer.CreatePageVersion(request.Identity, pageVersion);
 
@@ -285,7 +325,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 return;
             }
 
-            pageVersion = _dataLayer.GetPageVersion(result.NewRecordId, 1, (p, v) => v);
+            pageVersion = _dataLayer.GetPageVersion(result.NewRecordId, (p, v) => v);
             if (pageVersion == null)
             {
                 request.HttpStatus(
@@ -296,14 +336,23 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
             if (websiteVersionId.HasValue)
             {
-                _dataLayer.AddPageToWebsiteVersion(request.Identity, pageVersion.RecordId, websiteVersionId.Value);
+
+                _dataLayer.AddPageToWebsiteVersion(request.Identity, pageVersion.RecordId, websiteVersionId.Value, scenario);
             }
 
             request.Success(pageVersion);
         }
 
-        [Endpoint(UrlPath = "pageversion/{id}", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(
+            UrlPath = "pageversion/{id}", 
+            Methods = new[] {Method.Get}, 
+            RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the page version to return")]
+        [Description("Retrieves details of a specific version of a page")]
         private void RetrievePageVersion(IEndpointRequest request)
         {
             var pageVersionId = request.Parameter<long>("id");
@@ -315,8 +364,14 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 request.Success(pageVersion);
         }
 
-        [Endpoint(UrlPath = "pageversion/{id}", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(
+            UrlPath = "pageversion/{id}",
+            Methods = new[] {Method.Put}, 
+            RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment)]
         private void UpdatePageVersion(IEndpointRequest request)
         {
             var pageVersionId = request.Parameter<long>("id");
@@ -335,8 +390,14 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             }
         }
 
-        [Endpoint(UrlPath = "pageversion/{id}/routes", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(
+            UrlPath = "pageversion/{id}/routes", 
+            Methods = new[] {Method.Put}, 
+            RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment)]
         private void UpdatePageVersionRoutes(IEndpointRequest request)
         {
             var pageVersionId = request.Parameter<long>("id");
@@ -355,8 +416,14 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             }
         }
 
-        [Endpoint(UrlPath = "pageversion/{id}/zones", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(
+            UrlPath = "pageversion/{id}/zones", 
+            Methods = new[] {Method.Put}, 
+            RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment)]
         private void UpdatePageVersionZones(IEndpointRequest request)
         {
             var pageVersionId = request.Parameter<long>("id");
@@ -375,8 +442,14 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             }
         }
 
-        [Endpoint(UrlPath = "pageversion/{id}/components", Methods = new[] {Method.Put}, RequiredPermission = Permissions.EditPage)]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(
+            UrlPath = "pageversion/{id}/components",
+            Methods = new[] {Method.Put},
+            RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>), 
+            EndpointParameterType.PathSegment)]
         private void UpdatePageVersionComponents(IEndpointRequest request)
         {
             var pageVersionId = request.Parameter<long>("id");
@@ -395,8 +468,14 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             }
         }
 
-        [Endpoint(UrlPath = "pageversion/{id}", Methods = new[] {Method.Delete}, RequiredPermission = Permissions.EditPage)]
-        [EndpointParameter("id", typeof(PositiveNumber<long>), EndpointParameterType.PathSegment)]
+        [Endpoint(
+            UrlPath = "pageversion/{id}", 
+            Methods = new[] {Method.Delete},
+            RequiredPermission = Permissions.EditPage)]
+        [EndpointParameter(
+            "id", 
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
         private void DeletePageVersion(IEndpointRequest request)
         {
             var pageVersionId = request.Parameter<long>("id");

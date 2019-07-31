@@ -342,9 +342,9 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
-        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageId, int version, long websiteVersionId)
+        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageId, int version, long websiteVersionId, string scenario)
         {
-            var result = _databaseUpdater.AddPageToWebsiteVersion(identity, pageId, version, websiteVersionId);
+            var result = _databaseUpdater.AddPageToWebsiteVersion(identity, pageId, version, websiteVersionId, scenario);
             if (!result.Success) return result;
 
             lock (_liveUpdateLock)
@@ -363,9 +363,9 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
-        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageVersionId, long websiteVersionId)
+        UpdateResult IDatabaseUpdater.AddPageToWebsiteVersion(string identity, long pageVersionId, long websiteVersionId, string scenario)
         {
-            var result = _databaseUpdater.AddPageToWebsiteVersion(identity, pageVersionId, websiteVersionId);
+            var result = _databaseUpdater.AddPageToWebsiteVersion(identity, pageVersionId, websiteVersionId, scenario);
             if (!result.Success) return result;
 
             lock (_liveUpdateLock)
@@ -384,9 +384,9 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
-        UpdateResult IDatabaseUpdater.RemovePageFromWebsite(string identity, long pageId, long websiteVersionId)
+        UpdateResult IDatabaseUpdater.RemovePageFromWebsite(string identity, long pageId, long websiteVersionId, string scenario)
         {
-            var result = _databaseUpdater.RemovePageFromWebsite(identity, pageId, websiteVersionId);
+            var result = _databaseUpdater.RemovePageFromWebsite(identity, pageId, websiteVersionId, scenario);
             if (!result.Success) return result;
             lock (_liveUpdateLock)
             {

@@ -66,7 +66,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             var records = _dataLayer.GetWebsitePages(id, scenarioName, wvp => wvp);
 
             if (records == null)
-                request.NotFound("There are no pages in website version #" + id + 
+                request.NoContent("There are no pages in website version #" + id + 
                     (string.IsNullOrEmpty(scenarioName) ? "" : " for '" + scenarioName + "' test scenario"));
             else
                 request.Success(records);
@@ -95,7 +95,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
             var pageVersions = _dataLayer.GetWebsitePages(websiteVersionId, scenarioName, pv => pv, pv => pv.PageId == pageId);
             if (pageVersions == null || pageVersions.Length == 0)
-                request.NotFound(
+                request.NoContent(
                     "There is no version of page #" + pageId + 
                     " in version #" + websiteVersionId + " of the website" +
                     (string.IsNullOrEmpty(scenarioName) ? "" : " in the '" + scenarioName + "' test scenario"));

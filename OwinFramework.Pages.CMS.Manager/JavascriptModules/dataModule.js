@@ -55,7 +55,7 @@
         }
     }
 
-    var newStore = function (store) {
+    var newStore = function(store) {
         store.list = null;
         store.dictionary = {};
         store.dispatcherUnsubscribe = null;
@@ -64,169 +64,197 @@
         store.listName = store.listName || "list of " + name,
         store.arrayFields = store.arrayFields || [];
 
-        store.dispose = function() {
-            if (store.dispatcherUnsubscribe != null) store.dispatcherUnsubscribe();
-        };
-
-        store.add = function(record) {
-            if (store.list != undefined) store.list.push(record);
-            store.dictionary[record[store.idField]] = record;
-        };
-
-        store.remove = function(id) {
-            delete store.dictionary[id];
-            if (store.list != undefined) {
-                var index = -1;
-                store.list.forEach(function (e, i) { if (e != undefined && e[store.idField] === id) index = i; });
-                if (index >= 0) store.list.splice(index, 1);
-            }
-        };
-
-        store.setAll = function(records) {
-            if (records == null) return;
-            store.list = records;
-            store.dictionary = {};
-            for (let i = 0; i < records.length; i++) {
-                if (records[i] != undefined && records[i][store.idField] != undefined)
-                    store.dictionary[records[i][store.idField]] = records[i];
-            }
-        };
-
-        store.getAll = function () { return store.list; };
-
-        store.set = function(record) {
-            if (record == undefined) return;
-            var id = record[store.idField];
-            if (id == undefined) return;
-            var original = store.dictionary[id];
-            if (original == undefined) {
-                store.add(record);
-            } else {
-                copyObject(store.fields, store.arrayFields, record, original);
-            }
-        };
-        
-        store.get = function (id) { return store.dictionary[id]; }
-
-        store.createRecord = function (newRecord, onSuccess, onFail, params) {
-            if (store.mixin.createRecord == undefined) return;
-            store.mixin.createRecord.call(store,
-                newRecord,
-                function (response) {
-                    if (response == undefined) {
-                        if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been created");
-                    } else if (response[store.idField] == undefined) {
-                        if (onFail != undefined) onFail("The server failed to return an ID for the new " + store.name);
-                    } else {
-                        store.add(response);
-                        if (onSuccess != undefined) onSuccess(response);
-                    }
-                },
-                function(ajax) {
-                    if (ajax.status === 403) onFail("You do not have permission to create " + store.name);
-                    if (onFail != undefined) onFail("Failed to create a new " + store.name);
-                },
-                params);
+        if (store.dispose == undefined) {
+            store.dispose = function() {
+                if (store.dispatcherUnsubscribe != null) store.dispatcherUnsubscribe();
+            };
         }
 
-        store.retrieveAllRecords = function(onSuccess, onFail) {
-            if (store.mixin.retrieveAllRecords == undefined) return;
-            var records = store.getAll();
-            if (records == undefined) {
-                store.mixin.retrieveAllRecords.call(store,
+        if (store.add == undefined) {
+            store.add = function(record) {
+                if (store.list != undefined) store.list.push(record);
+                store.dictionary[record[store.idField]] = record;
+            };
+        }
+
+        if (store.remove == undefined) {
+            store.remove = function(id) {
+                delete store.dictionary[id];
+                if (store.list != undefined) {
+                    var index = -1;
+                    store.list.forEach(function(e, i) { if (e != undefined && e[store.idField] === id) index = i; });
+                    if (index >= 0) store.list.splice(index, 1);
+                }
+            };
+        }
+
+        if (store.setAll == undefined) {
+            store.setAll = function(records) {
+                if (records == null) return;
+                store.list = records;
+                store.dictionary = {};
+                for (let i = 0; i < records.length; i++) {
+                    if (records[i] != undefined && records[i][store.idField] != undefined)
+                        store.dictionary[records[i][store.idField]] = records[i];
+                }
+            };
+        }
+
+        if (store.getAll == undefined) {
+            store.getAll = function() { return store.list; };
+        }
+
+        if (store.set == undefined) {
+            store.set = function(record) {
+                if (record == undefined) return;
+                var id = record[store.idField];
+                if (id == undefined) return;
+                var original = store.dictionary[id];
+                if (original == undefined) {
+                    store.add(record);
+                } else {
+                    copyObject(store.fields, store.arrayFields, record, original);
+                }
+            };
+        }
+
+        if (store.get == undefined) {
+            store.get = function(id) { return store.dictionary[id]; }
+        }
+
+        if (store.createRecord == undefined) {
+            store.createRecord = function(newRecord, onSuccess, onFail, params) {
+                if (store.mixin.createRecord == undefined) return;
+                store.mixin.createRecord.call(store,
+                    newRecord,
                     function(response) {
                         if (response == undefined) {
-                            if (onFail != undefined) onFail("No " + store.listName + " was returned by the server");
+                            if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been created");
+                        } else if (response[store.idField] == undefined) {
+                            if (onFail != undefined) onFail("The server failed to return an ID for the new " + store.name);
                         } else {
-                            store.setAll(response);
+                            store.add(response);
                             if (onSuccess != undefined) onSuccess(response);
                         }
-                    }, 
-                    function(ajax) {
-                        if (ajax.status === 403) onFail("You do not have permission to retrieve " + store.listName);
-                        if (onFail != undefined) onFail("Failed to retrieve a " + store.listName);
-                    });
-            } else {
-                if (onSuccess != undefined) onSuccess(records);
-            }
-        }
-
-        store.retrieveRecord = function(id, onSuccess, onFail) {
-            if (store.mixin.retrieveRecord == undefined) return;
-            if (id == undefined) return;
-            var record = store.get(id);
-            if (record == undefined) {
-                store.mixin.retrieveRecord.call(store,
-                    id,
-                    function (response) {
-                        store.set(response);
-                        if (onSuccess != undefined) onSuccess(response);
                     },
                     function(ajax) {
-                        if (ajax.status === 403) onFail("You do not have permission to retrieve " + store.name + " " + id);
-                        if (onFail != undefined) onFail("Failed to retrieve " + store.name + " " + id);
-                    });
-            } else {
-                if (onSuccess != undefined) onSuccess(record);
+                        if (ajax.status === 403) onFail("You do not have permission to create " + store.name);
+                        if (onFail != undefined) onFail("Failed to create a new " + store.name);
+                    },
+                    params);
             }
         }
 
-        store.updateRecord = function (originalRecord, updatedRecord, onSuccess, onFail) {
-            if (store.mixin.updateRecord == undefined) return;
-            var changes = findChanges(store.fields, store.arrayFields, originalRecord, updatedRecord);
-            if (changes.length === 0 && store.arrayFields.length === 0) {
-                if (onSuccess != undefined) onSuccess(originalRecord);
-            } else {
-                var id = originalRecord[store.idField];
-                if (updatedRecord[store.idField] !== id) {
-                    if (onFail != undefined) {
-                        onFail("Original and updated " + store.name + " must have the same id");
-                    }
-                    return;
+        if (store.retrieveAllRecords == undefined) {
+            store.retrieveAllRecords = function(onSuccess, onFail) {
+                if (store.mixin.retrieveAllRecords == undefined) return;
+                var records = store.getAll();
+                if (records == undefined) {
+                    store.mixin.retrieveAllRecords.call(store,
+                        function(response) {
+                            if (response == undefined) {
+                                if (onFail != undefined) onFail("No " + store.listName + " was returned by the server");
+                            } else {
+                                store.setAll(response);
+                                if (onSuccess != undefined) onSuccess(response);
+                            }
+                        },
+                        function(ajax) {
+                            if (ajax.status === 403) onFail("You do not have permission to retrieve " + store.listName);
+                            if (onFail != undefined) onFail("Failed to retrieve a " + store.listName);
+                        });
+                } else {
+                    if (onSuccess != undefined) onSuccess(records);
                 }
-                store.mixin.updateRecord.call(store,
-                    originalRecord,
-                    updatedRecord,
-                    changes,
-                    function(response) {
-                        if (response == undefined) {
-                            if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been updated");
-                        } else {
+            }
+        }
+
+        if (store.retrieveRecord == undefined) {
+            store.retrieveRecord = function(id, onSuccess, onFail) {
+                if (store.mixin.retrieveRecord == undefined) return;
+                if (id == undefined) return;
+                var record = store.get(id);
+                if (record == undefined) {
+                    store.mixin.retrieveRecord.call(store,
+                        id,
+                        function(response) {
                             store.set(response);
                             if (onSuccess != undefined) onSuccess(response);
-                        }
-                    },
-                    function (ajax) {
+                        },
+                        function(ajax) {
+                            if (ajax.status === 403) onFail("You do not have permission to retrieve " + store.name + " " + id);
+                            if (onFail != undefined) onFail("Failed to retrieve " + store.name + " " + id);
+                        });
+                } else {
+                    if (onSuccess != undefined) onSuccess(record);
+                }
+            }
+        }
+
+        if (store.updateRecord == undefined) {
+            store.updateRecord = function(originalRecord, updatedRecord, onSuccess, onFail) {
+                if (store.mixin.updateRecord == undefined) return;
+                var changes = findChanges(store.fields, store.arrayFields, originalRecord, updatedRecord);
+                if (changes.length === 0 && store.arrayFields.length === 0) {
+                    if (onSuccess != undefined) onSuccess(originalRecord);
+                } else {
+                    var id = originalRecord[store.idField];
+                    if (updatedRecord[store.idField] !== id) {
                         if (onFail != undefined) {
-                            if (ajax.status === 403) onFail("You do not have permission to update " + store.name);
-                            else onFail("Failed to update " + store.name);
+                            onFail("Original and updated " + store.name + " must have the same id");
+                        }
+                        return;
+                    }
+                    store.mixin.updateRecord.call(store,
+                        originalRecord,
+                        updatedRecord,
+                        changes,
+                        function(response) {
+                            if (response == undefined) {
+                                if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been updated");
+                            } else {
+                                store.set(response);
+                                if (onSuccess != undefined) onSuccess(response);
+                            }
+                        },
+                        function(ajax) {
+                            if (onFail != undefined) {
+                                if (ajax.status === 403) onFail("You do not have permission to update " + store.name);
+                                else onFail("Failed to update " + store.name);
+                            }
+                        });
+                }
+            }
+        }
+
+        if (store.deleteRecord == undefined){
+            store.deleteRecord = function(id, onSuccess, onFail) {
+                if (store.mixin.deleteRecord == undefined) return;
+                store.mixin.deleteRecord(
+                    id,
+                    function(response) {
+                        store.remove(id);
+                        if (onSuccess != undefined) onSuccess(response);
+                    },
+                    function(ajax) {
+                        if (onFail != undefined) {
+                            if (ajax.status === 403) onFail("You do not have permission to delete " + store.name + " " + id);
+                            else onFail("Failed to delete " + store.name + " " + id);
                         }
                     });
             }
         }
 
-        store.deleteRecord = function(id, onSuccess, onFail) {
-            if (store.mixin.deleteRecord == undefined) return;
-            store.mixin.deleteRecord(
-                id,
-                function(response) {
-                    store.remove(id);
-                    if (onSuccess != undefined) onSuccess(response);
-                },
-                function(ajax) {
-                    if (onFail != undefined) {
-                        if (ajax.status === 403) onFail("You do not have permission to delete " + store.name + " " + id);
-                        else onFail("Failed to delete " + store.name + " " + id);
-                    }
-                });
+        if (store.cloneForEditing == undefined) {
+            store.cloneForEditing = function(original) {
+                return copyObject(store.fields, store.arrayFields, original);
+            }
         }
 
-        store.cloneForEditing = function(original) {
-            return copyObject(store.fields, store.arrayFields, original);
-        }
-
-        store.blankRecord = function() {
-             return {};
+        if (store.blankRecord == undefined) {
+            store.blankRecord = function() {
+                return {};
+            }
         }
 
         if (store.recordType != undefined) {
@@ -394,7 +422,13 @@ exported.pageVersionStore = dataUtilities.newStore({
         "routes", "layoutZones", "components"],
     mixin: {
         createRecord: function (pageVersion, onSuccess, onFail, params) {
-            exported.crudService.createPageVersion({ body: pageVersion, websiteVersionId: params.websiteVersionId }, onSuccess, onFail);
+            exported.crudService.createPageVersion({
+                    body: pageVersion,
+                    websiteVersionId: params.websiteVersionId,
+                    scenario: params.scenario
+                },
+                onSuccess,
+                onFail);
         },
         retrieveRecord: function (pageVersionId, onSuccess, onFail) {
             exported.crudService.retrievePageVersion({ id: pageVersionId }, onSuccess, null, onFail);
@@ -454,6 +488,14 @@ exported.pageVersionStore = dataUtilities.newStore({
         deleteRecord: function (pageVersionId, onSuccess, onFail) {
             exported.crudService.deletePage({ id: pageVersionId }, onSuccess, null, onFail);
         }
+    },
+    blankRecord: function() {
+        return{
+            assetDeployment: "Inherit",
+            routes: [],
+            layoutZones: [],
+            components: []
+        };
     },
     getPageVersions: function (pageId, onSuccess, onFail) {
         var store = this;

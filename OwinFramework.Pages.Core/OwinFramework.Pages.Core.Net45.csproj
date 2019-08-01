@@ -135,6 +135,7 @@
     <Compile Include="Enums\Method.cs" />
     <Compile Include="Enums\NameResolutionPhase.cs" />
     <Compile Include="Enums\PageArea.cs" />
+    <Compile Include="EnvironmentKeys.cs" />
     <Compile Include="Exceptions\BodyDeserializationException.cs" />
     <Compile Include="Exceptions\DataProviderBuilderException.cs" />
     <Compile Include="Exceptions\DataCatalogException.cs" />
@@ -261,6 +262,12 @@
     <Compile Include="Interfaces\Runtime\IRequestRouter.cs" />
     <Compile Include="Interfaces\Runtime\IRunable.cs" />
     <Compile Include="Interfaces\Runtime\IWriteResult.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestingData.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestingFramework.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestingScenario.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestingTest.cs" />
+    <Compile Include="Interfaces\Segmentation\ISegmentTestRecorder.cs" />
+    <Compile Include="Interfaces\Segmentation\IUserSegmenter.cs" />
     <Compile Include="Interfaces\Templates\IDataFieldFormatter.cs" />
     <Compile Include="Interfaces\Templates\ITemplateBuilder.cs" />
     <Compile Include="Interfaces\Templates\ITemplateDefinition.cs" />

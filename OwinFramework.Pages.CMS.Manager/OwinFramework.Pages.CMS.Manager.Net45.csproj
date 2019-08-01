@@ -39,6 +39,10 @@
     <Reference Include="Ioc.Modules">
       <HintPath>..\packages\Ioc.Modules\lib\net45\Ioc.Modules.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\net45\Microsoft.Owin\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\net45\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -62,12 +66,19 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CmsEditorPackage.cs" />
-    <Compile Include="Configuration\EditorConfiguration.cs" />
+    <Compile Include="CmsManagerPackage.cs" />
+    <Compile Include="Configuration\ManagerConfiguration.cs" />
     <Compile Include="Configuration\Permissions.cs" />
+    <Compile Include="Data\DataLayer.cs" />
+    <Compile Include="Data\TestDatabaseUpdater.cs" />
+    <Compile Include="Data\TestDatabaseUpdaterBase.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CrudService.cs" />
+    <Compile Include="Services\HistoryService.cs" />
+    <Compile Include="Services\ListService.cs" />
     <Compile Include="Services\LiveUpdateService.cs" />
+    <Compile Include="Services\SegmentTestingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.CMS.Runtime\OwinFramework.Pages.CMS.Runtime.Net45.csproj">
@@ -84,16 +95,48 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="OwinFramework.Pages.CMS.Editor.Net45.paket.references" />
+    <None Include="OwinFramework.Pages.CMS.Manager.Net45.paket.references" />
     <None Include="paket.template" />
-    <EmbeddedResource Include="Templates\LiveUpdateLog.less" />
+    <EmbeddedResource Include="Templates\CmsManager.less" />
+    <EmbeddedResource Include="Templates\Tools\DispatcherLog.less" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JavascriptModules\liveUpdateModule.js" />
+    <EmbeddedResource Include="JavascriptModules\componentsModule.js" />
+    <EmbeddedResource Include="JavascriptModules\dataModule.js" />
+    <EmbeddedResource Include="JavascriptModules\dispatcherModule.js" />
+    <EmbeddedResource Include="JavascriptModules\filtersModule.js" />
+    <EmbeddedResource Include="JavascriptModules\validationModule.js" />
+    <EmbeddedResource Include="JavascriptModules\viewsModule.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\LiveUpdateLog.html" />
-    <EmbeddedResource Include="Templates\LiveUpdateLog.js" />
+    <EmbeddedResource Include="Templates\CmsManager.html" />
+    <EmbeddedResource Include="Templates\CmsManager.js" />
+    <EmbeddedResource Include="Templates\Crud\EnvironmentEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\EnvironmentEditor.js" />
+    <EmbeddedResource Include="Templates\Crud\PageEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\PageEditor.js" />
+    <EmbeddedResource Include="Templates\Crud\SegmentationScenarioEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\SegmentationScenarioEditor.js" />
+    <EmbeddedResource Include="Templates\Crud\WebsiteVersionEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\WebsiteVersionEditor.js" />
+    <EmbeddedResource Include="Templates\Display\ContextDisplay.html" />
+    <EmbeddedResource Include="Templates\Display\ContextDisplay.js" />
+    <EmbeddedResource Include="Templates\Display\UserSegmentDisplay.html" />
+    <EmbeddedResource Include="Templates\Display\UserSegmentDisplay.js" />
+    <EmbeddedResource Include="Templates\Selectors\EnvironmentSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\EnvironmentSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\PageSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\PageSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\SegmentationScenarioSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\SegmentationScenarioSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\SegmentationTestSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\SegmentationTestSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\UserSegmentSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\UserSegmentSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\WebsiteVersionSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\WebsiteVersionSelector.js" />
+    <EmbeddedResource Include="Templates\Tools\DispatcherLog.html" />
+    <EmbeddedResource Include="Templates\Tools\DispatcherLog.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -36,7 +36,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.Standar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.CMS.Runtime.Net45", "OwinFramework.Pages.CMS.Runtime\OwinFramework.Pages.CMS.Runtime.Net45.csproj", "{E22AD442-D30E-4ECE-A856-DCA49CE9E9B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.CMS.Editor.Net45", "OwinFramework.Pages.CMS.Editor\OwinFramework.Pages.CMS.Editor.Net45.csproj", "{60C824DF-D107-4441-AD21-DBE2CE0D6829}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinFramework.Pages.CMS.Manager.Net45", "OwinFramework.Pages.CMS.Manager\OwinFramework.Pages.CMS.Manager.Net45.csproj", "{60C824DF-D107-4441-AD21-DBE2CE0D6829}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

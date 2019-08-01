@@ -56,6 +56,7 @@
     <Compile Include="MenuPackage.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TemplatesPackage.cs" />
     <Compile Include="TextEffectsPackage.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +72,10 @@
       <Project>{68b65603-bb88-4c0a-8cfc-32b92561b881}</Project>
       <Name>OwinFramework.Pages.Html.Net45</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OwinFramework.Pages.Restful\OwinFramework.Pages.Restful.Net45.csproj">
+      <Project>{f2707665-3996-47da-8914-9a4a919a0ebf}</Project>
+      <Name>OwinFramework.Pages.Restful.Net45</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE" />
@@ -79,7 +84,8 @@
     <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\ajaxLibrary.js" />
+    <EmbeddedResource Include="Assets\restModule.js" />
+    <EmbeddedResource Include="Assets\templateLibrary.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

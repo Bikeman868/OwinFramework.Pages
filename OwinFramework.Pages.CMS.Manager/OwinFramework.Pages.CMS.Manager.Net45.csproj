@@ -7,8 +7,8 @@
     <ProjectGuid>{60C824DF-D107-4441-AD21-DBE2CE0D6829}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OwinFramework.Pages.CMS.Editor</RootNamespace>
-    <AssemblyName>OwinFramework.Pages.CMS.Editor</AssemblyName>
+    <RootNamespace>OwinFramework.Pages.CMS.Manager</RootNamespace>
+    <AssemblyName>OwinFramework.Pages.CMS.Manager</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseIntermediateOutputPath>obj\Net45\</BaseIntermediateOutputPath>
@@ -33,7 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>bin\net45\Release\OwinFramework.Pages.CMS.Editor.XML</DocumentationFile>
+    <DocumentationFile>bin\net45\Release\OwinFramework.Pages.CMS.Manager.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ioc.Modules">

@@ -4,7 +4,7 @@ namespace OwinFramework.Pages.Core.Attributes
 {
     /// <summary>
     /// Attach these attributes to a page or service to document the 
-    /// options available to the requester. For example the supported Httl methods,
+    /// options available to the requester. For example the supported Http methods,
     /// query string parameters etc.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]

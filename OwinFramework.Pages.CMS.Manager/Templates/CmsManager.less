@@ -19,36 +19,41 @@
 @table-background: white;
 
 @base-font-px: 12px;
-@base-font-vmin: 2vmin;
+@base-font-vw: 1.6vw;
 @heading-font-family: Arial, sans-serif;
 @body-font-family: Arial, sans-serif;
 
 div.cms_manager {
     /* Basics */
-
-    * { 
+    * {
         overflow: hidden;
         box-sizing: border-box;
         margin: 0;
         padding: 0;
     }
-    ul { 
+
+    ul {
         list-style: none;
         padding: 0;
     }
-    a, a:visited { 
-        text-decoration: none; 
+
+    a, a:visited {
+        text-decoration: none;
     }
+
     table {
         border-collapse: collapse;
         margin: 5px 0;
     }
+
     th {
         padding: 5px 10px;
     }
+
     td {
         padding: 3px 5px;
     }
+
     select {
         display: block;
         width: 100%;
@@ -56,211 +61,257 @@ div.cms_manager {
         border-radius: 5px;
         padding: 8px;
     }
+
     select:focus {
         outline: none;
-    }    
-
+    }
     /* Typography */
+    p {
+        font-size: @base-font-px;
+        font-family: @body-font-family;
+    }
 
-    p { 
-        font-size: @base-font-vmin; 
-        font-family: @body-font-family; 
-    }
-    h1 { 
-        font-size: @base-font-vmin * 1.6;
+    h1 {
+        font-size: @base-font-vw * 1.6;
         font-family: @heading-font-family;
         letter-spacing: 1px;
     }
-    h2 { 
-        font-size: @base-font-vmin * 1.3; 
+
+    h2 {
+        font-size: @base-font-vw * 1.3;
         font-family: @heading-font-family;
         letter-spacing: 1px;
     }
-    h3 { 
-        font-size: @base-font-vmin * 1.2; 
+
+    h3 {
+        font-size: @base-font-vw * 1.2;
         font-family: @heading-font-family;
         letter-spacing: 1px;
     }
-    h4 { 
-        font-size: @base-font-vmin * 1.1; 
+
+    h4 {
+        font-size: @base-font-vw * 1.1;
         font-family: @heading-font-family;
     }
-    h5 { 
-        font-size: @base-font-vmin * 1.1; 
+
+    h5 {
+        font-size: @base-font-vw * 1.1;
         font-family: @heading-font-family;
     }
-    h6 { 
-        font-size: @base-font-vmin * 1.1; 
+
+    h6 {
+        font-size: @base-font-vw * 1.1;
         font-family: @heading-font-family;
     }
+
     th {
-        font-size: @base-font-vmin * 1.1; 
+        font-size: @base-font-vw * 1.1;
         font-family: @heading-font-family;
     }
+
     select {
         font: inherit;
-        font-size: @base-font-vmin * 1.7; 
+        font-size: @base-font-vw * 1.7;
         letter-spacing: 2px;
+
         option {
             font: inherit;
-            font-size: @base-font-vmin * 1.7; 
+            font-size: @base-font-vw * 1.7;
             letter-spacing: 2px;
         }
     }
+
     div.cms_field {
         label {
-            font-size: @base-font-vmin * 1.2; 
+            font-size: @base-font-vw * 1.2;
         }
+
         p {
-            font-size: @base-font-vmin;
+            font-size: @base-font-vw;
         }
+
         input[type=text] {
             font: inherit;
             font-family: @body-font-family;
-            font-size: @base-font-vmin * 1.8;
+            font-size: @base-font-vw * 1.8;
         }
+
         span.cms_checkbox {
             font: inherit;
             font-family: @body-font-family;
-            font-size: @base-font-vmin * 1.8;
+            font-size: @base-font-vw * 1.8;
         }
+
         textarea {
             font: inherit;
             font-family: @body-font-family;
-            font-size: @base-font-vmin * 1.8;
-            line-height: @base-font-vmin *2;
+            font-size: @base-font-vw * 1.8;
+            line-height: @base-font-vw *2;
         }
-        ::placeholder{
-            font-size: @base-font-vmin * 1.4;
+
+        ::placeholder {
+            font-size: @base-font-vw * 1.4;
         }
+
         button {
-            font-size: @base-font-vmin * 2.2;
+            font-size: @base-font-vw * 2.2;
             font-weight: 500;
         }
     }
+
     div.cms_selector {
         font: inherit;
         font-family: @body-font-family;
-        font-size: @base-font-vmin * 1.4;
+        font-size: @base-font-vw * 1.4;
+
         a {
             font: inherit;
             font-family: @body-font-family;
-            font-size: @base-font-vmin * 1.8;
+            font-size: @base-font-vw * 1.8;
             letter-spacing: 2px;
         }
     }
+
     .cms_validation_error_list {
         font: inherit;
         font-family: @body-font-family;
-        font-size: @base-font-vmin * 1.6;
+        font-size: @base-font-vw * 1.6;
     }
+
     div.cms_button_bar {
         button {
-            font-size: @base-font-vmin * 1.8;
+            font-size: @base-font-vw * 1.8;
             font-weight: 500;
             letter-spacing: 2px;
         }
     }
+
     ul.cms_tabs {
         li {
-            font-size: @base-font-vmin * 1.8;
+            font-size: @base-font-vw * 1.8;
             letter-spacing: 2px;
         }
     }
-    @media only screen and (min-width: @break-tablet){
-        p { 
-            font-size: @base-font-px; 
+
+    @media only screen and (min-width: @break-tablet) {
+        p {
+            font-size: @base-font-px;
         }
-        h1 { 
-            font-size: @base-font-px * 1.4; 
+
+        h1 {
+            font-size: @base-font-px * 1.4;
         }
-        h2 { 
-            font-size: @base-font-px * 1.3; 
+
+        h2 {
+            font-size: @base-font-px * 1.3;
         }
-        h3 { 
-            font-size: @base-font-px * 1.2; 
+
+        h3 {
+            font-size: @base-font-px * 1.2;
         }
-        h4 { 
-            font-size: @base-font-px * 1.15; 
+
+        h4 {
+            font-size: @base-font-px * 1.15;
         }
-        h5 { 
-            font-size: @base-font-px * 1.1; 
+
+        h5 {
+            font-size: @base-font-px * 1.1;
         }
-        h6 { 
-            font-size: @base-font-px; 
+
+        h6 {
+            font-size: @base-font-px;
         }
-        th { 
-            font-size: @base-font-px * 1.2; 
+
+        th {
+            font-size: @base-font-px * 1.2;
         }
+
         select {
             font: inherit;
             font-size: large;
             letter-spacing: 1px;
+
             option {
                 font: inherit;
                 font-size: large;
                 letter-spacing: 1px;
             }
         }
+
         input[type=text] {
             font-size: large;
         }
+
         span.cms_checkbox {
             font-size: large;
         }
+
         textarea {
             font-size: large;
         }
+
         button {
             font-size: large;
         }
+
         div.cms_field {
             label {
                 font-size: x-small;
             }
+
             p {
                 font-size: small;
             }
+
             input[type=text] {
                 font: inherit;
                 font-family: @body-font-family;
                 font-size: small;
             }
+
             span.cms_checkbox {
                 font: inherit;
                 font-family: @body-font-family;
                 font-size: small;
             }
+
             textarea {
                 font: inherit;
                 font-family: @body-font-family;
                 font-size: small;
-                line-height:1.5;
+                line-height: 1.5;
             }
-            ::placeholder{
+
+            ::placeholder {
                 font-size: smaller;
             }
+
             button {
                 font-size: large;
                 font-weight: 500;
             }
         }
+
         div.cms_selector {
             font-size: @base-font-px * 1.4;
+
             a {
                 font-size: @base-font-px * 1.4;
                 letter-spacing: 1px;
             }
         }
+
         .cms_validation_error_list {
             font-size: larger;
         }
+
         div.cms_button_bar {
             button {
                 font-size: larger;
                 letter-spacing: 1px;
             }
         }
+
         ul.cms_tabs {
             li {
                 font-size: larger;
@@ -268,34 +319,39 @@ div.cms_manager {
             }
         }
     }
-
     /* Colors and backgrounds */
-
-    a, a:visited { 
+    a, a:visited {
         color: @anchor-color;
     }
-    a:hover { 
+
+    a:hover {
         color: @anchor-hover-color
     }
+
     th {
         border: 1px solid darken(@table-heading-background, 5%);
         background-color: @table-heading-background;
     }
+
     td {
         border: 1px solid darken(@table-heading-background, 5%);
         background-color: @table-background;
     }
+
     select {
         border: 1px solid #aaa;
         box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
     }
+
     hr {
         border: 1px solid whitesmoke;
     }
+
     hr.thick {
         border: 6px solid whitesmoke;
         border-radius: 3px;
     }
+
     div.cms_main {
         border-radius: 10px;
         border-color: cadetblue;
@@ -308,36 +364,44 @@ div.cms_manager {
         margin-bottom: 20px;
         padding: 5px;
     }
+
     div.cms_left_panel {
         padding: 2px;
     }
+
     div.cms_right_panel {
         margin-bottom: 2px;
         margin-top: 2px;
         padding: 2px;
         border-left: 1px solid lightgray;
     }
+
     div.cms_clear {
         clear: both;
     }
+
     div.cms_panel {
         h1 {
             margin-bottom: 20px;
         }
+
         h2 {
             margin-bottom: 15px;
         }
+
         h3 {
             margin-bottom: 10px;
         }
     }
-    @media only screen and (min-width: @break-small-mobile){
+
+    @media only screen and (min-width: @break-small-mobile) {
         div.cms_left_panel {
             float: left;
-            margin: 2px; 
+            margin: 2px;
             width: 150px;
             padding: 5px;
         }
+
         div.cms_right_panel {
             margin-left: 150px;
             margin-right: 2px;
@@ -346,38 +410,45 @@ div.cms_manager {
             padding: 5px;
         }
     }
-    @media only screen and (min-width: @break-large-mobile){
+
+    @media only screen and (min-width: @break-large-mobile) {
         div.cms_left_panel {
             width: 250px;
             padding: 6px;
         }
+
         div.cms_right_panel {
             margin-left: 250px;
             padding: 6px;
         }
     }
-    @media only screen and (min-width: @break-tablet){
+
+    @media only screen and (min-width: @break-tablet) {
         div.cms_left_panel {
             width: 250px;
             padding: 8px;
         }
+
         div.cms_right_panel {
             margin-left: 250px;
             padding: 8px;
         }
     }
-    @media only screen and (min-width: @break-desktop){
+
+    @media only screen and (min-width: @break-desktop) {
         div.cms_left_panel {
             width: 350px;
             padding: 10px;
         }
+
         div.cms_right_panel {
             margin-left: 350px;
             max-width: 1200px;
             padding: 10px;
         }
     }
-    div.cms_edit_panel{
+
+    div.cms_edit_panel {
         background-color: @sub-panel-background;
         border-radius: 5px;
         padding: 10px;
@@ -385,6 +456,7 @@ div.cms_manager {
         margin: 10px 0px;
         border: @sub-panel-border;
     }
+
     div.cms_field {
         label {
             display: block;
@@ -392,6 +464,7 @@ div.cms_manager {
             margin-bottom: 2px;
             color: @field-label-color;
         }
+
         p {
             display: block;
             margin-left: 5px;
@@ -399,41 +472,48 @@ div.cms_manager {
             margin-bottom: 4px;
             padding: 2px;
         }
+
         input:valid {
-            box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , 0.1)
+            box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1)
         }
+
         input:invalid {
             box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
         }
+
         input[type=text] {
             display: block;
             margin-left: 5px;
             margin-top: 2px;
             margin-bottom: 6px;
-		    border: 0;
-		    outline: 0;
-		    padding: 10px 6px;
+            border: 0;
+            outline: 0;
+            padding: 10px 6px;
         }
+
         span.cms_checkbox {
             display: block;
             margin-left: 5px;
             margin-top: 2px;
             margin-bottom: 6px;
-		    border: 0;
-		    outline: 0;
-		    padding: 5px 0;
+            border: 0;
+            outline: 0;
+            padding: 5px 0;
             box-shadow: none;
 
             input {
                 display: inline;
             }
+
             input:valid {
                 box-shadow: none
             }
+
             input:invalid {
                 box-shadow: none
             }
         }
+
         td {
             input {
                 box-shadow: none;
@@ -441,34 +521,41 @@ div.cms_manager {
                 padding: 0;
                 margin: 0;
             }
+
             input:valid {
                 box-shadow: none;
                 border: 1px solid transparent;
             }
+
             input:invalid {
                 box-shadow: none;
                 border: 1px solid red;
             }
         }
+
         textarea {
             display: block;
             margin-left: 5px;
             margin-top: 2px;
             margin-bottom: 12px;
-		    border: 0;
-		    outline: 0;
-		    padding: 10px 6px;
+            border: 0;
+            outline: 0;
+            padding: 10px 6px;
         }
+
         textarea:valid {
-            box-shadow: 0 3px 5px 0 rgba(0, 0, 0 , .1)
+            box-shadow: 0 3px 5px 0 rgba(0, 0, 0, .1)
         }
+
         textarea:invalid {
             box-shadow: 0px 0px 3px 3px rgba(255,0,0,0.2)
         }
-        ::placeholder{
+
+        ::placeholder {
             font-size: smaller;
             color: lightgray;
         }
+
         button {
             color: @button-color;
             background: @button-background;
@@ -479,9 +566,11 @@ div.cms_manager {
             box-shadow: 3px 3px @button-shadow-color;
             margin: 6px 3px;
         }
+
         button:hover {
             background-color: darken(@button-background, 10%);
         }
+
         button:active {
             background-color: darken(@button-background, 10%);
             box-shadow: 2px 2px darken(@button-shadow-color, 10%);
@@ -495,15 +584,17 @@ div.cms_manager {
         margin-left: 5px;
         margin-top: 2px;
         margin-bottom: 12px;
-		border: 1px solid red;
-		outline: 0;
-		padding: 10px 6px;
+        border: 1px solid red;
+        outline: 0;
+        padding: 10px 6px;
     }
+
     div.cms_button_bar {
         background: lighten(@button-background, 30%);
         padding: 4px 10px;
         margin-top: 15px;
         border-radius: 5px;
+
         button {
             color: @button-color;
             background: @button-background;
@@ -514,18 +605,22 @@ div.cms_manager {
             box-shadow: 3px 3px @button-shadow-color;
             margin: 6px 3px;
         }
+
         button:hover {
             background-color: darken(@button-background, 10%);
         }
+
         button:active {
             background-color: darken(@button-background, 10%);
             box-shadow: 2px 2px darken(@button-shadow-color, 10%);
             transform: translateY(1px) translateX(1px);
         }
     }
+
     div.cms_selector {
         overflow: hidden;
         white-space: nowrap;
+
         a {
             text-decoration: none;
             display: block;
@@ -534,132 +629,167 @@ div.cms_manager {
             color: inherit;
             white-space: normal;
         }
+
         a:hover {
             color: @button-color;
             background-color: @button-background;
         }
     }
+
     ul.cms_tabs {
         white-space: nowrap;
         background: lighten(@button-background, 32%);
         border-radius: 5px;
         padding-left: 5px;
+
         li {
             display: inline-block;
             border: 1px solid @button-shadow-color;
             border-radius: 5px;
             padding: 10px 15px;
             overflow: visible;
-            a, a:visited, a:hover { 
-                text-decoration: none; 
+
+            a, a:visited, a:hover {
+                text-decoration: none;
                 color: @tab-text-color;
             }
         }
-        li.cms_is_active{
+
+        li.cms_is_active {
             border-bottom: 1px solid @tab-selected-color;
             background: @tab-selected-color;
             border-radius: 0;
         }
     }
-    div.cms_tabs_details{
+
+    div.cms_tabs_details {
         padding: 10px 0px 2px 0px;
     }
+
     .cms_field__name {
         width: 150px;
     }
+
     .cms_field__display_name {
         width: 250px;
     }
+
     .cms_field__url {
         width: 300px;
     }
+
     .cms_field__url_path {
         width: 200px;
     }
+
     .cms_field__website_version {
         width: 175px;
     }
+
     .cms_field__description {
         width: 300px;
         height: 50px;
     }
+
     .cms_field__html {
         width: 300px;
         height: 80px;
     }
+
     .cms_field__page {
         width: 250px;
     }
+
     .cms_field__asset_deployment {
         width: 250px;
     }
+
     .cms_field__module {
         width: 250px;
     }
+
     .cms_field__layout {
         width: 250px;
     }
+
     .cms_field__layout_name {
         width: 250px;
     }
+
     .cms_field__style {
         width: 250px;
     }
+
     .cms_field__permission {
         width: 200px;
     }
+
     .cms_field__asset_path {
         width: 200px;
     }
+
     .cms_field__priority {
         width: 80px;
     }
-    @media only screen and (min-width: @break-large-mobile){
+
+    @media only screen and (min-width: @break-large-mobile) {
         .cms_field__name {
             width: 150px;
         }
+
         .cms_field__display_name {
             width: 250px;
         }
+
         .cms_field__description {
             width: 450px;
             height: 100px;
         }
+
         .cms_field__html {
             width: 450px;
             height: 120px;
         }
     }
-    @media only screen and (min-width: @break-tablet){
+
+    @media only screen and (min-width: @break-tablet) {
         .cms_field__html {
             width: 600px;
             height: 160px;
         }
     }
+
     .cms_spacer_thin {
         height: 5px;
     }
+
     .cms_spacer_medium {
         height: 10px;
     }
+
     .cms_spacer_thick {
         height: 20px;
     }
-    @media only screen and (min-width: @break-large-mobile){
+
+    @media only screen and (min-width: @break-large-mobile) {
         .cms_spacer_thin {
             height: 10px;
         }
+
         .cms_spacer_medium {
             height: 15px;
         }
+
         .cms_spacer_thick {
             height: 30px;
         }
     }
-    @media only screen and (min-width: @break-tablet){
+
+    @media only screen and (min-width: @break-tablet) {
         .cms_field__url {
             width: 450px;
         }
+
         .cms_field__url_path {
             width: 450px;
         }

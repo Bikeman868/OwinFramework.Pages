@@ -653,6 +653,11 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return _databaseReader.GetHistorySummary(summaryId);
         }
 
+        T[] IDatabaseReader.GetElementUsage<T>(long elementVersionId, Func<WebsiteVersionRecordBase, T> map, Func<WebsiteVersionRecordBase, bool> predicate)
+        {
+            return _databaseReader.GetElementUsage(elementVersionId, map, predicate);
+        }
+
         #endregion
     }
 }

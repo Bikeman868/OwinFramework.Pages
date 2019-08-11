@@ -409,5 +409,20 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             if (_historyEvents == null) return null;
             return _historyEvents.Where(e => e.SummaryId == summaryId).ToArray();
         }
+
+        T[] IDatabaseReader.GetElementUsage<T>(long elementVersionId, Func<WebsiteVersionRecordBase, T> map, Func<WebsiteVersionRecordBase, bool> predicate)
+        {
+            if (predicate == null) predicate = wv => true;
+
+            return Enumerable.Empty<WebsiteVersionRecordBase>()
+                .Concat(_websiteVersionPages.Where(p => p.PageVersionId == elementVersionId).Cast<WebsiteVersionRecordBase>())
+                .Concat(_websiteVersionLayouts.Where(p => p.LayoutVersionId == elementVersionId).Cast<WebsiteVersionRecordBase>())
+                .Concat(_websiteVersionRegions.Where(p => p.RegionVersionId == elementVersionId).Cast<WebsiteVersionRecordBase>())
+                .Concat(_websiteVersionDataTypes.Where(p => p.DataTypeVersionId == elementVersionId).Cast<WebsiteVersionRecordBase>())
+                .Concat(_websiteVersionComponents.Where(p => p.ComponentVersionId == elementVersionId).Cast<WebsiteVersionRecordBase>())
+                .Where(predicate)
+                .Select(map)
+                .ToArray();
+        }
     }
 }

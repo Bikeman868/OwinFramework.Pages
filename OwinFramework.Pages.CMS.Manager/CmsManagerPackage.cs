@@ -80,6 +80,12 @@ namespace OwinFramework.Pages.CMS.Manager
                 .CreateComponent("listClient")
                 .Build();
 
+            fluentBuilder.BuildUpService(null, typeof(VersionsService))
+                .Name("versions")
+                .Route(_configuration.ServiceBasePath + "versions/", new []{ Method.Get, Method.Post, Method.Put, Method.Delete }, 0)
+                .CreateComponent("versionsClient")
+                .Build();
+
             fluentBuilder.BuildUpService(null, typeof(HistoryService))
                 .Name("history")
                 .Route(_configuration.ServiceBasePath + "history/", new []{ Method.Get }, 0)
@@ -152,6 +158,7 @@ namespace OwinFramework.Pages.CMS.Manager
                 .Name("editor")
                 .NeedsComponent("crudClient")
                 .NeedsComponent("listClient")
+                .NeedsComponent("versionsClient")
                 .NeedsComponent("historyClient")
                 .NeedsComponent("segmentTestingClient")
                 .AddTemplate(cmsManagerTemplatePath));

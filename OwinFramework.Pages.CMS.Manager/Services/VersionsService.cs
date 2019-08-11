@@ -86,7 +86,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         }
 
         [Endpoint(
-            UrlPath = "{type}/{id}/{versionId}",
+            UrlPath = "{type}/{id}",
             Methods = new[] { Method.Put },
             RequiredPermission = Permissions.ChangeElementVersion,
             ParameterSpecificPermission = "type")]
@@ -104,7 +104,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         [EndpointParameter(
             "versionId",
             typeof(PositiveNumber<long?>),
-            EndpointParameterType.PathSegment,
+            EndpointParameterType.QueryString,
             Description = "The ID of the version of this record to assign or null to remove the current assignment")]
         [EndpointParameter(
             "websiteVersionId",

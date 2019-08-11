@@ -5,9 +5,11 @@
     /// </summary>
     public class ComponentRecord: ElementRecordBase
     {
+        public const string RecordTypeName = "Component";
+
         public ComponentRecord()
         {
-            RecordType = "Component";
+            RecordType = RecordTypeName;
         }
     }
 }

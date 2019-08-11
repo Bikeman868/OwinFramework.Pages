@@ -10,9 +10,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class DataTypeVersionRecord: ElementVersionRecordBase
     {
+        public const string RecordTypeName = "DataTypeVersion";
+
         public DataTypeVersionRecord()
         {
-            RecordType = "DataTypeVersion";
+            RecordType = RecordTypeName;
         }
 
         /// <summary>

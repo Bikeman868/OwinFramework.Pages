@@ -70,213 +70,221 @@
                     </div>
                 </div>
 
-                <div v-if="currentPageVersion == undefined && pageVersionMode === 'view'">
-                    <div v-if="scenario == undefined">
-                        <h2>No version of this page in this version of the website</h2>
-                        <p>
-                            There is no version of this page in the selected website version.</p>
-                        <p>To select a version of this page to use in this version of the website
-                            tap on the 'Choose Version' button.</p>
-                    </div>
-                    <div v-else>
-                        <h2>The {{scenario.displayName|cms_lowercase}} scenario uses the standard page version</h2>
-                        <p>
-                            This page uses the page version defined for the website version when the '{{scenario.displayName}}'
-                            a/b testing scenario is in use.</p>
-                        <p>If you want to change the page version that should be used for the
-                            '{{scenario.displayName}}' a/b testing scenario, tap on the 'Choose Version' button.</p>
-                    </div>
-                    <div class="cms_button_bar">
-                        <button type="button" v-on:click="choosePageVersion">Choose Version</button>
-                        <button type="button" v-on:click="newPageVersion">New Version</button>
-                    </div>
-                </div>
-                <div v-else>
-                    <div v-if="pageVersionMode === 'new' || pageVersionMode === 'edit'">
-                        <h2 v-if="pageVersionMode === 'new'">Create New Page Version</h2>
-                        <h2 v-if="pageVersionMode === 'edit'">Edit Version {{editingPageVersion.version}} of the {{currentPage.displayName|cms_lowercase}} page</h2>
-                        <div class="cms_edit_panel">
-                            <cms-display-name-field-editor label="Name this version of the page"
-                                                           placeholder="Version 1"
-                                                           v-bind:display-name="editingPageVersion.displayName"
-                                                           @display-name-changed="editingPageVersion.displayName=$event">
-                            </cms-display-name-field-editor>
-                            <cms-description-field-editor v-bind:description="editingPageVersion.description"
-                                                          @description-changed="editingPageVersion.description=$event">
-                            </cms-description-field-editor>
-                        </div>
-                        <div class="cms_edit_panel">
-                            <h3>Page URLs</h3>
-
-                            <cms-url-path-field-editor label="Canonical URL path"
-                                                       v-bind:url-path="editingPageVersion.canonicalUrl"
-                                                       @url-path-changed="editingPageVersion.canonicalUrl=$event">
-                            </cms-url-path-field-editor>
-                            <cms-routes-field-editor label="Routes to this page"
-                                                     v-bind:routes="editingPageVersion.routes">
-                            </cms-routes-field-editor>
-                        </div>
-
-                        <div class="cms_edit_panel">
-                            <h3>Master page</h3>
-                            <cms-page-field-editor label="Master page"
-                                                   v-bind:page-id="editingPageVersion.masterPageId"
-                                                   v-bind:exclude="[editingPageVersion.elementId]"
-                                                   @page-id-changed="editingPageVersion.masterPageId=$event">
-                            </cms-page-field-editor>
-                            <cms-asset-deployment-field-editor label="Asset deployment"
-                                                               inherit-option="Inherit from master page"
-                                                               v-bind:asset-deployment="editingPageVersion.assetDeployment"
-                                                               v-bind:module-name="editingPageVersion.moduleName"
-                                                               @asset-deployment-changed="editingPageVersion.assetDeployment=$event"
-                                                               @module-name-changed="editingPageVersion.moduleName=$event">
-                            </cms-asset-deployment-field-editor>
-
-                        </div>
-
-                        <div class="cms_edit_panel">
-                            <h3>Page layout</h3>
-                            <cms-layout-field-editor label="Page layout"
-                                                     v-bind:layout-id="editingPageVersion.layoutId"
-                                                     v-bind:layout-name="editingPageVersion.layoutName"
-                                                     @layout-id-changed="editingPageVersion.layoutId=$event"
-                                                     @layout-name-changed="editingPageVersion.layoutName=$event"
-                                                     @inherit-changed="layoutInheritChanged($event)">
-                            </cms-layout-field-editor>
-                            <cms-layout-zones-field-editor label="Layout zone contents"
-                                                           v-bind:zone-nesting="editingZoneNesting"
-                                                           v-bind:layout-zones="editingPageVersion.layoutZones">
-                            </cms-layout-zones-field-editor>
-                        </div>
-
-                        <div class="cms_edit_panel">
-                            <h3>Page features</h3>
-                            <cms-title-field-editor label="Page title"
-                                                    placeholder="My new page"
-                                                    v-bind:title="editingPageVersion.title"
-                                                    @title-changed="editingPageVersion.title=$event">
-                            </cms-title-field-editor>
-                            <cms-style-field-editor label="Body style"
-                                                    v-bind:css-style="editingPageVersion.bodyStyle"
-                                                    @css-style-changed="editingPageVersion.bodyStyle=$event">
-                            </cms-style-field-editor>
-                            <cms-permisson-field-editor label="Permission required to view this page"
-                                                        v-bind:permission="editingPageVersion.permission"
-                                                        v-bind:asset-path="editingPageVersion.assetPath"
-                                                        @permission-changed="editingPageVersion.permission=$event"
-                                                        @asset-path-changed="editingPageVersion.assetPath=$event">
-                            </cms-permisson-field-editor>
-                        </div>
-                        <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
-                            <p v-for="error in versionErrors">{{error}}</p>
-                        </div>
-                        <div class="cms_button_bar">
-                            <button v-if="pageVersionMode === 'new'" type="button" v-on:click="createNewVersion">Create</button>
-                            <button v-if="pageVersionMode === 'edit'" type="button" v-on:click="saveVersionChanges">Save</button>
-                            <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
-                        </div>
-                    </div>
-                    <div v-if="pageVersionMode === 'view'">
-                        <h2>Version {{currentPageVersion.version}} of the {{currentPage.displayName}} page</h2>
-                        <div class="cms_field" v-if="currentPageVersion.displayName">
-                            <label>Version name</label>
-                            <p>{{currentPageVersion.displayName}}</p>
-                        </div>
-                        <div class="cms_field" v-if="currentPageVersion.description">
-                            <label>Description</label>
-                            <p>{{currentPageVersion.description}}</p>
-                        </div>
-
-                        <div class="cms_field" v-if="currentPageVersion.title">
-                            <label>Page title</label>
-                            <p>{{currentPageVersion.title}}</p>
-                        </div>
-                        <div class="cms_field" v-if="currentPageVersion.canonicalUrl">
-                            <label>Canonical URL</label>
-                            <p class="cms_field">{{currentPageVersion.canonicalUrl}}</p>
-                        </div>
-                        <div class="cms_field" v-if="currentPageVersion.routes && currentPageVersion.routes.length > 0">
-                            <label>Routes to this page</label>
-                            <p v-for="route in currentPageVersion.routes">{{route.path}}</p>
-                        </div>
-                        <div class="cms_field">
-                            <label>Assets</label>
-                            <p>{{currentPageVersion.assetDeployment}}<span v-if="currentPageVersion.assetDeployment==='PerModule'"> in the {{currentPageVersion.moduleName}} module</span></p>
-                        </div>
-                        <div class="cms_field" v-if="currentPageVersion.masterPageId">
-                            <label>Inherits from master page</label>
-                            <p>{{currentPageVersion.masterPageId | cms_lookupPageId}}</p>
-                        </div>
-                        <div class="cms_field">
-                            <label>Page layout</label>
-                            <p v-if="currentPageVersion.layoutName" class="cms_field">{{currentPageVersion.layoutName}}</p>
-                            <p v-else class="cms_field">{{currentPageVersion.layoutId | cms_lookupLayoutId}}</p>
-                            <p v-for="layoutZone in currentPageVersion.layoutZones" class="cms_field">
-                                The {{layoutZone.zone}} layout zone contains
-                                <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
-                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
-                                <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
-                                <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
-                                <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
-                                <span v-else>the default content defined by the layout</span>
+                <div v-if="websiteVersion && websiteVersion.recordId">
+                    <div v-if="currentPageVersion == undefined && pageVersionMode === 'view'">
+                        <div v-if="scenario == undefined">
+                            <h2>No version of this page in this version of the website</h2>
+                            <p>
+                                There is no version of this page in the selected website version.
+                            </p>
+                            <p>
+                                To select a version of this page to use in this version of the website
+                                tap on the 'Choose Version' button.
                             </p>
                         </div>
-                        <div class="cms_field" v-if="currentPageVersion.bodyStyle">
-                            <label>Body CSS style</label>
-                            <p>{{currentPageVersion.bodyStyle}}</p>
-                        </div>
-                        <div class="cms_field" v-if="currentPageVersion.permission">
-                            <label>Requires permission</label>
-                            <p>{{currentPageVersion.permission}}<span v-if="currentPageVersion.assetPath"> on {{currentPageVersion.assetPath}}</span></p>
-                        </div>
-                        <div class="cms_field" v-if="currentPageVersion.description">
-                            <label>Description</label>
-                            <p>{{currentPageVersion.description}}</p>
-                        </div>
-                        <div class="cms_field">
-                            <label>Created</label>
-                            <p>{{currentPageVersion.createdWhen|cms_formatDateTime}} by {{currentPageVersion.createdBy|cms_formatUserUrn}}</p>
+                        <div v-else>
+                            <h2>The {{scenario.displayName|cms_lowercase}} scenario uses the standard page version</h2>
+                            <p>
+                                This page uses the page version defined for the website version when the '{{scenario.displayName}}'
+                                a/b testing scenario is in use.
+                            </p>
+                            <p>
+                                If you want to change the page version that should be used for the
+                                '{{scenario.displayName}}' a/b testing scenario, tap on the 'Choose Version' button.
+                            </p>
                         </div>
                         <div class="cms_button_bar">
-                            <button type="button" v-on:click="choosePageVersion">Versions</button>
-                            <button type="button" v-on:click="editPageVersion">Edit</button>
-                            <button type="button" v-on:click="newPageVersion">New</button>
-                            <button type="button" v-on:click="deletePageVersion">Delete</button>
-                        </div>
-                        <div class="cms_spacer_medium">&nbsp;</div>
-                    </div>
-                    <div v-if="pageVersionMode === 'delete'">
-                        <h2>Confirm Page Version Deletion</h2>
-                        <p>
-                            This will delete version {{currentPageVersion.version}} of the {{currentPage.displayName}} page.
-                            This page will disapear from any versions of the website that use this version of
-                            the {{currentPage.displayName}} page.
-                        </p>
-                        <p>Are you sure?</p>
-                        <div class="cms_button_bar">
-                            <button type="button" v-on:click="confirmDeleteVersion">Delete</button>
-                            <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            <button type="button" v-on:click="choosePageVersion">Choose Version</button>
+                            <button type="button" v-on:click="newPageVersion">New Version</button>
                         </div>
                     </div>
-                    <div v-if="pageVersionMode === 'choose'">
-                        <h2>Choose Page Version</h2>
-                        <p>
-                            Which version of the {{currentPage.displayName}} page do you want to use for the
-                            {{websiteVersion.displayName}} version of the website
-                            <span v-if="scenario"> when the {{scenario.displayName|cms_lowercase}} a/b testing scenario is in use</span>?
-                        </p>
-                        <cms-choose-element-version v-bind:element-type="currentPage.recordType"
-                                                    v-bind:element-id="currentPage.recordId"
-                                                    v-bind:selected-version-id="currentPageVersion == undefined ? null : currentPageVersion.recordId"
-                                                    @select-version=""
-                                                    @copy-version=""
-                                                    @delete-version="">
-                        </cms-choose-element-version>
-                        <div class="cms_button_bar">
-                            <button type="button" v-on:click="setPageVersion">Save</button>
-                            <button type="button" v-on:click="clearPageVersion">None</button>
-                            <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                    <div v-else>
+                        <div v-if="pageVersionMode === 'new' || pageVersionMode === 'edit'">
+                            <h2 v-if="pageVersionMode === 'new'">Create New Page Version</h2>
+                            <h2 v-if="pageVersionMode === 'edit'">Edit Version {{editingPageVersion.version}} of the {{currentPage.displayName|cms_lowercase}} page</h2>
+                            <div class="cms_edit_panel">
+                                <cms-display-name-field-editor label="Name this version of the page"
+                                                               placeholder="Version 1"
+                                                               v-bind:display-name="editingPageVersion.displayName"
+                                                               @display-name-changed="editingPageVersion.displayName=$event">
+                                </cms-display-name-field-editor>
+                                <cms-description-field-editor v-bind:description="editingPageVersion.description"
+                                                              @description-changed="editingPageVersion.description=$event">
+                                </cms-description-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h3>Page URLs</h3>
+
+                                <cms-url-path-field-editor label="Canonical URL path"
+                                                           v-bind:url-path="editingPageVersion.canonicalUrl"
+                                                           @url-path-changed="editingPageVersion.canonicalUrl=$event">
+                                </cms-url-path-field-editor>
+                                <cms-routes-field-editor label="Routes to this page"
+                                                         v-bind:routes="editingPageVersion.routes">
+                                </cms-routes-field-editor>
+                            </div>
+
+                            <div class="cms_edit_panel">
+                                <h3>Master page</h3>
+                                <cms-page-field-editor label="Master page"
+                                                       v-bind:page-id="editingPageVersion.masterPageId"
+                                                       v-bind:exclude="[editingPageVersion.elementId]"
+                                                       @page-id-changed="editingPageVersion.masterPageId=$event">
+                                </cms-page-field-editor>
+                                <cms-asset-deployment-field-editor label="Asset deployment"
+                                                                   inherit-option="Inherit from master page"
+                                                                   v-bind:asset-deployment="editingPageVersion.assetDeployment"
+                                                                   v-bind:module-name="editingPageVersion.moduleName"
+                                                                   @asset-deployment-changed="editingPageVersion.assetDeployment=$event"
+                                                                   @module-name-changed="editingPageVersion.moduleName=$event">
+                                </cms-asset-deployment-field-editor>
+
+                            </div>
+
+                            <div class="cms_edit_panel">
+                                <h3>Page layout</h3>
+                                <cms-layout-field-editor label="Page layout"
+                                                         v-bind:layout-id="editingPageVersion.layoutId"
+                                                         v-bind:layout-name="editingPageVersion.layoutName"
+                                                         @layout-id-changed="editingPageVersion.layoutId=$event"
+                                                         @layout-name-changed="editingPageVersion.layoutName=$event"
+                                                         @inherit-changed="layoutInheritChanged($event)">
+                                </cms-layout-field-editor>
+                                <cms-layout-zones-field-editor label="Layout zone contents"
+                                                               v-bind:zone-nesting="editingZoneNesting"
+                                                               v-bind:layout-zones="editingPageVersion.layoutZones">
+                                </cms-layout-zones-field-editor>
+                            </div>
+
+                            <div class="cms_edit_panel">
+                                <h3>Page features</h3>
+                                <cms-title-field-editor label="Page title"
+                                                        placeholder="My new page"
+                                                        v-bind:title="editingPageVersion.title"
+                                                        @title-changed="editingPageVersion.title=$event">
+                                </cms-title-field-editor>
+                                <cms-style-field-editor label="Body style"
+                                                        v-bind:css-style="editingPageVersion.bodyStyle"
+                                                        @css-style-changed="editingPageVersion.bodyStyle=$event">
+                                </cms-style-field-editor>
+                                <cms-permisson-field-editor label="Permission required to view this page"
+                                                            v-bind:permission="editingPageVersion.permission"
+                                                            v-bind:asset-path="editingPageVersion.assetPath"
+                                                            @permission-changed="editingPageVersion.permission=$event"
+                                                            @asset-path-changed="editingPageVersion.assetPath=$event">
+                                </cms-permisson-field-editor>
+                            </div>
+                            <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
+                                <p v-for="error in versionErrors">{{error}}</p>
+                            </div>
+                            <div class="cms_button_bar">
+                                <button v-if="pageVersionMode === 'new'" type="button" v-on:click="createNewVersion">Create</button>
+                                <button v-if="pageVersionMode === 'edit'" type="button" v-on:click="saveVersionChanges">Save</button>
+                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            </div>
+                        </div>
+                        <div v-if="pageVersionMode === 'view'">
+                            <h2>Version {{currentPageVersion.version}} of the {{currentPage.displayName}} page</h2>
+                            <div class="cms_field" v-if="currentPageVersion.displayName">
+                                <label>Version name</label>
+                                <p>{{currentPageVersion.displayName}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.description">
+                                <label>Description</label>
+                                <p>{{currentPageVersion.description}}</p>
+                            </div>
+
+                            <div class="cms_field" v-if="currentPageVersion.title">
+                                <label>Page title</label>
+                                <p>{{currentPageVersion.title}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.canonicalUrl">
+                                <label>Canonical URL</label>
+                                <p class="cms_field">{{currentPageVersion.canonicalUrl}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.routes && currentPageVersion.routes.length > 0">
+                                <label>Routes to this page</label>
+                                <p v-for="route in currentPageVersion.routes">{{route.path}}</p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Assets</label>
+                                <p>{{currentPageVersion.assetDeployment}}<span v-if="currentPageVersion.assetDeployment==='PerModule'"> in the {{currentPageVersion.moduleName}} module</span></p>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.masterPageId">
+                                <label>Inherits from master page</label>
+                                <p>{{currentPageVersion.masterPageId | cms_lookupPageId}}</p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Page layout</label>
+                                <p v-if="currentPageVersion.layoutName" class="cms_field">{{currentPageVersion.layoutName}}</p>
+                                <p v-else class="cms_field">{{currentPageVersion.layoutId | cms_lookupLayoutId}}</p>
+                                <p v-for="layoutZone in currentPageVersion.layoutZones" class="cms_field">
+                                    The {{layoutZone.zone}} layout zone contains
+                                    <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
+                                    <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
+                                    <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
+                                    <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
+                                    <span v-else>the default content defined by the layout</span>
+                                </p>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.bodyStyle">
+                                <label>Body CSS style</label>
+                                <p>{{currentPageVersion.bodyStyle}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.permission">
+                                <label>Requires permission</label>
+                                <p>{{currentPageVersion.permission}}<span v-if="currentPageVersion.assetPath"> on {{currentPageVersion.assetPath}}</span></p>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.description">
+                                <label>Description</label>
+                                <p>{{currentPageVersion.description}}</p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Created</label>
+                                <p>{{currentPageVersion.createdWhen|cms_formatDateTime}} by {{currentPageVersion.createdBy|cms_formatUserUrn}}</p>
+                            </div>
+                            <div class="cms_button_bar">
+                                <button type="button" v-on:click="choosePageVersion">Versions</button>
+                                <button type="button" v-on:click="editPageVersion">Edit</button>
+                                <button type="button" v-on:click="newPageVersion">New</button>
+                                <button type="button" v-on:click="deletePageVersion">Delete</button>
+                            </div>
+                            <div class="cms_spacer_medium">&nbsp;</div>
+                        </div>
+                        <div v-if="pageVersionMode === 'delete'">
+                            <h2>Confirm Page Version Deletion</h2>
+                            <p>
+                                This will delete version {{currentPageVersion.version}} of the {{currentPage.displayName}} page.
+                                This page will disapear from any versions of the website that use this version of
+                                the {{currentPage.displayName}} page.
+                            </p>
+                            <p>Are you sure?</p>
+                            <div class="cms_button_bar">
+                                <button type="button" v-on:click="confirmDeleteVersion">Delete</button>
+                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            </div>
+                        </div>
+                        <div v-if="pageVersionMode === 'choose'">
+                            <h2>Choose Page Version</h2>
+                            <p>
+                                Which version of the {{currentPage.displayName}} page do you want to use for the
+                                {{websiteVersion.displayName}} version of the website
+                                <span v-if="scenario"> when the {{scenario.displayName|cms_lowercase}} a/b testing scenario is in use</span>?
+                            </p>
+                            <cms-choose-element-version v-bind:element-type="currentPage.recordType"
+                                                        v-bind:element-id="currentPage.recordId"
+                                                        v-bind:selected-version-id="currentPageVersion == undefined ? null : currentPageVersion.recordId"
+                                                        @select-version="selectPageVersion"
+                                                        @copy-version="copySelectedPageVersion"
+                                                        @delete-version="deleteSelectedPageVersion">
+                            </cms-choose-element-version>
+                            <div class="cms_button_bar">
+                                <button type="button" v-on:click="updatePageVersion">Update</button>
+                                <button type="button" v-on:click="clearPageVersion">None</button>
+                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            </div>
                         </div>
                     </div>
                 </div>

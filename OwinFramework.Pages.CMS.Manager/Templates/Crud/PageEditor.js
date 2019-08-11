@@ -187,6 +187,7 @@
                 vm.versionErrors = [];
                 if (vm.currentPageVersion == undefined) {
                     if (vm.currentPage == undefined) return;
+                    // TODO: If a scenario is selected copy the base page version for the page with no scenario
                     vm.editingPageVersion = exported.pageVersionStore.blankRecord();
                     vm.editingPageVersion.parentRecordId = vm.currentPage.recordId;
                 } else {
@@ -249,20 +250,48 @@
                         vm.pageVersionMode = "view";
                     });
             },
-            setPageVersion: function () {
-                this.pageVersionMode = "view";
+            selectPageVersion: function (pageVersionId) {
+                var vm = this;
+                vm.selectedPageVersionId = pageVersionId;
+            },
+            copySelectedPageVersion: function (pageVersionId) {
+                var vm = this;
+                // TODO: Create new page version based on the selected pageVersionId
+            },
+            deleteSelectedPageVersion: function (pageVersionId) {
+                var vm = this;
+                // TODO: Enter the deleting mode fot the selected pageVersionId
+            },
+            updatePageVersion: function () {
+                var vm = this;
+                exported.versionsService.assignElementVersion(
+                    {
+                        type: vm.currentPage.recordType,
+                        id: vm.currentPage.recordId,
+                        versionId: vm.selectedPageVersionId,
+                        websiteVersionId: vm.websiteVersion.recordId,
+                        scenario: vm.scenario ? vm.scenario.name : null
+                    },
+                    function () {
+                        vm.pageVersionMode = "view";
+                        vm.showPageVersion();
+                    });
             },
             clearPageVersion: function () {
-                this.pageVersionMode = "view";
+                var vm = this;
+                vm.selectedPageVersionId = null;
+                vm.currentPageVersion = null;
             },
             cancelVersionChanges: function () {
-                this.pageVersionMode = "view";
+                var vm = this;
+                vm.pageVersionMode = "view";
             },
             layoutInheritChanged: function (inherit) {
+                var vm = this;
                 if (inherit) {
-                    this.editingPageVersion.layoutName = null;
-                    this.editingPageVersion.layoutId = null;
-                    this.editingPageVersion.layoutZones.splice(0, this.editingPageVersion.layoutZones.length);
+                    vm.editingPageVersion.layoutName = null;
+                    vm.editingPageVersion.layoutId = null;
+                    vm.editingPageVersion.layoutZones.splice(0, vm.editingPageVersion.layoutZones.length);
                 }
             },
             validateVersion: function () {

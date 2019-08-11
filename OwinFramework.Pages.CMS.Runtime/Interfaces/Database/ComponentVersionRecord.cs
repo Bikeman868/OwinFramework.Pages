@@ -5,9 +5,11 @@
     /// </summary>
     public class ComponentVersionRecord: ElementVersionRecordBase
     {
+        public const string RecordTypeName = "ComponentVersion";
+
         public ComponentVersionRecord()
         {
-            RecordType = "ComponentVersion";
+            RecordType = RecordTypeName;
         }
     }
 }

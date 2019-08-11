@@ -10,9 +10,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class DataScopeRecord: RecordBase
     {
+        public const string RecordTypeName = "DataScope";
+
         public DataScopeRecord()
         {
-            RecordType = "DataScope";
+            RecordType = RecordTypeName;
         }
 
         /// <summary>

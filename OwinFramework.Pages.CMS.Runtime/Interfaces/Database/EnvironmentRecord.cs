@@ -9,9 +9,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class EnvironmentRecord: RecordBase
     {
+        public const string RecordTypeName = "Environment";
+
         public EnvironmentRecord()
         {
-            RecordType = "Environment";
+            RecordType = RecordTypeName;
         }
 
         /// <summary>

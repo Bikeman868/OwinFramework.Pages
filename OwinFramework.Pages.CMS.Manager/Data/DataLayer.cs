@@ -122,7 +122,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var result = _databaseUpdater.UpdateEnvironment(identity, environmentId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate(new EnvironmentRecord().RecordType, environmentId, changes);
+            AddChangesToLiveUpdate(EnvironmentRecord.RecordTypeName, environmentId, changes);
 
             return result;
         }
@@ -137,7 +137,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _nextMessage.DeletedRecords.Add(
                     new RecordReference
                     {
-                        RecordType = new EnvironmentRecord().RecordType,
+                        RecordType = EnvironmentRecord.RecordTypeName,
                         ElementId = environmentId
                     });
             }
@@ -168,7 +168,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var result = _databaseUpdater.UpdateWebsiteVersion(identity, websiteVersionId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate(new WebsiteVersionRecord().RecordType, websiteVersionId, changes);
+            AddChangesToLiveUpdate(WebsiteVersionRecord.RecordTypeName, websiteVersionId, changes);
 
             return result;
         }
@@ -183,7 +183,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _nextMessage.DeletedRecords.Add(
                     new RecordReference
                     {
-                        RecordType = new WebsiteVersionRecord().RecordType,
+                        RecordType = WebsiteVersionRecord.RecordTypeName,
                         ElementId = websiteVersionId
                     });
             }
@@ -214,7 +214,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var result = _databaseUpdater.UpdatePage(identity, pageId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate(new PageRecord().RecordType, pageId, changes);
+            AddChangesToLiveUpdate(PageRecord.RecordTypeName, pageId, changes);
 
             return result;
         }
@@ -229,7 +229,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _nextMessage.DeletedRecords.Add(
                     new RecordReference
                     {
-                        RecordType = new PageRecord().RecordType,
+                        RecordType = PageRecord.RecordTypeName,
                         ElementId = pageId
                     });
             }
@@ -260,7 +260,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var result = _databaseUpdater.UpdatePageVersion(identity, pageVersionId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate(new PageVersionRecord().RecordType, pageVersionId, changes);
+            AddChangesToLiveUpdate(PageVersionRecord.RecordTypeName, pageVersionId, changes);
 
             return result;
         }
@@ -275,7 +275,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _nextMessage.ChildListChanges.Add(
                     new RecordChildrenReference
                     {
-                        RecordType = new PageVersionRecord().RecordType,
+                        RecordType = PageVersionRecord.RecordTypeName,
                         ElementId = pageVersionId,
                         ChildRecordType = "Route"
                     });
@@ -295,7 +295,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _nextMessage.ChildListChanges.Add(
                     new RecordChildrenReference
                     {
-                        RecordType = new PageVersionRecord().RecordType,
+                        RecordType = PageVersionRecord.RecordTypeName,
                         ElementId = pageVersionId,
                         ChildRecordType = "LayoutZone"
                     });
@@ -314,7 +314,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _nextMessage.ChildListChanges.Add(
                     new RecordChildrenReference
                     {
-                        RecordType = new PageVersionRecord().RecordType,
+                        RecordType = PageVersionRecord.RecordTypeName,
                         ElementId = pageVersionId,
                         ChildRecordType = "Component"
                     });
@@ -334,7 +334,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _nextMessage.DeletedRecords.Add(
                     new RecordReference
                     {
-                        RecordType = new PageVersionRecord().RecordType,
+                        RecordType = PageVersionRecord.RecordTypeName,
                         ElementId = pageVersionId
                     });
             }
@@ -353,7 +353,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     new WebsiteVersionChange
                     {
                         WebsiteVersionId = websiteVersionId,
-                        ElementType = new PageRecord().RecordType,
+                        ElementType = PageRecord.RecordTypeName,
                         ElementId = pageId,
                         OldElementVersionId = 0, // TODO: find correct value
                         NewElementVersionId = 0 // TODO: find correct value
@@ -374,7 +374,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     new WebsiteVersionChange
                     {
                         WebsiteVersionId = websiteVersionId,
-                        ElementType = new PageRecord().RecordType,
+                        ElementType = PageRecord.RecordTypeName,
                         ElementId = 0, // TODO: find correct value
                         OldElementVersionId = 0, // TODO: find correct value
                         NewElementVersionId = pageVersionId
@@ -394,7 +394,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     new WebsiteVersionChange
                     {
                         WebsiteVersionId = websiteVersionId,
-                        ElementType = new PageRecord().RecordType,
+                        ElementType = PageRecord.RecordTypeName,
                         ElementId = pageId,
                         OldElementVersionId = 0, // TODO: find correct value
                         NewElementVersionId = null

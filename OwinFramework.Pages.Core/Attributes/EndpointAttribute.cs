@@ -80,6 +80,14 @@ namespace OwinFramework.Pages.Core.Attributes
         public bool EndpointSpecificPermission { get; set; }
 
         /// <summary>
+        /// Setting this property to the name of a parameter to the endpoint will cause the value
+        /// of that parameter to be passed to the Authorization middleware as the resource name so
+        /// that you can grant access to groups of users for specific values in thie parameter only
+        /// </summary>
+        /// <remarks>Note that this is not implemented yet</remarks>
+        public string ParameterSpecificPermission { get; set; } // TODO: Not implemented yet
+
+        /// <summary>
         /// Allows you to specify that this endpoint should be called for a specific 
         /// A/B testing scenario. Traditionally A/B testing was just a UI thing but in this 
         /// framework you can also A/B test service endpoints.

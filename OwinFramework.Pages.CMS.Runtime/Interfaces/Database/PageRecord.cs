@@ -5,9 +5,11 @@
     /// </summary>
     public class PageRecord: ElementRecordBase
     {
+        public const string RecordTypeName = "Page";
+
         public PageRecord()
         {
-            RecordType = "Page";
+            RecordType = RecordTypeName;
         }
     }
 }

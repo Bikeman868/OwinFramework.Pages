@@ -9,9 +9,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class WebsiteVersionRecord: RecordBase
     {
+        public const string RecordTypeName = "WebsiteVersion";
+
         public WebsiteVersionRecord()
         {
-            RecordType = "WebsiteVersion";
+            RecordType = RecordTypeName;
         }
     }
 }

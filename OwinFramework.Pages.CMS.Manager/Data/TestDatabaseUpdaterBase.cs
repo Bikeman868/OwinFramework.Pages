@@ -749,7 +749,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 new HistoryChangeDetails
                 {
                     ChangeType = "ChildRemoved",
-                    ChildType = new PageRecord().RecordType,
+                    ChildType = PageRecord.RecordTypeName,
                     ChildId = pageId,
                     Scenario = scenario
                 });

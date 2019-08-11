@@ -62,6 +62,11 @@
         return "website version #" + id;
     });
 
+    Vue.filter("cms_lookupScenarioName", function (value) {
+        if (value == undefined) { return "unsegmented users"; }
+        return "'" + value + "' scenario";
+    });
+
     Vue.filter("cms_lookupElementVersionId", function (value) {
         var id = parseInt(value);
         if (isNaN(id)) { return ""; }

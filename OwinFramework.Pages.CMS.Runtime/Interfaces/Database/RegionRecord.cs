@@ -5,9 +5,11 @@
     /// </summary>
     public class RegionRecord: ElementRecordBase
     {
+        public const string RecordTypeName = "Region";
+
         public RegionRecord()
         {
-            RecordType = "Region";
+            RecordType = RecordTypeName;
         }
     }
 }

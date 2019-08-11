@@ -11,9 +11,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class ElementPropertyRecord: RecordBase
     {
+        public const string RecordTypeName = "ElementProperty";
+
         public ElementPropertyRecord()
         {
-            RecordType = "ElementProperty";
+            RecordType = RecordTypeName;
         }
 
         /// <summary>

@@ -11,9 +11,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
     /// </summary>
     public class RegionVersionRecord: ElementVersionRecordBase
     {
+        public const string RecordTypeName = "RegionVersion";
+
         public RegionVersionRecord()
         {
-            RecordType = "RegionVersion";
+            RecordType = RecordTypeName;
         }
 
         /// <summary>

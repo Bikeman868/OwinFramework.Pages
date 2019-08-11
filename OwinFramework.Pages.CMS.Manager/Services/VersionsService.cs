@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 using OwinFramework.Pages.CMS.Manager.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
@@ -82,6 +83,57 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             }
 
             request.Success(response);
+        }
+
+        [Endpoint(
+            UrlPath = "{type}/{id}/{versionId}",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.ChangeElementVersion,
+            ParameterSpecificPermission = "type")]
+        [Description("Changes which version of an element should be used in the specified version of the website and optionally in an A/B test scenario")]
+        [EndpointParameter(
+            "type",
+            typeof(RequiredString),
+            EndpointParameterType.PathSegment,
+            Description = "The type of record to assign a version for. For example 'Page'")]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the record to assign a version for")]
+        [EndpointParameter(
+            "versionId",
+            typeof(PositiveNumber<long?>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the version of this record to assign or null to remove the current assignment")]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.QueryString,
+            Description = "The ID of the version of the website to make this assignment for. This will immediately change how this version of the website is rendered")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            EndpointParameterType.QueryString,
+            Description = "Optional A/B test scenario name. When provided makes this version assignment only for this specific test scenario. Unsegmented users and users seeing other scenarios will not be affacted")]
+        private void AssignElementVersion(IEndpointRequest request)
+        {
+            var type = request.Parameter<string>("type");
+            var id = request.Parameter<long>("id");
+            var versionId = request.Parameter<long?>("versionId");
+            var websiteVersionId = request.Parameter<long>("websiteVersionId");
+            var scenario = request.Parameter<string>("scenario");
+
+            if (versionId.HasValue)
+            {
+                if (string.Equals(type, PageRecord.RecordTypeName, StringComparison.OrdinalIgnoreCase))
+                    _dataLayer.AddPageToWebsiteVersion(request.Identity, versionId.Value, websiteVersionId, scenario);
+            }
+            else
+            {
+                if (string.Equals(type, PageRecord.RecordTypeName, StringComparison.OrdinalIgnoreCase))
+                    _dataLayer.RemovePageFromWebsite(request.Identity, id, websiteVersionId, scenario);
+            }
         }
 
         private class ElementVersionsResponse

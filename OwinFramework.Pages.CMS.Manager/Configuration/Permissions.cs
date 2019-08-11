@@ -24,12 +24,8 @@
         // so that you can grant access to specific environments where the
         // website runs
 
+        public const string ChangeElementVersion = "cms:version/element";
         public const string ChangeEnvironmentVersion = "cms:version/environment";
-        public const string ChangeComponentVersion = "cms:version/component";
-        public const string ChangeDataTypeVersion = "cms:version/datatype";
-        public const string ChangeLayoutVersion = "cms:version/layout";
-        public const string ChangePageVersion = "cms:version/page";
-        public const string ChangeRegionVersion = "cms:version/region";
 
         // These permissions relate to A/B testing
 

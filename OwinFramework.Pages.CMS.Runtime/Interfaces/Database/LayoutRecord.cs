@@ -5,9 +5,11 @@
     /// </summary>
     public class LayoutRecord: ElementRecordBase
     {
+        public const string RecordTypeName = "Layout";
+
         public LayoutRecord()
         {
-            RecordType = "Layout";
+            RecordType = RecordTypeName;
         }
     }
 }

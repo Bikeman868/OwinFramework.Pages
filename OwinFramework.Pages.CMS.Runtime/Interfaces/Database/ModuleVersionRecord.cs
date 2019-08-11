@@ -5,9 +5,11 @@
     /// </summary>
     public class ModuleVersionRecord: ElementVersionRecordBase
     {
+        public const string RecordTypeName = "ModuleVersion";
+
         public ModuleVersionRecord()
         {
-            RecordType = "ModuleVersion";
+            RecordType = RecordTypeName;
         }
 
     }

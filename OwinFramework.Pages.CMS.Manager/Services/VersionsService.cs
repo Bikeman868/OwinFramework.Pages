@@ -39,7 +39,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         }
 
         [Endpoint(
-            UrlPath = "{type}/{id}", 
+            UrlPath = "{type}/{id}",
             Methods = new[] {Method.Get}, 
             RequiredPermission = Permissions.View)]
         [Description("Retrieves a list of all versions of an element (for example 'Page') including which versions of the website use each versions of the record in different segmentation scenarios")]
@@ -53,7 +53,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             typeof(PositiveNumber<long>), 
             EndpointParameterType.PathSegment, 
             Description = "The ID of the record to return versions of")]
-        private void ElementVersions(IEndpointRequest request)
+        private void GetElementVersions(IEndpointRequest request)
         {
             var type = request.Parameter<string>("type");
             var id = request.Parameter<long>("id");
@@ -86,8 +86,13 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
         private class ElementVersionsResponse
         {
+            [JsonProperty("type")]
             public string RecordType { get; set; }
+
+            [JsonProperty("id")]
             public long RecordId { get; set; }
+
+            [JsonProperty("versions")]
             public ElementVersionResponse[] Versions { get; set; }
         }
 

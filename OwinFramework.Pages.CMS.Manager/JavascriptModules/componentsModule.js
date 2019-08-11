@@ -41,6 +41,77 @@
         mounted: function() { this.isActive = this.selected; }
     });
 
+    Vue.component("cms-choose-element-version", {
+        props: {
+            elementType: {
+                required: true,
+                type: String
+            },
+            elementId: {
+                required: true,
+                type: Number
+            }
+        },
+        watch: {
+            elementType: "retrieveVersions",
+            elementId: "retrieveVersions"
+        },
+        template:
+            "<table class=\"cms_selector\">" +
+            "  <tr><th>Ver</th><th>Name</th><th>Usage</th><th>Actions</th></tr>" +
+            "  <tr class=\"cms_selection\" v-for=\"version in versions\" @click=\"selectVersion($event, version.versionId)\">" +
+            "    <td>{{version.version}}</td>" +
+            "    <td>{{version.name}}</td>" +
+            "    <td><ul><li v-for=\"usage in version.usages\">{{usage.websiteVersionId|cms_lookupWebsiteVersionId}}</li></ul></td>" +
+            "    <td><button @click=\"copyVersion(version.versionId)\">Copy</button><button @click=\"deleteVersion(version.versionId)\">Delete</button></td>" +
+            "  </tr>" +
+            "</table>",
+        data: function () {
+            return {
+                versions: []
+            };
+        },
+        created: function () {
+            this.retrieveVersions();
+        },
+        methods: {
+            retrieveVersions: function () {
+                var vm = this;
+                if (vm.elementType == undefined || vm.elementId == undefined) {
+                    vm.versions = [];
+                    return;
+                }
+                exported.versionsService.getElementVersions(
+                    { type: vm.elementType, id: vm.elementId },
+                    function (response) { vm.versions = response.versions; });
+            },
+            selectVersion: function (e, versionId) {
+                var vm = this;
+                var td = e.target;
+                while (td.nodeName !== "TD") td = td.parentElement;
+                var tr = td.parentElement;
+                var table = tr.parentElement;
+                for (i = 0; i < table.children.length; i++) {
+                    var c = table.children[i];
+                    c.className = c.className.replace(/ *cms_selected/g, "");
+                    if (c === tr) {
+                        c.className += " cms_selected";
+                    }
+                };
+                vm.$emit("select-version", versionId);
+            },
+            copyVersion: function (versionId) {
+                var vm = this;
+                vm.$emit("copy-version", versionId);
+            },
+            deleteVersion: function (versionId) {
+                var vm = this;
+                vm.$emit("delete-version", versionId);
+            }
+        },
+        mounted: function () { this.isActive = this.selected; }
+    });
+
     Vue.component("cms-website-version-field-edior",
     {
         props: {

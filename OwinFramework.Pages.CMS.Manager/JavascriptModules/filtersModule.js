@@ -56,6 +56,12 @@
         return name;
     });
 
+    Vue.filter("cms_lookupWebsiteVersionId", function (value) {
+        var id = parseInt(value);
+        if (isNaN(id)) { return ""; }
+        return "website version #" + id;
+    });
+
     Vue.filter("cms_lookupElementVersionId", function (value) {
         var id = parseInt(value);
         if (isNaN(id)) { return ""; }

@@ -146,7 +146,7 @@ div.cms_manager {
             font: inherit;
             font-family: @body-font-family;
             font-size: @base-font-vw * 1.8;
-            line-height: @base-font-vw *2;
+            line-height: @base-font-vw * 2;
         }
 
         ::placeholder {
@@ -159,7 +159,7 @@ div.cms_manager {
         }
     }
 
-    div.cms_selector {
+    .cms_selector {
         font: inherit;
         font-family: @body-font-family;
         font-size: @base-font-vw * 1.4;
@@ -170,6 +170,20 @@ div.cms_manager {
             font-size: @base-font-vw * 1.8;
             letter-spacing: 2px;
         }
+
+        button {
+            font-size: @base-font-vw * 1.1;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .cms_selection {
+            cursor: pointer
+        }
+
+        .cms_selected {
+            background-color: orange;
+        }
     }
 
     .cms_validation_error_list {
@@ -178,7 +192,7 @@ div.cms_manager {
         font-size: @base-font-vw * 1.6;
     }
 
-    div.cms_button_bar {
+    .cms_button_bar {
         button {
             font-size: @base-font-vw * 1.8;
             font-weight: 500;
@@ -252,6 +266,7 @@ div.cms_manager {
 
         button {
             font-size: large;
+            letter-spacing: 1px;
         }
 
         div.cms_field {
@@ -288,16 +303,20 @@ div.cms_manager {
 
             button {
                 font-size: large;
-                font-weight: 500;
+                letter-spacing: 1px;
             }
         }
 
-        div.cms_selector {
+        .cms_selector {
             font-size: @base-font-px * 1.4;
 
             a {
                 font-size: @base-font-px * 1.4;
                 letter-spacing: 1px;
+            }
+
+            button {
+                font-size: medium;
             }
         }
 
@@ -305,7 +324,7 @@ div.cms_manager {
             font-size: larger;
         }
 
-        div.cms_button_bar {
+        .cms_button_bar {
             button {
                 font-size: larger;
                 letter-spacing: 1px;
@@ -328,6 +347,10 @@ div.cms_manager {
         color: @anchor-hover-color
     }
 
+    tr {
+        background-color: @table-background;
+    }
+
     th {
         border: 1px solid darken(@table-heading-background, 5%);
         background-color: @table-heading-background;
@@ -335,7 +358,7 @@ div.cms_manager {
 
     td {
         border: 1px solid darken(@table-heading-background, 5%);
-        background-color: @table-background;
+        background-color: inherit;
     }
 
     select {
@@ -589,7 +612,7 @@ div.cms_manager {
         padding: 10px 6px;
     }
 
-    div.cms_button_bar {
+    .cms_button_bar {
         background: lighten(@button-background, 30%);
         padding: 4px 10px;
         margin-top: 15px;
@@ -617,7 +640,7 @@ div.cms_manager {
         }
     }
 
-    div.cms_selector {
+    .cms_selector {
         overflow: hidden;
         white-space: nowrap;
 
@@ -633,6 +656,27 @@ div.cms_manager {
         a:hover {
             color: @button-color;
             background-color: @button-background;
+        }
+
+        button {
+            color: @button-color;
+            background: @button-background;
+            padding: 4px 6px;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            box-shadow: 3px 3px @button-shadow-color;
+            margin: 6px 3px;
+        }
+
+        button:hover {
+            background-color: darken(@button-background, 10%);
+        }
+
+        button:active {
+            background-color: darken(@button-background, 10%);
+            box-shadow: 2px 2px darken(@button-shadow-color, 10%);
+            transform: translateY(1px) translateX(1px);
         }
     }
 
@@ -662,7 +706,7 @@ div.cms_manager {
         }
     }
 
-    div.cms_tabs_details {
+    .cms_tabs_details {
         padding: 10px 0px 2px 0px;
     }
 

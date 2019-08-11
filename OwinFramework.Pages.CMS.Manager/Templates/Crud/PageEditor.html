@@ -266,6 +266,12 @@
                             {{websiteVersion.displayName}} version of the website
                             <span v-if="scenario"> when the {{scenario.displayName|cms_lowercase}} a/b testing scenario is in use</span>?
                         </p>
+                        <cms-choose-element-version v-bind:element-type="currentPage.recordType"
+                                                    v-bind:element-id="currentPage.recordId"
+                                                    @select-version="window.alert('Select')"
+                                                    @copy-version="window.alert('Copy')"
+                                                    @delete-version="window.alert('Delete')">
+                        </cms-choose-element-version>
                         <div class="cms_button_bar">
                             <button type="button" v-on:click="setPageVersion">Save</button>
                             <button type="button" v-on:click="clearPageVersion">Clear</button>

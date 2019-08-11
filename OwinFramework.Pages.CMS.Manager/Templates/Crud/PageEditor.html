@@ -268,13 +268,14 @@
                         </p>
                         <cms-choose-element-version v-bind:element-type="currentPage.recordType"
                                                     v-bind:element-id="currentPage.recordId"
-                                                    @select-version="window.alert('Select')"
-                                                    @copy-version="window.alert('Copy')"
-                                                    @delete-version="window.alert('Delete')">
+                                                    v-bind:selected-version-id="currentPageVersion == undefined ? null : currentPageVersion.recordId"
+                                                    @select-version=""
+                                                    @copy-version=""
+                                                    @delete-version="">
                         </cms-choose-element-version>
                         <div class="cms_button_bar">
                             <button type="button" v-on:click="setPageVersion">Save</button>
-                            <button type="button" v-on:click="clearPageVersion">Clear</button>
+                            <button type="button" v-on:click="clearPageVersion">None</button>
                             <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
                         </div>
                     </div>

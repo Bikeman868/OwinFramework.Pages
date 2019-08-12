@@ -59,12 +59,24 @@
     Vue.filter("cms_lookupWebsiteVersionId", function (value) {
         var id = parseInt(value);
         if (isNaN(id)) { return ""; }
-        return "website version #" + id;
+        var websiteVersionName = "website version #" + id;
+        exported.websiteVersionStore.retrieveRecord(
+            id,
+            function (websiteVersion) {
+                websiteVersionName = websiteVersion.displayName;
+            });
+        return websiteVersionName;
     });
 
     Vue.filter("cms_lookupScenarioName", function (value) {
         if (value == undefined) { return "unsegmented users"; }
-        return "'" + value + "' scenario";
+        var scenarioName = "'" + value + "' scenario";
+        exported.segmentScenarioStore.retrieveRecord(
+            value,
+            function (scenario) {
+                scenarioName = scenario.displayName;
+            });
+        return scenarioName;
     });
 
     Vue.filter("cms_lookupElementVersionId", function (value) {

@@ -182,11 +182,24 @@
                 var vm = this;
                 vm.pageVersionMode = "choose";
             },
+            copySelectedPageVersion: function (pageVersionId) {
+                var vm = this;
+                vm.versionErrors = [];
+                exported.pageVersionStore.retrieveRecord(
+                    pageVersionId,
+                    function (pageVersion) {
+                        vm.editingPageVersion = Object.assign(exported.pageVersionStore.blankRecord(), pageVersion);
+                        vm.pageVersionMode = "new";
+                    });
+            },
             newPageVersion: function () {
                 var vm = this;
                 vm.versionErrors = [];
                 if (vm.currentPageVersion == undefined) {
-                    if (vm.currentPage == undefined) return;
+                    if (vm.currentPage == undefined) {
+                        vm.versionErrors = ["You must select a page to create a new page version"];
+                        return;
+                    }
                     if (vm.scenario == undefined) {
                         vm.editingPageVersion = exported.pageVersionStore.blankRecord();
                         vm.editingPageVersion.parentRecordId = vm.currentPage.recordId;
@@ -262,10 +275,6 @@
             selectPageVersion: function (pageVersionId) {
                 var vm = this;
                 vm.selectedPageVersionId = pageVersionId;
-            },
-            copySelectedPageVersion: function (pageVersionId) {
-                var vm = this;
-                // TODO: Create new page version based on the selected pageVersionId
             },
             updatePageVersion: function () {
                 var vm = this;

@@ -78,7 +78,7 @@
             "  <tr v-for=\"version in versions\" class=\"cms_selection\" v-bind:class=\"{ cms_selected: version.isSelected }\" @click=\"selectVersion(version)\">" +
             "    <td>{{version.version}}</td>" +
             "    <td>{{version.name}}</td>" +
-            "    <td><ul><li v-for=\"usage in version.usages\">{{usage.websiteVersionId|cms_lookupWebsiteVersionId}}<span v-if=\"usage.scenario\"> in the {{usage.scenario|cms_lookupScenarioName}}</span></li></ul></td>" +
+            "    <td><ul><li v-for=\"usage in version.usages\">{{usage.websiteVersionId|cms_lookupWebsiteVersionId}}<span v-if=\"usage.scenario\"> for the {{usage.scenario|cms_lookupScenarioName}}</span></li></ul></td>" +
             "    <td v-if=\"showCopyButton || showDeleteButton\"><button v-if=\"showCopyButton\" @click.stop=\"copyVersion(version)\">Copy</button><button v-if=\"showDeleteButton\" @click.stop=\"deleteVersion(version)\">Delete</button></td>" +
             "  </tr>" +
             "</table>",

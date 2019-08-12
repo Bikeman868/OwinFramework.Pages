@@ -394,7 +394,10 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         page.Description = change.PropertyValue;
                         break;
                 }
+                details.Add(changeDetails);
             }
+
+            AddHistory(page, identity, details.ToArray());
 
             return new UpdateResult();
         }
@@ -452,8 +455,18 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         private void AddPageVersionToWebsiteVersion(string identity, PageVersionRecord pageVersion, long websiteVersionId, string scenario)
         {
+            IList<WebsiteVersionPageRecord> removedList;
+
             lock (_updateLock)
             {
+                removedList = _websiteVersionPages
+                    .Where(p =>
+                        p.WebsiteVersionId == websiteVersionId &&
+                        p.PageId == pageVersion.ParentRecordId &&
+                        (!string.IsNullOrEmpty(scenario) || string.IsNullOrEmpty(p.Scenario)) &&
+                        (string.IsNullOrEmpty(scenario) || string.Equals(scenario, p.Scenario, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+
                 var websiteVersionPages = _websiteVersionPages
                     .Where(p =>
                         p.WebsiteVersionId != websiteVersionId ||
@@ -471,6 +484,19 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 });
 
                 _websiteVersionPages = websiteVersionPages.ToArray();
+            }
+
+            foreach (var removed in removedList) {
+                AddHistory(
+                    new WebsiteVersionRecord { RecordId = removed.WebsiteVersionId },
+                    identity,
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "ChildRemoved",
+                        ChildType = PageRecord.RecordTypeName,
+                        ChildId = removed.PageId,
+                        Scenario = scenario
+                    });
             }
 
             AddHistory(
@@ -548,31 +574,31 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = pageVersion.Version.ToString();
                         pageVersion.Version = int.Parse(change.PropertyValue);
                         break;
-                    case "versionName":
+                    case "versionname":
                         changeDetails.OldValue = pageVersion.VersionName;
                         pageVersion.VersionName = change.PropertyValue;
                         break;
-                    case "moduleName":
+                    case "modulename":
                         changeDetails.OldValue = pageVersion.ModuleName;
                         pageVersion.ModuleName = change.PropertyValue;
                         break;
-                    case "assetDeployment":
+                    case "assetdeployment":
                         changeDetails.OldValue = pageVersion.AssetDeployment.ToString();
                         pageVersion.AssetDeployment = (AssetDeployment)Enum.Parse(typeof(AssetDeployment), change.PropertyValue);
                         break;
-                    case "masterPageId":
+                    case "masterpageid":
                         changeDetails.OldValue = pageVersion.MasterPageId.ToString();
                         pageVersion.MasterPageId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
                         break;
-                    case "layoutId":
+                    case "layoutid":
                         changeDetails.OldValue = pageVersion.LayoutId.ToString();
                         pageVersion.LayoutId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
                         break;
-                    case "layoutName":
+                    case "layoutname":
                         changeDetails.OldValue = pageVersion.LayoutName;
                         pageVersion.LayoutName = change.PropertyValue;
                         break;
-                    case "canonicalUrl":
+                    case "canonicalurl":
                         changeDetails.OldValue = pageVersion.CanonicalUrl;
                         pageVersion.CanonicalUrl = change.PropertyValue;
                         break;
@@ -580,7 +606,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = pageVersion.Title;
                         pageVersion.Title = change.PropertyValue;
                         break;
-                    case "bodyStyle":
+                    case "bodystyle":
                         changeDetails.OldValue = pageVersion.BodyStyle;
                         pageVersion.BodyStyle = change.PropertyValue;
                         break;
@@ -588,7 +614,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = pageVersion.RequiredPermission;
                         pageVersion.RequiredPermission = change.PropertyValue;
                         break;
-                    case "assetPath":
+                    case "assetpath":
                         changeDetails.OldValue = pageVersion.AssetPath;
                         pageVersion.AssetPath = change.PropertyValue;
                         break;

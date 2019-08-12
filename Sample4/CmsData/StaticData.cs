@@ -380,7 +380,7 @@ namespace Sample4.CmsData
                     ParentRecordId = _pages[0].RecordId,
                     RecordId = elementVersionId++,
                     Version = 1,
-                    Name = "Version 1",
+                    DisplayName = "Version 1",
                     LayoutId = _layouts[0].RecordId,
                     AssetDeployment = AssetDeployment.PerWebsite,
                     Title = "Sample 4",
@@ -392,7 +392,7 @@ namespace Sample4.CmsData
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Version = 1,
-                    Name = "Version 1",
+                    DisplayName = "Version 1",
                     MasterPageId = _pages[0].RecordId,
                     Title = "Customers",
                     Routes = new []
@@ -419,7 +419,7 @@ namespace Sample4.CmsData
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Version = 1,
-                    Name = "Version 1",
+                    DisplayName = "Version 1",
                     MasterPageId = _pages[0].RecordId,
                     Title = "Orders",
                     Routes = new []
@@ -446,7 +446,7 @@ namespace Sample4.CmsData
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
                     Version = 1,
-                    Name = "Version 1",
+                    DisplayName = "Version 1",
                     MasterPageId = _pages[0].RecordId,
                     Title = "CMS",
                     Routes = new []

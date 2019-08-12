@@ -69,7 +69,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             {
                 VersionId = r.RecordId,
                 Version = r.Version,
-                Name = r.Name,
+                Name = r.DisplayName,
                 Description = r.Description
             });
 

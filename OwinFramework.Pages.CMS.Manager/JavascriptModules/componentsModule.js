@@ -967,8 +967,8 @@
             "            <span v-if=\"change.changeType==='Created'\">Created this {{event.recordType|cms_lowercase}}</span>" +
             "            <span v-if=\"change.changeType==='Deleted'\">Deleted this {{event.recordType|cms_lowercase}}</span>" +
             "            <span v-if=\"change.changeType==='Modified'\">Changed the {{change.field}} from \"{{change.oldValue}}\" to \"{{change.newValue}}\"</span>" +
-            "            <span v-if=\"change.changeType==='ChildAdded'\">Added {{change.childType}} with ID={{change.childId}}</span>" +
-            "            <span v-if=\"change.changeType==='ChildRemoved'\">Removed {{change.childType}} with ID={{change.childId}}</span>" +
+            "            <span v-if=\"change.changeType==='ChildAdded'\">Added {{change.childType}} with ID={{change.childId}}<span v-if=\"change.scenario\"> in the {{change.scenario}} scenario</span></span>" +
+            "            <span v-if=\"change.changeType==='ChildRemoved'\">Removed {{change.childType}} with ID={{change.childId}}<span v-if=\"change.scenario\"> in the {{change.scenario}} scenario</span></span>" +
             "          </div>" +
             "        </td>" +
             "      </tr>" +

@@ -187,9 +187,18 @@
                 vm.versionErrors = [];
                 if (vm.currentPageVersion == undefined) {
                     if (vm.currentPage == undefined) return;
-                    // TODO: If a scenario is selected copy the base page version for the page with no scenario
-                    vm.editingPageVersion = exported.pageVersionStore.blankRecord();
-                    vm.editingPageVersion.parentRecordId = vm.currentPage.recordId;
+                    if (vm.scenario == undefined) {
+                        vm.editingPageVersion = exported.pageVersionStore.blankRecord();
+                        vm.editingPageVersion.parentRecordId = vm.currentPage.recordId;
+                    } else {
+                        exported.pageVersionStore.getWebsitePageVersion(
+                            vm.websiteVersion.recordId,
+                            null,
+                            vm.currentPage.recordId,
+                            function (pageVersion) {
+                                vm.editingPageVersion = Object.assign(exported.pageVersionStore.blankRecord(), pageVersion);
+                            });
+                    }
                 } else {
                     vm.editingPageVersion = Object.assign(exported.pageVersionStore.blankRecord(), vm.currentPageVersion);
                 }
@@ -219,7 +228,7 @@
             },
             createNewVersion: function () {
                 var vm = this;
-                if (vm.websiteVersion == undefined || vm.websiteVersion.recordId == undefined) {
+                if (vm.websiteVersion.recordId == undefined) {
                     vm.versionErrors = ["You must select a website version before creating a new version of the page"];
                 } else {
                     vm.validateVersion();
@@ -257,10 +266,6 @@
             copySelectedPageVersion: function (pageVersionId) {
                 var vm = this;
                 // TODO: Create new page version based on the selected pageVersionId
-            },
-            deleteSelectedPageVersion: function (pageVersionId) {
-                var vm = this;
-                // TODO: Enter the deleting mode fot the selected pageVersionId
             },
             updatePageVersion: function () {
                 var vm = this;

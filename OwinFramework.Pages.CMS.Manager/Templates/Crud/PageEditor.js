@@ -23,7 +23,8 @@
             versionErrors: [],
             originalPageVersion: {},
             editingPageVersion: {},
-            currentPageVersion: {}
+            currentPageVersion: {},
+            comparePageVersions: []
         },
         computed: {
             editingZoneNesting: function () {
@@ -167,6 +168,7 @@
             //
             showPageVersion: function () {
                 var vm = this;
+                vm.comparePageVersions = [];
                 if (vm.currentPage == undefined || vm.currentPage.recordId == undefined || vm.websiteVersion == undefined || vm.websiteVersion.recordId == undefined) {
                     vm.currentPageVersion = null;
                 } else {
@@ -275,6 +277,27 @@
             selectPageVersion: function (pageVersionId) {
                 var vm = this;
                 vm.selectedPageVersionId = pageVersionId;
+            },
+            deleteSelectedPageVersion: function (pageVersionId) {
+                var vm = this;
+                vm.selectedPageVersionId = pageVersionId;
+            },
+            togglePageVersion: function (pageVersionId, isSelected) {
+                var vm = this;
+                if (isSelected) {
+                    exported.pageVersionStore.retrieveRecord(
+                        pageVersionId,
+                        function (pageVersion) {
+                            vm.comparePageVersions.push(pageVersion);
+                        })
+                } else {
+                    for (i = 0; i < vm.comparePageVersions.length; i++) {
+                        if (vm.comparePageVersions[i].recordId === pageVersionId) {
+                            vm.comparePageVersions.splice(i, 1);
+                            i--;
+                        }
+                    }
+                }
             },
             updatePageVersion: function () {
                 var vm = this;

@@ -121,6 +121,71 @@
         mounted: function () { this.isActive = this.selected; }
     });
 
+    Vue.component("cms-multi-select-element-versions", {
+        props: {
+            elementType: {
+                required: true,
+                type: String
+            },
+            elementId: {
+                required: true,
+                type: Number
+            },
+            showDeleteButton: {
+                required: false,
+                type: Boolean,
+                default: false
+            }
+        },
+        watch: {
+            elementType: "retrieveVersions",
+            elementId: "retrieveVersions"
+        },
+        template:
+            "<table class=\"cms_selector\">" +
+            "  <tr><th>Ver</th><th>Name</th><th>Usage</th><th v-if=\"showDeleteButton\">Actions</th></tr>" +
+            "  <tr v-for=\"version in versions\" class=\"cms_selection\" v-bind:class=\"{ cms_selected: version.isSelected }\" @click=\"toggleVersion(version)\">" +
+            "    <td>{{version.version}}</td>" +
+            "    <td>{{version.name}}</td>" +
+            "    <td><ul><li v-for=\"usage in version.usages\">{{usage.websiteVersionId|cms_lookupWebsiteVersionId}}<span v-if=\"usage.scenario\"> for the {{usage.scenario|cms_lookupScenarioName}}</span></li></ul></td>" +
+            "    <td v-if=\"showDeleteButton\"><button v-if=\"showDeleteButton\" @click.stop=\"deleteVersion(version)\">Delete</button></td>" +
+            "  </tr>" +
+            "</table>",
+        data: function () {
+            return {
+                versions: []
+            };
+        },
+        created: function () {
+            this.retrieveVersions();
+        },
+        methods: {
+            retrieveVersions: function () {
+                var vm = this;
+                if (vm.elementType == undefined || vm.elementId == undefined) {
+                    vm.versions = [];
+                } else {
+                    exported.versionsService.getElementVersions(
+                        { type: vm.elementType, id: vm.elementId },
+                        function (response) {
+                            response.versions.forEach(function (v) { v.isSelected = false; });
+                            vm.versions = response.versions;
+                        });
+                }
+            },
+            toggleVersion: function (version) {
+                var vm = this;
+                version.isSelected = !version.isSelected;
+                vm.$emit("toggle-version", version.versionId, version.isSelected);
+            },
+            deleteVersion: function (version) {
+                var vm = this;
+                vm.$emit("delete-version", version.versionId);
+            }
+        },
+        mounted: function () { this.isActive = this.selected; }
+    });
+
     Vue.component("cms-website-version-field-edior",
     {
         props: {

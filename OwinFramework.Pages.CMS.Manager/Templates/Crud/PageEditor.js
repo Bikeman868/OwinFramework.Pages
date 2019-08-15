@@ -24,7 +24,12 @@
             originalPageVersion: {},
             editingPageVersion: {},
             currentPageVersion: {},
-            comparePageVersions: []
+            comparePageVersions: [],
+
+            modalDialogTitle: "",
+            modalDialogMessage: "",
+            modalDialogButtons: [{ caption: "OK" }],
+            modalDialogVisible: false
         },
         computed: {
             editingZoneNesting: function () {
@@ -99,6 +104,12 @@
                     vm._unsubscribePageId = null;
                 }
             },
+            showModalDialog(title, message, buttons) {
+                this.modalDialogTitle = title;
+                this.modalDialogMessage = message;
+                this.modalDialogButtons = buttons;
+                this.modalDialogVisible = true;
+            },
             newPage: function() {
                 var vm = this;
                 vm.errors = [];
@@ -115,6 +126,28 @@
             deletePage: function() {
                 var vm = this;
                 vm.pageMode = "delete";
+                vm.showModalDialog(
+                    "Delete " + vm.currentPage.displayName + " page",
+                    "Are you sure you wan to permenantly delete this page and all versions of it from all versions of the website?",
+                    [
+                        {
+                            caption: "Delete",
+                            onclick: function () {
+                                exported.pageStore.deleteRecord(
+                                    vm.currentPage.recordId,
+                                    function () {
+                                        vm.currentPage = null;
+                                        vm.pageMode = "view";
+                                    });
+                            }
+                        },
+                        {
+                            caption: "Cancel",
+                            onclick: function () {
+                                vm.pageMode = "view";
+                            }
+                        }
+                    ]);
             },
             saveChanges: function() {
                 var vm = this;
@@ -143,15 +176,6 @@
                             });
                     }
                 }
-            },
-            confirmDelete: function() {
-                var vm = this;
-                exported.pageStore.deleteRecord(
-                    vm.currentPage.recordId,
-                    function() {
-                        vm.currentPage = null;
-                        vm.pageMode = "view";
-                    });
             },
             cancelChanges: function() {
                 this.pageMode = "view";
@@ -226,9 +250,44 @@
                 Object.assign(vm.originalPageVersion, vm.editingPageVersion);
                 vm.pageVersionMode = "edit";
             },
-            deletePageVersion: function () {
+            deletePageVersion: function (pageVersionId, ondelete, oncancel) {
+                var vm = this;
+                exported.pageVersionStore.retrieveRecord(
+                    pageVersionId,
+                    function (pageVersion) {
+                        vm.showModalDialog(
+                            "Delete " + pageVersion.displayName + " version of the " + vm.currentPage.displayName + " page",
+                            "Are you sure you wan to permenantly delete this version the page. This will remove the page from any versions of the website that use this version of the page?",
+                            [
+                                {
+                                    caption: "Delete",
+                                    onclick: function () {
+                                        exported.pageVersionStore.deleteRecord(pageVersionId, ondelete);
+                                    }
+                                },
+                                {
+                                    caption: "Cancel",
+                                    onclick: oncancel
+                                }
+                            ]);
+                    });
+            },
+            deleteCurrentPageVersion: function () {
                 var vm = this;
                 vm.pageVersionMode = "delete";
+                vm.deletePageVersion(
+                    vm.currentPageVersion.recordId,
+                    function () {
+                        vm.currentPageVersion = null;
+                        vm.pageVersionMode = "view";
+                    },
+                    function () {
+                        vm.pageVersionMode = "view";
+                    });
+            },
+            deleteChoosePageVersion: function (e) {
+                var vm = this;
+                vm.deletePageVersion(e.versionId, e.onsuccess);
             },
             saveVersionChanges: function () {
                 var vm = this;
@@ -265,20 +324,7 @@
                     }
                 }
             },
-            confirmDeleteVersion: function () {
-                var vm = this;
-                exported.pageVersionStore.deleteRecord(
-                    vm.currentPageVersion.recordId,
-                    function () {
-                        vm.currentPageVersion = null;
-                        vm.pageVersionMode = "view";
-                    });
-            },
             selectPageVersion: function (pageVersionId) {
-                var vm = this;
-                vm.selectedPageVersionId = pageVersionId;
-            },
-            deleteSelectedPageVersion: function (pageVersionId) {
                 var vm = this;
                 vm.selectedPageVersionId = pageVersionId;
             },

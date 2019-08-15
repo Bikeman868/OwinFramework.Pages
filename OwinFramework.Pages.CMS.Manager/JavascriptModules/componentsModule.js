@@ -41,6 +41,43 @@
         mounted: function() { this.isActive = this.selected; }
     });
 
+    Vue.component("cms-modal-dialog", {
+        template:
+            "<div v-if=\"visible\" class=\"cms_modal\">" +
+            "  <div>" +
+            "    <h1 v-if=\"title\">{{title}}</h1>" +
+            "    <p v-if=\"message\">{{message}}</p>" +
+            "    <div><button v-for=\"button in buttons\" @click=\"buttonClicked(button.onclick)\">{{button.caption}}</button></div>" +
+            "  </div>" +
+            "</div>",
+        props: {
+            visible: {
+                required: false,
+                type: Boolean,
+                default: false
+            },
+            title: {
+                required: false,
+                type: String
+            },
+            message: {
+                required: false,
+                type: String
+            },
+            buttons: {
+                required: false,
+                type: Array,
+                default: function () { return [{ caption: "OK", onclick: null }] }
+            }
+        },
+        methods: {
+            buttonClicked: function (onclick) {
+                if (onclick != undefined) onclick();
+                this.$emit("close");
+            }
+        }
+    });
+
     Vue.component("cms-choose-element-version", {
         props: {
             elementType: {
@@ -180,7 +217,19 @@
             },
             deleteVersion: function (version) {
                 var vm = this;
-                vm.$emit("delete-version", version.versionId);
+                vm.$emit(
+                    "delete-version",
+                    {
+                        versionId: version.versionId,
+                        onsuccess: function() {
+                            for (i = 0; i < vm.versions.length; i++) {
+                                if (vm.versions[i] === version) {
+                                    vm.versions.splice(i, 1);
+                                    i--;
+                                }
+                            }
+                        }
+                    });
             }
         },
         mounted: function () { this.isActive = this.selected; }

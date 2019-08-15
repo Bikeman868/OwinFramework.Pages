@@ -1,4 +1,11 @@
 ﻿<div id="cms_page_editor" class="cms_panel" v-if="visible">
+    <cms-modal-dialog
+                      v-bind:title="modalDialogTitle"
+                      v-bind:message="modalDialogMessage"
+                      v-bind:buttons="modalDialogButtons"
+                      v-bind:visible="modalDialogVisible"
+                      @close="modalDialogVisible = false">
+    </cms-modal-dialog>
     <cms-tabs>
         <cms-tab name="Details" selected="true">
             <div v-if="currentPage == undefined && pageMode === 'view'">
@@ -64,10 +71,6 @@
                 <div v-if="pageMode === 'delete'">
                     <h2>Confirm Page Deletion</h2>
                     <p>This will delete all versions of the "{{currentPage.name}}" page in all versions of the website</p>
-                    <div class="cms_button_bar">
-                        <button type="button" v-on:click="confirmDelete">Delete</button>
-                        <button type="button" v-on:click="cancelChanges">Cancel</button>
-                    </div>
                 </div>
 
                 <div v-if="websiteVersion && websiteVersion.recordId">
@@ -249,7 +252,7 @@
                                 <button type="button" v-on:click="choosePageVersion">Choose</button>
                                 <button type="button" v-on:click="editPageVersion">Edit</button>
                                 <button type="button" v-on:click="newPageVersion">Copy</button>
-                                <button type="button" v-on:click="deletePageVersion">Delete</button>
+                                <button type="button" v-on:click="deleteCurrentPageVersion">Delete</button>
                             </div>
                             <div class="cms_spacer_medium">&nbsp;</div>
                         </div>
@@ -260,11 +263,6 @@
                                 This page will disapear from any versions of the website that use this version of
                                 the {{currentPage.displayName}} page.
                             </p>
-                            <p>Are you sure?</p>
-                            <div class="cms_button_bar">
-                                <button type="button" v-on:click="confirmDeleteVersion">Delete</button>
-                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
-                            </div>
                         </div>
                         <div v-if="pageVersionMode === 'choose'">
                             <h2>Choose Page Version</h2>
@@ -293,44 +291,49 @@
             <p>The page preview feature is not implemented yet</p>
         </cms-tab>
         <cms-tab name="Versions">
-            <h2>Compare versions of the {{currentPage.displayName|cms_lowercase}} page</h2>
-            <p>Choose versions to compare from the list below</p>
-            <cms-multi-select-element-versions v-bind:element-type="currentPage.recordType"
-                                               v-bind:element-id="currentPage.recordId"
-                                               v-bind:show-delete-button="true"
-                                               @toggle-version="togglePageVersion"
-                                               @delete-version="deleteSelectedPageVersion">
-            </cms-multi-select-element-versions>
-            <h2>Comparison matrix</h2>
-            <p>Use the table below to compare the selected versions</p>
-            <table>
-                <tr><td></td><th v-for="version in comparePageVersions">{{version.displayName}}</th></tr>
-                <tr><th>Version</th><td v-for="version in comparePageVersions">{{version.version}}</td></tr>
-                <tr><th>Title</th><td v-for="version in comparePageVersions">{{version.title}}</td></tr>
-                <tr><th>URL</th><td v-for="version in comparePageVersions">{{version.canonicalUrl}}</td></tr>
-                <tr><th>Routes</th><td v-for="version in comparePageVersions"><ul><li v-for="route in version.routes">{{route.path}}</li></ul></td></tr>
-                <tr><th>Assets</th><td v-for="version in comparePageVersions"><span v-if="version.assetDeployment==='PerModule'">{{version.moduleName}} module</span><span v-else>{{version.assetDeployment}}</span></td></tr>
-                <tr><th>Master page</th><td v-for="version in comparePageVersions">{{version.masterPageId | cms_lookupPageId}}</td></tr>
-                <tr>
-                    <th>Layout</th>
-                    <td v-for="version in comparePageVersions">
-                        <p v-if="version.layoutName" class="cms_field">{{version.layoutName}}</p>
-                        <p v-else>{{version.layoutId | cms_lookupLayoutId}}</p>
-                        <p v-for="layoutZone in version.layoutZones">
-                            The {{layoutZone.zone}} layout zone contains
-                            <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
-                            <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                            <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
-                            <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
-                            <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
-                            <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
-                            <span v-else>the default content defined by the layout</span>
-                        </p>
-                    </td>
-                </tr>
-                <tr><th>Body style</th><td v-for="version in comparePageVersions">{{version.bodyStyle}}</td></tr>
-                <tr><th>Requires permission</th><td v-for="version in comparePageVersions">{{version.permission}}</td></tr>
-            </table>
+            <div v-if="currentPage == undefined || currentPage.recordId == undefined">
+                <p>Choose a page from the list on the left to compare versions of this page</p>
+            </div>
+            <div v-else>
+                <h2>Compare versions of the {{currentPage.displayName|cms_lowercase}} page</h2>
+                <p>Choose versions to compare from the list below</p>
+                <cms-multi-select-element-versions v-bind:element-type="currentPage.recordType"
+                                                   v-bind:element-id="currentPage.recordId"
+                                                   v-bind:show-delete-button="true"
+                                                   @toggle-version="togglePageVersion"
+                                                   @delete-version="deleteChoosePageVersion">
+                </cms-multi-select-element-versions>
+                <h2>Comparison matrix</h2>
+                <p>Use the table below to compare the selected versions</p>
+                <table>
+                    <tr><td></td><th v-for="version in comparePageVersions">{{version.displayName}}</th></tr>
+                    <tr><th>Version</th><td v-for="version in comparePageVersions">{{version.version}}</td></tr>
+                    <tr><th>Title</th><td v-for="version in comparePageVersions">{{version.title}}</td></tr>
+                    <tr><th>URL</th><td v-for="version in comparePageVersions">{{version.canonicalUrl}}</td></tr>
+                    <tr><th>Routes</th><td v-for="version in comparePageVersions"><ul><li v-for="route in version.routes">{{route.path}}</li></ul></td></tr>
+                    <tr><th>Assets</th><td v-for="version in comparePageVersions"><span v-if="version.assetDeployment==='PerModule'">{{version.moduleName}} module</span><span v-else>{{version.assetDeployment}}</span></td></tr>
+                    <tr><th>Master page</th><td v-for="version in comparePageVersions">{{version.masterPageId | cms_lookupPageId}}</td></tr>
+                    <tr>
+                        <th>Layout</th>
+                        <td v-for="version in comparePageVersions">
+                            <p v-if="version.layoutName" class="cms_field">{{version.layoutName}}</p>
+                            <p v-else>{{version.layoutId | cms_lookupLayoutId}}</p>
+                            <p v-for="layoutZone in version.layoutZones">
+                                The {{layoutZone.zone}} layout zone contains
+                                <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
+                                <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
+                                <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
+                                <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
+                                <span v-else>the default content defined by the layout</span>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr><th>Body style</th><td v-for="version in comparePageVersions">{{version.bodyStyle}}</td></tr>
+                    <tr><th>Requires permission</th><td v-for="version in comparePageVersions">{{version.permission}}</td></tr>
+                </table>
+            </div>
         </cms-tab>
         <cms-tab name="History">
             <div v-if="currentPage == undefined || currentPage.recordId == undefined">

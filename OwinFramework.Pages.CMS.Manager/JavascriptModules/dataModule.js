@@ -486,7 +486,7 @@ exported.pageVersionStore = dataUtilities.newStore({
             }
         },
         deleteRecord: function (pageVersionId, onSuccess, onFail) {
-            exported.crudService.deletePage({ id: pageVersionId }, onSuccess, null, onFail);
+            exported.crudService.deletePageVersion({ id: pageVersionId }, onSuccess, null, onFail);
         }
     },
     blankRecord: function() {

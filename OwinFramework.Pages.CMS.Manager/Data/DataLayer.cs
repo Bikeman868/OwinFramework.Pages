@@ -320,7 +320,6 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     });
             }
 
-
             return result;
         }
 
@@ -396,6 +395,371 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         WebsiteVersionId = websiteVersionId,
                         ElementType = PageRecord.RecordTypeName,
                         ElementId = pageId,
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = null
+                    });
+            }
+
+            return result;
+        }
+
+        CreateResult IDatabaseUpdater.CreateLayout(string identity, LayoutRecord layout)
+        {
+            var result = _databaseUpdater.CreateLayout(identity, layout);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = layout.RecordType,
+                        ElementId = result.NewRecordId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateLayout(string identity, long layoutId, IEnumerable<DatabasePropertyChange> changes)
+        {
+            var result = _databaseUpdater.UpdateLayout(identity, layoutId, changes);
+            if (!result.Success) return result;
+
+            AddChangesToLiveUpdate(LayoutRecord.RecordTypeName, layoutId, changes);
+
+            return result;
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteLayout(string identity, long layoutId)
+        {
+            var result = _databaseUpdater.DeleteLayout(identity, layoutId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = LayoutRecord.RecordTypeName,
+                        ElementId = layoutId
+                    });
+            }
+
+            return result;
+        }
+
+        CreateResult IDatabaseUpdater.CreateLayoutVersion(string identity, LayoutVersionRecord layoutVersion)
+        {
+            var result = _databaseUpdater.CreateLayoutVersion(identity, layoutVersion);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = layoutVersion.RecordType,
+                        ElementId = result.NewRecordId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateLayoutVersion(string identity, long layoutVersionId, IEnumerable<DatabasePropertyChange> changes)
+        {
+            var result = _databaseUpdater.UpdateLayoutVersion(identity, layoutVersionId, changes);
+            if (!result.Success) return result;
+
+            AddChangesToLiveUpdate(LayoutVersionRecord.RecordTypeName, layoutVersionId, changes);
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateLayoutVersionZones(string identity, long layoutVersionId, IEnumerable<LayoutZoneRecord> layoutZones)
+        {
+            var result = _databaseUpdater.UpdateLayoutVersionZones(identity, layoutVersionId, layoutZones);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.ChildListChanges.Add(
+                    new RecordChildrenReference
+                    {
+                        RecordType = LayoutVersionRecord.RecordTypeName,
+                        ElementId = layoutVersionId,
+                        ChildRecordType = "Zone"
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateLayoutVersionComponents(string identity, long layoutVersionId, IEnumerable<ElementComponentRecord> components)
+        {
+            var result = _databaseUpdater.UpdateLayoutVersionComponents(identity, layoutVersionId, components);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.ChildListChanges.Add(
+                    new RecordChildrenReference
+                    {
+                        RecordType = LayoutVersionRecord.RecordTypeName,
+                        ElementId = layoutVersionId,
+                        ChildRecordType = "Component"
+                    });
+            }
+
+            return result;
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteLayoutVersion(string identity, long layoutVersionId)
+        {
+            var result = _databaseUpdater.DeleteLayoutVersion(identity, layoutVersionId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = LayoutVersionRecord.RecordTypeName,
+                        ElementId = layoutVersionId
+                    });
+            }
+
+            return result;
+        }
+
+        CreateResult IDatabaseUpdater.CreateRegion(string identity, RegionRecord region)
+        {
+            var result = _databaseUpdater.CreateRegion(identity, region);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = region.RecordType,
+                        ElementId = result.NewRecordId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateRegion(string identity, long regionId, IEnumerable<DatabasePropertyChange> changes)
+        {
+            var result = _databaseUpdater.UpdateRegion(identity, regionId, changes);
+            if (!result.Success) return result;
+
+            AddChangesToLiveUpdate(PageRecord.RecordTypeName, regionId, changes);
+
+            return result;
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteRegion(string identity, long regionId)
+        {
+            var result = _databaseUpdater.DeleteRegion(identity, regionId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = RegionRecord.RecordTypeName,
+                        ElementId = regionId
+                    });
+            }
+
+            return result;
+        }
+
+        CreateResult IDatabaseUpdater.CreateRegionVersion(string identity, RegionVersionRecord regionVersion)
+        {
+            var result = _databaseUpdater.CreateRegionVersion(identity, regionVersion);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = regionVersion.RecordType,
+                        ElementId = result.NewRecordId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateRegionVersion(string identity, long regionVersionId, IEnumerable<DatabasePropertyChange> changes)
+        {
+            var result = _databaseUpdater.UpdateRegionVersion(identity, regionVersionId, changes);
+            if (!result.Success) return result;
+
+            AddChangesToLiveUpdate(RegionVersionRecord.RecordTypeName, regionVersionId, changes);
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateRegionVersionComponents(string identity, long regionVersionId, IEnumerable<ElementComponentRecord> components)
+        {
+            var result = _databaseUpdater.UpdateRegionVersionComponents(identity, regionVersionId, components);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.ChildListChanges.Add(
+                    new RecordChildrenReference
+                    {
+                        RecordType = RegionVersionRecord.RecordTypeName,
+                        ElementId = regionVersionId,
+                        ChildRecordType = "Component"
+                    });
+            }
+
+            return result;
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteRegionVersion(string identity, long regionVersionId)
+        {
+            var result = _databaseUpdater.DeleteRegionVersion(identity, regionVersionId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = RegionVersionRecord.RecordTypeName,
+                        ElementId = regionVersionId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.AddLayoutToWebsiteVersion(string identity, long layoutId, int version, long websiteVersionId, string scenario)
+        {
+            var result = _databaseUpdater.AddLayoutToWebsiteVersion(identity, layoutId, version, websiteVersionId, scenario);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = LayoutRecord.RecordTypeName,
+                        ElementId = layoutId,
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = 0 // TODO: find correct value
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.AddLayoutToWebsiteVersion(string identity, long layoutVersionId, long websiteVersionId, string scenario)
+        {
+            var result = _databaseUpdater.AddLayoutToWebsiteVersion(identity, layoutVersionId, websiteVersionId, scenario);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = LayoutRecord.RecordTypeName,
+                        ElementId = 0, // TODO: find correct value
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = layoutVersionId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.RemoveLayoutFromWebsite(string identity, long layoutId, long websiteVersionId, string scenario)
+        {
+            var result = _databaseUpdater.RemoveLayoutFromWebsite(identity, layoutId, websiteVersionId, scenario);
+            if (!result.Success) return result;
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = LayoutRecord.RecordTypeName,
+                        ElementId = layoutId,
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = null
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.AddRegionToWebsiteVersion(string identity, long regionId, int version, long websiteVersionId, string scenario)
+        {
+            var result = _databaseUpdater.AddRegionToWebsiteVersion(identity, regionId, version, websiteVersionId, scenario);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = RegionRecord.RecordTypeName,
+                        ElementId = regionId,
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = 0 // TODO: find correct value
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.AddRegionToWebsiteVersion(string identity, long regionVersionId, long websiteVersionId, string scenario)
+        {
+            var result = _databaseUpdater.AddRegionToWebsiteVersion(identity, regionVersionId, websiteVersionId, scenario);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = RegionRecord.RecordTypeName,
+                        ElementId = 0, // TODO: find correct value
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = regionVersionId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.RemoveRegionFromWebsite(string identity, long regionId, long websiteVersionId, string scenario)
+        {
+            var result = _databaseUpdater.RemoveRegionFromWebsite(identity, regionId, websiteVersionId, scenario);
+            if (!result.Success) return result;
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = RegionRecord.RecordTypeName,
+                        ElementId = regionId,
                         OldElementVersionId = 0, // TODO: find correct value
                         NewElementVersionId = null
                     });

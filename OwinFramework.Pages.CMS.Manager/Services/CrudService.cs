@@ -488,5 +488,532 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         }
 
         #endregion
+
+        #region Layouts
+
+        [Endpoint(
+            Methods = new[] { Method.Post },
+            RequiredPermission = Permissions.EditLayout)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long?>),
+            Description = "Include the optional website version id to add the new layout to a specific version of the website")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "Include the optional scenario name to make this the layout to use in this segmentation test scenario")]
+        [Description("Creates a new layout and optionally adds it to a specific version of the website")]
+        private void CreateLayout(IEndpointRequest request)
+        {
+            var layout = request.Body<LayoutRecord>();
+            var websiteVersionId = request.Parameter<long?>("websiteVersionId");
+            var scenario = request.Parameter<string>("scenario");
+
+            var result = _dataLayer.CreateLayout(request.Identity, layout);
+
+            if (!result.Success)
+            {
+                request.BadRequest(result.DebugMessage);
+                return;
+            }
+
+            layout = _dataLayer.GetLayoutVersion(result.NewRecordId, 1, (p, v) => p);
+            if (layout == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError,
+                    "After creating the new layout it could not be found in the database");
+                return;
+            }
+
+            if (websiteVersionId.HasValue)
+            {
+                _dataLayer.AddLayoutToWebsiteVersion(request.Identity, layout.RecordId, 1, websiteVersionId.Value, scenario);
+            }
+            request.Success(layout);
+        }
+
+        [Endpoint(
+            UrlPath = "layout/{id}",
+            Methods = new[] { Method.Get },
+            RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void RetrieveLayout(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var layout = _dataLayer.GetLayoutVersion(id, (p, v) => p);
+
+            if (layout == null)
+                request.NotFound("No layout with ID " + id);
+            else
+                request.Success(layout);
+        }
+
+        [Endpoint(
+            UrlPath = "layout/{id}",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.EditLayout)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void UpdateLayout(IEndpointRequest request)
+        {
+            var layoutId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            var result = _dataLayer.UpdateLayout(request.Identity, layoutId, changes);
+
+            if (result.Success)
+            {
+                var layout = _dataLayer.GetLayoutVersion(layoutId, (p, v) => p);
+                request.Success(layout);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(
+            UrlPath = "layout/{id}",
+            Methods = new[] { Method.Delete },
+            RequiredPermission = Permissions.EditLayout)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void DeleteLayout(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var result = _dataLayer.DeleteLayout(request.Identity, id);
+
+            if (result.Success)
+                request.Success(new { id });
+            else
+                request.BadRequest(result.DebugMessage);
+        }
+
+        #endregion
+
+        #region Layout versions
+
+        [Endpoint(
+            Methods = new[] { Method.Post },
+            RequiredPermission = Permissions.EditLayout)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long?>),
+            Description = "Include the optional website version id to add the new layout version to a specific version of the website")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "Include the optional scenario name to make this the layout version to use in this segmentation test scenario")]
+        [Description("Creates a new version of a layout and optionally adds it to a specific version of the website")]
+        private void CreateLayoutVersion(IEndpointRequest request)
+        {
+            var layoutVersion = request.Body<LayoutVersionRecord>();
+            var websiteVersionId = request.Parameter<long?>("websiteVersionId");
+            var scenario = request.Parameter<string>("scenario");
+
+            var result = _dataLayer.CreateLayoutVersion(request.Identity, layoutVersion);
+
+            if (!result.Success)
+            {
+                request.BadRequest(result.DebugMessage);
+                return;
+            }
+
+            layoutVersion = _dataLayer.GetLayoutVersion(result.NewRecordId, (p, v) => v);
+            if (layoutVersion == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError,
+                    "After creating the new layout version it could not be found in the database");
+                return;
+            }
+
+            if (websiteVersionId.HasValue)
+            {
+
+                _dataLayer.AddLayoutToWebsiteVersion(request.Identity, layoutVersion.RecordId, websiteVersionId.Value, scenario);
+            }
+
+            request.Success(layoutVersion);
+        }
+
+        [Endpoint(
+            UrlPath = "layoutversion/{id}",
+            Methods = new[] { Method.Get },
+            RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the layout version to return")]
+        [Description("Retrieves details of a specific version of a layout")]
+        private void RetrieveLayoutVersion(IEndpointRequest request)
+        {
+            var layoutVersionId = request.Parameter<long>("id");
+            var layoutVersion = _dataLayer.GetLayoutVersion(layoutVersionId, (p, v) => v);
+
+            if (layoutVersion == null)
+                request.NotFound("No layout version with ID " + layoutVersionId);
+            else
+                request.Success(layoutVersion);
+        }
+
+        [Endpoint(
+            UrlPath = "layoutversion/{id}",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.EditLayout)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void UpdateLayoutVersion(IEndpointRequest request)
+        {
+            var layoutVersionId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            var result = _dataLayer.UpdateLayoutVersion(request.Identity, layoutVersionId, changes);
+
+            if (result.Success)
+            {
+                var layoutVersion = _dataLayer.GetLayoutVersion(layoutVersionId, (p, v) => v);
+                request.Success(layoutVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(
+            UrlPath = "layoutversion/{id}/zones",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.EditLayout)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void UpdateLayoutVersionZones(IEndpointRequest request)
+        {
+            var layoutVersionId = request.Parameter<long>("id");
+            var zones = request.Body<List<LayoutZoneRecord>>();
+
+            var result = _dataLayer.UpdateLayoutVersionZones(request.Identity, layoutVersionId, zones);
+
+            if (result.Success)
+            {
+                var layoutVersion = _dataLayer.GetLayoutVersion(layoutVersionId, (p, v) => v);
+                request.Success(layoutVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(
+            UrlPath = "layoutversion/{id}/components",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.EditLayout)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void UpdateLayoutVersionComponents(IEndpointRequest request)
+        {
+            var layoutVersionId = request.Parameter<long>("id");
+            var components = request.Body<List<ElementComponentRecord>>();
+
+            var result = _dataLayer.UpdateLayoutVersionComponents(request.Identity, layoutVersionId, components);
+
+            if (result.Success)
+            {
+                var layoutVersion = _dataLayer.GetLayoutVersion(layoutVersionId, (p, v) => v);
+                request.Success(layoutVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(
+            UrlPath = "layoutversion/{id}",
+            Methods = new[] { Method.Delete },
+            RequiredPermission = Permissions.EditLayout)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void DeleteLayoutVersion(IEndpointRequest request)
+        {
+            var layoutVersionId = request.Parameter<long>("id");
+            var result = _dataLayer.DeleteLayoutVersion(request.Identity, layoutVersionId);
+
+            if (result.Success)
+                request.Success(new { layoutVersionId });
+            else
+                request.BadRequest(result.DebugMessage);
+        }
+
+        #endregion
+
+        #region Regions
+
+        [Endpoint(
+            Methods = new[] { Method.Post },
+            RequiredPermission = Permissions.EditRegion)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long?>),
+            Description = "Include the optional website version id to add the new region to a specific version of the website")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "Include the optional scenario name to make this the region to use in this segmentation test scenario")]
+        [Description("Creates a new region and optionally adds it to a specific version of the website")]
+        private void CreateRegion(IEndpointRequest request)
+        {
+            var region = request.Body<RegionRecord>();
+            var websiteVersionId = request.Parameter<long?>("websiteVersionId");
+            var scenario = request.Parameter<string>("scenario");
+
+            var result = _dataLayer.CreateRegion(request.Identity, region);
+
+            if (!result.Success)
+            {
+                request.BadRequest(result.DebugMessage);
+                return;
+            }
+
+            region = _dataLayer.GetRegionVersion(result.NewRecordId, 1, (p, v) => p);
+            if (region == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError,
+                    "After creating the new region it could not be found in the database");
+                return;
+            }
+
+            if (websiteVersionId.HasValue)
+            {
+                _dataLayer.AddRegionToWebsiteVersion(request.Identity, region.RecordId, 1, websiteVersionId.Value, scenario);
+            }
+            request.Success(region);
+        }
+
+        [Endpoint(
+            UrlPath = "region/{id}",
+            Methods = new[] { Method.Get },
+            RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void RetrieveRegion(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var region = _dataLayer.GetRegionVersion(id, (p, v) => p);
+
+            if (region == null)
+                request.NotFound("No region with ID " + id);
+            else
+                request.Success(region);
+        }
+
+        [Endpoint(
+            UrlPath = "region/{id}",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.EditRegion)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void UpdateRegion(IEndpointRequest request)
+        {
+            var regionId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            var result = _dataLayer.UpdateRegion(request.Identity, regionId, changes);
+
+            if (result.Success)
+            {
+                var region = _dataLayer.GetRegionVersion(regionId, (p, v) => p);
+                request.Success(region);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(
+            UrlPath = "region/{id}",
+            Methods = new[] { Method.Delete },
+            RequiredPermission = Permissions.EditRegion)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void DeleteRegion(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var result = _dataLayer.DeleteRegion(request.Identity, id);
+
+            if (result.Success)
+                request.Success(new { id });
+            else
+                request.BadRequest(result.DebugMessage);
+        }
+
+        #endregion
+
+        #region Region versions
+
+        [Endpoint(
+            Methods = new[] { Method.Post },
+            RequiredPermission = Permissions.EditRegion)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long?>),
+            Description = "Include the optional website version id to add the new region version to a specific version of the website")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "Include the optional scenario name to make this the region version to use in this segmentation test scenario")]
+        [Description("Creates a new version of a region and optionally adds it to a specific version of the website")]
+        private void CreateRegionVersion(IEndpointRequest request)
+        {
+            var regionVersion = request.Body<RegionVersionRecord>();
+            var websiteVersionId = request.Parameter<long?>("websiteVersionId");
+            var scenario = request.Parameter<string>("scenario");
+
+            var result = _dataLayer.CreateRegionVersion(request.Identity, regionVersion);
+
+            if (!result.Success)
+            {
+                request.BadRequest(result.DebugMessage);
+                return;
+            }
+
+            regionVersion = _dataLayer.GetRegionVersion(result.NewRecordId, (p, v) => v);
+            if (regionVersion == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError,
+                    "After creating the new region version it could not be found in the database");
+                return;
+            }
+
+            if (websiteVersionId.HasValue)
+            {
+
+                _dataLayer.AddRegionToWebsiteVersion(request.Identity, regionVersion.RecordId, websiteVersionId.Value, scenario);
+            }
+
+            request.Success(regionVersion);
+        }
+
+        [Endpoint(
+            UrlPath = "regionversion/{id}",
+            Methods = new[] { Method.Get },
+            RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the region version to return")]
+        [Description("Retrieves details of a specific version of a region")]
+        private void RetrieveRegionVersion(IEndpointRequest request)
+        {
+            var regionVersionId = request.Parameter<long>("id");
+            var regionVersion = _dataLayer.GetRegionVersion(regionVersionId, (p, v) => v);
+
+            if (regionVersion == null)
+                request.NotFound("No region version with ID " + regionVersionId);
+            else
+                request.Success(regionVersion);
+        }
+
+        [Endpoint(
+            UrlPath = "regionversion/{id}",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.EditRegion)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void UpdateRegionVersion(IEndpointRequest request)
+        {
+            var regionVersionId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            var result = _dataLayer.UpdateRegionVersion(request.Identity, regionVersionId, changes);
+
+            if (result.Success)
+            {
+                var regionVersion = _dataLayer.GetRegionVersion(regionVersionId, (p, v) => v);
+                request.Success(regionVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(
+            UrlPath = "regionversion/{id}/components",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.EditRegion)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void UpdateRegionVersionComponents(IEndpointRequest request)
+        {
+            var regionVersionId = request.Parameter<long>("id");
+            var components = request.Body<List<ElementComponentRecord>>();
+
+            var result = _dataLayer.UpdateRegionVersionComponents(request.Identity, regionVersionId, components);
+
+            if (result.Success)
+            {
+                var regionVersion = _dataLayer.GetRegionVersion(regionVersionId, (p, v) => v);
+                request.Success(regionVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(
+            UrlPath = "regionversion/{id}",
+            Methods = new[] { Method.Delete },
+            RequiredPermission = Permissions.EditRegion)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void DeleteRegionVersion(IEndpointRequest request)
+        {
+            var regionVersionId = request.Parameter<long>("id");
+            var result = _dataLayer.DeleteRegionVersion(request.Identity, regionVersionId);
+
+            if (result.Success)
+                request.Success(new { regionVersionId });
+            else
+                request.BadRequest(result.DebugMessage);
+        }
+
+        #endregion
+
     }
 }

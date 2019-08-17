@@ -33,12 +33,12 @@
         },
         computed: {
             editingZoneNesting: function () {
-                // TODO: Look up in the layoutStore
                 if (this.editingPageVersion.layoutName == undefined || this.editingPageVersion.layoutName.length === 0) {
                     if (this.editingPageVersion.layoutId == undefined) {
                         // TODO: Lookup the master page layout
                         return "master1,master2";
                     } else {
+                        // TODO: Look up in the layoutStore
                         if (this.editingPageVersion.layoutId === 7) return "main";
                         if (this.editingPageVersion.layoutId === 8) return "left,right";
                         if (this.editingPageVersion.layoutId === 9) return "header,body,footer";

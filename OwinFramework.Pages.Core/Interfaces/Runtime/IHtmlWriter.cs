@@ -5,8 +5,6 @@ using Microsoft.Owin;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 
-// TODO: Provide mechanism for specifying if text should be escaped or is preformatted/raw html
-
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
     /// <summary>

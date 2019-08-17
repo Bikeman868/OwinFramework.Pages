@@ -26,6 +26,25 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         UpdateResult UpdatePageVersionComponents(string identity, long pageVersionId, IEnumerable<ElementComponentRecord> components);
         DeleteResult DeletePageVersion(string identity, long pageVersionId);
 
+        CreateResult CreateLayout(string identity, LayoutRecord layout);
+        UpdateResult UpdateLayout(string identity, long layoutId, IEnumerable<PropertyChange> changes);
+        DeleteResult DeleteLayout(string identity, long layoutId);
+
+        CreateResult CreateLayoutVersion(string identity, LayoutVersionRecord layoutVersion);
+        UpdateResult UpdateLayoutVersion(string identity, long layoutVersionId, IEnumerable<PropertyChange> changes);
+        UpdateResult UpdateLayoutVersionZones(string identity, long layoutVersionId, IEnumerable<LayoutZoneRecord> layoutZones);
+        UpdateResult UpdateLayoutVersionComponents(string identity, long layoutVersionId, IEnumerable<ElementComponentRecord> components);
+        DeleteResult DeleteLayoutVersion(string identity, long layoutVersionId);
+
+        CreateResult CreateRegion(string identity, RegionRecord region);
+        UpdateResult UpdateRegion(string identity, long regionId, IEnumerable<PropertyChange> changes);
+        DeleteResult DeleteRegion(string identity, long regionId);
+
+        CreateResult CreateRegionVersion(string identity, RegionVersionRecord regionVersion);
+        UpdateResult UpdateRegionVersion(string identity, long regionVersionId, IEnumerable<PropertyChange> changes);
+        UpdateResult UpdateRegionVersionComponents(string identity, long regionVersionId, IEnumerable<ElementComponentRecord> components);
+        DeleteResult DeleteRegionVersion(string identity, long regionVersionId);
+
         #endregion
 
         #region Many-many relationships
@@ -33,6 +52,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         UpdateResult AddPageToWebsiteVersion(string identity, long pageId, int version, long websiteVersionId, string scenario);
         UpdateResult AddPageToWebsiteVersion(string identity, long pageVersionId, long websiteVersionId, string scenario);
         UpdateResult RemovePageFromWebsite(string identity, long pageId, long websiteVersionId, string scenario);
+
+        UpdateResult AddLayoutToWebsiteVersion(string identity, long layoutId, int version, long websiteVersionId, string scenario);
+        UpdateResult AddLayoutToWebsiteVersion(string identity, long layoutVersionId, long websiteVersionId, string scenario);
+        UpdateResult RemoveLayoutFromWebsite(string identity, long layoutId, long websiteVersionId, string scenario);
+
+        UpdateResult AddRegionToWebsiteVersion(string identity, long regionId, int version, long websiteVersionId, string scenario);
+        UpdateResult AddRegionToWebsiteVersion(string identity, long regionVersionId, long websiteVersionId, string scenario);
+        UpdateResult RemoveRegionFromWebsite(string identity, long regionId, long websiteVersionId, string scenario);
 
         #endregion
     }

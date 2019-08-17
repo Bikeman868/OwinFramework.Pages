@@ -607,6 +607,44 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
+        UpdateResult IDatabaseUpdater.UpdateRegionVersionTemplates(string identity, long regionVersionId, IEnumerable<RegionTemplateRecord> templates)
+        {
+            var result = _databaseUpdater.UpdateRegionVersionTemplates(identity, regionVersionId, templates);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.ChildListChanges.Add(
+                    new RecordChildrenReference
+                    {
+                        RecordType = RegionVersionRecord.RecordTypeName,
+                        ElementId = regionVersionId,
+                        ChildRecordType = "Template"
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateRegionVersionLayoutZones(string identity, long regionVersionId, IEnumerable<LayoutZoneRecord> layoutZones)
+        {
+            var result = _databaseUpdater.UpdateRegionVersionLayoutZones(identity, regionVersionId, layoutZones);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.ChildListChanges.Add(
+                    new RecordChildrenReference
+                    {
+                        RecordType = RegionVersionRecord.RecordTypeName,
+                        ElementId = regionVersionId,
+                        ChildRecordType = "Zone"
+                    });
+            }
+
+            return result;
+        }
+
         UpdateResult IDatabaseUpdater.UpdateRegionVersionComponents(string identity, long regionVersionId, IEnumerable<ElementComponentRecord> components)
         {
             var result = _databaseUpdater.UpdateRegionVersionComponents(identity, regionVersionId, components);

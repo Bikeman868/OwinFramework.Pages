@@ -1056,38 +1056,10 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = layoutVersion.AssetDeployment.ToString();
                         layoutVersion.AssetDeployment = (AssetDeployment)Enum.Parse(typeof(AssetDeployment), change.PropertyValue);
                         break;
-                    //case "masterlayoutid":
-                    //    changeDetails.OldValue = layoutVersion.MasterLayoutId.ToString();
-                    //    layoutVersion.MasterLayoutId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
-                    //    break;
-                    //case "layoutid":
-                    //    changeDetails.OldValue = layoutVersion.LayoutId.ToString();
-                    //    layoutVersion.LayoutId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
-                    //    break;
-                    //case "layoutname":
-                    //    changeDetails.OldValue = layoutVersion.LayoutName;
-                    //    layoutVersion.LayoutName = change.PropertyValue;
-                    //    break;
-                    //case "canonicalurl":
-                    //    changeDetails.OldValue = layoutVersion.CanonicalUrl;
-                    //    layoutVersion.CanonicalUrl = change.PropertyValue;
-                    //    break;
-                    //case "title":
-                    //    changeDetails.OldValue = layoutVersion.Title;
-                    //    layoutVersion.Title = change.PropertyValue;
-                    //    break;
-                    //case "bodystyle":
-                    //    changeDetails.OldValue = layoutVersion.BodyStyle;
-                    //    layoutVersion.BodyStyle = change.PropertyValue;
-                    //    break;
-                    //case "permission":
-                    //    changeDetails.OldValue = layoutVersion.RequiredPermission;
-                    //    layoutVersion.RequiredPermission = change.PropertyValue;
-                    //    break;
-                    //case "assetpath":
-                    //    changeDetails.OldValue = layoutVersion.AssetPath;
-                    //    layoutVersion.AssetPath = change.PropertyValue;
-                    //    break;
+                    case "zonenesting":
+                        changeDetails.OldValue = layoutVersion.ZoneNesting;
+                        layoutVersion.ZoneNesting = change.PropertyValue;
+                        break;
                 }
                 details.Add(changeDetails);
             }
@@ -1491,43 +1463,137 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = regionVersion.AssetDeployment.ToString();
                         regionVersion.AssetDeployment = (AssetDeployment)Enum.Parse(typeof(AssetDeployment), change.PropertyValue);
                         break;
-                    //case "masterregionid":
-                    //    changeDetails.OldValue = regionVersion.MasterRegionId.ToString();
-                    //    regionVersion.MasterRegionId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
-                    //    break;
-                    //case "layoutid":
-                    //    changeDetails.OldValue = regionVersion.LayoutId.ToString();
-                    //    regionVersion.LayoutId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
-                    //    break;
-                    //case "layoutname":
-                    //    changeDetails.OldValue = regionVersion.LayoutName;
-                    //    regionVersion.LayoutName = change.PropertyValue;
-                    //    break;
-                    //case "canonicalurl":
-                    //    changeDetails.OldValue = regionVersion.CanonicalUrl;
-                    //    regionVersion.CanonicalUrl = change.PropertyValue;
-                    //    break;
-                    //case "title":
-                    //    changeDetails.OldValue = regionVersion.Title;
-                    //    regionVersion.Title = change.PropertyValue;
-                    //    break;
-                    //case "bodystyle":
-                    //    changeDetails.OldValue = regionVersion.BodyStyle;
-                    //    regionVersion.BodyStyle = change.PropertyValue;
-                    //    break;
-                    //case "permission":
-                    //    changeDetails.OldValue = regionVersion.RequiredPermission;
-                    //    regionVersion.RequiredPermission = change.PropertyValue;
-                    //    break;
-                    //case "assetpath":
-                    //    changeDetails.OldValue = regionVersion.AssetPath;
-                    //    regionVersion.AssetPath = change.PropertyValue;
-                    //    break;
+                    case "assetname":
+                        changeDetails.OldValue = regionVersion.AssetName.ToString();
+                        regionVersion.AssetName = change.PropertyValue;
+                        break;
+                    case "assetvalue":
+                        changeDetails.OldValue = regionVersion.AssetValue.ToString();
+                        regionVersion.AssetName = change.PropertyValue;
+                        break;
+                    case "layoutid":
+                        changeDetails.OldValue = regionVersion.LayoutId.ToString();
+                        regionVersion.LayoutId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
+                        break;
+                    case "layoutname":
+                        changeDetails.OldValue = regionVersion.LayoutName;
+                        regionVersion.LayoutName = change.PropertyValue;
+                        break;
+                    case "componentid":
+                        changeDetails.OldValue = regionVersion.LayoutId.ToString();
+                        regionVersion.ComponentId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
+                        break;
+                    case "componentname":
+                        changeDetails.OldValue = regionVersion.ComponentName;
+                        regionVersion.ComponentName = change.PropertyValue;
+                        break;
+                    case "listDatascopeid":
+                        changeDetails.OldValue = regionVersion.ListDataScopeId.ToString();
+                        regionVersion.ListDataScopeId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
+                        break;
+                    case "listdatascopename":
+                        changeDetails.OldValue = regionVersion.ListDataScopeName;
+                        regionVersion.ListDataScopeName = change.PropertyValue;
+                        break;
+                    case "repeatDatascopeid":
+                        changeDetails.OldValue = regionVersion.RepeatDataScopeId.ToString();
+                        regionVersion.RepeatDataScopeId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
+                        break;
+                    case "repeatdatascopename":
+                        changeDetails.OldValue = regionVersion.RepeatDataScopeName;
+                        regionVersion.RepeatDataScopeName = change.PropertyValue;
+                        break;
+                    case "listelementclasses":
+                        changeDetails.OldValue = regionVersion.ListElementClasses;
+                        regionVersion.ListElementClasses = change.PropertyValue;
+                        break;
+                    case "listelementstyle":
+                        changeDetails.OldValue = regionVersion.ListElementStyle;
+                        regionVersion.ListElementStyle = change.PropertyValue;
+                        break;
+                    case "listelementtag":
+                        changeDetails.OldValue = regionVersion.ListElementTag;
+                        regionVersion.ListElementTag = change.PropertyValue;
+                        break;
                 }
                 details.Add(changeDetails);
             }
 
             AddHistory(regionVersion, identity, details.ToArray());
+
+            return new UpdateResult();
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateRegionVersionTemplates(string identity, long regionVersionId, IEnumerable<RegionTemplateRecord> templates)
+        {
+            var regionVersion = _regionVersions.FirstOrDefault(p => p.RecordId == regionVersionId);
+            if (regionVersion == null) return new UpdateResult("region_version_not_found", "No region version found with id " + regionVersionId);
+
+            var oldTemplates = regionVersion.RegionTemplates;
+            var newTemplates = templates.ToArray();
+
+            if (oldTemplates != null && oldTemplates.Length == newTemplates.Length)
+            {
+                var hasChanged = false;
+                for (var i = 0; i < oldTemplates.Length; i++)
+                {
+                    if (oldTemplates[i].TemplatePath != newTemplates[i].TemplatePath) hasChanged = true;
+                    if (oldTemplates[i].PageArea != newTemplates[i].PageArea) hasChanged = true;
+                }
+                if (!hasChanged) return new UpdateResult();
+            }
+
+            regionVersion.RegionTemplates = newTemplates;
+
+            AddHistory(
+                regionVersion,
+                identity,
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = "regionTemplates",
+                    OldValue = JsonConvert.SerializeObject(oldTemplates),
+                    NewValue = JsonConvert.SerializeObject(newTemplates)
+                });
+
+            return new UpdateResult();
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateRegionVersionLayoutZones(string identity, long regionVersionId, IEnumerable<LayoutZoneRecord> layoutZones)
+        {
+            var regionVersion = _regionVersions.FirstOrDefault(p => p.RecordId == regionVersionId);
+            if (regionVersion == null) return new UpdateResult("region_version_not_found", "No region version found with id " + regionVersionId);
+
+            var oldZones = regionVersion.LayoutZones;
+            var newZones = layoutZones.ToArray();
+
+            if (oldZones != null && oldZones.Length == newZones.Length)
+            {
+                var hasChanged = false;
+                for (var i = 0; i < oldZones.Length; i++)
+                {
+                    if (oldZones[i].ZoneName != newZones[i].ZoneName) hasChanged = true;
+                    if (oldZones[i].ContentName != newZones[i].ContentName) hasChanged = true;
+                    if (oldZones[i].ContentType != newZones[i].ContentType) hasChanged = true;
+                    if (oldZones[i].ContentValue != newZones[i].ContentValue) hasChanged = true;
+                    if (oldZones[i].LayoutId != newZones[i].LayoutId) hasChanged = true;
+                    if (oldZones[i].RegionId != newZones[i].RegionId) hasChanged = true;
+                }
+                if (!hasChanged) return new UpdateResult();
+            }
+
+            regionVersion.LayoutZones = newZones;
+
+            AddHistory(
+                regionVersion,
+                identity,
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = "layoutZones",
+                    OldValue = JsonConvert.SerializeObject(oldZones),
+                    NewValue = JsonConvert.SerializeObject(newZones)
+                });
 
             return new UpdateResult();
         }

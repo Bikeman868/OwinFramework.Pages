@@ -42,6 +42,8 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
 
         CreateResult CreateRegionVersion(string identity, RegionVersionRecord regionVersion);
         UpdateResult UpdateRegionVersion(string identity, long regionVersionId, IEnumerable<PropertyChange> changes);
+        UpdateResult UpdateRegionVersionTemplates(string identity, long regionVersionId, IEnumerable<RegionTemplateRecord> templates);
+        UpdateResult UpdateRegionVersionLayoutZones(string identity, long regionVersionId, IEnumerable<LayoutZoneRecord> layoutZones);
         UpdateResult UpdateRegionVersionComponents(string identity, long regionVersionId, IEnumerable<ElementComponentRecord> components);
         DeleteResult DeleteRegionVersion(string identity, long regionVersionId);
 

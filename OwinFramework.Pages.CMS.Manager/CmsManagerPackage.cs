@@ -124,7 +124,8 @@ namespace OwinFramework.Pages.CMS.Manager
             AddTemplate("SegmentationScenarioSelector", less, scriptModules);
             AddTemplate("SegmentationTestSelector", less, scriptModules);
             AddTemplate("PageSelector", less, scriptModules);
-            
+            AddTemplate("LayoutSelector", less, scriptModules);
+
             AddTemplate("UserSegmentDisplay", less, scriptModules);
             AddTemplate("ContextDisplay", less, scriptModules);
 
@@ -132,6 +133,7 @@ namespace OwinFramework.Pages.CMS.Manager
             AddTemplate("WebsiteVersionEditor", less, scriptModules);
             AddTemplate("SegmentationScenarioEditor", less, scriptModules);
             AddTemplate("PageEditor", less, scriptModules);
+            AddTemplate("LayoutEditor", less, scriptModules);
 
             AddTemplate("DispatcherLog", less, scriptModules);
 

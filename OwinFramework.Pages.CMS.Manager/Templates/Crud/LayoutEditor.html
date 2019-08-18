@@ -1,0 +1,273 @@
+﻿<div id="cms_layout_editor" class="cms_panel" v-if="visible">
+    <cms-modal-dialog
+                      v-bind:title="modalDialogTitle"
+                      v-bind:message="modalDialogMessage"
+                      v-bind:buttons="modalDialogButtons"
+                      v-bind:visible="modalDialogVisible"
+                      @close="modalDialogVisible = false">
+    </cms-modal-dialog>
+    <cms-tabs>
+        <cms-tab name="Details" selected="true">
+            <div v-if="currentLayout == undefined && layoutMode === 'view'">
+                <h2>No layout selected</h2>
+                <p>
+                    No layout currently selected for editing.
+                    Choose a layout from the list on the left.
+                    If the list of layouts is empty this is because the selected website version contains no layouts.
+                </p>
+                <div class="cms_button_bar">
+                    <button type="button" v-on:click="newLayout">New</button>
+                </div>
+            </div>
+            <div v-else>
+                <div v-if="layoutMode === 'new' || layoutMode === 'edit'">
+                    <h2 v-if="layoutMode === 'new'">Create New Layout</h2>
+                    <h2 v-if="layoutMode === 'edit'">Edit Layout Details</h2>
+                    <div class="cms_edit_panel">
+                        <cms-display-name-field-editor label="Display this layout in CMS manager as"
+                                                       placeholder="My layout"
+                                                       v-bind:display-name="editingLayout.displayName"
+                                                       @display-name-changed="editingLayout.displayName=$event">
+                        </cms-display-name-field-editor>
+                        <cms-element-name-field-editor label="Layout name"
+                                                       placeholder="unique_layout_name"
+                                                       v-bind:element-name="editingLayout.name"
+                                                       @element-name-changed="editingLayout.name=$event">
+                        </cms-element-name-field-editor>
+                        <cms-description-field-editor v-bind:description="editingLayout.description || ''"
+                                                      @description-changed="editingLayout.description=$event">
+                        </cms-description-field-editor>
+                    </div>
+                    <div class="cms_validation_error_list" v-if="errors.length > 0">
+                        <p v-for="error in errors">{{error}}</p>
+                    </div>
+                    <div class="cms_button_bar">
+                        <button v-if="layoutMode === 'new'" type="button" v-on:click="createNew">Create</button>
+                        <button v-if="layoutMode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
+                        <button type="button" v-on:click="cancelChanges">Cancel</button>
+                    </div>
+                </div>
+                <div v-if="layoutMode === 'view'">
+                    <h2>{{currentLayout.displayName}} layout</h2>
+                    <div class="cms_field">
+                        <label>Name</label>
+                        <p>{{currentLayout.name}}</p>
+                    </div>
+                    <div v-if="currentLayout.description" class="cms_field">
+                        <label>Description</label>
+                        <p>{{currentLayout.description}}</p>
+                    </div>
+                    <div class="cms_field">
+                        <label>Created</label>
+                        <p>{{currentLayout.createdWhen|cms_formatDateTime}} by {{currentLayout.createdBy|cms_formatUserUrn}}</p>
+                    </div>
+                    <div class="cms_button_bar">
+                        <button type="button" v-on:click="editLayout">Edit</button>
+                        <button type="button" v-on:click="newLayout">New</button>
+                        <button type="button" v-on:click="deleteLayout">Delete</button>
+                    </div>
+                    <div class="cms_spacer_medium">&nbsp;</div>
+                </div>
+                <div v-if="layoutMode === 'delete'">
+                    <h2>Confirm Layout Deletion</h2>
+                    <p>This will delete all versions of the "{{currentLayout.name}}" layout in all versions of the website</p>
+                </div>
+
+                <div v-if="websiteVersion && websiteVersion.recordId">
+                    <div v-if="currentLayoutVersion == undefined && layoutVersionMode === 'view'">
+                        <div v-if="scenario == undefined">
+                            <h2>No version of this layout in this version of the website</h2>
+                            <p>
+                                There is no version of this layout in the selected website version.
+                            </p>
+                            <p>
+                                To select a version of this layout to use in this version of the website
+                                tap on the 'Choose Version' button.
+                            </p>
+                        </div>
+                        <div v-else>
+                            <h2>The {{scenario.displayName|cms_lowercase}} scenario uses the standard layout version</h2>
+                            <p>
+                                This layout uses the layout version defined for the website version when the '{{scenario.displayName}}'
+                                a/b testing scenario is in use.
+                            </p>
+                            <p>
+                                If you want to change the layout version that should be used for the
+                                '{{scenario.displayName}}' a/b testing scenario, tap on the 'Choose Version' button.
+                            </p>
+                        </div>
+                        <div class="cms_button_bar">
+                            <button type="button" v-on:click="chooseLayoutVersion">Choose Version</button>
+                            <button type="button" v-on:click="newLayoutVersion">New Version</button>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div v-if="layoutVersionMode === 'new' || layoutVersionMode === 'edit'">
+                            <h2 v-if="layoutVersionMode === 'new'">Create New Layout Version</h2>
+                            <h2 v-if="layoutVersionMode === 'edit'">Edit Version {{editingLayoutVersion.version}} of the {{currentLayout.displayName|cms_lowercase}} layout</h2>
+                            <div class="cms_edit_panel">
+                                <cms-display-name-field-editor label="Name this version of the layout"
+                                                               placeholder="Version 1"
+                                                               v-bind:display-name="editingLayoutVersion.displayName"
+                                                               @display-name-changed="editingLayoutVersion.displayName=$event">
+                                </cms-display-name-field-editor>
+                                <cms-description-field-editor v-bind:description="editingLayoutVersion.description || ''"
+                                                              @description-changed="editingLayoutVersion.description=$event">
+                                </cms-description-field-editor>
+                                <cms-asset-deployment-field-editor label="Asset deployment"
+                                                                   inherit-option="Inherit from parent"
+                                                                   v-bind:asset-deployment="editingLayoutVersion.assetDeployment"
+                                                                   v-bind:module-name="editingLayoutVersion.moduleName"
+                                                                   @asset-deployment-changed="editingLayoutVersion.assetDeployment=$event"
+                                                                   @module-name-changed="editingLayoutVersion.moduleName=$event">
+                                </cms-asset-deployment-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <cms-zones-field-editor label="Layout zones"
+                                                               v-bind:nesting="editingLayoutVersion.zoneNesting"
+                                                               v-bind:zones="editingLayoutVersion.layoutZones"
+                                                               @zone-nesting-changed="editingLayoutVersion.zoneNesting=$event">
+                                </cms-zones-field-editor>
+                            </div>
+                            <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
+                                <p v-for="error in versionErrors">{{error}}</p>
+                            </div>
+                            <div class="cms_button_bar">
+                                <button v-if="layoutVersionMode === 'new'" type="button" v-on:click="createNewVersion">Create</button>
+                                <button v-if="layoutVersionMode === 'edit'" type="button" v-on:click="saveVersionChanges">Save</button>
+                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            </div>
+                        </div>
+                        <div v-if="layoutVersionMode === 'view'">
+                            <h2>Version {{currentLayoutVersion.version}} of the {{currentLayout.displayName}} layout</h2>
+                            <div class="cms_field" v-if="currentLayoutVersion.displayName">
+                                <label>Version name</label>
+                                <p>{{currentLayoutVersion.displayName}}</p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Assets</label>
+                                <p>{{currentLayoutVersion.assetDeployment}}<span v-if="currentLayoutVersion.assetDeployment==='PerModule'"> in the {{currentLayoutVersion.moduleName}} module</span></p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Zone nesting</label>
+                                <p>{{currentLayoutVersion.zoneNesting}}</p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Zone contents</label>
+                                <p v-for="layoutZone in currentLayoutVersion.layoutZones" class="cms_field">
+                                    The {{layoutZone.zone}} zone default content is
+                                    <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
+                                    <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
+                                    <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
+                                    <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
+                                    <span v-else> empty</span>
+                                </p>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.description">
+                                <label>Description</label>
+                                <p>{{currentLayoutVersion.description}}</p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Created</label>
+                                <p>{{currentLayoutVersion.createdWhen|cms_formatDateTime}} by {{currentLayoutVersion.createdBy|cms_formatUserUrn}}</p>
+                            </div>
+                            <div class="cms_button_bar">
+                                <button type="button" v-on:click="chooseLayoutVersion">Choose</button>
+                                <button type="button" v-on:click="editLayoutVersion">Edit</button>
+                                <button type="button" v-on:click="newLayoutVersion">Copy</button>
+                                <button type="button" v-on:click="deleteCurrentLayoutVersion">Delete</button>
+                            </div>
+                            <div class="cms_spacer_medium">&nbsp;</div>
+                        </div>
+                        <div v-if="layoutVersionMode === 'delete'">
+                            <h2>Confirm Layout Version Deletion</h2>
+                            <p>
+                                This will delete version {{currentLayoutVersion.version}} of the {{currentLayout.displayName}} layout.
+                                This layout will disapear from any versions of the website that use this version of
+                                the {{currentLayout.displayName}} layout.
+                            </p>
+                        </div>
+                        <div v-if="layoutVersionMode === 'choose'">
+                            <h2>Choose Layout Version</h2>
+                            <p>
+                                Which version of the {{currentLayout.displayName}} layout do you want to use for the
+                                {{websiteVersion.displayName}} version of the website
+                                <span v-if="scenario"> when the {{scenario.displayName|cms_lowercase}} a/b testing scenario is in use</span>?
+                            </p>
+                            <cms-choose-element-version v-bind:element-type="currentLayout.recordType"
+                                                        v-bind:element-id="currentLayout.recordId"
+                                                        v-bind:selected-version-id="currentLayoutVersion == undefined ? null : currentLayoutVersion.recordId"
+                                                        @select-version="selectLayoutVersion"
+                                                        @copy-version="copySelectedLayoutVersion">
+                            </cms-choose-element-version>
+                            <div class="cms_button_bar">
+                                <button type="button" v-on:click="updateLayoutVersion">Update</button>
+                                <button type="button" v-on:click="clearLayoutVersion">None</button>
+                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </cms-tab>
+        <cms-tab name="Versions">
+            <div v-if="currentLayout == undefined || currentLayout.recordId == undefined">
+                <p>Choose a layout from the list on the left to compare versions of this layout</p>
+            </div>
+            <div v-else>
+                <h2>Compare versions of the {{currentLayout.displayName|cms_lowercase}} layout</h2>
+                <p>Choose versions to compare from the list below</p>
+                <cms-multi-select-element-versions v-bind:element-type="currentLayout.recordType"
+                                                   v-bind:element-id="currentLayout.recordId"
+                                                   v-bind:show-delete-button="true"
+                                                   @toggle-version="toggleLayoutVersion"
+                                                   @delete-version="deleteChooseLayoutVersion">
+                </cms-multi-select-element-versions>
+                <h2>Comparison matrix</h2>
+                <p>Use the table below to compare the selected versions</p>
+                <table>
+                    <tr><td></td><th v-for="version in compareLayoutVersions">{{version.displayName}}</th></tr>
+                    <tr><th>Version</th><td v-for="version in compareLayoutVersions">{{version.version}}</td></tr>
+                    <tr><th>Assets</th><td v-for="version in compareLayoutVersions"><span v-if="version.assetDeployment==='PerModule'">{{version.moduleName}} module</span><span v-else>{{version.assetDeployment}}</span></td></tr>
+                    <tr>
+                        <th>Zones</th>
+                        <td v-for="version in compareLayoutVersions">
+                            <p v-for="layoutZone in version.layoutZones">The {{layoutZone.zone}} zone default content is
+                                <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
+                                <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
+                                <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
+                                <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
+                                <span v-else>empty</span>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </cms-tab>
+        <cms-tab name="History">
+            <div v-if="currentLayout == undefined || currentLayout.recordId == undefined">
+                <p>
+                    No layout currently selected for history.
+                    Choose a layout from the list on the left.
+                    If the list of layouts is empty this is because the selected website version contains no layouts.
+                </p>
+            </div>
+            <div v-else>
+                <cms-history-period v-if="currentLayoutVersion == undefined || currentLayoutVersion.recordId == undefined"
+                                    v-bind:label="currentLayout.displayName + ' layout change history'"
+                                    v-bind:record-type="currentLayout.recordType"
+                                    v-bind:record-id="currentLayout.recordId">
+                </cms-history-period>
+                <cms-history-period v-else
+                                    v-bind:label="currentLayout.displayName + ' layout version ' + currentLayoutVersion.version + ' change history'"
+                                    v-bind:record-type="currentLayoutVersion.recordType"
+                                    v-bind:record-id="currentLayoutVersion.recordId">
+                </cms-history-period>
+            </div>
+        </cms-tab>
+    </cms-tabs>
+</div>

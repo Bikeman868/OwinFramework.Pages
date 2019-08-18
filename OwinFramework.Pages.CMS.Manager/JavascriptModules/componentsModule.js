@@ -716,6 +716,195 @@
         }
     });
 
+    Vue.component("cms-zones-field-editor",
+    {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Zone nesting"
+            },
+            nesting: {
+                required: false,
+                type: String
+            },
+            zones: {
+                required: true,
+                type: Array
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label>{{label}}</label>" +
+            "  <p>Nesting: {{editedNesting}}</p>" +
+            "  <table>" +
+            "    <tr><th>Zone</th><th>Nesting</th><th>Contents</th><th>-</th></tr>" +
+            "    <tr v-for=\"zone in zones\">" +
+            "      <td><input type=\"text\" class=\"cms_field__name\" placeholder=\"zone_name\" :pattern=\"namePattern\" v-model=\"zone.zone\"></td>" +
+            "      <td>" +
+            "        <span>{{zone.indent}}</span>" +
+            "        <button @click=\"outdentZone(zone)\">&lt;</button>" +
+            "        <button @click=\"indentZone(zone)\">&gt;</button>" +
+            "      </td>" +
+            "      <td><cms-layout-zone-editor :layout-zone=\"zone\" @default-changed=\"setZoneDefault($event)\"></cms-layout-zone-editor></td>" +
+            "      <td>" +
+            "        <button @click=\"moveZoneUp(zone)\">^</button>" +
+            "        <button @click=\"moveZoneDown(zone)\">v</button>" +
+            "        <button @click=\"removeZone(zone)\">-</button>" +
+            "      </td>" +
+            "    </tr>" +
+            "  </table>" +
+            "  <button @click=\"addZone\">+</button>" +
+            "</div>",
+        data: function () {
+            return {
+                editedNesting: this.nesting,
+                namePattern: exported.validation.namePattern.source
+            }
+        },
+        created: function () {
+            var vm = this;
+            var zones = [];
+            var zone = "";
+            var indent = 0;
+            var zoneIndex = 0;
+            var addZone = function () {
+                if (zone.length > 0) {
+                    for (let i = 0; i < vm.zones.length; i++) {
+                        if (vm.zones[i].zone == zone) {
+                            Vue.set(vm.zones[i], "indent", indent);
+                            zone = "";
+                            zoneIndex++;
+                            return;
+                        }
+                    }
+                    zones.splice(zoneIndex, 0, {
+                        zone: zone,
+                        regionId: null,
+                        layoutId: null,
+                        contentType: "",
+                        contentName: "",
+                        contentValue: "",
+                        indent: indent
+                    });
+                }
+                zone = "";
+                zoneIndex++;
+            };
+            for (let i = 0; i < vm.nesting.length; i++) {
+                var c = vm.nesting.charAt(i);
+                if (c == " ") continue;
+                if (c == "(") {
+                    addZone();
+                    indent++;
+                } else if (c == ")") {
+                    addZone();
+                    indent--;
+                } else if (c == ",") {
+                    addZone();
+                } else {
+                    zone += c;
+                }
+            }
+            addZone();
+        },
+        methods: {
+            setZoneDefault: function (e) {
+                if (e.isDefault) {
+                    e.layoutZone.regionId = null;
+                    e.layoutZone.layoutId = null;
+                    e.layoutZone.contentType = "";
+                    e.layoutZone.contentName = "";
+                    e.layoutZone.contentValue = "";
+                }
+            },
+            setNesting: function () {
+                var vm = this;
+                var nesting = "";
+                var indent = 0;
+                for (let i = 0; i < vm.zones.length; i++) {
+                    var zone = vm.zones[i];
+                    if (zone.indent < indent) {
+                        while (zone.indent < indent) {
+                            nesting += ")";
+                            indent--;
+                        }
+                    } else if (zone.indent > indent) {
+                        while (zone.indent > indent) {
+                            nesting += "(";
+                            indent++;
+                        }
+                    } else {
+                        if (i > 0) nesting += ",";
+                    }
+                    nesting += zone.zone;
+                }
+                while (indent-- > 0) nesting += ")";
+                vm.editedNesting = nesting;
+                this.$emit("zone-nesting-changed", nesting);
+            },
+            addZone: function () {
+                this.zones.push({
+                    zone: "zone_" + (this.zones.length + 1),
+                    regionId: null,
+                    layoutId: null,
+                    contentType: "",
+                    contentName: "",
+                    contentValue: "",
+                    indent: 0
+                });
+                this.setNesting();
+            },
+            removeZone: function (zone) {
+                for (let i = 0; i < this.zones.length; i++) {
+                    if (this.zones[i] === zone) {
+                        this.zones.splice(i, 1);
+                        this.setNesting();
+                        break;
+                    }
+                }
+            },
+            indentZone: function (zone) {
+                for (let i = 1; i < this.zones.length; i++) {
+                    if (this.zones[i] === zone) {
+                        if (zone.indent <= this.zones[i-1].indent)
+                        zone.indent += 1
+                        this.setNesting();
+                        break;
+                    }
+                }
+            },
+            outdentZone: function (zone) {
+                if (zone.indent > 0) {
+                    zone.indent -= 1
+                    this.setNesting();
+                }
+            },
+            moveZoneUp: function (zone) {
+                for (let i = 0; i < this.zones.length; i++) {
+                    if (this.zones[i] === zone) {
+                        var temp = this.zones[i - 1];
+                        this.zones.splice(i - 1, 1);
+                        this.zones.splice(i, 0, temp);
+                        break;
+                        this.setNesting();
+                    }
+                }
+            },
+            moveZoneDown: function (zone) {
+                for (let i = 0; i < this.zones.length - 1; i++) {
+                    if (this.zones[i] === zone) {
+                        var temp = this.zones[i];
+                        this.zones.splice(i, 1);
+                        this.zones.splice(i + 1, 0, temp);
+                        this.setNesting();
+                        break;
+                    }
+                }
+            }
+        }
+    });
+
     Vue.component("cms-routes-field-editor",
     {
         props: {

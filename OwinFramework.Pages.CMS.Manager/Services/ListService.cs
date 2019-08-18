@@ -103,6 +103,116 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 request.Success(pageVersions[0]);
         }
 
+        [Endpoint(UrlPath = "websiteversion/{id}/layouts", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the website version to get layouts for")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "The name of the segmentation scenario to get a layout version for")]
+        private void WebsiteVersionLayouts(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var scenarioName = request.Parameter<string>("scenario") ?? string.Empty;
+
+            var records = _dataLayer.GetWebsiteLayouts(id, scenarioName, wvp => wvp);
+
+            if (records == null)
+                request.NoContent("There are no layouts in website version #" + id +
+                    (string.IsNullOrEmpty(scenarioName) ? "" : " for '" + scenarioName + "' test scenario"));
+            else
+                request.Success(records);
+        }
+
+        [Endpoint(UrlPath = "websiteversion/{websiteVersionId}/layout/{layoutId}", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the website version to get information for")]
+        [EndpointParameter(
+            "layoutId",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the layout to get information for")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "The name of the segmentation scenario to get a layout version for")]
+        private void WebsiteLayoutVersion(IEndpointRequest request)
+        {
+            var websiteVersionId = request.Parameter<long>("websiteVersionId");
+            var layoutId = request.Parameter<long>("layoutId");
+            var scenarioName = request.Parameter<string>("scenario") ?? string.Empty;
+
+            var layoutVersions = _dataLayer.GetWebsiteLayouts(websiteVersionId, scenarioName, pv => pv, pv => pv.LayoutId == layoutId);
+            if (layoutVersions == null || layoutVersions.Length == 0)
+                request.NoContent(
+                    "There is no version of layout #" + layoutId +
+                    " in version #" + websiteVersionId + " of the website" +
+                    (string.IsNullOrEmpty(scenarioName) ? "" : " in the '" + scenarioName + "' test scenario"));
+            else
+                request.Success(layoutVersions[0]);
+        }
+
+        [Endpoint(UrlPath = "websiteversion/{id}/regions", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the website version to get regions for")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "The name of the segmentation scenario to get a region version for")]
+        private void WebsiteVersionRegions(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var scenarioName = request.Parameter<string>("scenario") ?? string.Empty;
+
+            var records = _dataLayer.GetWebsiteRegions(id, scenarioName, wvp => wvp);
+
+            if (records == null)
+                request.NoContent("There are no regions in website version #" + id +
+                    (string.IsNullOrEmpty(scenarioName) ? "" : " for '" + scenarioName + "' test scenario"));
+            else
+                request.Success(records);
+        }
+
+        [Endpoint(UrlPath = "websiteversion/{websiteVersionId}/region/{regionId}", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the website version to get information for")]
+        [EndpointParameter(
+            "regionId",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the region to get information for")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "The name of the segmentation scenario to get a region version for")]
+        private void WebsiteRegionVersion(IEndpointRequest request)
+        {
+            var websiteVersionId = request.Parameter<long>("websiteVersionId");
+            var regionId = request.Parameter<long>("regionId");
+            var scenarioName = request.Parameter<string>("scenario") ?? string.Empty;
+
+            var regionVersions = _dataLayer.GetWebsiteRegions(websiteVersionId, scenarioName, pv => pv, pv => pv.RegionId == regionId);
+            if (regionVersions == null || regionVersions.Length == 0)
+                request.NoContent(
+                    "There is no version of region #" + regionId +
+                    " in version #" + websiteVersionId + " of the website" +
+                    (string.IsNullOrEmpty(scenarioName) ? "" : " in the '" + scenarioName + "' test scenario"));
+            else
+                request.Success(regionVersions[0]);
+        }
+
         #endregion
 
         #region User segments

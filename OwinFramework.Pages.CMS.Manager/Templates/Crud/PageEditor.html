@@ -34,7 +34,7 @@
                                                        v-bind:element-name="editingPage.name"
                                                        @element-name-changed="editingPage.name=$event">
                         </cms-element-name-field-editor>
-                        <cms-description-field-editor v-bind:description="editingPage.description"
+                        <cms-description-field-editor v-bind:description="editingPage.description || ''"
                                                       @description-changed="editingPage.description=$event">
                         </cms-description-field-editor>
                     </div>
@@ -53,7 +53,7 @@
                         <label>Name</label>
                         <p>{{currentPage.name}}</p>
                     </div>
-                    <div class="cms_field">
+                    <div v-if="currentPage.description" class="cms_field">
                         <label>Description</label>
                         <p>{{currentPage.description}}</p>
                     </div>
@@ -111,7 +111,7 @@
                                                                v-bind:display-name="editingPageVersion.displayName"
                                                                @display-name-changed="editingPageVersion.displayName=$event">
                                 </cms-display-name-field-editor>
-                                <cms-description-field-editor v-bind:description="editingPageVersion.description"
+                                <cms-description-field-editor v-bind:description="editingPageVersion.description || ''"
                                                               @description-changed="editingPageVersion.description=$event">
                                 </cms-description-field-editor>
                             </div>
@@ -192,11 +192,6 @@
                                 <label>Version name</label>
                                 <p>{{currentPageVersion.displayName}}</p>
                             </div>
-                            <div class="cms_field" v-if="currentPageVersion.description">
-                                <label>Description</label>
-                                <p>{{currentPageVersion.description}}</p>
-                            </div>
-
                             <div class="cms_field" v-if="currentPageVersion.title">
                                 <label>Page title</label>
                                 <p>{{currentPageVersion.title}}</p>

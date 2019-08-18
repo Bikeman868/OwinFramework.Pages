@@ -119,6 +119,9 @@ exported.viewStore = function () {
     var showComponentEditor = function (context, topContext) {
         selectView("cms_bottom_edit_view", "/cms/manager/ComponentEditor", "cms_component_editor", exported.component_editor_vm, context, topContext);
     }
+    var showModuleEditor = function (context, topContext) {
+        selectView("cms_bottom_edit_view", "/cms/manager/ModuleEditor", "cms_module_editor", exported.module_editor_vm, context, topContext);
+    }
     var showDataScopeEditor = function (context, topContext) {
         selectView("cms_bottom_edit_view", "/cms/manager/DataScopeEditor", "cms_data_scope_editor", exported.data_scope_editor_vm, context, topContext);
     }
@@ -164,18 +167,27 @@ exported.viewStore = function () {
         }
         else if (viewName === "layouts") {
             showLayoutSelector(context, managerContext);
+            showLayoutEditor(context, managerContext);
         }
         else if (viewName === "regions") {
             showRegionSelector(context, managerContext);
+            showRegionEditor(context, managerContext);
         }
         else if (viewName === "components") {
             showComponentSelector(context, managerContext);
+            showComponentEditor(context, managerContext);
+        }
+        else if (viewName === "modules") {
+            showModuleSelector(context, managerContext);
+            showModuleEditor(context, managerContext);
         }
         else if (viewName === "dataScopes") {
             showDataScopeSelector(context, managerContext);
+            showDataScopeEditor(context, managerContext);
         }
         else if (viewName === "dataTypes") {
             showDataTypeSelector(context, managerContext);
+            showDataTypeEditor(context, managerContext);
         }
     }
 

@@ -12,8 +12,8 @@
 @tab-text-color: navy;
 @tab-selected-color: white;
 
-@sub-panel-background: whitesmoke;
-@sub-panel-border: 1px solid lightgrey;
+@edit-panel-background: whitesmoke;
+@edit-panel-border: 1px solid lightgrey;
 
 @table-heading-background: #e5e5ff;
 @table-background: white;
@@ -532,12 +532,12 @@ div.cms_manager {
     }
 
     div.cms_edit_panel {
-        background-color: @sub-panel-background;
+        background-color: @edit-panel-background;
         border-radius: 5px;
         padding: 10px;
-        max-width: 800px;
+        max-width: 1200px;
         margin: 10px 0px;
-        border: @sub-panel-border;
+        border: @edit-panel-border;
     }
 
     div.cms_field {
@@ -858,7 +858,7 @@ div.cms_manager {
 
     @media only screen and (min-width: @break-tablet) {
         .cms_field__html {
-            width: 600px;
+            width: 450px;
             height: 160px;
         }
     }

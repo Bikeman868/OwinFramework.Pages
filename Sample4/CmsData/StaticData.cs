@@ -30,6 +30,7 @@ namespace Sample4.CmsData
                     Name = "message",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow,
+                    DisplayName = "Message",
                     Description = "Displays a text message as a paragraph"
                 }
             };
@@ -40,6 +41,7 @@ namespace Sample4.CmsData
                 {
                     RecordId = elementId++,
                     Name = "header",
+                    DisplayName = "Header",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
@@ -47,6 +49,7 @@ namespace Sample4.CmsData
                 {
                     RecordId = elementId++,
                     Name = "footer",
+                    DisplayName = "Footer",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
@@ -54,6 +57,7 @@ namespace Sample4.CmsData
                 {
                     RecordId = elementId++,
                     Name = "customer_list",
+                    DisplayName = "Customer list",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
@@ -61,6 +65,7 @@ namespace Sample4.CmsData
                 {
                     RecordId = elementId++,
                     Name = "order_list",
+                    DisplayName = "Order list",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
@@ -68,6 +73,7 @@ namespace Sample4.CmsData
                 {
                     RecordId = elementId++,
                     Name = "title",
+                    DisplayName = "Title",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 }
@@ -79,6 +85,7 @@ namespace Sample4.CmsData
                 {
                     RecordId = elementId++,
                     Name = "page",
+                    DisplayName = "Page",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
@@ -86,6 +93,7 @@ namespace Sample4.CmsData
                 {
                     RecordId = elementId++,
                     Name = "header",
+                    DisplayName = "Page head",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },
@@ -93,6 +101,7 @@ namespace Sample4.CmsData
                 {
                     RecordId = elementId++,
                     Name = "footer",
+                    DisplayName = "Page footer",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
                 },

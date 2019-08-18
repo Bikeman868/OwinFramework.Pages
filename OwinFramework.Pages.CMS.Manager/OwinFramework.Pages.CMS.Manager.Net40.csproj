@@ -203,6 +203,18 @@
   <ItemGroup>
     <EmbeddedResource Include="Templates\Crud\SegmentationScenarioEditor.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Crud\LayoutEditor.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Crud\LayoutEditor.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\LayoutSelector.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Selectors\LayoutSelector.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

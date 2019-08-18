@@ -309,9 +309,26 @@
     }
 }();
 
+/*
+// TODO: Change fields to an array of objects where each object has the field name,
+// data type and flags indicating if it is the primary key, a list of children etc
+// this will allow retrieved records to have missing properties filled in with default
+// values. The default value can be explicitly set in the field definition object or
+// default based on data type. See example in environment store below.
+*/
+
 exported.environmentStore = dataUtilities.newStore({
     recordType: "Environment",
     name: "environment",
+    _fields: [
+        { name: "recordId", type:Number, isId:true },
+        { name: "name", type: String, default: function (r) { return "environment_" + r.recordid; } },
+        { name: "displayName", type: String, default: function (r) { return name; } },
+        { name: "description", type: String },
+        { name: "createdBy", type: String },
+        { name: "createdWhen", type: String },
+        { name: "baseUrl", type: String, default: function (r) { return "https://" + r.name + ".mycompany.com/"} },
+        { name: "websiteVersionId", type: Number }],
     idField: "recordId",
     fields: ["name", "displayName", "description", "createdBy", "createdWhen", "recordId", "baseUrl", "websiteVersionId"],
     mixin: {
@@ -526,6 +543,146 @@ exported.pageVersionStore = dataUtilities.newStore({
             null,
             function (ajax) {
                 if (onFail != undefined) onFail("Failed to get page version for website version");
+            });
+    }
+});
+
+exported.layoutStore = dataUtilities.newStore({
+    recordType: "Layout",
+    name: "layout",
+    listName: "list of layouts",
+    idField: "recordId",
+    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "recordId"],
+    mixin: {
+        createRecord: function (layout, onSuccess, onFail, params) {
+            exported.crudService.createLayout({ body: layout, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
+        },
+        retrieveRecord: function (layoutId, onSuccess, onFail) {
+            exported.crudService.retrieveLayout({ id: layoutId }, onSuccess, null, onFail);
+        },
+        retrieveAllRecords: function (onSuccess, onFail) {
+            exported.listService.allLayouts({}, onSuccess, null, onFail);
+        },
+        updateRecord: function (originalLayout, updatedLayout, changes, onSuccess, onFail) {
+            if (changes.length > 0) {
+                exported.crudService.updateLayout(
+                    {
+                        id: updatedLayout.recordId,
+                        body: changes
+                    },
+                    onSuccess, null, onFail);
+            }
+        },
+        deleteRecord: function (layoutId, onSuccess, onFail) {
+            exported.crudService.deleteLayout({ id: layoutId }, onSuccess, null, onFail);
+        }
+    }
+});
+
+exported.layoutVersionStore = dataUtilities.newStore({
+    recordType: "LayoutVersion",
+    name: "layout version",
+    listName: "list of layout versions",
+    idField: "recordId",
+    fields: [
+        "name", "displayName", "description", "createdBy", "createdWhen",
+        "recordId", "parentRecordId", "version", "moduleName", "assetDeployment", 
+        "zoneNesting"],
+    arrayFields: [
+        "layoutZones", "components"],
+    mixin: {
+        createRecord: function (layoutVersion, onSuccess, onFail, params) {
+            exported.crudService.createLayoutVersion({
+                body: layoutVersion,
+                websiteVersionId: params.websiteVersionId,
+                scenario: params.scenario
+            },
+                onSuccess,
+                onFail);
+        },
+        retrieveRecord: function (layoutVersionId, onSuccess, onFail) {
+            exported.crudService.retrieveLayoutVersion({ id: layoutVersionId }, onSuccess, null, onFail);
+        },
+        retrieveAllRecords: function (onSuccess, onFail) {
+            exported.listService.allLayoutVersions({}, onSuccess, null, onFail);
+        },
+        updateRecord: function (originalLayoutVersion, updatedLayoutVersion, changes, onSuccess, onFail) {
+            if (changes.length > 0) {
+                exported.crudService.updateLayoutVersion(
+                    {
+                        id: updatedLayoutVersion.recordId,
+                        body: changes
+                    },
+                    onSuccess, null, onFail);
+            }
+            if (updatedLayoutVersion.layoutZones != null) {
+                exported.crudService.updateLayoutVersionZones(
+                    {
+                        id: updatedLayoutVersion.recordId,
+                        body: updatedLayoutVersion.layoutZones
+                    },
+                    function (response) {
+                        originalLayoutVersion.layoutZones = updatedLayoutVersion.layoutZones;
+                        if (onSuccess != undefined) onSuccess(response);
+                    },
+                    null,
+                    onFail);
+            }
+            if (updatedLayoutVersion.components != undefined) {
+                exported.crudService.updateLayoutVersionComponents(
+                    {
+                        id: updatedLayoutVersion.recordId,
+                        body: updatedLayoutVersion.components
+                    },
+                    function (response) {
+                        originalLayoutVersion.components = updatedLayoutVersion.components;
+                        if (onSuccess != undefined) onSuccess(response);
+                    },
+                    null,
+                    onFail);
+            }
+        },
+        deleteRecord: function (layoutVersionId, onSuccess, onFail) {
+            exported.crudService.deleteLayoutVersion({ id: layoutVersionId }, onSuccess, null, onFail);
+        }
+    },
+    blankRecord: function () {
+        return {
+            assetDeployment: "Inherit",
+            zoneNesting: "zone1,zone2",
+            layoutZones: [],
+            components: []
+        };
+    },
+    getLayoutVersions: function (layoutId, onSuccess, onFail) {
+        var store = this;
+        exported.listService.layoutVersions(
+            { id: layoutId },
+            function (response) { dataUtilities.doSuccessGet("list of layout versions", response, onSuccess, onFail); },
+            null,
+            function (ajax) { dataUtilities.doFailGet("list of layout versions", ajax, onFail); });
+    },
+    getWebsiteLayoutVersion: function (websiteVersionId, segmentationScenarioName, layoutId, onSuccess, onFail) {
+        var store = this;
+        exported.listService.websiteLayoutVersion(
+            {
+                websiteVersionId: websiteVersionId,
+                scenario: segmentationScenarioName,
+                layoutId: layoutId
+            },
+            function (response) {
+                if (response != undefined) {
+                    var layoutVersionId = response.layoutVersionId;
+                    if (layoutVersionId != undefined) {
+                        store.retrieveRecord(layoutVersionId, onSuccess, onFail);
+                        return;
+                    }
+                }
+                if (onFail != undefined) onFail("Failed to get layout version for website version");
+            },
+            null,
+            function (ajax) {
+                if (onFail != undefined) onFail("Failed to get layout version for website version");
             });
     }
 });

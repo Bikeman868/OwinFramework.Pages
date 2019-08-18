@@ -1,4 +1,5 @@
-﻿using Prius.Contracts.Attributes;
+﻿using Newtonsoft.Json;
+using Prius.Contracts.Attributes;
 
 namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
 {
@@ -11,6 +12,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// The unique ID of a component to include in this version of the website
         /// </summary>
         [Mapping("componentId")]
+        [JsonProperty("componentId")]
         public long ComponentId { get; set; }
 
         /// <summary>
@@ -18,6 +20,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// version of the website
         /// </summary>
         [Mapping("componentVersionId")]
+        [JsonProperty("componentVersionId")]
         public long ComponentVersionId { get; set; }
     }
 }

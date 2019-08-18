@@ -39,6 +39,7 @@
                 { name: "layouts", displayName: "Layouts" },
                 { name: "regions", displayName: "Regions" },
                 { name: "components", displayName: "Components" },
+                { name: "modules", displayName: "Modules" },
                 { name: "dataScopes", displayName: "Scopes" },
                 { name: "dataTypes", displayName: "Types" }
         ]);

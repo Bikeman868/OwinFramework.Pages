@@ -175,6 +175,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         #region All elements of a type
 
         T[] GetPages<T>(Func<PageRecord, T> map, Func<PageRecord, bool> predicate = null);
+        T[] GetLayouts<T>(Func<LayoutRecord, T> map, Func<LayoutRecord, bool> predicate = null);
+        T[] GetRegions<T>(Func<RegionRecord, T> map, Func<RegionRecord, bool> predicate = null);
+        T[] GetDataTypes<T>(Func<DataTypeRecord, T> map, Func<DataTypeRecord, bool> predicate = null);
+        T[] GetDataScopes<T>(Func<DataScopeRecord, T> map, Func<DataScopeRecord, bool> predicate = null);
+        T[] GetComponents<T>(Func<ComponentRecord, T> map, Func<ComponentRecord, bool> predicate = null);
+        T[] GetModules<T>(Func<ModuleRecord, T> map, Func<ModuleRecord, bool> predicate = null);
 
         #endregion
 

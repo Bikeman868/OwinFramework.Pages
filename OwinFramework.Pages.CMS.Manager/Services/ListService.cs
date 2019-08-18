@@ -156,5 +156,60 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
         #endregion
 
+        #region Layouts
+
+        [Endpoint(UrlPath = "layout/{id}/versions", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the layout to get a list of versions for")]
+        private void LayoutVersions(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var layout = _dataLayer.GetLayoutVersion(id, (p, v) => p);
+
+            if (layout == null)
+                request.NotFound("No layout with ID " + id);
+            else
+                request.Success(layout);
+        }
+
+        [Endpoint(UrlPath = "layouts", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        private void AllLayouts(IEndpointRequest request)
+        {
+            var layouts = _dataLayer.GetLayouts(p => p);
+            request.Success(layouts);
+        }
+
+        #endregion
+
+        #region Regions
+
+        [Endpoint(UrlPath = "region/{id}/versions", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the region to get a list of versions for")]
+        private void RegionVersions(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var region = _dataLayer.GetRegionVersion(id, (p, v) => p);
+
+            if (region == null)
+                request.NotFound("No region with ID " + id);
+            else
+                request.Success(region);
+        }
+
+        [Endpoint(UrlPath = "regions", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        private void AllRegions(IEndpointRequest request)
+        {
+            var regions = _dataLayer.GetRegions(p => p);
+            request.Success(regions);
+        }
+
+        #endregion
     }
 }

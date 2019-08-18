@@ -9,6 +9,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
     public class TestDatabaseReaderBase: IDatabaseReader
     {
         protected EnvironmentRecord[] _environments;
+        protected ModuleRecord[] _modules;
 
         protected WebsiteVersionRecord[] _websiteVersions;
         protected WebsiteVersionPageRecord[] _websiteVersionPages;
@@ -205,10 +206,37 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         
         T[] IDatabaseReader.GetPages<T>(Func<PageRecord, T> map, Func<PageRecord, bool> predicate)
         {
-            if (predicate == null)
-                return _pages.Select(map).ToArray();
+            return (predicate == null ? _pages : _pages.Where(predicate)).Select(map).ToArray();
+        }
 
-            return _pages.Where(predicate).Select(map).ToArray();
+        T[] IDatabaseReader.GetLayouts<T>(Func<LayoutRecord, T> map, Func<LayoutRecord, bool> predicate)
+        {
+            return (predicate == null ? _layouts : _layouts.Where(predicate)).Select(map).ToArray();
+        }
+
+        T[] IDatabaseReader.GetRegions<T>(Func<RegionRecord, T> map, Func<RegionRecord, bool> predicate)
+        {
+            return (predicate == null ? _regions : _regions.Where(predicate)).Select(map).ToArray();
+        }
+
+        T[] IDatabaseReader.GetDataTypes<T>(Func<DataTypeRecord, T> map, Func<DataTypeRecord, bool> predicate)
+        {
+            return (predicate == null ? _dataTypes : _dataTypes.Where(predicate)).Select(map).ToArray();
+        }
+
+        T[] IDatabaseReader.GetDataScopes<T>(Func<DataScopeRecord, T> map, Func<DataScopeRecord, bool> predicate)
+        {
+            return (predicate == null ? _dataScopes : _dataScopes.Where(predicate)).Select(map).ToArray();
+        }
+
+        T[] IDatabaseReader.GetComponents<T>(Func<ComponentRecord, T> map, Func<ComponentRecord, bool> predicate)
+        {
+            return (predicate == null ? _components : _components.Where(predicate)).Select(map).ToArray();
+        }
+
+        T[] IDatabaseReader.GetModules<T>(Func<ModuleRecord, T> map, Func<ModuleRecord, bool> predicate)
+        {
+            return (predicate == null ? _modules : _modules.Where(predicate)).Select(map).ToArray();
         }
 
         IDictionary<string, object> IDatabaseReader.GetElementPropertyValues(long elementVersionId)
@@ -424,5 +452,6 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 .Select(map)
                 .ToArray();
         }
+
     }
 }

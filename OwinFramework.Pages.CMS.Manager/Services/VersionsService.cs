@@ -128,11 +128,19 @@ namespace OwinFramework.Pages.CMS.Manager.Services
             {
                 if (string.Equals(type, PageRecord.RecordTypeName, StringComparison.OrdinalIgnoreCase))
                     _dataLayer.AddPageToWebsiteVersion(request.Identity, versionId.Value, websiteVersionId, scenario);
+                if (string.Equals(type, LayoutRecord.RecordTypeName, StringComparison.OrdinalIgnoreCase))
+                    _dataLayer.AddLayoutToWebsiteVersion(request.Identity, versionId.Value, websiteVersionId, scenario);
+                if (string.Equals(type, RegionRecord.RecordTypeName, StringComparison.OrdinalIgnoreCase))
+                    _dataLayer.AddRegionToWebsiteVersion(request.Identity, versionId.Value, websiteVersionId, scenario);
             }
             else
             {
                 if (string.Equals(type, PageRecord.RecordTypeName, StringComparison.OrdinalIgnoreCase))
                     _dataLayer.RemovePageFromWebsite(request.Identity, id, websiteVersionId, scenario);
+                if (string.Equals(type, LayoutRecord.RecordTypeName, StringComparison.OrdinalIgnoreCase))
+                    _dataLayer.RemoveLayoutFromWebsite(request.Identity, id, websiteVersionId, scenario);
+                if (string.Equals(type, RegionRecord.RecordTypeName, StringComparison.OrdinalIgnoreCase))
+                    _dataLayer.RemoveRegionFromWebsite(request.Identity, id, websiteVersionId, scenario);
             }
         }
 

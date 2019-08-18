@@ -1045,6 +1045,36 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return _databaseReader.GetPages(map, predicate);
         }
 
+        T[] IDatabaseReader.GetLayouts<T>(Func<LayoutRecord, T> map, Func<LayoutRecord, bool> predicate)
+        {
+            return _databaseReader.GetLayouts(map, predicate);
+        }
+
+        T[] IDatabaseReader.GetRegions<T>(Func<RegionRecord, T> map, Func<RegionRecord, bool> predicate)
+        {
+            return _databaseReader.GetRegions(map, predicate);
+        }
+
+        T[] IDatabaseReader.GetDataTypes<T>(Func<DataTypeRecord, T> map, Func<DataTypeRecord, bool> predicate)
+        {
+            return _databaseReader.GetDataTypes(map, predicate);
+        }
+
+        T[] IDatabaseReader.GetDataScopes<T>(Func<DataScopeRecord, T> map, Func<DataScopeRecord, bool> predicate)
+        {
+            return _databaseReader.GetDataScopes(map, predicate);
+        }
+
+        T[] IDatabaseReader.GetComponents<T>(Func<ComponentRecord, T> map, Func<ComponentRecord, bool> predicate)
+        {
+            return _databaseReader.GetComponents(map, predicate);
+        }
+
+        T[] IDatabaseReader.GetModules<T>(Func<ModuleRecord, T> map, Func<ModuleRecord, bool> predicate)
+        {
+            return _databaseReader.GetModules(map, predicate);
+        }
+
         HistoryPeriodRecord IDatabaseReader.GetHistory(string recordType, long id, string bookmark)
         {
             return _databaseReader.GetHistory(recordType, id, bookmark);

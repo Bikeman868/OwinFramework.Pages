@@ -497,6 +497,11 @@
             layoutZone: {
                 required: true,
                 type: Object
+            },
+            defaultOption: {
+                required: false,
+                type: String,
+                default: "Default content"
             }
         },
         watch: {
@@ -522,7 +527,7 @@
         template:
             "<div>" +
             "  <select v-model=\"mode\">" +
-            "    <option value=\"0\">Default content</option>" +
+            "    <option value=\"0\">{{defaultOption}}</option>" +
             "    <option value=\"1\">CMS region</option>" +
             "    <option value=\"2\">CMS layout</option>" +
             "    <option value=\"3\">CMS component</option>" +
@@ -746,7 +751,7 @@
             "        <button @click=\"outdentZone(zone)\">&lt;</button>" +
             "        <button @click=\"indentZone(zone)\">&gt;</button>" +
             "      </td>" +
-            "      <td><cms-layout-zone-editor :layout-zone=\"zone\" @default-changed=\"setZoneDefault($event)\"></cms-layout-zone-editor></td>" +
+            "      <td><cms-layout-zone-editor :layout-zone=\"zone\" default-option=\"Empty\" @default-changed=\"setZoneDefault($event)\"></cms-layout-zone-editor></td>" +
             "      <td>" +
             "        <button @click=\"moveZoneUp(zone)\">^</button>" +
             "        <button @click=\"moveZoneDown(zone)\">v</button>" +
@@ -764,7 +769,6 @@
         },
         created: function () {
             var vm = this;
-            var zones = [];
             var zone = "";
             var indent = 0;
             var zoneIndex = 0;
@@ -778,7 +782,7 @@
                             return;
                         }
                     }
-                    zones.splice(zoneIndex, 0, {
+                    vm.zones.splice(zoneIndex, 0, {
                         zone: zone,
                         regionId: null,
                         layoutId: null,

@@ -155,14 +155,14 @@
                             <div class="cms_field">
                                 <label>Zone contents</label>
                                 <p v-for="layoutZone in currentLayoutVersion.layoutZones" class="cms_field">
-                                    The {{layoutZone.zone}} zone default content is
-                                    <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
-                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
-                                    <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
-                                    <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
-                                    <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
-                                    <span v-else> empty</span>
+                                    <span>The {{layoutZone.zone}} zone </span>
+                                    <span v-if="layoutZone.regionId">contains the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                                    <span v-else-if="layoutZone.layoutId">contains the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                                    <span v-else-if="layoutZone.layoutId">contains the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
+                                    <span v-else-if="layoutZone.contentType === 'Html'">contains HTML localizable as '{{layoutZone.contentName}}'</span>
+                                    <span v-else-if="layoutZone.contentType === 'Template'">contains the {{layoutZone.contentName}} template</span>
+                                    <span v-else-if="layoutZone.contentType">contains the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
+                                    <span v-else> is empty</span>
                                 </p>
                             </div>
                             <div class="cms_field" v-if="currentLayoutVersion.description">
@@ -234,14 +234,15 @@
                     <tr>
                         <th>Zones</th>
                         <td v-for="version in compareLayoutVersions">
-                            <p v-for="layoutZone in version.layoutZones">The {{layoutZone.zone}} zone default content is
-                                <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
-                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
-                                <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
-                                <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
-                                <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
-                                <span v-else>empty</span>
+                            <p v-for="layoutZone in version.layoutZones">
+                                <span>The {{layoutZone.zone}} zone </span>
+                                <span v-if="layoutZone.regionId">contains the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                                <span v-else-if="layoutZone.layoutId">contains the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                                <span v-else-if="layoutZone.layoutId">contains the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
+                                <span v-else-if="layoutZone.contentType === 'Html'">contains HTML localizable as '{{layoutZone.contentName}}'</span>
+                                <span v-else-if="layoutZone.contentType === 'Template'">contains the {{layoutZone.contentName}} template</span>
+                                <span v-else-if="layoutZone.contentType">contains the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
+                                <span v-else> is empty</span>
                             </p>
                         </td>
                     </tr>

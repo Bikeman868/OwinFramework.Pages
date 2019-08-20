@@ -330,9 +330,9 @@ namespace OwinFramework.Pages.CMS.Runtime
                 foreach (var component in layoutVersion.Components)
                     layoutDefinition.NeedsComponent(component.ComponentName);
 
-            if (layoutVersion.LayoutZones != null)
+            if (layoutVersion.Zones != null)
             { 
-                foreach(var layoutRegion in layoutVersion.LayoutZones)
+                foreach(var layoutRegion in layoutVersion.Zones)
                 {
                     if (layoutRegion.RegionId.HasValue)
                         layoutDefinition.Region(layoutRegion.ZoneName, GetRegion(builder, layoutRegion.RegionId.Value));

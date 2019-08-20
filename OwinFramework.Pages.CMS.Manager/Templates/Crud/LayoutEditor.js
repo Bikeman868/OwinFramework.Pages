@@ -348,7 +348,7 @@
                 if (inherit) {
                     vm.editingLayoutVersion.layoutName = null;
                     vm.editingLayoutVersion.layoutId = null;
-                    vm.editingLayoutVersion.layoutZones.splice(0, vm.editingLayoutVersion.layoutZones.length);
+                    vm.editingLayoutVersion.zones.splice(0, vm.editingLayoutVersion.zones.length);
                 }
             },
             validateVersion: function () {
@@ -360,9 +360,9 @@
                         vm.editingLayoutVersion.moduleName = exported.validation.name(vm.editingLayoutVersion.moduleName, "module name", errors);
                     }
                 }
-                if (vm.editingLayoutVersion.layoutZones) {
-                    for (let i = 0; i < vm.editingLayoutVersion.layoutZones.length; i++) {
-                        var layoutZone = vm.editingLayoutVersion.layoutZones[i];
+                if (vm.editingLayoutVersion.zones) {
+                    for (let i = 0; i < vm.editingLayoutVersion.zones.length; i++) {
+                        var layoutZone = vm.editingLayoutVersion.zones[i];
                         layoutZone.zone = exported.validation.name(layoutZone.zone, "zone name", errors);
                         if (layoutZone.regionId)
                             layoutZone.regionId = exported.validation.id(layoutZone.regionId, "zone region id", errors);

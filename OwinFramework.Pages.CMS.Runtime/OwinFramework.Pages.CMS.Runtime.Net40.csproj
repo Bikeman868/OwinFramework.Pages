@@ -65,6 +65,7 @@
     <Compile Include="Configuration\CmsConfiguration.cs" />
     <Compile Include="Data\TestDatabaseReaderBase.cs" />
     <Compile Include="Data\TestDatabaseReader.cs" />
+    <Compile Include="Interfaces\Database\ElementDataTypeRecord.cs" />
     <Compile Include="Interfaces\Database\HistoryChangeDetails.cs" />
     <Compile Include="Interfaces\Database\HistoryEventRecord.cs" />
     <Compile Include="Interfaces\Database\DeleteResult.cs" />

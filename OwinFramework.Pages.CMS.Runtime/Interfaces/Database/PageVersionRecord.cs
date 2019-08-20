@@ -81,6 +81,20 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         public string AssetPath { get; set; }
 
         /// <summary>
+        /// Optional category name to pass to the output cache middleware
+        /// </summary>
+        [Mapping("cacheCategory")]
+        [JsonProperty("cacheCategory")]
+        public string CacheCategory { get; set; }
+
+        /// <summary>
+        /// Optional cache priority to pass to the output cache middleware
+        /// </summary>
+        [Mapping("cachePriority")]
+        [JsonProperty("cachePriority")]
+        public string CachePriority { get; set; }
+
+        /// <summary>
         /// Defines which request URLs will render this page
         /// </summary>
         [JsonProperty("routes")]
@@ -99,5 +113,17 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// </summary>
         [JsonProperty("components")]
         public ElementComponentRecord[] Components { get; set; }
+
+        /// <summary>
+        /// A list of data scopes to use when resolving data needs of this page
+        /// </summary>
+        [JsonProperty("dataScopes")]
+        public ElementDataScopeRecord[] DataScopes { get; set; }
+
+        /// <summary>
+        /// A list of data types that this layout needs to render
+        /// </summary>
+        [JsonProperty("dataTypes")]
+        public ElementDataTypeRecord[] DataTypes { get; set; }
     }
 }

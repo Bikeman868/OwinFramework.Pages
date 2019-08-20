@@ -149,5 +149,11 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// </summary>
         [JsonProperty("dataScopes")]
         public ElementDataScopeRecord[] DataScopes { get; set; }
+
+        /// <summary>
+        /// A list of data types that this region needs to render
+        /// </summary>
+        [JsonProperty("dataTypes")]
+        public ElementDataTypeRecord[] DataTypes { get; set; }
     }
 }

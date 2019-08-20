@@ -123,11 +123,51 @@
                                 </cms-asset-deployment-field-editor>
                             </div>
                             <div class="cms_edit_panel">
-                                <cms-zones-field-editor label="Layout zones"
-                                                               v-bind:nesting="editingLayoutVersion.zoneNesting"
-                                                               v-bind:zones="editingLayoutVersion.layoutZones"
-                                                               @zone-nesting-changed="editingLayoutVersion.zoneNesting=$event">
+                                <h2>Zones</h2>
+                                <cms-zones-field-editor label=""
+                                                        v-bind:nesting="editingLayoutVersion.zoneNesting"
+                                                        v-bind:zones="editingLayoutVersion.zones"
+                                                        @zone-nesting-changed="editingLayoutVersion.zoneNesting=$event">
                                 </cms-zones-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h2>Layout container properties</h2>
+                                <cms-html-tag-field-editor label="Html tag"
+                                                     v-bind:html-tag="editingLayoutVersion.tag"
+                                                     @html-tag-changed="editingLayoutVersion.tag=$event">
+                                </cms-html-tag-field-editor>
+                                <cms-style-field-editor label="Custom style"
+                                                        v-bind:css-style="editingLayoutVersion.style"
+                                                        @css-style-changed="editingLayoutVersion.style=$event">
+                                </cms-style-field-editor>
+                                <cms-css-classes-field-editor label="Additional CSS classes"
+                                                        v-bind:css-classes="editingLayoutVersion.classes"
+                                                        @css-classes-changed="editingLayoutVersion.classes=$event">
+                                </cms-css-classes-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h2>Nested zones container properties</h2>
+                                <cms-html-tag-field-editor label="Html tag"
+                                                      v-bind:html-tag="editingLayoutVersion.nestedTag"
+                                                      @html-tag-changed="editingLayoutVersion.nestedTag=$event">
+                                </cms-html-tag-field-editor>
+                                <cms-style-field-editor label="Custom style"
+                                                       v-bind:css-style="editingLayoutVersion.nestedStyle"
+                                                       @css-style-changed="editingLayoutVersion.nestedStyle=$event">
+                                </cms-style-field-editor>
+                                <cms-css-classes-field-editor label="Additional CSS classes"
+                                                        v-bind:css-classes="editingLayoutVersion.nestedClasses"
+                                                        @css-classes-changed="editingLayoutVersion.nestedClasses=$event">
+                                </cms-css-classes-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h2>Layout data</h2>
+                                <cms-data-scopes-field-editor label="Layout data scopes"
+                                                              v-bind:scopes="editingLayoutVersion.dataScopes">
+                                </cms-data-scopes-field-editor>
+                                <cms-data-types-field-editor label="Layout data needs"
+                                                              v-bind:scopes="editingLayoutVersion.dataTypes">
+                                </cms-data-types-field-editor>
                             </div>
                             <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
                                 <p v-for="error in versionErrors">{{error}}</p>
@@ -154,16 +194,52 @@
                             </div>
                             <div class="cms_field">
                                 <label>Zone contents</label>
-                                <p v-for="layoutZone in currentLayoutVersion.layoutZones" class="cms_field">
-                                    <span>The {{layoutZone.zone}} zone </span>
-                                    <span v-if="layoutZone.regionId">contains the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
-                                    <span v-else-if="layoutZone.layoutId">contains the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                                    <span v-else-if="layoutZone.layoutId">contains the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
-                                    <span v-else-if="layoutZone.contentType === 'Html'">contains HTML localizable as '{{layoutZone.contentName}}'</span>
-                                    <span v-else-if="layoutZone.contentType === 'Template'">contains the {{layoutZone.contentName}} template</span>
-                                    <span v-else-if="layoutZone.contentType">contains the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
+                                <p v-for="zone in currentLayoutVersion.zones" class="cms_field">
+                                    <span>The {{zone.zone}} zone </span>
+                                    <span v-if="zone.regionId">contains the {{zone.regionId | cms_lookupRegionId}} region</span>
+                                    <span v-else-if="zone.layoutId">contains the {{zone.layoutId | cms_lookupLayoutId}} layout</span>
+                                    <span v-else-if="zone.layoutId">contains the {{zone.componentId | cms_lookupComponentId}} component</span>
+                                    <span v-else-if="zone.contentType === 'Html'">contains HTML localizable as '{{zone.contentName}}'</span>
+                                    <span v-else-if="zone.contentType === 'Template'">contains the {{zone.contentName}} template</span>
+                                    <span v-else-if="zone.contentType">contains the '{{zone.contentName}}' {{zone.contentType | cms_lowercase}}</span>
                                     <span v-else> is empty</span>
                                 </p>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.tag">
+                                <label>Html tag enclosing layout</label>
+                                <p>{{currentLayoutVersion.tag}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.style">
+                                <label>Html custom style</label>
+                                <p>{{currentLayoutVersion.style}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.classes">
+                                <label>Additional CSS classes</label>
+                                <p>{{currentLayoutVersion.classes}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.nestingTag">
+                                <label>Nested zone html tag</label>
+                                <p>{{currentLayoutVersion.nestingTag}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.nestingStyle">
+                                <label>Nested zone custom style</label>
+                                <p>{{currentLayoutVersion.nestingStyle}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.nestingClasses">
+                                <label>Nested zone additional classes</label>
+                                <p>{{currentLayoutVersion.nestingClasses}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.components && currentLayoutVersion.components.length > 0">
+                                <label>Dependant components</label>
+                                <ul><li v-for="component in currentLayoutVersion.components">{{component.componentId|cms_lookupComponentId}}</li></ul>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.dataScopes && currentLayoutVersion.dataScopes.length > 0">
+                                <label>Data scopes</label>
+                                <ul><li v-for="scope in currentLayoutVersion.dataScopes">{{scope.dataScopeId|cms_lookupDataScopeId}}</li></ul>
+                            </div>
+                            <div class="cms_field" v-if="currentLayoutVersion.dataTypes && currentLayoutVersion.dataTypes.length > 0">
+                                <label>Data needs</label>
+                                <ul><li v-for="type in currentLayoutVersion.dataTypes">{{type.dataTypeId|cms_lookupDataTypeId}}</li></ul>
                             </div>
                             <div class="cms_field" v-if="currentLayoutVersion.description">
                                 <label>Description</label>
@@ -234,7 +310,7 @@
                     <tr>
                         <th>Zones</th>
                         <td v-for="version in compareLayoutVersions">
-                            <p v-for="layoutZone in version.layoutZones">
+                            <p v-for="layoutZone in version.zones">
                                 <span>The {{layoutZone.zone}} zone </span>
                                 <span v-if="layoutZone.regionId">contains the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
                                 <span v-else-if="layoutZone.layoutId">contains the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>

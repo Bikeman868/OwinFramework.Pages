@@ -960,38 +960,116 @@
                 }
             }
         }
+        });
+
+    Vue.component("cms-data-scopes-field-editor",
+    {
+        props: {},
+        template: "",
+        methods: {}
     });
 
-    Vue.component("cms-style-field-editor",
+    Vue.component("cms-data-types-field-editor",
+    {
+        props: {},
+        template: "",
+        methods: {}
+    });
+
+    Vue.component("cms-html-tag-field-editor",
     {
         props: {
             label: {
                 required: false,
                 type: String,
-                default: "Style"
+                default: "Html tag"
             },
-            cssStyle: {
+            htmlTag: {
                 required: false,
                 type: String,
-                default: ""
+                default: "div"
+            },
+            choices: {
+                required: false,
+                type: Array,
+                default: function () {
+                    return [
+                        "", "div", "p", "ul", "li", "table", "tr", "td", "th",
+                        "span", "pre", "main", "article", "aside", "header", "footer",
+                        "nav", "form", "details", "summary"];
+                }
             }
         },
         template: 
             "<div class=\"cms_field\">" +
             "  <label>{{label}}</label>" +
-            "  <input type=\"text\" class=\"cms_field__style\" placeholder=\"font-family: arial; font-size: large;\" :pattern=\"cssPattern\" @input=\"inputStyle\" :value=\"cssStyle\">" +
+            "  <select class=\"cms_field__html_tag\" @change=\"tagChanged($event)\">" +
+            "    <option v-for=\"choice in choices\" :value=\"choice\" :selected=\"choice==htmlTag\">{{choice}}</option>" +
+            "  </select>" +
             "</div>",
-        data: function () {
-            return {
-                cssPattern: exported.validation.cssPattern.source
-            }
-        },
         methods: {
-            inputStyle: function(e) {
-                this.$emit("css-style-changed", e.target.value);
+            tagChanged: function(e) {
+                this.$emit("html-tag-changed", e.target.value);
             }
         }
     });
+
+    Vue.component("cms-style-field-editor",
+        {
+            props: {
+                label: {
+                    required: false,
+                    type: String,
+                    default: "Style"
+                },
+                cssStyle: {
+                    required: false,
+                    type: String,
+                    default: ""
+                }
+            },
+            template:
+                "<div class=\"cms_field\">" +
+                "  <label>{{label}}</label>" +
+                "  <input type=\"text\" class=\"cms_field__style\" placeholder=\"font-family: arial; font-size: large;\" :pattern=\"cssPattern\" @input=\"inputStyle\" :value=\"cssStyle\">" +
+                "</div>",
+            data: function () {
+                return {
+                    cssPattern: exported.validation.cssPattern.source
+                }
+            },
+            methods: {
+                inputStyle: function (e) {
+                    this.$emit("css-style-changed", e.target.value);
+                }
+            }
+        });
+
+    Vue.component("cms-css-classes-field-editor",
+        {
+            props: {
+                label: {
+                    required: false,
+                    type: String,
+                    default: "Classes"
+                },
+                cssClasses: {
+                    required: false,
+                    type: String,
+                    default: ""
+                }
+            },
+            template:
+                "<div class=\"cms_field\">" +
+                "  <label>{{label}}</label>" +
+                "  <input type=\"text\" class=\"cms_field__classes\" placeholder=\"my_container my_float_left\" @input=\"inputChanged\" :value=\"cssClasses\">" +
+                "</div>",
+            methods: {
+                inputChanged: function (e) {
+                    this.$emit("css-classes-changed", e.target.value);
+                }
+            }
+        });
 
     Vue.component("cms-permisson-field-editor",
     {

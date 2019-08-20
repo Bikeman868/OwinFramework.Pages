@@ -88,7 +88,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "header,main,footer",
-                    LayoutZones = new []
+                    Zones = new []
                     {
                         new LayoutZoneRecord
                         {
@@ -112,7 +112,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                     Version = 2,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "header,main,footer",
-                    LayoutZones = new []
+                    Zones = new []
                     {
                         new LayoutZoneRecord
                         {

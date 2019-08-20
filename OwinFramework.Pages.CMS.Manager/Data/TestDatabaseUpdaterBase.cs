@@ -618,6 +618,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = pageVersion.AssetPath;
                         pageVersion.AssetPath = change.PropertyValue;
                         break;
+                    case "cacheCategory":
+                        changeDetails.OldValue = pageVersion.CacheCategory;
+                        pageVersion.CacheCategory = change.PropertyValue;
+                        break;
+                    case "cachePriority":
+                        changeDetails.OldValue = pageVersion.CachePriority;
+                        pageVersion.CachePriority = change.PropertyValue;
+                        break;
                 }
                 details.Add(changeDetails);
             }
@@ -1060,6 +1068,30 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = layoutVersion.ZoneNesting;
                         layoutVersion.ZoneNesting = change.PropertyValue;
                         break;
+                    case "tag":
+                        changeDetails.OldValue = layoutVersion.ContainerTag;
+                        layoutVersion.ContainerTag = change.PropertyValue;
+                        break;
+                    case "style":
+                        changeDetails.OldValue = layoutVersion.ContainerStyle;
+                        layoutVersion.ContainerStyle = change.PropertyValue;
+                        break;
+                    case "classes":
+                        changeDetails.OldValue = layoutVersion.ContainerClasses;
+                        layoutVersion.ContainerClasses = change.PropertyValue;
+                        break;
+                    case "nestingTag":
+                        changeDetails.OldValue = layoutVersion.NestingTag;
+                        layoutVersion.NestingTag = change.PropertyValue;
+                        break;
+                    case "nestingStyle":
+                        changeDetails.OldValue = layoutVersion.NestingStyle;
+                        layoutVersion.NestingStyle = change.PropertyValue;
+                        break;
+                    case "nestingClasses":
+                        changeDetails.OldValue = layoutVersion.NestingClasses;
+                        layoutVersion.NestingClasses = change.PropertyValue;
+                        break;
                 }
                 details.Add(changeDetails);
             }
@@ -1074,7 +1106,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var layoutVersion = _layoutVersions.FirstOrDefault(p => p.RecordId == layoutVersionId);
             if (layoutVersion == null) return new UpdateResult("layout_version_not_found", "No layout version found with id " + layoutVersionId);
 
-            var oldZones = layoutVersion.LayoutZones;
+            var oldZones = layoutVersion.Zones;
             var newZones = layoutZones.ToArray();
 
             if (oldZones != null && oldZones.Length == newZones.Length)
@@ -1092,7 +1124,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 if (!hasChanged) return new UpdateResult();
             }
 
-            layoutVersion.LayoutZones = newZones;
+            layoutVersion.Zones = newZones;
 
             AddHistory(
                 layoutVersion,

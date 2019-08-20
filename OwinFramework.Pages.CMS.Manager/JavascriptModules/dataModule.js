@@ -434,9 +434,10 @@ exported.pageVersionStore = dataUtilities.newStore({
     fields: [
         "name", "displayName", "description", "createdBy", "createdWhen",
         "recordId", "parentRecordId", "version", "moduleName", "assetDeployment", "masterPageId",
-        "layoutName", "layoutId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath"],
+        "layoutName", "layoutId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath",
+        "cacheCategory", "cachePriority"],
     arrayFields: [
-        "routes", "layoutZones", "components"],
+        "routes", "layoutZones", "components", "dataScopes", "dataTypes"],
     mixin: {
         createRecord: function (pageVersion, onSuccess, onFail, params) {
             exported.crudService.createPageVersion({
@@ -587,9 +588,9 @@ exported.layoutVersionStore = dataUtilities.newStore({
     fields: [
         "name", "displayName", "description", "createdBy", "createdWhen",
         "recordId", "parentRecordId", "version", "moduleName", "assetDeployment", 
-        "zoneNesting"],
+        "zoneNesting", "tag", "style", "classes", "nestingTag", "nestingStyle", "nestingClasses"],
     arrayFields: [
-        "layoutZones", "components"],
+        "zones", "components", "dataScopes", "dataTypes"],
     mixin: {
         createRecord: function (layoutVersion, onSuccess, onFail, params) {
             exported.crudService.createLayoutVersion({
@@ -615,14 +616,14 @@ exported.layoutVersionStore = dataUtilities.newStore({
                     },
                     onSuccess, null, onFail);
             }
-            if (updatedLayoutVersion.layoutZones != null) {
+            if (updatedLayoutVersion.zones != null) {
                 exported.crudService.updateLayoutVersionZones(
                     {
                         id: updatedLayoutVersion.recordId,
-                        body: updatedLayoutVersion.layoutZones
+                        body: updatedLayoutVersion.zones
                     },
                     function (response) {
-                        originalLayoutVersion.layoutZones = updatedLayoutVersion.layoutZones;
+                        originalLayoutVersion.zones = updatedLayoutVersion.zones;
                         if (onSuccess != undefined) onSuccess(response);
                     },
                     null,
@@ -650,7 +651,7 @@ exported.layoutVersionStore = dataUtilities.newStore({
         return {
             assetDeployment: "Inherit",
             zoneNesting: "zone1,zone2",
-            layoutZones: [],
+            zones: [],
             components: []
         };
     },

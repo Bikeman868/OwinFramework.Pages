@@ -95,51 +95,67 @@
         var id = parseInt(value);
         if (isNaN(id)) { return ""; }
 
-        var pageName = "page #" + id;
+        var name = "page #" + id;
         exported.pageStore.retrieveRecord(
             id,
             function (page) {
-                pageName = page.displayName;
+                name = page.displayName;
             });
-        return pageName;
+        return name;
     });
 
     Vue.filter("cms_lookupLayoutId", function (value) {
         var id = parseInt(value);
         if (isNaN(id)) { return ""; }
 
-        var layoutName = "layout #" + id;
+        var name = "layout #" + id;
         //exported.layoutStore.retrieveRecord(
         //    id,
         //    function (layout) {
-        //        layoutName = layout.displayName;
+        //        name = layout.displayName;
         //    });
-        return layoutName;
+        return name;
     });
 
     Vue.filter("cms_lookupRegionId", function (value) {
         var id = parseInt(value);
         if (isNaN(id)) { return ""; }
 
-        var regionName = "region #" + id;
+        var name = "region #" + id;
         //exported.regionStore.retrieveRecord(
         //    id,
         //    function (region) {
-        //        regionName = region.displayName;
+        //        name = region.displayName;
         //    });
-        return regionName;
+        return name;
     });
 
     Vue.filter("cms_lookupComponentId", function (value) {
         var id = parseInt(value);
         if (isNaN(id)) { return ""; }
 
-        var componentName = "component #" + id;
+        var name = "component #" + id;
         //exported.componentStore.retrieveRecord(
         //    id,
         //    function (component) {
-        //        componentName = component.displayName;
+        //        name = component.displayName;
         //    });
-        return componentName;
+        return name;
+    });
+
+    Vue.filter("cms_lookupDataScopeId", function (value) {
+        var id = parseInt(value);
+        if (isNaN(id)) { return ""; }
+
+        var name = "data scope #" + id;
+        return name;
+    });
+
+    Vue.filter("cms_lookupDataTypeId", function (value) {
+        var id = parseInt(value);
+        if (isNaN(id)) { return ""; }
+
+        var name = "data type #" + id;
+        return name;
     });
 }

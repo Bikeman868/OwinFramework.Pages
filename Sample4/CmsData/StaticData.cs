@@ -250,7 +250,7 @@ namespace Sample4.CmsData
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "header,main,footer",
-                    LayoutZones = new []
+                    Zones = new []
                     {
                         new LayoutZoneRecord
                         {
@@ -272,7 +272,7 @@ namespace Sample4.CmsData
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "title,menu",
-                    LayoutZones = new []
+                    Zones = new []
                     {
                         new LayoutZoneRecord
                         {
@@ -302,7 +302,7 @@ namespace Sample4.CmsData
                     Version = 1,
                     AssetDeployment = AssetDeployment.Inherit,
                     ZoneNesting = "footer",
-                    LayoutZones = new []
+                    Zones = new []
                     {
                         new LayoutZoneRecord
                         {

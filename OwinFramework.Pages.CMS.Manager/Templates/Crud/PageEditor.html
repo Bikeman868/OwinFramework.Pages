@@ -177,6 +177,15 @@
                                                             @asset-path-changed="editingPageVersion.assetPath=$event">
                                 </cms-permisson-field-editor>
                             </div>
+                            <div class="cms_edit_panel">
+                                <h2>Page data</h2>
+                                <cms-data-scopes-field-editor label="Page data scopes"
+                                                              v-bind:scopes="editingPageVersion.dataScopes">
+                                </cms-data-scopes-field-editor>
+                                <cms-data-types-field-editor label="Page data needs"
+                                                             v-bind:scopes="editingPageVersion.dataTypes">
+                                </cms-data-types-field-editor>
+                            </div>
                             <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
                                 <p v-for="error in versionErrors">{{error}}</p>
                             </div>
@@ -234,6 +243,18 @@
                             <div class="cms_field" v-if="currentPageVersion.permission">
                                 <label>Requires permission</label>
                                 <p>{{currentPageVersion.permission}}<span v-if="currentPageVersion.assetPath"> on {{currentPageVersion.assetPath}}</span></p>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.components && currentPageVersion.components.length > 0">
+                                <label>Dependant components</label>
+                                <ul><li v-for="component in currentPageVersion.components">{{component.componentId|cms_lookupComponentId}}</li></ul>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.dataScopes && currentPageVersion.dataScopes.length > 0">
+                                <label>Data scopes</label>
+                                <ul><li v-for="scope in currentPageVersion.dataScopes">{{scope.dataScopeId|cms_lookupDataScopeId}}</li></ul>
+                            </div>
+                            <div class="cms_field" v-if="currentPageVersion.dataTypes && currentPageVersion.dataTypes.length > 0">
+                                <label>Data needs</label>
+                                <ul><li v-for="type in currentPageVersion.dataTypes">{{type.dataTypeId|cms_lookupDataTypeId}}</li></ul>
                             </div>
                             <div class="cms_field" v-if="currentPageVersion.description">
                                 <label>Description</label>

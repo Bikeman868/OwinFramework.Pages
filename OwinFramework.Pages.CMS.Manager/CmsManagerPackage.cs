@@ -206,6 +206,7 @@ namespace OwinFramework.Pages.CMS.Manager
                 .DeployIn(module)
                 .NeedsComponent("libraries:Vue")
                 .NeedsComponent("ajax:ajax")
+                .NeedsComponent("data:data")
                 .NeedsComponent("templates:library")
                 .NeedsComponent("liveUpdateClient")
                 .NeedsComponent(assetsComponent)

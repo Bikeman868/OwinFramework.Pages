@@ -1,337 +1,17 @@
-﻿var dataUtilities = function() {
-    var copyObject = function (props, arrayProps, from, to) {
-        to = to || {};
-        props.forEach(function (prop) {
-            if (typeof(from[prop]) === "object") {
-                to[prop] = Object.assign({}, from[prop]);
-            } else {
-                to[prop] = from[prop];
-            }
-        });
-        arrayProps.forEach(function (prop) {
-            to[prop] = [];
-            if (from[prop] != undefined) {
-                from[prop].forEach(function (e) {
-                    if (typeof (e) === "object")
-                        to[prop].push(Object.assign({}, e));
-                    else
-                        to[prop].push(e);
-                });
-            }
-        });
-        return to;
-    }
-
-    var findChanges = function (props, arrayProps, original, modified) {
-        var changes = [];
-        if (original == undefined) {
-            props.forEach(function(prop) {
-                var value = modified[prop];
-                if (value != undefined)
-                    changes.push({ name: prop, value: value });
-            });
-        } else {
-            props.forEach(function (prop) {
-                var value = modified[prop];
-                if (original[prop] !== value)
-                    if (value == undefined || typeof(value) !== "object")
-                        changes.push({ name: prop, value: value });
-            });
-        }
-        return changes;
-    }
-
-    var doSuccessGet = function(recordType, response, onSuccess, onFail) {
-        if (response == undefined) {
-            if (onFail != undefined) onFail("No " + recordType + " was returned by the server");
-        } else {
-            if (onSuccess != undefined) onSuccess(response);
-        }
-    }
-
-    var doFailGet = function(recordType, ajax, onFail) {
-        if (onFail != undefined) {
-            onFail("Failed to retrieve a " + recordType);
-        }
-    }
-
-    var newStore = function(store) {
-        store.list = null;
-        store.dictionary = {};
-        store.dispatcherUnsubscribe = null;
-        store.mixin = store.mixin || {},
-        store.name = store.name || recordType,
-        store.listName = store.listName || "list of " + name,
-        store.arrayFields = store.arrayFields || [];
-
-        if (store.dispose == undefined) {
-            store.dispose = function() {
-                if (store.dispatcherUnsubscribe != null) store.dispatcherUnsubscribe();
-            };
-        }
-
-        if (store.add == undefined) {
-            store.add = function(record) {
-                if (store.list != undefined) store.list.push(record);
-                store.dictionary[record[store.idField]] = record;
-            };
-        }
-
-        if (store.remove == undefined) {
-            store.remove = function(id) {
-                delete store.dictionary[id];
-                if (store.list != undefined) {
-                    var index = -1;
-                    store.list.forEach(function(e, i) { if (e != undefined && e[store.idField] === id) index = i; });
-                    if (index >= 0) store.list.splice(index, 1);
-                }
-            };
-        }
-
-        if (store.setAll == undefined) {
-            store.setAll = function(records) {
-                if (records == null) return;
-                store.list = records;
-                store.dictionary = {};
-                for (let i = 0; i < records.length; i++) {
-                    if (records[i] != undefined && records[i][store.idField] != undefined)
-                        store.dictionary[records[i][store.idField]] = records[i];
-                }
-            };
-        }
-
-        if (store.getAll == undefined) {
-            store.getAll = function() { return store.list; };
-        }
-
-        if (store.set == undefined) {
-            store.set = function(record) {
-                if (record == undefined) return;
-                var id = record[store.idField];
-                if (id == undefined) return;
-                var original = store.dictionary[id];
-                if (original == undefined) {
-                    store.add(record);
-                } else {
-                    copyObject(store.fields, store.arrayFields, record, original);
-                }
-            };
-        }
-
-        if (store.get == undefined) {
-            store.get = function(id) { return store.dictionary[id]; }
-        }
-
-        if (store.createRecord == undefined) {
-            store.createRecord = function(newRecord, onSuccess, onFail, params) {
-                if (store.mixin.createRecord == undefined) return;
-                store.mixin.createRecord.call(store,
-                    newRecord,
-                    function(response) {
-                        if (response == undefined) {
-                            if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been created");
-                        } else if (response[store.idField] == undefined) {
-                            if (onFail != undefined) onFail("The server failed to return an ID for the new " + store.name);
-                        } else {
-                            store.add(response);
-                            if (onSuccess != undefined) onSuccess(response);
-                        }
-                    },
-                    function(ajax) {
-                        if (ajax.status === 403) onFail("You do not have permission to create " + store.name);
-                        if (onFail != undefined) onFail("Failed to create a new " + store.name);
-                    },
-                    params);
-            }
-        }
-
-        if (store.retrieveAllRecords == undefined) {
-            store.retrieveAllRecords = function(onSuccess, onFail) {
-                if (store.mixin.retrieveAllRecords == undefined) return;
-                var records = store.getAll();
-                if (records == undefined) {
-                    store.mixin.retrieveAllRecords.call(store,
-                        function(response) {
-                            if (response == undefined) {
-                                if (onFail != undefined) onFail("No " + store.listName + " was returned by the server");
-                            } else {
-                                store.setAll(response);
-                                if (onSuccess != undefined) onSuccess(response);
-                            }
-                        },
-                        function(ajax) {
-                            if (ajax.status === 403) onFail("You do not have permission to retrieve " + store.listName);
-                            if (onFail != undefined) onFail("Failed to retrieve a " + store.listName);
-                        });
-                } else {
-                    if (onSuccess != undefined) onSuccess(records);
-                }
-            }
-        }
-
-        if (store.retrieveRecord == undefined) {
-            store.retrieveRecord = function(id, onSuccess, onFail) {
-                if (store.mixin.retrieveRecord == undefined) return;
-                if (id == undefined) return;
-                var record = store.get(id);
-                if (record == undefined) {
-                    store.mixin.retrieveRecord.call(store,
-                        id,
-                        function(response) {
-                            store.set(response);
-                            if (onSuccess != undefined) onSuccess(response);
-                        },
-                        function(ajax) {
-                            if (ajax.status === 403) onFail("You do not have permission to retrieve " + store.name + " " + id);
-                            if (onFail != undefined) onFail("Failed to retrieve " + store.name + " " + id);
-                        });
-                } else {
-                    if (onSuccess != undefined) onSuccess(record);
-                }
-            }
-        }
-
-        if (store.updateRecord == undefined) {
-            store.updateRecord = function(originalRecord, updatedRecord, onSuccess, onFail) {
-                if (store.mixin.updateRecord == undefined) return;
-                var changes = findChanges(store.fields, store.arrayFields, originalRecord, updatedRecord);
-                if (changes.length === 0 && store.arrayFields.length === 0) {
-                    if (onSuccess != undefined) onSuccess(originalRecord);
-                } else {
-                    var id = originalRecord[store.idField];
-                    if (updatedRecord[store.idField] !== id) {
-                        if (onFail != undefined) {
-                            onFail("Original and updated " + store.name + " must have the same id");
-                        }
-                        return;
-                    }
-                    store.mixin.updateRecord.call(store,
-                        originalRecord,
-                        updatedRecord,
-                        changes,
-                        function(response) {
-                            if (response == undefined) {
-                                if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been updated");
-                            } else {
-                                store.set(response);
-                                if (onSuccess != undefined) onSuccess(response);
-                            }
-                        },
-                        function(ajax) {
-                            if (onFail != undefined) {
-                                if (ajax.status === 403) onFail("You do not have permission to update " + store.name);
-                                else onFail("Failed to update " + store.name);
-                            }
-                        });
-                }
-            }
-        }
-
-        if (store.deleteRecord == undefined){
-            store.deleteRecord = function(id, onSuccess, onFail) {
-                if (store.mixin.deleteRecord == undefined) return;
-                store.mixin.deleteRecord(
-                    id,
-                    function(response) {
-                        store.remove(id);
-                        if (onSuccess != undefined) onSuccess(response);
-                    },
-                    function(ajax) {
-                        if (onFail != undefined) {
-                            if (ajax.status === 403) onFail("You do not have permission to delete " + store.name + " " + id);
-                            else onFail("Failed to delete " + store.name + " " + id);
-                        }
-                    });
-            }
-        }
-
-        if (store.cloneForEditing == undefined) {
-            store.cloneForEditing = function(original) {
-                return copyObject(store.fields, store.arrayFields, original);
-            }
-        }
-
-        if (store.blankRecord == undefined) {
-            store.blankRecord = function() {
-                return {};
-            }
-        }
-
-        if (store.recordType != undefined) {
-            store.dispatcherUnsubscribe = exported.dispatcher.subscribe(function(message) {
-                if (message.propertyChanges != undefined) {
-                    for (let i = 0; i < message.propertyChanges.length; i++) {
-                        var propertyChange = message.propertyChanges[i];
-                        if (propertyChange.recordType === store.recordType) {
-                            var record = store.get(propertyChange.id);
-                            if (record != undefined) {
-                                record[propertyChange.name] = propertyChange.value;
-                            }
-                        }
-                    }
-                }
-                if (message.deletedRecords != undefined) {
-                    for (let i = 0; i < message.deletedRecords.length; i++) {
-                        var deletedElement = message.deletedRecords[i];
-                        if (deletedElement.recordType === store.recordType) {
-                            store.remove(deletedElement.id);
-                        }
-                    }
-                }
-                if (message.newRecords != undefined && store.mixin.retrieveRecord != undefined) {
-                    for (let i = 0; i < message.newRecords.length; i++) {
-                        var newRecord = message.newRecords[i];
-                        if (newRecord.recordType === store.recordType) {
-                            store.mixin.retrieveRecord.call(store, newRecord.id, function (r) { store.set(r); });
-                        }
-                    }
-                }
-                if (message.childListChanges != undefined) {
-                    for (let i = 0; i < message.childListChanges.length; i++) {
-                        var childListChange = message.childListChanges[i];
-                        if (childListChange.recordType === store.recordType) {
-                            // TODO: refresh child list
-                        }
-                    }
-                }
-            });
-        }
-
-        return store;
-    }
-
-    return {
-        copyObject: copyObject,
-        findChanges: findChanges,
-        doSuccessGet: doSuccessGet,
-        doFailGet: doFailGet,
-        newStore: newStore
-    }
-}();
-
-/*
-// TODO: Change fields to an array of objects where each object has the field name,
-// data type and flags indicating if it is the primary key, a list of children etc
-// this will allow retrieved records to have missing properties filled in with default
-// values. The default value can be explicitly set in the field definition object or
-// default based on data type. See example in environment store below.
-*/
-
-exported.environmentStore = dataUtilities.newStore({
+﻿exported.environmentStore = ns.data.store.newStore({
     recordType: "Environment",
     name: "environment",
-    _fields: [
-        { name: "recordId", type:Number, isId:true },
-        { name: "name", type: String, default: function (r) { return "environment_" + r.recordid; } },
+    dispatcher: exported.dispatcher,
+    fields: [
+        { name: "recordId", type:Number, isKey:true },
+        { name: "name", type: String, default: function (r) { return "environment_" + r.recordId; } },
         { name: "displayName", type: String, default: function (r) { return name; } },
         { name: "description", type: String },
         { name: "createdBy", type: String },
         { name: "createdWhen", type: String },
         { name: "baseUrl", type: String, default: function (r) { return "https://" + r.name + ".mycompany.com/"} },
         { name: "websiteVersionId", type: Number }],
-    idField: "recordId",
-    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "recordId", "baseUrl", "websiteVersionId"],
-    mixin: {
+    crud: {
         createRecord: function(environment, onSuccess, onFail, params) {
             exported.crudService.createEnvironment({ body: environment }, onSuccess, onFail);
         },
@@ -355,12 +35,18 @@ exported.environmentStore = dataUtilities.newStore({
     }
 });
 
-exported.websiteVersionStore = dataUtilities.newStore({
+exported.websiteVersionStore = ns.data.store.newStore({
     recordType: "WebsiteVersion",
     name: "website version",
-    idField: "recordId",
-    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "recordId"],
-    mixin: {
+    dispatcher: exported.dispatcher,
+    fields: [
+        { name: "recordId", type: Number, isKey: true },
+        { name: "name", type: String, default: function (r) { return "website_version_" + r.recordId; } },
+        { name: "displayName", type: String, default: function (r) { return name; } },
+        { name: "description", type: String },
+        { name: "createdBy", type: String },
+        { name: "createdWhen", type: String }],
+    crud: {
         createRecord: function (websiteVersion, onSuccess, onFail, params) {
             exported.crudService.createWebsiteVersion({ body: websiteVersion }, onSuccess, onFail);
         },
@@ -386,21 +72,27 @@ exported.websiteVersionStore = dataUtilities.newStore({
     },
     getWebsiteVersionPages: function (websiteVersionId, onSuccess, onFail) {
         var store = this;
+        const description = "list of vebsite version pages";
         exported.listService.websiteVersionPages(
             { id: websiteVersionId },
-            function (response) { dataUtilities.doSuccessGet("list of vebsite version pages", response, onSuccess, onFail); },
+            function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
             null,
-            function (ajax) { dataUtilities.doFailGet("list of vebsite version pages", ajax, onFail); });
+            function (ajax) { store.handleGetFail(description, ajax, onFail); });
     }
 });
 
-exported.pageStore = dataUtilities.newStore({
+exported.pageStore = ns.data.store.newStore({
     recordType: "Page",
     name: "page",
-    listName: "list of pages",
-    idField: "recordId",
-    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "recordId"],
-    mixin: {
+    dispatcher: exported.dispatcher,
+    fields: [
+        { name: "recordId", type: Number, isKey: true },
+        { name: "name", type: String, default: function (r) { return "page_" + r.recordId; } },
+        { name: "displayName", type: String, default: function (r) { return name; } },
+        { name: "description", type: String },
+        { name: "createdBy", type: String },
+        { name: "createdWhen", type: String }],
+    crud: {
         createRecord: function(page, onSuccess, onFail, params) {
             exported.crudService.createPage({ body: page, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
         },
@@ -426,19 +118,38 @@ exported.pageStore = dataUtilities.newStore({
     }
 });
 
-exported.pageVersionStore = dataUtilities.newStore({
+exported.pageVersionStore = ns.data.store.newStore({
     recordType: "PageVersion",
     name: "page version",
     listName: "list of page versions",
-    idField: "recordId",
+    dispatcher: exported.dispatcher,
     fields: [
-        "name", "displayName", "description", "createdBy", "createdWhen",
-        "recordId", "parentRecordId", "version", "moduleName", "assetDeployment", "masterPageId",
-        "layoutName", "layoutId", "canonicalUrl", "title", "bodyStyle", "permission", "assetPath",
-        "cacheCategory", "cachePriority"],
-    arrayFields: [
-        "routes", "layoutZones", "components", "dataScopes", "dataTypes"],
-    mixin: {
+        { name: "recordId", type: Number, isKey: true },
+        { name: "name", type: String, default: function (r) { return "environment_" + r.recordId; } },
+        { name: "displayName", type: String, default: function (r) { return name; } },
+        { name: "description", type: String },
+        { name: "createdBy", type: String },
+        { name: "createdWhen", type: String },
+        { name: "parentRecordId", type: Number },
+        { name: "version", type: Number },
+        { name: "moduleName", type: String },
+        { name: "assetDeployment", type: String, dafault:"Inherit" },
+        { name: "masterPageId", type: Number },
+        { name: "layoutName", type: String },
+        { name: "layoutId", type: Number },
+        { name: "canonicalUrl", type: String },
+        { name: "title", type: String },
+        { name: "bodyStyle", type: String },
+        { name: "permission", type: String },
+        { name: "assetPath", type: String },
+        { name: "cacheCategory", type: String },
+        { name: "cachePriority", type: String },
+        { name: "routes", type: Array },
+        { name: "layoutZones", type: Array },
+        { name: "components", type: Array },
+        { name: "dataScopes", type: Array },
+        { name: "dataTypes", type: Array }],
+    crud: {
         createRecord: function (pageVersion, onSuccess, onFail, params) {
             exported.crudService.createPageVersion({
                     body: pageVersion,
@@ -507,21 +218,14 @@ exported.pageVersionStore = dataUtilities.newStore({
             exported.crudService.deletePageVersion({ id: pageVersionId }, onSuccess, null, onFail);
         }
     },
-    blankRecord: function() {
-        return{
-            assetDeployment: "Inherit",
-            routes: [],
-            layoutZones: [],
-            components: []
-        };
-    },
     getPageVersions: function (pageId, onSuccess, onFail) {
         var store = this;
+        const description = "list of page versions";
         exported.listService.pageVersions(
             { id: pageId },
-            function (response) { dataUtilities.doSuccessGet("list of page versions", response, onSuccess, onFail); },
+            function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
             null,
-            function (ajax) { dataUtilities.doFailGet("list of page versions", ajax, onFail); });
+            function (ajax) { store.handleGetFail(description, ajax, onFail); });
     },
     getWebsitePageVersion: function (websiteVersionId, segmentationScenarioName, pageId, onSuccess, onFail) {
         var store = this;
@@ -548,13 +252,19 @@ exported.pageVersionStore = dataUtilities.newStore({
     }
 });
 
-exported.layoutStore = dataUtilities.newStore({
+exported.layoutStore = ns.data.store.newStore({
     recordType: "Layout",
     name: "layout",
     listName: "list of layouts",
-    idField: "recordId",
-    fields: ["name", "displayName", "description", "createdBy", "createdWhen", "recordId"],
-    mixin: {
+    dispatcher: exported.dispatcher,
+    fields: [
+        { name: "recordId", type: Number, isKey: true },
+        { name: "name", type: String, default: function (r) { return "layout_" + r.recordId; } },
+        { name: "displayName", type: String, default: function (r) { return name; } },
+        { name: "description", type: String },
+        { name: "createdBy", type: String },
+        { name: "createdWhen", type: String }],
+    crud: {
         createRecord: function (layout, onSuccess, onFail, params) {
             exported.crudService.createLayout({ body: layout, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
         },
@@ -580,18 +290,34 @@ exported.layoutStore = dataUtilities.newStore({
     }
 });
 
-exported.layoutVersionStore = dataUtilities.newStore({
+exported.layoutVersionStore = ns.data.store.newStore({
     recordType: "LayoutVersion",
     name: "layout version",
     listName: "list of layout versions",
-    idField: "recordId",
+    dispatcher: exported.dispatcher,
     fields: [
-        "name", "displayName", "description", "createdBy", "createdWhen",
-        "recordId", "parentRecordId", "version", "moduleName", "assetDeployment", 
-        "zoneNesting", "tag", "style", "classes", "nestingTag", "nestingStyle", "nestingClasses"],
-    arrayFields: [
-        "zones", "components", "dataScopes", "dataTypes"],
-    mixin: {
+        { name: "recordId", type: Number, isKey: true },
+        { name: "name", type: String, default: function (r) { return "environment_" + r.recordId; } },
+        { name: "displayName", type: String, default: function (r) { return name; } },
+        { name: "description", type: String },
+        { name: "createdBy", type: String },
+        { name: "createdWhen", type: String },
+        { name: "parentRecordId", type: Number },
+        { name: "version", type: Number },
+        { name: "moduleName", type: String },
+        { name: "assetDeployment", type: String, dafault: "Inherit" },
+        { name: "zoneNesting", type: String, default: "zone1,zone2" },
+        { name: "tag", type: String },
+        { name: "style", type: String },
+        { name: "classes", type: String },
+        { name: "nestingTag", type: String },
+        { name: "nestingStyle", type: String },
+        { name: "nestingClasses", type: String },
+        { name: "zones", type: Array },
+        { name: "components", type: Array },
+        { name: "dataScopes", type: Array },
+        { name: "dataTypes", type: Array }],
+    crud: {
         createRecord: function (layoutVersion, onSuccess, onFail, params) {
             exported.crudService.createLayoutVersion({
                 body: layoutVersion,
@@ -647,21 +373,14 @@ exported.layoutVersionStore = dataUtilities.newStore({
             exported.crudService.deleteLayoutVersion({ id: layoutVersionId }, onSuccess, null, onFail);
         }
     },
-    blankRecord: function () {
-        return {
-            assetDeployment: "Inherit",
-            zoneNesting: "zone1,zone2",
-            zones: [],
-            components: []
-        };
-    },
     getLayoutVersions: function (layoutId, onSuccess, onFail) {
         var store = this;
+        const description = "list of layout versions";
         exported.listService.layoutVersions(
             { id: layoutId },
-            function (response) { dataUtilities.doSuccessGet("list of layout versions", response, onSuccess, onFail); },
+            function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
             null,
-            function (ajax) { dataUtilities.doFailGet("list of layout versions", ajax, onFail); });
+            function (ajax) { store.handleGetFail(description, ajax, onFail); });
     },
     getWebsiteLayoutVersion: function (websiteVersionId, segmentationScenarioName, layoutId, onSuccess, onFail) {
         var store = this;
@@ -688,29 +407,41 @@ exported.layoutVersionStore = dataUtilities.newStore({
     }
 });
 
-exported.userStore = dataUtilities.newStore({
+exported.userStore = ns.data.store.newStore({
     recordType: "User",
     name: "user",
     listName: "list of users",
-    idField: "userUrn",
-    fields: ["name", "userUrn"],
-    mixin: {
+    dispatcher: exported.dispatcher,
+    fields: [
+        { name: "userUrn", type: String, isKey: true },
+        { name: "name", type: String }],
+    crud: {
         retrieveRecord: function (userUrn, onSuccess, onFail) {
+            // TODO: Get users from back-end service
             onSuccess({userUrn: userUrn, name: "bikeman"});
         },
         retrieveAllRecords: function (onSuccess, onFail) {
+            // TODO: Get users from back-end service
             onSuccess([]);
         }
     }
 });
 
-exported.segmentTestStore = dataUtilities.newStore({
+exported.segmentTestStore = ns.data.store.newStore({
     recordType: "SegmentationTest",
     name: "segmentation test",
     listName: "list of segmentation tests",
-    idField: "name",
-    fields: ["name", "displayName", "description", "start", "end", "environment", "pages", "map"],
-    mixin: {
+    dispatcher: exported.dispatcher,
+    fields: [
+        { name: "name", type: String, default: "segment", isKey: true },
+        { name: "displayName", type: String, default: function (r) { return name; } },
+        { name: "description", type: String },
+        { name: "start", type: Date },
+        { name: "end", type: Date },
+        { name: "environment", type: String, default: "production" },
+        { name: "pages", type: Array },
+        { name: "map", type: Array }],
+    crud: {
         createRecord: function (test, onSuccess, onFail, params) {
             exported.segmentTestingService.createTest({ body: test }, onSuccess, onFail);
         },
@@ -731,13 +462,16 @@ exported.segmentTestStore = dataUtilities.newStore({
     }
 });
 
-exported.segmentScenarioStore = dataUtilities.newStore({
+exported.segmentScenarioStore = ns.data.store.newStore({
     recordType: "SegmentationScenario",
     name: "segmentation scenario",
     listName: "list of segmentation scenarios",
-    idField: "name",
-    fields: ["name", "displayName", "description"],
-    mixin: {
+    dispatcher: exported.dispatcher,
+    fields: [
+        { name: "name", type: String, default: "scenario", isKey: true },
+        { name: "displayName", type: String, default: function (r) { return name; } },
+        { name: "description", type: String }],
+    crud: {
         createRecord: function (scenario, onSuccess, onFail, params) {
             exported.segmentTestingService.createScenario({ body: scenario }, onSuccess, onFail);
         },

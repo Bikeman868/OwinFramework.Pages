@@ -98,6 +98,7 @@ namespace Sample4
             fluentBuilder.RegisterPackage(ninject.Get<LibrariesPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<TemplatesPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<AjaxPackage>(), factory);
+            fluentBuilder.RegisterPackage(ninject.Get<DataPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<CmsStaticRuntimePackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<CmsManagerPackage>(), factory);
 

@@ -5,8 +5,14 @@
     var isSuccess = function () { return true; }
     var onRenewSession = function (ajax) { return false; }
     var onSuccess = function (ajax) { return null; }
-    var onFail = function (ajax) { console.log("Failed ajax request: " + ajax); }
     var onDone = function (ajax) { }
+    var onFail = function (ajax) {
+        if (ajax.status >= 300) {
+            console.log(
+                "AJAX request to " + ajax.responseURL +
+                " failed with " + ajax.status + ":" + ajax.statusTxt);
+        }
+    }
 
     var init = function (params) {
         if (params.isSessionExpired != undefined)

@@ -19,6 +19,7 @@
         });
 
         store.fields.forEach(function (field) {
+            field.allowNull = field.allowNull == true;
             if (field.type == undefined) {
                 var defaultValue = defaultRecord[field.name];
                 if (defaultValue == undefined) field.type = String;
@@ -59,28 +60,51 @@
             }
         }
 
-        if (store.copyObject == undefined) {
-            store.copyObject = function (from, to) {
+        if (store.deepCopy == undefined) {
+            store.deepCopy = function (value) {
+                if (value == undefined) return null;
+                if (typeof (value) === "object") {
+                    isSuccess: function(ajax)
+                    if (value.constructor === Array) {
+                        var result = [];
+                        value.forEach(function (e) { result.push(store.deepCopy(e)); });
+                        return result;
+                    } else if (value.constructor === Date) {
+                        return new Date(value.valueOf());
+                    } else {
+                        var result = {};
+                        for (p in value) result[p] = store.deepCopy(value[p]);
+                        return result;
+                    }
+                }
+                return value;
+            }
+        }
+
+        if (store.copyRecord == undefined) {
+            store.copyRecord = function (from, to) {
                 to = to || {};
                 store.fields.forEach(function (field) {
                     var value = from[field.name];
                     if (value == undefined) return;
-                    if (field.type === Object) {
-                        to[field.name] = Object.assign({}, value);
-                    } else if (field.type === Array) {
-                        var a = [];
-                        for (let i = 0; i < value.length; i++) {
-                            if (typeof (value[i]) === "object")
-                                a.push(Object.assign({}, value[i]));
-                            else
-                                a.push(value[i]);
-                        }
-                        to[field.name] = a;
-                    } else {
-                        to[field.name] = value;
-                    }
+                    to[field.name] = store.deepCopy(value);
                 });
                 return to;
+            }
+        }
+
+        if (store.initRecord == undefined) {
+            store.initRecord = function (record) {
+                store.fields.forEach(function (field) {
+                    if (!field.allowNull && record[field.name] == undefined) {
+                        if (field.type === Object) record[field.name] = {};
+                        else if (field.type === Array) record[field.name] = [];
+                        else if (field.type === Date) record[field.name] = new Date();
+                        else if (field.type === Number) record[field.name] = 0;
+                        else if (field.type === Boolean) record[field.name] = false;
+                        else record[field.name] = "";
+                    }
+                });
             }
         }
 
@@ -183,8 +207,12 @@
                 store.list = records;
                 store.dictionary = {};
                 for (let i = 0; i < records.length; i++) {
-                    if (records[i] != undefined && records[i][store.keyField] != undefined)
-                        store.dictionary[records[i][store.keyField]] = records[i];
+                    var record = records[i];
+                    if (record != undefined) {
+                        store.initRecord(record);
+                        if (record[store.keyField] != undefined)
+                            store.dictionary[record[store.keyField]] = record;
+                    }
                 }
             };
         }
@@ -196,13 +224,16 @@
         if (store.set == undefined) {
             store.set = function (record) {
                 if (record == undefined) return;
+
                 var id = record[store.keyField];
                 if (id == undefined) return;
+
                 var original = store.dictionary[id];
                 if (original == undefined) {
+                    store.initRecord(record);
                     store.add(record);
                 } else {
-                    store.copyObject(record, original);
+                    store.copyRecord(record, original);
                 }
             };
         }
@@ -336,7 +367,9 @@
 
         if (store.cloneForEditing == undefined) {
             store.cloneForEditing = function (original) {
-                return store.copyObject(original);
+                var copy = store.copyRecord(original);
+                store.initRecord(copy);
+                return copy;
             }
         }
 
@@ -349,6 +382,7 @@
                     else
                         record[field.name] = field.default;
                 });
+                store.initRecord(record);
                 return record;
             }
         }

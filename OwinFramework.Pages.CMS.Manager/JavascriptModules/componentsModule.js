@@ -965,14 +965,14 @@
     Vue.component("cms-data-scopes-field-editor",
     {
         props: {},
-        template: "",
+        template: "<div></div>",
         methods: {}
     });
 
     Vue.component("cms-data-types-field-editor",
     {
         props: {},
-        template: "",
+        template: "<div></div>",
         methods: {}
     });
 

@@ -90,40 +90,63 @@
                 if (original == undefined) {
                     store.fields.forEach(function (field) {
                         var value = modified[field.name];
-                        if (value != undefined)
-                            changes.push({ name: field.name, value: value });
+                        if (value != undefined) {
+                            if (field.type === Object)
+                                changes.push({ name: field.name, objectValue: value });
+                            else if (field.type === Array)
+                                changes.push({ name: field.name, arrayValue: value });
+                            else
+                                changes.push({ name: field.name, value: value });
+                        }
                     });
                 } else {
                     store.fields.forEach(function (field) {
-                        var value = modified[field.name];
+                        var modifiedValue = modified[field.name];
+                        var originalValue = original[field.name];
                         if (field.type === Object) {
-                            if (value == undefined) {
-                                changes.push({ name: field.name, objectValue: value });
+                            if (modifiedValue == undefined) {
+                                if (originalValue != undefined)
+                                    changes.push({ name: field.name, objectValue: null });
+                            } else if (originalValue == undefined) {
+                                changes.push({ name: field.name, objectValue: modifiedValue });
                             } else {
                                 var hasChanges = false;
                                 var changedProperties = {};
-                                original.forEach(function (p) {
-                                    if (original[p] != value[p]) {
+                                for (p in modifiedValue) {
+                                    if (originalValue[p] != modifiedValue[p]) {
                                         hasChanges = true;
-                                        changedProperties[p] = value[p];
+                                        changedProperties[p] = modifiedValue[p];
                                     }
-                                });
+                                }
                                 if (hasChanges)
-                                    changes.push({ name: field.name, changedProperties: changedProperties });
+                                    changes.push({ name: field.name, objectProperties: changedProperties });
                             }
                         }
                         else if (field.type === Array) {
-                            if (value == undefined || original.length != value.length) {
-                                changes.push({ name: field.name, arrayValue: value });
+                            if (modifiedValue == undefined) {
+                                if (originalValue != undefined && originalValue.length > 0)
+                                    changes.push({ name: field.name, arrayValue: null });
+                            } else if (originalValue == undefined || originalValue.length != modifiedValue.length) {
+                                changes.push({ name: field.name, arrayValue: modifiedValue });
                             } else {
-                                for (let i = 0; i < value.length; i++) {
-                                    if (original[i] != value[i])
-                                        changes.push({ name: field.name, index: i, value: value[i] });
+                                for (let i = 0; i < modifiedValue.length; i++) {
+                                    if (typeof(modifiedValue[i]) === "object") {
+                                        var hasChanges = false;
+                                        for (p in modifiedValue[i]) {
+                                            if (originalValue[i][p] != modifiedValue[i][p]) {
+                                                hasChanges = true;
+                                            }
+                                        }
+                                        if (hasChanges) changes.push({ name: field.name, index: i, objectValue: modifiedValue[i] });
+                                    } else {
+                                        if (originalValue[i] != modifiedValue[i])
+                                            changes.push({ name: field.name, index: i, value: modifiedValue[i] });
+                                    }
                                 }
                             }
                         }
-                        else if (original[field.name] != value)
-                            changes.push({ name: field.name, value: value });
+                        else if (originalValue != modifiedValue)
+                            changes.push({ name: field.name, value: modifiedValue });
                     });
                 }
                 return changes;

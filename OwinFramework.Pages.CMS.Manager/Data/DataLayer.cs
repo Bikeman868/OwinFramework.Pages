@@ -267,6 +267,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         UpdateResult IDatabaseUpdater.UpdatePageVersionRoutes(string identity, long pageVersionId, IEnumerable<PageRouteRecord> routes)
         {
+            foreach (var route in routes) route.PageVersionId = pageVersionId;
+
             var result = _databaseUpdater.UpdatePageVersionRoutes(identity, pageVersionId, routes);
             if (!result.Success) return result;
 
@@ -280,7 +282,6 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         ChildRecordType = "Route"
                     });
             }
-
 
             return result;
         }

@@ -42,8 +42,8 @@
             editScenario: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingScenario = exported.segmentScenarioStore.cloneForEditing(vm.currentScenario);
-                Object.assign(vm.originalScenario, vm.editingScenario);
+                vm.originalScenario = exported.segmentScenarioStore.cloneRecord(vm.currentScenario);
+                vm.editingScenario = exported.segmentScenarioStore.cloneRecord(vm.originalScenario);
                 vm.mode = "edit";
             },
             deleteScenario: function() {

@@ -48,8 +48,8 @@
             editWebsiteVersion: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingWebsiteVersion = exported.websiteVersionStore.cloneForEditing(vm.currentWebsiteVersion);
-                Object.assign(vm.originalWebsiteVersion, vm.editingWebsiteVersion);
+                vm.originalWebsiteVersion = exported.websiteVersionStore.cloneRecord(vm.currentWebsiteVersion);
+                vm.editingWebsiteVersion = exported.websiteVersionStore.cloneRecord(vm.originalWebsiteVersion);
                 vm.mode = "edit";
             },
             deleteWebsiteVersion: function() {

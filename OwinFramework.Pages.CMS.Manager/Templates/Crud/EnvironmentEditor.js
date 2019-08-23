@@ -57,8 +57,8 @@
             editEnvironment: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingEnvironment = exported.environmentStore.cloneForEditing(vm.currentEnvironment);
-                Object.assign(vm.originalEnvironment, vm.editingEnvironment);
+                vm.originalEnvironment = exported.environmentStore.cloneRecord(vm.currentEnvironment);
+                vm.editingEnvironment = exported.environmentStore.cloneRecord(vm.originalEnvironment);
                 vm.mode = "edit";
             },
             deleteEnvironment: function() {

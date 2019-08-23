@@ -174,45 +174,6 @@ exported.pageVersionStore = ns.data.store.newStore({
                     },
                     onSuccess, null, onFail);
             }
-            if (updatedPageVersion.routes != undefined) {
-                exported.crudService.updatePageVersionRoutes(
-                    {
-                        id: updatedPageVersion.recordId,
-                        body: updatedPageVersion.routes
-                    },
-                    function (response) {
-                        originalPageVersion.routes = updatedPageVersion.routes;
-                        if (onSuccess != undefined) onSuccess(response);
-                    },
-                    null,
-                    onFail);
-            }
-            if (updatedPageVersion.layoutZones != null) {
-                exported.crudService.updatePageVersionZones(
-                    {
-                        id: updatedPageVersion.recordId,
-                        body: updatedPageVersion.layoutZones
-                    },
-                    function (response) {
-                        originalPageVersion.layoutZones = updatedPageVersion.layoutZones;
-                        if (onSuccess != undefined) onSuccess(response);
-                    },
-                    null,
-                    onFail);
-            }
-            if (updatedPageVersion.components != undefined) {
-                exported.crudService.updatePageVersionComponents(
-                    {
-                        id: updatedPageVersion.recordId,
-                        body: updatedPageVersion.components
-                    },
-                    function (response) {
-                        originalPageVersion.components = updatedPageVersion.components;
-                        if (onSuccess != undefined) onSuccess(response);
-                    },
-                    null,
-                    onFail);
-            }
         },
         deleteRecord: function (pageVersionId, onSuccess, onFail) {
             exported.crudService.deletePageVersion({ id: pageVersionId }, onSuccess, null, onFail);
@@ -341,32 +302,6 @@ exported.layoutVersionStore = ns.data.store.newStore({
                         body: changes
                     },
                     onSuccess, null, onFail);
-            }
-            if (updatedLayoutVersion.zones != null) {
-                exported.crudService.updateLayoutVersionZones(
-                    {
-                        id: updatedLayoutVersion.recordId,
-                        body: updatedLayoutVersion.zones
-                    },
-                    function (response) {
-                        originalLayoutVersion.zones = updatedLayoutVersion.zones;
-                        if (onSuccess != undefined) onSuccess(response);
-                    },
-                    null,
-                    onFail);
-            }
-            if (updatedLayoutVersion.components != undefined) {
-                exported.crudService.updateLayoutVersionComponents(
-                    {
-                        id: updatedLayoutVersion.recordId,
-                        body: updatedLayoutVersion.components
-                    },
-                    function (response) {
-                        originalLayoutVersion.components = updatedLayoutVersion.components;
-                        if (onSuccess != undefined) onSuccess(response);
-                    },
-                    null,
-                    onFail);
             }
         },
         deleteRecord: function (layoutVersionId, onSuccess, onFail) {

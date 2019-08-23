@@ -93,8 +93,8 @@
             editLayout: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingLayout = exported.layoutStore.cloneForEditing(vm.currentLayout);
-                Object.assign(vm.originalLayout, vm.editingLayout);
+                vm.originalLayout = exported.layoutStore.cloneRecord(vm.currentLayout);
+                vm.editingLayout = exported.layoutStore.cloneRecord(vm.originalLayout);
                 vm.layoutMode = "edit";
             },
             deleteLayout: function() {
@@ -188,7 +188,7 @@
                 exported.layoutVersionStore.retrieveRecord(
                     layoutVersionId,
                     function (layoutVersion) {
-                        vm.editingLayoutVersion = Object.assign(exported.layoutVersionStore.blankRecord(), layoutVersion);
+                        vm.editingLayoutVersion = exported.layoutVersionStore.cloneRecord(layoutVersion);
                         vm.layoutVersionMode = "new";
                     });
             },
@@ -209,19 +209,19 @@
                             null,
                             vm.currentLayout.recordId,
                             function (layoutVersion) {
-                                vm.editingLayoutVersion = Object.assign(exported.layoutVersionStore.blankRecord(), layoutVersion);
+                                vm.editingLayoutVersion = Exported.layoutVersionStore.cloneRecord(layoutVersion);
                             });
                     }
                 } else {
-                    vm.editingLayoutVersion = Object.assign(exported.layoutVersionStore.blankRecord(), vm.currentLayoutVersion);
+                    vm.editingLayoutVersion = exported.layoutVersionStore.cloneRecord(vm.currentLayoutVersion);
                 }
                 vm.layoutVersionMode = "new";
             },
             editLayoutVersion: function () {
                 var vm = this;
                 vm.versionErrors = [];
-                vm.editingLayoutVersion = exported.layoutVersionStore.cloneForEditing(vm.currentLayoutVersion);
-                Object.assign(vm.originalLayoutVersion, vm.editingLayoutVersion);
+                vm.originalLayoutVersion = exported.layoutVersionStore.cloneRecord(vm.currentLayoutVersion);
+                vm.editingLayoutVersion = exported.layoutVersionStore.cloneRecord(vm.originalLayoutVersion);
                 vm.layoutVersionMode = "edit";
             },
             deleteLayoutVersion: function (layoutVersionId, ondelete, oncancel) {

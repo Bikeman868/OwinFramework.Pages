@@ -119,8 +119,8 @@
             editPage: function() {
                 var vm = this;
                 vm.errors = [];
-                vm.editingPage = exported.pageStore.cloneForEditing(vm.currentPage);
-                Object.assign(vm.originalPage, vm.editingPage);
+                vm.originalPage = exported.pageStore.cloneRecord(vm.currentPage);
+                vm.editingPage = exported.pageStore.cloneRecord(vm.originalPage);
                 vm.pageMode = "edit";
             },
             deletePage: function() {
@@ -214,7 +214,7 @@
                 exported.pageVersionStore.retrieveRecord(
                     pageVersionId,
                     function (pageVersion) {
-                        vm.editingPageVersion = Object.assign(exported.pageVersionStore.blankRecord(), pageVersion);
+                        vm.editingPageVersion = exported.pageVersionStore.cloneRecord(pageVersion);
                         vm.pageVersionMode = "new";
                     });
             },
@@ -235,7 +235,7 @@
                             null,
                             vm.currentPage.recordId,
                             function (pageVersion) {
-                                vm.editingPageVersion = Object.assign(exported.pageVersionStore.blankRecord(), pageVersion);
+                                vm.editingPageVersion = exported.pageVersionStore.cloneRecord(pageVersion);
                             });
                     }
                 } else {
@@ -246,8 +246,8 @@
             editPageVersion: function () {
                 var vm = this;
                 vm.versionErrors = [];
-                vm.editingPageVersion = exported.pageVersionStore.cloneForEditing(vm.currentPageVersion);
-                Object.assign(vm.originalPageVersion, vm.editingPageVersion);
+                vm.originalPageVersion = exported.pageVersionStore.cloneRecord(vm.currentPageVersion);
+                vm.editingPageVersion = exported.pageVersionStore.cloneRecord(vm.originalPageVersion);
                 vm.pageVersionMode = "edit";
             },
             deletePageVersion: function (pageVersionId, ondelete, oncancel) {

@@ -64,7 +64,6 @@
             store.deepCopy = function (value) {
                 if (value == undefined) return null;
                 if (typeof (value) === "object") {
-                    isSuccess: function(ajax)
                     if (value.constructor === Array) {
                         var result = [];
                         value.forEach(function (e) { result.push(store.deepCopy(e)); });
@@ -365,8 +364,8 @@
             }
         }
 
-        if (store.cloneForEditing == undefined) {
-            store.cloneForEditing = function (original) {
+        if (store.cloneRecord == undefined) {
+            store.cloneRecord = function (original) {
                 var copy = store.copyRecord(original);
                 store.initRecord(copy);
                 return copy;

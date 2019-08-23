@@ -50,6 +50,8 @@
     <Compile Include="Interfaces\IResponseSerializer.cs" />
     <Compile Include="Interfaces\IRequestDeserializer.cs" />
     <Compile Include="Package.cs" />
+    <Compile Include="Parameters\EnumValue.cs" />
+    <Compile Include="Parameters\EnumString.cs" />
     <Compile Include="Parameters\OptionalString.cs" />
     <Compile Include="Parameters\RequiredString.cs" />
     <Compile Include="Parameters\ParameterParser.cs" />

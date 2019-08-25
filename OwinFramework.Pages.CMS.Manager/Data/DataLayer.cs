@@ -824,7 +824,10 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                             RecordType = elementType,
                             Id = elementId,
                             PropertyName = property.PropertyName,
-                            PropertyValue = property.PropertyValue
+                            PropertyValue = property.PropertyValue,
+                            ArrayIndex = property.ArrayIndex,
+                            PropertyArray = property.PropertyArray,
+                            PropertyObject = property.PropertyObject
                         }));
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OwinFramework.Pages.CMS.Runtime.Data;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
@@ -15,6 +16,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
         private readonly object _updateLock = new object();
         private long _nextHistoryEventId;
         private long _nextHistorySummaryId;
+
+        private DynamicCast<PageRouteRecord> _pageRouteCast = new DynamicCast<PageRouteRecord>();
 
         #region History
 
@@ -556,6 +559,16 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     NewValue = change.PropertyValue
                 };
 
+                if (change.ArrayIndex.HasValue)
+                    changeDetails.FieldName += "[" + change.ArrayIndex.Value + "]";
+
+                if (change.PropertyObject != null)
+                    changeDetails.NewValue = JsonConvert.SerializeObject(change.PropertyObject);
+                else if (change.PropertyArray != null)
+                    changeDetails.NewValue = JsonConvert.SerializeObject(change.PropertyArray);
+                else
+                    changeDetails.NewValue = JsonConvert.SerializeObject(change.PropertyValue);
+
                 switch (change.PropertyName.ToLower())
                 {
                     case "name":
@@ -625,6 +638,13 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     case "cachePriority":
                         changeDetails.OldValue = pageVersion.CachePriority;
                         pageVersion.CachePriority = change.PropertyValue;
+                        break;
+                    case "routes":
+                        changeDetails.OldValue = JsonConvert.SerializeObject(pageVersion.Routes);
+                        if (change.ArrayIndex.HasValue && change.ArrayIndex.Value < pageVersion.Routes.Length)
+                            pageVersion.Routes[change.ArrayIndex.Value] = _pageRouteCast.Cast((JObject)change.PropertyObject);
+                        else if (change.PropertyArray != null)
+                            pageVersion.Routes = _pageRouteCast.Cast(change.PropertyArray).ToArray();
                         break;
                 }
                 details.Add(changeDetails);

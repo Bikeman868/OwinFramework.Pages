@@ -68,6 +68,7 @@
     <Compile Include="Configuration\ManagerConfiguration.cs" />
     <Compile Include="Configuration\Permissions.cs" />
     <Compile Include="Data\DataLayer.cs" />
+    <Compile Include="Data\DynamicCast.cs" />
     <Compile Include="Data\TestDatabaseUpdater.cs" />
     <Compile Include="Data\TestDatabaseUpdaterBase.cs" />
     <Compile Include="Package.cs" />

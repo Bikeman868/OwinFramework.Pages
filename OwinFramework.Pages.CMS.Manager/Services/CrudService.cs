@@ -336,7 +336,6 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
             if (websiteVersionId.HasValue)
             {
-
                 _dataLayer.AddPageToWebsiteVersion(request.Identity, pageVersion.RecordId, websiteVersionId.Value, scenario);
             }
 

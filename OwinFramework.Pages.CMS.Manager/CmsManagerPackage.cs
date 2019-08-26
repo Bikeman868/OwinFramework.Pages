@@ -59,6 +59,13 @@ namespace OwinFramework.Pages.CMS.Manager
 
         IPackage IPackage.Build(IFluentBuilder fluentBuilder)
         {
+            // All CMS manager assets will be contained in a single module
+
+            var module = fluentBuilder.BuildUpModule()
+                .Name("cms_manager")
+                .AssetDeployment(AssetDeployment.PerModule)
+                .Build();
+
             // Build the API services
 
             fluentBuilder.BuildUpService(null, typeof(LiveUpdateService))
@@ -66,36 +73,42 @@ namespace OwinFramework.Pages.CMS.Manager
                 .Route(_configuration.ServiceBasePath + "live-update/", new []{ Method.Get, Method.Post, Method.Delete }, 0)
                 .RequiredPermission(Permissions.View, false)
                 .CreateComponent("liveUpdateClient")
+                .DeployIn(module)
                 .Build();
 
             fluentBuilder.BuildUpService(null, typeof(CrudService))
                 .Name("crud")
                 .Route(_configuration.ServiceBasePath + "crud/", new []{ Method.Get, Method.Post, Method.Put, Method.Delete }, 0)
                 .CreateComponent("crudClient")
+                .DeployIn(module)
                 .Build();
 
             fluentBuilder.BuildUpService(null, typeof(ListService))
                 .Name("list")
                 .Route(_configuration.ServiceBasePath + "list/", new []{ Method.Get, Method.Post }, 0)
                 .CreateComponent("listClient")
+                .DeployIn(module)
                 .Build();
 
             fluentBuilder.BuildUpService(null, typeof(VersionsService))
                 .Name("versions")
                 .Route(_configuration.ServiceBasePath + "versions/", new []{ Method.Get, Method.Post, Method.Put, Method.Delete }, 0)
                 .CreateComponent("versionsClient")
+                .DeployIn(module)
                 .Build();
 
             fluentBuilder.BuildUpService(null, typeof(HistoryService))
                 .Name("history")
                 .Route(_configuration.ServiceBasePath + "history/", new []{ Method.Get }, 0)
                 .CreateComponent("historyClient")
+                .DeployIn(module)
                 .Build();
 
             fluentBuilder.BuildUpService(null, typeof(SegmentTestingService))
                 .Name("segmentTesting")
                 .Route(_configuration.ServiceBasePath + "segment-testing/", new []{ Method.Get, Method.Post, Method.Put, Method.Delete }, 0)
                 .CreateComponent("segmentTestingClient")
+                .DeployIn(module)
                 .Build();
 
             // Load templates and accumulate all of the CSS and JS assets
@@ -139,15 +152,10 @@ namespace OwinFramework.Pages.CMS.Manager
 
             // Output JavaScript and CSS assets in a module asset
 
-            var module = fluentBuilder.BuildUpModule()
-                .Name("cms_manager")
-                .AssetDeployment(AssetDeployment.PerModule)
-                .Build();
-
             var assetsComponentBuilder = fluentBuilder.BuildUpComponent(null)
                 .Name("assets")
                 .DeployIn(module)
-                .RenderInitialization("cms-manager-init", "<script>setTimeout(ns." + NamespaceName + ".init, 10);</script>")
+                .RenderInitialization("cms-manager-init", "<script>ns." + NamespaceName + ".init();</script>")
                 .DeployLess(less.ToString());
 
             foreach (var scriptModule in scriptModules)

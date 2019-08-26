@@ -1,4 +1,4 @@
-﻿exported.filters = function() {
+﻿exported.buildFilters = function() {
     Vue.filter("cms_formatDateTime", function (value) {
         if (value) {
             var date = new Date(value);

@@ -1,6 +1,9 @@
 ﻿exported.init = function() {
-    exported.filters();
-    exported.components();
+    exported.buildDataStores();
+    exported.buildValidation();
+    exported.buildFilters();
+    exported.buildComponents();
+    exported.buildViewStore();
 
     var areaSelectorVm = function (eId, areas) {
         return new Vue({
@@ -35,13 +38,13 @@
     var bottomAreaSelector = areaSelectorVm(
         "cms_bottom_area_selector",
         [
-                { name: "pages", displayName: "Pages", selected: true },
-                { name: "layouts", displayName: "Layouts" },
-                { name: "regions", displayName: "Regions" },
-                { name: "components", displayName: "Components" },
-                { name: "modules", displayName: "Modules" },
-                { name: "dataScopes", displayName: "Scopes" },
-                { name: "dataTypes", displayName: "Types" }
+            { name: "pages", displayName: "Pages", selected: true },
+            { name: "layouts", displayName: "Layouts" },
+            { name: "regions", displayName: "Regions" },
+            { name: "components", displayName: "Components" },
+            { name: "modules", displayName: "Modules" },
+            { name: "dataScopes", displayName: "Scopes" },
+            { name: "dataTypes", displayName: "Types" }
         ]);
     bottomAreaSelector.show(bottomContext, topContext);
 

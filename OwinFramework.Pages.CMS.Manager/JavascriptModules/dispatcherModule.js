@@ -21,20 +21,6 @@
         }
     }
 
-    exported.liveUpdateService.register(
-        null,
-        function (response) { clientId = response.id });
-
-    window.addEventListener("beforeunload", function () {
-        if (clientId != undefined) {
-            /* Due to a weird bug where beforeunload is called multiple times 
-               even though the page was not reloaded, this line is being commented
-               out. The session will expire on the server side anyway so this
-               housekeeping is a nice to have */
-            //exported.liveUpdateService.deregister({ id: clientId });
-        }
-    });
-
     var poll = function () {
         if (clientId == undefined) {
             setTimeout(poll, 1000);
@@ -55,14 +41,34 @@
         }
     };
 
+    var init = function () {
+        exported.liveUpdateService.register(
+            null,
+            function (response) { clientId = response.id });
+
+        window.addEventListener("beforeunload", function () {
+            if (clientId != undefined) {
+                /* Due to a weird bug where beforeunload is called multiple times 
+                   even though the page was not reloaded, this line is being commented
+                   out. The session will expire on the server side anyway so this
+                   housekeeping is a nice to have */
+                //exported.liveUpdateService.deregister({ id: clientId });
+            }
+        });
+
+        poll();
+    }
+
     var subscribe = function (subscriber) {
+        if (init != undefined) {
+            init();
+            init = null;
+        }
         subscribers.push(subscriber);
         return function() {
             subscribers = subscribers.filter(function(e) { return e !== subscriber; });
         }
     }
-
-    poll();
 
     return {
         subscribe: subscribe

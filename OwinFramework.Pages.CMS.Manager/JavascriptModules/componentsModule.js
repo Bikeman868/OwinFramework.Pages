@@ -1,4 +1,4 @@
-﻿exported.components = function() {
+﻿exported.buildComponents = function() {
     Vue.component("cms-tabs", {
         template:
             "<div>"+

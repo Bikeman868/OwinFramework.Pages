@@ -38,7 +38,7 @@
     }
 }();
 
-exported.viewStore = function () {
+exported.buildViewStore = function () {
     var viewModels = {};
     var currentViewModel = {};
 
@@ -191,7 +191,7 @@ exported.viewStore = function () {
         }
     }
 
-    return {
+    exported.viewStore = {
         showEnvironmentEditor: showEnvironmentEditor,
         showWebsiteVersionEditor: showWebsiteVersionEditor,
         showSegmentationScenarioEditor: showSegmentationScenarioEditor,
@@ -221,4 +221,4 @@ exported.viewStore = function () {
 
         viewSelectChanged: viewSelectChanged
     }
-}();
+};

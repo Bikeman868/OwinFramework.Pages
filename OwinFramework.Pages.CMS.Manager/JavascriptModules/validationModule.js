@@ -1,4 +1,4 @@
-﻿var validation = function() {
+﻿exported.buildValidation = function () {
     var namePattern = new RegExp("^[a-z][0-9a-z_]+$");
     var nameRefPattern = new RegExp("^[a-z][0-9a-z_]+(:[a-z][0-9a-z_]+)?$");
     var displayNamePattern = new RegExp("^...+$");
@@ -124,7 +124,7 @@
         return value;
     }
 
-    return {
+    exported.validation = {
         name: name,
         nameRef: nameRef,
         displayName: displayName,
@@ -150,6 +150,4 @@
         pathPattern: pathPattern,
         htmlPattern: htmlPattern
     }
-}();
-
-exported.validation = validation;
+};

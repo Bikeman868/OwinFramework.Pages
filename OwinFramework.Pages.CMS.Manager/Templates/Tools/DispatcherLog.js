@@ -35,7 +35,17 @@
                     if (message.propertyChanges) {
                         for (let i = 0; i < message.propertyChanges.length; i++) {
                             var change = message.propertyChanges[i];
-                            updateData.changes += change.recordType + " #" + change.id + " " + change.name + "=\"" + change.value + "\" ";
+                            updateData.changes += change.recordType + " #" + change.id + " " + change.name;
+                            if (change.index != undefined) updateData.changes += "[" + change.index + "]";
+                            updateData.changes += " = ";
+                            if (change.objectValue != undefined)
+                                updateData.changes += JSON.stringify(change.objectValue);
+                            else if (change.arrayValue != undefined)
+                                updateData.changes += JSON.stringify(change.arrayValue);
+                            else if (change.changedProperties != null)
+                                updateData.changes += "{}";
+                            else updateData.changes += "\"" + change.value + "\"";
+                            updateData.changes += " ";
                         }
                     }
                     if (message.websiteVersionChanges && message.websiteVersionChanges.length > 0) {
@@ -51,12 +61,6 @@
                         for (let i = 0; i < message.deletedRecords.length; i++) {
                             var deletedRecord = message.deletedRecords[i];
                             updateData.changes += deletedRecord.recordType + " #" + deletedRecord.id + " deleted ";
-                        }
-                    }
-                    if (message.childListChanges) {
-                        for (let i = 0; i < message.childListChanges.length; i++) {
-                            var childListChange = message.childListChanges[i];
-                            updateData.changes += childListChange.recordType + " #" + childListChange.id + " " + childListChange.childRecordType + "s changed ";
                         }
                     }
                     vm.messages.unshift(updateData);

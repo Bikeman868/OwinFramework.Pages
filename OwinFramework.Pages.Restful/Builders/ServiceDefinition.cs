@@ -148,7 +148,9 @@ namespace OwinFramework.Pages.Restful.Builders
                 {
                     ServiceName = _service.Name,
                     Name = _service.ClientScriptComponentName,
-                    Package = _service.Package
+                    Package = _service.Package,
+                    AssetDeployment = AssetDeployment.Inherit,
+                    Module = _service.Module
                 };
                 _nameManager.Register(_clientScriptComponent);
             }

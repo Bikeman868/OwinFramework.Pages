@@ -11,18 +11,21 @@ using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.CMS.Manager.Data
 {
-    public class TestDatabaseUpdaterBase: TestDatabaseReaderBase, IDatabaseUpdater
+    public class TestDatabaseUpdaterBase : TestDatabaseReaderBase, IDatabaseUpdater
     {
         private readonly object _updateLock = new object();
         private long _nextHistoryEventId;
         private long _nextHistorySummaryId;
 
         private DynamicCast<PageRouteRecord> _pageRouteCast = new DynamicCast<PageRouteRecord>();
+        private DynamicCast<ElementComponentRecord> _elementComponentCast = new DynamicCast<ElementComponentRecord>();
+        private DynamicCast<LayoutZoneRecord> _layoutZoneCast = new DynamicCast<LayoutZoneRecord>();
+        private DynamicCast<RegionTemplateRecord> _regionTemplateCast = new DynamicCast<RegionTemplateRecord>();
 
         #region History
 
         protected HistoryEventRecord AddHistory(
-            RecordBase record, 
+            RecordBase record,
             string identity,
             params HistoryChangeDetails[] details)
         {
@@ -41,7 +44,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 }
                 else
                 {
-                    period = _historyPeriods.FirstOrDefault(p => 
+                    period = _historyPeriods.FirstOrDefault(p =>
                         p.RecordId == record.RecordId &&
                         string.Equals(p.RecordType, record.RecordType, StringComparison.OrdinalIgnoreCase));
                     if (period == null)
@@ -71,7 +74,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         Identity = identity,
                         When = DateTime.UtcNow
                     };
-                    period.Summaries = new[] {summary};
+                    period.Summaries = new[] { summary };
                 }
                 else
                 {
@@ -106,14 +109,14 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 Identity = identity,
                 SummaryId = summary.SummaryId,
                 ChangeDetails = JsonConvert.SerializeObject(
-                    details, 
-                    Formatting.None, 
+                    details,
+                    Formatting.None,
                     new JsonSerializerSettings
                     {
                         NullValueHandling = NullValueHandling.Ignore,
                         DefaultValueHandling = DefaultValueHandling.Include
                     })
-                };
+            };
 
             lock (_updateLock)
             {
@@ -149,8 +152,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _environments = environments.ToArray();
 
                 AddHistory(
-                    environment, 
-                    identity, 
+                    environment,
+                    identity,
                     new HistoryChangeDetails
                     {
                         ChangeType = "Created"
@@ -219,8 +222,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             }
 
             AddHistory(
-                environment, 
-                identity, 
+                environment,
+                identity,
                 new HistoryChangeDetails
                 {
                     ChangeType = "Deleted"
@@ -246,8 +249,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _websiteVersions = websiteVersions.ToArray();
 
                 AddHistory(
-                    websiteVersion, 
-                    identity, 
+                    websiteVersion,
+                    identity,
                     new HistoryChangeDetails
                     {
                         ChangeType = "Created"
@@ -307,8 +310,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             }
 
             AddHistory(
-                websiteVersion, 
-                identity, 
+                websiteVersion,
+                identity,
                 new HistoryChangeDetails
                 {
                     ChangeType = "Deleted"
@@ -334,8 +337,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _pages = pages.ToArray();
 
                 AddHistory(
-                    page, 
-                    identity, 
+                    page,
+                    identity,
                     new HistoryChangeDetails
                     {
                         ChangeType = "Created"
@@ -355,8 +358,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _pageVersions = pageVersions.ToArray();
 
                 AddHistory(
-                    pageVersion, 
-                    identity, 
+                    pageVersion,
+                    identity,
                     new HistoryChangeDetails
                     {
                         ChangeType = "Created"
@@ -416,8 +419,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             }
 
             AddHistory(
-                page, 
-                identity, 
+                page,
+                identity,
                 new HistoryChangeDetails
                 {
                     ChangeType = "Deleted"
@@ -432,7 +435,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             if (pageVersion == null)
             {
                 return new UpdateResult(
-                    "page_version_not_found", 
+                    "page_version_not_found",
                     "There is no version " + version + " of page id " + pageId);
             }
 
@@ -447,7 +450,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             if (pageVersion == null)
             {
                 return new UpdateResult(
-                    "page_version_not_found", 
+                    "page_version_not_found",
                     "There is page version " + pageVersionId);
             }
 
@@ -504,7 +507,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
             AddHistory(
                 new WebsiteVersionRecord { RecordId = websiteVersionId },
-                identity, 
+                identity,
                 new HistoryChangeDetails
                 {
                     ChangeType = "ChildAdded",
@@ -532,8 +535,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 _pageVersions = pageVersions.ToArray();
 
                 AddHistory(
-                    pageVersion, 
-                    identity, 
+                    pageVersion,
+                    identity,
                     new HistoryChangeDetails
                     {
                         ChangeType = "Created"
@@ -555,8 +558,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 var changeDetails = new HistoryChangeDetails
                 {
                     ChangeType = "Modified",
-                    FieldName = change.PropertyName,
-                    NewValue = change.PropertyValue
+                    FieldName = change.PropertyName
                 };
 
                 if (change.ArrayIndex.HasValue)
@@ -631,20 +633,22 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = pageVersion.AssetPath;
                         pageVersion.AssetPath = change.PropertyValue;
                         break;
-                    case "cacheCategory":
+                    case "cachecategory":
                         changeDetails.OldValue = pageVersion.CacheCategory;
                         pageVersion.CacheCategory = change.PropertyValue;
                         break;
-                    case "cachePriority":
+                    case "cachepriority":
                         changeDetails.OldValue = pageVersion.CachePriority;
                         pageVersion.CachePriority = change.PropertyValue;
                         break;
                     case "routes":
-                        changeDetails.OldValue = JsonConvert.SerializeObject(pageVersion.Routes);
-                        if (change.ArrayIndex.HasValue && change.ArrayIndex.Value < pageVersion.Routes.Length)
-                            pageVersion.Routes[change.ArrayIndex.Value] = _pageRouteCast.Cast((JObject)change.PropertyObject);
-                        else if (change.PropertyArray != null)
-                            pageVersion.Routes = _pageRouteCast.Cast(change.PropertyArray).ToArray();
+                        pageVersion.Routes = ArrayPropertyChange(change, changeDetails, pageVersion.Routes, _pageRouteCast);
+                        break;
+                    case "components":
+                        pageVersion.Components = ArrayPropertyChange(change, changeDetails, pageVersion.Components, _elementComponentCast);
+                        break;
+                    case "layoutzones":
+                        pageVersion.LayoutZones = ArrayPropertyChange(change, changeDetails, pageVersion.LayoutZones, _layoutZoneCast);
                         break;
                 }
                 details.Add(changeDetails);
@@ -677,8 +681,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             pageVersion.Routes = newRoutes;
 
             AddHistory(
-                pageVersion, 
-                identity, 
+                pageVersion,
+                identity,
                 new HistoryChangeDetails
                 {
                     ChangeType = "Modified",
@@ -716,8 +720,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             pageVersion.LayoutZones = newZones;
 
             AddHistory(
-                pageVersion, 
-                identity, 
+                pageVersion,
+                identity,
                 new HistoryChangeDetails
                 {
                     ChangeType = "Modified",
@@ -750,8 +754,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             pageVersion.Components = newComponents;
 
             AddHistory(
-                pageVersion, 
-                identity, 
+                pageVersion,
+                identity,
                 new HistoryChangeDetails
                 {
                     ChangeType = "Modified",
@@ -774,8 +778,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             }
 
             AddHistory(
-                pageVersion, 
-                identity, 
+                pageVersion,
+                identity,
                 new HistoryChangeDetails
                 {
                     ChangeType = "Deleted"
@@ -798,8 +802,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             }
 
             AddHistory(
-                new WebsiteVersionRecord { RecordId = websiteVersionId }, 
-                identity, 
+                new WebsiteVersionRecord { RecordId = websiteVersionId },
+                identity,
                 new HistoryChangeDetails
                 {
                     ChangeType = "ChildRemoved",
@@ -1100,17 +1104,23 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = layoutVersion.ContainerClasses;
                         layoutVersion.ContainerClasses = change.PropertyValue;
                         break;
-                    case "nestingTag":
+                    case "nestingtag":
                         changeDetails.OldValue = layoutVersion.NestingTag;
                         layoutVersion.NestingTag = change.PropertyValue;
                         break;
-                    case "nestingStyle":
+                    case "nestingstyle":
                         changeDetails.OldValue = layoutVersion.NestingStyle;
                         layoutVersion.NestingStyle = change.PropertyValue;
                         break;
-                    case "nestingClasses":
+                    case "nestingclasses":
                         changeDetails.OldValue = layoutVersion.NestingClasses;
                         layoutVersion.NestingClasses = change.PropertyValue;
+                        break;
+                    case "components":
+                        layoutVersion.Components = ArrayPropertyChange(change, changeDetails, layoutVersion.Components, _elementComponentCast);
+                        break;
+                    case "zones":
+                        layoutVersion.Zones = ArrayPropertyChange(change, changeDetails, layoutVersion.Zones, _layoutZoneCast);
                         break;
                 }
                 details.Add(changeDetails);
@@ -1243,7 +1253,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
         }
 
         #endregion
-        
+
         #region Regions
 
         CreateResult IDatabaseUpdater.CreateRegion(string identity, RegionRecord region)
@@ -1547,7 +1557,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = regionVersion.ListDataScopeName;
                         regionVersion.ListDataScopeName = change.PropertyValue;
                         break;
-                    case "repeatDatascopeid":
+                    case "repeatdatascopeid":
                         changeDetails.OldValue = regionVersion.RepeatDataScopeId.ToString();
                         regionVersion.RepeatDataScopeId = string.IsNullOrEmpty(change.PropertyValue) ? (long?)null : long.Parse(change.PropertyValue);
                         break;
@@ -1566,6 +1576,15 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     case "listelementtag":
                         changeDetails.OldValue = regionVersion.ListElementTag;
                         regionVersion.ListElementTag = change.PropertyValue;
+                        break;
+                    case "components":
+                        regionVersion.Components = ArrayPropertyChange(change, changeDetails, regionVersion.Components, _elementComponentCast);
+                        break;
+                    case "layoutzones":
+                        regionVersion.LayoutZones = ArrayPropertyChange(change, changeDetails, regionVersion.LayoutZones, _layoutZoneCast);
+                        break;
+                    case "regiontemplates":
+                        regionVersion.RegionTemplates = ArrayPropertyChange(change, changeDetails, regionVersion.RegionTemplates, _regionTemplateCast);
                         break;
                 }
                 details.Add(changeDetails);
@@ -1730,6 +1749,25 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                 });
 
             return new UpdateResult();
+        }
+
+        #endregion
+
+        #region protected helper functions
+
+        protected T[] ArrayPropertyChange<T>(PropertyChange change, HistoryChangeDetails changeDetails, T[] array, DynamicCast<T> dynamicCast) where T: class, new()
+        {
+            if (change.ArrayIndex.HasValue && change.ArrayIndex.Value < array.Length)
+            {
+                changeDetails.OldValue = JsonConvert.SerializeObject(array[change.ArrayIndex.Value]);
+                array[change.ArrayIndex.Value] = dynamicCast.Cast((JObject)change.PropertyObject);
+            }
+            else if (change.PropertyArray != null)
+            {
+                changeDetails.OldValue = JsonConvert.SerializeObject(array);
+                return dynamicCast.Cast(change.PropertyArray).ToArray();
+            }
+            return array;
         }
 
         #endregion

@@ -10,11 +10,11 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 {
     public class DynamicCast<T> where T: class, new()
     {
-        private Property[] _proprties;
+        private Property[] _props;
 
         public DynamicCast()
         {
-            _proprties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            _props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(x => x.GetSetMethod() != null)
                 .Where(x => x.GetGetMethod() != null)
                 .Select(p =>
@@ -81,21 +81,27 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         public void Fill(IDictionary<string, object> values, T target)
         {
-            foreach (var property in _proprties)
-                if (values.TryGetValue(property.Name, out var value))
-                    property.PropertyInfo.SetValue(target, value, null);
+            lock (_props)
+            {
+                foreach (var property in _props)
+                    if (values.TryGetValue(property.Name, out var value))
+                        property.PropertyInfo.SetValue(target, value, null);
+            }
         }
 
         public void Fill(JObject values, T target)
         {
-            foreach (var property in _proprties)
+            lock (_props)
             {
-                if (values.TryGetValue(property.Name, out var value))
+                foreach (var property in _props)
                 {
-                    if (value is JValue jvalue)
+                    if (values.TryGetValue(property.Name, out var value))
                     {
-                        var propertyValue = Convert.ChangeType(jvalue.Value, property.PropertyInfo.PropertyType);
-                        property.PropertyInfo.SetValue(target, propertyValue, null);
+                        if (value is JValue jvalue)
+                        {
+                            var propertyValue = Convert.ChangeType(jvalue.Value, property.PropertyInfo.PropertyType);
+                            property.PropertyInfo.SetValue(target, propertyValue, null);
+                        }
                     }
                 }
             }
@@ -103,8 +109,11 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         public void Fill(T obj, IDictionary<string, object> target)
         {
-            foreach (var property in _proprties)
-                target[property.Name] = property.PropertyInfo.GetValue(obj, null);
+            lock (_props)
+            {
+                foreach (var property in _props)
+                    target[property.Name] = property.PropertyInfo.GetValue(obj, null);
+            }
         }
 
         private class Property

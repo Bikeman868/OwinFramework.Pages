@@ -152,24 +152,35 @@
                             } else if (originalValue == undefined || originalValue.length != modifiedValue.length) {
                                 changes.push({ name: field.name, arrayValue: modifiedValue });
                             } else {
-                                for (let i = 0; i < modifiedValue.length; i++) {
-                                    if (typeof(modifiedValue[i]) === "object") {
+                                for (let i = 0; i < originalValue.length; i++) {
+                                    if (typeof (originalValue[i]) === "object") {
                                         var hasChanges = false;
-                                        for (p in modifiedValue[i]) {
+                                        for (p in originalValue[i]) {
                                             if (originalValue[i][p] != modifiedValue[i][p]) {
                                                 hasChanges = true;
                                             }
                                         }
-                                        if (hasChanges) changes.push({ name: field.name, index: i, objectValue: modifiedValue[i] });
+                                        if (hasChanges) changes.push({
+                                            name: field.name,
+                                            index: i,
+                                            objectValue: modifiedValue[i]
+                                        });
                                     } else {
                                         if (originalValue[i] != modifiedValue[i])
-                                            changes.push({ name: field.name, index: i, value: modifiedValue[i] });
+                                            changes.push({
+                                                name: field.name,
+                                                index: i,
+                                                value: modifiedValue[i]
+                                            });
                                     }
                                 }
                             }
                         }
                         else if (originalValue != modifiedValue)
-                            changes.push({ name: field.name, value: modifiedValue });
+                            changes.push({
+                                name: field.name,
+                                value: modifiedValue
+                            });
                     });
                 }
                 return changes;
@@ -394,7 +405,25 @@
                         if (propertyChange.recordType === store.recordType) {
                             var record = store.get(propertyChange.id);
                             if (record != undefined) {
-                                record[propertyChange.name] = propertyChange.value;
+                                if (propertyChange.index != undefined) {
+                                    if (record[propertyChange.name] == undefined)
+                                        record[propertyChange.name] = [];
+                                    while (record[propertyChange.name].length < propertyChange.index)
+                                        record[propertyChange.name].push(null);
+                                    if (propertyChange.objectValue != undefined)
+                                        record[propertyChange.name][propertyChange.index] = propertyChange.objectValue;
+                                    else if (propertyChange.arrayValue != undefined)
+                                        record[propertyChange.name][propertyChange.index] = propertyChange.arrayValue;
+                                    else
+                                        record[propertyChange.name][propertyChange.index] = propertyChange.value;
+                                } else {
+                                    if (propertyChange.objectValue != undefined)
+                                        record[propertyChange.name] = propertyChange.objectValue;
+                                    else if (propertyChange.arrayValue != undefined)
+                                        record[propertyChange.name] = propertyChange.arrayValue;
+                                    else
+                                        record[propertyChange.name] = propertyChange.value;
+                                }
                             }
                         }
                     }
@@ -412,14 +441,6 @@
                         var newRecord = message.newRecords[i];
                         if (newRecord.recordType === store.recordType) {
                             store.crud.retrieveRecord.call(store, newRecord.id, function (r) { store.set(r); });
-                        }
-                    }
-                }
-                if (message.childListChanges != undefined) {
-                    for (let i = 0; i < message.childListChanges.length; i++) {
-                        var childListChange = message.childListChanges[i];
-                        if (childListChange.recordType === store.recordType) {
-                            // TODO: refresh child list
                         }
                     }
                 }

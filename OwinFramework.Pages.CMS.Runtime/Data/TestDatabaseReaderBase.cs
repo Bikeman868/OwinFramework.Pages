@@ -317,24 +317,54 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         T IDatabaseReader.GetEnvironment<T>(long environmentId, Func<EnvironmentRecord, T> map)
         {
             var environmant = _environments.FirstOrDefault(e => e.RecordId == environmentId);
-            if (environmant == null) return default(T);
+            if (environmant == null) return default;
             return map(environmant);
         }
 
         T IDatabaseReader.GetWebsiteVersion<T>(long websiteVersionId, Func<WebsiteVersionRecord, T> map)
         {
             var websiteVersion = _websiteVersions.FirstOrDefault(e => e.RecordId == websiteVersionId);
-            if (websiteVersion == null) return default(T);
+            if (websiteVersion == null) return default;
             return map(websiteVersion);
+        }
+
+        T IDatabaseReader.GetPage<T>(long pageId, Func<PageRecord, T> map)
+        {
+            var page = _pages.FirstOrDefault(p => p.RecordId == pageId);
+            return page == null ? default : map(page);
+        }
+
+        T IDatabaseReader.GetLayout<T>(long layoutId, Func<LayoutRecord, T> map)
+        {
+            var layout = _layouts.FirstOrDefault(p => p.RecordId == layoutId);
+            return layout == null ? default : map(layout);
+        }
+
+        T IDatabaseReader.GetRegion<T>(long regionId, Func<RegionRecord, T> map)
+        {
+            var region = _regions.FirstOrDefault(p => p.RecordId == regionId);
+            return region == null ? default : map(region);
+        }
+
+        T IDatabaseReader.GetDataScope<T>(long dataScopeId, Func<DataScopeRecord, T> map)
+        {
+            var dataScope = _dataScopes.FirstOrDefault(p => p.RecordId == dataScopeId);
+            return dataScope == null ? default : map(dataScope);
+        }
+
+        T IDatabaseReader.GetDataType<T>(long dataTypeId, Func<DataTypeRecord, T> map)
+        {
+            var dataTypes = _dataTypes.FirstOrDefault(p => p.RecordId == dataTypeId);
+            return dataTypes == null ? default : map(dataTypes);
         }
 
         T IDatabaseReader.GetPageVersion<T>(long pageId, int version, Func<PageRecord, PageVersionRecord, T> map)
         {
             var page = _pages.FirstOrDefault(p => p.RecordId == pageId);
-            if (page == null) return default(T);
+            if (page == null) return default;
 
             var pageVersion = _pageVersions.FirstOrDefault(pv => pv.ParentRecordId == page.RecordId && pv.Version == version);
-            if (pageVersion == null) return default(T);
+            if (pageVersion == null) return default;
 
             return map(page, pageVersion);
         }
@@ -342,10 +372,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         T IDatabaseReader.GetLayoutVersion<T>(long layoutId, int version, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
             var layout = _layouts.FirstOrDefault(l => l.RecordId == layoutId);
-            if (layout == null) return default(T);
+            if (layout == null) return default;
 
             var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.ParentRecordId == layout.RecordId && lv.Version == version);
-            if (layoutVersion == null) return default(T);
+            if (layoutVersion == null) return default;
 
             return map(layout, layoutVersion);
         }
@@ -353,21 +383,32 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         T IDatabaseReader.GetRegionVersion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map)
         {
             var region = _regions.FirstOrDefault(r => r.RecordId == regionId);
-            if (region == null) return default(T);
+            if (region == null) return default;
 
             var regionVersion = _regionVersions.FirstOrDefault(rv => rv.ParentRecordId == region.RecordId && rv.Version == version);
-            if (regionVersion == null) return default(T);
+            if (regionVersion == null) return default;
 
             return map(region, regionVersion);
+        }
+
+        T IDatabaseReader.GetDataTypeVersion<T>(long dataTypeId, int version, Func<DataTypeRecord, DataTypeVersionRecord, T> map)
+        {
+            var dataType = _dataTypes.FirstOrDefault(r => r.RecordId == dataTypeId);
+            if (dataType == null) return default;
+
+            var dataTypeVersion = _dataTypeVersions.FirstOrDefault(rv => rv.ParentRecordId == dataType.RecordId && rv.Version == version);
+            if (dataTypeVersion == null) return default;
+
+            return map(dataType, dataTypeVersion);
         }
 
         T IDatabaseReader.GetPageVersion<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map)
         {
             var pageVersion = _pageVersions.FirstOrDefault(pv => pv.RecordId == pageVersionId);
-            if (pageVersion == null) return default(T);
+            if (pageVersion == null) return default;
 
             var page = _pages.FirstOrDefault(p => p.RecordId == pageVersion.ParentRecordId);
-            if (page == null) return default(T);
+            if (page == null) return default;
 
             return map(page, pageVersion);
         }
@@ -375,10 +416,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         T IDatabaseReader.GetLayoutVersion<T>(long layoutVersionId, Func<LayoutRecord, LayoutVersionRecord, T> map)
         {
             var layoutVersion = _layoutVersions.FirstOrDefault(lv => lv.RecordId == layoutVersionId);
-            if (layoutVersion == null) return default(T);
+            if (layoutVersion == null) return default;
 
             var layout = _layouts.FirstOrDefault(l => l.RecordId == layoutVersion.ParentRecordId);
-            if (layout == null) return default(T);
+            if (layout == null) return default;
 
             return map(layout, layoutVersion);
         }
@@ -386,10 +427,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         T IDatabaseReader.GetRegionVersion<T>(long regionVersionId, Func<RegionRecord, RegionVersionRecord, T> map)
         {
             var regionVersion = _regionVersions.FirstOrDefault(lv => lv.RecordId == regionVersionId);
-            if (regionVersion == null) return default(T);
+            if (regionVersion == null) return default;
 
             var region = _regions.FirstOrDefault(r => r.RecordId == regionVersion.ParentRecordId);
-            if (region == null) return default(T);
+            if (region == null) return default;
 
             return map(region, regionVersion);
         }
@@ -397,10 +438,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         T IDatabaseReader.GetComponentVersion<T>(long componentVersionId, Func<ComponentRecord, ComponentVersionRecord, T> map)
         {
             var componentVersion = _componentVersions.FirstOrDefault(lv => lv.RecordId == componentVersionId);
-            if (componentVersion == null) return default(T);
+            if (componentVersion == null) return default;
 
             var component = _components.FirstOrDefault(r => r.RecordId == componentVersion.ParentRecordId);
-            if (component == null) return default(T);
+            if (component == null) return default;
 
             return map(component, componentVersion);
         }
@@ -408,10 +449,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
         T IDatabaseReader.GetDataTypeVersion<T>(long dataTypeVersionId, Func<DataTypeRecord, DataTypeVersionRecord, T> map)
         {
             var dataTypeVersion = _dataTypeVersions.FirstOrDefault(v => v.RecordId == dataTypeVersionId);
-            if (dataTypeVersion == null) return default(T);
+            if (dataTypeVersion == null) return default;
 
             var dataType = _dataTypes.FirstOrDefault(r => r.RecordId == dataTypeVersion.ParentRecordId);
-            if (dataType == null) return default(T);
+            if (dataType == null) return default;
 
             dataTypeVersion.ScopeIds = _dataScopes
                 .Where(s => s.DataTypeId == dataType.RecordId)
@@ -452,6 +493,5 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 .Select(map)
                 .ToArray();
         }
-
     }
 }

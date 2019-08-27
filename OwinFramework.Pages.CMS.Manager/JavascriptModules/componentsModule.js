@@ -440,12 +440,13 @@
             "    </option>" +
             "  </select>" +
             "  <input v-if=\"!inherit && !selectedLayoutId\" type=\"text\" class=\"cms_field__layout_name\" " +
-            "    v-model=\"editedLayoutName\" placeholder=\"layout_name\" v-bind:pattern=\"namePattern\" @input=\"inputLayoutName\">" +
+            "    v-model=\"editedLayoutName\" placeholder=\"layout_name\" v-bind:pattern=\"nameRefPattern\" @input=\"inputLayoutName\">" +
             "</div>",
         data: function () {
             return {
                 layouts: [],
                 namePattern: exported.validation.namePattern.source,
+                nameRefPattern: exported.validation.nameRefPattern.source,
                 inherit: false,
                 selectedLayoutId: this.layoutId,
                 editedLayoutName: this.layoutName

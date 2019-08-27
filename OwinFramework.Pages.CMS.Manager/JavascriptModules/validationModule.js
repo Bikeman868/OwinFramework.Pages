@@ -25,8 +25,8 @@
         if (value == undefined || value.length < 2)
             errors.push("The " + fieldName + " field must contain at least 2 characters");
         else {
-            if (!namePattern.test(value))
-                errors.push("The " + fieldName + " field can only contain lower-case letters, numbers and underscore. The first character must be a lower-case letter. You can slo use a a pckage name qualifier in front of the name separated with a colon");
+            if (!nameRefPattern.test(value))
+                errors.push("The " + fieldName + " field can only contain lower-case letters, numbers and underscore. The first character must be a lower-case letter. You can slo use a a package name qualifier in front of the name separated with a colon");
         }
         return value;
     }

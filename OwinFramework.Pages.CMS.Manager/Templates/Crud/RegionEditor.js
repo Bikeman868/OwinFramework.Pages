@@ -3,13 +3,13 @@
         el: "#" + eId,
         data: {
             visible: true,
-            namePattern: "",
-            displayNamePattern: "",
-            titlePattern: "",
-            urlPathPattern: "",
-            cssPattern: "",
-            permissionPattern: "",
-            pathPattern: "",
+            namePattern: exported.validation.namePattern.source,
+            displayNamePattern: exported.validation.displayNamePattern.source,
+            titlePattern: exported.validation.titlePattern.source,
+            urlPathPattern: exported.validation.urlPathPattern.source,
+            cssPattern: exported.validation.cssPattern.source,
+            permissionPattern: exported.validation.permissionPattern.source,
+            pathPattern: exported.validation.pathPattern.source,
             websiteVersion: {},
             scenario: {},
 
@@ -48,16 +48,6 @@
                     return null;
                 }
             }
-        },
-        created: function() {
-            var vm = this;
-            vm.namePattern = exported.validation.namePattern.source;
-            vm.displayNamePattern = exported.validation.displayNamePattern.source;
-            vm.titlePattern = exported.validation.titlePattern.source;
-            vm.cssPattern = exported.validation.cssPattern.source;
-            vm.urlPathPattern = exported.validation.urlPathPattern.source;
-            vm.permissionPattern = exported.validation.permissionPattern.source;
-            vm.pathPattern = exported.validation.pathPattern.source;
         },
         methods: {
             show: function (context, managerContext) {

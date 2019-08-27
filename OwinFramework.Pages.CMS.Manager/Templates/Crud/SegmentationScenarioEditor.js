@@ -4,17 +4,12 @@
         data: {
             visible: true,
             mode: "view",
-            namePattern: "",
-            displayNamePattern: "",
+            namePattern: exported.validation.namePattern.source,
+            displayNamePattern: exported.validation.displayNamePattern.source,
             errors: [],
             originalScenario: {},
             editingScenario: {},
             currentScenario: {}
-        },
-        created: function() {
-            var vm = this;
-            vm.namePattern = exported.validation.namePattern.source;
-            vm.displayNamePattern = exported.validation.displayNamePattern.source;
         },
         methods: {
             show: function (context, managerContext) {

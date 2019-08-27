@@ -4,22 +4,15 @@
         data: {
             visible: true,
             mode: "view",
-            namePattern: "",
-            displayNamePattern: "",
-            urlPattern: "",
-            idPattern: "",
+            namePattern: exported.validation.namePattern.source,
+            displayNamePattern: exported.validation.displayNamePattern.source,
+            urlPattern: exported.validation.urlPattern.source,
+            idPattern: exported.validation.idPattern.source,
             errors: [],
             originalEnvironment: {},
             editingEnvironment: {},
             currentEnvironment: {},
             websiteVersion: {}
-        },
-        created: function() {
-            var vm = this;
-            vm.namePattern = exported.validation.namePattern.source;
-            vm.displayNamePattern = exported.validation.displayNamePattern.source;
-            vm.urlPattern = exported.validation.urlPattern.source;
-            vm.idPattern = exported.validation.idPattern.source;
         },
         methods: {
             show: function (context, managerContext) {

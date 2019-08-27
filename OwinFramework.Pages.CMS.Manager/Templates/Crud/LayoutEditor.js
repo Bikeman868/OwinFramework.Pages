@@ -3,9 +3,9 @@
         el: "#" + eId,
         data: {
             visible: true,
-            namePattern: "",
-            displayNamePattern: "",
-            cssPattern: "",
+            namePattern: exported.validation.namePattern.source,
+            displayNamePattern: exported.validation.displayNamePattern.source,
+            cssPattern: exported.validation.cssPattern.source,
             websiteVersion: {},
             scenario: {},
 
@@ -26,12 +26,6 @@
             modalDialogMessage: "",
             modalDialogButtons: [{ caption: "OK" }],
             modalDialogVisible: false
-        },
-        created: function() {
-            var vm = this;
-            vm.namePattern = exported.validation.namePattern.source;
-            vm.displayNamePattern = exported.validation.displayNamePattern.source;
-            vm.cssPattern = exported.validation.cssPattern.source;
         },
         methods: {
             show: function (context, managerContext) {

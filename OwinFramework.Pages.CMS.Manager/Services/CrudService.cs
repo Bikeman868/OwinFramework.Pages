@@ -215,7 +215,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 return;
             }
 
-            page = _dataLayer.GetPageVersion(result.NewRecordId, 1, (p, v) => p);
+            page = _dataLayer.GetPage(result.NewRecordId, p => p);
             if (page == null)
             {
                 request.HttpStatus(
@@ -242,7 +242,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void RetrievePage(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var page = _dataLayer.GetPageVersion(id, (p, v) => p);
+            var page = _dataLayer.GetPage(id, p => p);
 
             if (page == null)
                 request.NotFound("No page with ID " + id);
@@ -267,7 +267,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
             if (result.Success)
             {
-                var page = _dataLayer.GetPageVersion(pageId, (p, v) => p);
+                var page = _dataLayer.GetPage(pageId, p => p);
                 request.Success(page);
             }
             else
@@ -516,7 +516,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 return;
             }
 
-            layout = _dataLayer.GetLayoutVersion(result.NewRecordId, 1, (p, v) => p);
+            layout = _dataLayer.GetLayout(result.NewRecordId, l => l);
             if (layout == null)
             {
                 request.HttpStatus(
@@ -543,7 +543,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void RetrieveLayout(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var layout = _dataLayer.GetLayoutVersion(id, (p, v) => p);
+            var layout = _dataLayer.GetLayout(id, l => l);
 
             if (layout == null)
                 request.NotFound("No layout with ID " + id);
@@ -568,7 +568,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
             if (result.Success)
             {
-                var layout = _dataLayer.GetLayoutVersion(layoutId, (p, v) => p);
+                var layout = _dataLayer.GetLayout(layoutId, l => l);
                 request.Success(layout);
             }
             else
@@ -792,7 +792,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 return;
             }
 
-            region = _dataLayer.GetRegionVersion(result.NewRecordId, 1, (p, v) => p);
+            region = _dataLayer.GetRegion(result.NewRecordId, r => r);
             if (region == null)
             {
                 request.HttpStatus(
@@ -819,7 +819,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void RetrieveRegion(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var region = _dataLayer.GetRegionVersion(id, (p, v) => p);
+            var region = _dataLayer.GetRegion(id, r => r);
 
             if (region == null)
                 request.NotFound("No region with ID " + id);
@@ -844,7 +844,7 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
             if (result.Success)
             {
-                var region = _dataLayer.GetRegionVersion(regionId, (p, v) => p);
+                var region = _dataLayer.GetRegion(regionId, r => r);
                 request.Success(region);
             }
             else

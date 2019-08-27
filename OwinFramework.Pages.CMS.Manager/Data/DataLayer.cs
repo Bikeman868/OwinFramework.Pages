@@ -1019,6 +1019,11 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return _databaseReader.GetRegionVersion(regionId, version, map);
         }
 
+        T IDatabaseReader.GetDataTypeVersion<T>(long dataTypeId, int version, Func<DataTypeRecord, DataTypeVersionRecord, T> map)
+        {
+            return _databaseReader.GetDataTypeVersion(dataTypeId, version, map);
+        }
+
         T IDatabaseReader.GetPageVersion<T>(long pageVersionId, Func<PageRecord, PageVersionRecord, T> map)
         {
             return _databaseReader.GetPageVersion(pageVersionId, map);
@@ -1092,6 +1097,31 @@ namespace OwinFramework.Pages.CMS.Manager.Data
         T[] IDatabaseReader.GetElementUsage<T>(long elementVersionId, Func<WebsiteVersionRecordBase, T> map, Func<WebsiteVersionRecordBase, bool> predicate)
         {
             return _databaseReader.GetElementUsage(elementVersionId, map, predicate);
+        }
+
+        T IDatabaseReader.GetPage<T>(long pageId, Func<PageRecord, T> map)
+        {
+            return _databaseReader.GetPage(pageId, map);
+        }
+
+        T IDatabaseReader.GetLayout<T>(long layoutId, Func<LayoutRecord, T> map)
+        {
+            return _databaseReader.GetLayout(layoutId, map);
+        }
+
+        T IDatabaseReader.GetRegion<T>(long regionId, Func<RegionRecord, T> map)
+        {
+            return _databaseReader.GetRegion(regionId, map);
+        }
+
+        T IDatabaseReader.GetDataScope<T>(long dataScopeId, Func<DataScopeRecord, T> map)
+        {
+            return _databaseReader.GetDataScope(dataScopeId, map);
+        }
+
+        T IDatabaseReader.GetDataType<T>(long dataTypeId, Func<DataTypeRecord, T> map)
+        {
+            return _databaseReader.GetDataType(dataTypeId, map);
         }
 
         #endregion

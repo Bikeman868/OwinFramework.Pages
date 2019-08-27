@@ -202,6 +202,48 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <returns></returns>
         T[] GetElementVersions<T>(long elementId, Func<ElementVersionRecordBase, T> map);
        
+
+        /// <summary>
+        /// Retrieves a single page by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="pageId">The unique ID of the page to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetPage<T>(long pageId, Func<PageRecord, T> map);
+
+        /// <summary>
+        /// Retrieves a single layout by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="layoutId">The unique ID of the layout to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetLayout<T>(long layoutId, Func<LayoutRecord, T> map);
+
+        /// <summary>
+        /// Retrieves a single region by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="regionId">The unique ID of the region to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetRegion<T>(long regionId, Func<RegionRecord, T> map);
+
+        /// <summary>
+        /// Retrieves a single data scope by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="dataScopeId">The unique ID of the data scope to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetDataScope<T>(long dataScopeId, Func<DataScopeRecord, T> map);
+
+        /// <summary>
+        /// Retrieves a single data type by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="regionId">The unique ID of the data type to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetDataType<T>(long dataTypeId, Func<DataTypeRecord, T> map);
+
+
         /// <summary>
         /// Retrieves a single page version by its ID number
         /// </summary>
@@ -228,6 +270,16 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         /// <param name="version">The version of the region to get</param>
         /// <param name="map">A function that maps database records onto the return type</param>
         T GetRegionVersion<T>(long regionId, int version, Func<RegionRecord, RegionVersionRecord, T> map);
+
+        /// <summary>
+        /// Retrieves a single data type version by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="dataTypeId">The unique ID of the data type to return</param>
+        /// <param name="version">The version of the data type to get</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetDataTypeVersion<T>(long dataTypeId, int version, Func<DataTypeRecord, DataTypeVersionRecord, T> map);
+
 
         /// <summary>
         /// Retrieves a single page version by its ID number

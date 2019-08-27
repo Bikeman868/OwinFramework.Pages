@@ -138,6 +138,7 @@ namespace OwinFramework.Pages.CMS.Manager
             AddTemplate("SegmentationTestSelector", less, scriptModules);
             AddTemplate("PageSelector", less, scriptModules);
             AddTemplate("LayoutSelector", less, scriptModules);
+            AddTemplate("RegionSelector", less, scriptModules);
 
             AddTemplate("UserSegmentDisplay", less, scriptModules);
             AddTemplate("ContextDisplay", less, scriptModules);
@@ -147,10 +148,11 @@ namespace OwinFramework.Pages.CMS.Manager
             AddTemplate("SegmentationScenarioEditor", less, scriptModules);
             AddTemplate("PageEditor", less, scriptModules);
             AddTemplate("LayoutEditor", less, scriptModules);
+            AddTemplate("RegionEditor", less, scriptModules);
 
             AddTemplate("DispatcherLog", less, scriptModules);
 
-            // Output JavaScript and CSS assets in a module asset
+            // Output JavaScript and CSS assets in a module
 
             var assetsComponentBuilder = fluentBuilder.BuildUpComponent(null)
                 .Name("assets")

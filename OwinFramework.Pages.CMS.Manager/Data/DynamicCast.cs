@@ -8,11 +8,16 @@ using System.Reflection;
 
 namespace OwinFramework.Pages.CMS.Manager.Data
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <see cref="https://dotnetfiddle.net/yL2Ul9"/>
     public class DynamicCast<T> where T: class, new()
     {
-        private Property[] _props;
+        private static Property[] _props;
 
-        public DynamicCast()
+        static DynamicCast()
         {
             _props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(x => x.GetSetMethod() != null)

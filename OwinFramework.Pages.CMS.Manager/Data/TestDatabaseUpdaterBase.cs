@@ -19,6 +19,8 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         private DynamicCast<PageRouteRecord> _pageRouteCast = new DynamicCast<PageRouteRecord>();
         private DynamicCast<ElementComponentRecord> _elementComponentCast = new DynamicCast<ElementComponentRecord>();
+        private DynamicCast<ElementDataScopeRecord> _elementDataScopeCast = new DynamicCast<ElementDataScopeRecord>();
+        private DynamicCast<ElementDataTypeRecord> _elementDataTypeCast = new DynamicCast<ElementDataTypeRecord>();
         private DynamicCast<LayoutZoneRecord> _layoutZoneCast = new DynamicCast<LayoutZoneRecord>();
         private DynamicCast<RegionTemplateRecord> _regionTemplateCast = new DynamicCast<RegionTemplateRecord>();
 
@@ -1585,6 +1587,12 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         break;
                     case "regiontemplates":
                         regionVersion.RegionTemplates = ArrayPropertyChange(change, changeDetails, regionVersion.RegionTemplates, _regionTemplateCast);
+                        break;
+                    case "datascopes":
+                        regionVersion.DataScopes = ArrayPropertyChange(change, changeDetails, regionVersion.DataScopes, _elementDataScopeCast);
+                        break;
+                    case "datatypes":
+                        regionVersion.DataTypes = ArrayPropertyChange(change, changeDetails, regionVersion.DataTypes, _elementDataTypeCast);
                         break;
                 }
                 details.Add(changeDetails);

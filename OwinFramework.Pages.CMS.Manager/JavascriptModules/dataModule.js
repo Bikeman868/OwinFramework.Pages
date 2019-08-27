@@ -343,6 +343,141 @@
         }
     });
 
+    exported.regionStore = ns.data.store.newStore({
+        recordType: "Region",
+        name: "region",
+        dispatcher: exported.dispatcher,
+        fields: [
+            { name: "recordId", type: Number, isKey: true, allowNull: true },
+            { name: "name", type: String, default: "new_region" },
+            { name: "displayName", type: String, default: "New region" },
+            { name: "description", type: String, allowNull: true },
+            { name: "createdBy", type: String, allowNull: true },
+            { name: "createdWhen", type: Date, allowNull: true }],
+        crud: {
+            createRecord: function (region, onSuccess, onFail, params) {
+                exported.crudService.createRegion({ body: region, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
+            },
+            retrieveRecord: function (regionId, onSuccess, onFail) {
+                exported.crudService.retrieveRegion({ id: regionId }, onSuccess, null, onFail);
+            },
+            retrieveAllRecords: function (onSuccess, onFail) {
+                exported.listService.allRegions({}, onSuccess, null, onFail);
+            },
+            updateRecord: function (originalRegion, updatedRegion, changes, onSuccess, onFail) {
+                if (changes.length > 0) {
+                    exported.crudService.updateRegion(
+                        {
+                            id: updatedRegion.recordId,
+                            body: changes
+                        },
+                        onSuccess, null, onFail);
+                }
+            },
+            deleteRecord: function (regionId, onSuccess, onFail) {
+                exported.crudService.deleteRegion({ id: regionId }, onSuccess, null, onFail);
+            }
+        }
+    });
+
+    exported.regionVersionStore = ns.data.store.newStore({
+        recordType: "RegionVersion",
+        name: "region version",
+        listName: "list of region versions",
+        dispatcher: exported.dispatcher,
+        fields: [
+            { name: "recordId", type: Number, isKey: true, allowNull: true },
+            { name: "name", type: String, default: "new_region_version" },
+            { name: "displayName", type: String, default: "New region version" },
+            { name: "description", type: String, allowNull: true },
+            { name: "createdBy", type: String, allowNull: true },
+            { name: "createdWhen", type: Date, allowNull: true },
+            { name: "parentRecordId", type: Number, allowNull: true },
+            { name: "version", type: Number, allowNull: true },
+            { name: "moduleName", type: String, allowNull: true },
+            { name: "assetDeployment", type: String, default: "Inherit" },
+            { name: "layoutName", type: String, allowNull: true },
+            { name: "layoutId", type: Number, allowNull: true },
+            { name: "componentName", type: String, allowNull: true },
+            { name: "componentId", type: Number, allowNull: true },
+            { name: "assetName", type: String, allowNull: true },
+            { name: "assetValue", type: String, allowNull: true },
+            { name: "repeatDataTypeId", type: Number, allowNull: true },
+            { name: "repeatDataScopeId", type: Number, allowNull: true },
+            { name: "repeatDataScopeName", type: String, allowNull: true },
+            { name: "listDataScopeId", type: Number, allowNull: true },
+            { name: "listDataScopeName", type: String, allowNull: true },
+            { name: "listElementTag", type: String, allowNull: true },
+            { name: "listElementStyle", type: String, allowNull: true },
+            { name: "layoutZones", type: Array },
+            { name: "regionTemplates", type: Array },
+            { name: "components", type: Array },
+            { name: "dataScopes", type: Array },
+            { name: "dataTypes", type: Array }],
+        crud: {
+            createRecord: function (regionVersion, onSuccess, onFail, params) {
+                exported.crudService.createRegionVersion({
+                    body: regionVersion,
+                    websiteVersionId: params.websiteVersionId,
+                    scenario: params.scenario
+                },
+                    onSuccess,
+                    onFail);
+            },
+            retrieveRecord: function (regionVersionId, onSuccess, onFail) {
+                exported.crudService.retrieveRegionVersion({ id: regionVersionId }, onSuccess, null, onFail);
+            },
+            retrieveAllRecords: function (onSuccess, onFail) {
+                exported.listService.allRegionVersions({}, onSuccess, null, onFail);
+            },
+            updateRecord: function (originalRegionVersion, updatedRegionVersion, changes, onSuccess, onFail) {
+                if (changes.length > 0) {
+                    exported.crudService.updateRegionVersion(
+                        {
+                            id: updatedRegionVersion.recordId,
+                            body: changes
+                        },
+                        onSuccess, null, onFail);
+                }
+            },
+            deleteRecord: function (regionVersionId, onSuccess, onFail) {
+                exported.crudService.deleteRegionVersion({ id: regionVersionId }, onSuccess, null, onFail);
+            }
+        },
+        getRegionVersions: function (regionId, onSuccess, onFail) {
+            var store = this;
+            const description = "list of region versions";
+            exported.listService.regionVersions(
+                { id: regionId },
+                function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
+                null,
+                function (ajax) { store.handleGetFail(description, ajax, onFail); });
+        },
+        getWebsiteRegionVersion: function (websiteVersionId, segmentationScenarioName, regionId, onSuccess, onFail) {
+            var store = this;
+            exported.listService.websiteRegionVersion(
+                {
+                    websiteVersionId: websiteVersionId,
+                    scenario: segmentationScenarioName,
+                    regionId: regionId
+                },
+                function (response) {
+                    if (response != undefined) {
+                        var regionVersionId = response.regionVersionId;
+                        if (regionVersionId != undefined) {
+                            store.retrieveRecord(regionVersionId, onSuccess, onFail);
+                            return;
+                        }
+                    }
+                    if (onFail != undefined) onFail("Failed to get region version for website version");
+                },
+                null,
+                function (ajax) {
+                    if (onFail != undefined) onFail("Failed to get region version for website version");
+                });
+        }
+    });
+
     exported.userStore = ns.data.store.newStore({
         recordType: "User",
         name: "user",

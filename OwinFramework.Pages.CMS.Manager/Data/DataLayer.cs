@@ -557,7 +557,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             var result = _databaseUpdater.UpdateRegion(identity, regionId, changes);
             if (!result.Success) return result;
 
-            AddChangesToLiveUpdate(PageRecord.RecordTypeName, regionId, changes);
+            AddChangesToLiveUpdate(RegionRecord.RecordTypeName, regionId, changes);
 
             return result;
         }

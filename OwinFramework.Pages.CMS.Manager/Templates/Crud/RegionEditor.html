@@ -1,0 +1,376 @@
+﻿<div id="cms_region_editor" class="cms_panel" v-if="visible">
+    <cms-modal-dialog
+                      v-bind:title="modalDialogTitle"
+                      v-bind:message="modalDialogMessage"
+                      v-bind:buttons="modalDialogButtons"
+                      v-bind:visible="modalDialogVisible"
+                      @close="modalDialogVisible = false">
+    </cms-modal-dialog>
+    <cms-tabs>
+        <cms-tab name="Details" selected="true">
+            <div v-if="currentRegion == undefined && regionMode === 'view'">
+                <h2>No region selected</h2>
+                <p>
+                    No region currently selected for editing.
+                    Choose a region from the list on the left.
+                    If the list of regions is empty this is because the selected website version contains no regions.
+                </p>
+                <div class="cms_button_bar">
+                    <button type="button" v-on:click="newRegion">New</button>
+                </div>
+            </div>
+            <div v-else>
+                <div v-if="regionMode === 'new' || regionMode === 'edit'">
+                    <h2 v-if="regionMode === 'new'">Create New Region</h2>
+                    <h2 v-if="regionMode === 'edit'">Edit Region Details</h2>
+                    <div class="cms_edit_panel">
+                        <cms-display-name-field-editor label="Display this region in CMS manager as"
+                                                       placeholder="My region"
+                                                       v-bind:display-name="editingRegion.displayName"
+                                                       @display-name-changed="editingRegion.displayName=$event">
+                        </cms-display-name-field-editor>
+                        <cms-element-name-field-editor label="Region name"
+                                                       placeholder="unique_region_name"
+                                                       v-bind:element-name="editingRegion.name"
+                                                       @element-name-changed="editingRegion.name=$event">
+                        </cms-element-name-field-editor>
+                        <cms-description-field-editor v-bind:description="editingRegion.description || ''"
+                                                      @description-changed="editingRegion.description=$event">
+                        </cms-description-field-editor>
+                    </div>
+                    <div class="cms_validation_error_list" v-if="errors.length > 0">
+                        <p v-for="error in errors">{{error}}</p>
+                    </div>
+                    <div class="cms_button_bar">
+                        <button v-if="regionMode === 'new'" type="button" v-on:click="createNew">Create</button>
+                        <button v-if="regionMode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
+                        <button type="button" v-on:click="cancelChanges">Cancel</button>
+                    </div>
+                </div>
+                <div v-if="regionMode === 'view'">
+                    <h2>{{currentRegion.displayName}} region</h2>
+                    <div class="cms_field">
+                        <label>Name</label>
+                        <p>{{currentRegion.name}}</p>
+                    </div>
+                    <div v-if="currentRegion.description" class="cms_field">
+                        <label>Description</label>
+                        <p>{{currentRegion.description}}</p>
+                    </div>
+                    <div class="cms_field">
+                        <label>Created</label>
+                        <p>{{currentRegion.createdWhen|cms_formatDateTime}} by {{currentRegion.createdBy|cms_formatUserUrn}}</p>
+                    </div>
+                    <div class="cms_button_bar">
+                        <button type="button" v-on:click="editRegion">Edit</button>
+                        <button type="button" v-on:click="newRegion">New</button>
+                        <button type="button" v-on:click="deleteRegion">Delete</button>
+                    </div>
+                    <div class="cms_spacer_medium">&nbsp;</div>
+                </div>
+                <div v-if="regionMode === 'delete'">
+                    <h2>Confirm Region Deletion</h2>
+                    <p>This will delete all versions of the "{{currentRegion.name}}" region in all versions of the website</p>
+                </div>
+
+                <div v-if="websiteVersion && websiteVersion.recordId">
+                    <div v-if="currentRegionVersion == undefined && regionVersionMode === 'view'">
+                        <div v-if="scenario == undefined">
+                            <h2>No version of this region in this version of the website</h2>
+                            <p>
+                                There is no version of this region in the selected website version.
+                            </p>
+                            <p>
+                                To select a version of this region to use in this version of the website
+                                tap on the 'Choose Version' button.
+                            </p>
+                        </div>
+                        <div v-else>
+                            <h2>The {{scenario.displayName|cms_lowercase}} scenario uses the standard region version</h2>
+                            <p>
+                                This region uses the region version defined for the website version when the '{{scenario.displayName}}'
+                                a/b testing scenario is in use.
+                            </p>
+                            <p>
+                                If you want to change the region version that should be used for the
+                                '{{scenario.displayName}}' a/b testing scenario, tap on the 'Choose Version' button.
+                            </p>
+                        </div>
+                        <div class="cms_button_bar">
+                            <button type="button" v-on:click="chooseRegionVersion">Choose Version</button>
+                            <button type="button" v-on:click="newRegionVersion">New Version</button>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div v-if="regionVersionMode === 'new' || regionVersionMode === 'edit'">
+                            <h2 v-if="regionVersionMode === 'new'">Create New Region Version</h2>
+                            <h2 v-if="regionVersionMode === 'edit'">Edit Version {{editingRegionVersion.version}} of the {{currentRegion.displayName|cms_lowercase}} region</h2>
+                            <div class="cms_edit_panel">
+                                <cms-display-name-field-editor label="Name this version of the region"
+                                                               placeholder="Version 1"
+                                                               v-bind:display-name="editingRegionVersion.displayName"
+                                                               @display-name-changed="editingRegionVersion.displayName=$event">
+                                </cms-display-name-field-editor>
+                                <cms-description-field-editor v-bind:description="editingRegionVersion.description || ''"
+                                                              @description-changed="editingRegionVersion.description=$event">
+                                </cms-description-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h3>Region URLs</h3>
+
+                                <cms-url-path-field-editor label="Canonical URL path"
+                                                           v-bind:url-path="editingRegionVersion.canonicalUrl"
+                                                           @url-path-changed="editingRegionVersion.canonicalUrl=$event">
+                                </cms-url-path-field-editor>
+                                <cms-routes-field-editor label="Routes to this region"
+                                                         v-bind:routes="editingRegionVersion.routes">
+                                </cms-routes-field-editor>
+                            </div>
+
+                            <div class="cms_edit_panel">
+                                <h3>Master region</h3>
+                                <cms-region-field-editor label="Master region"
+                                                       v-bind:region-id="editingRegionVersion.masterRegionId"
+                                                       v-bind:exclude="[editingRegionVersion.elementId]"
+                                                       @region-id-changed="editingRegionVersion.masterRegionId=$event">
+                                </cms-region-field-editor>
+                                <cms-asset-deployment-field-editor label="Asset deployment"
+                                                                   inherit-option="Inherit from master region"
+                                                                   v-bind:asset-deployment="editingRegionVersion.assetDeployment"
+                                                                   v-bind:module-name="editingRegionVersion.moduleName"
+                                                                   @asset-deployment-changed="editingRegionVersion.assetDeployment=$event"
+                                                                   @module-name-changed="editingRegionVersion.moduleName=$event">
+                                </cms-asset-deployment-field-editor>
+
+                            </div>
+
+                            <div class="cms_edit_panel">
+                                <h3>Region layout</h3>
+                                <cms-layout-field-editor label="Region layout"
+                                                         v-bind:layout-id="editingRegionVersion.layoutId"
+                                                         v-bind:layout-name="editingRegionVersion.layoutName"
+                                                         @layout-id-changed="editingRegionVersion.layoutId=$event"
+                                                         @layout-name-changed="editingRegionVersion.layoutName=$event"
+                                                         @inherit-changed="layoutInheritChanged($event)">
+                                </cms-layout-field-editor>
+                                <cms-layout-zones-field-editor label="Layout zone contents"
+                                                               v-bind:zone-nesting="editingZoneNesting"
+                                                               v-bind:layout-zones="editingRegionVersion.layoutZones">
+                                </cms-layout-zones-field-editor>
+                            </div>
+
+                            <div class="cms_edit_panel">
+                                <h3>Region features</h3>
+                                <cms-title-field-editor label="Region title"
+                                                        placeholder="My new region"
+                                                        v-bind:title="editingRegionVersion.title"
+                                                        @title-changed="editingRegionVersion.title=$event">
+                                </cms-title-field-editor>
+                                <cms-style-field-editor label="Body style"
+                                                        v-bind:css-style="editingRegionVersion.bodyStyle"
+                                                        @css-style-changed="editingRegionVersion.bodyStyle=$event">
+                                </cms-style-field-editor>
+                                <cms-permisson-field-editor label="Permission required to view this region"
+                                                            v-bind:permission="editingRegionVersion.permission"
+                                                            v-bind:asset-path="editingRegionVersion.assetPath"
+                                                            @permission-changed="editingRegionVersion.permission=$event"
+                                                            @asset-path-changed="editingRegionVersion.assetPath=$event">
+                                </cms-permisson-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h2>Region data</h2>
+                                <cms-data-scopes-field-editor label="Region data scopes"
+                                                              v-bind:scopes="editingRegionVersion.dataScopes">
+                                </cms-data-scopes-field-editor>
+                                <cms-data-types-field-editor label="Region data needs"
+                                                             v-bind:scopes="editingRegionVersion.dataTypes">
+                                </cms-data-types-field-editor>
+                            </div>
+                            <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
+                                <p v-for="error in versionErrors">{{error}}</p>
+                            </div>
+                            <div class="cms_button_bar">
+                                <button v-if="regionVersionMode === 'new'" type="button" v-on:click="createNewVersion">Create</button>
+                                <button v-if="regionVersionMode === 'edit'" type="button" v-on:click="saveVersionChanges">Save</button>
+                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            </div>
+                        </div>
+                        <div v-if="regionVersionMode === 'view'">
+                            <h2>Version {{currentRegionVersion.version}} of the {{currentRegion.displayName}} region</h2>
+                            <div class="cms_field" v-if="currentRegionVersion.displayName">
+                                <label>Version name</label>
+                                <p>{{currentRegionVersion.displayName}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.title">
+                                <label>Region title</label>
+                                <p>{{currentRegionVersion.title}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.canonicalUrl">
+                                <label>Canonical URL</label>
+                                <p class="cms_field">{{currentRegionVersion.canonicalUrl}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.routes && currentRegionVersion.routes.length > 0">
+                                <label>Routes to this region</label>
+                                <p v-for="route in currentRegionVersion.routes">{{route.path}}</p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Assets</label>
+                                <p>{{currentRegionVersion.assetDeployment}}<span v-if="currentRegionVersion.assetDeployment==='PerModule'"> in the {{currentRegionVersion.moduleName}} module</span></p>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.masterRegionId">
+                                <label>Inherits from master region</label>
+                                <p>{{currentRegionVersion.masterRegionId | cms_lookupRegionId}}</p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Region layout</label>
+                                <p v-if="currentRegionVersion.layoutName" class="cms_field">{{currentRegionVersion.layoutName}}</p>
+                                <p v-else class="cms_field">{{currentRegionVersion.layoutId | cms_lookupLayoutId}}</p>
+                                <p v-for="layoutZone in currentRegionVersion.layoutZones" class="cms_field">
+                                    The {{layoutZone.zone}} layout zone contains
+                                    <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
+                                    <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
+                                    <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
+                                    <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
+                                    <span v-else>the default content defined by the layout</span>
+                                </p>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.bodyStyle">
+                                <label>Body CSS style</label>
+                                <p>{{currentRegionVersion.bodyStyle}}</p>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.permission">
+                                <label>Requires permission</label>
+                                <p>{{currentRegionVersion.permission}}<span v-if="currentRegionVersion.assetPath"> on {{currentRegionVersion.assetPath}}</span></p>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.components && currentRegionVersion.components.length > 0">
+                                <label>Dependant components</label>
+                                <ul><li v-for="component in currentRegionVersion.components">{{component.componentId|cms_lookupComponentId}}</li></ul>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.dataScopes && currentRegionVersion.dataScopes.length > 0">
+                                <label>Data scopes</label>
+                                <ul><li v-for="scope in currentRegionVersion.dataScopes">{{scope.dataScopeId|cms_lookupDataScopeId}}</li></ul>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.dataTypes && currentRegionVersion.dataTypes.length > 0">
+                                <label>Data needs</label>
+                                <ul><li v-for="type in currentRegionVersion.dataTypes">{{type.dataTypeId|cms_lookupDataTypeId}}</li></ul>
+                            </div>
+                            <div class="cms_field" v-if="currentRegionVersion.description">
+                                <label>Description</label>
+                                <p>{{currentRegionVersion.description}}</p>
+                            </div>
+                            <div class="cms_field">
+                                <label>Created</label>
+                                <p>{{currentRegionVersion.createdWhen|cms_formatDateTime}} by {{currentRegionVersion.createdBy|cms_formatUserUrn}}</p>
+                            </div>
+                            <div class="cms_button_bar">
+                                <button type="button" v-on:click="chooseRegionVersion">Choose</button>
+                                <button type="button" v-on:click="editRegionVersion">Edit</button>
+                                <button type="button" v-on:click="newRegionVersion">Copy</button>
+                                <button type="button" v-on:click="deleteCurrentRegionVersion">Delete</button>
+                            </div>
+                            <div class="cms_spacer_medium">&nbsp;</div>
+                        </div>
+                        <div v-if="regionVersionMode === 'delete'">
+                            <h2>Confirm Region Version Deletion</h2>
+                            <p>
+                                This will delete version {{currentRegionVersion.version}} of the {{currentRegion.displayName}} region.
+                                This region will disapear from any versions of the website that use this version of
+                                the {{currentRegion.displayName}} region.
+                            </p>
+                        </div>
+                        <div v-if="regionVersionMode === 'choose'">
+                            <h2>Choose Region Version</h2>
+                            <p>
+                                Which version of the {{currentRegion.displayName}} region do you want to use for the
+                                {{websiteVersion.displayName}} version of the website
+                                <span v-if="scenario"> when the {{scenario.displayName|cms_lowercase}} a/b testing scenario is in use</span>?
+                            </p>
+                            <cms-choose-element-version v-bind:element-type="currentRegion.recordType"
+                                                        v-bind:element-id="currentRegion.recordId"
+                                                        v-bind:selected-version-id="currentRegionVersion == undefined ? null : currentRegionVersion.recordId"
+                                                        @select-version="selectRegionVersion"
+                                                        @copy-version="copySelectedRegionVersion">
+                            </cms-choose-element-version>
+                            <div class="cms_button_bar">
+                                <button type="button" v-on:click="updateRegionVersion">Update</button>
+                                <button type="button" v-on:click="clearRegionVersion">None</button>
+                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </cms-tab>
+        <cms-tab name="Preview">
+            <p>The region preview feature is not implemented yet</p>
+        </cms-tab>
+        <cms-tab name="Versions">
+            <div v-if="currentRegion == undefined || currentRegion.recordId == undefined">
+                <p>Choose a region from the list on the left to compare versions of this region</p>
+            </div>
+            <div v-else>
+                <h2>Compare versions of the {{currentRegion.displayName|cms_lowercase}} region</h2>
+                <p>Choose versions to compare from the list below</p>
+                <cms-multi-select-element-versions v-bind:element-type="currentRegion.recordType"
+                                                   v-bind:element-id="currentRegion.recordId"
+                                                   v-bind:show-delete-button="true"
+                                                   @toggle-version="toggleRegionVersion"
+                                                   @delete-version="deleteChooseRegionVersion">
+                </cms-multi-select-element-versions>
+                <h2>Comparison matrix</h2>
+                <p>Use the table below to compare the selected versions</p>
+                <table>
+                    <tr><td></td><th v-for="version in compareRegionVersions">{{version.displayName}}</th></tr>
+                    <tr><th>Version</th><td v-for="version in compareRegionVersions">{{version.version}}</td></tr>
+                    <tr><th>Title</th><td v-for="version in compareRegionVersions">{{version.title}}</td></tr>
+                    <tr><th>URL</th><td v-for="version in compareRegionVersions">{{version.canonicalUrl}}</td></tr>
+                    <tr><th>Routes</th><td v-for="version in compareRegionVersions"><ul><li v-for="route in version.routes">{{route.path}}</li></ul></td></tr>
+                    <tr><th>Assets</th><td v-for="version in compareRegionVersions"><span v-if="version.assetDeployment==='PerModule'">{{version.moduleName}} module</span><span v-else>{{version.assetDeployment}}</span></td></tr>
+                    <tr><th>Master region</th><td v-for="version in compareRegionVersions">{{version.masterRegionId | cms_lookupRegionId}}</td></tr>
+                    <tr>
+                        <th>Layout</th>
+                        <td v-for="version in compareRegionVersions">
+                            <p v-if="version.layoutName" class="cms_field">{{version.layoutName}}</p>
+                            <p v-else>{{version.layoutId | cms_lookupLayoutId}}</p>
+                            <p v-for="layoutZone in version.layoutZones">
+                                The {{layoutZone.zone}} layout zone contains
+                                <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
+                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
+                                <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
+                                <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
+                                <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
+                                <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
+                                <span v-else>the default content defined by the layout</span>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr><th>Body style</th><td v-for="version in compareRegionVersions">{{version.bodyStyle}}</td></tr>
+                    <tr><th>Requires permission</th><td v-for="version in compareRegionVersions">{{version.permission}}</td></tr>
+                </table>
+            </div>
+        </cms-tab>
+        <cms-tab name="History">
+            <div v-if="currentRegion == undefined || currentRegion.recordId == undefined">
+                <p>
+                    No region currently selected for history.
+                    Choose a region from the list on the left.
+                    If the list of regions is empty this is because the selected website version contains no regions.
+                </p>
+            </div>
+            <div v-else>
+                <cms-history-period v-if="currentRegionVersion == undefined || currentRegionVersion.recordId == undefined"
+                                    v-bind:label="currentRegion.displayName + ' region change history'"
+                                    v-bind:record-type="currentRegion.recordType"
+                                    v-bind:record-id="currentRegion.recordId">
+                </cms-history-period>
+                <cms-history-period v-else
+                                    v-bind:label="currentRegion.displayName + ' region version ' + currentRegionVersion.version + ' change history'"
+                                    v-bind:record-type="currentRegionVersion.recordType"
+                                    v-bind:record-id="currentRegionVersion.recordId">
+                </cms-history-period>
+            </div>
+        </cms-tab>
+    </cms-tabs>
+</div>

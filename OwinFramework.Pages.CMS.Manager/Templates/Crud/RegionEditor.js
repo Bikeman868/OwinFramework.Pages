@@ -10,6 +10,7 @@
             cssPattern: exported.validation.cssPattern.source,
             permissionPattern: exported.validation.permissionPattern.source,
             pathPattern: exported.validation.pathPattern.source,
+            htmlPattern: exported.validation.htmlPattern.source,
             websiteVersion: {},
             scenario: {},
 
@@ -30,24 +31,6 @@
             modalDialogMessage: "",
             modalDialogButtons: [{ caption: "OK" }],
             modalDialogVisible: false
-        },
-        computed: {
-            editingZoneNesting: function () {
-                if (this.editingRegionVersion.layoutName == undefined || this.editingRegionVersion.layoutName.length === 0) {
-                    if (this.editingRegionVersion.layoutId == undefined) {
-                        // TODO: Lookup the master region layout
-                        return "master1,master2";
-                    } else {
-                        // TODO: Look up in the layoutStore
-                        if (this.editingRegionVersion.layoutId === 7) return "main";
-                        if (this.editingRegionVersion.layoutId === 8) return "left,right";
-                        if (this.editingRegionVersion.layoutId === 9) return "header,body,footer";
-                        return "";
-                    }
-                } else {
-                    return null;
-                }
-            }
         },
         methods: {
             show: function (context, managerContext) {
@@ -415,17 +398,6 @@
                 }
                 if (vm.editingRegionVersion.bodyStyle) {
                     vm.editingRegionVersion.bodyStyle = exported.validation.css(vm.editingRegionVersion.bodyStyle, "body style", errors);
-                }
-                var masterRegionId = vm.editingRegionVersion.masterRegionId;
-                while (masterRegionId != undefined) {
-                    if (masterRegionId === vm.editingRegionVersion.recordId) {
-                        errors.push("Master regions must be in a tree-like heirachy, you cannot create loops");
-                        masterRegionId = null;
-                    } else {
-                        masterRegionId = null;
-                        // exported.regionStore.retrieveRecord(masterRegionId, function(region) { masterRegionId = region.recordId; });
-                        // TODO: The masterRegionId is a property of the region version which is specific to each website version
-                    }
                 }
                 vm.versionErrors = errors;
             }

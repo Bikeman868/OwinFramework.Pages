@@ -235,8 +235,7 @@
         mounted: function () { this.isActive = this.selected; }
     });
 
-    Vue.component("cms-website-version-field-edior",
-    {
+    Vue.component("cms-website-version-field-edior", {
         props: {
             label: {
                 required: false,
@@ -279,8 +278,7 @@
         }
     });
 
-    Vue.component("cms-page-field-editor",
-    {
+    Vue.component("cms-page-field-editor", {
         props: {
             label: {
                 required: false,
@@ -352,8 +350,7 @@
         }
     });
 
-    Vue.component("cms-asset-deployment-field-editor",
-    {
+    Vue.component("cms-asset-deployment-field-editor", {
         props: {
             label: {
                 required: false,
@@ -408,8 +405,7 @@
         }
     });
 
-    Vue.component("cms-layout-field-editor",
-    {
+    Vue.component("cms-layout-field-editor", {
         props: {
             label: {
                 required: false,
@@ -492,8 +488,7 @@
         }
     });
 
-    Vue.component("cms-layout-zone-editor",
-    {
+    Vue.component("cms-layout-zone-editor", {
         props: {
             layoutZone: {
                 required: true,
@@ -554,7 +549,7 @@
             "    <textarea class=\"cms_field__html\" v-model=\"layoutZone.contentValue\" placeholder=\"<div></div>\" :pattern=\"htmlPattern\"></textarea>" +
             "  </div>" +
             "  <div v-if=\"mode==6\">" +
-            "    <input type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"/path/to/template\" :pattern=\"pathPattern\">" +
+            "    <cms-template-field-editor :templatePath=\"layoutZone.contentName\" @template-path-changed=\"layoutZone.contentName=$event\"></cms-template-field-editor>" +
             "  </div>" +
             "</div>",
         data: function () {
@@ -579,8 +574,7 @@
         }
     });
 
-    Vue.component("cms-layout-zones-field-editor",
-    {
+    Vue.component("cms-layout-zones-field-editor", {
         props: {
             label: {
                 required: false,
@@ -722,8 +716,7 @@
         }
     });
 
-    Vue.component("cms-zones-field-editor",
-    {
+    Vue.component("cms-zones-field-editor", {
         props: {
             label: {
                 required: false,
@@ -910,8 +903,7 @@
         }
     });
 
-    Vue.component("cms-routes-field-editor",
-    {
+    Vue.component("cms-routes-field-editor", {
         props: {
             label: {
                 required: false,
@@ -963,22 +955,164 @@
         }
         });
 
-    Vue.component("cms-data-scopes-field-editor",
-    {
+    Vue.component("cms-data-scope-field-editor", {
         props: {},
-        template: "<div></div>",
+        template: "<div>Data scope selector</div>",
         methods: {}
     });
 
-    Vue.component("cms-data-types-field-editor",
-    {
+    Vue.component("cms-data-type-field-editor", {
         props: {},
-        template: "<div></div>",
+        template: "<div>Data type selector</div>",
         methods: {}
     });
 
-    Vue.component("cms-html-tag-field-editor",
-    {
+    Vue.component("cms-data-scopes-field-editor", {
+        props: {},
+        template: "<div>Data scope list editor</div>",
+        methods: {}
+    });
+
+    Vue.component("cms-data-types-field-editor", {
+        props: {},
+        template: "<div>Data type list editor</div>",
+        methods: {}
+    });
+
+    Vue.component("cms-template-field-editor", {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Template path"
+            },
+            templatePath: {
+                required: false,
+                type: String,
+                default: ""
+            }
+        },
+        data: function () {
+            return {
+                pathPattern: exported.validation.pathPattern.source
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label v-if=\"label\">{{label}}</label>" +
+            "  <input type=\"text\" class=\"cms_field__template_path\" placeholder=\"/path/to/template\" :pattern=\"pathPattern\" @input=\"inputTemplatePath\" :value=\"templatePath\">" +
+            "</div>",
+        methods: {
+            inputTemplatePath: function (e) {
+                this.$emit("template-path-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-region-content-editor", {
+            props: {
+                regionVersion: {
+                    required: true,
+                    type: Object
+                }
+            },
+            data: function () {
+                return {
+                    mode: this.calculateMode(),
+                    namePattern: exported.validation.namePattern.source,
+                    nameRefPattern: exported.validation.nameRefPattern.source,
+                    pathPattern: exported.validation.pathPattern.source,
+                    htmlPattern: exported.validation.htmlPattern.source
+                }
+            },
+            computed: {
+                zoneNesting: function () {
+                    if (this.regionVersion.layoutName) {
+                        return null;
+                    } else {
+                        if (this.regionVersion.layoutId == undefined) {
+                            return "";
+                        } else {
+                            // TODO: Look up in the layoutStore
+                            if (this.regionVersion.layoutId === 7) return "main";
+                            if (this.regionVersion.layoutId === 8) return "left,right";
+                            if (this.regionVersion.layoutId === 9) return "header,body,footer";
+                            return "";
+                        }
+                    }
+                }
+            },
+            watch: {
+                regionVersion: function () {
+                    this.mode = this.calculateMode();
+                },
+                mode: function (newMode, oldMode) {
+                    if (oldMode === newMode) return;
+                    this.regionVersion.componentId = null;
+                    this.regionVersion.componentName = null;
+                    this.regionVersion.layoutId = null;
+                    this.regionVersion.layoutName = null;
+                    this.regionVersion.layoutZones = [];
+                    this.regionVersion.assetName = null;
+                    this.regionVersion.regionTemplates = [];
+                }
+            },
+            template:
+                "<div>" +
+                "    <select v-model=\"mode\" >" +
+                "        <option value=\"layout\">Layout</option>" +
+                "        <option value=\"component\">Component</option>" +
+                "        <option value=\"html\">Html</option>" +
+                "        <option value=\"template\">Template</option>" +
+                "    </select >" +
+                "    <div v-if=\"mode === 'layout'\">" +
+                "        <cms-layout-field-editor" +
+                "            label=\"Region layout\"" +
+                "            :inherit-option=\"null\"" +
+                "            :layout-id=\"regionVersion.layoutId\"" +
+                "            :layout-name=\"regionVersion.layoutName\"" +
+                "            @layout-id-changed=\"regionVersion.layoutId=$event\"" +
+                "            @layout-name-changed=\"regionVersion.layoutName=$event\">" +
+                "        </cms-layout-field-editor>" +
+                "        <cms-layout-zones-field-editor" +
+                "            label=\"Layout zone contents\"" +
+                "            :zone-nesting=\"zoneNesting\"" +
+                "            :layout-zones=\"regionVersion.layoutZones\">" +
+                "        </cms-layout-zones-field-editor>" +
+                "    </div >" +
+                "    <div v-if=\"mode === 'component'\">" +
+                "        <p>Component chooser</p>" +
+                "    </div>" +
+                "    <div v-if=\"mode === 'html'\">" +
+                "        <label>Localizable asset name</label>" +
+                "        <input type=\"text\" v-model=\"regionVersion.assetName\" placeholder=\"localizable_asset_name\" :pattern=\"namePattern\">" +
+                "        <label>Default language Html</label>" +
+                "        <textarea class=\"cms_field__html\" v-model=\"regionVersion.assetValue\" placeholder=\"<div></div>\" :pattern=\"htmlPattern\"></textarea>" +
+                "    </div >" +
+                "    <div v-if=\"mode === 'template'\">" +
+                "        <p>Choose templates for each page area</p>" +
+                "        <table>" +
+                "          <tr><th>Page Area</th><th>Template</th></tr>" +
+                "          <tr><td>Head</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
+                "          <tr><td>Title</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
+                "          <tr><td>Styles</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
+                "          <tr><td>Scripts</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
+                "          <tr><td>Body</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
+                "          <tr><td>Initialization</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
+                "        </table>" +
+                "    </div>" +
+                "</div>",
+            methods: {
+                calculateMode: function () {
+                    if (this.regionVersion.layoutId != undefined || this.regionVersion.layoutName) return "layout";
+                    if (this.regionVersion.componentId != undefined || this.regionVersion.componentName) return "component";
+                    if (this.regionVersion.regionTemplates && this.regionVersion.regionTemplates.length > 0) return "template";
+                    return "html";
+                }
+            }
+        });
+
+    Vue.component("cms-html-tag-field-editor", {
         props: {
             label: {
                 required: false,
@@ -1015,8 +1149,7 @@
         }
     });
 
-    Vue.component("cms-style-field-editor",
-        {
+    Vue.component("cms-style-field-editor", {
             props: {
                 label: {
                     required: false,
@@ -1046,8 +1179,7 @@
             }
         });
 
-    Vue.component("cms-css-classes-field-editor",
-        {
+    Vue.component("cms-css-classes-field-editor", {
             props: {
                 label: {
                     required: false,
@@ -1072,8 +1204,7 @@
             }
         });
 
-    Vue.component("cms-permisson-field-editor",
-    {
+    Vue.component("cms-permisson-field-editor", {
         props: {
             label: {
                 required: false,
@@ -1114,8 +1245,7 @@
         }
     });
 
-    Vue.component("cms-title-field-editor",
-    {
+    Vue.component("cms-title-field-editor", {
         props: {
             label: {
                 required: false,
@@ -1150,8 +1280,7 @@
         }
     });
 
-    Vue.component("cms-element-name-field-editor",
-    {
+    Vue.component("cms-element-name-field-editor", {
         props: {
             label: {
                 required: false,
@@ -1186,8 +1315,7 @@
         }
     });
 
-    Vue.component("cms-display-name-field-editor",
-    {
+    Vue.component("cms-display-name-field-editor", {
         props: {
             label: {
                 required: false,
@@ -1207,7 +1335,7 @@
         },
         template:
             "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
+            "  <label v-if=\"label\">{{label}}</label>" +
             "  <input type=\"text\" class=\"cms_field__display_name\" :placeholder=\"placeholder\" :pattern=\"displayNamePattern\" @input=\"inputDisplayName\" :value=\"displayName\">" +
             "</div>",
         data: function () {
@@ -1222,8 +1350,7 @@
         }
     });
 
-    Vue.component("cms-url-path-field-editor",
-    {
+    Vue.component("cms-url-path-field-editor", {
         props: {
             label: {
                 required: false,
@@ -1258,8 +1385,7 @@
         }
     });
 
-    Vue.component("cms-url-field-editor",
-    {
+    Vue.component("cms-url-field-editor", {
         props: {
             label: {
                 required: false,
@@ -1294,8 +1420,7 @@
         }
     });
 
-    Vue.component("cms-description-field-editor",
-    {
+    Vue.component("cms-description-field-editor", {
         props: {
             label: {
                 required: false,
@@ -1325,8 +1450,7 @@
         }
     });
 
-    Vue.component("cms-history-summary",
-    {
+    Vue.component("cms-history-summary", {
         props: {
             summary: {
                 required: true,
@@ -1386,8 +1510,7 @@
         }
     });
 
-    Vue.component("cms-history-period",
-    {
+    Vue.component("cms-history-period", {
         props: {
             label: {
                 required: false,

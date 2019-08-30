@@ -118,7 +118,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces.Database
         /// <summary>
         /// Optional comma separated list of CSS class names to apply to child elements
         /// </summary>
-        [Mapping("listElementStyle")]
+        [Mapping("listElementClasses")]
         [JsonProperty("listElementClasses")]
         public string ListElementClasses { get; set; }
 

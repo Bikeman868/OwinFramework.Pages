@@ -115,70 +115,26 @@
                                                               @description-changed="editingRegionVersion.description=$event">
                                 </cms-description-field-editor>
                             </div>
-                            <div class="cms_edit_panel">
-                                <h3>Region URLs</h3>
-
-                                <cms-url-path-field-editor label="Canonical URL path"
-                                                           v-bind:url-path="editingRegionVersion.canonicalUrl"
-                                                           @url-path-changed="editingRegionVersion.canonicalUrl=$event">
-                                </cms-url-path-field-editor>
-                                <cms-routes-field-editor label="Routes to this region"
-                                                         v-bind:routes="editingRegionVersion.routes">
-                                </cms-routes-field-editor>
-                            </div>
 
                             <div class="cms_edit_panel">
-                                <h3>Master region</h3>
-                                <cms-region-field-editor label="Master region"
-                                                       v-bind:region-id="editingRegionVersion.masterRegionId"
-                                                       v-bind:exclude="[editingRegionVersion.elementId]"
-                                                       @region-id-changed="editingRegionVersion.masterRegionId=$event">
-                                </cms-region-field-editor>
-                                <cms-asset-deployment-field-editor label="Asset deployment"
-                                                                   inherit-option="Inherit from master region"
+                                <h3>Asset deployment</h3>
+                                <cms-asset-deployment-field-editor label=""
+                                                                   inherit-option="Inherit from parent element"
                                                                    v-bind:asset-deployment="editingRegionVersion.assetDeployment"
                                                                    v-bind:module-name="editingRegionVersion.moduleName"
                                                                    @asset-deployment-changed="editingRegionVersion.assetDeployment=$event"
                                                                    @module-name-changed="editingRegionVersion.moduleName=$event">
                                 </cms-asset-deployment-field-editor>
-
                             </div>
 
                             <div class="cms_edit_panel">
-                                <h3>Region layout</h3>
-                                <cms-layout-field-editor label="Region layout"
-                                                         v-bind:layout-id="editingRegionVersion.layoutId"
-                                                         v-bind:layout-name="editingRegionVersion.layoutName"
-                                                         @layout-id-changed="editingRegionVersion.layoutId=$event"
-                                                         @layout-name-changed="editingRegionVersion.layoutName=$event"
-                                                         @inherit-changed="layoutInheritChanged($event)">
-                                </cms-layout-field-editor>
-                                <cms-layout-zones-field-editor label="Layout zone contents"
-                                                               v-bind:zone-nesting="editingZoneNesting"
-                                                               v-bind:layout-zones="editingRegionVersion.layoutZones">
-                                </cms-layout-zones-field-editor>
+                                <h3>Content</h3>
+                                <cms-region-content-editor v-bind:region-version="editingRegionVersion">
+                                </cms-region-content-editor>
                             </div>
 
                             <div class="cms_edit_panel">
-                                <h3>Region features</h3>
-                                <cms-title-field-editor label="Region title"
-                                                        placeholder="My new region"
-                                                        v-bind:title="editingRegionVersion.title"
-                                                        @title-changed="editingRegionVersion.title=$event">
-                                </cms-title-field-editor>
-                                <cms-style-field-editor label="Body style"
-                                                        v-bind:css-style="editingRegionVersion.bodyStyle"
-                                                        @css-style-changed="editingRegionVersion.bodyStyle=$event">
-                                </cms-style-field-editor>
-                                <cms-permisson-field-editor label="Permission required to view this region"
-                                                            v-bind:permission="editingRegionVersion.permission"
-                                                            v-bind:asset-path="editingRegionVersion.assetPath"
-                                                            @permission-changed="editingRegionVersion.permission=$event"
-                                                            @asset-path-changed="editingRegionVersion.assetPath=$event">
-                                </cms-permisson-field-editor>
-                            </div>
-                            <div class="cms_edit_panel">
-                                <h2>Region data</h2>
+                                <h2>Data binding</h2>
                                 <cms-data-scopes-field-editor label="Region data scopes"
                                                               v-bind:scopes="editingRegionVersion.dataScopes">
                                 </cms-data-scopes-field-editor>
@@ -186,6 +142,43 @@
                                                              v-bind:scopes="editingRegionVersion.dataTypes">
                                 </cms-data-types-field-editor>
                             </div>
+
+                            <div class="cms_edit_panel">
+                                <h3>Data repeater</h3>
+                                <cms-data-type-field-editor label="Data type"
+                                                            v-bind:data-type-id="editingRegionVersion.repeatDataTypeId"
+                                                            @data-type-id-changed="editingRegionVersion.repeatDataTypeId=$event">
+                                </cms-data-type-field-editor>
+                                <cms-data-scope-field-editor label="Data scope"
+                                                             v-bind:data-scope-id="editingRegionVersion.repeatDataScopeId"
+                                                             v-bind:data-scope-name="editingRegionVersion.repeatDataScopeName"
+                                                             @data-scope-id-changed="editingRegionVersion.repeatDataScopeId=$event"
+                                                             @data-scope-name-changed="editingRegionVersion.repeatDataScopeName=$event">
+                                </cms-data-scope-field-editor>
+                            </div>
+
+                            <div class="cms_edit_panel">
+                                <h3>Repeated elements</h3>
+                                <cms-html-tag-field-editor label="Html tag"
+                                                           v-bind:html-tag="editingRegionVersion.listElementTag"
+                                                           @html-tag-changed="editingRegionVersion.listElementTag=$event">
+                                </cms-html-tag-field-editor>
+                                <cms-style-field-editor label="Custom style"
+                                                        v-bind:css-style="editingRegionVersion.listElementStyle"
+                                                        @css-style-changed="editingRegionVersion.listElementStyle=$event">
+                                </cms-style-field-editor>
+                                <cms-css-classes-field-editor label="Additional CSS classes"
+                                                              v-bind:css-classes="editingRegionVersion.listElementClasses"
+                                                              @css-classes-changed="editingRegionVersion.listElementClasses=$event">
+                                </cms-css-classes-field-editor>
+                                <cms-data-scope-field-editor label="Data scope"
+                                                             v-bind:data-scope-id="editingRegionVersion.listDataScopeId"
+                                                             v-bind:data-scope-name="editingRegionVersion.listDataScopeName"
+                                                             @data-scope-id-changed="editingRegionVersion.listDataScopeId=$event"
+                                                             @data-scope-name-changed="editingRegionVersion.listDataScopeName=$event">
+                                </cms-data-scope-field-editor>
+                            </div>
+
                             <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
                                 <p v-for="error in versionErrors">{{error}}</p>
                             </div>
@@ -201,14 +194,6 @@
                                 <label>Version name</label>
                                 <p>{{currentRegionVersion.displayName}}</p>
                             </div>
-                            <div class="cms_field" v-if="currentRegionVersion.title">
-                                <label>Region title</label>
-                                <p>{{currentRegionVersion.title}}</p>
-                            </div>
-                            <div class="cms_field" v-if="currentRegionVersion.canonicalUrl">
-                                <label>Canonical URL</label>
-                                <p class="cms_field">{{currentRegionVersion.canonicalUrl}}</p>
-                            </div>
                             <div class="cms_field" v-if="currentRegionVersion.routes && currentRegionVersion.routes.length > 0">
                                 <label>Routes to this region</label>
                                 <p v-for="route in currentRegionVersion.routes">{{route.path}}</p>
@@ -217,11 +202,8 @@
                                 <label>Assets</label>
                                 <p>{{currentRegionVersion.assetDeployment}}<span v-if="currentRegionVersion.assetDeployment==='PerModule'"> in the {{currentRegionVersion.moduleName}} module</span></p>
                             </div>
-                            <div class="cms_field" v-if="currentRegionVersion.masterRegionId">
-                                <label>Inherits from master region</label>
-                                <p>{{currentRegionVersion.masterRegionId | cms_lookupRegionId}}</p>
-                            </div>
-                            <div class="cms_field">
+
+                            <div class="cms_field" v-if="currentRegionVersion.layoutName || currentRegionVersion.layoutId">
                                 <label>Region layout</label>
                                 <p v-if="currentRegionVersion.layoutName" class="cms_field">{{currentRegionVersion.layoutName}}</p>
                                 <p v-else class="cms_field">{{currentRegionVersion.layoutId | cms_lookupLayoutId}}</p>
@@ -236,14 +218,60 @@
                                     <span v-else>the default content defined by the layout</span>
                                 </p>
                             </div>
-                            <div class="cms_field" v-if="currentRegionVersion.bodyStyle">
-                                <label>Body CSS style</label>
-                                <p>{{currentRegionVersion.bodyStyle}}</p>
+                            <div class="cms_field" v-if="currentRegionVersion.componentName || currentRegionVersion.componentId">
+                                <label>Region component</label>
+                                <p v-if="currentRegionVersion.componentName" class="cms_field">{{currentRegionVersion.componentName}}</p>
+                                <p v-else class="cms_field">{{currentRegionVersion.componentId | cms_lookupComponentId}}</p>
                             </div>
-                            <div class="cms_field" v-if="currentRegionVersion.permission">
-                                <label>Requires permission</label>
-                                <p>{{currentRegionVersion.permission}}<span v-if="currentRegionVersion.assetPath"> on {{currentRegionVersion.assetPath}}</span></p>
+                            <div class="cms_field" v-if="currentRegionVersion.assetName">
+                                <label>Region HTML</label>
+                                <p class="cms_field">{{currentRegionVersion.assetName}}</p>
+                                <p class="cms_field">{{currentRegionVersion.assetValue}}</p>
                             </div>
+                            <div class="cms_field" v-if="currentRegionVersion.regionTemplates && currentRegionVersion.regionTemplates.length > 0">
+                                <label>Region templates</label>
+                                <p v-for="template in currentRegionVersion.regionTemplates" class="cms_field">
+                                    {{template.pageArea}} area of the page contains the {{template.templatePath}} template
+                                </p>
+                            </div>
+
+                            <div class="cms_field" v-if="currentRegionVersion.repeatDataTypeId">
+                                <h3>Repeat the contents of this region</h3>
+                                <div class="cms_field">
+                                    <label>Repeat for each</label>
+                                    <p>
+                                        {{currentRegionVersion.repeatDataTypeId | cms_lookupDataTypeId}}
+                                        <span v-if="currentRegionVersion.repeatDataScopeId">
+                                            in {{currentRegionVersion.repeatDataScopeId | cms_lookupDataScopeId}} scope
+                                        </span>
+                                        <span v-else-if="currentRegionVersion.repeatDataScoeName">
+                                            in {{currentRegionVersion.repeatDataScopeName}} scope
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="cms_field" v-if="currentRegionVersion.listElementTag">
+                                    <label>List item Html tag</label>
+                                    <p class="cms_field">{{currentRegionVersion.listElementTag}}</p>
+                                </div>
+                                <div class="cms_field" v-if="currentRegionVersion.listElementStyle">
+                                    <label>List item custom style</label>
+                                    <p class="cms_field">{{currentRegionVersion.listElementStyle}}</p>
+                                </div>
+                                <div class="cms_field" v-if="currentRegionVersion.listElementClasses">
+                                    <label>List item additional CSS classes</label>
+                                    <p class="cms_field">{{currentRegionVersion.listElementClasses}}</p>
+                                </div>
+                                <div v-if="currentRegionVersion.listDataScopeId || currentRegionVersion.listDataScopeName">
+                                    <label>Resolve list item data</label>
+                                    <span v-if="currentRegionVersion.repeatDataScopeId">
+                                        Using {{currentRegionVersion.listDataScopeId | cms_lookupDataScopeId}} scope
+                                    </span>
+                                    <span v-else-if="currentRegionVersion.repeatDataScoeName">
+                                        Using {{currentRegionVersion.listDataScopeName}} scope
+                                    </span>
+                                </div>
+                            </div>
+
                             <div class="cms_field" v-if="currentRegionVersion.components && currentRegionVersion.components.length > 0">
                                 <label>Dependant components</label>
                                 <ul><li v-for="component in currentRegionVersion.components">{{component.componentId|cms_lookupComponentId}}</li></ul>
@@ -256,6 +284,7 @@
                                 <label>Data needs</label>
                                 <ul><li v-for="type in currentRegionVersion.dataTypes">{{type.dataTypeId|cms_lookupDataTypeId}}</li></ul>
                             </div>
+
                             <div class="cms_field" v-if="currentRegionVersion.description">
                                 <label>Description</label>
                                 <p>{{currentRegionVersion.description}}</p>
@@ -324,11 +353,13 @@
                 <table>
                     <tr><td></td><th v-for="version in compareRegionVersions">{{version.displayName}}</th></tr>
                     <tr><th>Version</th><td v-for="version in compareRegionVersions">{{version.version}}</td></tr>
-                    <tr><th>Title</th><td v-for="version in compareRegionVersions">{{version.title}}</td></tr>
-                    <tr><th>URL</th><td v-for="version in compareRegionVersions">{{version.canonicalUrl}}</td></tr>
+                    //
+                    //
+                    // TODO: Compare other fields
+                    //
+                    //
                     <tr><th>Routes</th><td v-for="version in compareRegionVersions"><ul><li v-for="route in version.routes">{{route.path}}</li></ul></td></tr>
                     <tr><th>Assets</th><td v-for="version in compareRegionVersions"><span v-if="version.assetDeployment==='PerModule'">{{version.moduleName}} module</span><span v-else>{{version.assetDeployment}}</span></td></tr>
-                    <tr><th>Master region</th><td v-for="version in compareRegionVersions">{{version.masterRegionId | cms_lookupRegionId}}</td></tr>
                     <tr>
                         <th>Layout</th>
                         <td v-for="version in compareRegionVersions">
@@ -346,8 +377,6 @@
                             </p>
                         </td>
                     </tr>
-                    <tr><th>Body style</th><td v-for="version in compareRegionVersions">{{version.bodyStyle}}</td></tr>
-                    <tr><th>Requires permission</th><td v-for="version in compareRegionVersions">{{version.permission}}</td></tr>
                 </table>
             </div>
         </cms-tab>

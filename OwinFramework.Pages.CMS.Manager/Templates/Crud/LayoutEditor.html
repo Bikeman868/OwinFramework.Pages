@@ -307,6 +307,12 @@
                     <tr><td></td><th v-for="version in compareLayoutVersions">{{version.displayName}}</th></tr>
                     <tr><th>Version</th><td v-for="version in compareLayoutVersions">{{version.version}}</td></tr>
                     <tr><th>Assets</th><td v-for="version in compareLayoutVersions"><span v-if="version.assetDeployment==='PerModule'">{{version.moduleName}} module</span><span v-else>{{version.assetDeployment}}</span></td></tr>
+                    <tr><th>Tag</th><td v-for="version in compareLayoutVersions">{{version.tag}}</td></tr>
+                    <tr><th>Style</th><td v-for="version in compareLayoutVersions">{{version.style}}</td></tr>
+                    <tr><th>Classes</th><td v-for="version in compareLayoutVersions">{{version.classes}}</td></tr>
+                    <tr><th>Nesting tag</th><td v-for="version in compareLayoutVersions">{{version.nestingTag}}</td></tr>
+                    <tr><th>Nesting style</th><td v-for="version in compareLayoutVersions">{{version.nestingStyle}}</td></tr>
+                    <tr><th>Nesting classes</th><td v-for="version in compareLayoutVersions">{{version.nestingClasses}}</td></tr>
                     <tr>
                         <th>Zones</th>
                         <td v-for="version in compareLayoutVersions">
@@ -314,12 +320,33 @@
                                 <span>The {{layoutZone.zone}} zone </span>
                                 <span v-if="layoutZone.regionId">contains the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
                                 <span v-else-if="layoutZone.layoutId">contains the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                                <span v-else-if="layoutZone.layoutId">contains the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
+                                <span v-else-if="layoutZone.componentId">contains the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
                                 <span v-else-if="layoutZone.contentType === 'Html'">contains HTML localizable as '{{layoutZone.contentName}}'</span>
                                 <span v-else-if="layoutZone.contentType === 'Template'">contains the {{layoutZone.contentName}} template</span>
                                 <span v-else-if="layoutZone.contentType">contains the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
                                 <span v-else> is empty</span>
                             </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Components</th>
+                        <td v-for="version in compareLayoutVersions">
+                            <p v-for="component in version.components">
+                                <span v-if="component.componentId">{{component.componentId|cms_lookupComponentId}}</span>
+                                <span v-else-if="component.component">{{component.component}}</span>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Data types</th>
+                        <td v-for="version in compareLayoutVersions">
+                            <p v-for="dataType in version.dataTypes">{{dataType.dataTypeId|cms_lookupDataTypeId}}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Data scopes</th>
+                        <td v-for="version in compareLayoutVersions">
+                            <p v-for="dataScope in version.dataScopes">{{dataScope.dataScopeId|cms_lookupDataScopeId}}</p>
                         </td>
                     </tr>
                 </table>

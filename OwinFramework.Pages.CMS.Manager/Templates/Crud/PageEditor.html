@@ -348,6 +348,27 @@
                     </tr>
                     <tr><th>Body style</th><td v-for="version in comparePageVersions">{{version.bodyStyle}}</td></tr>
                     <tr><th>Requires permission</th><td v-for="version in comparePageVersions">{{version.permission}}</td></tr>
+                    <tr>
+                        <th>Components</th>
+                        <td v-for="version in comparePageVersions">
+                            <p v-for="component in version.components">
+                                <span v-if="component.componentId">{{component.componentId|cms_lookupComponentId}}</span>
+                                <span v-else-if="component.component">{{component.component}}</span>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Data types</th>
+                        <td v-for="version in comparePageVersions">
+                            <p v-for="dataType in version.dataTypes">{{dataType.dataTypeId|cms_lookupDataTypeId}}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Data scopes</th>
+                        <td v-for="version in comparePageVersions">
+                            <p v-for="dataScope in version.dataScopes">{{dataScope.dataScopeId|cms_lookupDataScopeId}}</p>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </cms-tab>

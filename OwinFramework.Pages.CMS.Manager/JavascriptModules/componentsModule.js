@@ -431,7 +431,8 @@
             "  <label>{{label}}</label>" +
             "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
             "  <select v-if=\"!inherit\" class=\"cms_field__layout\" @change=\"selectLayout($event)\">" +
-            "    <option v-for=\"layout in layouts\" v-bind:value=\"layout.recordId\" v-bind:selected=\"layout.recordId==selectedLayoutId\">" +
+            "    <option :value=\"null\" :selected=\"selectedLayoutId==undefined\">Defined in code</option>" +
+            "    <option v-for=\"layout in layouts\" :value=\"layout.recordId\" :selected=\"layout.recordId==selectedLayoutId\">" +
             "      {{layout.displayName}}" +
             "    </option>" +
             "  </select>" +
@@ -450,20 +451,7 @@
         },
         created: function () {
             var vm = this;
-            vm.layouts = [
-                { recordId: 7, displayName: "Layout 1" },
-                { recordId: 8, displayName: "Layout 2" },
-                { recordId: 9, displayName: "Layout 3" },
-                { recordId: 10, displayName: "Layout 4" }
-            ];
-            //exported.layoutStore.retrieveAllRecords(
-            //    function (response) {
-            //        vm.layouts = response;
-                    vm.layouts.unshift({
-                        recordId: "",
-                        displayName: "Defined in code"
-                    });
-            //    });
+            exported.layoutStore.retrieveAllRecords(function (response) { vm.layouts = response; });
             vm.inherit = vm.selectedLayoutId == undefined && (vm.editedLayoutName == undefined || vm.editedLayoutName.length === 0);
         },
         methods: {
@@ -484,6 +472,154 @@
                 vm.inherit = e.target.checked;
                 vm.$emit("inherit-changed", vm.inherit);
                 if (!vm.inherit) vm.$emit("layout-id-changed", vm.selectedLayoutId);
+            }
+        }
+    });
+
+    Vue.component("cms-region-field-editor", {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Region"
+            },
+            regionId: {
+                required: false,
+                type: Number
+            },
+            regionName: {
+                required: false,
+                type: String
+            },
+            inheritOption: {
+                required: false,
+                type: String,
+                default: "Inherit parent region"
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label v-if=\"label\">{{label}}</label>" +
+            "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
+            "  <select v-if=\"!inherit\" class=\"cms_field__region\" @change=\"selectRegion($event)\">" +
+            "    <option :value=\"null\" :selected=\"selectedRegionId==undefined\">Defined in code</option>" +
+            "    <option v-for=\"region in regions\" v-bind:value=\"region.recordId\" v-bind:selected=\"region.recordId==selectedRegionId\">" +
+            "      {{region.displayName}}" +
+            "    </option>" +
+            "  </select>" +
+            "  <input v-if=\"!inherit && !selectedRegionId\" type=\"text\" class=\"cms_field__region_name\" " +
+            "    v-model=\"editedRegionName\" placeholder=\"region_name\" v-bind:pattern=\"nameRefPattern\" @input=\"inputRegionName\">" +
+            "</div>",
+        data: function () {
+            return {
+                regions: [],
+                namePattern: exported.validation.namePattern.source,
+                nameRefPattern: exported.validation.nameRefPattern.source,
+                inherit: false,
+                selectedRegionId: this.regionId,
+                editedRegionName: this.regionName
+            }
+        },
+        created: function () {
+            var vm = this;
+            exported.regionStore.retrieveAllRecords(function (response) { vm.regions = response; });
+            vm.inherit = vm.selectedRegionId == undefined && (vm.editedRegionName == undefined || vm.editedRegionName.length === 0);
+        },
+        methods: {
+            selectRegion: function (e) {
+                var vm = this;
+                var regionId = parseInt(e.target.value);
+                if (isNaN(regionId)) regionId = null;
+                vm.selectedRegionId = regionId;
+                vm.$emit("region-id-changed", vm.selectedRegionId);
+            },
+            inputRegionName: function (e) {
+                var vm = this;
+                vm.editedRegionName = e.target.value;
+                vm.$emit("region-name-changed", vm.editedRegionName);
+            },
+            changeInherit: function (e) {
+                var vm = this;
+                vm.inherit = e.target.checked;
+                vm.$emit("inherit-changed", vm.inherit);
+                if (!vm.inherit) vm.$emit("region-id-changed", vm.selectedRegionId);
+            }
+        }
+    });
+
+    Vue.component("cms-component-field-editor", {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Component"
+            },
+            componentId: {
+                required: false,
+                type: Number
+            },
+            componentName: {
+                required: false,
+                type: String
+            },
+            inheritOption: {
+                required: false,
+                type: String,
+                default: "Inherit parent component"
+            }
+        },
+        template:
+            "<div class=\"cms_field\">" +
+            "  <label v-if=\"label\">{{label}}</label>" +
+            "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
+            "  <select v-if=\"!inherit\" class=\"cms_field__component\" @change=\"selectComponent($event)\">" +
+            "    <option :value=\"null\" :selected=\"selectedComponentId==undefined\">Defined in code</option>" +
+            "    <option v-for=\"component in components\" v-bind:value=\"component.recordId\" v-bind:selected=\"component.recordId==selectedComponentId\">" +
+            "      {{component.displayName}}" +
+            "    </option>" +
+            "  </select>" +
+            "  <input v-if=\"!inherit && !selectedComponentId\" type=\"text\" class=\"cms_field__component_name\" " +
+            "    v-model=\"editedComponentName\" placeholder=\"component_name\" :pattern=\"nameRefPattern\" @input=\"inputComponentName\">" +
+            "</div>",
+        data: function () {
+            return {
+                components: [],
+                namePattern: exported.validation.namePattern.source,
+                nameRefPattern: exported.validation.nameRefPattern.source,
+                inherit: false,
+                selectedComponentId: this.componentId,
+                editedComponentName: this.componentName
+            }
+        },
+        created: function () {
+            var vm = this;
+            vm.components = [
+                { recordId: 7, displayName: "Component 1" },
+                { recordId: 8, displayName: "Component 2" },
+                { recordId: 9, displayName: "Component 3" },
+                { recordId: 10, displayName: "Component 4" }
+            ];
+            //exported.componentStore.retrieveAllRecords(function (response) { vm.components = response; });
+            vm.inherit = vm.selectedComponentId == undefined && (vm.editedComponentName == undefined || vm.editedComponentName.length === 0);
+        },
+        methods: {
+            selectComponent: function (e) {
+                var vm = this;
+                var componentId = parseInt(e.target.value);
+                if (isNaN(componentId)) componentId = null;
+                vm.selectedComponentId = componentId;
+                vm.$emit("component-id-changed", vm.selectedComponentId);
+            },
+            inputComponentName: function (e) {
+                var vm = this;
+                vm.editedComponentName = e.target.value;
+                vm.$emit("component-name-changed", vm.editedComponentName);
+            },
+            changeInherit: function (e) {
+                var vm = this;
+                vm.inherit = e.target.checked;
+                vm.$emit("inherit-changed", vm.inherit);
+                if (!vm.inherit) vm.$emit("component-id-changed", vm.selectedComponentId);
             }
         }
     });
@@ -531,9 +667,9 @@
             "    <option value=\"5\">Static HTML</option>" +
             "    <option value=\"6\">HTML template</option>" +
             "  </select>" +
-            "  <p v-if=\"mode==1\">-region-choosing-component-</p>" +
-            "  <p v-if=\"mode==2\">-layout-choosing-component-</p>" +
-            "  <p v-if=\"mode==3\">-component-choosing-component-</p>" +
+            "  <cms-region-field-editor v-if=\"mode==1\" :region-id=\"layoutZone.regionId\" :inherit-option=\"null\"></cms-region-field-editor>" +
+            "  <cms-layout-field-editor v-if=\"mode==2\" :layout-id=\"layoutZone.layoutId\" :inherit-option=\"null\"></cms-layout-field-editor>" +
+            "  <cms-component-field-editor v-if=\"mode==3\" :component-id=\"layoutZone.componentId\" :inherit-option=\"null\"></cms-component-field-editor>" +
             "  <div v-if=\"mode==4\">" +
             "    <select v-model=\"layoutZone.contentType\">" +
             "      <option value=\"Region\">Region name</option>" +

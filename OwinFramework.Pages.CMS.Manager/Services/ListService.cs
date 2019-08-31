@@ -249,12 +249,12 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void PageVersions(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var page = _dataLayer.GetPageVersion(id, (p, v) => p);
+            var pageVersions = _dataLayer.GetElementVersions(id, p => p as PageVersionRecord);
 
-            if (page == null)
+            if (pageVersions == null)
                 request.NotFound("No page with ID " + id);
             else
-                request.Success(page);
+                request.Success(pageVersions.Where(v => v != null));
         }
 
         [Endpoint(UrlPath = "pages", Methods = new[] {Method.Get}, RequiredPermission = Permissions.View)]
@@ -277,12 +277,12 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void LayoutVersions(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var layout = _dataLayer.GetLayoutVersion(id, (p, v) => p);
+            var layoutVersions = _dataLayer.GetElementVersions(id, p => p as LayoutVersionRecord);
 
-            if (layout == null)
+            if (layoutVersions == null)
                 request.NotFound("No layout with ID " + id);
             else
-                request.Success(layout);
+                request.Success(layoutVersions.Where(v => v != null));
         }
 
         [Endpoint(UrlPath = "layouts", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
@@ -305,12 +305,12 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void RegionVersions(IEndpointRequest request)
         {
             var id = request.Parameter<long>("id");
-            var region = _dataLayer.GetRegionVersion(id, (p, v) => p);
+            var regionVersions = _dataLayer.GetElementVersions(id, p => p as RegionVersionRecord);
 
-            if (region == null)
+            if (regionVersions == null)
                 request.NotFound("No region with ID " + id);
             else
-                request.Success(region);
+                request.Success(regionVersions.Where(v => v != null));
         }
 
         [Endpoint(UrlPath = "regions", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]

@@ -109,11 +109,11 @@
         if (isNaN(id)) { return ""; }
 
         var name = "layout #" + id;
-        //exported.layoutStore.retrieveRecord(
-        //    id,
-        //    function (layout) {
-        //        name = layout.displayName;
-        //    });
+        exported.layoutStore.retrieveRecord(
+            id,
+            function (layout) {
+                name = layout.displayName;
+            });
         return name;
     });
 
@@ -122,11 +122,11 @@
         if (isNaN(id)) { return ""; }
 
         var name = "region #" + id;
-        //exported.regionStore.retrieveRecord(
-        //    id,
-        //    function (region) {
-        //        name = region.displayName;
-        //    });
+        exported.regionStore.retrieveRecord(
+            id,
+            function (region) {
+                name = region.displayName;
+            });
         return name;
     });
 

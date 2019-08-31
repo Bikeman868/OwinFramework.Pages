@@ -10,6 +10,7 @@
     var permissionPattern = new RegExp("^.+$");
     var pathPattern = new RegExp("^(/[0-9a-z\-_]+)+$");
     var htmlPattern = new RegExp("^<.+>$");
+    var tagPattern = new RegExp("^[a-z]+$");
 
     var name = function (value, fieldName, errors) {
         if (value == undefined || value.length < 2)
@@ -124,6 +125,16 @@
         return value;
     }
 
+    var tag = function (value, fieldName, errors) {
+        if (value == undefined || value.length < 1)
+            errors.push("The " + fieldName + " field must can not be blank");
+        else {
+            if (!tagPattern.test(value))
+                errors.push("The " + fieldName + " is not valid. It must be all lower case letters");
+        }
+        return value;
+    }
+
     exported.validation = {
         name: name,
         nameRef: nameRef,
@@ -137,6 +148,7 @@
         elementType: elementType,
         css: css,
         html: html,
+        tag: tag,
 
         namePattern: namePattern,
         nameRefPattern: nameRefPattern,
@@ -148,6 +160,7 @@
         cssPattern: cssPattern,
         permissionPattern: permissionPattern,
         pathPattern: pathPattern,
-        htmlPattern: htmlPattern
+        htmlPattern: htmlPattern,
+        tagPattern: tagPattern
     }
 };

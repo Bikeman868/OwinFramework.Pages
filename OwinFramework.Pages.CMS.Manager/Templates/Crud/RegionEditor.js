@@ -353,15 +353,6 @@
             validateVersion: function () {
                 var vm = this;
                 var errors = [];
-                vm.editingRegionVersion.title = exported.validation.title(vm.editingRegionVersion.title, "title", errors);
-                if (vm.editingRegionVersion.canonicalUrl) {
-                    vm.editingRegionVersion.canonicalUrl = exported.validation.urlPath(vm.editingRegionVersion.canonicalUrl, "canonical url path", errors);
-                }
-                if (vm.editingRegionVersion.routes) {
-                    for (let i = 0; i < vm.editingRegionVersion.routes.length; i++) {
-                        vm.editingRegionVersion.routes[i].path = exported.validation.urlPath(vm.editingRegionVersion.routes[i].path, "route path", errors);
-                    }
-                }
                 if (vm.editingRegionVersion.assetDeployment) {
                     vm.editingRegionVersion.assetDeployment = exported.validation.assetDeployment(vm.editingRegionVersion.assetDeployment, "asset deployment", errors);
                     if (vm.editingRegionVersion.assetDeployment === "PerModule") {
@@ -396,8 +387,39 @@
                         }
                     }
                 }
-                if (vm.editingRegionVersion.bodyStyle) {
-                    vm.editingRegionVersion.bodyStyle = exported.validation.css(vm.editingRegionVersion.bodyStyle, "body style", errors);
+                if (vm.editingRegionVersion.regionTemplates) {
+                    for (let i = 0; i < vm.editingRegionVersion.regionTemplates.length; i++) {
+                        var template = vm.editingRegionVersion.regionTemplates[i];
+                        template.templatePath = exported.validation.path(template.templatePath, template.pageArea + " template path", errors);
+                    }
+                }
+                if (vm.editingRegionVersion.componentName) {
+                    vm.editingRegionVersion.componentName = exported.validation.name(vm.editingRegionVersion.componentName, "component name", errors);
+                    if (vm.editingRegionVersion.componentId) errors.push("You cannot specify a component name and a component ID for the region");
+                } else {
+                    if (vm.editingRegionVersion.componentId)
+                        vm.editingRegionVersion.componentId = exported.validation.id(vm.editingRegionVersion.componentId, "component id", errors);
+                }
+                if (vm.editingRegionVersion.repeatDataTypeId) {
+                    vm.editingRegionVersion.repeatDataTypeId = exported.validation.id(vm.editingRegionVersion.repeatDataTypeId, "repeat data type id", errors);
+                }
+                if (vm.editingRegionVersion.repeatDataScopeId) {
+                    vm.editingRegionVersion.repeatDataScopeId = exported.validation.id(vm.editingRegionVersion.repeatDataScopeId, "repeat data scope id", errors);
+                }
+                if (vm.editingRegionVersion.assetName) {
+                    vm.editingRegionVersion.assetName = exported.validation.name(vm.editingRegionVersion.assetName, "asset name", errors);
+                }
+                if (vm.editingRegionVersion.listElementTag) {
+                    vm.editingRegionVersion.listElementTag = exported.validation.tag(vm.editingRegionVersion.listElementTag, "list element tag", errors);
+                }
+                if (vm.editingRegionVersion.listElementStyle) {
+                    vm.editingRegionVersion.listElementStyle = exported.validation.css(vm.editingRegionVersion.listElementStyle, "list element style", errors);
+                }
+                if (vm.editingRegionVersion.listElementClasses) {
+                    vm.editingRegionVersion.listElementClasses = exported.validation.css(vm.editingRegionVersion.listElementClasses, "list element classes", errors);
+                }
+                if (vm.editingRegionVersion.listDataScopeId) {
+                    vm.editingRegionVersion.listDataScopeId = exported.validation.id(vm.editingRegionVersion.listDataScopeId, "list data scope id", errors);
                 }
                 vm.versionErrors = errors;
             }

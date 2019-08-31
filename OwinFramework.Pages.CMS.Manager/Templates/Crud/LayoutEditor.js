@@ -375,6 +375,24 @@
                         }
                     }
                 }
+                if (vm.editingLayoutVersion.tag) {
+                    vm.editingLayoutVersion.tag = exported.validation.tag(vm.editingLayoutVersion.tag, "tag", errors);
+                }
+                if (vm.editingLayoutVersion.style) {
+                    vm.editingLayoutVersion.style = exported.validation.css(vm.editingLayoutVersion.style, "style", errors);
+                }
+                if (vm.editingLayoutVersion.classes) {
+                    vm.editingLayoutVersion.classes = exported.validation.css(vm.editingLayoutVersion.classes, "classes", errors);
+                }
+                if (vm.editingLayoutVersion.nestingTag) {
+                    vm.editingLayoutVersion.nestingTag = exported.validation.tag(vm.editingLayoutVersion.nestingTag, "nesting tag", errors);
+                }
+                if (vm.editingLayoutVersion.nestingStyle) {
+                    vm.editingLayoutVersion.nestingStyle = exported.validation.css(vm.editingLayoutVersion.nestingStyle, "nesting style", errors);
+                }
+                if (vm.editingLayoutVersion.nestingClasses) {
+                    vm.editingLayoutVersion.nestingClasses = exported.validation.css(vm.editingLayoutVersion.nestingClasses, "nesting classes", errors);
+                }
                 vm.versionErrors = errors;
             }
         }

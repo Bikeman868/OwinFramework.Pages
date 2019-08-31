@@ -305,10 +305,19 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
                 var region = _regions.FirstOrDefault(r => r.RecordId == elementId);
                 if (region != null)
                 {
-                    elementVersions = _layoutVersions.Where(lv => lv.ParentRecordId == region.RecordId);
+                    elementVersions = _regionVersions.Where(rv => rv.ParentRecordId == region.RecordId);
                 }
             }
-            
+
+            if (elementVersions == null)
+            {
+                var component = _components.FirstOrDefault(r => r.RecordId == elementId);
+                if (component != null)
+                {
+                    elementVersions = _componentVersions.Where(cv => cv.ParentRecordId == component.RecordId);
+                }
+            }
+
             return elementVersions == null 
                 ? new T[0]
                 : elementVersions.Select(map).ToArray();

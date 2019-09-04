@@ -133,31 +133,31 @@
                             <div class="cms_edit_panel">
                                 <h2>Layout container properties</h2>
                                 <cms-html-tag-field-editor label="Html tag"
-                                                     v-bind:html-tag="editingLayoutVersion.tag"
-                                                     @html-tag-changed="editingLayoutVersion.tag=$event">
+                                                           v-bind:html-tag="editingLayoutVersion.tag||''"
+                                                           @html-tag-changed="editingLayoutVersion.tag=$event">
                                 </cms-html-tag-field-editor>
                                 <cms-style-field-editor label="Custom style"
                                                         v-bind:css-style="editingLayoutVersion.style"
                                                         @css-style-changed="editingLayoutVersion.style=$event">
                                 </cms-style-field-editor>
                                 <cms-css-classes-field-editor label="Additional CSS classes"
-                                                        v-bind:css-classes="editingLayoutVersion.classes"
-                                                        @css-classes-changed="editingLayoutVersion.classes=$event">
+                                                              v-bind:css-classes="editingLayoutVersion.classes"
+                                                              @css-classes-changed="editingLayoutVersion.classes=$event">
                                 </cms-css-classes-field-editor>
                             </div>
                             <div class="cms_edit_panel">
                                 <h2>Nested zones container properties</h2>
                                 <cms-html-tag-field-editor label="Html tag"
-                                                      v-bind:html-tag="editingLayoutVersion.nestedTag"
-                                                      @html-tag-changed="editingLayoutVersion.nestedTag=$event">
+                                                           v-bind:html-tag="editingLayoutVersion.nestingTag||'div'"
+                                                           @html-tag-changed="editingLayoutVersion.nestingTag=$event">
                                 </cms-html-tag-field-editor>
                                 <cms-style-field-editor label="Custom style"
-                                                       v-bind:css-style="editingLayoutVersion.nestedStyle"
-                                                       @css-style-changed="editingLayoutVersion.nestedStyle=$event">
+                                                        v-bind:css-style="editingLayoutVersion.nestingStyle"
+                                                        @css-style-changed="editingLayoutVersion.nestingStyle=$event">
                                 </cms-style-field-editor>
                                 <cms-css-classes-field-editor label="Additional CSS classes"
-                                                        v-bind:css-classes="editingLayoutVersion.nestedClasses"
-                                                        @css-classes-changed="editingLayoutVersion.nestedClasses=$event">
+                                                              v-bind:css-classes="editingLayoutVersion.nestingClasses"
+                                                              @css-classes-changed="editingLayoutVersion.nestingClasses=$event">
                                 </cms-css-classes-field-editor>
                             </div>
                             <div class="cms_edit_panel">
@@ -166,7 +166,7 @@
                                                               v-bind:scopes="editingLayoutVersion.dataScopes">
                                 </cms-data-scopes-field-editor>
                                 <cms-data-types-field-editor label="Layout data needs"
-                                                              v-bind:scopes="editingLayoutVersion.dataTypes">
+                                                             v-bind:scopes="editingLayoutVersion.dataTypes">
                                 </cms-data-types-field-editor>
                             </div>
                             <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
@@ -287,6 +287,9 @@
                     </div>
                 </div>
             </div>
+        </cms-tab>
+        <cms-tab name="Preview">
+            <cms-layout-preview v-if="currentLayoutVersion" v-bind:layout-version="currentLayoutVersion"></cms-layout-preview>
         </cms-tab>
         <cms-tab name="Versions">
             <div v-if="currentLayout == undefined || currentLayout.recordId == undefined">

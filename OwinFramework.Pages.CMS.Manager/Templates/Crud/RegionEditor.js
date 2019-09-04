@@ -7,7 +7,8 @@
             displayNamePattern: exported.validation.displayNamePattern.source,
             titlePattern: exported.validation.titlePattern.source,
             urlPathPattern: exported.validation.urlPathPattern.source,
-            cssPattern: exported.validation.cssPattern.source,
+            stylePattern: exported.validation.stylePattern.source,
+            classesPattern: exported.validation.classesPattern.source,
             permissionPattern: exported.validation.permissionPattern.source,
             pathPattern: exported.validation.pathPattern.source,
             htmlPattern: exported.validation.htmlPattern.source,
@@ -413,10 +414,10 @@
                     vm.editingRegionVersion.listElementTag = exported.validation.tag(vm.editingRegionVersion.listElementTag, "list element tag", errors);
                 }
                 if (vm.editingRegionVersion.listElementStyle) {
-                    vm.editingRegionVersion.listElementStyle = exported.validation.css(vm.editingRegionVersion.listElementStyle, "list element style", errors);
+                    vm.editingRegionVersion.listElementStyle = exported.validation.style(vm.editingRegionVersion.listElementStyle, "list element style", errors);
                 }
                 if (vm.editingRegionVersion.listElementClasses) {
-                    vm.editingRegionVersion.listElementClasses = exported.validation.css(vm.editingRegionVersion.listElementClasses, "list element classes", errors);
+                    vm.editingRegionVersion.listElementClasses = exported.validation.classes(vm.editingRegionVersion.listElementClasses, "list element classes", errors);
                 }
                 if (vm.editingRegionVersion.listDataScopeId) {
                     vm.editingRegionVersion.listDataScopeId = exported.validation.id(vm.editingRegionVersion.listDataScopeId, "list data scope id", errors);

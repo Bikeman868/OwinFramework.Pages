@@ -333,7 +333,7 @@
             </div>
         </cms-tab>
         <cms-tab name="Preview">
-            <p>The region preview feature is not implemented yet</p>
+            <cms-region-preview v-if="currentRegionVersion" v-bind:region-version="currentRegionVersion"></cms-region-preview>
         </cms-tab>
         <cms-tab name="Versions">
             <div v-if="currentRegion == undefined || currentRegion.recordId == undefined">

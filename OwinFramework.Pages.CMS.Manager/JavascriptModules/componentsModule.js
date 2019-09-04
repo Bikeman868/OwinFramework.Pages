@@ -1301,11 +1301,11 @@
             template:
                 "<div class=\"cms_field\">" +
                 "  <label>{{label}}</label>" +
-                "  <input type=\"text\" class=\"cms_field__style\" placeholder=\"font-family: arial; font-size: large;\" :pattern=\"cssPattern\" @input=\"inputStyle\" :value=\"cssStyle\">" +
+                "  <input type=\"text\" class=\"cms_field__style\" placeholder=\"font-family: arial; font-size: large;\" :pattern=\"stylePattern\" @input=\"inputStyle\" :value=\"cssStyle\">" +
                 "</div>",
             data: function () {
                 return {
-                    cssPattern: exported.validation.cssPattern.source
+                    stylePattern: exported.validation.stylePattern.source
                 }
             },
             methods: {
@@ -1331,8 +1331,13 @@
             template:
                 "<div class=\"cms_field\">" +
                 "  <label>{{label}}</label>" +
-                "  <input type=\"text\" class=\"cms_field__classes\" placeholder=\"my_container my_float_left\" @input=\"inputChanged\" :value=\"cssClasses\">" +
+                "  <input type=\"text\" class=\"cms_field__classes\" placeholder=\"my_container my_float_left\" :pattern=\"classesPattern\" @input=\"inputChanged\" :value=\"cssClasses\">" +
                 "</div>",
+        data: function () {
+            return {
+                classesPattern: exported.validation.classesPattern.source
+            }
+        },
             methods: {
                 inputChanged: function (e) {
                     this.$emit("css-classes-changed", e.target.value);
@@ -1582,6 +1587,99 @@
         methods: {
             inputDescription: function (e) {
                 this.$emit("description-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-page-preview", {
+        props: {
+            pageVersion: {
+                required: true,
+                type: Object
+            }
+        },
+        template:
+            "<pre class=\"cms_preview cms_html__page_preview\">{{html}}</pre>",
+        computed: {
+            html: function () {
+                var result = "";
+                result += "<div>\n";
+                result += "</div>";
+                return result;
+            }
+        }
+    });
+
+    Vue.component("cms-layout-preview", {
+        props: {
+            layoutVersion: {
+                required: true,
+                type: Object
+            }
+        },
+        template:
+            "<pre class=\"cms_preview cms_html__layout_preview\">{{html}}</pre>",
+        computed: {
+            html: function () {
+                var result = "";
+                var tag = this.layoutVersion.tag;
+                var indent = "";
+                if (tag) {
+                    result += "<" + tag;
+                    if (this.layoutVersion.style) result += " style=\"" + this.layoutVersion.style + "\"";
+                    if (this.layoutVersion.classes) result += " class=\"" + this.layoutVersion.classes + "\"";
+                    result += ">\n";
+                    indent = "  ";
+                }
+                var nesting = this.layoutVersion.zoneNesting || "";
+                var nestingTag = this.layoutVersion.nestingTag || "div";
+                var zone = "";
+                var addZone = function () {
+                    if (zone.length > 0) result += indent + zone + "\n";
+                    zone = "";
+                };
+                for (let i = 0; i < nesting.length; i++) {
+                    var c = nesting.charAt(i);
+                    if (c == " ") continue;
+                    if (c == "(") {
+                        addZone();
+                        result += indent + "<" + nestingTag;
+                        if (this.layoutVersion.nestingStyle) result += " style=\"" + this.layoutVersion.nestingStyle + "\"";
+                        if (this.layoutVersion.nestingClasses) result += " class=\"" + this.layoutVersion.nestingClasses + "\"";
+                        result += ">\n";
+                        indent += "  ";
+                    } else if (c == ")") {
+                        addZone();
+                        indent = indent.substring(2);
+                        result += indent + "</" + nestingTag + ">\n";
+                    } else if (c == ",") {
+                        addZone();
+                    } else {
+                        zone += c;
+                    }
+                }
+                addZone();
+                if (tag) result += "</" + tag + ">";
+                return result;
+            }
+        }
+    });
+
+    Vue.component("cms-region-preview", {
+        props: {
+            regionVersion: {
+                required: true,
+                type: Object
+            }
+        },
+        template:
+            "<pre class=\"cms_preview cms_html__region_preview\">{{html}}</pre>",
+        computed: {
+            html: function () {
+                var result = "";
+                result += "<div>\n";
+                result += "</div>";
+                return result;
             }
         }
     });

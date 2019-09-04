@@ -7,7 +7,8 @@
             displayNamePattern: exported.validation.displayNamePattern.source,
             titlePattern: exported.validation.titlePattern.source,
             urlPathPattern: exported.validation.urlPathPattern.source,
-            cssPattern: exported.validation.cssPattern.source,
+            stylePattern: exported.validation.stylePattern.source,
+            classesPattern: exported.validation.classesPattern.source,
             permissionPattern: exported.validation.permissionPattern.source,
             pathPattern: exported.validation.pathPattern.source,
             websiteVersion: {},
@@ -414,7 +415,7 @@
                     }
                 }
                 if (vm.editingPageVersion.bodyStyle) {
-                    vm.editingPageVersion.bodyStyle = exported.validation.css(vm.editingPageVersion.bodyStyle, "body style", errors);
+                    vm.editingPageVersion.bodyStyle = exported.validation.style(vm.editingPageVersion.bodyStyle, "body style", errors);
                 }
                 var masterPageId = vm.editingPageVersion.masterPageId;
                 while (masterPageId != undefined) {

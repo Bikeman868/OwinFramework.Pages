@@ -6,7 +6,8 @@
     var idPattern = new RegExp("^[0-9]+$");
     var titlePattern = new RegExp("^..+$");
     var urlPathPattern = new RegExp("^(/[0-9a-z\-_]+)+$");
-    var cssPattern = new RegExp("^( ?[a-z0-9_]+: ?[a-z0-9_\-]+; ?)*$");
+    var stylePattern = new RegExp("^( ?[a-z0-9_\-]+: ?[a-z0-9_\-]+; ?)*$");
+    var classesPattern = new RegExp("^[0-9a-z ]*$");
     var permissionPattern = new RegExp("^.+$");
     var pathPattern = new RegExp("^(/[0-9a-z\-_]+)+$");
     var htmlPattern = new RegExp("^<.+>$");
@@ -109,12 +110,22 @@
         return value;
     }
 
-    var css = function (value, fieldName, errors) {
+    var style = function (value, fieldName, errors) {
         if (value == undefined || value.length < 4)
             errors.push("The " + fieldName + " must contain at least 4 characters");
         else {
-            if (!cssPattern.test(value))
+            if (!stylePattern.test(value))
                 errors.push("The " + fieldName + " is not valid. It should be similar to 'font-family: arial; font-size: 12px;'");
+        }
+        return value;
+    }
+
+    var classes = function (value, fieldName, errors) {
+        if (value == undefined || value.length < 1)
+            errors.push("The " + fieldName + " can not be blank");
+        else {
+            if (!classesPattern.test(value))
+                errors.push("The " + fieldName + " is not valid. It should be similar to 'class1 class2'");
         }
         return value;
     }
@@ -146,7 +157,8 @@
         title: title,
         assetDeployment: assetDeployment,
         elementType: elementType,
-        css: css,
+        style: style,
+        classes: classes,
         html: html,
         tag: tag,
 
@@ -157,7 +169,8 @@
         idPattern: idPattern,
         titlePattern: titlePattern,
         urlPathPattern: urlPathPattern,
-        cssPattern: cssPattern,
+        stylePattern: stylePattern,
+        classesPattern: classesPattern,
         permissionPattern: permissionPattern,
         pathPattern: pathPattern,
         htmlPattern: htmlPattern,

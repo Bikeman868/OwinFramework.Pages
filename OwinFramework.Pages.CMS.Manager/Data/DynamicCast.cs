@@ -104,8 +104,24 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                     {
                         if (value is JValue jvalue)
                         {
-                            var propertyValue = Convert.ChangeType(jvalue.Value, property.PropertyInfo.PropertyType);
-                            property.PropertyInfo.SetValue(target, propertyValue, null);
+                            var underlyingType = Nullable.GetUnderlyingType(property.PropertyInfo.PropertyType);
+                            if (underlyingType == null)
+                            {
+                                var propertyValue = Convert.ChangeType(jvalue.Value, property.PropertyInfo.PropertyType);
+                                property.PropertyInfo.SetValue(target, propertyValue, null);
+                            }
+                            else
+                            {
+                                if (jvalue.Value == null)
+                                {
+                                    property.PropertyInfo.SetValue(target, null, null);
+                                }
+                                else
+                                {
+                                    var propertyValue = Convert.ChangeType(jvalue.Value, underlyingType);
+                                    property.PropertyInfo.SetValue(target, propertyValue, null);
+                                }
+                            }
                         }
                     }
                 }

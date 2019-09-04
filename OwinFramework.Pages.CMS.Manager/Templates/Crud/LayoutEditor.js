@@ -5,7 +5,8 @@
             visible: true,
             namePattern: exported.validation.namePattern.source,
             displayNamePattern: exported.validation.displayNamePattern.source,
-            cssPattern: exported.validation.cssPattern.source,
+            stylePattern: exported.validation.stylePattern.source,
+            classesPattern: exported.validation.classesPattern.source,
             websiteVersion: {},
             scenario: {},
 
@@ -379,19 +380,19 @@
                     vm.editingLayoutVersion.tag = exported.validation.tag(vm.editingLayoutVersion.tag, "tag", errors);
                 }
                 if (vm.editingLayoutVersion.style) {
-                    vm.editingLayoutVersion.style = exported.validation.css(vm.editingLayoutVersion.style, "style", errors);
+                    vm.editingLayoutVersion.style = exported.validation.style(vm.editingLayoutVersion.style, "style", errors);
                 }
                 if (vm.editingLayoutVersion.classes) {
-                    vm.editingLayoutVersion.classes = exported.validation.css(vm.editingLayoutVersion.classes, "classes", errors);
+                    vm.editingLayoutVersion.classes = exported.validation.classes(vm.editingLayoutVersion.classes, "classes", errors);
                 }
                 if (vm.editingLayoutVersion.nestingTag) {
                     vm.editingLayoutVersion.nestingTag = exported.validation.tag(vm.editingLayoutVersion.nestingTag, "nesting tag", errors);
                 }
                 if (vm.editingLayoutVersion.nestingStyle) {
-                    vm.editingLayoutVersion.nestingStyle = exported.validation.css(vm.editingLayoutVersion.nestingStyle, "nesting style", errors);
+                    vm.editingLayoutVersion.nestingStyle = exported.validation.style(vm.editingLayoutVersion.nestingStyle, "nesting style", errors);
                 }
                 if (vm.editingLayoutVersion.nestingClasses) {
-                    vm.editingLayoutVersion.nestingClasses = exported.validation.css(vm.editingLayoutVersion.nestingClasses, "nesting classes", errors);
+                    vm.editingLayoutVersion.nestingClasses = exported.validation.classes(vm.editingLayoutVersion.nestingClasses, "nesting classes", errors);
                 }
                 vm.versionErrors = errors;
             }

@@ -1,0 +1,49 @@
+﻿Environments
+------------
+Website version drop-down gets more and more blank entries
+Create new environment got error but environment was created
+History change details do not need to repeat the date, just time is enough
+
+Website versions
+----------------
+Create new version returned an error but version was created
+Website version selector panel contains blank entries on one browser but not the other after failed create
+
+A/B Scenarios
+-------------
+New scenario does not let me choose a name
+Create fails and a new scenario is not created
+
+Pages
+-----
+Create new returns an error but the new page was created
+Create new page makes a V1 but does not associate this with the selected website version
+Create new page, initial version has no name or page title. Editing and saving produces a validation error
+When creating a new page user should choose a master page and a layout for V1
+Choosing a page version throws invalid parameter exception on the server side, layout id is zero
+
+Layouts
+-------
+Create new layout returns an error but the new layout was created
+Create new version returns an error but the new layout version was created
+
+Regions
+-------
+Create new region returns an error but the new region was created
+Create new version returns an error but the new region version was created
+
+Components
+----------
+Not yet implemented
+
+Modules
+----------
+Not yet implemented
+
+Data types
+----------
+Not yet implemented
+
+Data scopes
+-----------
+Not yet implemented

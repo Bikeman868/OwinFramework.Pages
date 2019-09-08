@@ -9,10 +9,17 @@
         template:
             "<pre class=\"cms_preview cms_html__page_preview\">{{html}}</pre>",
         computed: {
+            // TODO: Other page version properties
+            // TODO: Undefined properties revert to master page
             html: function () {
                 var result = "";
-                result += "<div>\n";
-                result += "</div>";
+                result += "<html>\n";
+                result += "  <head>\n";
+                result += "    <title>{{pageVersion.title}}</title>\n";
+                result += "  </head>\n";
+                result += "  <body>\n";
+                result += "  </body>\n";
+                result += "</html>";
                 return result;
             }
         }
@@ -202,5 +209,101 @@
                     });
             }
         }
+    });
+
+    Vue.component("cms-view-page-detail", {
+        props: {
+            page: {
+                type: Object
+            }
+        },
+        template:
+            "<div>" +
+            "  <h2>{{page.displayName}} page</h2>"+
+            "  <div class=\"cms_field\">"+
+            "    <label>Name</label>"+
+            "    <p>{{page.name}}</p> "+
+            "  </div>"+
+            "  <div v-if=\"page.description\" class=\"cms_field\">" +
+            "    <label>Description</label>"+
+            "    <p>{{page.description}}</p>"+
+            "  </div>"+
+            "  <div class=\"cms_field\">" +
+            "    <label>Created</label>"+
+            "    <p>{{page.createdWhen|cms_formatDateTime}} by {{page.createdBy|cms_formatUserUrn}}</p> "+
+            "  </div>"+
+            "</div>"
+    });
+
+    Vue.component("cms-view-page-version-detail", {
+        props: {},
+        template: "",
+        data: function () {
+            return {};
+        },
+        methods: {}
+    });
+
+    Vue.component("cms-view-layout-detail", {
+        props: {},
+        template: "",
+        data: function () {
+            return {};
+        },
+        methods: {}
+    });
+
+    Vue.component("cms-view-lyout-version-detail", {
+        props: {},
+        template: "",
+        data: function () {
+            return {};
+        },
+        methods: {}
+    });
+
+    Vue.component("cms-view-region-detail", {
+        props: {},
+        template: "",
+        data: function () {
+            return {};
+        },
+        methods: {}
+    });
+
+    Vue.component("cms-view-region-version-detail", {
+        props: {},
+        template: "",
+        data: function () {
+            return {};
+        },
+        methods: {}
+    });
+
+    Vue.component("cms-view-environment-detail", {
+        props: {},
+        template: "",
+        data: function () {
+            return {};
+        },
+        methods: {}
+    });
+
+    Vue.component("cms-view-website-version-detail", {
+        props: {},
+        template: "",
+        data: function () {
+            return {};
+        },
+        methods: {}
+    });
+
+    Vue.component("cms-view-segmentation-scenario-detail", {
+        props: {},
+        template: "",
+        data: function () {
+            return {};
+        },
+        methods: {}
     });
 }

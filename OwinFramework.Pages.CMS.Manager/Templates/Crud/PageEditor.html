@@ -74,19 +74,7 @@
                     </div>
                 </div>
                 <div v-if="pageMode === 'view'">
-                    <h2>{{currentPage.displayName}} page</h2>
-                    <div class="cms_field">
-                        <label>Name</label>
-                        <p>{{currentPage.name}}</p>
-                    </div>
-                    <div v-if="currentPage.description" class="cms_field">
-                        <label>Description</label>
-                        <p>{{currentPage.description}}</p>
-                    </div>
-                    <div class="cms_field">
-                        <label>Created</label>
-                        <p>{{currentPage.createdWhen|cms_formatDateTime}} by {{currentPage.createdBy|cms_formatUserUrn}}</p>
-                    </div>
+                    <cms-view-page-detail v-bind:page="currentPage"></cms-view-page-detail>
                     <div class="cms_button_bar">
                         <button type="button" v-on:click="editPage">Edit</button>
                         <button type="button" v-on:click="newPage">New</button>

@@ -120,7 +120,9 @@ namespace OwinFramework.Pages.CMS.Manager
             LoadScriptModule("validationModule", scriptModules);
             LoadScriptModule("viewsModule", scriptModules);
             LoadScriptModule("filtersModule", scriptModules);
-            LoadScriptModule("componentsModule", scriptModules);
+            LoadScriptModule("genericComponentsModule", scriptModules);
+            LoadScriptModule("displayOnlyComponentsModule", scriptModules);
+            LoadScriptModule("fieldEditorComponentsModule", scriptModules);
 
             // Load templates that are directly loaded into regions
 

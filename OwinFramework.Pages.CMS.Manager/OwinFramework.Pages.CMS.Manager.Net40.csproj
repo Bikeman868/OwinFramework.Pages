@@ -168,7 +168,7 @@
     <EmbeddedResource Include="JavascriptModules\filtersModule.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JavascriptModules\componentsModule.js" />
+    <EmbeddedResource Include="JavascriptModules\fieldEditorComponentsModule.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\Selectors\UserSegmentSelector.html" />
@@ -229,6 +229,8 @@
     <EmbeddedResource Include="Templates\Selectors\RegionSelector.js" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="JavascriptModules\genericComponentsModule.js" />
+    <EmbeddedResource Include="JavascriptModules\displayOnlyComponentsModule.js" />
     <Content Include="Known issues.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

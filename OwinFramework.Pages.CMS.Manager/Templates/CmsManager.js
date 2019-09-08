@@ -2,7 +2,9 @@
     exported.buildDataStores();
     exported.buildValidation();
     exported.buildFilters();
-    exported.buildComponents();
+    exported.buildGenericComponents();
+    exported.buildDisplayOnlyComponents();
+    exported.buildFieldEditorComponents();
     exported.buildViewStore();
 
     var areaSelectorVm = function (eId, areas) {

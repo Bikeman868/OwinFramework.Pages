@@ -38,6 +38,21 @@
                                                       @description-changed="editingRegion.description=$event">
                         </cms-description-field-editor>
                     </div>
+                    <div  v-if="regionMode === 'new'" class="cms_edit_panel">
+                        <cms-display-name-field-editor label="Display this region in CMS manager as"
+                                                       placeholder="My region"
+                                                       v-bind:display-name="editingRegion.displayName"
+                                                       @display-name-changed="editingRegion.displayName=$event">
+                        </cms-display-name-field-editor>
+                        <cms-element-name-field-editor label="Region name"
+                                                       placeholder="unique_region_name"
+                                                       v-bind:element-name="editingRegion.name"
+                                                       @element-name-changed="editingRegion.name=$event">
+                        </cms-element-name-field-editor>
+                        <cms-description-field-editor v-bind:description="editingRegion.description || ''"
+                                                      @description-changed="editingRegion.description=$event">
+                        </cms-description-field-editor>
+                    </div>
                     <div class="cms_validation_error_list" v-if="errors.length > 0">
                         <p v-for="error in errors">{{error}}</p>
                     </div>

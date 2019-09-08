@@ -260,7 +260,7 @@
                     function (response) {
                         if (response == undefined) {
                             if (onFail != undefined) onFail("No response was received from the server, the " + store.name + " might not have been created");
-                        } else if (response[store.idField] == undefined) {
+                        } else if (response[store.keyField] == undefined) {
                             if (onFail != undefined) onFail("The server failed to return an ID for the new " + store.name);
                         } else {
                             store.add(response);

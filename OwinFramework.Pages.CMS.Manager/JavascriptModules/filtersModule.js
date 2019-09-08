@@ -45,6 +45,23 @@
         return "";
     });
 
+    Vue.filter("cms_formatTime", function (value) {
+        if (value) {
+            var date = new Date(value);
+
+            var hours = date.getHours();
+            if (hours < 10) hours = "0" + hours;
+            else hours = hours + "";
+
+            var minutes = date.getMinutes();
+            if (minutes < 10) minutes = "0" + minutes;
+            else minutes = minutes + "";
+
+            return hours + ":" + minutes;
+        }
+        return "";
+    });
+
     Vue.filter("cms_lowercase", function (value) {
         if (value == undefined) return "";
         return value.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, "$1 $2").toLowerCase();

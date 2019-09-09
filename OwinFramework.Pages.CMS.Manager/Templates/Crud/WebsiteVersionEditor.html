@@ -41,19 +41,8 @@
                     </div>
                 </div>
                 <div v-if="mode === 'view'">
+                    <cms-view-website-version-detail v-bind:website-version="currentWebsiteVersion"></cms-view-website-version-detail>
                     <h2>Version {{currentWebsiteVersion.displayName}} of the website</h2>
-                    <div class="cms_field">
-                        <label>Name</label>
-                        <p>{{currentWebsiteVersion.name}}</p>
-                    </div>
-                    <div class="cms_field">
-                        <label>Description</label>
-                        <p>{{currentWebsiteVersion.description}}</p>
-                    </div>
-                    <div class="cms_field">
-                        <label>Created</label>
-                        <p>{{currentWebsiteVersion.createdWhen|cms_formatDateTime}} by {{currentWebsiteVersion.createdBy|cms_formatUserUrn}}</p>
-                    </div>
                     <div class="cms_button_bar">
                         <button type="button" v-on:click="editWebsiteVersion">Edit</button>
                         <button type="button" v-on:click="newWebsiteVersion">New</button>

@@ -171,6 +171,7 @@
             "<div class=\"cms_field\">" +
             "  <label>{{label}}</label>" +
             "  <select class=\"cms_field__website_version\" @change=\"selectWebsiteVersion($event)\">" +
+            "    <option :value=\"null\" :selected=\"websiteVersionId==undefined\"></option> " +
             "    <option v-for=\"websiteVersion in websiteVersions\" :value=\"websiteVersion.recordId\" :selected=\"websiteVersion.recordId==websiteVersionId\">" +
             "      {{websiteVersion.displayName}}" +
             "    </option>" +
@@ -184,10 +185,7 @@
         created: function () {
             var vm = this;
             exported.websiteVersionStore.retrieveAllRecords(
-                function (response) {
-                    response.unshift({recordId: null, displayName: ""});
-                    vm.websiteVersions = response;
-                });
+                function (response) { vm.websiteVersions = response; });
         },
         methods: {
             selectWebsiteVersion: function (e) {
@@ -224,7 +222,8 @@
             "<div class=\"cms_field\">" +
             "  <label>{{label}}</label>" +
             "  <select class=\"cms_field__page\" @change=\"selectPage($event)\">" +
-            "    <option v-for=\"page in pages\" v-bind:value=\"page.recordId\" v-bind:selected=\"page.recordId==pageId\">" +
+            "    <option v-if=\"allowNone\" :selected=\"pageId==undefined\"></option>" +
+            "    <option v-for=\"page in pages\" :value=\"page.recordId\" :selected=\"page.recordId==pageId\">" +
             "      {{page.displayName}}" +
             "    </option>" +
             "  </select>" +
@@ -250,12 +249,6 @@
                                     i--;
                                 }
                             }
-                        }
-                        if (vm.allowNone) {
-                            response.unshift({
-                                recordId: null,
-                                displayName: ""
-                            });
                         }
                     }
                     vm.pages = response;

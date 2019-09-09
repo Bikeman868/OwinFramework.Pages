@@ -63,19 +63,7 @@
                     </div>
                 </div>
                 <div v-if="regionMode === 'view'">
-                    <h2>{{currentRegion.displayName}} region</h2>
-                    <div class="cms_field">
-                        <label>Name</label>
-                        <p>{{currentRegion.name}}</p>
-                    </div>
-                    <div v-if="currentRegion.description" class="cms_field">
-                        <label>Description</label>
-                        <p>{{currentRegion.description}}</p>
-                    </div>
-                    <div class="cms_field">
-                        <label>Created</label>
-                        <p>{{currentRegion.createdWhen|cms_formatDateTime}} by {{currentRegion.createdBy|cms_formatUserUrn}}</p>
-                    </div>
+                    <cms-view-region-detail v-bind:region="currentRegion"></cms-view-region-detail>
                     <div class="cms_button_bar">
                         <button type="button" v-on:click="editRegion">Edit</button>
                         <button type="button" v-on:click="newRegion">New</button>
@@ -204,110 +192,7 @@
                             </div>
                         </div>
                         <div v-if="regionVersionMode === 'view'">
-                            <h2>Version {{currentRegionVersion.version}} of the {{currentRegion.displayName}} region</h2>
-                            <div class="cms_field" v-if="currentRegionVersion.displayName">
-                                <label>Version name</label>
-                                <p>{{currentRegionVersion.displayName}}</p>
-                            </div>
-                            <div class="cms_field" v-if="currentRegionVersion.routes && currentRegionVersion.routes.length > 0">
-                                <label>Routes to this region</label>
-                                <p v-for="route in currentRegionVersion.routes">{{route.path}}</p>
-                            </div>
-                            <div class="cms_field">
-                                <label>Assets</label>
-                                <p>{{currentRegionVersion.assetDeployment}}<span v-if="currentRegionVersion.assetDeployment==='PerModule'"> in the {{currentRegionVersion.moduleName}} module</span></p>
-                            </div>
-
-                            <div class="cms_field" v-if="currentRegionVersion.layoutName || currentRegionVersion.layoutId">
-                                <label>Region layout</label>
-                                <p v-if="currentRegionVersion.layoutName" class="cms_field">{{currentRegionVersion.layoutName}}</p>
-                                <p v-else class="cms_field">{{currentRegionVersion.layoutId | cms_lookupLayoutId}}</p>
-                                <p v-for="layoutZone in currentRegionVersion.layoutZones" class="cms_field">
-                                    The {{layoutZone.zone}} layout zone contains
-                                    <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
-                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
-                                    <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
-                                    <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
-                                    <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
-                                    <span v-else>the default content defined by the layout</span>
-                                </p>
-                            </div>
-                            <div class="cms_field" v-if="currentRegionVersion.componentName || currentRegionVersion.componentId">
-                                <label>Region component</label>
-                                <p v-if="currentRegionVersion.componentName" class="cms_field">{{currentRegionVersion.componentName}}</p>
-                                <p v-else class="cms_field">{{currentRegionVersion.componentId | cms_lookupComponentId}}</p>
-                            </div>
-                            <div class="cms_field" v-if="currentRegionVersion.assetName">
-                                <label>Region HTML</label>
-                                <p class="cms_field">{{currentRegionVersion.assetName}}</p>
-                                <p class="cms_field">{{currentRegionVersion.assetValue}}</p>
-                            </div>
-                            <div class="cms_field" v-if="currentRegionVersion.regionTemplates && currentRegionVersion.regionTemplates.length > 0">
-                                <label>Region templates</label>
-                                <p v-for="template in currentRegionVersion.regionTemplates" class="cms_field">
-                                    {{template.pageArea}} area of the page contains the {{template.templatePath}} template
-                                </p>
-                            </div>
-
-                            <div class="cms_field" v-if="currentRegionVersion.repeatDataTypeId">
-                                <h3>Repeat the contents of this region</h3>
-                                <div class="cms_field">
-                                    <label>Repeat for each</label>
-                                    <p>
-                                        {{currentRegionVersion.repeatDataTypeId | cms_lookupDataTypeId}}
-                                        <span v-if="currentRegionVersion.repeatDataScopeId">
-                                            in {{currentRegionVersion.repeatDataScopeId | cms_lookupDataScopeId}} scope
-                                        </span>
-                                        <span v-else-if="currentRegionVersion.repeatDataScoeName">
-                                            in {{currentRegionVersion.repeatDataScopeName}} scope
-                                        </span>
-                                    </p>
-                                </div>
-                                <div class="cms_field" v-if="currentRegionVersion.listElementTag">
-                                    <label>List item Html tag</label>
-                                    <p class="cms_field">{{currentRegionVersion.listElementTag}}</p>
-                                </div>
-                                <div class="cms_field" v-if="currentRegionVersion.listElementStyle">
-                                    <label>List item custom style</label>
-                                    <p class="cms_field">{{currentRegionVersion.listElementStyle}}</p>
-                                </div>
-                                <div class="cms_field" v-if="currentRegionVersion.listElementClasses">
-                                    <label>List item additional CSS classes</label>
-                                    <p class="cms_field">{{currentRegionVersion.listElementClasses}}</p>
-                                </div>
-                                <div v-if="currentRegionVersion.listDataScopeId || currentRegionVersion.listDataScopeName">
-                                    <label>Resolve list item data</label>
-                                    <span v-if="currentRegionVersion.repeatDataScopeId">
-                                        Using {{currentRegionVersion.listDataScopeId | cms_lookupDataScopeId}} scope
-                                    </span>
-                                    <span v-else-if="currentRegionVersion.repeatDataScoeName">
-                                        Using {{currentRegionVersion.listDataScopeName}} scope
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="cms_field" v-if="currentRegionVersion.components && currentRegionVersion.components.length > 0">
-                                <label>Dependant components</label>
-                                <ul><li v-for="component in currentRegionVersion.components">{{component.componentId|cms_lookupComponentId}}</li></ul>
-                            </div>
-                            <div class="cms_field" v-if="currentRegionVersion.dataScopes && currentRegionVersion.dataScopes.length > 0">
-                                <label>Data scopes</label>
-                                <ul><li v-for="scope in currentRegionVersion.dataScopes">{{scope.dataScopeId|cms_lookupDataScopeId}}</li></ul>
-                            </div>
-                            <div class="cms_field" v-if="currentRegionVersion.dataTypes && currentRegionVersion.dataTypes.length > 0">
-                                <label>Data needs</label>
-                                <ul><li v-for="type in currentRegionVersion.dataTypes">{{type.dataTypeId|cms_lookupDataTypeId}}</li></ul>
-                            </div>
-
-                            <div class="cms_field" v-if="currentRegionVersion.description">
-                                <label>Description</label>
-                                <p>{{currentRegionVersion.description}}</p>
-                            </div>
-                            <div class="cms_field">
-                                <label>Created</label>
-                                <p>{{currentRegionVersion.createdWhen|cms_formatDateTime}} by {{currentRegionVersion.createdBy|cms_formatUserUrn}}</p>
-                            </div>
+                            <cms-view-region-version-detail v-bind:region="currentRegion" v-bind:region-version="currentRegionVersion"></cms-view-region-version-detail>
                             <div class="cms_button_bar">
                                 <button type="button" v-on:click="chooseRegionVersion">Choose</button>
                                 <button type="button" v-on:click="editRegionVersion">Edit</button>

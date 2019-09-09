@@ -49,12 +49,7 @@
                     </div>
                 </div>
                 <div v-if="mode === 'view'">
-                    <h2>{{currentEnvironment.displayName}} environment</h2>
-                    <div class="cms_field"><label>Name</label><p>{{currentEnvironment.name}}</p></div>
-                    <div class="cms_field"><label>Base URL</label><p>{{currentEnvironment.baseUrl}}</p></div>
-                    <div class="cms_field"><label>Website version</label><p>{{websiteVersion.displayName}}</p></div>
-                    <div class="cms_field"><label>Description</label><p>{{currentEnvironment.description}}</p></div>
-                    <div class="cms_field"><label>Created</label><p>{{currentEnvironment.createdWhen|cms_formatDateTime}} by {{currentEnvironment.createdBy|cms_formatUserUrn}}</p></div>
+                    <cms-view-environment-detail v-bind:environment="currentEnvironment"></cms-view-environment-detail>
                     <div class="cms_button_bar">
                         <button type="button" v-on:click="editEnvironment">Edit</button>
                         <button type="button" v-on:click="newEnvironment">New</button>

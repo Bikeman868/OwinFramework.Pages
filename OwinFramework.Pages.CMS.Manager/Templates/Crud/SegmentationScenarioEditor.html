@@ -36,9 +36,7 @@
                     </div>
                 </div>
                 <div v-if="mode === 'view'">
-                    <h2>{{currentScenario.displayName}} a/b testing scenario</h2>
-                    <div class="cms_field"><label>Name</label><p>{{currentScenario.name}}</p></div>
-                    <div class="cms_field"><label>Description</label><p>{{currentScenario.description}}</p></div>
+                    <cms-view-segmentation-scenario-detail v-bind:scenario="currentScenario"></cms-view-segmentation-scenario-detail>
                     <div class="cms_button_bar">
                         <button type="button" v-on:click="editScenario">Edit</button>
                         <button type="button" v-on:click="newScenario">New</button>

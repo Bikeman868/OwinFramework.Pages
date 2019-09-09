@@ -210,74 +210,9 @@
                             </div>
                         </div>
                         <div v-if="pageVersionMode === 'view'">
-                            <h2>Version {{currentPageVersion.version}} of the {{currentPage.displayName}} page</h2>
-                            <div class="cms_field" v-if="currentPageVersion.displayName">
-                                <label>Version name</label>
-                                <p>{{currentPageVersion.displayName}}</p>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.title">
-                                <label>Page title</label>
-                                <p>{{currentPageVersion.title}}</p>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.canonicalUrl">
-                                <label>Canonical URL</label>
-                                <p class="cms_field">{{currentPageVersion.canonicalUrl}}</p>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.routes && currentPageVersion.routes.length > 0">
-                                <label>Routes to this page</label>
-                                <p v-for="route in currentPageVersion.routes">{{route.path}}</p>
-                            </div>
-                            <div class="cms_field">
-                                <label>Assets</label>
-                                <p>{{currentPageVersion.assetDeployment}}<span v-if="currentPageVersion.assetDeployment==='PerModule'"> in the {{currentPageVersion.moduleName}} module</span></p>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.masterPageId">
-                                <label>Inherits from master page</label>
-                                <p>{{currentPageVersion.masterPageId | cms_lookupPageId}}</p>
-                            </div>
-                            <div class="cms_field">
-                                <label>Page layout</label>
-                                <p v-if="currentPageVersion.layoutName" class="cms_field">{{currentPageVersion.layoutName}}</p>
-                                <p v-else class="cms_field">{{currentPageVersion.layoutId | cms_lookupLayoutId}}</p>
-                                <p v-for="layoutZone in currentPageVersion.layoutZones" class="cms_field">
-                                    The {{layoutZone.zone}} layout zone contains
-                                    <span v-if="layoutZone.regionId">the {{layoutZone.regionId | cms_lookupRegionId}} region</span>
-                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.layoutId | cms_lookupLayoutId}} layout</span>
-                                    <span v-else-if="layoutZone.layoutId">the {{layoutZone.componentId | cms_lookupComponentId}} component</span>
-                                    <span v-else-if="layoutZone.contentType === 'Html'">HTML localizable as '{{layoutZone.contentName}}'</span>
-                                    <span v-else-if="layoutZone.contentType === 'Template'">the {{layoutZone.contentName}} template</span>
-                                    <span v-else-if="layoutZone.contentType">the '{{layoutZone.contentName}}' {{layoutZone.contentType | cms_lowercase}}</span>
-                                    <span v-else>the default content defined by the layout</span>
-                                </p>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.bodyStyle">
-                                <label>Body CSS style</label>
-                                <p>{{currentPageVersion.bodyStyle}}</p>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.permission">
-                                <label>Requires permission</label>
-                                <p>{{currentPageVersion.permission}}<span v-if="currentPageVersion.assetPath"> on {{currentPageVersion.assetPath}}</span></p>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.components && currentPageVersion.components.length > 0">
-                                <label>Dependant components</label>
-                                <ul><li v-for="component in currentPageVersion.components">{{component.componentId|cms_lookupComponentId}}</li></ul>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.dataScopes && currentPageVersion.dataScopes.length > 0">
-                                <label>Data scopes</label>
-                                <ul><li v-for="scope in currentPageVersion.dataScopes">{{scope.dataScopeId|cms_lookupDataScopeId}}</li></ul>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.dataTypes && currentPageVersion.dataTypes.length > 0">
-                                <label>Data needs</label>
-                                <ul><li v-for="type in currentPageVersion.dataTypes">{{type.dataTypeId|cms_lookupDataTypeId}}</li></ul>
-                            </div>
-                            <div class="cms_field" v-if="currentPageVersion.description">
-                                <label>Description</label>
-                                <p>{{currentPageVersion.description}}</p>
-                            </div>
-                            <div class="cms_field">
-                                <label>Created</label>
-                                <p>{{currentPageVersion.createdWhen|cms_formatDateTime}} by {{currentPageVersion.createdBy|cms_formatUserUrn}}</p>
-                            </div>
+                            <cms-view-page-version-detail v-bind:page-version="currentPageVersion" 
+                                                          v-bind:page="currentPage">
+                            </cms-view-page-version-detail>
                             <div class="cms_button_bar">
                                 <button type="button" v-on:click="choosePageVersion">Choose</button>
                                 <button type="button" v-on:click="editPageVersion">Edit</button>

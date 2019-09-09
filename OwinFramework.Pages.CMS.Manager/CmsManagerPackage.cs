@@ -123,6 +123,7 @@ namespace OwinFramework.Pages.CMS.Manager
             LoadScriptModule("genericComponentsModule", scriptModules);
             LoadScriptModule("displayOnlyComponentsModule", scriptModules);
             LoadScriptModule("fieldEditorComponentsModule", scriptModules);
+            LoadScriptModule("elementEditorComponentsModule", scriptModules);
 
             // Load templates that are directly loaded into regions
 

@@ -229,6 +229,7 @@
     <EmbeddedResource Include="Templates\Selectors\RegionSelector.js" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="JavascriptModules\elementEditorComponentsModule.js" />
     <EmbeddedResource Include="JavascriptModules\genericComponentsModule.js" />
     <EmbeddedResource Include="JavascriptModules\displayOnlyComponentsModule.js" />
     <Content Include="Known issues.txt" />

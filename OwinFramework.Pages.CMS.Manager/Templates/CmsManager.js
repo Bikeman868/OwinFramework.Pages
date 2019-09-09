@@ -5,6 +5,7 @@
     exported.buildGenericComponents();
     exported.buildDisplayOnlyComponents();
     exported.buildFieldEditorComponents();
+    exported.buildElementEditorComponents();
     exported.buildViewStore();
 
     var areaSelectorVm = function (eId, areas) {

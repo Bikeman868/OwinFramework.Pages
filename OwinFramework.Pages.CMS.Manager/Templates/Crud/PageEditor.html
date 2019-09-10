@@ -21,49 +21,10 @@
             </div>
             <div v-else>
                 <div v-if="pageMode === 'new' || pageMode === 'edit'">
-                    <h2 v-if="pageMode === 'new'">Create New Page</h2>
-                    <h2 v-if="pageMode === 'edit'">Edit Page Details</h2>
-                    <div class="cms_edit_panel">
-                        <cms-display-name-field-editor label="Display this page in CMS manager as"
-                                                       placeholder="My page"
-                                                       v-bind:display-name="editingPage.displayName"
-                                                       @display-name-changed="editingPage.displayName=$event">
-                        </cms-display-name-field-editor>
-                        <cms-element-name-field-editor label="Page name"
-                                                       placeholder="unique_page_name"
-                                                       v-bind:element-name="editingPage.name"
-                                                       @element-name-changed="editingPage.name=$event">
-                        </cms-element-name-field-editor>
-                        <cms-description-field-editor v-bind:description="editingPage.description || ''"
-                                                      @description-changed="editingPage.description=$event">
-                        </cms-description-field-editor>
-                    </div>
-                    <div v-if="pageMode === 'new'" class="cms_edit_panel">
-                        <h3>Page features</h3>
-                        <cms-title-field-editor label="Page title"
-                                                placeholder="My new page"
-                                                v-bind:title="newPageVersion.title"
-                                                @title-changed="newPageVersion.title=$event">
-                        </cms-title-field-editor>
-                        <h3>Master page</h3>
-                        <cms-page-field-editor label="Master page"
-                                               v-bind:page-id="newPageVersion.masterPageId"
-                                               v-bind:exclude="[newPageVersion.elementId]"
-                                               @page-id-changed="newPageVersion.masterPageId=$event">
-                        </cms-page-field-editor>
-                        <h3>Page layout</h3>
-                        <cms-layout-field-editor label="Page layout"
-                                                 v-bind:layout-id="newPageVersion.layoutId"
-                                                 v-bind:layout-name="newPageVersion.layoutName"
-                                                 @layout-id-changed="newPageVersion.layoutId=$event"
-                                                 @layout-name-changed="newPageVersion.layoutName=$event"
-                                                 @inherit-changed="layoutInheritChanged($event)">
-                        </cms-layout-field-editor>
-                        <cms-layout-zones-field-editor label="Layout zone contents"
-                                                       v-bind:zone-nesting="newZoneNesting"
-                                                       v-bind:layout-zones="newPageVersion.layoutZones">
-                        </cms-layout-zones-field-editor>
-                    </div>
+                    <cms-edit-page v-bind:page="editingPage"
+                                   v-bind:page-version="editingPagePageVersion"
+                                   v-bind:is-new="pageMode === 'new'">
+                    </cms-edit-page>
                     <div class="cms_validation_error_list" v-if="errors.length > 0">
                         <p v-for="error in errors">{{error}}</p>
                     </div>
@@ -117,89 +78,10 @@
                     </div>
                     <div v-else>
                         <div v-if="pageVersionMode === 'new' || pageVersionMode === 'edit'">
-                            <h2 v-if="pageVersionMode === 'new'">Create New Page Version</h2>
-                            <h2 v-if="pageVersionMode === 'edit'">Edit Version {{editingPageVersion.version}} of the {{currentPage.displayName|cms_lowercase}} page</h2>
-                            <div class="cms_edit_panel">
-                                <cms-display-name-field-editor label="Name this version of the page"
-                                                               placeholder="Version 1"
-                                                               v-bind:display-name="editingPageVersion.displayName"
-                                                               @display-name-changed="editingPageVersion.displayName=$event">
-                                </cms-display-name-field-editor>
-                                <cms-description-field-editor v-bind:description="editingPageVersion.description || ''"
-                                                              @description-changed="editingPageVersion.description=$event">
-                                </cms-description-field-editor>
-                            </div>
-                            <div class="cms_edit_panel">
-                                <h3>Page URLs</h3>
-
-                                <cms-url-path-field-editor label="Canonical URL path"
-                                                           v-bind:url-path="editingPageVersion.canonicalUrl"
-                                                           @url-path-changed="editingPageVersion.canonicalUrl=$event">
-                                </cms-url-path-field-editor>
-                                <cms-routes-field-editor label="Routes to this page"
-                                                         v-bind:routes="editingPageVersion.routes">
-                                </cms-routes-field-editor>
-                            </div>
-
-                            <div class="cms_edit_panel">
-                                <h3>Master page</h3>
-                                <cms-page-field-editor label="Master page"
-                                                       v-bind:page-id="editingPageVersion.masterPageId"
-                                                       v-bind:exclude="[editingPageVersion.elementId]"
-                                                       @page-id-changed="editingPageVersion.masterPageId=$event">
-                                </cms-page-field-editor>
-                                <cms-asset-deployment-field-editor label="Asset deployment"
-                                                                   inherit-option="Inherit from master page"
-                                                                   v-bind:asset-deployment="editingPageVersion.assetDeployment"
-                                                                   v-bind:module-name="editingPageVersion.moduleName"
-                                                                   @asset-deployment-changed="editingPageVersion.assetDeployment=$event"
-                                                                   @module-name-changed="editingPageVersion.moduleName=$event">
-                                </cms-asset-deployment-field-editor>
-
-                            </div>
-
-                            <div class="cms_edit_panel">
-                                <h3>Page layout</h3>
-                                <cms-layout-field-editor label="Page layout"
-                                                         v-bind:layout-id="editingPageVersion.layoutId"
-                                                         v-bind:layout-name="editingPageVersion.layoutName"
-                                                         @layout-id-changed="editingPageVersion.layoutId=$event"
-                                                         @layout-name-changed="editingPageVersion.layoutName=$event"
-                                                         @inherit-changed="layoutInheritChanged($event)">
-                                </cms-layout-field-editor>
-                                <cms-layout-zones-field-editor label="Layout zone contents"
-                                                               v-bind:zone-nesting="editingZoneNesting"
-                                                               v-bind:layout-zones="editingPageVersion.layoutZones">
-                                </cms-layout-zones-field-editor>
-                            </div>
-
-                            <div class="cms_edit_panel">
-                                <h3>Page features</h3>
-                                <cms-title-field-editor label="Page title"
-                                                        placeholder="My new page"
-                                                        v-bind:title="editingPageVersion.title"
-                                                        @title-changed="editingPageVersion.title=$event">
-                                </cms-title-field-editor>
-                                <cms-style-field-editor label="Body style"
-                                                        v-bind:css-style="editingPageVersion.bodyStyle"
-                                                        @css-style-changed="editingPageVersion.bodyStyle=$event">
-                                </cms-style-field-editor>
-                                <cms-permisson-field-editor label="Permission required to view this page"
-                                                            v-bind:permission="editingPageVersion.permission"
-                                                            v-bind:asset-path="editingPageVersion.assetPath"
-                                                            @permission-changed="editingPageVersion.permission=$event"
-                                                            @asset-path-changed="editingPageVersion.assetPath=$event">
-                                </cms-permisson-field-editor>
-                            </div>
-                            <div class="cms_edit_panel">
-                                <h2>Page data</h2>
-                                <cms-data-scopes-field-editor label="Page data scopes"
-                                                              v-bind:scopes="editingPageVersion.dataScopes">
-                                </cms-data-scopes-field-editor>
-                                <cms-data-types-field-editor label="Page data needs"
-                                                             v-bind:scopes="editingPageVersion.dataTypes">
-                                </cms-data-types-field-editor>
-                            </div>
+                            <cms-edit-page-version v-bind:page="currentPage"
+                                                   v-bind:page-version="editingPageVersion"
+                                                   v-bind:is-new="pageVersionMode === 'new'">
+                            </cms-edit-page-version>
                             <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
                                 <p v-for="error in versionErrors">{{error}}</p>
                             </div>

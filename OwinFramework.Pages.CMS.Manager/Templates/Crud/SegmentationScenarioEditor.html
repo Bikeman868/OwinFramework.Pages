@@ -14,18 +14,9 @@
             </div>
             <div v-else>
                 <div v-if="mode === 'new' || mode === 'edit'">
-                    <h2 v-if="mode === 'new'">Create New Scenario</h2>
-                    <h2 v-if="mode === 'edit'">Edit Scenario Details</h2>
-                    <div class="cms_edit_panel">
-                        <cms-display-name-field-editor label="Show this scenario in CMS manager as"
-                                                       placeholder="Blue color scheme"
-                                                       v-bind:display-name="editingScenario.displayName"
-                                                       @display-name-changed="editingScenario.displayName=$event">
-                        </cms-display-name-field-editor>
-                        <cms-description-field-editor v-bind:description="editingScenario.description"
-                                                      @description-changed="editingScenario.description=$event">
-                        </cms-description-field-editor>
-                    </div>
+                    <cms-edit-segmentation-scenario v-bind:scenario="editingScenario" 
+                                                    v-bind:is-new="mode === 'new'">
+                    </cms-edit-segmentation-scenario>
                     <div class="cms_validation_error_list" v-if="errors.length > 0">
                         <p v-for="error in errors">{{error}}</p>
                     </div>

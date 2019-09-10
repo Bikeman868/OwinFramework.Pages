@@ -19,6 +19,7 @@
             originalPage: {},
             editingPage: {},
             currentPage: {},
+            editingPagePageVersion: {},
 
             pageVersionMode: "view",
             versionErrors: [],
@@ -31,24 +32,6 @@
             modalDialogMessage: "",
             modalDialogButtons: [{ caption: "OK" }],
             modalDialogVisible: false
-        },
-        computed: {
-            editingZoneNesting: function () {
-                if (this.editingPageVersion.layoutName == undefined || this.editingPageVersion.layoutName.length === 0) {
-                    if (this.editingPageVersion.layoutId == undefined) {
-                        // TODO: Lookup the master page layout
-                        return "master1,master2";
-                    } else {
-                        // TODO: Look up in the layoutStore
-                        if (this.editingPageVersion.layoutId === 7) return "main";
-                        if (this.editingPageVersion.layoutId === 8) return "left,right";
-                        if (this.editingPageVersion.layoutId === 9) return "header,body,footer";
-                        return "";
-                    }
-                } else {
-                    return null;
-                }
-            }
         },
         methods: {
             show: function (context, managerContext) {
@@ -105,6 +88,7 @@
                 var vm = this;
                 vm.errors = [];
                 vm.editingPage = exported.pageStore.blankRecord();
+                vm.editingPagePageVersion = exported.pageVersionStore.blankRecord();
                 vm.pageMode = "new";
             },
             editPage: function() {

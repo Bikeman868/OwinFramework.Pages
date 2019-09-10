@@ -14,9 +14,9 @@
             </div>
             <div v-else>
                 <div v-if="mode === 'new' || mode === 'edit'">
-                    <h2 v-if="mode === 'new'">Create New Website Version</h2>
-                    <h2 v-if="mode === 'edit'">Edit Website Version Details</h2>
-                    <cms-edit-website-version v-bind:website-version="editingWebsiteVersion"></cms-edit-website-version>
+                    <cms-edit-website-version v-bind:website-version="editingWebsiteVersion"
+                                              v-bind:is-new="mode === 'new'">
+                    </cms-edit-website-version>
                     <div class="cms_validation_error_list" v-if="errors.length > 0">
                         <p v-for="error in errors">{{error}}</p>
                     </div>

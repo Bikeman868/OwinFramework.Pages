@@ -51,6 +51,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AjaxPackage.cs" />
+    <Compile Include="DataPackage.cs" />
     <Compile Include="LayoutsPackage.cs" />
     <Compile Include="LibrariesPackage.cs" />
     <Compile Include="MenuPackage.cs" />
@@ -86,6 +87,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Assets\restModule.js" />
     <EmbeddedResource Include="Assets\templateLibrary.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\dataModule.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

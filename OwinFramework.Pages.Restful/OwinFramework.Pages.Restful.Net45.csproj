@@ -57,6 +57,8 @@
     <Compile Include="Interfaces\IResponseSerializer.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Parameters\AnyValue.cs" />
+    <Compile Include="Parameters\EnumString.cs" />
+    <Compile Include="Parameters\EnumValue.cs" />
     <Compile Include="Parameters\NonZeroValue.cs" />
     <Compile Include="Parameters\OptionalString.cs" />
     <Compile Include="Parameters\ParameterParser.cs" />

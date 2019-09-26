@@ -76,6 +76,7 @@
     <Compile Include="Interfaces\Database\DeleteResult.cs" />
     <Compile Include="Interfaces\Database\ElementComponentRecord.cs" />
     <Compile Include="Interfaces\Database\ElementDataScopeRecord.cs" />
+    <Compile Include="Interfaces\Database\ElementDataTypeRecord.cs" />
     <Compile Include="Interfaces\Database\ElementPropertyValueRecord.cs" />
     <Compile Include="Interfaces\Database\ElementVersionRecordBase.cs" />
     <Compile Include="Interfaces\Database\ElementRecordBase.cs" />

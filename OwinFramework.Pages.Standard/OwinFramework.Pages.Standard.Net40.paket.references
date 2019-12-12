@@ -1,6 +1,6 @@
-﻿Ioc.Modules
-Urchin.Client
+﻿Urchin.Client
 
 group net40
+  Ioc.Modules.Contract
   Owin.Framework framework: net40
   Microsoft.Owin framework: net40

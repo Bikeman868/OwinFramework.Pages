@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample1", "Sample1\Sample1.csproj", "{AB5CD12E-F29A-4767-BD7E-64AAC7D88230}"
 EndProject
@@ -20,9 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		install.cmd = install.cmd
 		paket.dependencies = paket.dependencies
 		paket.lock = paket.lock
-		Performance1.psess = Performance1.psess
-		Performance17.psess = Performance17.psess
-		Performance2.psess = Performance2.psess
 		publish.cmd = publish.cmd
 		readme.md = readme.md
 		restore.cmd = restore.cmd
@@ -114,5 +111,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A949963-F4B0-4DF4-9553-A1C48579EB74}
 	EndGlobalSection
 EndGlobal

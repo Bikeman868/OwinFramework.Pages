@@ -37,6 +37,9 @@
     <Reference Include="dotless.ClientOnly">
       <HintPath>..\packages\DotlessClientOnly\lib\dotless.ClientOnly.dll</HintPath>
     </Reference>
+    <Reference Include="Ioc.Modules.Contract">
+      <HintPath>..\packages\Ioc.Modules.Contract\lib\net45\Ioc.Modules.Contract.dll</HintPath>
+    </Reference>
     <Reference Include="OwinFramework, Version=2.6.8.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\net45\Owin.Framework\lib\net45\OwinFramework.dll</HintPath>
@@ -200,15 +203,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Ioc.Modules">
-          <HintPath>..\packages\Ioc.Modules\lib\net45\Ioc.Modules.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'" />
   </Choose>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">

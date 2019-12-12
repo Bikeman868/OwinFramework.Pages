@@ -1,5 +1,4 @@
-﻿Ioc.Modules
-Ninject
+﻿Ninject
 Ioc.Modules.Ninject
 Newtonsoft.Json
 Prius
@@ -9,6 +8,7 @@ group net40
   Owin
   Microsoft.Owin
   Microsoft.Owin.Host.SystemWeb
+  Ioc.Modules
   Owin.Framework
   Owin.Framework.DefaultDocument
   Owin.Framework.Documenter
@@ -21,6 +21,7 @@ group net45
   Owin
   Microsoft.Owin
   Microsoft.Owin.Host.SystemWeb
+  Ioc.Modules
   Owin.Framework
   Owin.Framework.DefaultDocument
   Owin.Framework.Documenter

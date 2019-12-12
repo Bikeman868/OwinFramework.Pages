@@ -182,6 +182,26 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
       <ItemGroup>
+        <Reference Include="Ioc.Modules.Contract">
+          <HintPath>..\packages\Ioc.Modules.Contract\lib\net40\Ioc.Modules.Contract.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
+      <ItemGroup>
+        <Reference Include="Ioc.Modules.Contract">
+          <HintPath>..\packages\Ioc.Modules.Contract\lib\net45\Ioc.Modules.Contract.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
+      <ItemGroup>
         <Reference Include="Ioc.Modules.Ninject">
           <HintPath>..\packages\Ioc.Modules.Ninject\lib\net40\Ioc.Modules.Ninject.dll</HintPath>
           <Private>True</Private>
@@ -402,8 +422,8 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
       <ItemGroup>
-        <Reference Include="OwinFramework.Configuration.Urchin">
-          <HintPath>..\packages\net40\Owin.Framework.Urchin\lib\net40\OwinFramework.Configuration.Urchin.dll</HintPath>
+        <Reference Include="OwinFramework.Urchin">
+          <HintPath>..\packages\net40\Owin.Framework.Urchin\lib\net40\OwinFramework.Urchin.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

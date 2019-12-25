@@ -93,6 +93,7 @@
         props: {
             page: { type: Object },
             pageVersion: { type: Object },
+            websiteVersion: { type: Object },
             isNew: { type: Boolean, default: false }
         },
         template:
@@ -145,20 +146,22 @@
             "</div>",
         computed: {
             zoneNesting: function () {
+                var nesting = null;
                 if (this.pageVersion.layoutName == undefined || this.pageVersion.layoutName.length === 0) {
                     if (this.pageVersion.layoutId == undefined) {
                         // TODO: Lookup the master page layout
-                        return "master1,master2";
+                        nesting = "master1,master2";
                     } else {
-                        // TODO: Look up in the layoutStore
-                        if (this.pageVersion.layoutId === 7) return "main";
-                        if (this.pageVersion.layoutId === 8) return "left,right";
-                        if (this.pageVersion.layoutId === 9) return "header,body,footer";
-                        return "";
+                        nesting = "";
+                        // TODO: Lookup layout version for website version
+                        exported.layoutVersionStore.retrieveRecord(
+                            this.pageVersion.layoutId,
+                            function (layoutVersion) {
+                                nesting = layoutVersion.zoneNesting;
+                            });
                     }
-                } else {
-                    return null;
                 }
+                return nesting;
             }
         }
     });
@@ -167,6 +170,8 @@
         props: {
             page: { type: Object },
             pageVersion: { type: Object },
+            websiteVersion: { type: Object },
+            scenario: { type: String, default: "" },
             isNew: { type: Boolean, default: false }
         },
         template:
@@ -252,20 +257,41 @@
             "</div>",
         computed: {
             zoneNesting: function () {
+                var nesting = null;
                 if (this.pageVersion.layoutName == undefined || this.pageVersion.layoutName.length === 0) {
                     if (this.pageVersion.layoutId == undefined) {
                         // TODO: Lookup the master page layout
-                        return "master1,master2";
+                        nesting = "master1,master2";
                     } else {
-                        // TODO: Look up in the layoutStore
-                        if (this.pageVersion.layoutId === 7) return "main";
-                        if (this.pageVersion.layoutId === 8) return "left,right";
-                        if (this.pageVersion.layoutId === 9) return "header,body,footer";
-                        return "";
+                        nesting = "";
+                        // TODO: Find which version of the layout is used on this
+                        //       version of the page in this scenario
+                        /*
+                        exported.listService.websitePageVersion(
+                            {
+                                websiteVersionId: this.websiteVersion.Id,
+                                scenario: this.scenario,
+                                pageId: this.page.Id
+                            },
+                            function (response) {
+                                if (response != undefined) {
+                                    var pageVersionId = response.pageVersionId;
+
+                                    if (pageVersionId != undefined) {
+                                        exported.layoutVersionStore.retrieveRecord(
+                                            this.pageVersion.layoutId,
+                                            function (layoutVersion) {
+                                                nesting = layoutVersion.zoneNesting;
+                                            });
+                                    }
+                                }
+                                if (onFail != undefined) onFail("Failed to get page version for website version");
+                            }
+                        );
+                        */
                     }
-                } else {
-                    return null;
                 }
+                return nesting;
             }
         }
     });

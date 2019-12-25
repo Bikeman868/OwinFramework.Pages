@@ -299,8 +299,11 @@ namespace OwinFramework.Pages.Framework.Managers
             trace(context, () => "Request is being handled by the Asset Manager");
 
             if (context.Request.Method != "GET")
-                throw new HttpException((int)HttpStatusCode.MethodNotAllowed, 
-                    "The " + context.Request.Method + " method is not supported for static assets");
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                context.Response.ReasonPhrase = "Method not allowed";
+                return context.Response.WriteAsync("The " + context.Request.Method + " method is not supported for static assets");
+            }
 
             // Path can be /assets/static.{css|js}
             // Path can be /assets/module/{modulename}.{css|js}
@@ -309,20 +312,29 @@ namespace OwinFramework.Pages.Framework.Managers
 
             PathString subPath;
             if (!context.Request.Path.StartsWithSegments(_rootPath, out subPath))
-                throw new HttpException((int)HttpStatusCode.NotFound, 
-                    "The requested path is not within the root path for assets");
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.ReasonPhrase = "Outside of the root path";
+                return context.Response.WriteAsync("Assets must be under " + _rootPath.Value);
+            }
 
             if (!subPath.HasValue || subPath.Value == "/")
-                throw new HttpException((int)HttpStatusCode.NotFound,
-                    "No asset was specifed in the path");
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.ReasonPhrase = "No asset specified";
+                return context.Response.WriteAsync("No asset was specifed in the path");
+            }
 
             var pathElements = subPath.Value.Split('/');
             var lastPathElement = pathElements[pathElements.Length - 1];
 
             var extIndex = lastPathElement.LastIndexOf('.');
             if (extIndex < 0)
-                throw new HttpException((int)HttpStatusCode.NotFound,
-                    "No file extension was present in the request path");
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.ReasonPhrase = "No file extension was present";
+                return context.Response.WriteAsync("Assets must have a file extension");
+            }
 
             var name = lastPathElement.Substring(0, extIndex);
             var ext = lastPathElement.Substring(extIndex);
@@ -332,8 +344,12 @@ namespace OwinFramework.Pages.Framework.Managers
             AssetType assetType;
             if (string.Equals(ext, ".css", StringComparison.OrdinalIgnoreCase)) assetType = AssetType.Style;
             else if (string.Equals(ext, ".js", StringComparison.OrdinalIgnoreCase)) assetType = AssetType.Script;
-            else throw new HttpException((int)HttpStatusCode.NotFound,
-                "Only css and js files are supported by thie endpoint");
+            else
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.ReasonPhrase = "Unsupported file type";
+                return context.Response.WriteAsync("Only css and js files are supported by thie endpoint");
+            }
 
             var secondLastPathElement = pathElements[pathElements.Length - 2];
             string content;
@@ -347,14 +363,20 @@ namespace OwinFramework.Pages.Framework.Managers
                 if (string.Equals(secondLastPathElement, "module", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!_moduleFunctions.TryGetValue(name, out content))
-                    throw new HttpException((int)HttpStatusCode.NotFound,
-                        "Unknown module " + name);
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        context.Response.ReasonPhrase = "Unknown module";
+                        return context.Response.WriteAsync("Unknown module " + name);
+                    }
                 }
                 else if (string.Equals(secondLastPathElement, "page", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!_pageFunctions.TryGetValue(name, out content))
-                    throw new HttpException((int)HttpStatusCode.NotFound,
-                        "Unknown page " + name);
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        context.Response.ReasonPhrase = "Unknown page";
+                        return context.Response.WriteAsync("Unknown page " + name);
+                    }
                 }
                 else
                 {
@@ -370,22 +392,32 @@ namespace OwinFramework.Pages.Framework.Managers
                 if (string.Equals(secondLastPathElement, "module", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!_moduleStyles.TryGetValue(name, out content))
-                        throw new HttpException((int)HttpStatusCode.NotFound,
-                            "Unknown module " + name);
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        context.Response.ReasonPhrase = "Unknown module";
+                        return context.Response.WriteAsync("Unknown module " + name);
+                    }
                 }
                 else if (string.Equals(secondLastPathElement, "page", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!_pageStyles.TryGetValue(name, out content))
-                        throw new HttpException((int)HttpStatusCode.NotFound,
-                            "Unknown page " + name);
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        context.Response.ReasonPhrase = "Unknown page";
+                        return context.Response.WriteAsync("Unknown page " + name);
+                    }
                 }
                 else
                 {
                     content = _websiteStyles;
                 }
             }
-            else throw new HttpException((int)HttpStatusCode.InternalServerError,
-                "Somehow the asset type was unknown");
+            else
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                context.Response.ReasonPhrase = "Unknown asset type";
+                return context.Response.WriteAsync("Somehow the asset type was unknown");
+            }
 
             context.Response.Expires = DateTime.UtcNow + _frameworkConfiguration.AssetCacheTime;
             context.Response.Headers.Set(

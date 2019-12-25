@@ -1,6 +1,0 @@
-﻿Moq
-Moq.Modules
-
-group net45
-  Owin.Framework
-  Microsoft.Owin

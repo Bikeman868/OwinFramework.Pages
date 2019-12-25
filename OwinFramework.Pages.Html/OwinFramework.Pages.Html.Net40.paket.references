@@ -1,7 +1,0 @@
-﻿Urchin.Client
-DotlessClientOnly
-
-group net40
-  Ioc.Modules.Contract
-  Owin.Framework framework: net40
-  Microsoft.Owin framework: net40

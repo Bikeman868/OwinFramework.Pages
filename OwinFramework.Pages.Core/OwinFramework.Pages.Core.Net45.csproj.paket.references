@@ -1,6 +1,0 @@
-Newtonsoft.Json
-
-group net45
-  Ioc.Modules.Contract
-  Owin.Framework framework: net45
-  Microsoft.Owin framework: net45

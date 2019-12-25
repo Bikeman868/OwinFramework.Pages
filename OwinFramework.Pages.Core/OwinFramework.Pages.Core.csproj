@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net40;net45</TargetFrameworks>
+    <AssemblyName>OwinFramework.Pages.Core</AssemblyName>
+    <RootNamespace>OwinFramework.Pages.Core</RootNamespace>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>1.2.8</Version>
+    <Authors>Martin Halliday</Authors>
+    <Copyright>Copyright © Martin Halliday 2018-2020</Copyright>
+    <PackageProjectUrl>http://owinframework.net/content/area/pages/landing</PackageProjectUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <RepositoryUrl>https://github.com/Bikeman868/OwinFramework.Pages</RepositoryUrl>
+    <Description>Defines the interfaces, enums and custom attributes that the other packages from Owin.Pages.Framework depend on.</Description>
+    <PackageReleaseNotes>Uses new MSBuid format to target multiple platforms</PackageReleaseNotes>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <AssemblyVersion>1.2.8.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>bin\release</OutputPath>
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\debug</OutputPath>
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
+    <PackageReference Include="Owin.Framework" Version="2.7.0" />
+  </ItemGroup>
+
+</Project>

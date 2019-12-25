@@ -1,7 +1,0 @@
-﻿Moq.Modules
-NUnit
-
-group net45
-  Microsoft.Owin framework: net45
-  Owin.Framework framework: net45
-  Owin.Framework.Mocks framework: net45

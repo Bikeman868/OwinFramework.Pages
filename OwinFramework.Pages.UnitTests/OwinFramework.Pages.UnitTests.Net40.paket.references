@@ -1,7 +1,0 @@
-﻿Moq.Modules
-NUnit
-
-group net40
-  Microsoft.Owin framework: net40
-  Owin.Framework framework: net40
-  Owin.Framework.Mocks framework: net40

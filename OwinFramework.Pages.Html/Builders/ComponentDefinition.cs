@@ -33,7 +33,6 @@ namespace OwinFramework.Pages.Html.Builders
 
         private class HtmlDefinition
         {
-            public int Order;
             public string AssetName;
             public string DefaultHtml;
         }

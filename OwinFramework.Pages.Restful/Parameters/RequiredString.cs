@@ -11,7 +11,6 @@ namespace OwinFramework.Pages.Restful.Parameters
     /// </summary>
     public class RequiredString: AnyValue<string>
     {
-        private readonly Func<object, bool> _check;
         private const string _errorMessage = "The string value is required";
 
         public override string Description { get { return base.Description +  ". The string can not be empty or whitespace only."; } }

@@ -27,6 +27,9 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
     <PackageReference Include="Owin.Framework" Version="2.7.0" />
   </ItemGroup>

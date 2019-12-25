@@ -27,6 +27,15 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Runtime\html-entities.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Runtime\html-entities.json" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="DotlessClientOnly" Version="1.5.2" />
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
     <PackageReference Include="Owin.Framework" Version="2.7.0" />

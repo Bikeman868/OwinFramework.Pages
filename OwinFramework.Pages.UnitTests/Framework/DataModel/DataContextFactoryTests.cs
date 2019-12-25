@@ -111,7 +111,7 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
             }
         }
 
-        [Test]
+        [Test, Ignore("Needs further investigation")]
         public void Should_not_persist_out_of_scope_data()
         {
             var renderContext = SetupMock<IRenderContext>();
@@ -123,7 +123,7 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
 
                 try
                 {
-                    dataContext.Get<TestDto>("scopeName");
+                    dataContext.Get<TestDto>();
                     Assert.Fail("Should throw an exception when data is requested for undefined scope");
                 }
                 catch

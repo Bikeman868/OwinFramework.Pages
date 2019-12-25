@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net40;net45</TargetFrameworks>
@@ -26,6 +26,101 @@
     <OutputPath>bin\debug</OutputPath>
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="JavascriptModules\dataModule.js" />
+    <None Remove="JavascriptModules\dispatcherModule.js" />
+    <None Remove="JavascriptModules\displayOnlyComponentsModule.js" />
+    <None Remove="JavascriptModules\elementEditorComponentsModule.js" />
+    <None Remove="JavascriptModules\fieldEditorComponentsModule.js" />
+    <None Remove="JavascriptModules\filtersModule.js" />
+    <None Remove="JavascriptModules\genericComponentsModule.js" />
+    <None Remove="JavascriptModules\validationModule.js" />
+    <None Remove="JavascriptModules\viewsModule.js" />
+    <None Remove="Templates\CmsManager.html" />
+    <None Remove="Templates\CmsManager.js" />
+    <None Remove="Templates\CmsManager.less" />
+    <None Remove="Templates\Crud\EnvironmentEditor.html" />
+    <None Remove="Templates\Crud\EnvironmentEditor.js" />
+    <None Remove="Templates\Crud\LayoutEditor.html" />
+    <None Remove="Templates\Crud\LayoutEditor.js" />
+    <None Remove="Templates\Crud\PageEditor.html" />
+    <None Remove="Templates\Crud\PageEditor.js" />
+    <None Remove="Templates\Crud\RegionEditor.html" />
+    <None Remove="Templates\Crud\RegionEditor.js" />
+    <None Remove="Templates\Crud\SegmentationScenarioEditor.html" />
+    <None Remove="Templates\Crud\SegmentationScenarioEditor.js" />
+    <None Remove="Templates\Crud\WebsiteVersionEditor.html" />
+    <None Remove="Templates\Crud\WebsiteVersionEditor.js" />
+    <None Remove="Templates\Display\ContextDisplay.html" />
+    <None Remove="Templates\Display\ContextDisplay.js" />
+    <None Remove="Templates\Display\UserSegmentDisplay.html" />
+    <None Remove="Templates\Display\UserSegmentDisplay.js" />
+    <None Remove="Templates\Selectors\EnvironmentSelector.html" />
+    <None Remove="Templates\Selectors\EnvironmentSelector.js" />
+    <None Remove="Templates\Selectors\LayoutSelector.html" />
+    <None Remove="Templates\Selectors\LayoutSelector.js" />
+    <None Remove="Templates\Selectors\PageSelector.html" />
+    <None Remove="Templates\Selectors\PageSelector.js" />
+    <None Remove="Templates\Selectors\RegionSelector.html" />
+    <None Remove="Templates\Selectors\RegionSelector.js" />
+    <None Remove="Templates\Selectors\SegmentationScenarioSelector.html" />
+    <None Remove="Templates\Selectors\SegmentationScenarioSelector.js" />
+    <None Remove="Templates\Selectors\SegmentationTestSelector.html" />
+    <None Remove="Templates\Selectors\SegmentationTestSelector.js" />
+    <None Remove="Templates\Selectors\UserSegmentSelector.html" />
+    <None Remove="Templates\Selectors\UserSegmentSelector.js" />
+    <None Remove="Templates\Selectors\WebsiteVersionSelector.html" />
+    <None Remove="Templates\Selectors\WebsiteVersionSelector.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="JavascriptModules\dataModule.js" />
+    <EmbeddedResource Include="JavascriptModules\dispatcherModule.js" />
+    <EmbeddedResource Include="JavascriptModules\displayOnlyComponentsModule.js" />
+    <EmbeddedResource Include="JavascriptModules\elementEditorComponentsModule.js" />
+    <EmbeddedResource Include="JavascriptModules\fieldEditorComponentsModule.js" />
+    <EmbeddedResource Include="JavascriptModules\filtersModule.js" />
+    <EmbeddedResource Include="JavascriptModules\genericComponentsModule.js" />
+    <EmbeddedResource Include="JavascriptModules\validationModule.js" />
+    <EmbeddedResource Include="JavascriptModules\viewsModule.js" />
+    <EmbeddedResource Include="Templates\CmsManager.html" />
+    <EmbeddedResource Include="Templates\CmsManager.js" />
+    <EmbeddedResource Include="Templates\CmsManager.less" />
+    <EmbeddedResource Include="Templates\Crud\EnvironmentEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\EnvironmentEditor.js" />
+    <EmbeddedResource Include="Templates\Crud\LayoutEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\LayoutEditor.js" />
+    <EmbeddedResource Include="Templates\Crud\PageEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\PageEditor.js" />
+    <EmbeddedResource Include="Templates\Crud\RegionEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\RegionEditor.js" />
+    <EmbeddedResource Include="Templates\Crud\SegmentationScenarioEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\SegmentationScenarioEditor.js" />
+    <EmbeddedResource Include="Templates\Crud\WebsiteVersionEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\WebsiteVersionEditor.js" />
+    <EmbeddedResource Include="Templates\Display\ContextDisplay.html" />
+    <EmbeddedResource Include="Templates\Display\ContextDisplay.js" />
+    <EmbeddedResource Include="Templates\Display\UserSegmentDisplay.html" />
+    <EmbeddedResource Include="Templates\Display\UserSegmentDisplay.js" />
+    <EmbeddedResource Include="Templates\Selectors\EnvironmentSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\EnvironmentSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\LayoutSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\LayoutSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\PageSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\PageSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\RegionSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\RegionSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\SegmentationScenarioSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\SegmentationScenarioSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\SegmentationTestSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\SegmentationTestSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\UserSegmentSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\UserSegmentSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\WebsiteVersionSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\WebsiteVersionSelector.js" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
     <PackageReference Include="Owin.Framework" Version="2.7.0" />

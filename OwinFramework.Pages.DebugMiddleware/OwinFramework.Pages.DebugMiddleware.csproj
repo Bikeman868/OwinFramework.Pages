@@ -27,6 +27,21 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="html.css" />
+    <None Remove="html.js" />
+    <None Remove="svg.css" />
+    <None Remove="svg.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="html.css" />
+    <EmbeddedResource Include="html.js" />
+    <EmbeddedResource Include="svg.css" />
+    <EmbeddedResource Include="svg.js" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
     <PackageReference Include="Owin.Framework" Version="2.7.0" />
     <PackageReference Include="Svg" Version="2.3.0" />

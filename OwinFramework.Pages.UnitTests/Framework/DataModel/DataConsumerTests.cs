@@ -25,7 +25,7 @@ namespace OwinFramework.Pages.UnitTests.Framework.DataModel
                 SetupMock<IDataDependencyFactory>());
         }
 
-        [Test, Ignore("Getting consumer needs no longer has teh side-effect of adding daat scope rules")]
+        [Test, Ignore("Getting consumer needs no longer has teh side-effect of adding data scope rules")]
         public void Should_register_type_dependencies()
         {
             var dataScopeProvider = SetupMock<IDataScopeRules>();

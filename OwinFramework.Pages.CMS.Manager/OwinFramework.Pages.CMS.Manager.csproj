@@ -12,15 +12,15 @@
     <PackageProjectUrl>http://owinframework.net/content/project/owinframework.pages.cms.manager/landing</PackageProjectUrl>
     <RepositoryType>GitHub</RepositoryType>
     <RepositoryUrl>https://github.com/Bikeman868/OwinFramework.Pages</RepositoryUrl>
-    <Description>rovides a UI for editing pages, layouts, regions etc within the CMS. You can include this in your website to allow the pages to be modified, or you can build a separate website (intranet) for managing website content</Description>
-    <PackageReleaseNotes>Uses new MSBuid format to target multiple platforms</PackageReleaseNotes>
+    <Description>Provides a UI for editing pages, layouts, regions etc within the CMS. You can include this in your website to allow the pages to be modified, or you can build a separate website (intranet) for managing website content</Description>
+    <PackageReleaseNotes>Uses new SDK project file format to target multiple platforms</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <AssemblyVersion>1.2.8.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>bin\release</OutputPath>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>bin\release\OwinFramework.Pages.CMS.Manager.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>bin\debug</OutputPath>

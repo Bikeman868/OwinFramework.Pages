@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Owin.Framework.Pages.Framework</id>
+    <version>1.2.8</version>
+    <title>Owin Framework Pages Framework</title>
+    <authors>Martin Halliday</authors>
+    <owners>Martin Halliday</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Default implementations of core interfaces that most people will choose to use. You can implement these framework classes yourself if you want to completely define  how the this framework works under the hood, but this is a very advanced use case</description>
+    <copyright>Copyright Martin Halliday 2018-2020</copyright>
+    <releaseNotes>Uses the new SDK project file format to target multiple platforms</releaseNotes>
+    <projectUrl>http://owinframework.net/content/project/owinframework.pages.Framework/landing</projectUrl>
+    <license type="expression">Apache-2.0</license>
+    <tags>OWIN OwinFramework Pages</tags>
+    <dependencies>
+      <group targetFramework="net40">
+        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="Urchin.Client" version="1.3.1" />
+        <dependency id="Owin.Framework" version="2.7.0" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.2.8" />
+	  </group>
+      <group targetFramework="net45">
+        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="Urchin.Client" version="1.3.1" />
+        <dependency id="Owin.Framework" version="2.7.0" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.2.8" />
+      </group>
+    </dependencies>
+    <references>
+      <reference file="OwinFramework.Pages.Framework.dll" />
+    </references>
+  </metadata>
+  <files>
+    <file src="..\OwinFramework.Pages.Framework\bin\release\net40\OwinFramework.Pages.Framework.dll" target="lib\net40"/>
+    <file src="..\OwinFramework.Pages.Framework\bin\release\net45\OwinFramework.Pages.Framework.dll" target="lib\net45"/>
+    <file src="..\OwinFramework.Pages.Framework\bin\release\OwinFramework.Pages.Framework.xml" target="lib\net40"/>
+    <file src="..\OwinFramework.Pages.Framework\bin\release\OwinFramework.Pages.Framework.xml" target="lib\net45"/>
+
+    <file src="..\OwinFramework.Pages.Framework\bin\release\net40\OwinFramework.Pages.Framework.dll" target="ref\net40"/>
+    <file src="..\OwinFramework.Pages.Framework\bin\release\net45\OwinFramework.Pages.Framework.dll" target="ref\net45"/>
+	
+    <file src="..\*.md" target=""/>
+  </files>
+</package>

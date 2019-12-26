@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Owin.Framework.Pages.Core</id>
+    <version>1.2.8</version>
+    <title>Owin Framework Pages Core</title>
+    <authors>Martin Halliday</authors>
+    <owners>Martin Halliday</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Defines the interfaces, enums and custom attributes that the other packages from Owin.Pages.Framework depend on</description>
+    <copyright>Copyright Martin Halliday 2018-2020</copyright>
+    <releaseNotes>Uses the new SDK project file format to target multiple platforms</releaseNotes>
+    <projectUrl>http://owinframework.net/content/project/owinframework.pages.core/landing</projectUrl>
+    <license type="expression">Apache-2.0</license>
+    <tags>OWIN OwinFramework Pages</tags>
+    <dependencies>
+      <group targetFramework="net40">
+        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="Owin.Framework" version="2.7.0" />
+	  </group>
+      <group targetFramework="net45">
+        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="Owin.Framework" version="2.7.0" />
+      </group>
+    </dependencies>
+    <references>
+      <reference file="OwinFramework.Pages.Core.dll" />
+    </references>
+  </metadata>
+  <files>
+    <file src="..\OwinFramework.Pages.Core\bin\release\net40\OwinFramework.Pages.Core.dll" target="lib\net40"/>
+    <file src="..\OwinFramework.Pages.Core\bin\release\net45\OwinFramework.Pages.Core.dll" target="lib\net45"/>
+    <file src="..\OwinFramework.Pages.Core\bin\release\OwinFramework.Pages.Core.xml" target="lib\net40"/>
+    <file src="..\OwinFramework.Pages.Core\bin\release\OwinFramework.Pages.Core.xml" target="lib\net45"/>
+
+    <file src="..\OwinFramework.Pages.Core\bin\release\net40\OwinFramework.Pages.Core.dll" target="ref\net40"/>
+    <file src="..\OwinFramework.Pages.Core\bin\release\net45\OwinFramework.Pages.Core.dll" target="ref\net45"/>
+	
+    <file src="..\*.md" target=""/>
+  </files>
+</package>

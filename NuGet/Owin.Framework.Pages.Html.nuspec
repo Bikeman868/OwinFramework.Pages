@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Owin.Framework.Pages.Html</id>
+    <version>1.2.8</version>
+    <title>Owin Framework Pages Html</title>
+    <authors>Martin Halliday</authors>
+    <owners>Martin Halliday</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides build engines that can be plugged into the fluent builder to enable your website to respond to requests by returning pages of Html</description>
+    <copyright>Copyright Martin Halliday 2018-2020</copyright>
+    <releaseNotes>Uses the new SDK project file format to target multiple platforms</releaseNotes>
+    <projectUrl>http://owinframework.net/content/project/owinframework.pages.html/landing</projectUrl>
+    <license type="expression">Apache-2.0</license>
+    <tags>OWIN OwinFramework Pages Html</tags>
+    <dependencies>
+      <group targetFramework="net40">
+        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="Urchin.Client" version="1.3.1" />
+        <dependency id="DotlessClientOnly" version="1.5.2" />
+        <dependency id="Owin.Framework" version="2.7.0" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.2.8" />
+	  </group>
+      <group targetFramework="net45">
+        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="Urchin.Client" version="1.3.1" />
+        <dependency id="DotlessClientOnly" version="1.5.2" />
+        <dependency id="Owin.Framework" version="2.7.0" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.2.8" />
+      </group>
+    </dependencies>
+    <references>
+      <reference file="OwinFramework.Pages.Html.dll" />
+    </references>
+  </metadata>
+  <files>
+    <file src="..\OwinFramework.Pages.Html\bin\release\net40\OwinFramework.Pages.Html.dll" target="lib\net40"/>
+    <file src="..\OwinFramework.Pages.Html\bin\release\net45\OwinFramework.Pages.Html.dll" target="lib\net45"/>
+    <file src="..\OwinFramework.Pages.Html\bin\release\OwinFramework.Pages.Html.xml" target="lib\net40"/>
+    <file src="..\OwinFramework.Pages.Html\bin\release\OwinFramework.Pages.Html.xml" target="lib\net45"/>
+
+    <file src="..\OwinFramework.Pages.Html\bin\release\net40\OwinFramework.Pages.Html.dll" target="ref\net40"/>
+    <file src="..\OwinFramework.Pages.Html\bin\release\net45\OwinFramework.Pages.Html.dll" target="ref\net45"/>
+	
+    <file src="..\*.md" target=""/>
+  </files>
+</package>

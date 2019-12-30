@@ -14,6 +14,8 @@ namespace OwinFramework.Pages.Standard
     /// within your JavaScript code. This package depends on the Ajax package
     /// and assumes that you have created a back-end service that performs
     /// CRUD operations for each store.
+    /// For an example of how to use this library, see the dataModule.js file
+    /// in the OwinFramework.Pages.CMS.Manager project from this solution.
     /// </summary>
     public class DataPackage: IPackage
     {

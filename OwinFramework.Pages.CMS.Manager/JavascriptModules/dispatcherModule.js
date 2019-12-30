@@ -42,6 +42,7 @@
     };
 
     var init = function () {
+        // TODO: If the register function fails no updates will be received - should retry
         exported.liveUpdateService.register(
             null,
             function (response) { clientId = response.id });

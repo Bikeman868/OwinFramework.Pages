@@ -1,4 +1,25 @@
 ﻿exported.store = function () {
+    // A data store maintains a client-side copy of data retrieved from the
+    // server and optionally subscribes to update messages to keep it in sync
+    // with other browser tabs - possibly on other computers. It also provides
+    // methods for modifying this data on the client and sending changes back to
+    // the server, including lists of child records.
+    //
+    // To create a store, construct an object to use as your data store and implement
+    // the methods that you want to be custom, then pass your object to the newStore
+    // function to fill in the rest of the methods with default implementations. Your
+    // store must implement at least a fields array and a recordType property. To 
+    // read/write data to a back-end service you must implement the crud property.
+    // For examples of this see the dataModule.js file in the CMS Manager project.
+    //
+    // To use the store call these methods of the store:
+    //   createRecord - creates a new record, adds it to the data store and writes it to the server
+    //   retrieveAllRecords - returns an array of records. You can bind this to a view and new records will be shown in the view
+    //   retrieveRecord - retrieves one record by its ID. Gets if from the server and caches on the client
+    //   updateRecord - updates a record and sends only the changes back to the server
+    //   deleteRecord - deletes the record from the server then removes it from the client-side cache
+    //   cloneRecord - makes a copy of an existing record as the basis of a new record. Deep copies the children.
+    //   blankRecord - returns a new record with default values for each field
     var newStore = function (store) {
         if (store.recordType == undefined) throw "Data stores must have a recordType";
         if (store.fields == undefined) throw "Data stores must define some fields";

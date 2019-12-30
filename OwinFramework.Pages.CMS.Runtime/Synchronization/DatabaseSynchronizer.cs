@@ -183,6 +183,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
                 using (var context = _contextFactory.Create(_configuration.LiveUpdateRepositoryName))
                 {
                     context.ExecuteNonQuery(command);
+                    if (messageIdParameter.Value == null || messageIdParameter.Value is object) return 0;
                     return (long)messageIdParameter.Value;
                 }
             }

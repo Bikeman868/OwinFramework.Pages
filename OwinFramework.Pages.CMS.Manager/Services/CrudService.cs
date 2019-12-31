@@ -1014,5 +1014,228 @@ namespace OwinFramework.Pages.CMS.Manager.Services
 
         #endregion
 
+        #region Components
+
+        [Endpoint(
+            Methods = new[] { Method.Post },
+            RequiredPermission = Permissions.EditComponent)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long?>),
+            Description = "Include the optional website version id to add the new component to a specific version of the website")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "Include the optional scenario name to make this the component to use in this segmentation test scenario")]
+        [Description("Creates a new component and optionally adds it to a specific version of the website")]
+        private void CreateComponent(IEndpointRequest request)
+        {
+            var component = request.Body<ComponentRecord>();
+            var websiteVersionId = request.Parameter<long?>("websiteVersionId");
+            var scenario = request.Parameter<string>("scenario");
+
+            var result = _dataLayer.CreateComponent(request.Identity, component);
+
+            if (!result.Success)
+            {
+                request.BadRequest(result.DebugMessage);
+                return;
+            }
+
+            component = _dataLayer.GetComponent(result.NewRecordId, l => l);
+            if (component == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError,
+                    "After creating the new component it could not be found in the database");
+                return;
+            }
+
+            if (websiteVersionId.HasValue)
+            {
+                _dataLayer.AddComponentToWebsiteVersion(request.Identity, component.RecordId, 1, websiteVersionId.Value, scenario);
+            }
+            request.Success(component);
+        }
+
+        [Endpoint(
+            UrlPath = "component/{id}",
+            Methods = new[] { Method.Get },
+            RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void RetrieveComponent(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var component = _dataLayer.GetComponent(id, l => l);
+
+            if (component == null)
+                request.NotFound("No component with ID " + id);
+            else
+                request.Success(component);
+        }
+
+        [Endpoint(
+            UrlPath = "component/{id}",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.EditComponent)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void UpdateComponent(IEndpointRequest request)
+        {
+            var componentId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            var result = _dataLayer.UpdateComponent(request.Identity, componentId, changes);
+
+            if (result.Success)
+            {
+                var component = _dataLayer.GetComponent(componentId, l => l);
+                request.Success(component);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(
+            UrlPath = "component/{id}",
+            Methods = new[] { Method.Delete },
+            RequiredPermission = Permissions.EditComponent)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void DeleteComponent(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var result = _dataLayer.DeleteComponent(request.Identity, id);
+
+            if (result.Success)
+                request.Success(new { id });
+            else
+                request.BadRequest(result.DebugMessage);
+        }
+
+        #endregion
+
+        #region Component versions
+
+        [Endpoint(
+            Methods = new[] { Method.Post },
+            RequiredPermission = Permissions.EditComponent)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long?>),
+            Description = "Include the optional website version id to add the new component version to a specific version of the website")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "Include the optional scenario name to make this the component version to use in this segmentation test scenario")]
+        [Description("Creates a new version of a component and optionally adds it to a specific version of the website")]
+        private void CreateComponentVersion(IEndpointRequest request)
+        {
+            var componentVersion = request.Body<ComponentVersionRecord>();
+            var websiteVersionId = request.Parameter<long?>("websiteVersionId");
+            var scenario = request.Parameter<string>("scenario");
+
+            var result = _dataLayer.CreateComponentVersion(request.Identity, componentVersion);
+
+            if (!result.Success)
+            {
+                request.BadRequest(result.DebugMessage);
+                return;
+            }
+
+            componentVersion = _dataLayer.GetComponentVersion(result.NewRecordId, (p, v) => v);
+            if (componentVersion == null)
+            {
+                request.HttpStatus(
+                    HttpStatusCode.InternalServerError,
+                    "After creating the new component version it could not be found in the database");
+                return;
+            }
+
+            if (websiteVersionId.HasValue)
+            {
+
+                _dataLayer.AddComponentToWebsiteVersion(request.Identity, componentVersion.RecordId, websiteVersionId.Value, scenario);
+            }
+
+            request.Success(componentVersion);
+        }
+
+        [Endpoint(
+            UrlPath = "componentversion/{id}",
+            Methods = new[] { Method.Get },
+            RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the component version to return")]
+        [Description("Retrieves details of a specific version of a component")]
+        private void RetrieveComponentVersion(IEndpointRequest request)
+        {
+            var componentVersionId = request.Parameter<long>("id");
+            var componentVersion = _dataLayer.GetComponentVersion(componentVersionId, (p, v) => v);
+
+            if (componentVersion == null)
+                request.NotFound("No component version with ID " + componentVersionId);
+            else
+                request.Success(componentVersion);
+        }
+
+        [Endpoint(
+            UrlPath = "componentversion/{id}",
+            Methods = new[] { Method.Put },
+            RequiredPermission = Permissions.EditComponent)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void UpdateComponentVersion(IEndpointRequest request)
+        {
+            var componentVersionId = request.Parameter<long>("id");
+            var changes = request.Body<List<PropertyChange>>();
+
+            var result = _dataLayer.UpdateComponentVersion(request.Identity, componentVersionId, changes);
+
+            if (result.Success)
+            {
+                var componentVersion = _dataLayer.GetComponentVersion(componentVersionId, (p, v) => v);
+                request.Success(componentVersion);
+            }
+            else
+            {
+                request.BadRequest(result.DebugMessage);
+            }
+        }
+
+        [Endpoint(
+            UrlPath = "componentversion/{id}",
+            Methods = new[] { Method.Delete },
+            RequiredPermission = Permissions.EditComponent)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment)]
+        private void DeleteComponentVersion(IEndpointRequest request)
+        {
+            var componentVersionId = request.Parameter<long>("id");
+            var result = _dataLayer.DeleteComponentVersion(request.Identity, componentVersionId);
+
+            if (result.Success)
+                request.Success(new { componentVersionId });
+            else
+                request.BadRequest(result.DebugMessage);
+        }
+
+        #endregion
     }
 }

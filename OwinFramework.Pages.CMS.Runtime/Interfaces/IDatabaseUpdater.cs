@@ -47,6 +47,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         UpdateResult UpdateRegionVersionComponents(string identity, long regionVersionId, IEnumerable<ElementComponentRecord> components);
         DeleteResult DeleteRegionVersion(string identity, long regionVersionId);
 
+        CreateResult CreateComponent(string identity, ComponentRecord component);
+        UpdateResult UpdateComponent(string identity, long componentId, IEnumerable<PropertyChange> changes);
+        DeleteResult DeleteComponent(string identity, long componentId);
+
+        CreateResult CreateComponentVersion(string identity, ComponentVersionRecord componentVersion);
+        UpdateResult UpdateComponentVersion(string identity, long componentVersionId, IEnumerable<PropertyChange> changes);
+        DeleteResult DeleteComponentVersion(string identity, long componentVersionId);
+
         #endregion
 
         #region Many-many relationships
@@ -62,6 +70,10 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         UpdateResult AddRegionToWebsiteVersion(string identity, long regionId, int version, long websiteVersionId, string scenario);
         UpdateResult AddRegionToWebsiteVersion(string identity, long regionVersionId, long websiteVersionId, string scenario);
         UpdateResult RemoveRegionFromWebsite(string identity, long regionId, long websiteVersionId, string scenario);
+
+        UpdateResult AddComponentToWebsiteVersion(string identity, long layoutId, int version, long websiteVersionId, string scenario);
+        UpdateResult AddComponentToWebsiteVersion(string identity, long layoutVersionId, long websiteVersionId, string scenario);
+        UpdateResult RemoveComponentFromWebsite(string identity, long layoutId, long websiteVersionId, string scenario);
 
         #endregion
     }

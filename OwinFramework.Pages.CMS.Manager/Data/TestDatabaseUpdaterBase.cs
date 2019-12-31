@@ -1761,6 +1761,336 @@ namespace OwinFramework.Pages.CMS.Manager.Data
 
         #endregion
 
+        #region Components
+
+        CreateResult IDatabaseUpdater.CreateComponent(string identity, ComponentRecord component)
+        {
+            lock (_updateLock)
+            {
+                component.RecordId = _components.OrderByDescending(p => p.RecordId).First().RecordId + 1;
+                component.CreatedWhen = DateTime.UtcNow;
+                component.CreatedBy = identity;
+
+                var components = _components.ToList();
+                components.Add(component);
+                _components = components.ToArray();
+
+                AddHistory(
+                    component,
+                    identity,
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "Created"
+                    });
+
+                var componentVersion = new ComponentVersionRecord
+                {
+                    RecordId = _componentVersions.OrderByDescending(pv => pv.RecordId).First().RecordId + 1,
+                    CreatedWhen = component.CreatedWhen,
+                    CreatedBy = component.CreatedBy,
+                    ParentRecordId = component.RecordId,
+                    Version = 1
+                };
+
+                var componentVersions = _componentVersions.ToList();
+                componentVersions.Add(componentVersion);
+                _componentVersions = componentVersions.ToArray();
+
+                AddHistory(
+                    componentVersion,
+                    identity,
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "Created"
+                    });
+
+                return new CreateResult(component.RecordId);
+            }
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateComponent(string identity, long componentId, IEnumerable<PropertyChange> changes)
+        {
+            var component = _components.FirstOrDefault(p => p.RecordId == componentId);
+            if (component == null) return new UpdateResult("component_not_found", "No component found with id " + componentId);
+
+            var details = new List<HistoryChangeDetails>();
+
+            foreach (var change in changes)
+            {
+                var changeDetails = new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = change.PropertyName,
+                    NewValue = change.PropertyValue
+                };
+
+                switch (change.PropertyName.ToLower())
+                {
+                    case "name":
+                        changeDetails.OldValue = component.Name;
+                        component.Name = change.PropertyValue;
+                        break;
+                    case "displayname":
+                        changeDetails.OldValue = component.DisplayName;
+                        component.DisplayName = change.PropertyValue;
+                        break;
+                    case "description":
+                        changeDetails.OldValue = component.Description;
+                        component.Description = change.PropertyValue;
+                        break;
+                }
+                details.Add(changeDetails);
+            }
+
+            AddHistory(component, identity, details.ToArray());
+
+            return new UpdateResult();
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteComponent(string identity, long componentId)
+        {
+            var component = _components.FirstOrDefault(p => p.RecordId == componentId);
+            if (component == null) return new DeleteResult("component_not_found", "No component found with id " + componentId);
+
+            lock (_updateLock)
+            {
+                _components = _components.Where(p => p.RecordId != componentId).ToArray();
+            }
+
+            AddHistory(
+                component,
+                identity,
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Deleted"
+                });
+
+            return new DeleteResult();
+        }
+
+        UpdateResult IDatabaseUpdater.AddComponentToWebsiteVersion(string identity, long componentId, int version, long websiteVersionId, string scenario)
+        {
+            var componentVersion = _componentVersions.FirstOrDefault(pv => pv.ParentRecordId == componentId && pv.Version == version);
+            if (componentVersion == null)
+            {
+                return new UpdateResult(
+                    "component_version_not_found",
+                    "There is no version " + version + " of component id " + componentId);
+            }
+
+            AddComponentVersionToWebsiteVersion(identity, componentVersion, websiteVersionId, scenario);
+
+            return new UpdateResult();
+        }
+
+        UpdateResult IDatabaseUpdater.AddComponentToWebsiteVersion(string identity, long componentVersionId, long websiteVersionId, string scenario)
+        {
+            var componentVersion = _componentVersions.FirstOrDefault(pv => pv.RecordId == componentVersionId);
+            if (componentVersion == null)
+            {
+                return new UpdateResult(
+                    "component_version_not_found",
+                    "There is component version " + componentVersionId);
+            }
+
+            AddComponentVersionToWebsiteVersion(identity, componentVersion, websiteVersionId, scenario);
+
+            return new UpdateResult();
+        }
+
+        private void AddComponentVersionToWebsiteVersion(string identity, ComponentVersionRecord componentVersion, long websiteVersionId, string scenario)
+        {
+            IList<WebsiteVersionComponentRecord> removedList;
+
+            lock (_updateLock)
+            {
+                removedList = _websiteVersionComponents
+                    .Where(p =>
+                        p.WebsiteVersionId == websiteVersionId &&
+                        p.ComponentId == componentVersion.ParentRecordId &&
+                        (!string.IsNullOrEmpty(scenario) || string.IsNullOrEmpty(p.Scenario)) &&
+                        (string.IsNullOrEmpty(scenario) || string.Equals(scenario, p.Scenario, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+
+                var websiteVersionComponents = _websiteVersionComponents
+                    .Where(p =>
+                        p.WebsiteVersionId != websiteVersionId ||
+                        p.ComponentId != componentVersion.ParentRecordId ||
+                        (string.IsNullOrEmpty(scenario) && !string.IsNullOrEmpty(p.Scenario)) ||
+                        (!string.IsNullOrEmpty(scenario) && !string.Equals(scenario, p.Scenario, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+
+                websiteVersionComponents.Add(new WebsiteVersionComponentRecord
+                {
+                    WebsiteVersionId = websiteVersionId,
+                    ComponentId = componentVersion.ParentRecordId,
+                    ComponentVersionId = componentVersion.RecordId,
+                    Scenario = scenario
+                });
+
+                _websiteVersionComponents = websiteVersionComponents.ToArray();
+            }
+
+            foreach (var removed in removedList)
+            {
+                AddHistory(
+                    new WebsiteVersionRecord { RecordId = removed.WebsiteVersionId },
+                    identity,
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "ChildRemoved",
+                        ChildType = ComponentRecord.RecordTypeName,
+                        ChildId = removed.ComponentId,
+                        Scenario = scenario
+                    });
+            }
+
+            AddHistory(
+                new WebsiteVersionRecord { RecordId = websiteVersionId },
+                identity,
+                new HistoryChangeDetails
+                {
+                    ChangeType = "ChildAdded",
+                    ChildType = componentVersion.RecordType,
+                    ChildId = componentVersion.RecordId,
+                    Scenario = scenario
+                });
+        }
+
+        #endregion
+
+        #region Component versions
+
+        CreateResult IDatabaseUpdater.CreateComponentVersion(string identity, ComponentVersionRecord componentVersion)
+        {
+            lock (_updateLock)
+            {
+                componentVersion.RecordId = _componentVersions.OrderByDescending(pv => pv.RecordId).First().RecordId + 1;
+                componentVersion.Version = _componentVersions.OrderByDescending(pv => pv.Version).First().Version + 1;
+                componentVersion.CreatedWhen = DateTime.UtcNow;
+                componentVersion.CreatedBy = identity;
+
+                var componentVersions = _componentVersions.ToList();
+                componentVersions.Add(componentVersion);
+                _componentVersions = componentVersions.ToArray();
+
+                AddHistory(
+                    componentVersion,
+                    identity,
+                    new HistoryChangeDetails
+                    {
+                        ChangeType = "Created"
+                    });
+
+                return new CreateResult(componentVersion.RecordId);
+            }
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateComponentVersion(string identity, long componentVersionId, IEnumerable<PropertyChange> changes)
+        {
+            var componentVersion = _componentVersions.FirstOrDefault(p => p.RecordId == componentVersionId);
+            if (componentVersion == null) return new UpdateResult("component_version_not_found", "No component version found with id " + componentVersionId);
+
+            var details = new List<HistoryChangeDetails>();
+
+            foreach (var change in changes)
+            {
+                var changeDetails = new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = change.PropertyName,
+                    NewValue = change.PropertyValue
+                };
+
+                switch (change.PropertyName.ToLower())
+                {
+                    case "name":
+                        changeDetails.OldValue = componentVersion.Name;
+                        componentVersion.Name = change.PropertyValue;
+                        break;
+                    case "displayname":
+                        changeDetails.OldValue = componentVersion.DisplayName;
+                        componentVersion.DisplayName = change.PropertyValue;
+                        break;
+                    case "description":
+                        changeDetails.OldValue = componentVersion.Description;
+                        componentVersion.Description = change.PropertyValue;
+                        break;
+                    case "version":
+                        changeDetails.OldValue = componentVersion.Version.ToString();
+                        componentVersion.Version = int.Parse(change.PropertyValue);
+                        break;
+                    case "versionname":
+                        changeDetails.OldValue = componentVersion.VersionName;
+                        componentVersion.VersionName = change.PropertyValue;
+                        break;
+                    case "modulename":
+                        changeDetails.OldValue = componentVersion.ModuleName;
+                        componentVersion.ModuleName = change.PropertyValue;
+                        break;
+                    case "assetdeployment":
+                        changeDetails.OldValue = componentVersion.AssetDeployment.ToString();
+                        componentVersion.AssetDeployment = (AssetDeployment)Enum.Parse(typeof(AssetDeployment), change.PropertyValue);
+                        break;
+                }
+                details.Add(changeDetails);
+            }
+
+            AddHistory(componentVersion, identity, details.ToArray());
+
+            return new UpdateResult();
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteComponentVersion(string identity, long componentVersionId)
+        {
+            var componentVersion = _componentVersions.FirstOrDefault(p => p.RecordId == componentVersionId);
+            if (componentVersion == null) return new DeleteResult("component_version_not_found", "No component version found with id " + componentVersionId);
+
+            lock (_updateLock)
+            {
+                _componentVersions = _componentVersions.Where(p => p.RecordId != componentVersionId).ToArray();
+            }
+
+            AddHistory(
+                componentVersion,
+                identity,
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Deleted"
+                });
+
+            return new DeleteResult();
+        }
+
+        UpdateResult IDatabaseUpdater.RemoveComponentFromWebsite(string identity, long componentId, long websiteVersionId, string scenario)
+        {
+            lock (_updateLock)
+            {
+                _websiteVersionComponents =
+                    _websiteVersionComponents.Where(p =>
+                        p.WebsiteVersionId != websiteVersionId ||
+                        p.ComponentId != componentId ||
+                        (string.IsNullOrEmpty(scenario) && !string.IsNullOrEmpty(p.Scenario)) ||
+                        (!string.IsNullOrEmpty(scenario) && !string.Equals(scenario, p.Scenario, StringComparison.OrdinalIgnoreCase)))
+                        .ToArray();
+            }
+
+            AddHistory(
+                new WebsiteVersionRecord { RecordId = websiteVersionId },
+                identity,
+                new HistoryChangeDetails
+                {
+                    ChangeType = "ChildRemoved",
+                    ChildType = ComponentRecord.RecordTypeName,
+                    ChildId = componentId,
+                    Scenario = scenario
+                });
+
+            return new UpdateResult();
+        }
+
+        #endregion
+
         #region protected helper functions
 
         protected T[] ArrayPropertyChange<T>(PropertyChange change, HistoryChangeDetails changeDetails, T[] array, DynamicCast<T> dynamicCast) where T: class, new()

@@ -268,8 +268,39 @@ namespace OwinFramework.Pages.CMS.Manager
         private void LoadScriptModule(string moduleName, List<string> modules)
         {
             var lines = GetEmbeddedTextFile(moduleName + ".js");
-            if (lines != null)
-                modules.Add(string.Join("\n", lines));
+            if (lines == null) return;
+
+            var javaScript = string.Join("\n", lines);
+
+            const char backTick = '`';
+            const char quote = '"';
+            const char escape = '\\';
+            const char newLine = '\n';
+            var quoteString = new string(quote, 1);
+            var escapedQuoteString = new string(new[] { escape, quote });
+            var newLineString = new string(newLine, 1);
+            var escapedNewLineString = new string(new[] { escape, 'n', escape, newLine });
+
+            if (javaScript.IndexOf(backTick) >= 0)
+            {
+                var sb = new StringBuilder();
+                var s = javaScript.Split(backTick);
+                for (var i = 0; i < s.Length; i += 2)
+                {
+                    sb.Append(s[i]);
+                    if (i + 1 < s.Length)
+                    {
+                        sb.Append(quote);
+                        sb.Append(s[i + 1]
+                            .Replace(quoteString, escapedQuoteString)
+                            .Replace(newLineString, escapedNewLineString));
+                        sb.Append(quote);
+                    }
+                }
+                javaScript = sb.ToString();
+            }
+
+            modules.Add(javaScript);
         }
 
         private string[] GetEmbeddedTextFile(string templateName)

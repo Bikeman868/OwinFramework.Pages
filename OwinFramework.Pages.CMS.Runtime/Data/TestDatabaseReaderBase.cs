@@ -355,6 +355,12 @@ namespace OwinFramework.Pages.CMS.Runtime.Data
             return region == null ? default : map(region);
         }
 
+        T IDatabaseReader.GetComponent<T>(long componentId, Func<ComponentRecord, T> map)
+        {
+            var component = _components.FirstOrDefault(p => p.RecordId == componentId);
+            return component == null ? default : map(component);
+        }
+
         T IDatabaseReader.GetDataScope<T>(long dataScopeId, Func<DataScopeRecord, T> map)
         {
             var dataScope = _dataScopes.FirstOrDefault(p => p.RecordId == dataScopeId);

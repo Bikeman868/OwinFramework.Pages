@@ -683,6 +683,98 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
+        CreateResult IDatabaseUpdater.CreateComponent(string identity, ComponentRecord component)
+        {
+            var result = _databaseUpdater.CreateComponent(identity, component);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = component.RecordType,
+                        ElementId = result.NewRecordId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateComponent(string identity, long componentId, IEnumerable<DatabasePropertyChange> changes)
+        {
+            var result = _databaseUpdater.UpdateComponent(identity, componentId, changes);
+            if (!result.Success) return result;
+
+            AddChangesToLiveUpdate(ComponentRecord.RecordTypeName, componentId, changes);
+
+            return result;
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteComponent(string identity, long componentId)
+        {
+            var result = _databaseUpdater.DeleteComponent(identity, componentId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = ComponentRecord.RecordTypeName,
+                        ElementId = componentId
+                    });
+            }
+
+            return result;
+        }
+
+        CreateResult IDatabaseUpdater.CreateComponentVersion(string identity, ComponentVersionRecord componentVersion)
+        {
+            var result = _databaseUpdater.CreateComponentVersion(identity, componentVersion);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.NewRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = componentVersion.RecordType,
+                        ElementId = result.NewRecordId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateComponentVersion(string identity, long componentVersionId, IEnumerable<DatabasePropertyChange> changes)
+        {
+            var result = _databaseUpdater.UpdateComponentVersion(identity, componentVersionId, changes);
+            if (!result.Success) return result;
+
+            AddChangesToLiveUpdate(ComponentVersionRecord.RecordTypeName, componentVersionId, changes);
+
+            return result;
+        }
+
+        DeleteResult IDatabaseUpdater.DeleteComponentVersion(string identity, long componentVersionId)
+        {
+            var result = _databaseUpdater.DeleteComponentVersion(identity, componentVersionId);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.DeletedRecords.Add(
+                    new RecordReference
+                    {
+                        RecordType = ComponentVersionRecord.RecordTypeName,
+                        ElementId = componentVersionId
+                    });
+            }
+
+            return result;
+        }
+
         UpdateResult IDatabaseUpdater.AddLayoutToWebsiteVersion(string identity, long layoutId, int version, long websiteVersionId, string scenario)
         {
             var result = _databaseUpdater.AddLayoutToWebsiteVersion(identity, layoutId, version, websiteVersionId, scenario);
@@ -799,6 +891,68 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         WebsiteVersionId = websiteVersionId,
                         ElementType = RegionRecord.RecordTypeName,
                         ElementId = regionId,
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = null
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.AddComponentToWebsiteVersion(string identity, long componentId, int version, long websiteVersionId, string scenario)
+        {
+            var result = _databaseUpdater.AddComponentToWebsiteVersion(identity, componentId, version, websiteVersionId, scenario);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = ComponentRecord.RecordTypeName,
+                        ElementId = componentId,
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = 0 // TODO: find correct value
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.AddComponentToWebsiteVersion(string identity, long componentVersionId, long websiteVersionId, string scenario)
+        {
+            var result = _databaseUpdater.AddComponentToWebsiteVersion(identity, componentVersionId, websiteVersionId, scenario);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = ComponentRecord.RecordTypeName,
+                        ElementId = 0, // TODO: find correct value
+                        OldElementVersionId = 0, // TODO: find correct value
+                        NewElementVersionId = componentVersionId
+                    });
+            }
+
+            return result;
+        }
+
+        UpdateResult IDatabaseUpdater.RemoveComponentFromWebsite(string identity, long componentId, long websiteVersionId, string scenario)
+        {
+            var result = _databaseUpdater.RemoveComponentFromWebsite(identity, componentId, websiteVersionId, scenario);
+            if (!result.Success) return result;
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.WebsiteVersionChanges.Add(
+                    new WebsiteVersionChange
+                    {
+                        WebsiteVersionId = websiteVersionId,
+                        ElementType = ComponentRecord.RecordTypeName,
+                        ElementId = componentId,
                         OldElementVersionId = 0, // TODO: find correct value
                         NewElementVersionId = null
                     });
@@ -1112,6 +1266,11 @@ namespace OwinFramework.Pages.CMS.Manager.Data
         T IDatabaseReader.GetRegion<T>(long regionId, Func<RegionRecord, T> map)
         {
             return _databaseReader.GetRegion(regionId, map);
+        }
+
+        T IDatabaseReader.GetComponent<T>(long componentId, Func<ComponentRecord, T> map)
+        {
+            return _databaseReader.GetComponent(componentId, map);
         }
 
         T IDatabaseReader.GetDataScope<T>(long dataScopeId, Func<DataScopeRecord, T> map)

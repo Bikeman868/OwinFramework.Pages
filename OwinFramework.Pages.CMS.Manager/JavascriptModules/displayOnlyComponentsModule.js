@@ -7,22 +7,17 @@
             }
         },
         template:
-            "<pre class=\"cms_preview cms_html__page_preview\">{{html}}</pre>",
-        computed: {
-            // TODO: Other page version properties
-            // TODO: Undefined properties revert to master page
-            html: function () {
-                var result = "";
-                result += "<html>\n";
-                result += "  <head>\n";
-                result += "    <title>{{pageVersion.title}}</title>\n";
-                result += "  </head>\n";
-                result += "  <body>\n";
-                result += "  </body>\n";
-                result += "</html>";
-                return result;
-            }
-        }
+// TODO: Other page version properties
+// TODO: Undefined properties revert to master page
+`<pre class="cms_preview cms_html__page_preview">
+  &lt;html>
+    &lt;head>
+      &lt;title>{{pageVersion.title}}&lt;/title>
+    &lt;/head>
+    &lt;body>
+    &lt;/body>
+  &lt;/html>
+</pre>`
     });
 
     Vue.component("cms-layout-preview", {
@@ -33,7 +28,7 @@
             }
         },
         template:
-            "<pre class=\"cms_preview cms_html__layout_preview\">{{html}}</pre>",
+            `<pre class="cms_preview cms_html__layout_preview">{{html}}</pre>`,
         computed: {
             html: function () {
                 var result = "";
@@ -88,7 +83,7 @@
             }
         },
         template:
-            "<pre class=\"cms_preview cms_html__region_preview\">{{html}}</pre>",
+            `<pre class="cms_preview cms_html__region_preview">{{html}}</pre>`,
         computed: {
             html: function () {
                 var result = "";
@@ -110,30 +105,30 @@
             summary: "clearEvents"
         },
         template:
-            "<tr class=\"cms_history_summary\">" +
-            "  <td class=\"cms_history__when\">{{summary.when|cms_formatDate}}</td>" +
-            "  <td class=\"cms_history__identity\">{{summary.identity|cms_formatUserUrn}}</td>" +
-            "  <td v-if=\"events==undefined\" class=\"cms_history__changes\">" +
-            "    {{summary.changes}}" +
-            "    <button @click=\"retrieveEvents\">...</button>" +
-            "  </td>" +
-            "  <td v-else class=\"cms_history__changes\">" +
-            "    <table class=\"cms_history_events\">" +
-            "      <tr class=\"cms_history_events\" v-for=\"event in events\">" +
-            "        <td class=\"cms_history__when\">{{event.when|cms_formatTime}}</td>" +
-            "        <td class=\"cms_history__changes\">" +
-            "          <div v-for=\"change in event.changes\">"+
-            "            <span v-if=\"change.changeType==='Created'\">Created this {{event.recordType|cms_lowercase}}</span>" +
-            "            <span v-if=\"change.changeType==='Deleted'\">Deleted this {{event.recordType|cms_lowercase}}</span>" +
-            "            <span v-if=\"change.changeType==='Modified'\">Changed the {{change.field}} from \"{{change.oldValue}}\" to \"{{change.newValue}}\"</span>" +
-            "            <span v-if=\"change.changeType==='ChildAdded'\">Added {{change.childType}} with ID={{change.childId}}<span v-if=\"change.scenario\"> in the {{change.scenario}} scenario</span></span>" +
-            "            <span v-if=\"change.changeType==='ChildRemoved'\">Removed {{change.childType}} with ID={{change.childId}}<span v-if=\"change.scenario\"> in the {{change.scenario}} scenario</span></span>" +
-            "          </div>" +
-            "        </td>" +
-            "      </tr>" +
-            "    </table>" +
-            "  </td>" +
-            "</tr>",
+`<tr class="cms_history_summary">
+  <td class="cms_history__when">{{summary.when|cms_formatDate}}</td>
+  <td class="cms_history__identity">{{summary.identity|cms_formatUserUrn}}</td>
+  <td v-if="events==undefined" class="cms_history__changes">
+    {{summary.changes}}
+    <button @click="retrieveEvents">...</button>
+  </td>
+  <td v-else class="cms_history__changes">
+    <table class="cms_history_events">
+      <tr class="cms_history_events" v-for="event in events">
+        <td class="cms_history__when">{{event.when|cms_formatTime}}</td>
+        <td class="cms_history__changes">
+          <div v-for="change in event.changes">"+
+            <span v-if="change.changeType==='Created'">Created this {{event.recordType|cms_lowercase}}</span>
+            <span v-if="change.changeType==='Deleted'">Deleted this {{event.recordType|cms_lowercase}}</span>
+            <span v-if="change.changeType==='Modified'">Changed the {{change.field}} from "{{change.oldValue}}" to "{{change.newValue}}"</span>
+            <span v-if="change.changeType==='ChildAdded'">Added {{change.childType}} with ID={{change.childId}}<span v-if="change.scenario"> in the {{change.scenario}} scenario</span></span>
+            <span v-if="change.changeType==='ChildRemoved'">Removed {{change.childType}} with ID={{change.childId}}<span v-if="change.scenario"> in the {{change.scenario}} scenario</span></span>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>`,
         data: function () {
             return {
                 events: null
@@ -180,16 +175,16 @@
             recordId: "loadData"
         },
         template:
-            "<div>" +
-            "  <h2>{{label}}</h2>" +
-            "  <table class=\"cms_history_period\">" +
-            "    <tr class=\"cms_history_summary\">" +
-            "      <th>When</th><th>Who</th><th>What</th>" +
-            "    </tr>" +
-            "    <cms-history-summary v-for=\"summary in summaries\" :key=\"summary.id\" :summary=\"summary\">" +
-            "    </cms-history-summary>" +
-            "  </table>" +
-            "</div>",
+`<div>
+  <h2>{{label}}</h2>
+  <table class="cms_history_period">
+    <tr class="cms_history_summary">
+      <th>When</th><th>Who</th><th>What</th>
+    </tr>
+    <cms-history-summary v-for="summary in summaries" :key="summary.id" :summary="summary">
+    </cms-history-summary>
+  </table>
+</div>`,
         data: function () {
             return {
                 summaries: []
@@ -215,22 +210,22 @@
         props: {
             page: { type: Object }
         },
-        template:
-            "<div>" +
-            "  <h2>{{page.displayName}} page</h2>"+
-            "  <div class=\"cms_field\">"+
-            "    <label>Name</label>"+
-            "    <p>{{page.name}}</p> "+
-            "  </div>"+
-            "  <div v-if=\"page.description\" class=\"cms_field\">" +
-            "    <label>Description</label>"+
-            "    <p>{{page.description}}</p>"+
-            "  </div>"+
-            "  <div class=\"cms_field\">" +
-            "    <label>Created</label>"+
-            "    <p>{{page.createdWhen|cms_formatDateTime}} by {{page.createdBy|cms_formatUserUrn}}</p> "+
-            "  </div>"+
-            "</div>"
+       template:
+`<div>
+  <h2>{{page.displayName}} page</h2>
+  <div class="cms_field">
+    <label>Name</label>
+    <p>{{page.name}}</p>
+  </div>
+  <div v-if="page.description" class="cms_field">
+    <label>Description</label>
+    <p>{{page.description}}</p>
+  </div>
+  <div class="cms_field">
+    <label>Created</label>
+    <p>{{page.createdWhen|cms_formatDateTime}} by {{page.createdBy|cms_formatUserUrn}}</p>
+  </div>
+</div>`
     });
 
     Vue.component("cms-view-page-version-detail", {
@@ -541,6 +536,55 @@
             "    <div class=\"cms_field\">" +
             "        <label>Created</label>" +
             "        <p>{{ regionVersion.createdWhen | cms_formatDateTime }} by {{ regionVersion.createdBy | cms_formatUserUrn }}</p>" +
+            "    </div>" +
+            "</div>"
+    });
+
+    Vue.component("cms-view-component-detail", {
+        props: {
+            component: { type: Object }
+        },
+        template:
+            "<div>" +
+            "  <h2>{{component.displayName}} component</h2>" +
+            "  <div class=\"cms_field\">" +
+            "    <label>Name</label>" +
+            "    <p>{{component.name}}</p> " +
+            "  </div>" +
+            "  <div v-if=\"component.description\" class=\"cms_field\">" +
+            "    <label>Description</label>" +
+            "    <p>{{component.description}}</p>" +
+            "  </div>" +
+            "  <div class=\"cms_field\">" +
+            "    <label>Created</label>" +
+            "    <p>{{component.createdWhen|cms_formatDateTime}} by {{component.createdBy|cms_formatUserUrn}}</p> " +
+            "  </div>" +
+            "</div>"
+    });
+
+    Vue.component("cms-view-component-version-detail", {
+        props: {
+            component: { type: Object },
+            componentVersion: { type: Object }
+        },
+        template:
+            "<div>" +
+            "    <h2>Version {{ componentVersion.version }} of the {{ component.displayName }} component</h2>" +
+            "    <div class=\"cms_field\" v-if=\"componentVersion.displayName\">" +
+            "        <label>Version name</label>" +
+            "        <p>{{ componentVersion.displayName }}</p>" +
+            "    </div>" +
+            "    <div class=\"cms_field\">" +
+            "        <label>Assets</label>" +
+            "        <p>{{ componentVersion.assetDeployment }}<span v-if=\"componentVersion.assetDeployment==='PerModule'\"> in the {{ componentVersion.moduleName }} module</span></p>" +
+            "    </div>" +
+            "    <div class=\"cms_field\" v-if=\"componentVersion.description\">" +
+            "        <label>Description</label>" +
+            "        <p>{{ componentVersion.description }}</p>" +
+            "    </div>" +
+            "    <div class=\"cms_field\">" +
+            "        <label>Created</label>" +
+            "        <p>{{ componentVersion.createdWhen | cms_formatDateTime }} by {{ componentVersion.createdBy | cms_formatUserUrn }}</p>" +
             "    </div>" +
             "</div>"
     });

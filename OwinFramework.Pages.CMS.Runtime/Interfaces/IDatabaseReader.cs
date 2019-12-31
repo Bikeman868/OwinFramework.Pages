@@ -228,6 +228,14 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
         T GetRegion<T>(long regionId, Func<RegionRecord, T> map);
 
         /// <summary>
+        /// Retrieves a single component by its ID number
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="componentId">The unique ID of the component to return</param>
+        /// <param name="map">A function that maps database records onto the return type</param>
+        T GetComponent<T>(long componentId, Func<ComponentRecord, T> map);
+
+        /// <summary>
         /// Retrieves a single data scope by its ID number
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>

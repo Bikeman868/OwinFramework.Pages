@@ -28,17 +28,19 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="JavascriptModules\dataModule.js" />
-    <None Remove="JavascriptModules\dispatcherModule.js" />
     <None Remove="JavascriptModules\displayOnlyComponentsModule.js" />
     <None Remove="JavascriptModules\elementEditorComponentsModule.js" />
     <None Remove="JavascriptModules\fieldEditorComponentsModule.js" />
     <None Remove="JavascriptModules\filtersModule.js" />
     <None Remove="JavascriptModules\genericComponentsModule.js" />
+    <None Remove="JavascriptModules\updateNotifierModule.js" />
     <None Remove="JavascriptModules\validationModule.js" />
     <None Remove="JavascriptModules\viewsModule.js" />
     <None Remove="Templates\CmsManager.html" />
     <None Remove="Templates\CmsManager.js" />
     <None Remove="Templates\CmsManager.less" />
+    <None Remove="Templates\Crud\ComponentEditor.html" />
+    <None Remove="Templates\Crud\ComponentEditor.js" />
     <None Remove="Templates\Crud\EnvironmentEditor.html" />
     <None Remove="Templates\Crud\EnvironmentEditor.js" />
     <None Remove="Templates\Crud\LayoutEditor.html" />
@@ -55,6 +57,8 @@
     <None Remove="Templates\Display\ContextDisplay.js" />
     <None Remove="Templates\Display\UserSegmentDisplay.html" />
     <None Remove="Templates\Display\UserSegmentDisplay.js" />
+    <None Remove="Templates\Selectors\ComponentSelector.html" />
+    <None Remove="Templates\Selectors\ComponentSelector.js" />
     <None Remove="Templates\Selectors\EnvironmentSelector.html" />
     <None Remove="Templates\Selectors\EnvironmentSelector.js" />
     <None Remove="Templates\Selectors\LayoutSelector.html" />
@@ -71,13 +75,16 @@
     <None Remove="Templates\Selectors\UserSegmentSelector.js" />
     <None Remove="Templates\Selectors\WebsiteVersionSelector.html" />
     <None Remove="Templates\Selectors\WebsiteVersionSelector.js" />
+    <None Remove="Templates\Tools\UpdateNotifierLog.html" />
+    <None Remove="Templates\Tools\UpdateNotifierLog.js" />
+    <None Remove="Templates\Tools\UpdateNotifierLog.less" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JavascriptModules\dataModule.js" />
-    <EmbeddedResource Include="JavascriptModules\dispatcherModule.js" />
+    <EmbeddedResource Include="JavascriptModules\updateNotifierModule.js" />
     <EmbeddedResource Include="JavascriptModules\displayOnlyComponentsModule.js" />
     <EmbeddedResource Include="JavascriptModules\elementEditorComponentsModule.js" />
     <EmbeddedResource Include="JavascriptModules\fieldEditorComponentsModule.js" />
@@ -90,6 +97,8 @@
     <EmbeddedResource Include="Templates\CmsManager.less" />
     <EmbeddedResource Include="Templates\Crud\EnvironmentEditor.html" />
     <EmbeddedResource Include="Templates\Crud\EnvironmentEditor.js" />
+    <EmbeddedResource Include="Templates\Crud\ComponentEditor.html" />
+    <EmbeddedResource Include="Templates\Crud\ComponentEditor.js" />
     <EmbeddedResource Include="Templates\Crud\LayoutEditor.html" />
     <EmbeddedResource Include="Templates\Crud\LayoutEditor.js" />
     <EmbeddedResource Include="Templates\Crud\PageEditor.html" />
@@ -106,6 +115,8 @@
     <EmbeddedResource Include="Templates\Display\UserSegmentDisplay.js" />
     <EmbeddedResource Include="Templates\Selectors\EnvironmentSelector.html" />
     <EmbeddedResource Include="Templates\Selectors\EnvironmentSelector.js" />
+    <EmbeddedResource Include="Templates\Selectors\ComponentSelector.html" />
+    <EmbeddedResource Include="Templates\Selectors\ComponentSelector.js" />
     <EmbeddedResource Include="Templates\Selectors\LayoutSelector.html" />
     <EmbeddedResource Include="Templates\Selectors\LayoutSelector.js" />
     <EmbeddedResource Include="Templates\Selectors\PageSelector.html" />
@@ -120,6 +131,9 @@
     <EmbeddedResource Include="Templates\Selectors\UserSegmentSelector.js" />
     <EmbeddedResource Include="Templates\Selectors\WebsiteVersionSelector.html" />
     <EmbeddedResource Include="Templates\Selectors\WebsiteVersionSelector.js" />
+    <EmbeddedResource Include="Templates\Tools\UpdateNotifierLog.html" />
+    <EmbeddedResource Include="Templates\Tools\UpdateNotifierLog.js" />
+    <EmbeddedResource Include="Templates\Tools\UpdateNotifierLog.less" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />

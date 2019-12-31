@@ -115,7 +115,7 @@ namespace OwinFramework.Pages.CMS.Manager
 
             var scriptModules = new List<string>();
 
-            LoadScriptModule("dispatcherModule", scriptModules);
+            LoadScriptModule("updateNotifierModule", scriptModules);
             LoadScriptModule("dataModule", scriptModules);
             LoadScriptModule("validationModule", scriptModules);
             LoadScriptModule("viewsModule", scriptModules);
@@ -142,6 +142,7 @@ namespace OwinFramework.Pages.CMS.Manager
             AddTemplate("PageSelector", less, scriptModules);
             AddTemplate("LayoutSelector", less, scriptModules);
             AddTemplate("RegionSelector", less, scriptModules);
+            AddTemplate("ComponentSelector", less, scriptModules);
 
             AddTemplate("UserSegmentDisplay", less, scriptModules);
             AddTemplate("ContextDisplay", less, scriptModules);
@@ -152,8 +153,9 @@ namespace OwinFramework.Pages.CMS.Manager
             AddTemplate("PageEditor", less, scriptModules);
             AddTemplate("LayoutEditor", less, scriptModules);
             AddTemplate("RegionEditor", less, scriptModules);
+            AddTemplate("ComponentEditor", less, scriptModules);
 
-            AddTemplate("DispatcherLog", less, scriptModules);
+            AddTemplate("UpdateNotifierLog", less, scriptModules);
 
             // Output JavaScript and CSS assets in a module
 

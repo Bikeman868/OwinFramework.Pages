@@ -1,0 +1,295 @@
+﻿<div id="cms_component_editor" class="cms_panel" v-if="visible">
+    <cms-modal-dialog
+                      v-bind:title="modalDialogTitle"
+                      v-bind:message="modalDialogMessage"
+                      v-bind:buttons="modalDialogButtons"
+                      v-bind:visible="modalDialogVisible"
+                      @close="modalDialogVisible = false">
+    </cms-modal-dialog>
+    <cms-tabs>
+        <cms-tab name="Details" selected="true">
+            <div v-if="currentComponent == undefined && componentMode === 'view'">
+                <h2>No component selected</h2>
+                <p>
+                    No component currently selected for editing.
+                    Choose a component from the list on the left.
+                    If the list of components is empty this is because the selected website version contains no components.
+                </p>
+                <div class="cms_button_bar">
+                    <button type="button" v-on:click="newComponent">New</button>
+                </div>
+            </div>
+            <div v-else>
+                <div v-if="componentMode === 'new' || componentMode === 'edit'">
+                    <h2 v-if="componentMode === 'new'">Create New Component</h2>
+                    <h2 v-if="componentMode === 'edit'">Edit Component Details</h2>
+                    <div class="cms_edit_panel">
+                        <cms-display-name-field-editor label="Display this component in CMS manager as"
+                                                       placeholder="My component"
+                                                       v-bind:display-name="editingComponent.displayName"
+                                                       @display-name-changed="editingComponent.displayName=$event">
+                        </cms-display-name-field-editor>
+                        <cms-element-name-field-editor label="Component name"
+                                                       placeholder="unique_component_name"
+                                                       v-bind:element-name="editingComponent.name"
+                                                       @element-name-changed="editingComponent.name=$event">
+                        </cms-element-name-field-editor>
+                        <cms-description-field-editor v-bind:description="editingComponent.description || ''"
+                                                      @description-changed="editingComponent.description=$event">
+                        </cms-description-field-editor>
+                    </div>
+                    <div class="cms_validation_error_list" v-if="errors.length > 0">
+                        <p v-for="error in errors">{{error}}</p>
+                    </div>
+                    <div class="cms_button_bar">
+                        <button v-if="componentMode === 'new'" type="button" v-on:click="createNew">Create</button>
+                        <button v-if="componentMode === 'edit'" type="button" v-on:click="saveChanges">Save</button>
+                        <button type="button" v-on:click="cancelChanges">Cancel</button>
+                    </div>
+                </div>
+                <div v-if="componentMode === 'view'">
+                    <cms-view-component-detail v-bind:component="currentComponent"></cms-view-component-detail>
+                </div>
+                <div v-if="componentMode === 'delete'">
+                    <h2>Confirm Component Deletion</h2>
+                    <p>This will delete all versions of the "{{currentComponent.name}}" component in all versions of the website</p>
+                </div>
+
+                <div v-if="websiteVersion && websiteVersion.recordId">
+                    <div v-if="currentComponentVersion == undefined && componentVersionMode === 'view'">
+                        <div v-if="scenario == undefined">
+                            <h2>No version of this component in this version of the website</h2>
+                            <p>
+                                There is no version of this component in the selected website version.
+                            </p>
+                            <p>
+                                To select a version of this component to use in this version of the website
+                                tap on the 'Choose Version' button.
+                            </p>
+                        </div>
+                        <div v-else>
+                            <h2>The {{scenario.displayName|cms_lowercase}} scenario uses the standard component version</h2>
+                            <p>
+                                This component uses the component version defined for the website version when the '{{scenario.displayName}}'
+                                a/b testing scenario is in use.
+                            </p>
+                            <p>
+                                If you want to change the component version that should be used for the
+                                '{{scenario.displayName}}' a/b testing scenario, tap on the 'Choose Version' button.
+                            </p>
+                        </div>
+                        <div class="cms_button_bar">
+                            <button type="button" v-on:click="chooseComponentVersion">Choose Version</button>
+                            <button type="button" v-on:click="newComponentVersion">New Version</button>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div v-if="componentVersionMode === 'new' || componentVersionMode === 'edit'">
+                            <h2 v-if="componentVersionMode === 'new'">Create New Component Version</h2>
+                            <h2 v-if="componentVersionMode === 'edit'">Edit Version {{editingComponentVersion.version}} of the {{currentComponent.displayName|cms_lowercase}} component</h2>
+                            <div class="cms_edit_panel">
+                                <cms-display-name-field-editor label="Name this version of the component"
+                                                               placeholder="Version 1"
+                                                               v-bind:display-name="editingComponentVersion.displayName"
+                                                               @display-name-changed="editingComponentVersion.displayName=$event">
+                                </cms-display-name-field-editor>
+                                <cms-description-field-editor v-bind:description="editingComponentVersion.description || ''"
+                                                              @description-changed="editingComponentVersion.description=$event">
+                                </cms-description-field-editor>
+                                <cms-asset-deployment-field-editor label="Asset deployment"
+                                                                   inherit-option="Inherit from parent"
+                                                                   v-bind:asset-deployment="editingComponentVersion.assetDeployment"
+                                                                   v-bind:module-name="editingComponentVersion.moduleName"
+                                                                   @asset-deployment-changed="editingComponentVersion.assetDeployment=$event"
+                                                                   @module-name-changed="editingComponentVersion.moduleName=$event">
+                                </cms-asset-deployment-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h2>Zones</h2>
+                                <cms-zones-field-editor label=""
+                                                        v-bind:nesting="editingComponentVersion.zoneNesting"
+                                                        v-bind:zones="editingComponentVersion.zones"
+                                                        @zone-nesting-changed="editingComponentVersion.zoneNesting=$event">
+                                </cms-zones-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h2>Component container properties</h2>
+                                <cms-html-tag-field-editor label="Html tag"
+                                                           v-bind:html-tag="editingComponentVersion.tag||''"
+                                                           @html-tag-changed="editingComponentVersion.tag=$event">
+                                </cms-html-tag-field-editor>
+                                <cms-style-field-editor label="Custom style"
+                                                        v-bind:css-style="editingComponentVersion.style"
+                                                        @css-style-changed="editingComponentVersion.style=$event">
+                                </cms-style-field-editor>
+                                <cms-css-classes-field-editor label="Additional CSS classes"
+                                                              v-bind:css-classes="editingComponentVersion.classes"
+                                                              @css-classes-changed="editingComponentVersion.classes=$event">
+                                </cms-css-classes-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h2>Nested zones container properties</h2>
+                                <cms-html-tag-field-editor label="Html tag"
+                                                           v-bind:html-tag="editingComponentVersion.nestingTag||'div'"
+                                                           @html-tag-changed="editingComponentVersion.nestingTag=$event">
+                                </cms-html-tag-field-editor>
+                                <cms-style-field-editor label="Custom style"
+                                                        v-bind:css-style="editingComponentVersion.nestingStyle"
+                                                        @css-style-changed="editingComponentVersion.nestingStyle=$event">
+                                </cms-style-field-editor>
+                                <cms-css-classes-field-editor label="Additional CSS classes"
+                                                              v-bind:css-classes="editingComponentVersion.nestingClasses"
+                                                              @css-classes-changed="editingComponentVersion.nestingClasses=$event">
+                                </cms-css-classes-field-editor>
+                            </div>
+                            <div class="cms_edit_panel">
+                                <h2>Component data</h2>
+                                <cms-data-scopes-field-editor label="Component data scopes"
+                                                              v-bind:scopes="editingComponentVersion.dataScopes">
+                                </cms-data-scopes-field-editor>
+                                <cms-data-types-field-editor label="Component data needs"
+                                                             v-bind:scopes="editingComponentVersion.dataTypes">
+                                </cms-data-types-field-editor>
+                            </div>
+                            <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
+                                <p v-for="error in versionErrors">{{error}}</p>
+                            </div>
+                            <div class="cms_button_bar">
+                                <button v-if="componentVersionMode === 'new'" type="button" v-on:click="createNewVersion">Create</button>
+                                <button v-if="componentVersionMode === 'edit'" type="button" v-on:click="saveVersionChanges">Save</button>
+                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            </div>
+                        </div>
+                        <div v-if="componentVersionMode === 'view'">
+                            <cms-view-component-version-detail v-bind:component="currentComponent"
+                                                            v-bind:component-version="currentComponentVersion">
+                            </cms-view-component-version-detail>
+                            <div class="cms_button_bar">
+                                <button type="button" v-on:click="chooseComponentVersion">Choose</button>
+                                <button type="button" v-on:click="editComponentVersion">Edit</button>
+                                <button type="button" v-on:click="newComponentVersion">Copy</button>
+                                <button type="button" v-on:click="deleteCurrentComponentVersion">Delete</button>
+                            </div>
+                            <div class="cms_spacer_medium">&nbsp;</div>
+                        </div>
+                        <div v-if="componentVersionMode === 'delete'">
+                            <h2>Confirm Component Version Deletion</h2>
+                            <p>
+                                This will delete version {{currentComponentVersion.version}} of the {{currentComponent.displayName}} component.
+                                This component will disapear from any versions of the website that use this version of
+                                the {{currentComponent.displayName}} component.
+                            </p>
+                        </div>
+                        <div v-if="componentVersionMode === 'choose'">
+                            <h2>Choose Component Version</h2>
+                            <p>
+                                Which version of the {{currentComponent.displayName}} component do you want to use for the
+                                {{websiteVersion.displayName}} version of the website
+                                <span v-if="scenario"> when the {{scenario.displayName|cms_lowercase}} a/b testing scenario is in use</span>?
+                            </p>
+                            <cms-choose-element-version v-bind:element-type="currentComponent.recordType"
+                                                        v-bind:element-id="currentComponent.recordId"
+                                                        v-bind:selected-version-id="currentComponentVersion == undefined ? null : currentComponentVersion.recordId"
+                                                        @select-version="selectComponentVersion"
+                                                        @copy-version="copySelectedComponentVersion">
+                            </cms-choose-element-version>
+                            <div class="cms_button_bar">
+                                <button type="button" v-on:click="updateComponentVersion">Update</button>
+                                <button type="button" v-on:click="clearComponentVersion">None</button>
+                                <button type="button" v-on:click="cancelVersionChanges">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </cms-tab>
+        <cms-tab name="Preview">
+            <cms-component-preview v-if="currentComponentVersion" v-bind:component-version="currentComponentVersion"></cms-component-preview>
+        </cms-tab>
+        <cms-tab name="Versions">
+            <div v-if="currentComponent == undefined || currentComponent.recordId == undefined">
+                <p>Choose a component from the list on the left to compare versions of this component</p>
+            </div>
+            <div v-else>
+                <h2>Compare versions of the {{currentComponent.displayName|cms_lowercase}} component</h2>
+                <p>Choose versions to compare from the list below</p>
+                <cms-multi-select-element-versions v-bind:element-type="currentComponent.recordType"
+                                                   v-bind:element-id="currentComponent.recordId"
+                                                   v-bind:show-delete-button="true"
+                                                   @toggle-version="toggleComponentVersion"
+                                                   @delete-version="deleteChooseComponentVersion">
+                </cms-multi-select-element-versions>
+                <h2>Comparison matrix</h2>
+                <p>Use the table below to compare the selected versions</p>
+                <table>
+                    <tr><td></td><th v-for="version in compareComponentVersions">{{version.displayName}}</th></tr>
+                    <tr><th>Version</th><td v-for="version in compareComponentVersions">{{version.version}}</td></tr>
+                    <tr><th>Assets</th><td v-for="version in compareComponentVersions"><span v-if="version.assetDeployment==='PerModule'">{{version.moduleName}} module</span><span v-else>{{version.assetDeployment}}</span></td></tr>
+                    <tr><th>Tag</th><td v-for="version in compareComponentVersions">{{version.tag}}</td></tr>
+                    <tr><th>Style</th><td v-for="version in compareComponentVersions">{{version.style}}</td></tr>
+                    <tr><th>Classes</th><td v-for="version in compareComponentVersions">{{version.classes}}</td></tr>
+                    <tr><th>Nesting tag</th><td v-for="version in compareComponentVersions">{{version.nestingTag}}</td></tr>
+                    <tr><th>Nesting style</th><td v-for="version in compareComponentVersions">{{version.nestingStyle}}</td></tr>
+                    <tr><th>Nesting classes</th><td v-for="version in compareComponentVersions">{{version.nestingClasses}}</td></tr>
+                    <tr>
+                        <th>Zones</th>
+                        <td v-for="version in compareComponentVersions">
+                            <p v-for="componentZone in version.zones">
+                                <span>The {{componentZone.zone}} zone </span>
+                                <span v-if="componentZone.regionId">contains the {{componentZone.regionId | cms_lookupRegionId}} region</span>
+                                <span v-else-if="componentZone.componentId">contains the {{componentZone.componentId | cms_lookupComponentId}} component</span>
+                                <span v-else-if="componentZone.componentId">contains the {{componentZone.componentId | cms_lookupComponentId}} component</span>
+                                <span v-else-if="componentZone.contentType === 'Html'">contains HTML localizable as '{{componentZone.contentName}}'</span>
+                                <span v-else-if="componentZone.contentType === 'Template'">contains the {{componentZone.contentName}} template</span>
+                                <span v-else-if="componentZone.contentType">contains the '{{componentZone.contentName}}' {{componentZone.contentType | cms_lowercase}}</span>
+                                <span v-else> is empty</span>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Components</th>
+                        <td v-for="version in compareComponentVersions">
+                            <p v-for="component in version.components">
+                                <span v-if="component.componentId">{{component.componentId|cms_lookupComponentId}}</span>
+                                <span v-else-if="component.component">{{component.component}}</span>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Data types</th>
+                        <td v-for="version in compareComponentVersions">
+                            <p v-for="dataType in version.dataTypes">{{dataType.dataTypeId|cms_lookupDataTypeId}}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Data scopes</th>
+                        <td v-for="version in compareComponentVersions">
+                            <p v-for="dataScope in version.dataScopes">{{dataScope.dataScopeId|cms_lookupDataScopeId}}</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </cms-tab>
+        <cms-tab name="History">
+            <div v-if="currentComponent == undefined || currentComponent.recordId == undefined">
+                <p>
+                    No component currently selected for history.
+                    Choose a component from the list on the left.
+                    If the list of components is empty this is because the selected website version contains no components.
+                </p>
+            </div>
+            <div v-else>
+                <cms-history-period v-if="currentComponentVersion == undefined || currentComponentVersion.recordId == undefined"
+                                    v-bind:label="currentComponent.displayName + ' component change history'"
+                                    v-bind:record-type="currentComponent.recordType"
+                                    v-bind:record-id="currentComponent.recordId">
+                </cms-history-period>
+                <cms-history-period v-else
+                                    v-bind:label="currentComponent.displayName + ' component version ' + currentComponentVersion.version + ' change history'"
+                                    v-bind:record-type="currentComponentVersion.recordType"
+                                    v-bind:record-id="currentComponentVersion.recordId">
+                </cms-history-period>
+            </div>
+        </cms-tab>
+    </cms-tabs>
+</div>

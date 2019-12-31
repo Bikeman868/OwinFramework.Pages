@@ -25,7 +25,7 @@
         if (store.fields == undefined) throw "Data stores must define some fields";
         store.list = null;
         store.dictionary = {};
-        store.dispatcherUnsubscribe = null;
+        store.updateNotifierUnsubscribe = null;
         store.crud = store.crud || {};
         store.name = store.name || store.recordType;
         store.listName = store.listName || "list of " + name;
@@ -210,7 +210,7 @@
 
         if (store.dispose == undefined) {
             store.dispose = function () {
-                if (store.dispatcherUnsubscribe != null) store.dispatcherUnsubscribe();
+                if (store.updateNotifierUnsubscribe != null) store.updateNotifierUnsubscribe();
             };
         }
 
@@ -418,8 +418,8 @@
             }
         }
 
-        if (store.recordType != undefined && store.dispatcher != undefined) {
-            store.dispatcherUnsubscribe = store.dispatcher.subscribe(function (message) {
+        if (store.recordType != undefined && store.updateNotifier != undefined) {
+            store.updateNotifierUnsubscribe = store.updateNotifier.subscribe(function (message) {
                 if (message.propertyChanges != undefined) {
                     for (let i = 0; i < message.propertyChanges.length; i++) {
                         var propertyChange = message.propertyChanges[i];

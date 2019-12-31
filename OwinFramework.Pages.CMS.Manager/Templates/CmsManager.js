@@ -55,6 +55,6 @@
     exported.viewStore.showPageSelector(bottomContext, topContext);
     exported.viewStore.showPageEditor(bottomContext, topContext);
     exported.viewStore.showEnvironmentEditor(bottomContext, topContext);
-    exported.viewStore.showDispatcherLog(bottomContext, topContext);
+    exported.viewStore.showUpdateNotifierLog(bottomContext, topContext);
     exported.viewStore.showContextDisplay(bottomContext, topContext);
 }

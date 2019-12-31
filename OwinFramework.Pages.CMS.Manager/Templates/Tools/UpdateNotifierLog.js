@@ -1,4 +1,4 @@
-﻿exported.dispatcher_log_vm = function (eId) {
+﻿exported.update_notifier_log_vm = function (eId) {
     return new Vue({
         el: "#" + eId,
         data: {
@@ -24,7 +24,7 @@
             },
             show: function (context, managerContext) {
                 var vm = this;
-                vm._dispatcherUnsubscribe = exported.dispatcher.subscribe(function (message) {
+                vm._updateNotifierUnsubscribe = exported.updateNotifier.subscribe(function (message) {
                     var updateData =
                     {
                         when: message.when,
@@ -69,9 +69,9 @@
             },
             hide: function() {
                 var vm = this;
-                if (vm._dispatcherUnsubscribe != undefined) {
-                    vm._dispatcherUnsubscribe();
-                    vm._dispatcherUnsubscribe = null;
+                if (vm._updateNotifierUnsubscribe != undefined) {
+                    vm._updateNotifierUnsubscribe();
+                    vm._updateNotifierUnsubscribe = null;
                 }
                 vm.visible = false;
             }

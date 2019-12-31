@@ -213,6 +213,116 @@ namespace OwinFramework.Pages.CMS.Manager.Services
                 request.Success(regionVersions[0]);
         }
 
+        [Endpoint(UrlPath = "websiteversion/{id}/components", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the website version to get components for")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "The name of the segmentation scenario to get a component version for")]
+        private void WebsiteVersionComponents(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var scenarioName = request.Parameter<string>("scenario") ?? string.Empty;
+
+            var records = _dataLayer.GetWebsiteComponents(id, scenarioName, wvp => wvp);
+
+            if (records == null)
+                request.NoContent("There are no components in website version #" + id +
+                    (string.IsNullOrEmpty(scenarioName) ? "" : " for '" + scenarioName + "' test scenario"));
+            else
+                request.Success(records);
+        }
+
+        [Endpoint(UrlPath = "websiteversion/{websiteVersionId}/component/{componentId}", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the website version to get information for")]
+        [EndpointParameter(
+            "componentId",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the component to get information for")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "The name of the segmentation scenario to get a component version for")]
+        private void WebsiteComponentVersion(IEndpointRequest request)
+        {
+            var websiteVersionId = request.Parameter<long>("websiteVersionId");
+            var componentId = request.Parameter<long>("componentId");
+            var scenarioName = request.Parameter<string>("scenario") ?? string.Empty;
+
+            var componentVersions = _dataLayer.GetWebsiteComponents(websiteVersionId, scenarioName, pv => pv, pv => pv.ComponentId == componentId);
+            if (componentVersions == null || componentVersions.Length == 0)
+                request.NoContent(
+                    "There is no version of component #" + componentId +
+                    " in version #" + websiteVersionId + " of the website" +
+                    (string.IsNullOrEmpty(scenarioName) ? "" : " in the '" + scenarioName + "' test scenario"));
+            else
+                request.Success(componentVersions[0]);
+        }
+
+        [Endpoint(UrlPath = "websiteversion/{id}/datatypes", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the website version to get data types for")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "The name of the segmentation scenario to get a data type version for")]
+        private void WebsiteVersionDataTypes(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var scenarioName = request.Parameter<string>("scenario") ?? string.Empty;
+
+            var records = _dataLayer.GetWebsiteDataTypes(id, scenarioName, wvp => wvp);
+
+            if (records == null)
+                request.NoContent("There are no data types in website version #" + id +
+                    (string.IsNullOrEmpty(scenarioName) ? "" : " for '" + scenarioName + "' test scenario"));
+            else
+                request.Success(records);
+        }
+
+        [Endpoint(UrlPath = "websiteversion/{websiteVersionId}/datatype/{dataTypeId}", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "websiteVersionId",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the website version to get information for")]
+        [EndpointParameter(
+            "dataTypeId",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the data type to get information for")]
+        [EndpointParameter(
+            "scenario",
+            typeof(OptionalString),
+            Description = "The name of the segmentation scenario to get a data type version for")]
+        private void WebsiteDataTypeVersion(IEndpointRequest request)
+        {
+            var websiteVersionId = request.Parameter<long>("websiteVersionId");
+            var dataTypeId = request.Parameter<long>("dataTypeId");
+            var scenarioName = request.Parameter<string>("scenario") ?? string.Empty;
+
+            var dataTypeVersions = _dataLayer.GetWebsiteDataTypes(websiteVersionId, scenarioName, pv => pv, pv => pv.DataTypeId == dataTypeId);
+            if (dataTypeVersions == null || dataTypeVersions.Length == 0)
+                request.NoContent(
+                    "There is no version of data type #" + dataTypeId +
+                    " in version #" + websiteVersionId + " of the website" +
+                    (string.IsNullOrEmpty(scenarioName) ? "" : " in the '" + scenarioName + "' test scenario"));
+            else
+                request.Success(dataTypeVersions[0]);
+        }
+
         #endregion
 
         #region User segments
@@ -318,6 +428,101 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         {
             var regions = _dataLayer.GetRegions(p => p);
             request.Success(regions);
+        }
+
+        #endregion
+
+        #region Components
+
+        [Endpoint(UrlPath = "component/{id}/versions", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the component to get a list of versions for")]
+        private void ComponentVersions(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var componentVersions = _dataLayer.GetElementVersions(id, p => p as ComponentVersionRecord);
+
+            if (componentVersions == null)
+                request.NotFound("No component with ID " + id);
+            else
+                request.Success(componentVersions.Where(v => v != null));
+        }
+
+        [Endpoint(UrlPath = "components", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        private void AllComponents(IEndpointRequest request)
+        {
+            var components = _dataLayer.GetComponents(p => p);
+            request.Success(components);
+        }
+
+        #endregion
+
+        #region Modules
+
+        [Endpoint(UrlPath = "module/{id}/versions", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the module to get a list of versions for")]
+        private void ModuleVersions(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var moduleVersions = _dataLayer.GetElementVersions(id, p => p as ModuleVersionRecord);
+
+            if (moduleVersions == null)
+                request.NotFound("No module with ID " + id);
+            else
+                request.Success(moduleVersions.Where(v => v != null));
+        }
+
+        [Endpoint(UrlPath = "modules", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        private void AllModules(IEndpointRequest request)
+        {
+            var modules = _dataLayer.GetModules(p => p);
+            request.Success(modules);
+        }
+
+        #endregion
+
+        #region DataScopes
+
+        [Endpoint(UrlPath = "datascopes", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        private void AllDataScopes(IEndpointRequest request)
+        {
+            var dataScopes = _dataLayer.GetDataScopes(p => p);
+            request.Success(dataScopes);
+        }
+
+        #endregion
+
+        #region DataTypes
+
+        [Endpoint(UrlPath = "datatype/{id}/versions", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        [EndpointParameter(
+            "id",
+            typeof(PositiveNumber<long>),
+            EndpointParameterType.PathSegment,
+            Description = "The ID of the data type to get a list of versions for")]
+        private void DataTypeVersions(IEndpointRequest request)
+        {
+            var id = request.Parameter<long>("id");
+            var dataTypeVersions = _dataLayer.GetElementVersions(id, p => p as DataTypeVersionRecord);
+
+            if (dataTypeVersions == null)
+                request.NotFound("No dataType with ID " + id);
+            else
+                request.Success(dataTypeVersions.Where(v => v != null));
+        }
+
+        [Endpoint(UrlPath = "datatypes", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        private void AllDataTypes(IEndpointRequest request)
+        {
+            var dataTypes = _dataLayer.GetDataTypes(p => p);
+            request.Success(dataTypes);
         }
 
         #endregion

@@ -30,7 +30,6 @@ namespace OwinFramework.Pages.Standard
         /// Constructs a package that will build a component that includes a
         /// JavaScript library for managing data stores
         /// </summary>
-        /// <param name="hostingEnvironment"></param>
         public DataPackage(IHostingEnvironment hostingEnvironment)
         {
             var my = this as IPackage;

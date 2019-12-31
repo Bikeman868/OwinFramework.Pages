@@ -28,10 +28,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
                 return;
 
             foreach (var subscriber in subscribers)
-            {
-                var handler = subscriber.OnMessageReceived;
-                if (handler != null) handler(updateMessage);
-            }
+                subscriber.OnMessageReceived?.Invoke(updateMessage);
         }
 
         ILiveUpdateRecipient ILiveUpdateReceiver.Subscribe(Action<MessageDto> onMessageReceived)
@@ -79,9 +76,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
 
             void IDisposable.Dispose()
             {
-                if (_unsubscribeAction != null)
-                    _unsubscribeAction(this);
-
+                _unsubscribeAction?.Invoke(this);
                 _unsubscribeAction = null;
             }
         }

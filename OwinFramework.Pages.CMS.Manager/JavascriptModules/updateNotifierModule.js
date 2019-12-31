@@ -1,4 +1,4 @@
-﻿exported.dispatcher = function() {
+﻿exported.updateNotifier = function() {
     var messages = [];
     var subscribers = [];
     var clientId = null;

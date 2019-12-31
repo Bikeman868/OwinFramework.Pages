@@ -78,6 +78,9 @@ namespace OwinFramework.Pages.CMS.Runtime.Synchronization
         {
             _disposed = true;
 
+            _configReg?.Dispose();
+            _configReg = null;
+
             if (!_pollingThread.Join(TimeSpan.FromSeconds(15)))
                 _pollingThread.Abort();
         }

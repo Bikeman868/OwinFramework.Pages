@@ -52,6 +52,9 @@ exported.buildViewStore = function () {
             currentViewModel[container] = viewModel;
             return;
         }
+        if (buildViewModel == undefined) {
+            Alert("Missing view model for " + templatePath);
+        }
         var viewContainer = document.getElementById(container);
         ns.templates.templateLibrary.getTemplate(
             viewContainer,
@@ -139,8 +142,8 @@ exported.buildViewStore = function () {
     }
 
     // Tools
-    var showDispatcherLog = function (context, topContext) {
-        selectView("cms_tool_view", "/cms/manager/DispatcherLog", "cms_dispatcher_log", exported.dispatcher_log_vm, context, topContext);
+    var showUpdateNotifierLog = function (context, topContext) {
+        selectView("cms_tool_view", "/cms/manager/UpdateNotifierLog", "cms_update_notifier_log", exported.update_notifier_log_vm, context, topContext);
     }
 
     var viewSelectChanged = function(e, context, managerContext) {
@@ -217,7 +220,7 @@ exported.buildViewStore = function () {
         showUserSegmentDisplay:showUserSegmentDisplay,
         showContextDisplay: showContextDisplay,
 
-        showDispatcherLog: showDispatcherLog,
+        showUpdateNotifierLog: showUpdateNotifierLog,
 
         viewSelectChanged: viewSelectChanged
     }

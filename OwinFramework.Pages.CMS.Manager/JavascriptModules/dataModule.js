@@ -2,7 +2,7 @@
     exported.environmentStore = ns.data.store.newStore({
         recordType: "Environment",
         name: "environment",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "recordId", type: Number, isKey: true, allowNull: true },
             { name: "name", type: String, default: "new_environment" },
@@ -39,7 +39,7 @@
     exported.websiteVersionStore = ns.data.store.newStore({
         recordType: "WebsiteVersion",
         name: "website version",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "recordId", type: Number, isKey: true, allowNull: true },
             { name: "name", type: String, default: "new_website_version" },
@@ -85,7 +85,7 @@
     exported.pageStore = ns.data.store.newStore({
         recordType: "Page",
         name: "page",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "recordId", type: Number, isKey: true, allowNull: true },
             { name: "name", type: String, default: "new_page" },
@@ -123,7 +123,7 @@
         recordType: "PageVersion",
         name: "page version",
         listName: "list of page versions",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "recordId", type: Number, isKey: true, allowNull: true },
             { name: "name", type: String, default: "new_page_version" },
@@ -218,7 +218,7 @@
         recordType: "Layout",
         name: "layout",
         listName: "list of layouts",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "recordId", type: Number, isKey: true, allowNull: true },
             { name: "name", type: String, default: "new_layout" },
@@ -256,7 +256,7 @@
         recordType: "LayoutVersion",
         name: "layout version",
         listName: "list of layout versions",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "recordId", type: Number, isKey: true, allowNull: true },
             { name: "name", type: String, default: "new_layout_version" },
@@ -346,7 +346,7 @@
     exported.regionStore = ns.data.store.newStore({
         recordType: "Region",
         name: "region",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "recordId", type: Number, isKey: true, allowNull: true },
             { name: "name", type: String, default: "new_region" },
@@ -384,7 +384,7 @@
         recordType: "RegionVersion",
         name: "region version",
         listName: "list of region versions",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "recordId", type: Number, isKey: true, allowNull: true },
             { name: "name", type: String, default: "new_region_version" },
@@ -482,7 +482,7 @@
         recordType: "User",
         name: "user",
         listName: "list of users",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "userUrn", type: String, isKey: true },
             { name: "name", type: String }],
@@ -502,7 +502,7 @@
         recordType: "SegmentationTest",
         name: "segmentation test",
         listName: "list of segmentation tests",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "name", type: String, default: "new_segment", isKey: true },
             { name: "displayName", type: String, default: "New segment" },
@@ -537,7 +537,7 @@
         recordType: "SegmentationScenario",
         name: "segmentation scenario",
         listName: "list of segmentation scenarios",
-        dispatcher: exported.dispatcher,
+        updateNotifier: exported.updateNotifier,
         fields: [
             { name: "name", type: String, default: "new_scenario", isKey: true },
             { name: "displayName", type: String, default: "New scenario" },
@@ -569,4 +569,123 @@
             }
         }
     });
+
+    exported.componentStore = ns.data.store.newStore({
+        recordType: "Component",
+        name: "component",
+        listName: "list of components",
+        updateNotifier: exported.updateNotifier,
+        fields: [
+            { name: "recordId", type: Number, isKey: true, allowNull: true },
+            { name: "name", type: String, default: "new_component" },
+            { name: "displayName", type: String, default: "New component" },
+            { name: "description", type: String, allowNull: true },
+            { name: "createdBy", type: String, allowNull: true },
+            { name: "createdWhen", type: Date, allowNull: true }],
+        crud: {
+            createRecord: function (component, onSuccess, onFail, params) {
+                exported.crudService.createComponent({ body: component, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
+            },
+            retrieveRecord: function (componentId, onSuccess, onFail) {
+                exported.crudService.retrieveComponent({ id: componentId }, onSuccess, null, onFail);
+            },
+            retrieveAllRecords: function (onSuccess, onFail) {
+                exported.listService.allComponents({}, onSuccess, null, onFail);
+            },
+            updateRecord: function (originalComponent, updatedComponent, changes, onSuccess, onFail) {
+                if (changes.length > 0) {
+                    exported.crudService.updateComponent(
+                        {
+                            id: updatedComponent.recordId,
+                            body: changes
+                        },
+                        onSuccess, null, onFail);
+                }
+            },
+            deleteRecord: function (componentId, onSuccess, onFail) {
+                exported.crudService.deleteComponent({ id: componentId }, onSuccess, null, onFail);
+            }
+        }
+    });
+
+    exported.componentVersionStore = ns.data.store.newStore({
+        recordType: "ComponentVersion",
+        name: "component version",
+        listName: "list of component versions",
+        updateNotifier: exported.updateNotifier,
+        fields: [
+            { name: "recordId", type: Number, isKey: true, allowNull: true },
+            { name: "name", type: String, default: "new_component_version" },
+            { name: "displayName", type: String, default: "New component version" },
+            { name: "description", type: String, allowNull: true },
+            { name: "createdBy", type: String, allowNull: true },
+            { name: "createdWhen", type: Date, allowNull: true },
+            { name: "parentRecordId", type: Number, allowNull: true },
+            { name: "version", type: Number, allowNull: true },
+            { name: "moduleName", type: String, allowNull: true },
+            { name: "assetDeployment", type: String, default: "Inherit" }],
+        crud: {
+            createRecord: function (componentVersion, onSuccess, onFail, params) {
+                exported.crudService.createComponentVersion({
+                        body: componentVersion,
+                        websiteVersionId: params.websiteVersionId,
+                        scenario: params.scenario
+                    },
+                    onSuccess,
+                    onFail);
+            },
+            retrieveRecord: function (componentVersionId, onSuccess, onFail) {
+                exported.crudService.retrieveComponentVersion({ id: componentVersionId }, onSuccess, null, onFail);
+            },
+            retrieveAllRecords: function (onSuccess, onFail) {
+                exported.listService.allComponentVersions({}, onSuccess, null, onFail);
+            },
+            updateRecord: function (originalComponentVersion, updatedComponentVersion, changes, onSuccess, onFail) {
+                if (changes.length > 0) {
+                    exported.crudService.updateComponentVersion(
+                        {
+                            id: updatedComponentVersion.recordId,
+                            body: changes
+                        },
+                        onSuccess, null, onFail);
+                }
+            },
+            deleteRecord: function (componentVersionId, onSuccess, onFail) {
+                exported.crudService.deleteComponentVersion({ id: componentVersionId }, onSuccess, null, onFail);
+            }
+        },
+        getComponentVersions: function (componentId, onSuccess, onFail) {
+            var store = this;
+            const description = "list of component versions";
+            exported.listService.componentVersions(
+                { id: componentId },
+                function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
+                null,
+                function (ajax) { store.handleGetFail(description, ajax, onFail); });
+        },
+        getWebsiteComponentVersion: function (websiteVersionId, segmentationScenarioName, componentId, onSuccess, onFail) {
+            var store = this;
+            exported.listService.websiteComponentVersion(
+                {
+                    websiteVersionId: websiteVersionId,
+                    scenario: segmentationScenarioName,
+                    componentId: componentId
+                },
+                function (response) {
+                    if (response != undefined) {
+                        var componentVersionId = response.componentVersionId;
+                        if (componentVersionId != undefined) {
+                            store.retrieveRecord(componentVersionId, onSuccess, onFail);
+                            return;
+                        }
+                    }
+                    if (onFail != undefined) onFail("Failed to get component version for website version");
+                },
+                null,
+                function (ajax) {
+                    if (onFail != undefined) onFail("Failed to get component version for website version");
+                });
+        }
+    });
+
 }

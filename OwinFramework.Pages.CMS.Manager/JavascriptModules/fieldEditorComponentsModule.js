@@ -31,15 +31,15 @@
             selectedVersionId: "retrieveVersions"
         },
         template:
-            "<table class=\"cms_selector\">" +
-            "  <tr><th>Ver</th><th>Name</th><th>Usage</th><th v-if=\"showCopyButton || showDeleteButton\">Actions</th></tr>" +
-            "  <tr v-for=\"version in versions\" class=\"cms_selection\" v-bind:class=\"{ cms_selected: version.isSelected }\" @click=\"selectVersion(version)\">" +
-            "    <td>{{version.version}}</td>" +
-            "    <td>{{version.name}}</td>" +
-            "    <td><ul><li v-for=\"usage in version.usages\">{{usage.websiteVersionId|cms_lookupWebsiteVersionId}}<span v-if=\"usage.scenario\"> for the {{usage.scenario|cms_lookupScenarioName}}</span></li></ul></td>" +
-            "    <td v-if=\"showCopyButton || showDeleteButton\"><button v-if=\"showCopyButton\" @click.stop=\"copyVersion(version)\">Copy</button><button v-if=\"showDeleteButton\" @click.stop=\"deleteVersion(version)\">Delete</button></td>" +
-            "  </tr>" +
-            "</table>",
+/*html*/`<table class="cms_selector">
+  <tr><th>Ver</th><th>Name</th><th>Usage</th><th v-if="showCopyButton || showDeleteButton">Actions</th></tr>
+  <tr v-for="version in versions" class="cms_selection" v-bind:class="{ cms_selected: version.isSelected }" @click="selectVersion(version)">
+    <td>{{version.version}}</td>
+    <td>{{version.name}}</td>
+    <td><ul><li v-for="usage in version.usages">{{usage.websiteVersionId|cms_lookupWebsiteVersionId}}<span v-if="usage.scenario"> for the {{usage.scenario|cms_lookupScenarioName}}</span></li></ul></td>
+    <td v-if="showCopyButton || showDeleteButton"><button v-if="showCopyButton" @click.stop="copyVersion(version)">Copy</button><button v-if="showDeleteButton" @click.stop="deleteVersion(version)">Delete</button></td>
+  </tr>
+</table>`,
         data: function () {
             return {
                 versions: []
@@ -100,15 +100,15 @@
             elementId: "retrieveVersions"
         },
         template:
-            "<table class=\"cms_selector\">" +
-            "  <tr><th>Ver</th><th>Name</th><th>Usage</th><th v-if=\"showDeleteButton\">Actions</th></tr>" +
-            "  <tr v-for=\"version in versions\" class=\"cms_selection\" v-bind:class=\"{ cms_selected: version.isSelected }\" @click=\"toggleVersion(version)\">" +
-            "    <td>{{version.version}}</td>" +
-            "    <td>{{version.name}}</td>" +
-            "    <td><ul><li v-for=\"usage in version.usages\">{{usage.websiteVersionId|cms_lookupWebsiteVersionId}}<span v-if=\"usage.scenario\"> for the {{usage.scenario|cms_lookupScenarioName}}</span></li></ul></td>" +
-            "    <td v-if=\"showDeleteButton\"><button v-if=\"showDeleteButton\" @click.stop=\"deleteVersion(version)\">Delete</button></td>" +
-            "  </tr>" +
-            "</table>",
+/*html*/`<table class="cms_selector">
+  <tr><th>Ver</th><th>Name</th><th>Usage</th><th v-if="showDeleteButton">Actions</th></tr>
+  <tr v-for="version in versions" class="cms_selection" v-bind:class="{ cms_selected: version.isSelected }" @click="toggleVersion(version)">
+    <td>{{version.version}}</td>
+    <td>{{version.name}}</td>
+    <td><ul><li v-for="usage in version.usages">{{usage.websiteVersionId|cms_lookupWebsiteVersionId}}<span v-if="usage.scenario"> for the {{usage.scenario|cms_lookupScenarioName}}</span></li></ul></td>
+    <td v-if="showDeleteButton"><button v-if="showDeleteButton" @click.stop="deleteVersion(version)">Delete</button></td>
+  </tr>
+</table>`,
         data: function () {
             return {
                 versions: []
@@ -168,15 +168,15 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <select class=\"cms_field__website_version\" @change=\"selectWebsiteVersion($event)\">" +
-            "    <option :value=\"null\" :selected=\"websiteVersionId==undefined\"></option> " +
-            "    <option v-for=\"websiteVersion in websiteVersions\" :value=\"websiteVersion.recordId\" :selected=\"websiteVersion.recordId==websiteVersionId\">" +
-            "      {{websiteVersion.displayName}}" +
-            "    </option>" +
-            "  </select>" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <select class="cms_field__website_version" @change="selectWebsiteVersion($event)">
+    <option :value="null" :selected="websiteVersionId==undefined"></option> 
+    <option v-for="websiteVersion in websiteVersions" :value="websiteVersion.recordId" :selected="websiteVersion.recordId==websiteVersionId">
+      {{websiteVersion.displayName}}
+    </option>
+  </select>
+</div>`,
         data: function () {
             return {
                 websiteVersions: []
@@ -219,15 +219,15 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <select class=\"cms_field__page\" @change=\"selectPage($event)\">" +
-            "    <option v-if=\"allowNone\" :selected=\"pageId==undefined\"></option>" +
-            "    <option v-for=\"page in pages\" :value=\"page.recordId\" :selected=\"page.recordId==pageId\">" +
-            "      {{page.displayName}}" +
-            "    </option>" +
-            "  </select>" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <select class="cms_field__page" @change="selectPage($event)">
+    <option v-if="allowNone" :selected="pageId==undefined"></option>
+    <option v-for="page in pages" :value="page.recordId" :selected="page.recordId==pageId">
+      {{page.displayName}}
+    </option>
+  </select>
+</div>`,
         data: function () {
             return {
                 pages: []
@@ -286,18 +286,18 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <select class=\"cms_field__asset_deployment\" @change=\"selectAssetDeployment($event)\">" +
-            "    <option value=\"Inherit\" v-bind:selected=\"assetDeployment==='Inherit'\">{{inheritOption}}</option>" +
-            "    <option value=\"InPage\" v-bind:selected=\"assetDeployment==='InPage'\">Inline within page</option>" +
-            "    <option value=\"PerPage\" v-bind:selected=\"assetDeployment==='PerPage'\">Page specific asset</option>" +
-            "    <option value=\"PerModule\" v-bind:selected=\"assetDeployment==='PerModule'\">Defined by module</option>" +
-            "    <option value=\"PerWebsite\" v-bind:selected=\"assetDeployment==='PerWebsite'\">Website asset</option>" +
-            "  </select>" +
-            "  <input v-if=\"selectedAssetDeployment==='PerModule'\" type=\"text\" class=\"cms_field__module\" " +
-            "    v-model=\"editedModuleName\" placeholder=\"module_name\" v-bind:pattern=\"namePattern\" @input=\"inputModuleName\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <select class="cms_field__asset_deployment" @change="selectAssetDeployment($event)">
+    <option value="Inherit" v-bind:selected="assetDeployment==='Inherit'">{{inheritOption}}</option>
+    <option value="InPage" v-bind:selected="assetDeployment==='InPage'">Inline within page</option>
+    <option value="PerPage" v-bind:selected="assetDeployment==='PerPage'">Page specific asset</option>
+    <option value="PerModule" v-bind:selected="assetDeployment==='PerModule'">Defined by module</option>
+    <option value="PerWebsite" v-bind:selected="assetDeployment==='PerWebsite'">Website asset</option>
+  </select>
+  <input v-if="selectedAssetDeployment==='PerModule'" type="text" class="cms_field__module" 
+    v-model="editedModuleName" placeholder="module_name" v-bind:pattern="namePattern" @input="inputModuleName">
+</div>`,
         data: function () {
             return {
                 namePattern: exported.validation.namePattern.source,
@@ -341,18 +341,18 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
-            "  <select v-if=\"!inherit\" class=\"cms_field__layout\" @change=\"selectLayout($event)\">" +
-            "    <option :value=\"null\" :selected=\"selectedLayoutId==undefined\">Defined in code</option>" +
-            "    <option v-for=\"layout in layouts\" :value=\"layout.recordId\" :selected=\"layout.recordId==selectedLayoutId\">" +
-            "      {{layout.displayName}}" +
-            "    </option>" +
-            "  </select>" +
-            "  <input v-if=\"!inherit && !selectedLayoutId\" type=\"text\" class=\"cms_field__layout_name\" " +
-            "    v-model=\"editedLayoutName\" placeholder=\"layout_name\" v-bind:pattern=\"nameRefPattern\" @input=\"inputLayoutName\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <span v-if="inheritOption" class="cms_checkbox"><input type="checkbox" v-bind:checked="inherit" @change="changeInherit">{{inheritOption}}</span>
+  <select v-if="!inherit" class="cms_field__layout" @change="selectLayout($event)">
+    <option :value="null" :selected="selectedLayoutId==undefined">Defined in code</option>
+    <option v-for="layout in layouts" :value="layout.recordId" :selected="layout.recordId==selectedLayoutId">
+      {{layout.displayName}}
+    </option>
+  </select>
+  <input v-if="!inherit && !selectedLayoutId" type="text" class="cms_field__layout_name" 
+    v-model="editedLayoutName" placeholder="layout_name" v-bind:pattern="nameRefPattern" @input="inputLayoutName">
+</div>`,
         data: function () {
             return {
                 layouts: [],
@@ -412,18 +412,18 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label v-if=\"label\">{{label}}</label>" +
-            "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
-            "  <select v-if=\"!inherit\" class=\"cms_field__region\" @change=\"selectRegion($event)\">" +
-            "    <option :value=\"null\" :selected=\"selectedRegionId==undefined\">Defined in code</option>" +
-            "    <option v-for=\"region in regions\" v-bind:value=\"region.recordId\" v-bind:selected=\"region.recordId==selectedRegionId\">" +
-            "      {{region.displayName}}" +
-            "    </option>" +
-            "  </select>" +
-            "  <input v-if=\"!inherit && !selectedRegionId\" type=\"text\" class=\"cms_field__region_name\" " +
-            "    v-model=\"editedRegionName\" placeholder=\"region_name\" v-bind:pattern=\"nameRefPattern\" @input=\"inputRegionName\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label v-if="label">{{label}}</label>
+  <span v-if="inheritOption" class="cms_checkbox"><input type="checkbox" v-bind:checked="inherit" @change="changeInherit">{{inheritOption}}</span>
+  <select v-if="!inherit" class="cms_field__region" @change="selectRegion($event)">
+    <option :value="null" :selected="selectedRegionId==undefined">Defined in code</option>
+    <option v-for="region in regions" v-bind:value="region.recordId" v-bind:selected="region.recordId==selectedRegionId">
+      {{region.displayName}}
+    </option>
+  </select>
+  <input v-if="!inherit && !selectedRegionId" type="text" class="cms_field__region_name" 
+    v-model="editedRegionName" placeholder="region_name" v-bind:pattern="nameRefPattern" @input="inputRegionName">
+</div>`,
         data: function () {
             return {
                 regions: [],
@@ -483,18 +483,18 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label v-if=\"label\">{{label}}</label>" +
-            "  <span v-if=\"inheritOption\" class=\"cms_checkbox\"><input type=\"checkbox\" v-bind:checked=\"inherit\" @change=\"changeInherit\">{{inheritOption}}</span>" +
-            "  <select v-if=\"!inherit\" class=\"cms_field__component\" @change=\"selectComponent($event)\">" +
-            "    <option :value=\"null\" :selected=\"selectedComponentId==undefined\">Defined in code</option>" +
-            "    <option v-for=\"component in components\" v-bind:value=\"component.recordId\" v-bind:selected=\"component.recordId==selectedComponentId\">" +
-            "      {{component.displayName}}" +
-            "    </option>" +
-            "  </select>" +
-            "  <input v-if=\"!inherit && !selectedComponentId\" type=\"text\" class=\"cms_field__component_name\" " +
-            "    v-model=\"editedComponentName\" placeholder=\"component_name\" :pattern=\"nameRefPattern\" @input=\"inputComponentName\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label v-if="label">{{label}}</label>
+  <span v-if="inheritOption" class="cms_checkbox"><input type="checkbox" v-bind:checked="inherit" @change="changeInherit">{{inheritOption}}</span>
+  <select v-if="!inherit" class="cms_field__component" @change="selectComponent($event)">
+    <option :value="null" :selected="selectedComponentId==undefined">Defined in code</option>
+    <option v-for="component in components" v-bind:value="component.recordId" v-bind:selected="component.recordId==selectedComponentId">
+      {{component.displayName}}
+    </option>
+  </select>
+  <input v-if="!inherit && !selectedComponentId" type="text" class="cms_field__component_name" 
+    v-model="editedComponentName" placeholder="component_name" :pattern="nameRefPattern" @input="inputComponentName">
+</div>`,
         data: function () {
             return {
                 components: [],
@@ -571,37 +571,37 @@
             }
         },
         template:
-            "<div>" +
-            "  <select v-model=\"mode\">" +
-            "    <option value=\"0\">{{defaultOption}}</option>" +
-            "    <option value=\"1\">CMS region</option>" +
-            "    <option value=\"2\">CMS layout</option>" +
-            "    <option value=\"3\">CMS component</option>" +
-            "    <option value=\"4\">Named element</option>" +
-            "    <option value=\"5\">Static HTML</option>" +
-            "    <option value=\"6\">HTML template</option>" +
-            "  </select>" +
-            "  <cms-region-field-editor v-if=\"mode==1\" :region-id=\"layoutZone.regionId\" :inherit-option=\"null\"></cms-region-field-editor>" +
-            "  <cms-layout-field-editor v-if=\"mode==2\" :layout-id=\"layoutZone.layoutId\" :inherit-option=\"null\"></cms-layout-field-editor>" +
-            "  <cms-component-field-editor v-if=\"mode==3\" :component-id=\"layoutZone.componentId\" :inherit-option=\"null\"></cms-component-field-editor>" +
-            "  <div v-if=\"mode==4\">" +
-            "    <select v-model=\"layoutZone.contentType\">" +
-            "      <option value=\"Region\">Region name</option>" +
-            "      <option value=\"Layout\">Layout name</option>" +
-            "      <option value=\"Component\">Component name</option>" +
-            "    </select>" +
-            "    <input type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"package:element_name\" :pattern=\"nameRefPattern\">" +
-            "  </div>" +
-            "  <div v-if=\"mode==5\">" +
-            "    <label>Localizable asset name</label>" +
-            "    <input type=\"text\" v-model=\"layoutZone.contentName\" placeholder=\"localizable_asset_name\" :pattern=\"namePattern\">" +
-            "    <label>Default language Html</label>" +
-            "    <textarea class=\"cms_field__html\" v-model=\"layoutZone.contentValue\" placeholder=\"<div></div>\" :pattern=\"htmlPattern\"></textarea>" +
-            "  </div>" +
-            "  <div v-if=\"mode==6\">" +
-            "    <cms-template-field-editor :templatePath=\"layoutZone.contentName\" @template-path-changed=\"layoutZone.contentName=$event\"></cms-template-field-editor>" +
-            "  </div>" +
-            "</div>",
+/*html*/`<div>
+  <select v-model="mode">
+    <option value="0">{{defaultOption}}</option>
+    <option value="1">CMS region</option>
+    <option value="2">CMS layout</option>
+    <option value="3">CMS component</option>
+    <option value="4">Named element</option>
+    <option value="5">Static HTML</option>
+    <option value="6">HTML template</option>
+  </select>
+  <cms-region-field-editor v-if="mode==1" :region-id="layoutZone.regionId" :inherit-option="null"></cms-region-field-editor>
+  <cms-layout-field-editor v-if="mode==2" :layout-id="layoutZone.layoutId" :inherit-option="null"></cms-layout-field-editor>
+  <cms-component-field-editor v-if="mode==3" :component-id="layoutZone.componentId" :inherit-option="null"></cms-component-field-editor>
+  <div v-if="mode==4">
+    <select v-model="layoutZone.contentType">
+      <option value="Region">Region name</option>
+      <option value="Layout">Layout name</option>
+      <option value="Component">Component name</option>
+    </select>
+    <input type="text" v-model="layoutZone.contentName" placeholder="package:element_name" :pattern="nameRefPattern">
+  </div>
+  <div v-if="mode==5">
+    <label>Localizable asset name</label>
+    <input type="text" v-model="layoutZone.contentName" placeholder="localizable_asset_name" :pattern="namePattern">
+    <label>Default language Html</label>
+    <textarea class="cms_field__html" v-model="layoutZone.contentValue" placeholder="<div></div>" :pattern="htmlPattern"></textarea>
+  </div>
+  <div v-if="mode==6">
+    <cms-template-field-editor :templatePath="layoutZone.contentName" @template-path-changed="layoutZone.contentName=$event"></cms-template-field-editor>
+  </div>
+</div>`,
         data: function () {
             return {
                 mode: this.calculateMode(),
@@ -645,27 +645,27 @@
             layoutZones: "setZones"
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <table v-if=\"mode==='fixed'\">" +
-            "    <tr><th>Zone</th><th>Contents</th></tr>" +
-            "    <tr v-for=\"zone in zones\">" +
-            "      <td>{{zone.name}}</td>" +
-            "      <td><cms-layout-zone-editor :layout-zone=\"zone.layoutZone\" @default-changed=\"setZoneDefault($event)\"></cms-layout-zone-editor></td>" +
-            "    </tr>" +
-            "  </table>" +
-            "  <div v-else>" +
-            "    <table>" +
-            "      <tr><th>Zone</th><th>Contents</th><th>-</th></tr>" +
-            "      <tr v-for=\"zone in zones\">" +
-            "        <td><input type=\"text\" class=\"cms_field__name\" placeholder=\"zone_name\" :pattern=\"namePattern\" v-model=\"zone.name\"></td>" +
-            "        <td><cms-layout-zone-editor :layout-zone=\"zone.layoutZone\" @default-changed=\"setZoneDefault($event)\"></cms-layout-zone-editor></td>" +
-            "        <td><button @click=\"removeZone(zone.name)\">-</button></td>" +
-            "      </tr>" +
-            "    </table>" +
-            "    <button @click=\"addZone\">+</button>" +
-            "  </div>" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <table v-if="mode==='fixed'">
+    <tr><th>Zone</th><th>Contents</th></tr>
+    <tr v-for="zone in zones">
+      <td>{{zone.name}}</td>
+      <td><cms-layout-zone-editor :layout-zone="zone.layoutZone" @default-changed="setZoneDefault($event)"></cms-layout-zone-editor></td>
+    </tr>
+  </table>
+  <div v-else>
+    <table>
+      <tr><th>Zone</th><th>Contents</th><th>-</th></tr>
+      <tr v-for="zone in zones">
+        <td><input type="text" class="cms_field__name" placeholder="zone_name" :pattern="namePattern" v-model="zone.name"></td>
+        <td><cms-layout-zone-editor :layout-zone="zone.layoutZone" @default-changed="setZoneDefault($event)"></cms-layout-zone-editor></td>
+        <td><button @click="removeZone(zone.name)">-</button></td>
+      </tr>
+    </table>
+    <button @click="addZone">+</button>
+  </div>
+</div>`,
         data: function () {
             return {
                 mode: "fixed",
@@ -783,28 +783,28 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <p>Nesting: {{editedNesting}}</p>" +
-            "  <table>" +
-            "    <tr><th>Zone</th><th>Nesting</th><th>Contents</th><th>-</th></tr>" +
-            "    <tr v-for=\"zone in zones\">" +
-            "      <td><input type=\"text\" class=\"cms_field__name\" placeholder=\"zone_name\" :pattern=\"namePattern\" v-model=\"zone.zone\"></td>" +
-            "      <td>" +
-            "        <span>{{zone.indent}}</span>" +
-            "        <button @click=\"outdentZone(zone)\">&lt;</button>" +
-            "        <button @click=\"indentZone(zone)\">&gt;</button>" +
-            "      </td>" +
-            "      <td><cms-layout-zone-editor :layout-zone=\"zone\" default-option=\"Empty\" @default-changed=\"setZoneDefault($event)\"></cms-layout-zone-editor></td>" +
-            "      <td>" +
-            "        <button @click=\"moveZoneUp(zone)\">^</button>" +
-            "        <button @click=\"moveZoneDown(zone)\">v</button>" +
-            "        <button @click=\"removeZone(zone)\">-</button>" +
-            "      </td>" +
-            "    </tr>" +
-            "  </table>" +
-            "  <button @click=\"addZone\">+</button>" +
-            "</div>",
+ /*html*/`<div class="cms_field">
+   <label>{{label}}</label>
+   <p>Nesting: {{editedNesting}}</p>
+   <table>
+     <tr><th>Zone</th><th>Nesting</th><th>Contents</th><th>-</th></tr>
+     <tr v-for="zone in zones">
+       <td><input type="text" class="cms_field__name" placeholder="zone_name" :pattern="namePattern" v-model="zone.zone"></td>
+       <td>
+         <span>{{zone.indent}}</span>
+         <button @click="outdentZone(zone)">&lt;</button>
+         <button @click="indentZone(zone)">&gt;</button>
+       </td>
+       <td><cms-layout-zone-editor :layout-zone="zone" default-option="Empty" @default-changed="setZoneDefault($event)"></cms-layout-zone-editor></td>
+       <td>
+         <button @click="moveZoneUp(zone)">^</button>
+         <button @click="moveZoneDown(zone)">v</button>
+         <button @click="removeZone(zone)">-</button>
+       </td>
+     </tr>
+   </table>
+   <button @click="addZone">+</button>
+ </div>`,
         data: function () {
             return {
                 editedNesting: this.nesting,
@@ -966,18 +966,18 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <table>" +
-            "    <tr><th>Priority</th><th>Url path</th><th>-</th></tr>" +
-            "    <tr v-for=\"route in routes\">" +
-            "      <td><input type=\"text\" class=\"cms_field__priority\" placeholder=\"100\" :pattern=\"idPattern\" v-model=\"route.priority\"></td>" +
-            "      <td><input type=\"text\" class=\"cms_field__url_path\" placeholder=\"/content/page.html\" :pattern=\"urlPathPattern\" v-model=\"route.path\"></td>" +
-            "      <td><button @click=\"removeRoute(route.id)\">-</button></td>" +
-            "    </tr>" +
-            "  </table>" +
-            "  <button @click=\"addRoute\">+</button>"+
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <table>
+    <tr><th>Priority</th><th>Url path</th><th>-</th></tr>
+    <tr v-for="route in routes">
+      <td><input type="text" class="cms_field__priority" placeholder="100" :pattern="idPattern" v-model="route.priority"></td>
+      <td><input type="text" class="cms_field__url_path" placeholder="/content/page.html" :pattern="urlPathPattern" v-model="route.path"></td>
+      <td><button @click="removeRoute(route.id)">-</button></td>
+    </tr>
+  </table>
+  <button @click="addRoute">+</button>"+
+</div>`,
         data: function () {
             return {
                 nextId: 1
@@ -1048,10 +1048,10 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label v-if=\"label\">{{label}}</label>" +
-            "  <input type=\"text\" class=\"cms_field__template_path\" placeholder=\"/path/to/template\" :pattern=\"pathPattern\" @input=\"inputTemplatePath\" :value=\"templatePath\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label v-if="label">{{label}}</label>
+  <input type="text" class="cms_field__template_path" placeholder="/path/to/template" :pattern="pathPattern" @input="inputTemplatePath" :value="templatePath">
+</div>`,
         methods: {
             inputTemplatePath: function (e) {
                 this.$emit("template-path-changed", e.target.value);
@@ -1108,50 +1108,50 @@
                 }
             },
             template:
-                "<div>" +
-                "    <select v-model=\"mode\" >" +
-                "        <option value=\"layout\">Layout</option>" +
-                "        <option value=\"component\">Component</option>" +
-                "        <option value=\"html\">Html</option>" +
-                "        <option value=\"template\">Template</option>" +
-                "    </select >" +
-                "    <div v-if=\"mode === 'layout'\">" +
-                "        <cms-layout-field-editor" +
-                "            label=\"Region layout\"" +
-                "            :inherit-option=\"null\"" +
-                "            :layout-id=\"regionVersion.layoutId\"" +
-                "            :layout-name=\"regionVersion.layoutName\"" +
-                "            @layout-id-changed=\"regionVersion.layoutId=$event\"" +
-                "            @layout-name-changed=\"regionVersion.layoutName=$event\">" +
-                "        </cms-layout-field-editor>" +
-                "        <cms-layout-zones-field-editor" +
-                "            label=\"Layout zone contents\"" +
-                "            :zone-nesting=\"zoneNesting\"" +
-                "            :layout-zones=\"regionVersion.layoutZones\">" +
-                "        </cms-layout-zones-field-editor>" +
-                "    </div >" +
-                "    <div v-if=\"mode === 'component'\">" +
-                "        <p>Component chooser</p>" +
-                "    </div>" +
-                "    <div v-if=\"mode === 'html'\">" +
-                "        <label>Localizable asset name</label>" +
-                "        <input type=\"text\" v-model=\"regionVersion.assetName\" placeholder=\"localizable_asset_name\" :pattern=\"namePattern\">" +
-                "        <label>Default language Html</label>" +
-                "        <textarea class=\"cms_field__html\" v-model=\"regionVersion.assetValue\" placeholder=\"<div></div>\" :pattern=\"htmlPattern\"></textarea>" +
-                "    </div >" +
-                "    <div v-if=\"mode === 'template'\">" +
-                "        <p>Choose templates for each page area</p>" +
-                "        <table>" +
-                "          <tr><th>Page Area</th><th>Template</th></tr>" +
-                "          <tr><td>Head</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
-                "          <tr><td>Title</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
-                "          <tr><td>Styles</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
-                "          <tr><td>Scripts</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
-                "          <tr><td>Body</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
-                "          <tr><td>Initialization</td><td><cms-template-field-editor :label=\"null\"></cms-template-field-editor></td></tr>" +
-                "        </table>" +
-                "    </div>" +
-                "</div>",
+/*html*/`<div>
+    <select v-model="mode" >
+        <option value="layout">Layout</option>
+        <option value="component">Component</option>
+        <option value="html">Html</option>
+        <option value="template">Template</option>
+    </select >
+    <div v-if="mode === 'layout'">
+        <cms-layout-field-editor
+            label="Region layout"
+            :inherit-option="null"
+            :layout-id="regionVersion.layoutId"
+            :layout-name="regionVersion.layoutName"
+            @layout-id-changed="regionVersion.layoutId=$event"
+            @layout-name-changed="regionVersion.layoutName=$event">
+        </cms-layout-field-editor>
+        <cms-layout-zones-field-editor
+            label="Layout zone contents"
+            :zone-nesting="zoneNesting"
+            :layout-zones="regionVersion.layoutZones">
+        </cms-layout-zones-field-editor>
+    </div >
+    <div v-if="mode === 'component'">
+        <p>Component chooser</p>
+    </div>
+    <div v-if="mode === 'html'">
+        <label>Localizable asset name</label>
+        <input type="text" v-model="regionVersion.assetName" placeholder="localizable_asset_name" :pattern="namePattern">
+        <label>Default language Html</label>
+        <textarea class="cms_field__html" v-model="regionVersion.assetValue" placeholder="<div></div>" :pattern="htmlPattern"></textarea>
+    </div >
+    <div v-if="mode === 'template'">
+        <p>Choose templates for each page area</p>
+        <table>
+          <tr><th>Page Area</th><th>Template</th></tr>
+          <tr><td>Head</td><td><cms-template-field-editor :label="null"></cms-template-field-editor></td></tr>
+          <tr><td>Title</td><td><cms-template-field-editor :label="null"></cms-template-field-editor></td></tr>
+          <tr><td>Styles</td><td><cms-template-field-editor :label="null"></cms-template-field-editor></td></tr>
+          <tr><td>Scripts</td><td><cms-template-field-editor :label="null"></cms-template-field-editor></td></tr>
+          <tr><td>Body</td><td><cms-template-field-editor :label="null"></cms-template-field-editor></td></tr>
+          <tr><td>Initialization</td><td><cms-template-field-editor :label="null"></cms-template-field-editor></td></tr>
+        </table>
+    </div>
+</div>`,
             methods: {
                 calculateMode: function () {
                     if (this.regionVersion.layoutId != undefined || this.regionVersion.layoutName) return "layout";
@@ -1186,12 +1186,12 @@
             }
         },
         template: 
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <select class=\"cms_field__html_tag\" @change=\"tagChanged($event)\">" +
-            "    <option v-for=\"choice in choices\" :value=\"choice\" :selected=\"choice==htmlTag\">{{choice}}</option>" +
-            "  </select>" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <select class="cms_field__html_tag" @change="tagChanged($event)">
+    <option v-for="choice in choices" :value="choice" :selected="choice==htmlTag">{{choice}}</option>
+  </select>
+</div>`,
         methods: {
             tagChanged: function(e) {
                 this.$emit("html-tag-changed", e.target.value);
@@ -1213,10 +1213,10 @@
                 }
             },
             template:
-                "<div class=\"cms_field\">" +
-                "  <label>{{label}}</label>" +
-                "  <input type=\"text\" class=\"cms_field__style\" placeholder=\"font-family: arial; font-size: large;\" :pattern=\"stylePattern\" @input=\"inputStyle\" :value=\"cssStyle\">" +
-                "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <input type="text" class="cms_field__style" placeholder="font-family: arial; font-size: large;" :pattern="stylePattern" @input="inputStyle" :value="cssStyle">
+</div>`,
             data: function () {
                 return {
                     stylePattern: exported.validation.stylePattern.source
@@ -1243,10 +1243,10 @@
                 }
             },
             template:
-                "<div class=\"cms_field\">" +
-                "  <label>{{label}}</label>" +
-                "  <input type=\"text\" class=\"cms_field__classes\" placeholder=\"my_container my_float_left\" :pattern=\"classesPattern\" @input=\"inputChanged\" :value=\"cssClasses\">" +
-                "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <input type="text" class="cms_field__classes" placeholder="my_container my_float_left" :pattern="classesPattern" @input="inputChanged" :value="cssClasses">
+</div>`,
         data: function () {
             return {
                 classesPattern: exported.validation.classesPattern.source
@@ -1278,11 +1278,11 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <input type=\"text\" class=\"cms_field__permission\" placeholder=\"content:editor\" :pattern=\"permissionPattern\" @input=\"inputPermission\" :value=\"permission\">" +
-            "  <input type=\"text\" class=\"cms_field__asset_path\" placeholder=\"/user/profile/image\" :pattern=\"pathPattern\" @input=\"inputAssetPath\" :value=\"assetPath\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <input type="text" class="cms_field__permission" placeholder="content:editor" :pattern="permissionPattern" @input="inputPermission" :value="permission">
+  <input type="text" class="cms_field__asset_path" placeholder="/user/profile/image" :pattern="pathPattern" @input="inputAssetPath" :value="assetPath">
+</div>`,
         data: function () {
             return {
                 editedStyle: this.style,
@@ -1319,10 +1319,10 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <input type=\"text\" class=\"cms_field__title\" :placeholder=\"placeholder\" :pattern=\"titlePattern\" @input=\"inputTitle\" :value=\"title\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <input type="text" class="cms_field__title" :placeholder="placeholder" :pattern="titlePattern" @input="inputTitle" :value="title">
+</div>`,
         data: function () {
             return {
                 titlePattern: exported.validation.titlePattern.source
@@ -1354,10 +1354,10 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <input type=\"text\" class=\"cms_field__name\" :placeholder=\"placeholder\" :pattern=\"namePattern\" @input=\"inputElementName\" :value=\"elementName\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <input type="text" class="cms_field__name" :placeholder="placeholder" :pattern="namePattern" @input="inputElementName" :value="elementName">
+</div>`,
         data: function () {
             return {
                 namePattern: exported.validation.namePattern.source
@@ -1389,10 +1389,10 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label v-if=\"label\">{{label}}</label>" +
-            "  <input type=\"text\" class=\"cms_field__display_name\" :placeholder=\"placeholder\" :pattern=\"displayNamePattern\" @input=\"inputDisplayName\" :value=\"displayName\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label v-if="label">{{label}}</label>
+  <input type="text" class="cms_field__display_name" :placeholder="placeholder" :pattern="displayNamePattern" @input="inputDisplayName" :value="displayName">
+</div>`,
         data: function () {
             return {
                 displayNamePattern: exported.validation.displayNamePattern.source
@@ -1424,10 +1424,10 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <input type=\"text\" class=\"cms_field__url_path\" :placeholder=\"placeholder\" :pattern=\"urlPathPattern\" @input=\"inputUrlPath\" :value=\"urlPath\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <input type="text" class="cms_field__url_path" :placeholder="placeholder" :pattern="urlPathPattern" @input="inputUrlPath" :value="urlPath">
+</div>`,
         data: function () {
             return {
                 urlPathPattern: exported.validation.urlPathPattern.source
@@ -1459,10 +1459,10 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <input type=\"text\" class=\"cms_field__url\" :placeholder=\"placeholder\" :pattern=\"urlPattern\" @input=\"inputUrl\" :value=\"url\">" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <input type="text" class="cms_field__url" :placeholder="placeholder" :pattern="urlPattern" @input="inputUrl" :value="url">
+</div>`,
         data: function () {
             return {
                 urlPattern: exported.validation.urlPattern.source
@@ -1494,10 +1494,10 @@
             }
         },
         template:
-            "<div class=\"cms_field\">" +
-            "  <label>{{label}}</label>" +
-            "  <textarea class=\"cms_field__description\" :placeholder=\"placeholder\" @input=\"inputDescription\">{{description}}</textarea>" +
-            "</div>",
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <textarea class="cms_field__description" :placeholder="placeholder" @input="inputDescription">{{description}}</textarea>
+</div>`,
         methods: {
             inputDescription: function (e) {
                 this.$emit("description-changed", e.target.value);

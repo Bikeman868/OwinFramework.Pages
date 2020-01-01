@@ -68,8 +68,8 @@
         },
         template:
 /*html*/`<div>
-    <h2 v-if="isNew">Create New Scenario</h2>"+
-    <h2 v-else>Edit Scenario Details</h2>"+
+    <h2 v-if="isNew">Create New Scenario</h2>
+    <h2 v-else>Edit Scenario Details</h2>
     <div class="cms_edit_panel">
        <cms-display-name-field-editor label="Show this scenario in CMS manager as"
                                        placeholder="Blue color scheme"
@@ -108,7 +108,7 @@
                                           @display-name-changed="page.displayName=$event">
            </cms-display-name-field-editor>
            <cms-element-name-field-editor label="Page name"
-                                          placeholder="unique_page_name""+
+                                          placeholder="unique_page_name"
                                           v-bind:element-name="page.name"
                                           @element-name-changed="page.name=$event">
            </cms-element-name-field-editor>
@@ -177,7 +177,7 @@
         template:
 /*html*/`<div>
    <h2 v-if="isNew">Create New Page Version</h2>
-   <h2 v-else">Edit Version {{pageVersion.version}} of the {{page.displayName|cms_lowercase}} page</h2>
+   <h2 v-else>Edit Version {{pageVersion.version}} of the {{page.displayName|cms_lowercase}} page</h2>
    <div class="cms_edit_panel">
        <cms-display-name-field-editor label="Name this version of the page"
                                        placeholder="Version 1"

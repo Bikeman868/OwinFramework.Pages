@@ -976,7 +976,7 @@
       <td><button @click="removeRoute(route.id)">-</button></td>
     </tr>
   </table>
-  <button @click="addRoute">+</button>"+
+  <button @click="addRoute">+</button>
 </div>`,
         data: function () {
             return {

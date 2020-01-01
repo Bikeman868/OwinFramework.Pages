@@ -117,7 +117,7 @@
       <tr class="cms_history_events" v-for="event in events">
         <td class="cms_history__when">{{event.when|cms_formatTime}}</td>
         <td class="cms_history__changes">
-          <div v-for="change in event.changes">"+
+          <div v-for="change in event.changes">
             <span v-if="change.changeType==='Created'">Created this {{event.recordType|cms_lowercase}}</span>
             <span v-if="change.changeType==='Deleted'">Deleted this {{event.recordType|cms_lowercase}}</span>
             <span v-if="change.changeType==='Modified'">Changed the {{change.field}} from "{{change.oldValue}}" to "{{change.newValue}}"</span>
@@ -335,7 +335,7 @@
         },
         template: 
 /*html*/`<div>
-    <h2>Version {{ layoutVersion.version }} of the {{ layout.displayName }} layout</h2>"+
+    <h2>Version {{ layoutVersion.version }} of the {{ layout.displayName }} layout</h2>
     <div class="cms_field" v-if="layoutVersion.displayName">
         <label>Version name</label>
         <p>{{ layoutVersion.displayName }}</p>

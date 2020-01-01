@@ -1,15 +1,15 @@
 ﻿exported.buildGenericComponents = function() {
     Vue.component("cms-tabs", {
         template:
-/*html*/`<div>"+
+/*html*/`<div>
     <ul class="cms_tabs">
-      <li v-for="tab in tabs" :class="{ 'cms_is_active': tab.isActive }">"+
-          <a :href="tab.href" @click="selectTab(tab)">{{ tab.name }}</a>"+
-      </li>"+
-    </ul>"+
-    <div class="cms_tabs_details">"+
-        <slot></slot>"+
-    </div>"+
+      <li v-for="tab in tabs" :class="{ 'cms_is_active': tab.isActive }">
+          <a :href="tab.href" @click="selectTab(tab)">{{ tab.name }}</a>
+      </li>
+    </ul>
+    <div class="cms_tabs_details">
+        <slot></slot>
+    </div>
 </div>`,
         data: function() {
             return { tabs: [] };

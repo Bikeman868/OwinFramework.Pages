@@ -775,6 +775,25 @@ namespace OwinFramework.Pages.CMS.Manager.Data
             return result;
         }
 
+        UpdateResult IDatabaseUpdater.UpdateComponentVersionProperties(string identity, long componentVersionId, IEnumerable<ElementPropertyRecord> componentProperties)
+        {
+            var result = _databaseUpdater.UpdateComponentVersionProperties(identity, componentVersionId, componentProperties);
+            if (!result.Success) return result;
+
+            lock (_liveUpdateLock)
+            {
+                _nextMessage.ChildListChanges.Add(
+                    new RecordChildrenReference
+                    {
+                        RecordType = ComponentVersionRecord.RecordTypeName,
+                        ElementId = componentVersionId,
+                        ChildRecordType = "Property"
+                    });
+            }
+
+            return result;
+        }
+
         UpdateResult IDatabaseUpdater.AddLayoutToWebsiteVersion(string identity, long layoutId, int version, long websiteVersionId, string scenario)
         {
             var result = _databaseUpdater.AddLayoutToWebsiteVersion(identity, layoutId, version, websiteVersionId, scenario);

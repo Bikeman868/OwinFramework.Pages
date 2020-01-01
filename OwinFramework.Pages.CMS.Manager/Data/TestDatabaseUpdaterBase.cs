@@ -23,6 +23,7 @@ namespace OwinFramework.Pages.CMS.Manager.Data
         private DynamicCast<ElementDataTypeRecord> _elementDataTypeCast = new DynamicCast<ElementDataTypeRecord>();
         private DynamicCast<LayoutZoneRecord> _layoutZoneCast = new DynamicCast<LayoutZoneRecord>();
         private DynamicCast<RegionTemplateRecord> _regionTemplateCast = new DynamicCast<RegionTemplateRecord>();
+        private DynamicCast<ElementPropertyRecord> _elementPropertyCast = new DynamicCast<ElementPropertyRecord>();
 
         #region History
 
@@ -2032,11 +2033,52 @@ namespace OwinFramework.Pages.CMS.Manager.Data
                         changeDetails.OldValue = componentVersion.AssetDeployment.ToString();
                         componentVersion.AssetDeployment = (AssetDeployment)Enum.Parse(typeof(AssetDeployment), change.PropertyValue);
                         break;
+                    case "properties":
+                        componentVersion.Properties = ArrayPropertyChange(change, changeDetails, componentVersion.Properties, _elementPropertyCast);
+                        break;
                 }
                 details.Add(changeDetails);
             }
 
             AddHistory(componentVersion, identity, details.ToArray());
+
+            return new UpdateResult();
+        }
+
+        UpdateResult IDatabaseUpdater.UpdateComponentVersionProperties(string identity, long componentVersionId, IEnumerable<ElementPropertyRecord> componentProperties)
+        {
+            var componentVersion = _componentVersions.FirstOrDefault(p => p.RecordId == componentVersionId);
+            if (componentVersion == null) return new UpdateResult("component_version_not_found", "No component version found with id " + componentVersionId);
+
+            var oldProperties = componentVersion.Properties;
+            var newProperties = componentProperties.ToArray();
+
+            if (oldProperties != null && oldProperties.Length == newProperties.Length)
+            {
+                var hasChanged = false;
+                for (var i = 0; i < oldProperties.Length; i++)
+                {
+                    if (oldProperties[i].TypeName != newProperties[i].TypeName) hasChanged = true;
+                    if (oldProperties[i].DisplayRegionName != newProperties[i].DisplayRegionName) hasChanged = true;
+                    if (oldProperties[i].EditRegionName != newProperties[i].EditRegionName) hasChanged = true;
+                    if (oldProperties[i].DisplayName != newProperties[i].DisplayName) hasChanged = true;
+                    if (oldProperties[i].Description != newProperties[i].Description) hasChanged = true;
+                }
+                if (!hasChanged) return new UpdateResult();
+            }
+
+            componentVersion.Properties = newProperties;
+
+            AddHistory(
+                componentVersion,
+                identity,
+                new HistoryChangeDetails
+                {
+                    ChangeType = "Modified",
+                    FieldName = "properties",
+                    OldValue = JsonConvert.SerializeObject(oldProperties),
+                    NewValue = JsonConvert.SerializeObject(newProperties)
+                });
 
             return new UpdateResult();
         }

@@ -623,7 +623,9 @@
             { name: "parentRecordId", type: Number, allowNull: true },
             { name: "version", type: Number, allowNull: true },
             { name: "moduleName", type: String, allowNull: true },
-            { name: "assetDeployment", type: String, default: "Inherit" }],
+            { name: "assetDeployment", type: String, default: "Inherit" },
+            { name: "componentName", type: String, default: "my_package:my_component" },
+            { name: "properties", type: Array }],
         crud: {
             createRecord: function (componentVersion, onSuccess, onFail, params) {
                 exported.crudService.createComponentVersion({

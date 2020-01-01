@@ -1,6 +1,8 @@
 ﻿exported.buildValidation = function () {
     var namePattern = new RegExp("^[a-z][0-9a-z_]+$");
     var nameRefPattern = new RegExp("^[a-z][0-9a-z_]+(:[a-z][0-9a-z_]+)?$");
+    var csharpNamePattern = new RegExp("^[a-zA-Z_][0-9a-zA-Z_]*$");
+    var csharpTypeNamePattern = new RegExp("^[a-zA-Z_][0-9a-zA-Z_]*(\.[a-zA-Z_][0-9a-zA-Z_]*)*$");
     var displayNamePattern = new RegExp("^...+$");
     var urlPattern = new RegExp("^http(s)?://[0-9a-z_-]+\.[0-9a-z_.-]+/$");
     var idPattern = new RegExp("^[0-9]+$");
@@ -36,6 +38,26 @@
     var displayName = function (value, fieldName, errors) {
         if (value == undefined || value.length < 3)
             errors.push("The " + fieldName + " field must contain at least 3 characters");
+        return value;
+    }
+
+    var csharpName = function (value, fieldName, errors) {
+        if (value == undefined || value.length < 1)
+            errors.push("The " + fieldName + " field must contain at least 1 character");
+        else {
+            if (!csharpNamePattern.test(value))
+                errors.push("The " + fieldName + " field can only contain letters, numbers and underscore. The first character can not be a number");
+        }
+        return value;
+    }
+
+    var csharpTypeName = function (value, fieldName, errors) {
+        if (value == undefined || value.length < 1)
+            errors.push("The " + fieldName + " field must contain at least 1 character");
+        else {
+            if (!csharpTypeNamePattern.test(value))
+                errors.push("The " + fieldName + " field can only contain letters, numbers and underscore. The first character can not be a number. Namespaces can be separated with periods.");
+        }
         return value;
     }
 
@@ -150,6 +172,8 @@
         name: name,
         nameRef: nameRef,
         displayName: displayName,
+        csharpName: csharpName,
+        csharpTypeName: csharpTypeName,
         url: url,
         urlPath: urlPath,
         path: path,
@@ -165,6 +189,8 @@
         namePattern: namePattern,
         nameRefPattern: nameRefPattern,
         displayNamePattern: displayNamePattern,
+        csharpNamePattern: csharpNamePattern,
+        csharpTypeNamePattern: csharpTypeNamePattern,
         urlPattern: urlPattern,
         idPattern: idPattern,
         titlePattern: titlePattern,

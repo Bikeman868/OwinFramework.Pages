@@ -185,7 +185,9 @@ namespace Sample4.CmsData
                 {
                     ParentRecordId = _components[0].RecordId,
                     RecordId = elementVersionId++,
-                    Version = 1
+                    Version = 1,
+                    ComponentName = "message",
+                    Properties = _properties
                 }
             };
 

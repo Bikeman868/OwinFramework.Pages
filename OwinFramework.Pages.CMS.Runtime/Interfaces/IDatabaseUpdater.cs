@@ -53,6 +53,7 @@ namespace OwinFramework.Pages.CMS.Runtime.Interfaces
 
         CreateResult CreateComponentVersion(string identity, ComponentVersionRecord componentVersion);
         UpdateResult UpdateComponentVersion(string identity, long componentVersionId, IEnumerable<PropertyChange> changes);
+        UpdateResult UpdateComponentVersionProperties(string identity, long componentVersionId, IEnumerable<ElementPropertyRecord> componentProperties);
         DeleteResult DeleteComponentVersion(string identity, long componentVersionId);
 
         #endregion

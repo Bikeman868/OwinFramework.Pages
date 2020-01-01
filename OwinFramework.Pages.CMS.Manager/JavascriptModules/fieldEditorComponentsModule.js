@@ -1504,4 +1504,112 @@
             }
         }
     });
+
+    Vue.component("cms-component-class-field-editor", {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Component class"
+            },
+            placeholder: {
+                required: false,
+                type: String,
+                default: "my_package:my_component"
+            },
+            componentClass: {
+                required: false,
+                type: String,
+                default: ""
+            },
+        },
+        template:
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <input type="text" class="cms_field__name" :placeholder="placeholder" :pattern="nameRefPattern" @input="inputClassName" :value="componentClass">
+</div>`,
+        data: function () {
+            return {
+                nameRefPattern: exported.validation.nameRefPattern.source
+            }
+        },
+        methods: {
+            inputClassName: function (e) {
+                this.$emit("component-class-changed", e.target.value);
+            }
+        }
+    });
+
+    Vue.component("cms-element-properties-field-editor", {
+        props: {
+            label: {
+                required: false,
+                type: String,
+                default: "Properties"
+            },
+            elementProperties: {
+                required: false,
+                type: Array
+            }
+        },
+        template:
+/*html*/`<div class="cms_field">
+  <label>{{label}}</label>
+  <table>
+      <tr><th>Name</th><th>Property</th><th>Regions</th><th>Description</th><th>-</th></tr>
+      <tr v-for="property in elementProperties">
+        <td>
+            <input type="text" class="cms_field__display_name" placeholder="display name" v-model="property.displayName">
+        </td>
+        <td>
+            <label>C# class property name</label>
+            <input type="text" class="cms_field__name" placeholder="PropertyName" :pattern="csharpNamePattern" v-model="property.name">
+            <label>C# class property type</label>
+            <input type="text" class="cms_field__type" placeholder="System.String" :pattern="csharpTypeNamePattern" v-model="property.typeName">
+        </td>
+        <td>
+            <cms-region-field-editor label="Display region" :region-name="property.displayRegionName" inherit-option="Default display"></cms-region-field-editor>
+            <cms-region-field-editor label="Edit region" :region-name="property.editRegionName" inherit-option="Default editor"></cms-region-field-editor>
+        </td>
+        <td>
+            <label>Property description</label>
+            <textarea class="cms_field__description" :placeholder="description">{{property.description}}</textarea>
+        </td>
+        <td>
+            <button @click="removeProperty(property.name)">-</button>
+        </td>
+      </tr>
+  </table>
+  <button @click="addProperty">+</button>`,
+        data: function () {
+            return {
+                regions: [],
+                nameRefPattern: exported.validation.nameRefPattern.source,
+                displayNamePattern: exported.validation.displayNamePattern.source,
+                csharpNamePattern: exported.validation.csharpNamePattern.source,
+                csharpTypeNamePattern: exported.validation.csharpTypeNamePattern.source
+            }
+        },
+        created: function () {
+            var vm = this;
+            exported.regionStore.retrieveAllRecords(function (response) { vm.regions = response; });
+        },
+        methods: {
+            addProperty: function () {
+                this.elementProperties.push({
+                    name: "",
+                    displayName: "",
+                    displayRegionName: "",
+                    editRegionName: "",
+                    description: ""
+                });
+            },
+            removeProperty: function (name) {
+                for (let i = 0; i < this.elementProperties.length; i++) {
+                    if (this.elementProperties[i].name === name)
+                        this.elementProperties.splice(i, 1);
+                }
+            }
+        }
+    });
 }

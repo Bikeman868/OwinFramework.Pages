@@ -105,51 +105,18 @@
                                 </cms-asset-deployment-field-editor>
                             </div>
                             <div class="cms_edit_panel">
-                                <h2>Zones</h2>
-                                <cms-zones-field-editor label=""
-                                                        v-bind:nesting="editingComponentVersion.zoneNesting"
-                                                        v-bind:zones="editingComponentVersion.zones"
-                                                        @zone-nesting-changed="editingComponentVersion.zoneNesting=$event">
-                                </cms-zones-field-editor>
+                                <h2>Component implementation</h2>
+                                <cms-component-class-field-editor label=""
+                                                                  v-bind:component-class="editingComponentVersion.componentName"
+                                                                  @component-class-changed="editingComponentVersion.componentName=$event">
+                                </cms-component-class-field-editor>
                             </div>
                             <div class="cms_edit_panel">
-                                <h2>Component container properties</h2>
-                                <cms-html-tag-field-editor label="Html tag"
-                                                           v-bind:html-tag="editingComponentVersion.tag||''"
-                                                           @html-tag-changed="editingComponentVersion.tag=$event">
-                                </cms-html-tag-field-editor>
-                                <cms-style-field-editor label="Custom style"
-                                                        v-bind:css-style="editingComponentVersion.style"
-                                                        @css-style-changed="editingComponentVersion.style=$event">
-                                </cms-style-field-editor>
-                                <cms-css-classes-field-editor label="Additional CSS classes"
-                                                              v-bind:css-classes="editingComponentVersion.classes"
-                                                              @css-classes-changed="editingComponentVersion.classes=$event">
-                                </cms-css-classes-field-editor>
-                            </div>
-                            <div class="cms_edit_panel">
-                                <h2>Nested zones container properties</h2>
-                                <cms-html-tag-field-editor label="Html tag"
-                                                           v-bind:html-tag="editingComponentVersion.nestingTag||'div'"
-                                                           @html-tag-changed="editingComponentVersion.nestingTag=$event">
-                                </cms-html-tag-field-editor>
-                                <cms-style-field-editor label="Custom style"
-                                                        v-bind:css-style="editingComponentVersion.nestingStyle"
-                                                        @css-style-changed="editingComponentVersion.nestingStyle=$event">
-                                </cms-style-field-editor>
-                                <cms-css-classes-field-editor label="Additional CSS classes"
-                                                              v-bind:css-classes="editingComponentVersion.nestingClasses"
-                                                              @css-classes-changed="editingComponentVersion.nestingClasses=$event">
-                                </cms-css-classes-field-editor>
-                            </div>
-                            <div class="cms_edit_panel">
-                                <h2>Component data</h2>
-                                <cms-data-scopes-field-editor label="Component data scopes"
-                                                              v-bind:scopes="editingComponentVersion.dataScopes">
-                                </cms-data-scopes-field-editor>
-                                <cms-data-types-field-editor label="Component data needs"
-                                                             v-bind:scopes="editingComponentVersion.dataTypes">
-                                </cms-data-types-field-editor>
+                                <h2>Properties</h2>
+                                <cms-element-properties-field-editor label=""
+                                                                     v-bind:element-properties="editingComponentVersion.properties"
+                                                                     @element-properties-changed="editingComponentVersion.properties=$event">
+                                </cms-element-properties-field-editor>
                             </div>
                             <div class="cms_validation_error_list" v-if="versionErrors.length > 0">
                                 <p v-for="error in versionErrors">{{error}}</p>

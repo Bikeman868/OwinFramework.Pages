@@ -12,6 +12,7 @@ using OwinFramework.Pages.Html.Runtime;
 namespace Sample4.Elements
 {
     [IsComponent("message")]
+    [Description("Displays a styled paragraph of text")]
     public class MessageComponent: Component
     {
         public string Message { get; set; }

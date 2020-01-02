@@ -49,6 +49,11 @@
                 </div>
                 <div v-if="componentMode === 'view'">
                     <cms-view-component-detail v-bind:component="currentComponent"></cms-view-component-detail>
+                    <div class="cms_button_bar">
+                        <button type="button" v-on:click="editComponent">Edit</button>
+                        <button type="button" v-on:click="newComponent">New</button>
+                        <button type="button" v-on:click="deleteComponent">Delete</button>
+                    </div>
                 </div>
                 <div v-if="componentMode === 'delete'">
                     <h2>Confirm Component Deletion</h2>
@@ -103,11 +108,7 @@
                                                                    @asset-deployment-changed="editingComponentVersion.assetDeployment=$event"
                                                                    @module-name-changed="editingComponentVersion.moduleName=$event">
                                 </cms-asset-deployment-field-editor>
-                            </div>
-                            <div class="cms_edit_panel">
-                                <h2>Component implementation</h2>
-                                <cms-component-class-field-editor label=""
-                                                                  v-bind:component-class="editingComponentVersion.componentName"
+                                <cms-component-class-field-editor v-bind:component-class="editingComponentVersion.componentName"
                                                                   @component-class-changed="editingComponentVersion.componentName=$event">
                                 </cms-component-class-field-editor>
                             </div>

@@ -579,14 +579,12 @@
         <p>{{ componentVersion.assetDeployment }}<span v-if="componentVersion.assetDeployment==='PerModule'"> in the {{ componentVersion.moduleName }} module</span></p>
     </div>
     <div class="cms_field" v-if="componentVersion.componentName">
-        <label>Implementation name</label>
+        <label>Component C# name</label>
         <p class="cms_field">{{ componentVersion.componentName }}</p>
     </div>
     <div class="cms_field" v-if="componentVersion.properties && componentVersion.properties.length > 0">
         <label>Component properties</label>
-        <p v-for="property in componentVersion.properties" class="cms_field">
-            {{ property.typeName }} {{ property.displayName }}
-        </p>
+        <p v-for="property in componentVersion.properties" class="cms_field">{{ property.displayName }}</p>
     </div>
     <div class="cms_field" v-if="componentVersion.description">
         <label>Description</label>

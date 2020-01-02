@@ -644,5 +644,89 @@ namespace OwinFramework.Pages.Framework.Managers
         }
 
         #endregion
+
+        #region Return all registrations
+
+        IDictionary<string, IComponent> INameManager.AllComponents(Func<string, IComponent, bool> predicate)
+        {
+            lock (_components)
+            {
+                return predicate == null
+                    ? _components.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                    : _components.Where(p => predicate(p.Key, p.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+        }
+
+        IDictionary<string, IRegion> INameManager.AllRegions(Func<string, IRegion, bool> predicate)
+        {
+            lock (_regions)
+            {
+                return predicate == null
+                    ? _regions.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                    : _regions.Where(p => predicate(p.Key, p.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+        }
+
+        IDictionary<string, ILayout> INameManager.AllLayouts(Func<string, ILayout, bool> predicate)
+        {
+            lock (_layouts)
+            {
+                return predicate == null
+                    ? _layouts.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                    : _layouts.Where(p => predicate(p.Key, p.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+        }
+
+        IDictionary<string, IPage> INameManager.AllPages(Func<string, IPage, bool> predicate)
+        {
+            lock (_pages)
+            {
+                return predicate == null
+                    ? _pages.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                    : _pages.Where(p => predicate(p.Key, p.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+        }
+
+        IDictionary<string, IService> INameManager.AllServices(Func<string, IService, bool> predicate)
+        {
+            lock (_services)
+            {
+                return predicate == null
+                    ? _services.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                    : _services.Where(p => predicate(p.Key, p.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+        }
+
+        IDictionary<string, IDataProvider> INameManager.AllDataProviders(Func<string, IDataProvider, bool> predicate)
+        {
+            lock (_dataProviders)
+            {
+                return predicate == null
+                    ? _dataProviders.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                    : _dataProviders.Where(p => predicate(p.Key, p.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+        }
+
+        IDictionary<string, IPackage> INameManager.AllPackages(Func<string, IPackage, bool> predicate)
+        {
+            lock (_packages)
+            {
+                return predicate == null
+                    ? _packages.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                    : _packages.Where(p => predicate(p.Key, p.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+        }
+
+        IDictionary<string, ITemplate> INameManager.AllTemplates(Func<string, ITemplate, bool> predicate)
+        {
+            lock (_templates)
+            {
+                return predicate == null
+                    ? _templates.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                    : _templates.Where(p => predicate(p.Key, p.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+        }
+
+        #endregion
     }
 }

@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using OwinFramework.Pages.CMS.Manager.Configuration;
 using OwinFramework.Pages.CMS.Runtime.Interfaces;
 using OwinFramework.Pages.CMS.Runtime.Interfaces.Database;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Interfaces.Segmentation;
 using OwinFramework.Pages.Restful.Interfaces;
@@ -19,13 +23,16 @@ namespace OwinFramework.Pages.CMS.Manager.Services
     {
         private readonly IDataLayer _dataLayer;
         private readonly ISegmentTestingFramework _segmentTestingFramework;
+        private readonly INameManager _nameManager;
 
         public ListService(
             IDataLayer dataLater,
-            ISegmentTestingFramework segmentTestingFramework)
+            ISegmentTestingFramework segmentTestingFramework,
+            INameManager nameManager)
         {
             _dataLayer = dataLater;
             _segmentTestingFramework = segmentTestingFramework;
+            _nameManager = nameManager;
         }
 
         #region Environments
@@ -455,6 +462,70 @@ namespace OwinFramework.Pages.CMS.Manager.Services
         private void AllComponents(IEndpointRequest request)
         {
             var components = _dataLayer.GetComponents(p => p);
+            request.Success(components);
+        }
+
+        [Endpoint(UrlPath = "component/classes", Methods = new[] { Method.Get }, RequiredPermission = Permissions.View)]
+        private void AllComponentClassess(IEndpointRequest request)
+        {
+            var components = new List<ComponentVersionRecord>();
+            foreach(var componentEntry in _nameManager.AllComponents().OrderBy(c => c.Key))
+            {
+                var componentRecord = new ComponentVersionRecord 
+                {
+                    Name = componentEntry.Key,
+                    DisplayName = componentEntry.Key,
+                    CreatedWhen = DateTime.UtcNow,
+                    CreatedBy = request.Identity,
+                    ComponentName = componentEntry.Key.ToLower()
+                };
+
+                var component = componentEntry.Value;
+                var componentType = component.GetType();
+
+                componentRecord.Name = componentType.FullName;
+
+                var descriptions = componentType.GetCustomAttributes(typeof(DescriptionAttribute), true);
+                if (descriptions != null && descriptions.Length > 0)
+                    componentRecord.Description = ((DescriptionAttribute)descriptions[0]).Html;
+
+                var excludedProperties = new List<string> 
+                {
+                    "ElementType",
+                    "HeadWriters",
+                    "ScriptWriters",
+                    "StyleWriters",
+                    "BodyWriters",
+                    "InitializationWriters",
+                    "CssRules",
+                    "JavascriptFunctions",
+                    "AssetDeployment",
+                    "Module",
+                    "Package",
+                    "Name",
+                    "ServiceName",
+                    "ClientScript"
+                };
+
+                var properties = componentType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                if (properties != null && properties.Length > 0)
+                {
+                    componentRecord.Properties = properties
+                        .Where(p => !excludedProperties.Contains(p.Name))
+                        .Select(p => new ElementPropertyRecord
+                        {
+                            Name = p.Name,
+                            DisplayName = p.Name,
+                            CreatedBy = request.Identity,
+                            CreatedWhen = DateTime.UtcNow,
+                            Type = p.PropertyType,
+                            TypeName = p.PropertyType.FullName
+                        })
+                        .ToArray();
+                }
+
+                components.Add(componentRecord);
+            }
             request.Success(components);
         }
 

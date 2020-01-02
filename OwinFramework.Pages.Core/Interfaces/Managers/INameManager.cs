@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 
@@ -168,6 +169,54 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         /// </summary>
         /// <param name="path">The path that the template was loaded from. e.g. '/templates/customer/order'</param>
         ITemplate ResolveTemplate(string path);
+
+        /// <summary>
+        /// Returns a map of all registered components
+        /// </summary>
+        /// <param name="predicate">Optional filter function</param>
+        IDictionary<string, IComponent> AllComponents(Func<string, IComponent, bool> predicate = null);
+
+        /// <summary>
+        /// Returns a map of all registered regions
+        /// </summary>
+        /// <param name="predicate">Optional filter function</param>
+        IDictionary<string, IRegion> AllRegions(Func<string, IRegion, bool> predicate = null);
+
+        /// <summary>
+        /// Returns a map of all registered layouts
+        /// </summary>
+        /// <param name="predicate">Optional filter function</param>
+        IDictionary<string, ILayout> AllLayouts(Func<string, ILayout, bool> predicate = null);
+
+        /// <summary>
+        /// Returns a map of all registered pages
+        /// </summary>
+        /// <param name="predicate">Optional filter function</param>
+        IDictionary<string, IPage> AllPages(Func<string, IPage, bool> predicate = null);
+
+        /// <summary>
+        /// Returns a map of all registered services
+        /// </summary>
+        /// <param name="predicate">Optional filter function</param>
+        IDictionary<string, IService> AllServices(Func<string, IService, bool> predicate = null);
+
+        /// <summary>
+        /// Returns a map of all registered data providers
+        /// </summary>
+        /// <param name="predicate">Optional filter function</param>
+        IDictionary<string, IDataProvider> AllDataProviders(Func<string, IDataProvider, bool> predicate = null);
+
+        /// <summary>
+        /// Returns a map of all registered packages
+        /// </summary>
+        /// <param name="predicate">Optional filter function</param>
+        IDictionary<string, IPackage> AllPackages(Func<string, IPackage, bool> predicate = null);
+
+        /// <summary>
+        /// Returns a map of all registered templates
+        /// </summary>
+        /// <param name="predicate">Optional filter function</param>
+        IDictionary<string, ITemplate> AllTemplates(Func<string, ITemplate, bool> predicate = null);
 
         /// <summary>
         /// Makes up a random namespace qualified name that is unique and in the same 

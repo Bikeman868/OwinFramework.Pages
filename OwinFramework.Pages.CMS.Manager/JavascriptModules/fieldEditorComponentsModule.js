@@ -169,7 +169,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <select class="cms_field__website_version" @change="selectWebsiteVersion($event)">
     <option :value="null" :selected="websiteVersionId==undefined"></option> 
     <option v-for="websiteVersion in websiteVersions" :value="websiteVersion.recordId" :selected="websiteVersion.recordId==websiteVersionId">
@@ -220,7 +220,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <select class="cms_field__page" @change="selectPage($event)">
     <option v-if="allowNone" :selected="pageId==undefined"></option>
     <option v-for="page in pages" :value="page.recordId" :selected="page.recordId==pageId">
@@ -287,7 +287,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <select class="cms_field__asset_deployment" @change="selectAssetDeployment($event)">
     <option value="Inherit" v-bind:selected="assetDeployment==='Inherit'">{{inheritOption}}</option>
     <option value="InPage" v-bind:selected="assetDeployment==='InPage'">Inline within page</option>
@@ -342,7 +342,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <span v-if="inheritOption" class="cms_checkbox"><input type="checkbox" v-bind:checked="inherit" @change="changeInherit">{{inheritOption}}</span>
   <select v-if="!inherit" class="cms_field__layout" @change="selectLayout($event)">
     <option :value="null" :selected="selectedLayoutId==undefined">Defined in code</option>
@@ -646,7 +646,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <table v-if="mode==='fixed'">
     <tr><th>Zone</th><th>Contents</th></tr>
     <tr v-for="zone in zones">
@@ -784,7 +784,7 @@
         },
         template:
  /*html*/`<div class="cms_field">
-   <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
    <p>Nesting: {{editedNesting}}</p>
    <table>
      <tr><th>Zone</th><th>Nesting</th><th>Contents</th><th>-</th></tr>
@@ -967,7 +967,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <table>
     <tr><th>Priority</th><th>Url path</th><th>-</th></tr>
     <tr v-for="route in routes">
@@ -1187,7 +1187,7 @@
         },
         template: 
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <select class="cms_field__html_tag" @change="tagChanged($event)">
     <option v-for="choice in choices" :value="choice" :selected="choice==htmlTag">{{choice}}</option>
   </select>
@@ -1214,7 +1214,7 @@
             },
             template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <input type="text" class="cms_field__style" placeholder="font-family: arial; font-size: large;" :pattern="stylePattern" @input="inputStyle" :value="cssStyle">
 </div>`,
             data: function () {
@@ -1244,7 +1244,7 @@
             },
             template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <input type="text" class="cms_field__classes" placeholder="my_container my_float_left" :pattern="classesPattern" @input="inputChanged" :value="cssClasses">
 </div>`,
         data: function () {
@@ -1279,7 +1279,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <input type="text" class="cms_field__permission" placeholder="content:editor" :pattern="permissionPattern" @input="inputPermission" :value="permission">
   <input type="text" class="cms_field__asset_path" placeholder="/user/profile/image" :pattern="pathPattern" @input="inputAssetPath" :value="assetPath">
 </div>`,
@@ -1320,7 +1320,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <input type="text" class="cms_field__title" :placeholder="placeholder" :pattern="titlePattern" @input="inputTitle" :value="title">
 </div>`,
         data: function () {
@@ -1355,7 +1355,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <input type="text" class="cms_field__name" :placeholder="placeholder" :pattern="namePattern" @input="inputElementName" :value="elementName">
 </div>`,
         data: function () {
@@ -1425,7 +1425,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <input type="text" class="cms_field__url_path" :placeholder="placeholder" :pattern="urlPathPattern" @input="inputUrlPath" :value="urlPath">
 </div>`,
         data: function () {
@@ -1460,7 +1460,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <input type="text" class="cms_field__url" :placeholder="placeholder" :pattern="urlPattern" @input="inputUrl" :value="url">
 </div>`,
         data: function () {
@@ -1495,7 +1495,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <textarea class="cms_field__description" :placeholder="placeholder" @input="inputDescription">{{description}}</textarea>
 </div>`,
         methods: {
@@ -1510,7 +1510,7 @@
             label: {
                 required: false,
                 type: String,
-                default: "Component class"
+                default: "Component C# class"
             },
             placeholder: {
                 required: false,
@@ -1525,16 +1525,36 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
-  <input type="text" class="cms_field__name" :placeholder="placeholder" :pattern="nameRefPattern" @input="inputClassName" :value="componentClass">
+  <label v-if="label">{{label}}</label>
+  <select class="cms_field__component_class" @change="selectComponentClass($event)">
+    <option :value="null" :selected="componentClass==undefined"></option> 
+    <option v-for="component in components" :value="component.componentName" :selected="component.componentName==componentClass">
+      {{component.displayName}}
+    </option>
+  </select>
+  <input v-if="manual" type="text" class="cms_field__component_class" :placeholder="placeholder" :pattern="nameRefPattern" @input="inputClassName" :value="componentClass">
 </div>`,
         data: function () {
             return {
-                nameRefPattern: exported.validation.nameRefPattern.source
+                nameRefPattern: exported.validation.nameRefPattern.source,
+                manual: false,
+                components: []
             }
+        },
+        created: function () {
+            var vm = this;
+            exported.listService.allComponentClassess(
+                { },
+                function (response) {
+                    vm.components = response;
+                });
         },
         methods: {
             inputClassName: function (e) {
+                this.$emit("component-class-changed", e.target.value);
+            },
+            selectComponentClass: function (e) {
+                this.manual = !e.target.value;
                 this.$emit("component-class-changed", e.target.value);
             }
         }
@@ -1554,7 +1574,7 @@
         },
         template:
 /*html*/`<div class="cms_field">
-  <label>{{label}}</label>
+  <label v-if="label">{{label}}</label>
   <table>
       <tr><th>Name</th><th>Property</th><th>Regions</th><th>Description</th><th>-</th></tr>
       <tr v-for="property in elementProperties">
@@ -1573,7 +1593,7 @@
         </td>
         <td>
             <label>Property description</label>
-            <textarea class="cms_field__description" :placeholder="description">{{property.description}}</textarea>
+            <textarea class="cms_field__description" placeholder="description">{{property.description}}</textarea>
         </td>
         <td>
             <button @click="removeProperty(property.name)">-</button>

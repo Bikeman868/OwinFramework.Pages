@@ -15,6 +15,7 @@ using Urchin.Client.Sources;
 using OwinFramework.Pages.Core;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using Sample5.Middleware;
 
 [assembly: OwinStartup(typeof(Sample5.Startup))]
 
@@ -53,6 +54,7 @@ namespace Sample5
 
             // Define the middleware to add to the Owin Pipeline
             pipelineBuilder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/sample5/pages");
+            pipelineBuilder.Register(ninject.Get<RedirectMiddleware>()).ConfigureWith(config, "/sample5/redirect");
             pipelineBuilder.Register(ninject.Get<OwinFramework.Less.LessMiddleware>()).ConfigureWith(config, "/sample5/less").As("Less");
             pipelineBuilder.Register(ninject.Get<OwinFramework.StaticFiles.StaticFilesMiddleware>()).ConfigureWith(config, "/sample5/staticFiles/scripts").As("Scripts").RunAfter("Less");
             pipelineBuilder.Register(ninject.Get<OwinFramework.StaticFiles.StaticFilesMiddleware>()).ConfigureWith(config, "/sample5/staticFiles/images").As("Images").RunAfter("Less");

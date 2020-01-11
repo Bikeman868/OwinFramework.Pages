@@ -56,6 +56,10 @@
         "includeSubFolders": "true",
         "FileExtensions": [
           {
+            "extension": ".ico",
+            "mimeType": "image/ico"
+          },
+          {
             "extension": ".jpg",
             "mimeType": "image/jpeg"
           },

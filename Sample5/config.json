@@ -1,0 +1,94 @@
+﻿{
+    "prius": {
+        "databases": [
+        ],
+        "fallbackPolicies": [
+            { "name": "none", "allowedFailurePercent": 100 }
+        ],
+        "repositories": [
+        ]
+    },
+    "owinFramework": {
+        "pages": {
+            "framework": { 
+                "debugLogging":  false,
+                "debugLibraries":  true
+            },
+            "html": {
+                "includeComments": true,
+                "indented": true
+            }
+        }
+    },
+  "sample5": {
+    "pages": {
+
+    },
+    "notFound": {
+
+    },
+    "documenter": {
+
+    },
+    "staticFiles": {
+      "scripts": {
+        "staticFilesRootUrl": "/scripts",
+        "documentationRootUrl": null,
+        "rootDirectory": "~\\web\\scripts",
+        "enabled": "true",
+        "includeSubFolders": "true",
+        "FileExtensions": [
+          {
+            "extension": ".js",
+            "mimeType": "application/javascript"
+          }
+        ],
+        "maximumFileSizeToCache": 10000,
+        "totalCacheSize": 1000000,
+        "maximumCacheTime": "02:00:00",
+        "requiredPermission": ""
+      },
+      "images": {
+        "staticFilesRootUrl": "/images",
+        "documentationRootUrl": null,
+        "rootDirectory": "~\\web\\images",
+        "enabled": "true",
+        "includeSubFolders": "true",
+        "FileExtensions": [
+          {
+            "extension": ".jpg",
+            "mimeType": "image/jpeg"
+          },
+          {
+            "extension": ".jpeg",
+            "mimeType": "image/jpeg"
+          },
+          {
+            "extension": ".png",
+            "mimeType": "image/png"
+          },
+          {
+            "extension": ".eps",
+            "mimeType": "application/postscript"
+          },
+          {
+            "extension": ".svg",
+            "mimeType": "image/svg+xml"
+          }
+        ],
+        "maximumFileSizeToCache": 10000,
+        "totalCacheSize": 1000000,
+        "maximumCacheTime": "02:00:00",
+        "requiredPermission": ""
+      }
+    },
+    "less": {
+      "rootUrl": "/styles",
+      "rootDirectory": "~\\web\\styles",
+      "enabled": true,
+      "analyticsEnabled": false,
+      "minify": false,
+      "traceLog": false
+    }
+  }
+}

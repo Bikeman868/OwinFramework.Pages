@@ -275,7 +275,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var usesRegion in attributes.LayoutRegions)
                 {
-                    layout.Region(usesRegion.ZoneName, usesRegion.RegionElementName);
+                    layout.Region(usesRegion.ZoneName, usesRegion.RegionName);
                 }
             }
 
@@ -291,7 +291,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionLayout in attributes.RegionLayouts)
                 {
-                    layout.Layout(regionLayout.Region, regionLayout.Layout);
+                    layout.Layout(regionLayout.ZoneName, regionLayout.LayoutName);
                 }
             }
 
@@ -459,7 +459,7 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 foreach (var regionLayout in attributes.RegionLayouts)
                 {
-                    page.ZoneLayout(regionLayout.Region, regionLayout.Layout);
+                    page.ZoneLayout(regionLayout.ZoneName, regionLayout.LayoutName);
                 }
             }
 
@@ -999,7 +999,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 {
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,
-                        (nm, l, rl) => l.PopulateElement(rl.Region, nm.ResolveComponent(rl.Layout, l.Package)),
+                        (nm, l, rl) => l.PopulateElement(rl.ZoneName, nm.ResolveComponent(rl.LayoutName, l.Package)),
                         layout,
                         regionLayout);
                 }

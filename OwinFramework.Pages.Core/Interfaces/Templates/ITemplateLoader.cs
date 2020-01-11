@@ -13,7 +13,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
     {
         /// <summary>
         /// Loads templates from the template source and parses them using
-        /// the supplied parser then registeres them with the template manager
+        /// the supplied parser then registers them with the template manager
         /// </summary>
         /// <param name="parser">The parser to use to construct the ITemplate
         /// instance from the template file</param>

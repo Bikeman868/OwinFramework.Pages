@@ -268,6 +268,46 @@ namespace OwinFramework.Pages.Mocks.Managers
             throw new NameResolutionFailureException(typeof(T), package, name);
         }
 
+        public IDictionary<string, IComponent> AllComponents(Func<string, IComponent, bool> predicate = null)
+        {
+            return Components;
+        }
+
+        public IDictionary<string, IRegion> AllRegions(Func<string, IRegion, bool> predicate = null)
+        {
+            return Regions;
+        }
+
+        public IDictionary<string, ILayout> AllLayouts(Func<string, ILayout, bool> predicate = null)
+        {
+            return Layouts;
+        }
+
+        public IDictionary<string, IPage> AllPages(Func<string, IPage, bool> predicate = null)
+        {
+            return Pages;
+        }
+
+        public IDictionary<string, IService> AllServices(Func<string, IService, bool> predicate = null)
+        {
+            return Services;
+        }
+
+        public IDictionary<string, IDataProvider> AllDataProviders(Func<string, IDataProvider, bool> predicate = null)
+        {
+            return DataProviders;
+        }
+
+        public IDictionary<string, IPackage> AllPackages(Func<string, IPackage, bool> predicate = null)
+        {
+            return Packages;
+        }
+
+        public IDictionary<string, ITemplate> AllTemplates(Func<string, ITemplate, bool> predicate = null)
+        {
+            return Templates;
+        }
+
         private abstract class PendingActionBase: IComparable<PendingActionBase>
         {
             private NameResolutionPhase _phase;

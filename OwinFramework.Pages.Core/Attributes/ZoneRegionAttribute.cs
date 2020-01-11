@@ -13,11 +13,11 @@ namespace OwinFramework.Pages.Core.Attributes
         /// to place in a region of a layout
         /// </summary>
         /// <param name="zoneName">The name of the zone to populate within the layout</param>
-        /// <param name="regionElementName">The name of the region element to put into this region of the layout</param>
-        public ZoneRegionAttribute(string zoneName, string regionElementName)
+        /// <param name="regionName">The name of the region element to put into this region of the layout</param>
+        public ZoneRegionAttribute(string zoneName, string regionName)
         {
             ZoneName = zoneName;
-            RegionElementName = regionElementName;
+            RegionName = regionName;
         }
 
         /// <summary>
@@ -28,6 +28,6 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// The name of the region element to place in this named region
         /// </summary>
-        public string RegionElementName { get; set; }
+        public string RegionName { get; set; }
     }
 }

@@ -11,22 +11,22 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// Creates an attribute that associates a layout with a region of another layout
         /// </summary>
-        /// <param name="region">The name of the region to populate</param>
-        /// <param name="layout">The name of the layout to render in this region</param>
-        public ZoneLayoutAttribute(string region, string layout)
+        /// <param name="zoneName">The name of the zone to populate</param>
+        /// <param name="layoutName">The name of the layout to render in this region</param>
+        public ZoneLayoutAttribute(string zoneName, string layoutName)
         {
-            Region = region;
-            Layout = layout;
+            ZoneName = zoneName;
+            LayoutName = layoutName;
         }
 
         /// <summary>
-        /// The name of the region to populate
+        /// The name of the zone to populate
         /// </summary>
-        public string Region { get; set; }
+        public string ZoneName { get; set; }
 
         /// <summary>
         /// The name of the layout to place in this region
         /// </summary>
-        public string Layout { get; set; }
+        public string LayoutName { get; set; }
     }
 }

@@ -94,23 +94,23 @@
     <Reference Include="OwinFramework.NotFound, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.NotFound.2.7.0\lib\net45\OwinFramework.NotFound.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Core, Version=1.2.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.7\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Core, Version=1.2.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.9\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.DebugMiddleware, Version=1.2.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.DebugMiddleware.1.2.7\lib\net45\OwinFramework.Pages.DebugMiddleware.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.DebugMiddleware, Version=1.2.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.DebugMiddleware.1.2.9\lib\net45\OwinFramework.Pages.DebugMiddleware.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Framework, Version=1.2.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Framework.1.2.7\lib\net45\OwinFramework.Pages.Framework.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Framework, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Framework.1.2.9\lib\net45\OwinFramework.Pages.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Html, Version=1.2.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Html.1.2.7\lib\net45\OwinFramework.Pages.Html.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Html, Version=1.2.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Html.1.2.9\lib\net45\OwinFramework.Pages.Html.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Restful, Version=1.2.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Restful.1.2.7\lib\net45\OwinFramework.Pages.Restful.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Restful, Version=1.2.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Restful.1.2.9\lib\net45\OwinFramework.Pages.Restful.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Standard, Version=1.2.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.7\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Standard, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.9\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.StaticFiles, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.StaticFiles.2.7.0\lib\net45\OwinFramework.StaticFiles.dll</HintPath>
@@ -129,6 +129,9 @@
     <Reference Include="Prius.Orm, Version=2.2.1.30, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Prius.2.2.1\lib\net45\Prius.Orm.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Svg, Version=2.2.1.39233, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
+      <HintPath>..\packages\Svg.2.3.0\lib\net35\Svg.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -154,6 +157,8 @@
   <ItemGroup>
     <Content Include="web\templates\page\home-page.html" />
     <Content Include="Web.config" />
+    <None Include="web\templates\widget\login.vue" />
+    <Content Include="web\templates\widget\login.js" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\MessageComponent.cs" />

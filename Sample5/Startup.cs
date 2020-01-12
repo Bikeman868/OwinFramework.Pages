@@ -107,11 +107,8 @@ namespace Sample5
             // Parse html files using mustache syntax. This allows them to contain data binding expressions
             fileSystemLoader.Load(mustacheParser, p => p.Value.EndsWith(".html"));
 
-            // Parse Vue.js view models without modification
-            fileSystemLoader.Load(asIsParser, p => p.Value.EndsWith(".vue"));
-
-            // Parse JavaScript without modification
-            fileSystemLoader.Load(asIsParser, p => p.Value.EndsWith(".js"));
+            // Parse JavaScript and Vue views without modification
+            fileSystemLoader.Load(asIsParser, p => p.Value.EndsWith(".js") || p.Value.EndsWith(".vue"));
 
             // Build the website
             nameManager.Bind();

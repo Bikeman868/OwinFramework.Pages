@@ -22,6 +22,7 @@
 * Template parsers
   - Html with custom tags for data binding and repeating
   - Angular subset
+  - When one template comprises multiple files each file uses it's defined parser and the results are combined into one template
 
 * Standard packages
   - Commonly used layouts

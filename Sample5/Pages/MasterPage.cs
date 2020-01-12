@@ -31,10 +31,12 @@ namespace Sample5
     [UsesComponent("page__head")]
     internal class TitleRegion : NavigationElement { }
 
-    [IsLayout("header_bar_layout", "hamburger_zone,title_zone")]
+    [IsLayout("header_bar_layout", "hamburger_zone,login_zone,title_zone")]
     [ZoneRegion("hamburger_zone", "menus:mobile_menu")]
     [ZoneRegion("title_zone", "title_region")]
+    [ZoneTemplate("login_zone", "/widget/login")]
     [NeedsComponent("menus:menuStyle1")]
+    [NeedsComponent("libraries:vue")]
     internal class HeaderBarLayout : NavigationElement { }
 
     [IsRegion("header_bar_region")]

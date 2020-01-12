@@ -119,6 +119,9 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Templates\Template5.vue" />
+    <Content Include="Templates\Template6.html" />
+    <Content Include="Templates\Template6.js" />
+    <Content Include="Templates\Template6.css" />
     <Content Include="Templates\Template4.svg" />
     <Content Include="Templates\Template3.svg" />
     <Content Include="Templates\Template1.html" />

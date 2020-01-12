@@ -1,17 +1,17 @@
-﻿<div id="app">
+﻿<div id="app1">
   {{ message }}
 </div>
 
 --css
 
-#app { color: pink; }
+#app1 { color: pink; }
 
 --init
 
-var app = new Vue({
-  el: '#app',
+var app1 = new Vue({
+  el: '#app1',
   data: {
-  message: 'Hello Vue!'
+  message: 'Hello Vue 1!'
   }
 })
 

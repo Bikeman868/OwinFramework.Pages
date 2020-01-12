@@ -1,14 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net40;net45</TargetFrameworks>
     <AssemblyName>OwinFramework.Pages.Mocks</AssemblyName>
     <RootNamespace>OwinFramework.Pages.Mocks</RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.2.8</Version>
+    <Version>1.2.9</Version>
     <Authors>Martin Halliday</Authors>
     <Copyright>Copyright © Martin Halliday 2018-2020</Copyright>
-    <AssemblyVersion>1.2.8.0</AssemblyVersion>
+    <AssemblyVersion>1.2.9.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -128,7 +128,10 @@ namespace OwinFramework.Pages.Html.Templates
 
             for (var i = 0; i < fileNames.Length; i++)
             {
-                resources[i].Content = LoadFileContents(fileNames[i], out Encoding encoding);
+                resources[i] = new TemplateResource
+                {
+                    Content = LoadFileContents(fileNames[i], out Encoding encoding)
+                };
                 resources[i].Encoding = encoding;
                 resources[i].ContentType = ContentTypeFromExt(Path.GetExtension(fileNames[i]));
             }
@@ -144,6 +147,7 @@ namespace OwinFramework.Pages.Html.Templates
                     FileNames = fileNames,
                     Parser = parser,
                     TemplatePath = templatePath,
+                    Checksum = new byte[fileNames.Length][]
                 };
 
                 for (var i = 0; i < fileNames.Length; i++)

@@ -6,7 +6,7 @@
     <RootNamespace>OwinFramework.Pages.Html</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.2.8</Version>
+    <Version>1.2.9</Version>
     <Authors>Martin Halliday</Authors>
     <Copyright>Copyright © Martin Halliday 2018-2020</Copyright>
     <PackageProjectUrl>http://owinframework.net/content/project/owinframework.pages.html/landing</PackageProjectUrl>
@@ -15,7 +15,7 @@
     <Description>Provides build engines that can be plugged into the fluent builder to enable your website to respond to requests by returning pages of Html</Description>
     <PackageReleaseNotes>Uses new MSBuid format to target multiple platforms</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <AssemblyVersion>1.2.8.0</AssemblyVersion>
+    <AssemblyVersion>1.2.9.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

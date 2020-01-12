@@ -85,12 +85,6 @@
     <Reference Include="OwinFramework, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.2.7.0\lib\net45\OwinFramework.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.AnalysisReporter, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.AnalysisReporter.2.7.0\lib\net45\OwinFramework.AnalysisReporter.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Documenter, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Documenter.2.7.0\lib\net45\OwinFramework.Documenter.dll</HintPath>
-    </Reference>
     <Reference Include="OwinFramework.ExceptionReporter, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.ExceptionReporter.2.7.0\lib\net45\OwinFramework.ExceptionReporter.dll</HintPath>
     </Reference>
@@ -99,9 +93,6 @@
     </Reference>
     <Reference Include="OwinFramework.NotFound, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.NotFound.2.7.0\lib\net45\OwinFramework.NotFound.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Pages.CMS.Runtime, Version=1.2.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.CMS.Runtime.1.2.7\lib\net45\OwinFramework.Pages.CMS.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Pages.Core, Version=1.2.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.7\lib\net45\OwinFramework.Pages.Core.dll</HintPath>

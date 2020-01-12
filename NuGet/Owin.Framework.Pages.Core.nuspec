@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.Core</id>
-    <version>1.2.8</version>
+    <version>1.2.9</version>
     <title>Owin Framework Pages Core</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Defines the interfaces, enums and custom attributes that the other packages from Owin.Pages.Framework depend on</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
-    <releaseNotes>Uses the new SDK project file format to target multiple platforms</releaseNotes>
+    <releaseNotes>Template parsers support multi-file templates</releaseNotes>
     <projectUrl>http://owinframework.net/content/project/owinframework.pages.core/landing</projectUrl>
     <license type="expression">Apache-2.0</license>
     <tags>OWIN OwinFramework Pages</tags>

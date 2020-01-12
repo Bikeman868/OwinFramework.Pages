@@ -159,7 +159,7 @@ namespace Sample1
             var fileSystemLoader = ninject.Get<FileSystemLoader>();
             fileSystemLoader.RootPath = new PathString("/file");
             fileSystemLoader.ReloadInterval = TimeSpan.FromSeconds(3);
-            fileSystemLoader.Load(asIsTemplateParser, p => p.Value.EndsWith(".html"));
+            fileSystemLoader.Load(asIsTemplateParser, p => p.Value.EndsWith(".html") || p.Value.EndsWith(".js") || p.Value.EndsWith(".css"));
             fileSystemLoader.Load(markdownTemplateParser, p => p.Value.EndsWith(".md"));
             fileSystemLoader.Load(mustacheParser, p => p.Value.EndsWith(".svg"));
             fileSystemLoader.Load(multiPartParser, p => p.Value.EndsWith(".vue"));

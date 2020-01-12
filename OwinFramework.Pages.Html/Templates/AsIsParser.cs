@@ -30,7 +30,22 @@ namespace OwinFramework.Pages.Html.Templates
             {
                 var encoding = resource.Encoding ?? Encoding.UTF8;
                 var html = encoding.GetString(resource.Content);
-                template.AddHtml(html);
+                switch (resource.ContentType?.ToLower())
+                {
+                    case "application/javascript":
+                        foreach (var line in html.Split('\n'))
+                            template.AddInitializationLine(line);
+                        break;
+
+                    case "text/css":
+                        foreach(var line in html.Split('\n'))
+                            template.AddStyleLine(line);
+                        break;
+
+                    default:
+                        template.AddHtml(html);
+                        break;
+                }
             }
             return template.Build();
         }

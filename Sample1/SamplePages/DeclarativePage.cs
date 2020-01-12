@@ -247,7 +247,8 @@ namespace Sample1.SamplePages
     //[ZoneTemplate("main", "/file/template2")]
     //[ZoneTemplate("main", "/file/template3")]
     //[ZoneTemplate("main", "/file/template4")]
-    [ZoneTemplate("main", "/file/template5")]
+    //[ZoneTemplate("main", "/file/template5")]
+    [ZoneTemplate("main", "/file/template6")]
     [NeedsComponent("libraries:Vue")]
     internal class Page2Layout { }
 

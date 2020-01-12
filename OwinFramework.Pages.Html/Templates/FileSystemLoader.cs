@@ -31,10 +31,10 @@ namespace OwinFramework.Pages.Html.Templates
 
         private class TemplateInfo
         {
-            public string FileName;
+            public string[] FileNames;
             public string TemplatePath;
             public ITemplateParser Parser;
-            public byte[] Checksum;
+            public byte[][] Checksum;
         }
 
         public FileSystemLoader(
@@ -65,17 +65,98 @@ namespace OwinFramework.Pages.Html.Templates
             if (mapPath == null)
                 mapPath = DefaultMapping;
 
-            foreach(var file in GetFiles(directory, includeSubPaths))
-            {
-                var path = new PathString(file.FullName.Substring(directory.FullName.Length).Replace('\\', '/'));
-                if (predicate(path))
-                {
-                    var templatePath = mapPath(path);
+            var files = GetFiles(directory, includeSubPaths)
+                .Select(fileInfo => new Tuple<FileInfo, PathString>
+                (
+                    fileInfo,
+                    new PathString(fileInfo.FullName.Substring(directory.FullName.Length).Replace('\\', '/'))
+                ))
+                .Where(t => predicate(t.Item2))
+                .OrderBy(t => t.Item2.Value)
+                .ToList();
 
-                    Trace.WriteLine("Parsing file '" + file.FullName + "' with '" + parser + "' and registering as '" + templatePath + "'");
-                    LoadFile(file.FullName, parser, templatePath);
+            List<Tuple<FileInfo, PathString>> fileSet = new List<Tuple<FileInfo, PathString>>();
+
+            Action parse = () =>
+            {
+                if (fileSet.Count > 0)
+                {
+                    var templatePath = mapPath(fileSet[0].Item2);
+                    Trace.WriteLine(fileSet.Aggregate("Parsing files ", (s, f) => s + "'" + f.Item1.FullName + "' ") + " with '" + parser + "' and registering as '" + templatePath + "'");
+                    LoadFileSet(fileSet.Select(f => f.Item1.FullName).ToArray(), parser, templatePath);
+                }
+                fileSet.Clear();
+            };
+
+            foreach(var file in files)
+            {
+                if (fileSet.Count == 0)
+                {
+                    fileSet.Add(file);
+                }
+                else
+                {
+                    var file1 = Path.GetFileNameWithoutExtension(fileSet[0].Item1.FullName);
+                    var file2 = Path.GetFileNameWithoutExtension(file.Item1.FullName);
+                    if (string.Equals(file1, file2, StringComparison.OrdinalIgnoreCase))
+                    {
+                        fileSet.Add(file);
+                    }
+                    else
+                    {
+                        parse();
+                        fileSet.Add(file);
+                    }
                 }
             }
+
+            parse();
+        }
+
+        /// <summary>
+        /// Loads a set of files that comprise the parts of a single template
+        /// </summary>
+        /// <param name="fileNames">The files to load</param>
+        /// <param name="parser">The parser to use to parse the template files</param>
+        /// <param name="templatePath">Optional template path registers the template 
+        /// with the Name Manager. Also causes the template to be periodically
+        /// reloaded</param>
+        /// <returns>The template that was loaded</returns>
+        public ITemplate LoadFileSet(string[] fileNames, ITemplateParser parser, string templatePath = null)
+        {
+            var resources = new TemplateResource[fileNames.Length];
+
+            for (var i = 0; i < fileNames.Length; i++)
+            {
+                resources[i].Content = LoadFileContents(fileNames[i], out Encoding encoding);
+                resources[i].Encoding = encoding;
+                resources[i].ContentType = ContentTypeFromExt(Path.GetExtension(fileNames[i]));
+            }
+
+            var template = parser.Parse(resources, Package);
+
+            if (!string.IsNullOrEmpty(templatePath))
+            {
+                _nameManager.Register(template, templatePath);
+
+                var templateInfo = new TemplateInfo
+                {
+                    FileNames = fileNames,
+                    Parser = parser,
+                    TemplatePath = templatePath,
+                };
+
+                for (var i = 0; i < fileNames.Length; i++)
+                {
+                    templateInfo.Checksum[i] = CalculateChecksum(resources[i].Content);
+                }
+
+                Reload(templateInfo);
+            }
+
+            template.IsStatic = !ReloadInterval.HasValue;
+
+            return template;
         }
 
         /// <summary>
@@ -91,7 +172,7 @@ namespace OwinFramework.Pages.Html.Templates
         {
             Encoding encoding;
             var buffer = LoadFileContents(fileName, out encoding);
-            var template = parser.Parse(buffer, encoding, Package);
+            var template = parser.Parse(new[] { new TemplateResource { Content = buffer, Encoding = encoding } }, Package);
 
             if (!string.IsNullOrEmpty(templatePath))
             {
@@ -99,10 +180,10 @@ namespace OwinFramework.Pages.Html.Templates
 
                 Reload(new TemplateInfo
                     {
-                        FileName = fileName,
+                        FileNames = new[] { fileName },
                         Parser = parser,
                         TemplatePath = templatePath,
-                        Checksum = CalculateChecksum(buffer)
+                        Checksum = new[] { CalculateChecksum(buffer) }
                     });
             }
 
@@ -182,28 +263,45 @@ namespace OwinFramework.Pages.Html.Templates
 
                                 try
                                 {
-                                    Encoding encoding;
-                                    var buffer = LoadFileContents(templateInfo.FileName, out encoding);
-                                    var checksum = CalculateChecksum(buffer);
+                                    var modified = false;
 
-                                    if (checksum.Length != templateInfo.Checksum.Length)
+                                    var resources = new TemplateResource[templateInfo.FileNames.Length];
+
+                                    for (var j = 0; j < templateInfo.FileNames.Length; j++)
                                     {
-                                        var template = templateInfo.Parser.Parse(buffer, encoding, Package);
-                                        _nameManager.Register(template, templateInfo.TemplatePath);
-                                        templateInfo.Checksum = checksum;
-                                    }
-                                    else
-                                    {
-                                        for (var j = 0; j < checksum.Length; j++)
+                                        var fileName = templateInfo.FileNames[j];
+                                        resources[j] = new TemplateResource
                                         {
-                                            if (checksum[j] != templateInfo.Checksum[j])
+                                            Content = LoadFileContents(fileName, out Encoding encoding),
+                                            ContentType = ContentTypeFromExt(Path.GetExtension(fileName))
+                                        };
+                                        resources[j].Encoding = encoding;
+
+                                        var checksum = CalculateChecksum(resources[j].Content);
+
+                                        if (checksum.Length != templateInfo.Checksum[j].Length)
+                                        {
+                                            templateInfo.Checksum[j] = checksum;
+                                            modified = true;
+                                        }
+                                        else
+                                        {
+                                            for (var k = 0; k < checksum.Length; k++)
                                             {
-                                                var template = templateInfo.Parser.Parse(buffer, encoding, Package);
-                                                _nameManager.Register(template, templateInfo.TemplatePath);
-                                                templateInfo.Checksum = checksum;
-                                                break;
+                                                if (checksum[k] != templateInfo.Checksum[j][k])
+                                                {
+                                                    templateInfo.Checksum[j] = checksum;
+                                                    modified = true;
+                                                    break;
+                                                }
                                             }
                                         }
+                                    }
+
+                                    if (modified)
+                                    {
+                                        var template = templateInfo.Parser.Parse(resources, Package);
+                                        _nameManager.Register(template, templateInfo.TemplatePath);
                                     }
                                 }
                                 catch (ThreadAbortException)
@@ -212,7 +310,7 @@ namespace OwinFramework.Pages.Html.Templates
                                 }
                                 catch (Exception ex)
                                 {
-                                    var message = "Failed to load template " + templateInfo.FileName + ". " + ex.Message;
+                                    var message = templateInfo.FileNames.Aggregate("Failed to load template files", (m, f) => m + " '" + f + "'") + ". " + ex.Message;
                                     exception = new Exception(message, ex);
                                     Trace.WriteLine(message);
                                 }
@@ -264,5 +362,17 @@ namespace OwinFramework.Pages.Html.Templates
             return fileSystemPath.Value;
         }
 
+        private string ContentTypeFromExt(string ext)
+        {
+            switch (ext.ToLower())
+            {
+                case ".js": 
+                    return "application/javascript";
+                case ".css":
+                case ".less":
+                    return "text/css";
+            }
+            return "text/html";
+        }
     }
 }

@@ -72,26 +72,26 @@ namespace Sample5
             var fluentBuilder = ninject.Get<IFluentBuilder>();
             Func<Type, object> factory = t => ninject.Get(t);
 
-            // Install build engine for packages, data providers
+            // Install the build engine for packages, modules and data providers
             ninject.Get<OwinFramework.Pages.Framework.BuildEngine>().Install(fluentBuilder);
 
-            // Install build engine for web pages
+            // Install the build engine for web pages, layouts and regions
             ninject.Get<OwinFramework.Pages.Html.BuildEngine>().Install(fluentBuilder);
 
-            // Install build engine for REST endpoints
+            // Install the build engine for REST services
             ninject.Get<OwinFramework.Pages.Restful.BuildEngine>().Install(fluentBuilder);
 
-            // Register packages containing components, layouts etc
-            // that can be referenced by name from other elements.
+            // Register packages containing resuable page elements
             fluentBuilder.RegisterPackage(ninject.Get<MenuPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<LayoutsPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<LibrariesPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<TemplatesPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<AjaxPackage>(), factory);
             fluentBuilder.RegisterPackage(ninject.Get<DataPackage>(), factory);
+            fluentBuilder.RegisterPackage(ninject.Get<TextEffectsPackage>(), factory);
 
-            // Register all of the elements defined in this assembly
-            fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
+            // Reflect over the executing assembly and register all elements that it contains
+            fluentBuilder.Register(Assembly.GetExecutingAssembly(), factory);
 
             // Load templates from the local file system
             var fileSystemLoader = ninject.Get<FileSystemLoader>();
@@ -104,7 +104,7 @@ namespace Sample5
             var asIsParser = ninject.Get<AsIsParser>();
             var mustacheParser = ninject.Get<MustacheParser>();
 
-            // Parse html files using mustache syntax
+            // Parse html files using mustache syntax. This allows them to contain data binding expressions
             fileSystemLoader.Load(mustacheParser, p => p.Value.EndsWith(".html"));
 
             // Parse Vue.js view models without modification

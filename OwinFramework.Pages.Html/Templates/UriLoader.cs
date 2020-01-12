@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using Microsoft.Owin;
-using OwinFramework.Interfaces.Utility;
-using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Templates;
@@ -75,7 +71,7 @@ namespace OwinFramework.Pages.Html.Templates
 
             Encoding encoding;
             var buffer = LoadUriContents(uri, out encoding);
-            var template = parser.Parse(buffer, encoding, Package);
+            var template = parser.Parse(new[] { new TemplateResource { Content = buffer, Encoding = encoding } }, Package);
 
             if (!string.IsNullOrEmpty(templatePath))
             {
@@ -162,7 +158,9 @@ namespace OwinFramework.Pages.Html.Templates
 
                                     if (checksum.Length != templateInfo.Checksum.Length)
                                     {
-                                        var template = templateInfo.Parser.Parse(buffer, encoding, Package);
+                                        var template = templateInfo.Parser.Parse(
+                                            new []{ new TemplateResource { Content = buffer, Encoding = encoding } }, 
+                                            Package);
                                         _nameManager.Register(template, templateInfo.TemplatePath);
                                         templateInfo.Checksum = checksum;
                                     }
@@ -172,7 +170,9 @@ namespace OwinFramework.Pages.Html.Templates
                                         {
                                             if (checksum[j] != templateInfo.Checksum[j])
                                             {
-                                                var template = templateInfo.Parser.Parse(buffer, encoding, Package);
+                                                var template = templateInfo.Parser.Parse(
+                                                    new[] { new TemplateResource { Content = buffer, Encoding = encoding } },
+                                                    Package);
                                                 _nameManager.Register(template, templateInfo.TemplatePath);
                                                 templateInfo.Checksum = checksum;
                                                 break;

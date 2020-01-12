@@ -23,15 +23,16 @@ namespace OwinFramework.Pages.Html.Templates
             _templateBuilder = templateBuilder;
         }
 
-        public ITemplate Parse(byte[] template, Encoding encoding, IPackage package)
+        public ITemplate Parse(TemplateResource[] resources, IPackage package)
         {
-            encoding = encoding ?? Encoding.UTF8;
-            var html = encoding.GetString(template);
-
-            return _templateBuilder.BuildUpTemplate()
-                .PartOf(package)
-                .AddHtml(html)
-                .Build();
+            var template = _templateBuilder.BuildUpTemplate().PartOf(package);
+            foreach (var resource in resources) 
+            {
+                var encoding = resource.Encoding ?? Encoding.UTF8;
+                var html = encoding.GetString(resource.Content);
+                template.AddHtml(html);
+            }
+            return template.Build();
         }
     }
 }

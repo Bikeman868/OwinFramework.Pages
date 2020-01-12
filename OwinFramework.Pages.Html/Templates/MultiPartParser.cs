@@ -35,12 +35,23 @@ namespace OwinFramework.Pages.Html.Templates
             _templateBuilder = templateBuilder;
         }
 
-        public ITemplate Parse(byte[] template, Encoding encoding, IPackage package)
+        public ITemplate Parse(TemplateResource[] resources, IPackage package)
         {
-            encoding = encoding ?? Encoding.UTF8;
-            var text = encoding.GetString(template);
-
             var templateDefinition = _templateBuilder.BuildUpTemplate();
+
+            foreach (var resource in resources)
+                ParseResource(resource, templateDefinition, package);
+
+            return templateDefinition.Build();
+        }
+
+        private void ParseResource(
+            TemplateResource resource, 
+            ITemplateDefinition templateDefinition, 
+            IPackage package)
+        {
+            var encoding = resource.Encoding ?? Encoding.UTF8;
+            var text = encoding.GetString(resource.Content);
 
             var section = "--html";
             var newSection = true;
@@ -109,8 +120,6 @@ namespace OwinFramework.Pages.Html.Templates
                 newSection = false;
                 blankLineCount = 0;
             }
-
-            return templateDefinition.Build();
         }
     }
 }

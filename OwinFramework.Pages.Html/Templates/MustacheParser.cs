@@ -60,14 +60,18 @@ namespace OwinFramework.Pages.Html.Templates
                 RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
         }
 
-        public ITemplate Parse(byte[] template, Encoding encoding, IPackage package)
+        public ITemplate Parse(TemplateResource[] resources, IPackage package)
         {
-            encoding = encoding ?? Encoding.UTF8;
-            var text = encoding.GetString(template);
+            var template = _templateBuilder.BuildUpTemplate().PartOf(package);
 
-            var templateDefinition = _templateBuilder.BuildUpTemplate().PartOf(package);
-            ParseMustache(templateDefinition, text);
-            return templateDefinition.Build();
+            foreach (var resource in resources)
+            {
+                var encoding = resource.Encoding ?? Encoding.UTF8;
+                var text = encoding.GetString(resource.Content);
+
+                ParseMustache(template, text);
+            }
+            return template.Build();
         }
 
         private void ParseMustache(ITemplateDefinition template, string text)

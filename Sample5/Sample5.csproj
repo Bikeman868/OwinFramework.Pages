@@ -22,6 +22,8 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Use64BitIISExpress />
     <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -85,14 +87,41 @@
     <Reference Include="OwinFramework, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.2.7.0\lib\net45\OwinFramework.dll</HintPath>
     </Reference>
+    <Reference Include="OwinFramework.Authorization, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Authorization.1.1.0\lib\net45\OwinFramework.Authorization.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework.Authorization.Core, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Authorization.Core.1.1.0\lib\net45\OwinFramework.Authorization.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework.Authorization.Prius, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Authorization.Prius.1.1.0\lib\net45\OwinFramework.Authorization.Prius.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework.Authorization.UI, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Authorization.UI.1.1.0\lib\net45\OwinFramework.Authorization.UI.dll</HintPath>
+    </Reference>
     <Reference Include="OwinFramework.ExceptionReporter, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.ExceptionReporter.2.7.0\lib\net45\OwinFramework.ExceptionReporter.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework.Facilities.Cache.Local, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Facilities.Cache.Local.2.7.2\lib\net45\OwinFramework.Facilities.Cache.Local.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework.Facilities.IdentityStore.Prius, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Facilities.IdentityStore.Prius.2.7.2\lib\net45\OwinFramework.Facilities.IdentityStore.Prius.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework.Facilities.TokenStore.Cache, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Facilities.TokenStore.Cache.2.7.2\lib\net45\OwinFramework.Facilities.TokenStore.Cache.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework.FormIdentification, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.FormIdentification.2.7.0\lib\net45\OwinFramework.FormIdentification.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Less, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Less.2.7.0\lib\net45\OwinFramework.Less.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.NotFound, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.NotFound.2.7.0\lib\net45\OwinFramework.NotFound.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework.OutputCache, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.OutputCache.2.7.0\lib\net45\OwinFramework.OutputCache.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Pages.Core, Version=1.2.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.9\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
@@ -112,11 +141,17 @@
     <Reference Include="OwinFramework.Pages.Standard, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.9\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
     </Reference>
+    <Reference Include="OwinFramework.Session, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Session.2.7.0\lib\net45\OwinFramework.Session.dll</HintPath>
+    </Reference>
     <Reference Include="OwinFramework.StaticFiles, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.StaticFiles.2.7.0\lib\net45\OwinFramework.StaticFiles.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Urchin, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Urchin.2.7.0\lib\net45\OwinFramework.Urchin.dll</HintPath>
+    </Reference>
+    <Reference Include="OwinFramework.Versioning, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Versioning.2.7.0\lib\net45\OwinFramework.Versioning.dll</HintPath>
     </Reference>
     <Reference Include="Prius.Contracts, Version=2.2.1.30, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Prius.2.2.1\lib\net45\Prius.Contracts.dll</HintPath>
@@ -132,6 +167,9 @@
     </Reference>
     <Reference Include="Svg, Version=2.2.1.39233, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
       <HintPath>..\packages\Svg.2.3.0\lib\net35\Svg.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite, Version=1.0.112.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.112.0\lib\net45\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -370,4 +408,11 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
   </Choose>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.112.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.112.0\build\net45\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.112.0\build\net45\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.112.0\build\net45\System.Data.SQLite.Core.targets'))" />
+  </Target>
 </Project>

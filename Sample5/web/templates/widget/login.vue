@@ -1,19 +1,50 @@
 ﻿<div id="login">
-    <button>Login</button>
-    <div class="popup form">
-        <p><a>Login</a> or <a>signup</a></p>
-        <div>
-            <label for="login-email">Email</label>
-            <input id="login-email" type="text" />
-        </div>
-        <div v-if="showPassword1">
-            <label for="login-password">Password</label>
-            <input id="login-password" type="password" />
-        </div>
-        <div v-if="showPassword2">
-            <label for="login-confirm-password">Confirm password</label>
-            <input id="login-confirm-password" type="password" />
-        </div>
-        <p><a>Password reset</a></p>
+    <button v-if="!isLoggedIn" type="button" v-on:click="show">Login</button>
+    <button v-if="isLoggedIn" type="button" v-on:click="logout">Logout</button>
+    <div v-if="showPopup" class="sample5_popup">
+        <sample5-tabs>
+            <sample5-tab name="Login" selected="true">
+                <div class="sample5_field">
+                    <label>Email</label>
+                    <input v-model="email" type="email" placeholder="me@provider.com" />
+                </div>
+                <div class="sample5_field">
+                    <label>Password</label>
+                    <input v-model="password" type="password" />
+                </div>
+                <div class="sample5_button_bar">
+                    <button type="button" v-on:click="login">Login</button>
+                    <button type="button" v-on:click="cancel">Cancel</button>
+                </div>
+            </sample5-tab>
+            <sample5-tab name="Register">
+                <div class="sample5_field">
+                    <label>Email</label>
+                    <input v-model="email" type="email" placeholder="me@provider.com" />
+                </div>
+                <div class="sample5_field">
+                    <label>Password</label>
+                    <input v-model="password" type="password" />
+                </div>
+                <div class="sample5_field">
+                    <label>Confirm password</label>
+                    <input v-model="confirmPassword" type="password" />
+                </div>
+                <div class="sample5_button_bar">
+                    <button type="button" v-on:click="register">Register</button>
+                    <button type="button" v-on:click="cancel">Cancel</button>
+                </div>
+            </sample5-tab>
+            <sample5-tab name="Password reset">
+                <div class="sample5_field">
+                    <label>Email</label>
+                    <input v-model="email" type="email" placeholder="me@provider.com" />
+                </div>
+                <div class="sample5_button_bar">
+                    <button type="button" v-on:click="reset">Send password reset email</button>
+                    <button type="button" v-on:click="cancel">Cancel</button>
+                </div>
+            </sample5-tab>
+        </sample5-tabs>
     </div>
 </div>

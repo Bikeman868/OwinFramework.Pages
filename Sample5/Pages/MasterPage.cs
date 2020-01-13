@@ -28,7 +28,7 @@ namespace Sample5
     // Header - is the same on all pages
 
     [IsRegion("title_region")]
-    [UsesComponent("page__head")]
+    [UsesComponent("page_head")]
     internal class TitleRegion : NavigationElement { }
 
     [IsLayout("header_bar_layout", "hamburger_zone,login_zone,title_zone")]
@@ -77,12 +77,13 @@ namespace Sample5
     //------------------------------------------------------------------------------------
     // Base page for all pages on the website
 
-    [IsLayout("master_page_layout", "header_zone,body_zone,footer_zone")]
+    [IsLayout("master_page_layout", "resources_zone,header_zone,body_zone,footer_zone")]
     [Container("div", "{ns}_page")]
+    [ZoneComponent("resources_zone", "resources")]
     [ZoneRegion("header_zone", "header_region")]
     [ZoneRegion("body_zone", "body_region")]
     [ZoneRegion("footer_zone", "footer_region")]
-    internal class NavigationPageLayout : NavigationElement { }
+    internal class MasterPageLayout : NavigationElement { }
 
     [PartOf("application_package")]
     [UsesLayout("master_page_layout")]

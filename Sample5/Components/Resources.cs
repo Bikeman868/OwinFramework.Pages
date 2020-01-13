@@ -6,12 +6,13 @@ using OwinFramework.Pages.Html.Elements;
 
 namespace Sample5.Components
 {
-    [IsComponent("page__head")]
+    [IsComponent("resources")]
+    [NeedsComponent("libraries:vue")]
     [PartOf("application_package")]
-    [Description("Common header that is present on all pages")]
-    public class PageHead : Component
+    [Description("Writes resources required on every page of the website")]
+    public class Resources : Component
     {
-        public PageHead(IComponentDependenciesFactory dependencies) : base(dependencies)
+        public Resources(IComponentDependenciesFactory dependencies) : base(dependencies)
         {
             PageAreas = new[] { PageArea.Head, PageArea.Body };
         }
@@ -25,12 +26,8 @@ namespace Sample5.Components
             }
             else if (pageArea == PageArea.Body)
             {
-                context.Html.WriteOpenTag("a", "class", Package.NamespaceName + "_page-head", "href", "/");
-                context.Html.WriteLine();
-                context.Html.WriteElementLine("h1", "Sample5");
-                context.Html.WriteElementLine("p", "An example of how to create a website with the Owin Framework");
-                context.Html.WriteCloseTag("a");
-                context.Html.WriteLine();
+                context.Html.WriteElementLine("script", null, "src", "/scripts/main.js");
+                context.Html.WriteElementLine("div", null, "id", "pageMask");
             }
 
             return base.WritePageArea(context, pageArea);

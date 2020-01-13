@@ -157,12 +157,13 @@
   <ItemGroup>
     <Content Include="web\templates\page\home-page.html" />
     <Content Include="Web.config" />
+    <Content Include="web\scripts\main.js" />
     <None Include="web\templates\widget\login.vue" />
     <Content Include="web\templates\widget\login.js" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\MessageComponent.cs" />
-    <Compile Include="Components\PageHeadComponent.cs" />
+    <Compile Include="Components\Resources.cs" />
+    <Compile Include="Components\PageHead.cs" />
     <Compile Include="DataProviders\MenuDataProvider.cs" />
     <Compile Include="Packaging\ApplicationPackage.cs" />
     <Compile Include="Packaging\ContentModule.cs" />
@@ -190,7 +191,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="web\images\" />
-    <Folder Include="web\scripts\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,9 +1,18 @@
-﻿@content-panel-background: white;
+﻿@popup-background: white;
 @header-background: gray;
+@button-background: cornflowerblue;
 
+@body-color: whitesmoke;
+@popup-color: black;
+@popup-border-color: black;
+@popup-shadow-color: #aaaaaa;
 @header-color: whitesmoke;
 @anchor-color: #0000b3;
 @anchor-hover-color: #1a1aff;
+@button-color: white;
+@button-shadow-color: #e0e0ff;
+@tab-text-color: navy;
+@tab-selected-color: white;
 
 @break1: 400px;
 @break2: 600px;
@@ -20,7 +29,7 @@
 
 body {
     margin: 10px;
-    background-color: whitesmoke;
+    background-color: @body-color;
 }
 
 p {
@@ -63,7 +72,27 @@ div {
     padding: 0;
 }
 
+button {
+    background: @button-background;
+    color: @button-color;
+    font-size: @base-font-size * 1.2;
+    font-weight: 500;
+    letter-spacing: 2px;
+    padding: 3px 10px 3px 10px;
+    border-radius: 6px;
+    margin: 8px;
+}
+
+.sample5_button_bar {
+    padding: 15px 0 5px 0;
+
+    button {
+        margin: 8px;
+    }
+}
+
 div.sample5_page {
+    position: relative;
     min-width: @break1;
     max-width: @break4;
     margin: 0 auto;
@@ -98,6 +127,38 @@ ul.menus_dt_menu {
     div.menus_mb_menu {
         display: none;
     }
+}
+
+.sample5_tabs {
+    white-space: nowrap;
+    background: lighten(@button-background, 32%);
+    border-radius: 5px;
+    padding-left: 5px;
+
+    li {
+        display: inline-block;
+        border: 1px solid @button-shadow-color;
+        border-radius: 5px;
+        padding: 10px 15px;
+        overflow: visible;
+        font-size: @base-font-size * 1.2;
+        letter-spacing: 1px;
+
+        a, a:visited, a:hover {
+            text-decoration: none;
+            color: @tab-text-color;
+        }
+    }
+
+    li.sample5_is_active {
+        border-bottom: 1px solid @tab-selected-color;
+        background: @tab-selected-color;
+        border-radius: 0;
+    }
+}
+
+.sample5_tabs_details {
+    padding: 10px 0px 2px 0px;
 }
 
 div.sample5_header-region {
@@ -136,14 +197,44 @@ div.sample5_footer-region {
     }
 }
 
-.popup {
-    display: none;
+#pageMask {
+    visibility: hidden;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background-color: rgba(0,0,0,0.1);
 }
 
 #login {
     float: right;
 
-    button {
+    >button {
         margin: 15px 10px 0 5px;
     }
+
+    .sample5_popup {
+        max-width: 600px;
+    }
+
+    label {
+        width: 130px;
+        display: inline-block;
+    }
 }
+
+.sample5_popup {
+    float: left;
+    position: absolute;
+    left: 10%;
+    top: 40px;
+    width: 80%;
+    padding: 20px;
+    background-color: @popup-background;
+    color: @popup-color;
+    border: 1px solid @popup-border-color;
+    border-radius: 5px;
+    box-shadow: 7px 7px 3px 4px @popup-shadow-color;
+}
+

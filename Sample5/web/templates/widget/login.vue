@@ -35,7 +35,7 @@
                     <button type="button" v-on:click="cancel">Cancel</button>
                 </div>
             </sample5-tab>
-            <sample5-tab name="Password reset">
+            <sample5-tab name="Reset password">
                 <div class="sample5_field">
                     <label>Email</label>
                     <input v-model="email" type="email" placeholder="me@provider.com" />
@@ -45,6 +45,7 @@
                     <button type="button" v-on:click="cancel">Cancel</button>
                 </div>
             </sample5-tab>
+            <div v-if="error" class="sample5_error">{{error}}</div>
         </sample5-tabs>
     </div>
 </div>

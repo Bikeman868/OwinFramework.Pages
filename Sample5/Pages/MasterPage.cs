@@ -51,7 +51,7 @@ namespace Sample5
     internal class HeaderLayout : NavigationElement { }
 
     [IsRegion("header_region")]
-    [Container("div", "{ns}_header-region")]
+    [Container("div", "{ns}_header_region")]
     [UsesLayout("header_layout")]
     internal class HeaderRegion : NavigationElement { }
 
@@ -63,7 +63,7 @@ namespace Sample5
     internal class FooterComponent : NavigationElement { }
 
     [IsRegion("footer_region")]
-    [Container("div", "{ns}_footer-region")]
+    [Container("div", "{ns}_footer_region")]
     [UsesComponent("footer_component")]
     internal class FooterRegion : NavigationElement { }
 
@@ -71,7 +71,7 @@ namespace Sample5
     // Body - the body region has a different layout on each page
 
     [IsRegion("body_region")]
-    [Container("div", "{ns}_body-region")]
+    [Container("div", "{ns}_body_region")]
     internal class BodyRegion : ContentElement { }
 
     //------------------------------------------------------------------------------------

@@ -41,7 +41,7 @@
                     <input v-model="email" type="email" placeholder="me@provider.com" />
                 </div>
                 <div class="sample5_button_bar">
-                    <button type="button" v-on:click="reset">Send password reset email</button>
+                    <button type="button" v-on:click="reset">Send</button>
                     <button type="button" v-on:click="cancel">Cancel</button>
                 </div>
             </sample5-tab>

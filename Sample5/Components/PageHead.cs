@@ -20,7 +20,7 @@ namespace Sample5.Components
         {
             if (pageArea == PageArea.Body)
             {
-                context.Html.WriteOpenTag("a", "class", Package.NamespaceName + "_page-head", "href", "/");
+                context.Html.WriteOpenTag("a", "class", Package.NamespaceName + "_page_head", "href", "/");
                 context.Html.WriteLine();
                 context.Html.WriteElementLine("h1", "Sample5");
                 context.Html.WriteElementLine("p", "An example of how to create a website with the Owin Framework");

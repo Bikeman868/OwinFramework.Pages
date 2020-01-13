@@ -1,5 +1,5 @@
 ﻿Vue.component("sample5-tabs", {
-    template:"<div><ul class=\"sample5_tabs\"><li v-for=\"tab in tabs\" :class=\"{ 'sample5_is_active': tab.isActive }\"><a @click=\"selectTab(tab)\">{{ tab.name }}</a></li></ul><div class=\"sample5_tabs_details\"><slot></slot></div></div>",
+    template:"<div class=\"sample5_tabs\"><ul class=\"sample5_tabs\"><li v-for=\"tab in tabs\" :class=\"{ 'sample5_is_active': tab.isActive }\"><a @click=\"selectTab(tab)\">{{ tab.name }}</a></li></ul><div class=\"sample5_tabs_details\"><slot></slot></div></div>",
     data: function () {
         return { tabs: [] };
     },

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define _USER_ACCOUNTS
+using System;
 using System.IO;
 using System.Reflection;
 using Ioc.Modules;
@@ -71,25 +72,27 @@ namespace Sample5
             // The Exception Reporter middleware will catch exceptions in the Owin pipeline and report them
             pipelineBuilder.Register(ninject.Get<OwinFramework.ExceptionReporter.ExceptionReporterMiddleware>()).RunFirst();
 
+            // The Output Cache middleware will cache some assets in memory and also instruct the browser to cache certain assets
+            pipelineBuilder.Register(ninject.Get<OwinFramework.OutputCache.OutputCacheMiddleware>());
+
+            // The Versioning middleware will add a version number to assets allowing them to be cached by the browser indefinately
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Versioning.VersioningMiddleware>());
+
+# if _SER_ACCOUNTS
+            // The Authorization UI middleware will allow you to manage user groups, roles and permissions on your website
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.UI.AuthorizationApiMiddleware>());
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.UI.AuthorizationApiMiddleware>());
+
             // The Form Identification middleware will handle POST requests for login, logout, reset password etc
             pipelineBuilder.Register(ninject.Get<OwinFramework.FormIdentification.FormIdentificationMiddleware>());
 
             // The Authorization middleware will allow other middleware to define required permissions
             pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.AuthorizationMiddleware>());
 
-            // The Authorization UI middleware will allow you to manage user groups, roles and permissions on your website
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.UI.AuthorizationApiMiddleware>());
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.UI.AuthorizationApiMiddleware>());
-
             // The In Process Session middleware will maintain sessions when their is only 1 web server or if you have sticky sessions.
             // If you have multiple web servers without sticky sessions then you should switch to the CacheSessionMidleware or provide your own
             pipelineBuilder.Register(ninject.Get<OwinFramework.Session.InProcessSessionMidleware>());
-
-            // The Output Cache middleware will cache some assets in memory and also instruct the browser to cache certain assets
-            pipelineBuilder.Register(ninject.Get<OwinFramework.OutputCache.OutputCacheMiddleware>());
-
-            // The Versioning middleware will add a version number to assets allowing them to be cached by the browser indefinately
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Versioning.VersioningMiddleware>());
+#endif
 
 #if DEBUG
             // The Debug Info middleware allows you to add ?debug=true to any page rendered by the Pages middleware

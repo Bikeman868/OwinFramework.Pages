@@ -77,6 +77,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         IPageDefinition RequiresPermission(string permissionName, string assetName = null);
 
         /// <summary>
+        /// Tells the authentication middleware that the caller must be identified to
+        /// access this page
+        /// </summary>
+        IPageDefinition RequiresIdentification();
+
+        /// <summary>
         /// Defines information that can be used by the Output Cache middleware to cache
         /// this page. The output cache can cache the generated Html for a period of time
         /// and can also instruct the browser, CDN and proxy services to cache the page.

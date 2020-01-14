@@ -393,6 +393,16 @@ namespace OwinFramework.Pages.Framework.Builders
                 page.CanonicalUrl(attributes.IsPage.CanonicalUrl);
             }
 
+            if (attributes.RequiresPermission != null)
+            {
+                page.RequiresPermission(attributes.RequiresPermission.PermissionName, attributes.RequiresPermission.ResourcePath);
+            }
+
+            if (attributes.RequiresIdentification != null)
+            {
+                page.RequiresIdentification();
+            }
+
             /*
             if (!ReferenceEquals(attributes.DeployCsss, null))
             {

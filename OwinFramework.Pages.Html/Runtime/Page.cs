@@ -105,6 +105,9 @@ namespace OwinFramework.Pages.Html.Runtime
             _dependencies = dependencies;
             _dataScopeRules = dependencies.DataScopeProviderFactory.Create();
             _dataConsumer = dependencies.DataConsumerFactory.Create();
+
+            AllowAnonymous = true;
+            CachePriority = CachePriority.Never;
         }
 
         #region Page one-time initialization

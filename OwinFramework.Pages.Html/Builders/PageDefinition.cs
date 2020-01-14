@@ -141,6 +141,13 @@ namespace OwinFramework.Pages.Html.Builders
                             "' but there is no Authorization middleware in the Owin pipeline");
                     return authorization.HasPermission(permissionName, assetName);
                 };
+            _page.AllowAnonymous = false;
+            return this;
+        }
+
+        IPageDefinition IPageDefinition.RequiresIdentification()
+        {
+            _page.AllowAnonymous = false;
             return this;
         }
 

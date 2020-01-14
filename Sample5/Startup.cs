@@ -1,4 +1,4 @@
-﻿#define USER_ACCOUNTS
+﻿#define _USER_ACCOUNTS
 using System;
 using System.IO;
 using System.Reflection;

@@ -1,34 +1,129 @@
 ﻿{
-    "prius": {
-        "databases": [
-        ],
-        "fallbackPolicies": [
-            { "name": "none", "allowedFailurePercent": 100 }
-        ],
-        "repositories": [
+  "prius": {
+    "databases": [
+      {
+        "name": "authorizationMaster",
+        "type": "MySql",
+        "connectionString": ""
+      },
+      {
+        "name": "authorizationSlave",
+        "type": "MySql",
+        "connectionString": ""
+      },
+      {
+        "name": "identity",
+        "type": "MySql",
+        "connectionString": ""
+      }
+    ],
+      "fallbackPolicies": [
+          { "name": "none", "allowedFailurePercent": 100 }
+      ],
+    "repositories": [
+      {
+        "name": "AuthorizationMaster",
+        "clusters": [
+          {
+            "databases": [
+              "authorizationMaster"
+            ],
+            "fallbackPolicy": "none"
+          }
         ]
+      },
+      {
+        "name": "AuthorizationSlave",
+        "clusters": [
+          {
+            "databases": [
+              "authorizationSlave"
+            ],
+            "fallbackPolicy": "none"
+          }
+        ]
+      },
+      {
+        "name": "Identity",
+        "clusters": [
+          {
+            "databases": [
+              "identity"
+            ],
+            "fallbackPolicy": "noFallback"
+          }
+        ]
+      }
+    ]
+  },
+  "owinFramework": {
+    "facility": {
+      "identityStore.Prius": {
+        "priusRepositoryName": "Identity",
+        "identityUrnNamespace": "sample5.user",
+        "mixedCaseTokens": false,
+        "mixedCaseIdentity": false,
+        "mixedCaseSharedSecret": true,
+        "minimumUserNameLength": 3,
+        "maximumUserNameLength": 80,
+        "userNameRegex ": "^[a-zA-Z0-9@_.-]*$",
+        "minimumPasswordLength": 8,
+        "maximumPasswordLength": 160,
+        "passwordRegex": ".*",
+        "failedLoginsToLock": 5,
+        "lockDuration": "04:00:00",
+        "rememberMeFor": "90"
+      }
     },
-    "owinFramework": {
-        "pages": {
-            "framework": { 
-                "debugLogging":  false,
-                "debugLibraries":  true
-            },
-            "html": {
-                "includeComments": true,
-                "indented": true
-            }
-        }
+    "authorization": {
+      "data": {
+        "priusMasterRepository": "AuthorizationMaster",
+        "priusReadonlyReplicaRepository": "AuthorizationSlave",
+        "defaultGroup": "sys.users",
+        "administratorGroup": "sys.admins",
+        "anonymousGroup": "sys.users"
+      }
     },
-  "sample5": {
     "pages": {
-
+      "framework": {
+        "debugLogging": false,
+        "debugLibraries": true
+      },
+      "html": {
+        "includeComments": true,
+        "indented": true
+      }
+    }
+  },
+  "middleware": {
+    "pages": {
+      "debugInfo": {}
     },
-    "notFound": {
+    "redirect": {},
+    "notFound": {},
+    "exceptions": {},
+    "outputCache": {},
+    "versioning": {},
+    "session": {},
+    "identification": {
+      "forms": {
+        "cookieName": "identification",
 
+      }
     },
-    "documenter": {
-
+    "authorization": {
+      "ui": {
+        "documentationRootUrl": "/authorization/ui/config",
+        "apiRootUrl": "/authorization/ui/api",
+        "uiRootUrl": "/authorization/ui",
+        "permissionToCallApi": "auth:ui",
+        "permissionToEditPermissions": "auth:permission.edit",
+        "permissionToEditRoles": "auth:role.edit",
+        "permissionToEditGroups": "auth:group.edit",
+        "permissionToAssignPermissionToRole": "auth:permission.assign",
+        "permissionToAssignRoleToGroup": "auth:role.assign",
+        "permissionToAssignUserToGroup": "auth:group.assign"
+      }
     },
     "staticFiles": {
       "scripts": {

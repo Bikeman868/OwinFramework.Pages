@@ -1,4 +1,4 @@
-﻿#define _USER_ACCOUNTS
+﻿#define USER_ACCOUNTS
 using System;
 using System.IO;
 using System.Reflection;
@@ -54,49 +54,49 @@ namespace Sample5
 #endif
 
             // Add middleware defined by this application
-            pipelineBuilder.Register(ninject.Get<RedirectMiddleware>()).ConfigureWith(config, "/sample5/redirect");
+            pipelineBuilder.Register(ninject.Get<RedirectMiddleware>()).ConfigureWith(config, "/middleware/redirect");
 
             // The Pages middleware provides html page rendering and REST services
-            pipelineBuilder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/sample5/pages");
+            pipelineBuilder.Register(ninject.Get<PagesMiddleware>()).ConfigureWith(config, "/middleware/pages");
 
             // The Less middleware will dynamically compile less into css and cache in memory
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Less.LessMiddleware>()).ConfigureWith(config, "/sample5/less").As("Less");
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Less.LessMiddleware>()).ConfigureWith(config, "/middleware/less").As("Less");
 
             // The static files middleware will serve files from the file system to the browser
-            pipelineBuilder.Register(ninject.Get<OwinFramework.StaticFiles.StaticFilesMiddleware>()).ConfigureWith(config, "/sample5/staticFiles/scripts").As("Scripts").RunAfter("Less");
-            pipelineBuilder.Register(ninject.Get<OwinFramework.StaticFiles.StaticFilesMiddleware>()).ConfigureWith(config, "/sample5/staticFiles/images").As("Images").RunAfter("Less");
+            pipelineBuilder.Register(ninject.Get<OwinFramework.StaticFiles.StaticFilesMiddleware>()).ConfigureWith(config, "/middleware/staticFiles/scripts").As("Scripts").RunAfter("Less");
+            pipelineBuilder.Register(ninject.Get<OwinFramework.StaticFiles.StaticFilesMiddleware>()).ConfigureWith(config, "/middleware/staticFiles/images").As("Images").RunAfter("Less");
 
             // The Not Found middleware will return a friendly 404 page
-            pipelineBuilder.Register(ninject.Get<OwinFramework.NotFound.NotFoundMiddleware>()).ConfigureWith(config, "/sample5/notFound");
+            pipelineBuilder.Register(ninject.Get<OwinFramework.NotFound.NotFoundMiddleware>()).ConfigureWith(config, "/middleware/notFound");
 
             // The Exception Reporter middleware will catch exceptions in the Owin pipeline and report them
-            pipelineBuilder.Register(ninject.Get<OwinFramework.ExceptionReporter.ExceptionReporterMiddleware>()).RunFirst();
+            pipelineBuilder.Register(ninject.Get<OwinFramework.ExceptionReporter.ExceptionReporterMiddleware>()).ConfigureWith(config, "/middleware/exceptions").RunFirst();
 
             // The Output Cache middleware will cache some assets in memory and also instruct the browser to cache certain assets
-            pipelineBuilder.Register(ninject.Get<OwinFramework.OutputCache.OutputCacheMiddleware>());
+            pipelineBuilder.Register(ninject.Get<OwinFramework.OutputCache.OutputCacheMiddleware>()).ConfigureWith(config, "/middleware/outputCache");
 
             // The Versioning middleware will add a version number to assets allowing them to be cached by the browser indefinately
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Versioning.VersioningMiddleware>());
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Versioning.VersioningMiddleware>()).ConfigureWith(config, "/middleware/versioning");
 
-# if _SER_ACCOUNTS
-            // The Authorization UI middleware will allow you to manage user groups, roles and permissions on your website
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.UI.AuthorizationApiMiddleware>());
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.UI.AuthorizationApiMiddleware>());
-
-            // The Form Identification middleware will handle POST requests for login, logout, reset password etc
-            pipelineBuilder.Register(ninject.Get<OwinFramework.FormIdentification.FormIdentificationMiddleware>());
-
-            // The Authorization middleware will allow other middleware to define required permissions
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.AuthorizationMiddleware>());
-
+# if USER_ACCOUNTS
             // The In Process Session middleware will maintain sessions when their is only 1 web server or if you have sticky sessions.
             // If you have multiple web servers without sticky sessions then you should switch to the CacheSessionMidleware or provide your own
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Session.InProcessSessionMidleware>());
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Session.InProcessSessionMidleware>()).ConfigureWith(config, "/middleware/session");
+
+            // The Form Identification middleware will handle POST requests for login, logout, reset password etc
+            pipelineBuilder.Register(ninject.Get<OwinFramework.FormIdentification.FormIdentificationMiddleware>()).ConfigureWith(config, "/middleware/identification/forms"); ;
+
+            // The Authorization middleware will allow other middleware to define required permissions
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.AuthorizationMiddleware>()).ConfigureWith(config, "/middleware/authorization");
+
+            // The Authorization UI middleware will allow you to manage user groups, roles and permissions on your website
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.UI.AuthorizationApiMiddleware>()).ConfigureWith(config, "/middleware/authorization/ui");
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Authorization.UI.AuthorizationUiMiddleware>()).ConfigureWith(config, "/middleware/authorization/ui");
 #endif
 
 #if DEBUG
             // The Debug Info middleware allows you to add ?debug=true to any page rendered by the Pages middleware
-            pipelineBuilder.Register(ninject.Get<DebugInfoMiddleware>()).ConfigureWith(config, "/sample5/pages/debugInfo");
+            pipelineBuilder.Register(ninject.Get<DebugInfoMiddleware>()).ConfigureWith(config, "/middleware/pages/debugInfo");
 #endif
 
             // Build the owin pipeline

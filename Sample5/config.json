@@ -2,19 +2,14 @@
   "prius": {
     "databases": [
       {
-        "name": "authorizationMaster",
+        "name": "authorization",
         "type": "MySql",
-        "connectionString": ""
-      },
-      {
-        "name": "authorizationSlave",
-        "type": "MySql",
-        "connectionString": ""
+        "connectionString": "Server=localhost;Database=authorization;Uid=svc_test;Pwd=password;"
       },
       {
         "name": "identity",
         "type": "MySql",
-        "connectionString": ""
+        "connectionString": "Server=localhost;Database=identity;Uid=svc_test;Pwd=password;"
       }
     ],
       "fallbackPolicies": [
@@ -22,22 +17,11 @@
       ],
     "repositories": [
       {
-        "name": "AuthorizationMaster",
+        "name": "Authorization",
         "clusters": [
           {
             "databases": [
-              "authorizationMaster"
-            ],
-            "fallbackPolicy": "none"
-          }
-        ]
-      },
-      {
-        "name": "AuthorizationSlave",
-        "clusters": [
-          {
-            "databases": [
-              "authorizationSlave"
+              "authorization"
             ],
             "fallbackPolicy": "none"
           }
@@ -77,11 +61,11 @@
     },
     "authorization": {
       "data": {
-        "priusMasterRepository": "AuthorizationMaster",
-        "priusReadonlyReplicaRepository": "AuthorizationSlave",
+        "priusMasterRepository": "Authorization",
+        "priusReadonlyReplicaRepository": "Authorization",
         "defaultGroup": "sys.users",
         "administratorGroup": "sys.admins",
-        "anonymousGroup": "sys.users"
+        "anonymousGroup": ""
       }
     },
     "pages": {
@@ -92,6 +76,15 @@
       "html": {
         "includeComments": true,
         "indented": true
+      }
+    },
+    "middleware": {
+      "traceFilter": {
+        "level": "All",
+        "middlewareClasses": [
+          "OwinFramework.Session.CacheSessionMiddleware",
+          "OwinFramework.Session.InProcessSessionMidleware"
+        ]
       }
     }
   },

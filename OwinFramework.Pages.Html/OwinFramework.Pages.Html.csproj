@@ -44,5 +44,8 @@
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.csproj" />
   </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo F|xcopy /Y &quot;$(ProjectDir)bin\debug\net45\$(TargetFileName)&quot; &quot;$(SolutionDir)packages\Owin.Framework.Pages.Html.1.2.9\lib\net45\$(TargetFileName)&quot;" />
+  </Target>
 
 </Project>

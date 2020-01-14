@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net40;net45</TargetFrameworks>
@@ -33,5 +33,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
     <PackageReference Include="Owin.Framework" Version="2.7.0" />
   </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo F|xcopy /Y &quot;$(ProjectDir)bin\debug\net45\$(TargetFileName)&quot; &quot;$(SolutionDir)packages\Owin.Framework.Pages.Core.1.2.9\lib\net45\$(TargetFileName)&quot;" />
+  </Target>
 
 </Project>

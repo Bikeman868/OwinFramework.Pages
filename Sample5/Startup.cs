@@ -1,4 +1,4 @@
-﻿#define _USER_ACCOUNTS
+﻿#define USER_ACCOUNTS
 using System;
 using System.IO;
 using System.Reflection;
@@ -81,7 +81,7 @@ namespace Sample5
 # if USER_ACCOUNTS
             // The In Process Session middleware will maintain sessions when their is only 1 web server or if you have sticky sessions.
             // If you have multiple web servers without sticky sessions then you should switch to the CacheSessionMidleware or provide your own
-            pipelineBuilder.Register(ninject.Get<OwinFramework.Session.InProcessSessionMidleware>()).ConfigureWith(config, "/middleware/session");
+            pipelineBuilder.Register(ninject.Get<OwinFramework.Session.CacheSessionMiddleware>()).ConfigureWith(config, "/middleware/session");
 
             // The Form Identification middleware will handle POST requests for login, logout, reset password etc
             pipelineBuilder.Register(ninject.Get<OwinFramework.FormIdentification.FormIdentificationMiddleware>()).ConfigureWith(config, "/middleware/identification/forms"); ;

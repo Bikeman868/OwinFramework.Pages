@@ -111,8 +111,8 @@
     <Reference Include="OwinFramework.Facilities.TokenStore.Cache, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Facilities.TokenStore.Cache.2.7.2\lib\net45\OwinFramework.Facilities.TokenStore.Cache.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.FormIdentification, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.FormIdentification.2.7.0\lib\net45\OwinFramework.FormIdentification.dll</HintPath>
+    <Reference Include="OwinFramework.FormIdentification, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.FormIdentification.2.7.1\lib\net45\OwinFramework.FormIdentification.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Less, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Less.2.7.0\lib\net45\OwinFramework.Less.dll</HintPath>
@@ -196,6 +196,7 @@
     <Content Include="web\templates\page\home-page.html" />
     <Content Include="Web.config" />
     <Content Include="web\scripts\main.js" />
+    <None Include="packages.config" />
     <None Include="web\templates\widget\login.vue" />
     <Content Include="web\templates\widget\login.js" />
   </ItemGroup>
@@ -218,7 +219,6 @@
   <ItemGroup>
     <Content Include="config.json" />
     <Content Include="Readme.md" />
-    <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

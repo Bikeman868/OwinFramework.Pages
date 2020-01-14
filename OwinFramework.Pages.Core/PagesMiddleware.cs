@@ -70,13 +70,21 @@ namespace OwinFramework.Pages.Core
             if (!string.IsNullOrEmpty(runable.RequiredPermission) && 
                 string.IsNullOrEmpty(runable.SecureResource))
             {
+                Trace(context, () => GetType().Name + " runnable requires the user to have the " + runable.RequiredPermission + " permission");
+
                 var upstreamAuthorization = context.GetFeature<IUpstreamAuthorization>();
                 if (upstreamAuthorization != null)
                     upstreamAuthorization.AddRequiredPermission(runable.RequiredPermission);
             }
 
-            if (!runable.AllowAnonymous)
+            if (runable.AllowAnonymous)
             {
+                Trace(context, () => GetType().Name + " runnable allows anonymous requests");
+            }
+            else
+            {
+                Trace(context, () => GetType().Name + " runnable does not allow anonymous requests");
+
                 var upstreamIdentification = context.GetFeature<IUpstreamIdentification>();
                 if (upstreamIdentification != null)
                     upstreamIdentification.AllowAnonymous = false;
@@ -84,12 +92,19 @@ namespace OwinFramework.Pages.Core
 
             if (!string.IsNullOrEmpty(runable.CacheCategory))
             {
+                Trace(context, () => GetType().Name + " runnable is in cache category " + runable.CacheCategory);
+
                 var upstreamOutputCache = context.GetFeature<IUpstreamOutputCache>();
-                if (upstreamOutputCache.CachedContentIsAvailable)
+                if (upstreamOutputCache != null && upstreamOutputCache.CachedContentIsAvailable)
                 {
+                    Trace(context, () => GetType().Name + " output cache has cached output");
+
                     var timeInCache = upstreamOutputCache.TimeInCache;
                     if (timeInCache.HasValue && timeInCache.Value > _maximumCacheTime)
+                    {
+                        Trace(context, () => GetType().Name + " cached output is too old, discarding");
                         upstreamOutputCache.UseCachedContent = false;
+                    }
                 }
             }
 
@@ -106,11 +121,15 @@ namespace OwinFramework.Pages.Core
             if (!string.IsNullOrEmpty(runable.RequiredPermission) &&
                 !string.IsNullOrEmpty(runable.SecureResource))
             {
+                Trace(context, () => GetType().Name + " runnable requires the user to have the " + runable.RequiredPermission + " permission on resource " + runable.SecureResource);
+
                 var authorization = context.GetFeature<IAuthorization>();
                 if (authorization != null)
                 {
                     if (!authorization.HasPermission(runable.RequiredPermission, runable.SecureResource))
                     {
+                        Trace(context, () => GetType().Name + " user does not have permission for this runable");
+
                         context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                         return context.Response.WriteAsync(string.Empty);
                     }
@@ -121,6 +140,8 @@ namespace OwinFramework.Pages.Core
             {
                 if (!runable.AuthenticationFunc(context))
                 {
+                    Trace(context, () => GetType().Name + " the runable's authentication function returned false");
+
                     context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                     return context.Response.WriteAsync(string.Empty);
                 }
@@ -134,6 +155,7 @@ namespace OwinFramework.Pages.Core
                     outputCache.Category = runable.CacheCategory;
                     outputCache.MaximumCacheTime = _maximumCacheTime;
                     outputCache.Priority = runable.CachePriority;
+
                     Trace(context, () => GetType().Name + " configured output cache " + outputCache.Category + " " + outputCache.Priority + " " + outputCache.MaximumCacheTime);
                 }
             }

@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="Moq.Modules" Version="1.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
-    <PackageReference Include="Owin.Framework" Version="2.7.0" />
+    <PackageReference Include="Owin.Framework" Version="2.7.1" />
     <PackageReference Include="Urchin.Client" Version="1.3.1" />
   </ItemGroup>
   <ItemGroup>

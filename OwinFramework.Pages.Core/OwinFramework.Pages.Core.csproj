@@ -31,10 +31,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
-    <PackageReference Include="Owin.Framework" Version="2.7.0" />
+    <PackageReference Include="Owin.Framework" Version="2.7.1" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="echo F|xcopy /Y &quot;$(ProjectDir)bin\debug\net45\$(TargetFileName)&quot; &quot;$(SolutionDir)packages\Owin.Framework.Pages.Core.1.2.10\lib\net45\$(TargetFileName)&quot;" />
+    <Exec Command="REM echo F|xcopy /Y &quot;$(ProjectDir)bin\debug\net45\$(TargetFileName)&quot; &quot;$(SolutionDir)packages\Owin.Framework.Pages.Core.1.2.10\lib\net45\$(TargetFileName)&quot;" />
   </Target>
 
 </Project>

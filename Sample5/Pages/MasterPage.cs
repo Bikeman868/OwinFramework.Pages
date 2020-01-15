@@ -37,6 +37,7 @@ namespace Sample5
     [ZoneTemplate("login_zone", "/widget/login")]
     [NeedsComponent("menus:menuStyle1")]
     [NeedsComponent("libraries:vue")]
+    [NeedsComponent("ajax:ajax")]
     internal class HeaderBarLayout : NavigationElement { }
 
     [IsRegion("header_bar_region")]

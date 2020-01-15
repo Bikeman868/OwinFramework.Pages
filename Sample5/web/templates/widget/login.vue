@@ -1,4 +1,4 @@
-﻿<div id="login">
+﻿<div v-cloak id="login">
     <button v-if="!isLoggedIn" type="button" v-on:click="show">Login</button>
     <button v-if="isLoggedIn" type="button" v-on:click="logout">Logout</button>
     <div v-if="showPopup" class="sample5_popup">

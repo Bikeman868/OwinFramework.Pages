@@ -16,11 +16,11 @@
     <dependencies>
       <group targetFramework="net40">
         <dependency id="Newtonsoft.Json" version="7.0.1" />
-        <dependency id="Owin.Framework" version="2.7.0" />
+        <dependency id="Owin.Framework" version="2.7.1" />
 	  </group>
       <group targetFramework="net45">
         <dependency id="Newtonsoft.Json" version="7.0.1" />
-        <dependency id="Owin.Framework" version="2.7.0" />
+        <dependency id="Owin.Framework" version="2.7.1" />
       </group>
     </dependencies>
     <references>

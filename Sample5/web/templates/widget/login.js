@@ -36,10 +36,23 @@
                 if (this.password != this.confirmPassword)
                     this.error = "Your password and confirmation password do not match, please try again."
                 else {
-                    this.error = "Registration is not implemented yet";
+                    var vm = this;
+                    ns.ajax.restModule.postForm({
+                        url: "/formId/signup",
+                        body: "email=" + encodeURIComponent(this.email) + "&password=" + encodeURIComponent(this.password),
+                        onSuccess: function () {
+                            vm.isLoggedIn = true;
+                            vm.cancel();
+                        },
+                        onFail: function () {
+                            vm.error = "Registration failed";
+                        }
+                    });
                 }
             }
-            if (!this.error) this.cancel();
+        },
+        logout: function() {
+            this.isLoggedIn = false;
         },
         reset: function () {
             if (this.isValidEmail()) {

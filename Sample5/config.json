@@ -4,12 +4,12 @@
       {
         "name": "authorization",
         "type": "MySql",
-        "connectionString": "Server=localhost;Database=authorization;Uid=svc_test;Pwd=password;"
+        "connectionString": "Server=localhost;Database=authorization;CheckParameters=false;Uid=svc_test;Pwd=password;"
       },
       {
         "name": "identity",
         "type": "MySql",
-        "connectionString": "Server=localhost;Database=identity;Uid=svc_test;Pwd=password;"
+        "connectionString": "Server=localhost;Database=identity;CheckParameters=false;Uid=svc_test;Pwd=password;"
       }
     ],
       "fallbackPolicies": [
@@ -81,9 +81,13 @@
     "middleware": {
       "traceFilter": {
         "level": "All",
-        "middlewareClasses": [
+        "_middlewareClasses": [
           "OwinFramework.Session.CacheSessionMiddleware",
-          "OwinFramework.Session.InProcessSessionMidleware"
+          "OwinFramework.Session.InProcessSessionMidleware",
+          "OwinFramework.FormIdentification.FormIdentificationMiddleware",
+          "OwinFramework.OutputCache.OutputCacheMiddleware",
+          "OwinFramework.StaticFiles.StaticFilesMiddleware",
+          "OwinFramework.Versioning.VersioningMiddleware"
         ]
       }
     }

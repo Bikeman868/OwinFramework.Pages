@@ -43,7 +43,7 @@ namespace OwinFramework.Pages.Standard
 
             var javaScript = Encoding.UTF8.GetString(resource.Content);
 
-           fluentBuilder.BuildUpComponent(null)
+            fluentBuilder.BuildUpComponent(null)
                 .Name("ajax")
                 .AssetDeployment(AssetDeployment.PerWebsite)
                 .DeployScript(javaScript)

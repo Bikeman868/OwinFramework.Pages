@@ -6,48 +6,54 @@
         email: "",
         password: "",
         confirmPassword: "",
-        error: ""
+        error: "",
+        selectedTab: ""
     },
     watch: {
         email: function () { this.error = undefined; },
         password: function () { this.error = undefined; },
         confirmPassword: function () { this.error = undefined; },
     },
+    mounted: function() {
+        var path = window.location.pathname;
+        if (path === "/formid/signin") {
+            this.selectedTab = "Login";
+            this.showPopup = true;
+        }
+        else if (path === "/formid/signup") {
+            this.selectedTab = "Register";
+            this.showPopup = true;
+        }
+        else this.selectedTab = "Login";
+    },
     methods: {
         show: function () {
             document.getElementById("pageMask").style.visibility = "visible";
             this.showPopup = true;
         },
+        hide: function () {
+            this.showPopup = false;
+            document.getElementById("pageMask").style.visibility = "hidden";
+        },
         cancel: function () {
             this.error = undefined;
             this.password = undefined;
             this.confirmPassword = undefined;
-            this.showPopup = false;
-            document.getElementById("pageMask").style.visibility = "hidden";
+            this.hide();
         },
         login: function () {
             if (this.isValidEmail()) {
-                this.error = "Login is not implemented yet";
+                document.forms["signin-form"].submit();
             }
-            if (!this.error) this.cancel();
+            this.showPopup = false;
         },
         register: function () {
             if (this.isValidEmail() && this.isValidPassword()) {
                 if (this.password != this.confirmPassword)
                     this.error = "Your password and confirmation password do not match, please try again."
                 else {
-                    var vm = this;
-                    ns.ajax.restModule.postForm({
-                        url: "/formId/signup",
-                        body: "email=" + encodeURIComponent(this.email) + "&password=" + encodeURIComponent(this.password),
-                        onSuccess: function () {
-                            vm.isLoggedIn = true;
-                            vm.cancel();
-                        },
-                        onFail: function () {
-                            vm.error = "Registration failed";
-                        }
-                    });
+                    this.hide();
+                    document.forms["signup-form"].submit();
                 }
             }
         },
@@ -56,9 +62,9 @@
         },
         reset: function () {
             if (this.isValidEmail()) {
-                this.error = "Resetting your password not implemented yet";
+                this.hide();
+                document.forms["reset-password-form"].submit();
             }
-            if (!this.error) this.cancel();
         },
         isValidEmail() {
             var isValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email);

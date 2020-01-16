@@ -1,9 +1,4 @@
-﻿new Vue({
-    el: "#login",
-    data: {
-        showPopup: false,
-        isLoggedIn: false,
-        email: "",
+﻿        showPopup: false,
         password: "",
         confirmPassword: "",
         error: "",
@@ -58,7 +53,9 @@
             }
         },
         logout: function() {
+            this.hide();
             this.isLoggedIn = false;
+            document.forms["signout-form"].submit();
         },
         reset: function () {
             if (this.isValidEmail()) {
@@ -77,4 +74,3 @@
             return isValid;
         }
     }
-})

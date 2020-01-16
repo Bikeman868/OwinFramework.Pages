@@ -102,6 +102,7 @@ namespace Sample5
 
 #if DEBUG
             // The Debug Info middleware allows you to add ?debug=true to any page rendered by the Pages middleware
+            // You can also add ?debug=svg or ?debug=html or ?debug=json
             pipelineBuilder.Register(ninject.Get<DebugInfoMiddleware>()).ConfigureWith(config, "/middleware/pages/debugInfo");
 #endif
 

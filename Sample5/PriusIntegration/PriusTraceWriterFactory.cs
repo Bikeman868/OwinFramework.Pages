@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Sample5.PriusIntegration
 {
-    public class TraceWriterFactory : ITraceWriterFactory
+    public class PriusTraceWriterFactory : ITraceWriterFactory
     {
         ITraceWriter ITraceWriterFactory.Create(string repositoryName)
         {
@@ -53,7 +53,8 @@ namespace Sample5.PriusIntegration
             {
                 if (_firstLine)
                 {
-                    Trace.WriteLine("Prius: Executing procedure " + _procedure + " on " + _database + " from " + _cluster);
+                    Trace.WriteLine("Prius: Executing stored procedure " + _procedure + " on " + _database + " database");
+
                     foreach (var parameter in _parameters)
                         Trace.WriteLine("Prius: Parameter " + parameter.Name + "[" + parameter.Type.Name + "] = "+ (parameter.Value == null ? "NULL" : parameter.Value.ToString()));
 

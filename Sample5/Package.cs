@@ -30,7 +30,7 @@ namespace Sample5
 
                     new IocRegistration().Init<Prius.Contracts.Interfaces.External.IFactory, PriusIntegration.PriusFactory>(),
                     new IocRegistration().Init<Prius.Contracts.Interfaces.External.IErrorReporter, PriusIntegration.PriusErrorReporter>(),
-                    new IocRegistration().Init<Prius.Contracts.Interfaces.External.ITraceWriterFactory, PriusIntegration.TraceWriterFactory>()
+                    new IocRegistration().Init<Prius.Contracts.Interfaces.External.ITraceWriterFactory, PriusIntegration.PriusTraceWriterFactory>()
                 };
             }
         }

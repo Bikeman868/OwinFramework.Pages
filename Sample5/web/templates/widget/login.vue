@@ -1,10 +1,12 @@
 ﻿<div v-cloak id="login">
+    <div class="sample5_username">{{email}}</div>
     <button v-if="!isLoggedIn" type="button" v-on:click="show">Login</button>
     <button v-if="isLoggedIn" type="button" v-on:click="logout">Logout</button>
+    <form id="signout-form" method="post" action="/formid/signout"></form>
     <div v-if="showPopup" class="sample5_popup">
         <sample5-tabs :selected="selectedTab">
             <sample5-tab name="Login">
-                <form id="signin-form" method="POST" action="/formid/signin">
+                <form id="signin-form" method="post" action="/formid/signin">
                     <div class="sample5_field">
                         <label>Email</label>
                         <input v-model="email" type="email" name="email" placeholder="me@provider.com" />
@@ -24,7 +26,7 @@
                 </form>
             </sample5-tab>
             <sample5-tab name="Register">
-                <form id="signup-form" method="POST" action="/formid/signup">
+                <form id="signup-form" method="post" action="/formid/signup">
                     <div class="sample5_field">
                         <label>Email</label>
                         <input v-model="email" type="email" name="email" placeholder="me@provider.com" />
@@ -48,7 +50,7 @@
                 </form>
             </sample5-tab>
             <sample5-tab name="Reset password">
-                <form id="reset-password-form" method="POST" action="/formid/sendpasswordreset">
+                <form id="reset-password-form" method="post" action="/formid/sendpasswordreset">
                     <div class="sample5_field">
                         <label>Email</label>
                         <input v-model="email" type="email" placeholder="me@provider.com" />

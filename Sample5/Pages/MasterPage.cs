@@ -29,15 +29,19 @@ namespace Sample5
 
     [IsRegion("title_region")]
     [UsesComponent("page_head")]
+    [Container(null)]
     internal class TitleRegion : NavigationElement { }
+
+    [IsRegion("login_region")]
+    [UsesComponent("login_dialog")]
+    [Container(null)]
+    internal class LoginRegion : NavigationElement { }
 
     [IsLayout("header_bar_layout", "hamburger_zone,login_zone,title_zone")]
     [ZoneRegion("hamburger_zone", "menus:mobile_menu")]
     [ZoneRegion("title_zone", "title_region")]
-    [ZoneTemplate("login_zone", "/widget/login")]
+    [ZoneRegion("login_zone", "login_region")]
     [NeedsComponent("menus:menuStyle1")]
-    [NeedsComponent("libraries:vue")]
-    [NeedsComponent("ajax:ajax")]
     internal class HeaderBarLayout : NavigationElement { }
 
     [IsRegion("header_bar_region")]

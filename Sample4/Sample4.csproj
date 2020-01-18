@@ -75,20 +75,20 @@
     <Reference Include="OwinFramework, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.2.7.1\lib\net40\OwinFramework.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.AnalysisReporter, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.AnalysisReporter.2.7.1\lib\net40\OwinFramework.AnalysisReporter.dll</HintPath>
+    <Reference Include="OwinFramework.AnalysisReporter, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.AnalysisReporter.2.7.2\lib\net40\OwinFramework.AnalysisReporter.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.DefaultDocument, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.DefaultDocument.2.7.1\lib\net40\OwinFramework.DefaultDocument.dll</HintPath>
+    <Reference Include="OwinFramework.DefaultDocument, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.DefaultDocument.2.7.2\lib\net40\OwinFramework.DefaultDocument.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Documenter, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Documenter.2.7.1\lib\net40\OwinFramework.Documenter.dll</HintPath>
+    <Reference Include="OwinFramework.Documenter, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Documenter.2.7.2\lib\net40\OwinFramework.Documenter.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.ExceptionReporter, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.ExceptionReporter.2.7.1\lib\net40\OwinFramework.ExceptionReporter.dll</HintPath>
+    <Reference Include="OwinFramework.ExceptionReporter, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.ExceptionReporter.2.7.2\lib\net40\OwinFramework.ExceptionReporter.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.NotFound, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.NotFound.2.7.1\lib\net40\OwinFramework.NotFound.dll</HintPath>
+    <Reference Include="OwinFramework.NotFound, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.NotFound.2.7.2\lib\net40\OwinFramework.NotFound.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Urchin, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Urchin.2.7.1\lib\net40\OwinFramework.Urchin.dll</HintPath>

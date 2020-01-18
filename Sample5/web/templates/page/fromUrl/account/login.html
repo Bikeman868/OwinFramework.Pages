@@ -1,0 +1,24 @@
+﻿<h1>Log in</h1>
+<p>
+    Enter your email address and password to log into the website.
+</p>
+<p>
+    Tick the 'Remember me' box if you want your browser to keep you logged in for the next time you visit this website.
+</p>
+<form id="login-form" method="post" action="/account/login">
+    <div class="sample5_field">
+        <label for="login-email" class="email">Email</label>
+        <input id="login-email" type="email" name="email" placeholder="me@provider.com" />
+    </div>
+    <div class="sample5_field">
+        <label for="login-password" class="password">Password</label>
+        <input id="login-password" type="password" name="password" />
+    </div>
+    <div class="sample5_field">
+        <label for="login-remember-me" class="checkbox">Remember me</label>
+        <input id="login-remember-me" type="checkbox" name="rememberMe" value="true" checked="checked" />
+    </div>
+    <div class="sample5_button_bar">
+        <input type="submit" value="Login">
+    </div>
+</form>

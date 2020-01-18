@@ -42,6 +42,16 @@ namespace OwinFramework.Pages.Framework.Interfaces
         bool DebugLibraries { get; }
 
         /// <summary>
+        /// The root url of pages that are mapped onto templates
+        /// </summary>
+        string TemplateUrlRootPath { get; }
+
+        /// <summary>
+        /// The root template path for url mapped pages
+        /// </summary>
+        string TemplateRootPath { get; }
+
+        /// <summary>
         /// Adds an action to perform when the framework configuration changes
         /// </summary>
         /// <param name="action"></param>

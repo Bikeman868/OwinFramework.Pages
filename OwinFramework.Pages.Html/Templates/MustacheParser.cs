@@ -12,7 +12,7 @@ namespace OwinFramework.Pages.Html.Templates
 {
     /// <summary>
     /// This is a template parser that replaces data binding expressions
-    /// enclosed in double { with data obtained from the render context.
+    /// enclosed in double curly braces with data obtained from the render context.
     /// The data binding expressions are like this {{type:field}} for
     /// example {{Person:FirstName}}.
     /// 

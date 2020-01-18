@@ -7,9 +7,9 @@ using System.Web;
 
 namespace Sample5.Pages
 {
-    [IsPage("form_id_page", "/formid")]
-    [Route("/formid/**", Method.Get, Priority = 100)]
+    [IsPage("account_page", "/account")]
+    [Route("/account/*", Method.Get, Priority = 100)]
     [PageTitle("Account management")]
-    [ZoneTemplate("body_zone", "/page/form-id-page")]
-    public class FormIdPage : MasterPage { }
+    [ZoneComponent("body_zone", "templates:from_url")]
+    public class AccountPage : MasterPage { }
 }

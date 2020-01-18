@@ -10,16 +10,7 @@
         confirmPassword: function () { this.error = undefined; },
     },
     mounted: function() {
-        var path = window.location.pathname;
-        if (path === "/formid/signin") {
-            this.selectedTab = "Login";
-            this.showPopup = true;
-        }
-        else if (path === "/formid/signup") {
-            this.selectedTab = "Register";
-            this.showPopup = true;
-        }
-        else this.selectedTab = "Login";
+        this.selectedTab = "Login";
     },
     methods: {
         show: function () {
@@ -38,7 +29,7 @@
         },
         login: function () {
             if (this.isValidEmail()) {
-                document.forms["signin-form"].submit();
+                document.forms["login-form"].submit();
             }
             this.showPopup = false;
         },
@@ -48,14 +39,14 @@
                     this.error = "Your password and confirmation password do not match, please try again."
                 else {
                     this.hide();
-                    document.forms["signup-form"].submit();
+                    document.forms["register-form"].submit();
                 }
             }
         },
         logout: function() {
             this.hide();
             this.isLoggedIn = false;
-            document.forms["signout-form"].submit();
+            document.forms["logout-form"].submit();
         },
         reset: function () {
             if (this.isValidEmail()) {

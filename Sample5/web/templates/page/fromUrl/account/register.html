@@ -1,0 +1,28 @@
+﻿<h1>Log in</h1>
+<p>
+    Enter your email address and choose a password to create an account on the website.
+</p>
+<p>
+    Tick the 'Remember me' box if you want your browser to keep you logged in for the next time you visit this website.
+</p>
+<form id="register-form" method="post" action="/account/register">
+    <div class="sample5_field">
+        <label for="register-email" class="email">Email</label>
+        <input id="register-email" type="email" name="email" placeholder="me@provider.com" />
+    </div>
+    <div class="sample5_field">
+        <label for="register-password" class="password">Password</label>
+        <input id="register-password" type="password" name="password" />
+    </div>
+    <div class="sample5_field">
+        <label for="register-confirm-password" class="password">Password</label>
+        <input id="register-confirm-password" type="password" name="password" />
+    </div>
+    <div class="sample5_field">
+        <label for="register-remember-me" class="checkbox">Remember me</label>
+        <input id="register-remember-me" type="checkbox" name="rememberMe" value="true" checked="checked" />
+    </div>
+    <div class="sample5_button_bar">
+        <input type="submit" value="register">
+    </div>
+</form>

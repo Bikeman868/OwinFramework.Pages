@@ -2,22 +2,22 @@
     <div class="sample5_username">{{email}}</div>
     <button v-if="!isLoggedIn" type="button" v-on:click="show">Login</button>
     <button v-if="isLoggedIn" type="button" v-on:click="logout">Logout</button>
-    <form id="signout-form" method="post" action="/formid/signout"></form>
+    <form id="logout-form" method="post" action="/account/logout"></form>
     <div v-if="showPopup" class="sample5_popup">
         <sample5-tabs :selected="selectedTab">
             <sample5-tab name="Login">
-                <form id="signin-form" method="post" action="/formid/signin">
+                <form id="login-form" method="post" action="/account/login">
                     <div class="sample5_field">
-                        <label>Email</label>
-                        <input v-model="email" type="email" name="email" placeholder="me@provider.com" />
+                        <label for="login-login-email" class="email">Email</label>
+                        <input id="login-login-email" v-model="email" type="email" name="email" placeholder="me@provider.com" />
                     </div>
                     <div class="sample5_field">
-                        <label>Password</label>
-                        <input v-model="password" type="password" name="password" />
+                        <label for="login-login-password" class="password">Password</label>
+                        <input id="login-login-password" v-model="password" type="password" name="password" />
                     </div>
                     <div class="sample5_field">
-                        <label>Remember me</label>
-                        <input type="checkbox" name="rememberMe" value="true" checked="checked" />
+                        <label for="login-login-remember-me" class="checkbox">Remember me</label>
+                        <input id="login-login-remember-me" type="checkbox" name="rememberMe" value="true" checked="checked" />
                     </div>
                     <div class="sample5_button_bar">
                         <button type="button" v-on:click="login">Login</button>
@@ -26,22 +26,22 @@
                 </form>
             </sample5-tab>
             <sample5-tab name="Register">
-                <form id="signup-form" method="post" action="/formid/signup">
+                <form id="register-form" method="post" action="/account/register">
                     <div class="sample5_field">
-                        <label>Email</label>
-                        <input v-model="email" type="email" name="email" placeholder="me@provider.com" />
+                        <label for="login-register-email" class="email">Email</label>
+                        <input id="login-register-email" v-model="email" type="email" name="email" placeholder="me@provider.com" />
                     </div>
                     <div class="sample5_field">
-                        <label>Password</label>
-                        <input v-model="password" type="password" name="password" />
+                        <label for="login-register-password" class="password">Password</label>
+                        <input id="login-register-password" v-model="password" type="password" name="password" />
                     </div>
                     <div class="sample5_field">
-                        <label>Confirm password</label>
-                        <input v-model="confirmPassword" type="password" />
+                        <label for="login-register-confirm-password" class="password">Confirm password</label>
+                        <input id="login-register-confirm-password" v-model="confirmPassword" type="password" />
                     </div>
                     <div class="sample5_field">
-                        <label>Remember me</label>
-                        <input type="checkbox" name="rememberMe" value="true" checked="checked" />
+                        <label for="login-register-remember-me" class="checkbox">Remember me</label>
+                        <input id="login-register-remember-me" type="checkbox" name="rememberMe" value="true" checked="checked" />
                     </div>
                     <div class="sample5_button_bar">
                         <button type="button" v-on:click="register">Register</button>
@@ -50,10 +50,10 @@
                 </form>
             </sample5-tab>
             <sample5-tab name="Reset password">
-                <form id="reset-password-form" method="post" action="/formid/sendpasswordreset">
+                <form id="reset-password-form" method="post" action="/account/sendpasswordreset">
                     <div class="sample5_field">
-                        <label>Email</label>
-                        <input v-model="email" type="email" placeholder="me@provider.com" />
+                        <label for="login-reset-email" class="email">Email</label>
+                        <input id="login-reset-email" v-model="email" type="email" placeholder="me@provider.com" />
                     </div>
                     <div class="sample5_button_bar">
                         <button type="button" v-on:click="reset">Send</button>

@@ -12,9 +12,12 @@
         "connectionString": "Server=localhost;Database=identity;CheckParameters=false;Uid=svc_test;Pwd=password;"
       }
     ],
-      "fallbackPolicies": [
-          { "name": "none", "allowedFailurePercent": 100 }
-      ],
+    "fallbackPolicies": [
+      {
+        "name": "none",
+        "allowedFailurePercent": 100
+      }
+    ],
     "repositories": [
       {
         "name": "Authorization",
@@ -70,8 +73,15 @@
     },
     "pages": {
       "framework": {
-        "debugLogging": false,
-        "debugLibraries": true
+        "debugLogging": true,
+        "debugLibraries": true,
+        "defaultLanguage": "en-US",
+        "assetRootPath": "/assets",
+        "servicesRootPath": "/services",
+        "assetCacheTime": "01:00:00",
+        "assetVersion": 1,
+        "templateUrlRootPath": "/",
+        "templateRootPath": "/page/fromUrl"
       },
       "html": {
         "includeComments": true,
@@ -105,7 +115,35 @@
     "identification": {
       "forms": {
         "cookieName": "identification",
-
+        "secureProtocol": "https",
+        "secureDomain": "",
+        "signupPage": "/account/register",
+        "signupSuccessPage": "/account/register-success",
+        "signupFailPage": "/account/register-fail",
+        "signinPage": "/account/login",
+        "signinSuccessPage": "/account/login-success",
+        "signinFailPage": "/account/login-fail",
+        "signoutPage": "/account/logout",
+        "signoutSuccessPage": "/",
+        "changePasswordPage": "/account/change-password",
+        "changePasswordSuccessPage": "/account/change-password-success",
+        "changePasswordFailPage": "/account/change-password-fail",
+        "changeEmailPage": "/account/change-email",
+        "changeEmailSuccessPage": "/account/change-email-success",
+        "changeEmailFailPage": "/account/change-email-fail",
+        "sendPasswordResetPage": "/account/reset-password",
+        "sendPasswordResetSuccesPage": "/account/reset-password-success",
+        "sendPasswordResetFailPage": "/account/reset-password-fail",
+        "verifyEmailPage": "/account/verify-email",
+        "verifyEmailSuccessPage": "/account/verify-email-success",
+        "verifyEmailFailPage": "/account/verify-email-fail",
+        "revertEmailPage": "/account/revert",
+        "revertEmailSuccessPage": "/account/revert-success",
+        "revertEmailFailPage": "/account/revert-fail",
+        "renewSessionPage": "/account/renew",
+        "updateIdentityPage": "/account/update",
+        "welcomeEmailFrom": "do-not-reply@sample5.com",
+        "welcomeEmailSubject": "Thank you for creating an account"
       }
     },
     "authorization": {

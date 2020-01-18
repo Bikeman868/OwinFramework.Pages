@@ -52,8 +52,8 @@ namespace Sample5
 
 #if DEBUG
             // Enable tracing in Prius
-            var priusRepositoryFactory = ninject.Get<Prius.Contracts.Interfaces.Factory.IRepositoryFactory >();
-            priusRepositoryFactory.EnableTracing(ninject.Get<Prius.Contracts.Interfaces.External.ITraceWriterFactory>());
+            //var priusRepositoryFactory = ninject.Get<Prius.Contracts.Interfaces.Factory.IRepositoryFactory >();
+            //priusRepositoryFactory.EnableTracing(ninject.Get<Prius.Contracts.Interfaces.External.ITraceWriterFactory>());
 
             // Enable tracing in the Owin middleware pipeline
             pipelineBuilder.EnableTracing();

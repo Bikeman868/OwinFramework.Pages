@@ -95,8 +95,8 @@
     <Reference Include="OwinFramework.Authorization.UI, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Authorization.UI.1.1.1\lib\net45\OwinFramework.Authorization.UI.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.ExceptionReporter, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.ExceptionReporter.2.7.1\lib\net45\OwinFramework.ExceptionReporter.dll</HintPath>
+    <Reference Include="OwinFramework.ExceptionReporter, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.ExceptionReporter.2.7.2\lib\net45\OwinFramework.ExceptionReporter.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Facilities.Cache.Local, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Facilities.Cache.Local.2.7.2\lib\net45\OwinFramework.Facilities.Cache.Local.dll</HintPath>
@@ -107,17 +107,17 @@
     <Reference Include="OwinFramework.Facilities.TokenStore.Cache, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Facilities.TokenStore.Cache.2.7.2\lib\net45\OwinFramework.Facilities.TokenStore.Cache.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.FormIdentification, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.FormIdentification.2.7.1\lib\net45\OwinFramework.FormIdentification.dll</HintPath>
+    <Reference Include="OwinFramework.FormIdentification, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.FormIdentification.2.7.2\lib\net45\OwinFramework.FormIdentification.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Less, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Less.2.7.1\lib\net45\OwinFramework.Less.dll</HintPath>
+    <Reference Include="OwinFramework.Less, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Less.2.7.2\lib\net45\OwinFramework.Less.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.NotFound, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.NotFound.2.7.1\lib\net45\OwinFramework.NotFound.dll</HintPath>
+    <Reference Include="OwinFramework.NotFound, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.NotFound.2.7.2\lib\net45\OwinFramework.NotFound.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.OutputCache, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.OutputCache.2.7.1\lib\net45\OwinFramework.OutputCache.dll</HintPath>
+    <Reference Include="OwinFramework.OutputCache, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.OutputCache.2.7.2\lib\net45\OwinFramework.OutputCache.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Pages.Core, Version=1.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.10\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
@@ -137,17 +137,17 @@
     <Reference Include="OwinFramework.Pages.Standard, Version=1.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.10\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Session, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Session.2.7.1\lib\net45\OwinFramework.Session.dll</HintPath>
+    <Reference Include="OwinFramework.Session, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Session.2.7.2\lib\net45\OwinFramework.Session.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.StaticFiles, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.StaticFiles.2.7.1\lib\net45\OwinFramework.StaticFiles.dll</HintPath>
+    <Reference Include="OwinFramework.StaticFiles, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.StaticFiles.2.7.2\lib\net45\OwinFramework.StaticFiles.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Urchin, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Urchin.2.7.1\lib\net45\OwinFramework.Urchin.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Versioning, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Versioning.2.7.1\lib\net45\OwinFramework.Versioning.dll</HintPath>
+    <Reference Include="OwinFramework.Versioning, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Versioning.2.7.2\lib\net45\OwinFramework.Versioning.dll</HintPath>
     </Reference>
     <Reference Include="Prius.Contracts, Version=2.2.2.31, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Prius.2.2.2\lib\net45\Prius.Contracts.dll</HintPath>
@@ -185,8 +185,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="web\templates\page\fromUrl\account\register-fail.html" />
+    <Content Include="web\templates\page\fromUrl\account\register-success.html" />
+    <Content Include="web\templates\page\fromUrl\account\register.html" />
+    <Content Include="web\templates\page\fromUrl\account\logout.html" />
+    <Content Include="web\templates\page\fromUrl\account\login-fail.html" />
+    <Content Include="web\templates\page\fromUrl\account\login-success.html" />
+    <Content Include="web\templates\page\fromUrl\account\login.html" />
     <Content Include="web\templates\page\welcome-page.html" />
-    <Content Include="web\templates\page\form-id-page.html" />
     <Content Include="web\templates\page\home-page.html" />
     <Content Include="Web.config" />
     <Content Include="web\scripts\main.js" />
@@ -198,12 +204,14 @@
     <Compile Include="Components\LoginDialog.cs" />
     <Compile Include="Components\Resources.cs" />
     <Compile Include="Components\PageHead.cs" />
+    <Compile Include="Session\ISessionData.cs" />
+    <Compile Include="Session\SessionDataProvider.cs" />
     <Compile Include="DataProviders\MenuDataProvider.cs" />
     <Compile Include="Packaging\ApplicationPackage.cs" />
     <Compile Include="Packaging\ContentModule.cs" />
     <Compile Include="Packaging\NavigationModule.cs" />
     <Compile Include="Pages\WelcomePage.cs" />
-    <Compile Include="Pages\FormIdPage.cs" />
+    <Compile Include="Pages\AccountPage.cs" />
     <Compile Include="Pages\HomePage.cs" />
     <Compile Include="Pages\MasterPage.cs" />
     <Compile Include="PriusIntegration\PriusErrorReporter.cs" />
@@ -212,6 +220,7 @@
     <Compile Include="PriusIntegration\PriusTraceWriterFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Middleware\RedirectMiddleware.cs" />
+    <Compile Include="Session\SessionData.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

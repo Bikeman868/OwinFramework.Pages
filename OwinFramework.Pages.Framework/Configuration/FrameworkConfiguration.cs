@@ -32,6 +32,12 @@ namespace OwinFramework.Pages.Framework.Configuration
         [JsonProperty("debugLibraries")]
         public bool DebugLibraries{ get; private set; }
 
+        [JsonProperty("templateUrlRootPath")]
+        public string TemplateUrlRootPath { get; private set; }
+
+        [JsonProperty("templateRootPath")]
+        public string TemplateRootPath { get; private set; }
+
         #region Implementation details
 
         private readonly List<Action<IFrameworkConfiguration>> _subscribers;
@@ -46,6 +52,8 @@ namespace OwinFramework.Pages.Framework.Configuration
             AssetVersion = "1";
             DebugLogging = false;
             DebugLibraries = false;
+            TemplateUrlRootPath = "/";
+            TemplateRootPath = "/";
         }
 
         public FrameworkConfiguration(IConfigurationStore configurationStore)
@@ -63,8 +71,10 @@ namespace OwinFramework.Pages.Framework.Configuration
                     AssetVersion = c.AssetVersion;
                     DebugLogging = c.DebugLogging;
                     DebugLibraries = c.DebugLibraries;
+                    TemplateUrlRootPath = c.TemplateUrlRootPath;
+                    TemplateRootPath = c.TemplateRootPath;
 
-                    lock(_subscribers)
+                    lock (_subscribers)
                         foreach (var subscriber in _subscribers)
                             subscriber(this);
                 },

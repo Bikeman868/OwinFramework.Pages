@@ -1,6 +1,6 @@
 ﻿@popup-background: white;
 @header-background: gray;
-@button-background: cornflowerblue;
+@button-background: white;
 @field-background: #f2f2f2;
 
 @body-color: whitesmoke;
@@ -10,7 +10,7 @@
 @header-color: whitesmoke;
 @anchor-color: #0000b3;
 @anchor-hover-color: #1a1aff;
-@button-color: white;
+@button-color: navy;
 @button-shadow-color: #e0e0ff;
 @tab-text-color: navy;
 @tab-selected-color: white;
@@ -74,7 +74,7 @@ div {
     padding: 0;
 }
 
-button {
+button, input[type="submit"] {
     background: @button-background;
     color: @button-color;
     font-size: @base-font-size * 1.2;
@@ -222,10 +222,15 @@ div.sample5_footer_region {
     box-shadow: 7px 7px 3px 4px @popup-shadow-color;
 }
 
-.sample5_field {
+div.sample5_field {
     padding: 5px 0 5px 0;
 
-    input {
+    label {
+        display: block;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"] {
+        display: inline-block;
         font-size: @base-font-size * 1.2;
         padding: 8px;
         background-color: @field-background;
@@ -234,6 +239,25 @@ div.sample5_footer_region {
         border-right-color: darken(@field-background, 20%);
         width: 80%;
         max-width: 350px;
+    }
+
+    label.text, label.email, label.password {
+
+    }
+
+    input[type="checkbox"] {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        vertical-align: bottom;
+    }
+
+    label.checkbox {
+        vertical-align: top;
+        line-height: 18px;
+        margin: 2px 0;
+        display: block;
+        height: 18px;
     }
 }
 

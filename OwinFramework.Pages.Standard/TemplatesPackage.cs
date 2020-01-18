@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using Microsoft.Owin;
 using OwinFramework.Interfaces.Utility;
 using OwinFramework.MiddlewareHelpers.EmbeddedResources;
 using OwinFramework.Pages.Core.Attributes;
@@ -25,6 +26,7 @@ namespace OwinFramework.Pages.Standard
     {
         private readonly ResourceManager _resourceManager;
         private readonly TemplateLibraryComponent _templateLibraryComponent;
+        private readonly TemplateFromUrlComponent _templateFromUrlComponent;
 
         public string NamespaceName { get; set; }
         public IModule Module { get; set; }
@@ -43,13 +45,19 @@ namespace OwinFramework.Pages.Standard
 
             _resourceManager = new ResourceManager(hostingEnvironment, new MimeTypeEvaluator());
             _templateLibraryComponent = new TemplateLibraryComponent(componentDependencies);
+            _templateFromUrlComponent = new TemplateFromUrlComponent(componentDependencies);
 
             frameworkConfiguration.Subscribe(c =>
             {
                 _servicePath = c.ServicesRootPath + "/templates";
+
                 _templateLibraryComponent.Configure(
                     NamespaceName, 
                     _servicePath + "/template?path=");
+
+                _templateFromUrlComponent.Configure(
+                    new PathString(c.TemplateUrlRootPath),
+                    new PathString(c.TemplateRootPath));
             });
         }
 
@@ -71,9 +79,21 @@ namespace OwinFramework.Pages.Standard
                 .DeployScript(javaScript)
                 .Build();
 
+            fluentBuilder.BuildUpComponent(_templateFromUrlComponent)
+                 .Name("from_url")
+                 .AssetDeployment(AssetDeployment.PerWebsite)
+                 .Build();
+
             return this;
         }
 
+        /// <summary>
+        /// A component that loads and configures the template library JavaScript.
+        /// This library has methods for dynamically fetching Html templates from
+        /// a template service and adding the Html to a browser DOM element. This
+        /// allows you to lazily load the Html for your page rather than delivering
+        /// it all in the initial response.
+        /// </summary>
         private class TemplateLibraryComponent : Html.Elements.Component
         {
             private string _javaScript;
@@ -81,7 +101,7 @@ namespace OwinFramework.Pages.Standard
             public TemplateLibraryComponent(IComponentDependenciesFactory dependencies) 
                 : base(dependencies)
             {
-                PageAreas = new []{PageArea.Initialization};
+                PageAreas = new []{ PageArea.Initialization };
             }
 
             public void Configure(string namespaceName, string templateServiceUrl)
@@ -109,6 +129,65 @@ namespace OwinFramework.Pages.Standard
             }
         }
 
+        /// <summary>
+        /// This component will render a template into the page on the server side where
+        /// the path of the template is derrived from the url of the page. This provides
+        /// a mechanism for creating a large number of pages where the content in one
+        /// region of the page is defined by an html template. You can use any template 
+        /// parser you like including the ones that provide a data binding syntax.
+        /// </summary>
+        private class TemplateFromUrlComponent: Html.Elements.Component
+        {
+            private PathString _urlBasePath;
+            private PathString _templateBasePath;
+
+            public TemplateFromUrlComponent(IComponentDependenciesFactory dependencies)
+                : base(dependencies)
+            {
+                PageAreas = new[] 
+                { 
+                    PageArea.Head, 
+                    PageArea.Title,
+                    PageArea.Scripts,
+                    PageArea.Styles,
+                    PageArea.Body,
+                    PageArea.Initialization 
+                };
+
+                _urlBasePath = new PathString("/");
+                _templateBasePath = new PathString("/");
+            }
+
+            public void Configure(PathString urlBasePath, PathString templateBasePath)
+            {
+                _urlBasePath = urlBasePath;
+                _templateBasePath = templateBasePath.HasValue ? templateBasePath : new PathString("/");
+            }
+
+            public override IWriteResult WritePageArea(IRenderContext context, PageArea pageArea)
+            {
+                var requestPath = context.OwinContext.Request.Path;
+                PathString relativePath = requestPath;
+                ITemplate template = null;
+
+                if (!_urlBasePath.HasValue || _urlBasePath.Value == "/" || requestPath.StartsWithSegments(_urlBasePath, out relativePath))
+                {
+                    var templatePath = _templateBasePath.Add(relativePath);
+                    template = Dependencies.NameManager.ResolveTemplate(templatePath.Value);
+                }
+
+                if (template != null)
+                    return template.WritePageArea(context, pageArea);
+
+                return Html.Runtime.WriteResult.Continue();
+            }
+        }
+
+        /// <summary>
+        /// This service serves template files allowing them to be retrieved via AJAX and dynamically
+        /// added to the page. The templateLibrary.js file contains the client-side code to make this
+        /// easy.
+        /// </summary>
         private class TemplateService
         {
             private readonly IAssetManager _assetmanager;

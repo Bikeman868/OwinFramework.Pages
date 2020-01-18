@@ -39,12 +39,15 @@ namespace Sample5.DataProviders
 
             var menu2 = new MenuPackage.MenuItem
             {
-                Name = "Menu 2",
+                Name = "Account",
                 SubMenu = new[]
                     {
-                        new MenuPackage.MenuItem { Name = "Sub menu 1", Url = "/pages/1" },
-                        new MenuPackage.MenuItem { Name = "Sub menu 2", Url = "/pages/2" },
-                        new MenuPackage.MenuItem { Name = "Sub menu 3", Url = "/pages/3" },
+                        new MenuPackage.MenuItem { Name = "Login", Url = "/account/login" },
+                        new MenuPackage.MenuItem { Name = "Register", Url = "/account/register" },
+                        new MenuPackage.MenuItem { Name = "Change password", Url = "/account/change-password" },
+                        new MenuPackage.MenuItem { Name = "Change email", Url = "/account/change-email" },
+                        new MenuPackage.MenuItem { Name = "Reset password", Url = "/account/reset-password" },
+                        new MenuPackage.MenuItem { Name = "Verify email", Url = "/account/verify-email-again" },
                     }
             };
 

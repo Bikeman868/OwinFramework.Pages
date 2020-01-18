@@ -1,0 +1,30 @@
+﻿<h1>Change email address</h1>
+<p>
+    Use the form below to change your email address.
+</p>
+<p>
+    When you change your email address we will send an email to the new address. Please click the link in
+    the email to confirm the change. 
+</p>
+<p>
+    We will also send an email to your current email address that contains a link you can click
+    to revert your email address back. We do this in case you accidentally change your email 
+    address to the wrong one, and you do not have access to that email account.
+</p>
+<form id="change-email-form" method="post" action="/account/change-email">
+    <div class="sample5_field">
+        <label for="change-email-email" class="email">Email</label>
+        <input id="change-email-email" type="email" name="email" placeholder="me@provider.com" />
+    </div>
+    <div class="sample5_field">
+        <label for="change-email-old-password" class="password">Password</label>
+        <input id="change-email-old-password" type="password" name="password" />
+    </div>
+    <div class="sample5_field">
+        <label for="change-email-new-email" class="email">New email</label>
+        <input id="change-email-new-email" type="email" name="newEmail" />
+    </div>
+    <div class="sample5_button_bar">
+        <input type="submit" value="Change email">
+    </div>
+</form>

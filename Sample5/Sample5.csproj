@@ -185,13 +185,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="web\templates\page\fromUrl\account\register-fail.html" />
-    <Content Include="web\templates\page\fromUrl\account\register-success.html" />
-    <Content Include="web\templates\page\fromUrl\account\register.html" />
-    <Content Include="web\templates\page\fromUrl\account\logout.html" />
-    <Content Include="web\templates\page\fromUrl\account\login-fail.html" />
-    <Content Include="web\templates\page\fromUrl\account\login-success.html" />
-    <Content Include="web\templates\page\fromUrl\account\login.html" />
+    <Content Include="web\templates\fromUrl\account\revert-email-fail.html" />
+    <Content Include="web\templates\fromUrl\account\revert-email-success.html" />
+    <Content Include="web\templates\fromUrl\account\revert-email.html" />
+    <Content Include="web\templates\fromUrl\account\change-email.html" />
+    <Content Include="web\templates\fromUrl\account\change-email-fail.html" />
+    <Content Include="web\templates\fromUrl\account\verify-email-again.html" />
+    <Content Include="web\templates\fromUrl\account\verify-email-fail.html" />
+    <Content Include="web\templates\fromUrl\account\verify-email-success.html" />
+    <Content Include="web\templates\fromUrl\account\change-password-success.html" />
+    <Content Include="web\templates\fromUrl\account\change-password.html" />
+    <Content Include="web\templates\fromUrl\account\change-password-fail.html" />
+    <Content Include="web\templates\fromUrl\account\change-email-success.html" />
+    <Content Include="web\templates\fromUrl\account\register-fail.html" />
+    <Content Include="web\templates\fromUrl\account\register-success.html" />
+    <Content Include="web\templates\fromUrl\account\register.html" />
+    <Content Include="web\templates\fromUrl\account\logout.html" />
+    <Content Include="web\templates\fromUrl\account\login-fail.html" />
+    <Content Include="web\templates\fromUrl\account\login-success.html" />
+    <Content Include="web\templates\fromUrl\account\login.html" />
     <Content Include="web\templates\page\welcome-page.html" />
     <Content Include="web\templates\page\home-page.html" />
     <Content Include="Web.config" />

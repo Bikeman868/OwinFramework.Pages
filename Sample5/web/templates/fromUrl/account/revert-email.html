@@ -1,0 +1,45 @@
+﻿<h1>Revert email address</h1>
+<p>
+    Use this page to revert your email address back to <span id="old-email-span"></span> and reset your password
+</p>
+<p>
+    You should do this in the case where you accidentally changed your email address to an email account that
+    you do not have access to, or where someone else guessed your password and reset the email address on
+    our account to an account that you do not have access to.
+</p>
+<p>
+    Please ensure that you choose a password that is at least 15 characters long and preferably longer.
+    You do not need to use numbers or special characters as this makes very little difference. Ideally
+    your password should be 3 or 4 completely unrelated words that add up to 18 characters or more. This
+    type of password is very hard to crack and very easy to remember.
+</p>
+
+<form method="post" action="/acount/revert-email">
+    <input type="hidden" name="token" id="token-field" />
+    <input type="hidden" name="email" id="email-field" />
+    <input type="hidden" name="id" id="id-field" />
+    <div class="sample5_field">
+        <label>New password <input type="password" name="newPassword" /></label>
+    </div>
+    <div class="sample5_button_bar">
+        <input type="submit" value="Revert email and reset password">
+    </div>
+</form>
+<script>
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    window.onload = function () {
+        document.getElementById("old-email-span").value = getParameterByName("email");
+        document.getElementById("token-field").value = getParameterByName("token");
+        document.getElementById("email-field").value = getParameterByName("email");
+        document.getElementById("id-field").value = getParameterByName("id");
+    }
+</script>

@@ -185,6 +185,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="web\templates\fromUrl\account\reset-password-fail.html" />
+    <Content Include="web\templates\fromUrl\account\reset-password-success.html" />
+    <Content Include="web\templates\fromUrl\account\reset-password.html" />
     <Content Include="web\templates\fromUrl\account\revert-email-fail.html" />
     <Content Include="web\templates\fromUrl\account\revert-email-success.html" />
     <Content Include="web\templates\fromUrl\account\revert-email.html" />

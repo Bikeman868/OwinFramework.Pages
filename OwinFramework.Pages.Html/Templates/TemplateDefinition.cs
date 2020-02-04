@@ -21,23 +21,27 @@ namespace OwinFramework.Pages.Html.Templates
         private readonly INameManager _nameManager;
         private readonly IAssetManager _assetManager;
         private readonly Template _template;
-        private readonly ActionList _headActions;
-        private readonly ActionList _scriptActions;
-        private readonly ActionList _styleActions;
-        private readonly ActionList _bodyActions;
-        private readonly ActionList _initializationActions;
+        private readonly RenderActionList _headActions;
+        private readonly RenderActionList _scriptActions;
+        private readonly RenderActionList _styleActions;
+        private readonly RenderActionList _bodyActions;
+        private readonly RenderActionList _initializationActions;
         private readonly Stack<Element> _elementStack;
         private readonly Stack<Repeat> _repeatStack;
+        private readonly JavascriptActionList _staticJavascriptActions;
+        private readonly CssActionList _staticCssActions;
 
         private IPackage _package;
         private Element _element;
         private Repeat _repeat;
 
-        private ActionList HeadActions { get { return _headActions; } }
-        private ActionList ScriptActions { get { return _scriptActions; } }
-        private ActionList StyleActions { get { return _styleActions; } }
-        private ActionList BodyActions { get { return _repeat ?? _bodyActions; } }
-        private ActionList InitializationActions { get { return _initializationActions; } }
+        private RenderActionList HeadActions { get { return _headActions; } }
+        private RenderActionList ScriptActions { get { return _scriptActions; } }
+        private RenderActionList StyleActions { get { return _styleActions; } }
+        private RenderActionList BodyActions { get { return _repeat ?? _bodyActions; } }
+        private RenderActionList InitializationActions { get { return _initializationActions; } }
+        private JavascriptActionList StaticJavascriptActions { get { return _staticJavascriptActions; } }
+        private CssActionList StaticCssActions { get { return _staticCssActions; } }
 
         private class Element
         {
@@ -45,7 +49,39 @@ namespace OwinFramework.Pages.Html.Templates
             public List<string> Attributes = new List<string>();
         }
 
-        private abstract class ActionList
+        private class JavascriptActionList
+        {
+            protected readonly List<Action<IJavascriptWriter>> _actions = new List<Action<IJavascriptWriter>>();
+
+            public void Add(Action<IJavascriptWriter> action)
+            {
+                _actions.Add(action);
+            }
+
+            public void ToTemplate(Template template)
+            {
+                if (_actions.Count > 0)
+                    template.AddStaticJavascript(_actions);
+            }
+        }
+
+        private class CssActionList
+        {
+            protected readonly List<Action<ICssWriter>> _actions = new List<Action<ICssWriter>>();
+
+            public void Add(Action<ICssWriter> action)
+            {
+                _actions.Add(action);
+            }
+
+            public void ToTemplate(Template template)
+            {
+                if (_actions.Count > 0)
+                    template.AddStaticCss(_actions);
+            }
+        }
+
+        private abstract class RenderActionList
         {
             protected readonly List<Action<IRenderContext>> _renderActions = new List<Action<IRenderContext>>();
 
@@ -78,7 +114,7 @@ namespace OwinFramework.Pages.Html.Templates
             public abstract void ToTemplate(Template template);
         }
 
-        private class BodyActionList : ActionList
+        private class BodyActionList : RenderActionList
         {
             public override void ToTemplate(Template template)
             {
@@ -87,7 +123,7 @@ namespace OwinFramework.Pages.Html.Templates
             }
         }
 
-        private class HeadActionList : ActionList
+        private class HeadActionList : RenderActionList
         {
             public override void ToTemplate(Template template)
             {
@@ -96,7 +132,7 @@ namespace OwinFramework.Pages.Html.Templates
             }
         }
 
-        private class ScriptActionList : ActionList
+        private class ScriptActionList : RenderActionList
         {
             public override void ToTemplate(Template template)
             {
@@ -105,7 +141,7 @@ namespace OwinFramework.Pages.Html.Templates
             }
         }
 
-        private class StyleActionList : ActionList
+        private class StyleActionList : RenderActionList
         {
             public override void ToTemplate(Template template)
             {
@@ -114,7 +150,7 @@ namespace OwinFramework.Pages.Html.Templates
             }
         }
 
-        private class InitializationActionList : ActionList
+        private class InitializationActionList : RenderActionList
         {
             public override void ToTemplate(Template template)
             {
@@ -190,6 +226,8 @@ namespace OwinFramework.Pages.Html.Templates
             _styleActions = new StyleActionList();
             _bodyActions = new BodyActionList();
             _initializationActions = new InitializationActionList();
+            _staticJavascriptActions = new JavascriptActionList();
+            _staticCssActions = new CssActionList();
 
             _elementStack = new Stack<Element>();
             _repeatStack = new Stack<Repeat>();
@@ -611,6 +649,24 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
+        public ITemplateDefinition AddStaticJavascript(string rawJavascript)
+        {
+            StaticJavascriptActions.Add(w =>
+            {
+                w.WriteLineRaw(rawJavascript);
+            });
+            return this;
+        }
+
+        public ITemplateDefinition AddStaticCss(string css)
+        {
+            StaticCssActions.Add(w =>
+            {
+                w.WriteLineRaw(css);
+            });
+            return this;
+        }
+
         public ITemplate Build()
         {
             HeadActions.ToTemplate(_template);
@@ -618,6 +674,8 @@ namespace OwinFramework.Pages.Html.Templates
             StyleActions.ToTemplate(_template);
             BodyActions.ToTemplate(_template);
             InitializationActions.ToTemplate(_template);
+            StaticCssActions.ToTemplate(_template);
+            StaticJavascriptActions.ToTemplate(_template);
             return _template;
         }
 

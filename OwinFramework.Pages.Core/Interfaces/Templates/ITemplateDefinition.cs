@@ -242,6 +242,20 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         ITemplateDefinition AddInitializationLine(string javaScript);
 
         /// <summary>
+        /// Adds Javascript to a static asset that is referenced by any 
+        /// page that renders this template
+        /// </summary>
+        /// <param name="rawJavascript">Raw unescaped Javascript</param>
+        ITemplateDefinition AddStaticJavascript(string rawJavascript);
+
+        /// <summary>
+        /// Adds CSS to a static asset that is referenced by any page that 
+        /// renders this template
+        /// </summary>
+        /// <param name="css">Raw unescaped CSS</param>
+        ITemplateDefinition AddStaticCss(string css);
+
+        /// <summary>
         /// Constructs and returns the template that was defined
         /// </summary>
         ITemplate Build();

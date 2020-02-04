@@ -113,16 +113,16 @@ namespace OwinFramework.Pages.Html.Elements
                 name = "template set '";
 
                 Action<string, string> add = (n,v) =>
+                {
+                    if (!string.IsNullOrEmpty(v))
                     {
-                        if (!string.IsNullOrEmpty(v))
-                        {
-                            if (first)
-                                first = false;
-                            else
-                                name += ",";
-                            name += n + '=' + v;
-                        }
-                    };
+                        if (first)
+                            first = false;
+                        else
+                            name += ",";
+                        name += n + '=' + v;
+                    }
+                };
 
                 add("head", _headTemplatePath);
                 add("script", _scriptTemplatePath);
@@ -304,6 +304,17 @@ namespace OwinFramework.Pages.Html.Elements
         private void AddTemplateDependencies(INameManager nm, string templatePath)
         {
             var template = nm.ResolveTemplate(templatePath);
+
+            if (JavascriptFunctions == null)
+                JavascriptFunctions = new Action<IJavascriptWriter>[] { w => template.WriteJavascript(w) };
+            else
+                JavascriptFunctions = JavascriptFunctions.Concat(new Action<IJavascriptWriter>[] { w => template.WriteJavascript(w) }).ToArray();
+
+            if (CssRules == null)
+                CssRules = new Action<ICssWriter>[] { w => template.WriteCss(w) };
+            else
+                CssRules = CssRules.Concat(new Action<ICssWriter>[] { w => template.WriteCss(w) }).ToArray();
+
             var dataConsumer = template as IDataConsumer;
             if (dataConsumer == null) return;
 

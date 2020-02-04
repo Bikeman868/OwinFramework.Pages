@@ -144,6 +144,7 @@ namespace Sample1
                 .AddElementOpen("p", "class", "test")
                 .AddText("page-2-body", "Page 2 body")
                 .AddElementClose()
+                .AddStaticCss("p.test {font-size: large;}")
                 .Build();
             nameManager.Register(template3, "/page2/body");
 

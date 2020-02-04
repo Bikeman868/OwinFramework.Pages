@@ -334,7 +334,10 @@ namespace OwinFramework.Pages.Html.Builders
                             }));
                     }
 
-                    _component.CssRules = css.ToArray();
+                    if (_component.CssRules == null)
+                        _component.CssRules = css.ToArray();
+                    else
+                        _component.CssRules = _component.CssRules.Concat(css).ToArray();
 
                     var javascriptWriters = new List<Action<IJavascriptWriter>>();
 
@@ -354,7 +357,10 @@ namespace OwinFramework.Pages.Html.Builders
                             }));
                     }
 
-                    _component.JavascriptFunctions = javascriptWriters.ToArray();
+                    if (_component.JavascriptFunctions == null)
+                        _component.JavascriptFunctions = javascriptWriters.ToArray();
+                    else
+                        _component.JavascriptFunctions = _component.JavascriptFunctions.Concat(javascriptWriters).ToArray();
 
                     if (_headHtmlToRender.Count > 0)
                     {

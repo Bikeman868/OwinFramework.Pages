@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Text;
 using Microsoft.Owin;
 using OwinFramework.Interfaces.Utility;
@@ -168,16 +169,16 @@ namespace OwinFramework.Pages.Standard
             {
                 var requestPath = context.OwinContext.Request.Path;
                 PathString relativePath = requestPath;
-                ITemplate template = null;
 
                 if (!_urlBasePath.HasValue || _urlBasePath.Value == "/" || requestPath.StartsWithSegments(_urlBasePath, out relativePath))
                 {
                     var templatePath = _templateBasePath.Add(relativePath);
-                    template = Dependencies.NameManager.ResolveTemplate(templatePath.Value);
-                }
+                    var template = Dependencies.NameManager.ResolveTemplate(templatePath.Value);
 
-                if (template != null)
-                    return template.WritePageArea(context, pageArea);
+                    if (template != null)
+                        return template.WritePageArea(context, pageArea);
+
+                }
 
                 return Html.Runtime.WriteResult.Continue();
             }

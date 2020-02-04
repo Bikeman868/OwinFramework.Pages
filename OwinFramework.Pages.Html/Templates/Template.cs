@@ -32,6 +32,9 @@ namespace OwinFramework.Pages.Html.Templates
         private Action<IRenderContext>[] _bodyElements;
         private Action<IRenderContext>[] _initializationElements;
 
+        private Action<IJavascriptWriter>[] _staticJavascript;
+        private Action<ICssWriter>[] _staticCss;
+
         public Template(IDataConsumerFactory dataConsumerFactory)
         {
             _dataConsumer = dataConsumerFactory.Create();
@@ -87,6 +90,26 @@ namespace OwinFramework.Pages.Html.Templates
             AddPageArea(PageArea.Initialization);
         }
 
+        public void AddStaticJavascript(IEnumerable<Action<IJavascriptWriter>> javascriptWriters)
+        {
+            if (javascriptWriters == null) return;
+
+            if (_staticJavascript == null)
+                _staticJavascript = javascriptWriters.ToArray();
+            else
+                _staticJavascript = _staticJavascript.Concat(javascriptWriters).ToArray();
+        }
+
+        public void AddStaticCss(IEnumerable<Action<ICssWriter>> cssWriters)
+        {
+            if (cssWriters == null) return;
+
+            if (_staticCss == null)
+                _staticCss = cssWriters.ToArray();
+            else
+                _staticCss = _staticCss.Concat(cssWriters).ToArray();
+        }
+
         IWriteResult ITemplate.WritePageArea(IRenderContext context, PageArea pageArea)
         {
             if (pageArea == PageArea.Head && _headElements != null)
@@ -120,6 +143,24 @@ namespace OwinFramework.Pages.Html.Templates
             }
 
             return WriteResult.Continue();
+        }
+
+        void ITemplate.WriteJavascript(IJavascriptWriter javascriptWriter)
+        {
+            if (_staticJavascript != null)
+            {
+                for (var i = 0; i < _staticJavascript.Length; i++)
+                    _staticJavascript[i](javascriptWriter);
+            }
+        }
+
+        void ITemplate.WriteCss(ICssWriter cssWriter)
+        {
+            if (_staticCss != null)
+            {
+                for (var i = 0; i < _staticJavascript.Length; i++)
+                    _staticCss[i](cssWriter);
+            }
         }
 
         IEnumerable<PageArea> IPageWriter.GetPageAreas()

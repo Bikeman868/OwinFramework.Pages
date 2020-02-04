@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.CMS.Runtime</id>
-    <version>1.2.10</version>
+    <version>1.2.11</version>
     <title>Owin Framework Pages CMS Runtime</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>You must include this package in your website to render pages defined within the CMS</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
-    <releaseNotes>Template parsers support multi-file templates</releaseNotes>
+    <releaseNotes>Minor update</releaseNotes>
     <projectUrl>http://owinframework.net/content/project/owinframework.pages.cms.runtime/landing</projectUrl>
     <license type="expression">Apache-2.0</license>
     <tags>OWIN OwinFramework CMS</tags>
@@ -19,14 +19,14 @@
         <dependency id="Urchin.Client" version="1.3.1" />
         <dependency id="Prius" version="2.2.1" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.2.10" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.2.11" />
 	  </group>
       <group targetFramework="net45">
         <dependency id="Newtonsoft.Json" version="7.0.1" />
         <dependency id="Urchin.Client" version="1.3.1" />
         <dependency id="Prius" version="2.2.1" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.2.10" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.2.11" />
       </group>
     </dependencies>
     <references>

@@ -43,9 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
-    <PackageReference Include="Owin.Framework" Version="2.7.1" />
+    <PackageReference Include="Owin.Framework" Version="2.8.0" />
     <PackageReference Include="Svg" Version="2.3.0" />
-    <PackageReference Include="Urchin.Client" Version="1.3.1" />
+    <PackageReference Include="Urchin.Client" Version="1.3.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.csproj" />

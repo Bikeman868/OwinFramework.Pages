@@ -138,8 +138,8 @@
     <Reference Include="OwinFramework.Pages.Standard, Version=1.2.11.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.11\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Session, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Session.2.8.0\lib\net45\OwinFramework.Session.dll</HintPath>
+    <Reference Include="OwinFramework.Session, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Session.2.8.2\lib\net45\OwinFramework.Session.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.StaticFiles, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.StaticFiles.2.8.0\lib\net45\OwinFramework.StaticFiles.dll</HintPath>

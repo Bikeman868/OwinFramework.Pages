@@ -46,7 +46,7 @@ namespace Sample5.DataProviders
                         new MenuPackage.MenuItem { Name = "Register", Url = "/account/register" },
                         new MenuPackage.MenuItem { Name = "Change password", Url = "/account/change-password" },
                         new MenuPackage.MenuItem { Name = "Change email", Url = "/account/change-email" },
-                        new MenuPackage.MenuItem { Name = "Reset password", Url = "/account/reset-password" },
+                        new MenuPackage.MenuItem { Name = "Reset password", Url = "/account/send-password-reset" },
                         new MenuPackage.MenuItem { Name = "Verify email", Url = "/account/verify-email-again" },
                     }
             };

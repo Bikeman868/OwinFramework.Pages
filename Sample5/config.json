@@ -131,9 +131,12 @@
         "changeEmailPage": "/account/change-email",
         "changeEmailSuccessPage": "/account/change-email-success",
         "changeEmailFailPage": "/account/change-email-fail",
-        "sendPasswordResetPage": "/account/reset-password",
-        "sendPasswordResetSuccesPage": "/account/reset-password-success",
-        "sendPasswordResetFailPage": "/account/reset-password-fail",
+        "sendPasswordResetPage": "/account/send-password-reset",
+        "sendPasswordResetSuccessPage": "/account/send-password-reset-success",
+        "sendPasswordResetFailPage": "/account/send-password-reset-fail",
+        "resetPasswordPage": "/account/reset-password",
+        "resetPasswordSuccessPage": "/account/reset-password-success",
+        "resetPasswordFailPage": "/account/reset-password-fail",
         "verifyEmailPage": "/account/verify-email",
         "verifyEmailSuccessPage": "/account/verify-email-success",
         "verifyEmailFailPage": "/account/verify-email-fail",
@@ -143,7 +146,11 @@
         "renewSessionPage": "/account/renew",
         "updateIdentityPage": "/account/update",
         "welcomeEmailFrom": "do-not-reply@sample5.com",
-        "welcomeEmailSubject": "Thank you for creating an account"
+        "welcomeEmailSubject": "Thank you for creating an account",
+        "passwordResetEmailFrom": "do-not-reply@sample5.com",
+        "passwordResetEmailSubject": "Reset your password",
+        "emailChangeEmailFrom": "do-not-reply@sample5.com",
+        "emailChangeEmailSubject": "Email address change"
       }
     },
     "authorization": {

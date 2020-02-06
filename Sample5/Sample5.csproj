@@ -108,8 +108,8 @@
     <Reference Include="OwinFramework.Facilities.TokenStore.Cache, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Facilities.TokenStore.Cache.2.7.2\lib\net45\OwinFramework.Facilities.TokenStore.Cache.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.FormIdentification, Version=2.8.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.FormIdentification.2.8.1\lib\net45\OwinFramework.FormIdentification.dll</HintPath>
+    <Reference Include="OwinFramework.FormIdentification, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.FormIdentification.2.8.2\lib\net45\OwinFramework.FormIdentification.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Less, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Less.2.8.0\lib\net45\OwinFramework.Less.dll</HintPath>

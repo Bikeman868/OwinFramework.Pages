@@ -376,8 +376,10 @@ namespace OwinFramework.Pages.Html.Templates
                     return "text/css";
                 case ".less":
                     return "text/less";
+                case ".html":
+                    return "text/html";
             }
-            return "text/html";
+            return null;
         }
     }
 }

@@ -44,6 +44,9 @@ namespace OwinFramework.Pages.Html.Templates
                             template.AddStyleLine(line);
                         break;
 
+                    case "text/less":
+                        throw new NotImplementedException("You can not render .less directly into the page. Consider using the ComponentParser instead");
+
                     default:
                         template.AddHtml(html);
                         break;

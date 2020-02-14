@@ -106,12 +106,14 @@ namespace Sample4
             fluentBuilder.Register(Assembly.GetExecutingAssembly(), t => ninject.Get(t));
 
             // This is an example of loading and parsing template files using the same
-            // parser for all templates. In this case they are html files with server-side
-            // data binding expressions using the mustache format.
-            var mustacheParser = ninject.Get<MustacheParser>();
+            // parser for all templates. In this case they are components that have multiple
+            // parts. The various files with the same names but different extensions will be
+            // combined into a single template
             var fileSystemLoader = ninject.Get<FileSystemLoader>();
             fileSystemLoader.ReloadInterval = TimeSpan.FromSeconds(3);
-            fileSystemLoader.Load(mustacheParser, p => p.Value.EndsWith(".html"));
+
+            var componentParser = ninject.Get<ComponentParser>();
+            fileSystemLoader.Load(componentParser, p => true);
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements binding them together into a runable website

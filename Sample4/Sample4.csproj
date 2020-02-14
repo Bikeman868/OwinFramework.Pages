@@ -145,6 +145,7 @@
     <Content Include="config.json" />
     <Content Include="Readme.md" />
     <None Include="packages.config" />
+    <Content Include="Templates\customer.less" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

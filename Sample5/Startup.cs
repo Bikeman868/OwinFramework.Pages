@@ -144,12 +144,16 @@ namespace Sample5
             // Construct the template parsers that we need
             var asIsParser = ninject.Get<AsIsParser>();
             var mustacheParser = ninject.Get<MustacheParser>();
+            var cssParser = ninject.Get<CssParser>();
 
             // Parse html files using mustache syntax. This allows them to contain data binding expressions
             fileSystemLoader.Load(mustacheParser, p => p.Value.EndsWith(".html"));
 
             // Parse JavaScript and Vue views without modification
             fileSystemLoader.Load(asIsParser, p => p.Value.EndsWith(".js") || p.Value.EndsWith(".vue"));
+
+            // Parse html files using mustache syntax. This allows them to contain data binding expressions
+            fileSystemLoader.Load(cssParser, p => p.Value.EndsWith(".less"));
 
             // Build the website
             nameManager.Bind();

@@ -373,8 +373,9 @@ namespace OwinFramework.Pages.Html.Templates
                 case ".js": 
                     return "application/javascript";
                 case ".css":
-                case ".less":
                     return "text/css";
+                case ".less":
+                    return "text/less";
             }
             return "text/html";
         }

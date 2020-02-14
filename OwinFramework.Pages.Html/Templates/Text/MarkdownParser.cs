@@ -20,7 +20,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
         private Func<IDocumentElement, bool> _onBeginProcessElement;
         private Func<IDocumentElement, bool> _onEndProcessElement;
 
-        private Core.Collections.LinkedList<StackedElement> _elementStack;
+        private Utility.Containers.LinkedList<StackedElement> _elementStack;
         private Dictionary<string, string> _references;
         private List<AnchorElement> _anchorsToFixup;
         private DocumentElement _document;
@@ -41,7 +41,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
 
             _characterStream = new MarkdownCharacterStream(reader){State = MarkdownStates.ParagraphBreak};
             _stringParser = new TextParser(_stringBuilderFactory, _characterStream);
-            _elementStack = new Core.Collections.LinkedList<StackedElement>();
+            _elementStack = new Utility.Containers.LinkedList<StackedElement>();
             _references = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             _anchorsToFixup = new List<AnchorElement>();
 
@@ -426,7 +426,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
                 return t != null && predicate(t);
             });
 
-            return listElement == null ? null : (T)listElement.Data.Element;
+            return listElement == null ? null : (T)listElement.Element;
         }
 
         private void AddParagraph(string trimmedLine)
@@ -703,10 +703,10 @@ namespace OwinFramework.Pages.Html.Templates.Text
 
             foreach (var stackedElement in _elementStack)
             {
-                if (!stackedElement.Started)
+                if (!stackedElement.Data.Started)
                 {
-                    stackedElement.Started = true;
-                    if (!Begin(stackedElement.Element))
+                    stackedElement.Data.Started = true;
+                    if (!Begin(stackedElement.Data.Element))
                         return false;
                 }
             }

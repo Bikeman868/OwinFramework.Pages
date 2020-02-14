@@ -1,4 +1,10 @@
-﻿        showPopup: false,
+﻿new Vue({
+    el: "#login",
+    data: {
+        isLoggedIn: false,
+        email: "",
+        isEmailVerified: false,
+        showPopup: false,
         password: "",
         confirmPassword: "",
         error: "",
@@ -9,7 +15,7 @@
         password: function () { this.error = undefined; },
         confirmPassword: function () { this.error = undefined; },
     },
-    mounted: function() {
+    mounted: function () {
         this.selectedTab = "Login";
     },
     methods: {
@@ -43,7 +49,7 @@
                 }
             }
         },
-        logout: function() {
+        logout: function () {
             this.hide();
             this.isLoggedIn = false;
             document.forms["logout-form"].submit();
@@ -65,3 +71,4 @@
             return isValid;
         }
     }
+}

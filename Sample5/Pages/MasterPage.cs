@@ -42,6 +42,7 @@ namespace Sample5
     [ZoneRegion("title_zone", "title_region")]
     [ZoneRegion("login_zone", "login_region")]
     [NeedsComponent("menus:menuStyle1")]
+    [NeedsComponent("config_service_client")]
     internal class HeaderBarLayout : NavigationElement { }
 
     [IsRegion("header_bar_region")]

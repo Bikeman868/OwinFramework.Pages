@@ -11,7 +11,9 @@ namespace OwinFramework.Pages.Html.Templates
     /// This is a template parser that inserts the contents
     /// of the template directly into the page without changing
     /// anything. This is good for snippets of static Html, embedding
-    /// SVG directly into the page etc.
+    /// SVG directly into the page etc. This parser adds the content
+    /// to the appropriate area of the page according to the content
+    /// type of the resource.
     /// </summary>
     public class AsIsParser: ITemplateParser
     {

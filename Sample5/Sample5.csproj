@@ -48,6 +48,7 @@
     </Reference>
     <Reference Include="Ioc.Modules, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Ioc.Modules.1.4.1\lib\net45\Ioc.Modules.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Ioc.Modules.Contract, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Ioc.Modules.Contract.1.4.1\lib\net45\Ioc.Modules.Contract.dll</HintPath>
@@ -55,6 +56,7 @@
     </Reference>
     <Reference Include="Ioc.Modules.Ninject, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Ioc.Modules.Ninject.1.4.1\lib\net45\Ioc.Modules.Ninject.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -77,6 +79,7 @@
     </Reference>
     <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -120,23 +123,23 @@
     <Reference Include="OwinFramework.OutputCache, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.OutputCache.2.8.0\lib\net45\OwinFramework.OutputCache.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Core, Version=1.2.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.11\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Core, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.12\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.DebugMiddleware, Version=1.2.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.DebugMiddleware.1.2.11\lib\net45\OwinFramework.Pages.DebugMiddleware.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.DebugMiddleware, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.DebugMiddleware.1.2.12\lib\net45\OwinFramework.Pages.DebugMiddleware.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Pages.Framework, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Framework.1.2.11\lib\net45\OwinFramework.Pages.Framework.dll</HintPath>
+      <HintPath>..\packages\Owin.Framework.Pages.Framework.1.2.12\lib\net45\OwinFramework.Pages.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Html, Version=1.2.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Html.1.2.11\lib\net45\OwinFramework.Pages.Html.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Html, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Html.1.2.12\lib\net45\OwinFramework.Pages.Html.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Restful, Version=1.2.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Restful.1.2.11\lib\net45\OwinFramework.Pages.Restful.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Restful, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Restful.1.2.12\lib\net45\OwinFramework.Pages.Restful.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Standard, Version=1.2.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.11\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Standard, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.12\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Session, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Session.2.8.2\lib\net45\OwinFramework.Session.dll</HintPath>
@@ -152,12 +155,15 @@
     </Reference>
     <Reference Include="Prius.Contracts, Version=2.2.2.31, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Prius.2.2.2\lib\net45\Prius.Contracts.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Prius.MySql, Version=2.2.2.31, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Prius.MySql.2.2.2\lib\net45\Prius.MySql.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Prius.Orm, Version=2.2.2.31, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Prius.2.2.2\lib\net45\Prius.Orm.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Svg, Version=2.2.1.39233, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
       <HintPath>..\packages\Svg.2.3.0\lib\net35\Svg.dll</HintPath>
@@ -186,6 +192,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="web\images\favicon.ico" />
     <Content Include="web\templates\fromUrl\account\send-password-reset-success.html" />
     <Content Include="web\templates\fromUrl\account\send-password-reset-fail.html" />
     <Content Include="web\templates\fromUrl\account\reset-password-fail.html" />
@@ -222,6 +229,7 @@
     <Compile Include="Components\LoginDialog.cs" />
     <Compile Include="Components\Resources.cs" />
     <Compile Include="Components\PageHead.cs" />
+    <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Session\ISessionData.cs" />
     <Compile Include="Session\SessionDataProvider.cs" />
     <Compile Include="DataProviders\MenuDataProvider.cs" />
@@ -252,9 +260,7 @@
     </None>
     <Content Include="web\styles\main.less" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="web\images\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

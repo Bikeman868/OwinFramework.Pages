@@ -42,6 +42,7 @@ namespace OwinFramework.Pages.Html.Templates
 
                 Write(template, document);
             }
+
             return template.Build();
         }
     }

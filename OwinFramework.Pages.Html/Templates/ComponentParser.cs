@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using dotless.Core.configuration;
+﻿using System.Text;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 
@@ -22,13 +18,18 @@ namespace OwinFramework.Pages.Html.Templates
     public class ComponentParser: ITemplateParser
     {
         private readonly ITemplateBuilder _templateBuilder;
-        private readonly MustacheTemplateBuilder _mustacheTemplateBuilder;
+        private readonly MustacheMixIn _mustacheMixIn;
+        private readonly JavascriptMixIn _javascriptMixIn;
+        private readonly CssMixIn _cssMixin;
 
         public ComponentParser(
             ITemplateBuilder templateBuilder)
         {
             _templateBuilder = templateBuilder;
-            _mustacheTemplateBuilder = new MustacheTemplateBuilder();
+            _mustacheMixIn = new MustacheMixIn();
+            _javascriptMixIn = new JavascriptMixIn();
+            _cssMixin = new CssMixIn();
+
             RenderIntoPage = true;
         }
 
@@ -45,19 +46,19 @@ namespace OwinFramework.Pages.Html.Templates
                 switch (resource.ContentType?.ToLower())
                 {
                     case "application/javascript":
-                        AddJavascriptToTemplate(template, content);
+                        _javascriptMixIn.AddToTemplate(template, content, RenderIntoPage);
                         break;
 
                     case "text/css":
-                        AddCssToTemplate(template, content);
+                        _cssMixin.AddCssToTemplate(template, content, RenderIntoPage);
                         break;
 
                     case "text/less":
-                        AddLessToTemplate(template, content);
+                        _cssMixin.AddLessToTemplate(template, content, RenderIntoPage, true);
                         break;
 
                     case "text/html":
-                        _mustacheTemplateBuilder.AddToTemplate(template, content);
+                        _mustacheMixIn.AddToTemplate(template, content);
                         break;
 
                     default:
@@ -66,67 +67,6 @@ namespace OwinFramework.Pages.Html.Templates
                 }
             }
             return template.Build();
-        }
-
-        private void AddCssToTemplate(ITemplateDefinition template, string css)
-        {
-            if (RenderIntoPage)
-            {
-                foreach (var line in css.Split('\n'))
-                    template.AddStyleLine(line);
-            }
-            else
-            {
-                template.AddStaticCss(css);
-            }
-        }
-
-        private void AddLessToTemplate(ITemplateDefinition template, string less)
-        {
-            var dotlessConfig = new DotlessConfiguration { MinifyOutput = true };
-            var css = dotless.Core.Less.Parse(less, dotlessConfig);
-            AddCssToTemplate(template, css);
-        }
-
-        private void AddJavascriptToTemplate(ITemplateDefinition template, string javascript)
-        {
-            const char backTick = '`';
-            const char quote = '"';
-            const char escape = '\\';
-            const char newLine = '\n';
-            var quoteString = new string(quote, 1);
-            var escapedQuoteString = new string(new[] { escape, quote });
-            var newLineString = new string(newLine, 1);
-            var escapedNewLineString = new string(new[] { escape, 'n', escape, newLine });
-
-            if (javascript.IndexOf(backTick) >= 0)
-            {
-                var sb = new StringBuilder();
-                var s = javascript.Split(backTick);
-                for (var i = 0; i < s.Length; i += 2)
-                {
-                    sb.Append(s[i]);
-                    if (i + 1 < s.Length)
-                    {
-                        sb.Append(quote);
-                        sb.Append(s[i + 1]
-                            .Replace(quoteString, escapedQuoteString)
-                            .Replace(newLineString, escapedNewLineString));
-                        sb.Append(quote);
-                    }
-                }
-                javascript = sb.ToString();
-            }
-
-            if (RenderIntoPage)
-            {
-                foreach (var line in javascript.Split('\n'))
-                    template.AddInitializationLine(line);
-            }
-            else
-            {
-                template.AddStaticJavascript(javascript);
-            }
         }
     }
 }

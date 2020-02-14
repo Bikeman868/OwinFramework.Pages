@@ -10,47 +10,11 @@ using OwinFramework.Pages.Core.Interfaces.Templates;
 
 namespace OwinFramework.Pages.Html.Templates
 {
-    /// <summary>
-    /// This is a template builder that replaces data binding expressions
-    /// enclosed in double curly braces with data obtained from the render context.
-    /// The data binding expressions are like this {{type:field}} for
-    /// example {{Person:FirstName}}.
-    /// 
-    /// Type names can be fully qualified, or you can declare referencecs
-    /// to them at the start of you template. See examples.
-    /// You can also access properties of contained objects by adding
-    /// periods like this {{Person:Address.City}}
-    /// 
-    /// You can also use the standard Mustache # and / syntax to repeat 
-    /// output for each element in a list.
-    /// </summary>
-    /// <example>
-    ///   {{Person=MyApp.DataModels.IPerson}}
-    ///   <h1>{{Person:LastName}}</h1>
-    ///   <p>Hi {{Person:FirstName}},</p>
-    ///   <p>Welcome to my wonderful app</p>
-    /// </example>
-    /// <example>
-    ///   <h1>{{MyApp.DataModels.IPerson:LastName}}</h1>
-    ///   <p>Hi {{MyApp.DataModels.IPerson:FirstName}},</p>
-    ///   <p>Welcome to my wonderful app</p>
-    /// </example>
-    /// <example>
-    ///   <svg width="50" height="200">
-    ///     <g transform="translate(40,200) rotate(-90)">
-    ///       <text class="title">{{Person:Title}} {{Person:LastName}}</text>
-    ///     </g>
-    ///   </svg>
-    /// </example>
-    /// <example>
-    ///   {{Address=MyApp.DataModels.IAddress}}
-    ///   {{#Address}}<p>{{Street}},{{City}},{{Zip}}</p>{{/Address}}
-    /// </example>
-    public class MustacheTemplateBuilder
+    public class MustacheMixIn
     {
         private readonly Regex _mustacheRegex;
 
-        public MustacheTemplateBuilder()
+        public MustacheMixIn()
         {
             _mustacheRegex = new Regex(
                 @"{{([a-zA-Z0-9=+:.#/ ]+)}}", 

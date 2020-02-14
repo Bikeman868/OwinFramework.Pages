@@ -378,6 +378,8 @@ namespace OwinFramework.Pages.Html.Templates
                     return "text/less";
                 case ".html":
                     return "text/html";
+                case ".md":
+                    return "text/x-markdown";
             }
             return null;
         }

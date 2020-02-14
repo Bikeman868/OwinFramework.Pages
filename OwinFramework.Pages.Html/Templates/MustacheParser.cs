@@ -49,13 +49,13 @@ namespace OwinFramework.Pages.Html.Templates
     public class MustacheParser : ITemplateParser
     {
         private readonly ITemplateBuilder _templateBuilder;
-        private readonly MustacheTemplateBuilder _mustacheTemplateBuilder;
+        private readonly MustacheMixIn _mustacheMixIn;
 
         public MustacheParser(
             ITemplateBuilder templateBuilder)
         {
             _templateBuilder = templateBuilder;
-            _mustacheTemplateBuilder = new MustacheTemplateBuilder();
+            _mustacheMixIn = new MustacheMixIn();
         }
 
         public ITemplate Parse(TemplateResource[] resources, IPackage package)
@@ -67,7 +67,7 @@ namespace OwinFramework.Pages.Html.Templates
                 var encoding = resource.Encoding ?? Encoding.UTF8;
                 var text = encoding.GetString(resource.Content);
 
-                _mustacheTemplateBuilder.AddToTemplate(template, text);
+                _mustacheMixIn.AddToTemplate(template, text);
             }
             return template.Build();
         }

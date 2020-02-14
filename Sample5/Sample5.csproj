@@ -123,23 +123,23 @@
     <Reference Include="OwinFramework.OutputCache, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.OutputCache.2.8.0\lib\net45\OwinFramework.OutputCache.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Core, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.12\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Core, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.14\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.DebugMiddleware, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.DebugMiddleware.1.2.12\lib\net45\OwinFramework.Pages.DebugMiddleware.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.DebugMiddleware, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.DebugMiddleware.1.2.14\lib\net45\OwinFramework.Pages.DebugMiddleware.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Pages.Framework, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Framework.1.2.12\lib\net45\OwinFramework.Pages.Framework.dll</HintPath>
+      <HintPath>..\packages\Owin.Framework.Pages.Framework.1.2.14\lib\net45\OwinFramework.Pages.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Html, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Html.1.2.12\lib\net45\OwinFramework.Pages.Html.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Html, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Html.1.2.14\lib\net45\OwinFramework.Pages.Html.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Restful, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Restful.1.2.12\lib\net45\OwinFramework.Pages.Restful.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Restful, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Restful.1.2.14\lib\net45\OwinFramework.Pages.Restful.dll</HintPath>
     </Reference>
-    <Reference Include="OwinFramework.Pages.Standard, Version=1.2.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.12\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
+    <Reference Include="OwinFramework.Pages.Standard, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.14\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
     </Reference>
     <Reference Include="OwinFramework.Session, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Framework.Session.2.8.2\lib\net45\OwinFramework.Session.dll</HintPath>

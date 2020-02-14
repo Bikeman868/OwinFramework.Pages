@@ -224,12 +224,12 @@
     <None Include="packages.config" />
     <None Include="web\templates\widget\login.vue" />
     <Content Include="web\templates\widget\login.js" />
+    <Content Include="web\templates\widget\login.less" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\LoginDialog.cs" />
     <Compile Include="Components\Resources.cs" />
     <Compile Include="Components\PageHead.cs" />
-    <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\InfoService.cs" />
     <Compile Include="Session\ISessionData.cs" />
     <Compile Include="Session\SessionDataProvider.cs" />
     <Compile Include="DataProviders\MenuDataProvider.cs" />

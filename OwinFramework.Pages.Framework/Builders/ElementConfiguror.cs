@@ -716,6 +716,11 @@ namespace OwinFramework.Pages.Framework.Builders
                 service.Cache(attributes.CacheOutput.CacheCategory, attributes.CacheOutput.CachePriority);
             }
 
+            if (attributes.GenerateClientScript != null)
+            {
+                service.CreateComponent(attributes.GenerateClientScript.ComponentName);
+            }
+
             if (!ReferenceEquals(attributes.IsService, null))
             {
                 service.Name(attributes.IsService.Name);

@@ -6,7 +6,7 @@
     <RootNamespace>OwinFramework.Pages.Framework</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.2.12</Version>
+    <Version>1.2.13</Version>
     <Authors>Martin Halliday</Authors>
     <Copyright>Copyright © Martin Halliday 2018-2020</Copyright>
     <PackageProjectUrl>http://owinframework.net/content/area/pages/landing</PackageProjectUrl>
@@ -38,7 +38,7 @@
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.csproj" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="REM echo F|xcopy /Y &quot;$(ProjectDir)bin\debug\net45\$(TargetFileName)&quot; &quot;$(SolutionDir)packages\Owin.Framework.Pages.Framework.1.2.12\lib\net45\$(TargetFileName)&quot;" />
+    <Exec Command="REM echo F|xcopy /Y &quot;$(ProjectDir)bin\debug\net45\$(TargetFileName)&quot; &quot;$(SolutionDir)packages\Owin.Framework.Pages.Framework.1.2.13\lib\net45\$(TargetFileName)&quot;" />
   </Target>
 
 </Project>

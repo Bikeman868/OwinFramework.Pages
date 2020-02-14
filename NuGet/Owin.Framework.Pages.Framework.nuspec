@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.Framework</id>
-    <version>1.2.12</version>
+    <version>1.2.13</version>
     <title>Owin Framework Pages Framework</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>
@@ -18,13 +18,13 @@
         <dependency id="Newtonsoft.Json" version="7.0.1" />
         <dependency id="Urchin.Client" version="1.3.1" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.2.12" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.2.13" />
 	  </group>
       <group targetFramework="net45">
         <dependency id="Newtonsoft.Json" version="7.0.1" />
         <dependency id="Urchin.Client" version="1.3.1" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.2.12" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.2.13" />
       </group>
     </dependencies>
     <references>

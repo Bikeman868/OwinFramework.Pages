@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.Core</id>
-    <version>1.2.12</version>
+    <version>1.2.13</version>
     <title>Owin Framework Pages Core</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>

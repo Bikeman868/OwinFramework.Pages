@@ -168,8 +168,12 @@ namespace OwinFramework.Pages.Html.Elements
             _headTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.CreateInstances,
+                NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
+
+            Dependencies.NameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                () => CheckForMultiPartTemplate());
 
             HeadWriters = new Action<IRenderContext>[] { RenderHeadTemplate };
         }
@@ -184,8 +188,12 @@ namespace OwinFramework.Pages.Html.Elements
             _scriptTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.CreateInstances,
+                NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
+
+            Dependencies.NameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                () => CheckForMultiPartTemplate());
 
             ScriptWriters = new Action<IRenderContext>[] { RenderScriptTemplate };
         }
@@ -199,8 +207,12 @@ namespace OwinFramework.Pages.Html.Elements
             _styleTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.CreateInstances,
+                NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
+
+            Dependencies.NameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                () => CheckForMultiPartTemplate());
 
             StyleWriters = new Action<IRenderContext>[] { RenderStyleTemplate };
         }
@@ -213,7 +225,7 @@ namespace OwinFramework.Pages.Html.Elements
             _bodyTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.CreateInstances,
+                NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
 
             Dependencies.NameManager.AddResolutionHandler(
@@ -231,8 +243,12 @@ namespace OwinFramework.Pages.Html.Elements
             _initializationTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.CreateInstances,
+                NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
+
+            Dependencies.NameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                () => CheckForMultiPartTemplate());
 
             InitializationWriters = new Action<IRenderContext>[] { RenderInitializationTemplate };
         }
@@ -308,6 +324,9 @@ namespace OwinFramework.Pages.Html.Elements
             var deployable = template as IDeployable;
             if (deployable != null)
             {
+                Module = deployable.Module;
+                AssetDeployment = deployable.AssetDeployment;
+
                 if (JavascriptFunctions == null)
                     JavascriptFunctions = new Action<IJavascriptWriter>[] { w => deployable.WriteStaticJavascript(w) };
                 else
@@ -318,6 +337,14 @@ namespace OwinFramework.Pages.Html.Elements
                 else
                     CssRules = CssRules.Concat(new Action<ICssWriter>[] { w => deployable.WriteStaticCss(w) }).ToArray();
             }
+
+            var packagable = template as IPackagable;
+            if (packagable != null)
+            {
+                Package = packagable.Package;
+                nm.Register(this);
+            }
+
 
             var dataConsumer = template as IDataConsumer;
             if (dataConsumer == null) return;

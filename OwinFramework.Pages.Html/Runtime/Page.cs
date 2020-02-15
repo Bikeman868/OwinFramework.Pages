@@ -174,11 +174,15 @@ namespace OwinFramework.Pages.Html.Runtime
 
             foreach (var element in data.Elements)
             {
-                var name = string.IsNullOrEmpty(element.Element.Name)
-                    ? element.Element.GetType().Name
-                    : element.Element.Name;
+                if (string.IsNullOrEmpty(element.Element.Name))
+                {
+#if DEBUG
+                    System.Diagnostics.Trace.WriteLine("   " +  element.Element + " cannot deploy assets because it has no name");
+#endif
+                    continue;
+                }
 
-                var elementUniqueName = element.Element.ElementType.ToString() + ":" + name;
+                var elementUniqueName = element.Element.ElementType.ToString() + ":" + element.Element.Name;
                 if (!elements.Add(elementUniqueName))
                     continue;
 
@@ -210,7 +214,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
 
 #if DEBUG
-                System.Diagnostics.Trace.WriteLine("   " + name + " deployed to " + deployment);
+                System.Diagnostics.Trace.WriteLine($"   '{elementUniqueName}' of type '{element.Element.GetType().Name}' deployed to {deployment}");
 #endif
             }
 

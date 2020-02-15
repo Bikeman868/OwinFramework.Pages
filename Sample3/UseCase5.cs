@@ -35,8 +35,6 @@ namespace Sample3.UseCase5
 
             #endregion
 
-            #region Initialize the Pages middleware
-
             var fluentBuilder = ninject.Get<IFluentBuilder>();
             var requestRouter = ninject.Get<IRequestRouter>();
             var nameManager = ninject.Get<INameManager>();
@@ -50,15 +48,15 @@ namespace Sample3.UseCase5
 
             var templateBuilder = ninject.Get<ITemplateBuilder>();
 
-            var template2 = templateBuilder
+            var template = templateBuilder
                 .BuildUpTemplate()
                 .PartOf("usecase5")
-                .DeployIn("usecase5")
+                .AssetDeployment(AssetDeployment.PerWebsite)
                 .AddStaticCss("h2 { font-size: 60px; }")
                 .AddStyleLine("h2 { color: orange; }")
                 .AddHtml("<h2>This is test 2</h2>")
                 .Build();
-            nameManager.Register(template2, "/test2");
+            nameManager.Register(template, "/test2");
             
             fluentBuilder.Register(typeof(ApplicationModule), t => ninject.Get(t));
             fluentBuilder.Register(typeof(ApplicationPackage), t => ninject.Get(t));
@@ -66,8 +64,6 @@ namespace Sample3.UseCase5
             fluentBuilder.Register(typeof(HomeLayout), t => ninject.Get(t));
 
             nameManager.Bind();
-
-            #endregion
         }
     }
 

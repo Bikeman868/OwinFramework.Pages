@@ -42,9 +42,12 @@ namespace OwinFramework.Pages.Html.Templates
             _cssMixin = new CssMixIn();
         }
 
-        public ITemplate Parse(TemplateResource[] resources, IPackage package)
+        public ITemplate Parse(TemplateResource[] resources, IPackage package, IModule module)
         {
-            var templateDefinition = _templateBuilder.BuildUpTemplate();
+            var templateDefinition = _templateBuilder
+                .BuildUpTemplate()
+                .PartOf(package)
+                .DeployIn(module);
 
             foreach (var resource in resources)
                 ParseResource(resource, templateDefinition, package);

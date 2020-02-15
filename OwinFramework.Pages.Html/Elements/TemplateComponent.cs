@@ -305,15 +305,19 @@ namespace OwinFramework.Pages.Html.Elements
         {
             var template = nm.ResolveTemplate(templatePath);
 
-            if (JavascriptFunctions == null)
-                JavascriptFunctions = new Action<IJavascriptWriter>[] { w => template.WriteJavascript(w) };
-            else
-                JavascriptFunctions = JavascriptFunctions.Concat(new Action<IJavascriptWriter>[] { w => template.WriteJavascript(w) }).ToArray();
+            var deployable = template as IDeployable;
+            if (deployable != null)
+            {
+                if (JavascriptFunctions == null)
+                    JavascriptFunctions = new Action<IJavascriptWriter>[] { w => deployable.WriteStaticJavascript(w) };
+                else
+                    JavascriptFunctions = JavascriptFunctions.Concat(new Action<IJavascriptWriter>[] { w => deployable.WriteStaticJavascript(w) }).ToArray();
 
-            if (CssRules == null)
-                CssRules = new Action<ICssWriter>[] { w => template.WriteCss(w) };
-            else
-                CssRules = CssRules.Concat(new Action<ICssWriter>[] { w => template.WriteCss(w) }).ToArray();
+                if (CssRules == null)
+                    CssRules = new Action<ICssWriter>[] { w => deployable.WriteStaticCss(w) };
+                else
+                    CssRules = CssRules.Concat(new Action<ICssWriter>[] { w => deployable.WriteStaticCss(w) }).ToArray();
+            }
 
             var dataConsumer = template as IDataConsumer;
             if (dataConsumer == null) return;

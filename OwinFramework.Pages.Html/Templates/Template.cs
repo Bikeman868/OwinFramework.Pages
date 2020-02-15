@@ -16,13 +16,16 @@ namespace OwinFramework.Pages.Html.Templates
     /// of the page using the AddXxx() methods. These are output to
     /// the pages at runtime using the WritePageArea() method.
     /// </summary>
-    public class Template : ITemplate, IDataConsumer
+    public class Template : ITemplate, IDataConsumer, IDeployable
     {
         string INamed.Name { get; set; }
         IPackage IPackagable.Package { get; set; }
+        IModule IDeployable.Module { get; set; }
+        AssetDeployment IDeployable.AssetDeployment { get; set; }
         bool ITemplate.IsStatic { get; set; }
 
         ElementType INamed.ElementType { get { return ElementType.Template; } }
+
 
         private PageArea[] _pageAreas = new PageArea[0];
 
@@ -110,6 +113,26 @@ namespace OwinFramework.Pages.Html.Templates
                 _staticCss = _staticCss.Concat(cssWriters).ToArray();
         }
 
+        IWriteResult IDeployable.WriteStaticCss(ICssWriter writer)
+        {
+            if (_staticCss != null)
+            {
+                for (var i = 0; i < _staticCss.Length; i++)
+                    _staticCss[i](writer);
+            }
+            return WriteResult.Continue();
+        }
+
+        IWriteResult IDeployable.WriteStaticJavascript(IJavascriptWriter writer)
+        {
+            if (_staticJavascript != null)
+            {
+                for (var i = 0; i < _staticJavascript.Length; i++)
+                    _staticJavascript[i](writer);
+            }
+            return WriteResult.Continue();
+        }
+
         IWriteResult ITemplate.WritePageArea(IRenderContext context, PageArea pageArea)
         {
             if (pageArea == PageArea.Head && _headElements != null)
@@ -143,24 +166,6 @@ namespace OwinFramework.Pages.Html.Templates
             }
 
             return WriteResult.Continue();
-        }
-
-        void ITemplate.WriteJavascript(IJavascriptWriter javascriptWriter)
-        {
-            if (_staticJavascript != null)
-            {
-                for (var i = 0; i < _staticJavascript.Length; i++)
-                    _staticJavascript[i](javascriptWriter);
-            }
-        }
-
-        void ITemplate.WriteCss(ICssWriter cssWriter)
-        {
-            if (_staticCss != null)
-            {
-                for (var i = 0; i < _staticJavascript.Length; i++)
-                    _staticCss[i](cssWriter);
-            }
         }
 
         IEnumerable<PageArea> IPageWriter.GetPageAreas()

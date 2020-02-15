@@ -16,6 +16,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         public PathString RootPath { get; set; }
         public IPackage Package { get; set; }
+        public IModule Module { get; set; }
         public TimeSpan? ReloadInterval { get; set; }
 
         public TemplateLoader()

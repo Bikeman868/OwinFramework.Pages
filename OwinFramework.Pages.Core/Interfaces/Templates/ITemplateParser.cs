@@ -45,7 +45,8 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// parameter is defined as an array to allow for the use case where multiple files
         /// are needed to specify the template</param>
         /// <param name="package">Optional package used for name resolution</param>
+        /// <param name="module">Optional module. Only relevant for templates that render static assets</param>
         /// <returns>An ITemplate instance</returns>
-        ITemplate Parse(TemplateResource[] resources, IPackage package = null);
+        ITemplate Parse(TemplateResource[] resources, IPackage package = null, IModule module = null);
     }
 }

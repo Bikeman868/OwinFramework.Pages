@@ -54,6 +54,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         IPackage Package { get; set; }
 
         /// <summary>
+        /// Sets the module to use for deploying static assets. If the module is not
+        /// set then the assets will be deployed to the website global asset resources
+        /// </summary>
+        IModule Module { get; set; }
+
+        /// <summary>
         /// Setting this property makes the template loader reload templates at
         /// timed intervals. Note that setting this property means tha the loader
         /// must keep track of the templates that were loaded and the parser that

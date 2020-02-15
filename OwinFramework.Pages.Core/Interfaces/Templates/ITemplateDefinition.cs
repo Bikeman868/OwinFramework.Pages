@@ -19,6 +19,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         ITemplateDefinition PartOf(IPackage package);
 
         /// <summary>
+        /// Specifies that this component is deployed as part of a module
+        /// </summary>
+        /// <param name="module">The module that this component is deployed in</param>
+        ITemplateDefinition DeployIn(IModule module);
+
+        /// <summary>
+        /// Specifies that this layout is deployed as part of a module
+        /// </summary>
+        /// <param name="moduleName">The name of the module that this 
+        /// layout is deployed in</param>
+        ITemplateDefinition DeployIn(string moduleName);
+
+        /// <summary>
         /// Adds a block of HTML to the template definition
         /// </summary>
         ITemplateDefinition AddHtml(string html);

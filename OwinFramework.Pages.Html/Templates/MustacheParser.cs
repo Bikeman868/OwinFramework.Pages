@@ -58,9 +58,12 @@ namespace OwinFramework.Pages.Html.Templates
             _mustacheMixIn = new MustacheMixIn();
         }
 
-        public ITemplate Parse(TemplateResource[] resources, IPackage package)
+        public ITemplate Parse(TemplateResource[] resources, IPackage package, IModule module)
         {
-            var template = _templateBuilder.BuildUpTemplate().PartOf(package);
+            var template = _templateBuilder
+                .BuildUpTemplate()
+                .PartOf(package)
+                .DeployIn(module);
 
             foreach (var resource in resources)
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using OwinFramework.Interfaces.Utility;
 using OwinFramework.InterfacesV1.Middleware;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
@@ -146,23 +147,39 @@ namespace OwinFramework.Pages.Html.Runtime
                 _layout = new PageLayout(elementDependencies, null, Layout, regionElements, data);
             }
 
+            // Create PageComponent wrappers around non-visual components and sort them
+            // by their dependencies.
             if (_components == null)
             {
                 _pageComponents = new PageComponent[0];
             }
             else
             {
-                _pageComponents = _components
-                    .ToList()
-                    .Select(c => new PageComponent(elementDependencies, null, c, data))
-                    .ToArray();
+                var dependencyGraphFactory = new Utility.DependencyGraphFactory();
+                var dependencyGraph = dependencyGraphFactory.Create<PageComponent>();
 
-                // TODO: sort by dependencies
-                //foreach (var component in _components)
-                //{
-                //    data.BeginAddElement(component, null);
-                //    data.EndAddElement(component);
-                //}
+                foreach (var component in _components)
+                {
+                    var pageComponent = new PageComponent(elementDependencies, null, component, data);
+
+                    var libraryConsumer = component as ILibraryConsumer;
+                    var dependentComponents = libraryConsumer?.GetDependentComponents();
+                    var graphEdges = dependentComponents?.Select(c => new ElementDependencyGraphEdge(c));
+
+                    dependencyGraph.Add(
+                        component.FullyQualifiedName(), 
+                        pageComponent, 
+                        graphEdges, 
+                        OwinFramework.Interfaces.Builder.PipelinePosition.Middle);
+                }
+
+                _pageComponents = dependencyGraph.GetBuildOrderData().ToArray();
+
+                foreach (var pageComponent in _pageComponents)
+                {
+                    data.BeginAddElement(pageComponent.Component, null);
+                    data.EndAddElement(pageComponent.Component);
+                }
             }
 
             _dataContextBuilder = data.RootDataContextBuilder;

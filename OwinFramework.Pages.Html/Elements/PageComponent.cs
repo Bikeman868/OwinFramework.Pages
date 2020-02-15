@@ -4,6 +4,7 @@ using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Runtime;
+using System.Collections.Generic;
 
 namespace OwinFramework.Pages.Html.Elements
 {
@@ -20,9 +21,9 @@ namespace OwinFramework.Pages.Html.Elements
             IPageData pageData)
             : base(dependencies, parent, component, pageData)
         {
-            pageData.BeginAddElement(Element);
-            pageData.EndAddElement(Element);
         }
+
+        public IElement Component => Element;
 
         protected override T PopulateDebugInfo<T>(DebugInfo debugInfo, int parentDepth, int childDepth)
         {

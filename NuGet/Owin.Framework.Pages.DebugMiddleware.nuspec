@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.DebugMiddleware</id>
-    <version>1.3.0</version>
+    <version>1.3.1</version>
     <title>Owin Framework Pages Debug Middleware</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Middleware that shows the internal structure of pages to help with debugging issues with page composition and data provisioning</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
-    <releaseNotes>Template loader fluent syntax</releaseNotes>
+    <releaseNotes>Non-visual components are rendered before components that depend on them</releaseNotes>
     <projectUrl>http://owinframework.net/content/project/owinframework.pages.debugmiddleware/landing</projectUrl>
     <license type="expression">Apache-2.0</license>
     <tags>OWIN OwinFramework Pages Debug</tags>
@@ -19,14 +19,14 @@
         <dependency id="Urchin.Client" version="1.3.1" />
         <dependency id="Svg" version="2.3.0" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.3.0" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.3.1" />
 	  </group>
       <group targetFramework="net45">
         <dependency id="Newtonsoft.Json" version="7.0.1" />
         <dependency id="Urchin.Client" version="1.3.1" />
         <dependency id="Svg" version="2.3.0" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.3.0" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.3.1" />
       </group>
     </dependencies>
     <references>

@@ -8,33 +8,35 @@ using System.Linq;
 
 namespace Sample5.Services
 {
-    [IsService("config", "/services/config", new Method[]{ Method.Get })]
+    [IsService("info", "/services/info", new Method[]{ Method.Get })]
+    [PartOf("application_package")]
+    [DeployedAs("navigation_module")]
     [GenerateClientScript("config_service_client")]
-    public class ConfigurationService
+    public class InfoService
     {
         [Endpoint]
-        public void User(IEndpointRequest request)
+        public void GetUserInfo(IEndpointRequest request)
         {
-            var userConfig = new UserConfig();
+            var userInfo = new UserInfo();
 
             var identification = request.OwinContext.GetFeature<IIdentification>();
 
             if (identification != null)
             {
-                userConfig.IsLoggedIn = !identification.IsAnonymous;
+                userInfo.IsLoggedIn = !identification.IsAnonymous;
 
                 var usernameClaim = identification.Claims.FirstOrDefault(claim => claim.Name == ClaimNames.Username);
                 if (usernameClaim != null)
                 {
-                    userConfig.Email = usernameClaim.Value;
-                    userConfig.IsEmailVerified = usernameClaim.Status == ClaimStatus.Verified;
+                    userInfo.Email = usernameClaim.Value;
+                    userInfo.IsEmailVerified = usernameClaim.Status == ClaimStatus.Verified;
                 }
             }
 
-            request.Success(userConfig);
+            request.Success(userInfo);
         }
 
-        private class UserConfig
+        private class UserInfo
         {
             [JsonProperty("isLoggedIn")]
             public bool IsLoggedIn { get; set; }

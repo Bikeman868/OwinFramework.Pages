@@ -23,6 +23,9 @@ namespace OwinFramework.Pages.Html.Templates
     {
         private readonly IStringBuilderFactory _stringBuilderFactory;
         private readonly ITemplateBuilder _templateBuilder;
+        private readonly MustacheMixIn _mustacheMixIn;
+        private readonly JavascriptMixIn _javascriptMixIn;
+        private readonly CssMixIn _cssMixin;
 
         /// <summary>
         /// Constructs a parser that can parse Markdown documents into templates
@@ -33,11 +36,18 @@ namespace OwinFramework.Pages.Html.Templates
         {
             _stringBuilderFactory = stringBuilderFactory;
             _templateBuilder = templateBuilder;
+
+            _mustacheMixIn = new MustacheMixIn();
+            _javascriptMixIn = new JavascriptMixIn();
+            _cssMixin = new CssMixIn();
         }
 
-        public ITemplate Parse(TemplateResource[] resources, IPackage package)
+        public ITemplate Parse(TemplateResource[] resources, IPackage package, IModule module)
         {
-            var templateDefinition = _templateBuilder.BuildUpTemplate();
+            var templateDefinition = _templateBuilder
+                .BuildUpTemplate()
+                .PartOf(package)
+                .DeployIn(module);
 
             foreach (var resource in resources)
                 ParseResource(resource, templateDefinition, package);
@@ -47,7 +57,7 @@ namespace OwinFramework.Pages.Html.Templates
 
         private void ParseResource(
             TemplateResource resource, 
-            ITemplateDefinition templateDefinition, 
+            ITemplateDefinition template, 
             IPackage package)
         {
             var encoding = resource.Encoding ?? Encoding.UTF8;
@@ -61,6 +71,13 @@ namespace OwinFramework.Pages.Html.Templates
                 .Replace("\r", string.Empty)
                 .Split('\n')
                 .Select(s => s.Trim());
+
+            var scriptLines = new List<string>();
+            var cssLines = new List<string>();
+            var lessLines = new List<string>();
+            var htmlLines = new List<string>();
+            var headLines = new List<string>();
+            var initLines = new List<string>();
 
             foreach (var line in lines)
             {
@@ -82,44 +99,71 @@ namespace OwinFramework.Pages.Html.Templates
 
                 if (section.StartsWith("--javascript"))
                 {
-                    for (var i = 0; i < blankLineCount; i++)
-                        templateDefinition.AddScriptLine(string.Empty);
+                    for (var i = 0; i < blankLineCount - 1; i++)
+                        scriptLines.Add(string.Empty);
 
-                    templateDefinition.AddScriptLine(line);
+                    scriptLines.Add(line);
                 }
                 else if (section.StartsWith("--css"))
                 {
-                    for (var i = 0; i < blankLineCount; i++)
-                        templateDefinition.AddStyleLine(string.Empty);
+                    for (var i = 0; i < blankLineCount - 1; i++)
+                        cssLines.Add(string.Empty);
 
-                    templateDefinition.AddStyleLine(line);
+                    cssLines.Add(line);
+                }
+                else if (section.StartsWith("--less"))
+                {
+                    for (var i = 0; i < blankLineCount - 1; i++)
+                        lessLines.Add(string.Empty);
+
+                    lessLines.Add(line);
                 }
                 else if (section.StartsWith("--head"))
                 {
-                    for (var i = 0; i < blankLineCount; i++)
-                        templateDefinition.AddHeadLine(string.Empty);
+                    for (var i = 0; i < blankLineCount - 1; i++)
+                        headLines.Add(string.Empty);
 
-                    templateDefinition.AddHeadLine(line);
+                    headLines.Add(line);
                 }
                 else if (section.StartsWith("--init"))
                 {
-                    for (var i = 0; i < blankLineCount; i++)
-                        templateDefinition.AddInitializationLine(string.Empty);
+                    for (var i = 0; i < blankLineCount - 1; i++)
+                        initLines.Add(string.Empty);
 
-                    templateDefinition.AddInitializationLine(line);
+                    initLines.Add(line);
                 }
                 else if (section.StartsWith("--html"))
                 {
-                    for (var i = 0; i < blankLineCount; i++)
-                        templateDefinition.AddLineBreak();
+                    for (var i = 0; i < blankLineCount - 1; i++)
+                        htmlLines.Add(string.Empty);
 
-                    templateDefinition.AddHtml(line);
-                    templateDefinition.AddLineBreak();
+                    htmlLines.Add(line);
                 }
 
                 newSection = false;
                 blankLineCount = 0;
             }
+
+            foreach (var headLine in headLines)
+                template.AddHeadLine(headLine);
+
+            if (scriptLines.Count > 0)
+                _javascriptMixIn.AddToTemplate(template, string.Join("\n", scriptLines), true);
+
+            if (cssLines.Count > 0)
+                _cssMixin.AddCssToTemplate(template, string.Join("\n", cssLines), true);
+
+            if (lessLines.Count > 0)
+                _cssMixin.AddLessToTemplate(template, string.Join("\n", lessLines), true, true);
+
+            foreach (var htmlLine in htmlLines)
+            {
+                template.AddHtml(htmlLine);
+                template.AddLineBreak();
+            }
+
+            foreach (var initLine in initLines)
+                template.AddInitializationLine(initLine);
         }
     }
 }

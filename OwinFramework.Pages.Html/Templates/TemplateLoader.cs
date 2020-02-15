@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Text;
 using Microsoft.Owin;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 
 namespace OwinFramework.Pages.Html.Templates
@@ -13,13 +15,18 @@ namespace OwinFramework.Pages.Html.Templates
     public abstract class TemplateLoader: ITemplateLoader
     {
         private readonly Encoding[] _detectableEncodings;
+        protected readonly INameManager _nameManager;
 
-        public PathString RootPath { get; set; }
-        public IPackage Package { get; set; }
-        public TimeSpan? ReloadInterval { get; set; }
+        public PathString RootPath { get; private set; }
+        public IPackage Package { get; private set; }
+        public IModule Module { get; private set; }
+        public TimeSpan? ReloadInterval { get; private set; }
+        public AssetDeployment AssetDeployment { get; private set; }
 
-        public TemplateLoader()
+        public TemplateLoader(INameManager nameManager)
         {
+            _nameManager = nameManager;
+
             _detectableEncodings = 
                 Encoding.GetEncodings()
                 .Where(e => 
@@ -29,13 +36,67 @@ namespace OwinFramework.Pages.Html.Templates
                     })
                 .Select(e => e.GetEncoding())
                 .ToArray();
+
+            AssetDeployment = AssetDeployment.Inherit;
         }
 
-        public abstract void Load(
+        public ITemplateLoader PartOf(IPackage package)
+        {
+            Package = package;
+            return this;
+        }
+
+        public ITemplateLoader PartOf(string packageName)
+        {
+            _nameManager.AddResolutionHandler(NameResolutionPhase.ResolvePackageNames, 
+                nm => 
+                {
+                    Package = nm.ResolvePackage(packageName);
+                });
+            return this;
+        }
+
+        public ITemplateLoader DeployIn(IModule module)
+        {
+            Module = module;
+            AssetDeployment = AssetDeployment.PerModule;
+            return this;
+        }
+
+        public ITemplateLoader DeployIn(string moduleName)
+        {
+            _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, 
+                nm => 
+                {
+                    Module = nm.ResolveModule(moduleName);
+                });
+            AssetDeployment = AssetDeployment.PerModule;
+            return this;
+        }
+
+        public ITemplateLoader DeployAssetsTo(AssetDeployment assetDeployment)
+        {
+            AssetDeployment = assetDeployment;
+            return this;
+        }
+
+        public ITemplateLoader LoadUnder(PathString rootPath)
+        {
+            RootPath = rootPath;
+            return this;
+        }
+
+        public abstract ITemplateLoader Load(
             ITemplateParser parser, 
             Func<PathString, bool> predicate = null, 
             Func<PathString, string> mapPath = null, 
             bool includeSubPaths = true);
+
+        public ITemplateLoader ReloadEvery(TimeSpan interval)
+        {
+            ReloadInterval = interval;
+            return this;
+        }
 
         protected byte[] RemovePreamble(byte[] buffer, out Encoding encoding)
         {
@@ -75,5 +136,6 @@ namespace OwinFramework.Pages.Html.Templates
             Buffer.BlockCopy(buffer, preambleLength, tempBuffer, 0, tempBuffer.Length);
             return tempBuffer;
         }
+
     }
 }

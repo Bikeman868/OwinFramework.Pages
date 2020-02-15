@@ -150,7 +150,7 @@ namespace OwinFramework.Pages.Html.Elements
             _multiPartTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.ResolveElementReferences,
+                NameResolutionPhase.CreateInstances,
                 nm => AddTemplateDependencies(nm, templatePath));
 
             HeadWriters = new Action<IRenderContext>[] { RenderMultiPartHead };
@@ -171,6 +171,10 @@ namespace OwinFramework.Pages.Html.Elements
                 NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
 
+            Dependencies.NameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                () => CheckForMultiPartTemplate());
+
             HeadWriters = new Action<IRenderContext>[] { RenderHeadTemplate };
         }
 
@@ -187,6 +191,10 @@ namespace OwinFramework.Pages.Html.Elements
                 NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
 
+            Dependencies.NameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                () => CheckForMultiPartTemplate());
+
             ScriptWriters = new Action<IRenderContext>[] { RenderScriptTemplate };
         }
 
@@ -201,6 +209,10 @@ namespace OwinFramework.Pages.Html.Elements
             Dependencies.NameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
+
+            Dependencies.NameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                () => CheckForMultiPartTemplate());
 
             StyleWriters = new Action<IRenderContext>[] { RenderStyleTemplate };
         }
@@ -233,6 +245,10 @@ namespace OwinFramework.Pages.Html.Elements
             Dependencies.NameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
                 nm => AddTemplateDependencies(nm, templatePath));
+
+            Dependencies.NameManager.AddResolutionHandler(
+                NameResolutionPhase.CreateInstances,
+                () => CheckForMultiPartTemplate());
 
             InitializationWriters = new Action<IRenderContext>[] { RenderInitializationTemplate };
         }
@@ -305,15 +321,30 @@ namespace OwinFramework.Pages.Html.Elements
         {
             var template = nm.ResolveTemplate(templatePath);
 
-            if (JavascriptFunctions == null)
-                JavascriptFunctions = new Action<IJavascriptWriter>[] { w => template.WriteJavascript(w) };
-            else
-                JavascriptFunctions = JavascriptFunctions.Concat(new Action<IJavascriptWriter>[] { w => template.WriteJavascript(w) }).ToArray();
+            var deployable = template as IDeployable;
+            if (deployable != null)
+            {
+                Module = deployable.Module;
+                AssetDeployment = deployable.AssetDeployment;
 
-            if (CssRules == null)
-                CssRules = new Action<ICssWriter>[] { w => template.WriteCss(w) };
-            else
-                CssRules = CssRules.Concat(new Action<ICssWriter>[] { w => template.WriteCss(w) }).ToArray();
+                if (JavascriptFunctions == null)
+                    JavascriptFunctions = new Action<IJavascriptWriter>[] { w => deployable.WriteStaticJavascript(w) };
+                else
+                    JavascriptFunctions = JavascriptFunctions.Concat(new Action<IJavascriptWriter>[] { w => deployable.WriteStaticJavascript(w) }).ToArray();
+
+                if (CssRules == null)
+                    CssRules = new Action<ICssWriter>[] { w => deployable.WriteStaticCss(w) };
+                else
+                    CssRules = CssRules.Concat(new Action<ICssWriter>[] { w => deployable.WriteStaticCss(w) }).ToArray();
+            }
+
+            var packagable = template as IPackagable;
+            if (packagable != null)
+            {
+                Package = packagable.Package;
+                nm.Register(this);
+            }
+
 
             var dataConsumer = template as IDataConsumer;
             if (dataConsumer == null) return;

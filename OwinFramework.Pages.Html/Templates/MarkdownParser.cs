@@ -27,9 +27,12 @@ namespace OwinFramework.Pages.Html.Templates
             _templateBuilder = templateBuilder;
         }
 
-        public ITemplate Parse(TemplateResource[] resources, IPackage package)
+        public ITemplate Parse(TemplateResource[] resources, IPackage package, IModule module)
         {
-            var template = _templateBuilder.BuildUpTemplate().PartOf(package);
+            var template = _templateBuilder
+                .BuildUpTemplate()
+                .PartOf(package)
+                .DeployIn(module);
 
             foreach (var resource in resources)
             {
@@ -42,6 +45,7 @@ namespace OwinFramework.Pages.Html.Templates
 
                 Write(template, document);
             }
+
             return template.Build();
         }
     }

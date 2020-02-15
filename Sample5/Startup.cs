@@ -141,15 +141,9 @@ namespace Sample5
             fileSystemLoader.ReloadInterval = TimeSpan.FromSeconds(3);
 #endif
 
-            // Construct the template parsers that we need
-            var asIsParser = ninject.Get<AsIsParser>();
-            var mustacheParser = ninject.Get<MustacheParser>();
-
-            // Parse html files using mustache syntax. This allows them to contain data binding expressions
-            fileSystemLoader.Load(mustacheParser, p => p.Value.EndsWith(".html"));
-
-            // Parse JavaScript and Vue views without modification
-            fileSystemLoader.Load(asIsParser, p => p.Value.EndsWith(".js") || p.Value.EndsWith(".vue"));
+            // Load and parse all the templates
+            var componentParser = ninject.Get<ComponentParser>();
+            fileSystemLoader.Load(componentParser, p => true);
 
             // Build the website
             nameManager.Bind();

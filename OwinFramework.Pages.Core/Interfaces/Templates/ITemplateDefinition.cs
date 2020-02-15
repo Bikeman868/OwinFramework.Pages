@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.Core.Interfaces.Templates
 {
@@ -17,6 +18,24 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// Sets the namespace used to resolve component references
         /// </summary>
         ITemplateDefinition PartOf(IPackage package);
+
+        /// <summary>
+        /// Specifies that this component is deployed as part of a module
+        /// </summary>
+        /// <param name="module">The module that this template is deployed in</param>
+        ITemplateDefinition DeployIn(IModule module);
+
+        /// <summary>
+        /// Specifies that this layout is deployed as part of a module
+        /// </summary>
+        /// <param name="moduleName">The name of the module that this 
+        /// template is deployed in</param>
+        ITemplateDefinition DeployIn(string moduleName);
+
+        /// <summary>
+        /// Defines how assets produced from the template will be deployed
+        /// </summary>
+        ITemplateDefinition AssetDeployment(AssetDeployment assetDeployment);
 
         /// <summary>
         /// Adds a block of HTML to the template definition

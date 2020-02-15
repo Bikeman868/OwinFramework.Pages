@@ -333,7 +333,7 @@ namespace OwinFramework.Pages.Framework.Managers
                             if (exceptions.Count < 10)
                                 exceptions.Add(ex);
                         }
-                        System.Diagnostics.Trace.WriteLine("Exception during name resolution. " + ex.Message);
+                        Trace.WriteLine("Exception during name resolution. " + ex.Message);
                     }
                 _pendingActions.Clear();
             }

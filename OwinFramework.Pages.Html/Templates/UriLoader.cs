@@ -18,8 +18,6 @@ namespace OwinFramework.Pages.Html.Templates
     /// </summary>
     public class UriLoader: TemplateLoader
     {
-        private readonly INameManager _nameManager;
-
         public Uri BaseUri { get; set; }
 
         private Thread _reloadThread;
@@ -33,13 +31,11 @@ namespace OwinFramework.Pages.Html.Templates
             public byte[] Checksum;
         }
 
-        public UriLoader(
-            INameManager nameManager)
+        public UriLoader(INameManager nameManager): base(nameManager)
         {
-            _nameManager = nameManager;
         }
 
-        public override void Load(
+        public override ITemplateLoader Load(
             ITemplateParser parser, 
             Func<PathString, bool> predicate = null, 
             Func<PathString, string> mapPath = null,
@@ -71,7 +67,7 @@ namespace OwinFramework.Pages.Html.Templates
 
             Encoding encoding;
             var buffer = LoadUriContents(uri, out encoding);
-            var template = parser.Parse(new[] { new TemplateResource { Content = buffer, Encoding = encoding } }, Package);
+            var template = parser.Parse(new[] { new TemplateResource { Content = buffer, Encoding = encoding } }, Package, Module);
 
             if (!string.IsNullOrEmpty(templatePath))
             {
@@ -160,7 +156,8 @@ namespace OwinFramework.Pages.Html.Templates
                                     {
                                         var template = templateInfo.Parser.Parse(
                                             new []{ new TemplateResource { Content = buffer, Encoding = encoding } }, 
-                                            Package);
+                                            Package,
+                                            Module);
                                         _nameManager.Register(template, templateInfo.TemplatePath);
                                         templateInfo.Checksum = checksum;
                                     }
@@ -172,7 +169,8 @@ namespace OwinFramework.Pages.Html.Templates
                                             {
                                                 var template = templateInfo.Parser.Parse(
                                                     new[] { new TemplateResource { Content = buffer, Encoding = encoding } },
-                                                    Package);
+                                                    Package,
+                                                    Module);
                                                 _nameManager.Register(template, templateInfo.TemplatePath);
                                                 templateInfo.Checksum = checksum;
                                                 break;

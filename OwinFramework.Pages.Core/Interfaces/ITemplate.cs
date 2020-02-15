@@ -8,7 +8,7 @@ namespace OwinFramework.Pages.Core.Interfaces
     /// Templates can reference layouts, regions and components.
     /// Templates can use data-binding expressions wihtin the Html.
     /// </summary>
-    public interface ITemplate : IPageWriter, IPackagable, INamed
+    public interface ITemplate : IPageWriter, IPackagable, INamed, IDeployable
     {
         /// <summary>
         /// This property is true if the template is not reloaded after the
@@ -25,21 +25,5 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// <param name="context">The rendering operation in progress</param>
         /// <param name="pageArea">The area of the page to write to</param>
         IWriteResult WritePageArea(IRenderContext context, PageArea pageArea);
-
-        /// <summary>
-        /// This method gives the template an oportunity to output Javascript into
-        /// a static asset that will be included on any page that references this
-        /// template. This can be used to output static Javascript assets that the
-        /// template depends on.
-        /// </summary>
-        void WriteJavascript(IJavascriptWriter javascriptWriter);
-
-        /// <summary>
-        /// This method gives the template an oportunity to output CSS into
-        /// a static asset that will be included on any page that references this
-        /// template. This can be used to output static CSS that the
-        /// template depends on.
-        /// </summary>
-        void WriteCss(ICssWriter cssWriter);
     }
 }

@@ -251,6 +251,27 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
+        public ITemplateDefinition DeployIn(string moduleName)
+        {
+            _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
+                {
+                    ((ITemplate)_template).Module = nm.ResolveModule(moduleName);
+                });
+            return this;
+        }
+
+        public ITemplateDefinition DeployIn(IModule module)
+        {
+            ((ITemplate)_template).Module = module;
+            return this;
+        }
+
+        public ITemplateDefinition AssetDeployment(AssetDeployment assetDeployment)
+        {
+            ((ITemplate)_template).AssetDeployment = assetDeployment;
+            return this;
+        }
+
         public ITemplateDefinition AddHtml(string html)
         {
             BodyActions.Add(r => r.Html.Write(html));

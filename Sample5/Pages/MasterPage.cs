@@ -32,16 +32,12 @@ namespace Sample5
     [Container(null)]
     internal class TitleRegion : NavigationElement { }
 
-    [IsRegion("login_region")]
-    [UsesComponent("login_dialog")]
-    [Container(null)]
-    internal class LoginRegion : NavigationElement { }
-
     [IsLayout("header_bar_layout", "hamburger_zone,login_zone,title_zone")]
     [ZoneRegion("hamburger_zone", "menus:mobile_menu")]
     [ZoneRegion("title_zone", "title_region")]
-    [ZoneRegion("login_zone", "login_region")]
+    [ZoneTemplate("login_zone", "/widget/login")]
     [NeedsComponent("menus:menuStyle1")]
+    [NeedsComponent("ajax:ajax")]
     [NeedsComponent("config_service_client")]
     internal class HeaderBarLayout : NavigationElement { }
 

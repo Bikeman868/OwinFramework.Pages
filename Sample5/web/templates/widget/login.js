@@ -16,7 +16,15 @@
         confirmPassword: function () { this.error = undefined; },
     },
     mounted: function () {
-        this.selectedTab = "Login";
+        var vm = this;
+        vm.selectedTab = "Login";
+        ns.sample5.infoService.getUserInfo(
+            {},
+            function (response) {
+                vm.isLoggedIn = response.isLoggedIn;
+                vm.email = response.email;
+                vm.isEmailVerified = response.isEmailVerified;
+            });
     },
     methods: {
         show: function () {
@@ -71,4 +79,4 @@
             return isValid;
         }
     }
-}
+});

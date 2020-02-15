@@ -22,7 +22,6 @@ namespace OwinFramework.Pages.Html.Templates
     public class FileSystemLoader: TemplateLoader
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly INameManager _nameManager;
 
         public DirectoryInfo TemplateDirectory { get; set; }
 
@@ -40,12 +39,12 @@ namespace OwinFramework.Pages.Html.Templates
         public FileSystemLoader(
             IHostingEnvironment hostingEnvironment,
             INameManager nameManager)
+            : base(nameManager)
         {
             _hostingEnvironment = hostingEnvironment;
-            _nameManager = nameManager;
         }
 
-        public override void Load(
+        public override ITemplateLoader Load(
             ITemplateParser parser, 
             Func<PathString, bool> predicate = null, 
             Func<PathString, string> mapPath = null,
@@ -111,6 +110,8 @@ namespace OwinFramework.Pages.Html.Templates
             }
 
             parse();
+
+            return this;
         }
 
         /// <summary>
@@ -136,7 +137,7 @@ namespace OwinFramework.Pages.Html.Templates
                 resources[i].ContentType = ContentTypeFromExt(Path.GetExtension(fileNames[i]));
             }
 
-            var template = parser.Parse(resources, Package);
+            var template = parser.Parse(resources, Package, Module);
 
             if (!string.IsNullOrEmpty(templatePath))
             {
@@ -176,7 +177,10 @@ namespace OwinFramework.Pages.Html.Templates
         {
             Encoding encoding;
             var buffer = LoadFileContents(fileName, out encoding);
-            var template = parser.Parse(new[] { new TemplateResource { Content = buffer, Encoding = encoding } }, Package);
+            var template = parser.Parse(
+                new[] { new TemplateResource { Content = buffer, Encoding = encoding } }, 
+                Package, 
+                Module);
 
             if (!string.IsNullOrEmpty(templatePath))
             {
@@ -304,7 +308,7 @@ namespace OwinFramework.Pages.Html.Templates
 
                                     if (modified)
                                     {
-                                        var template = templateInfo.Parser.Parse(resources, Package);
+                                        var template = templateInfo.Parser.Parse(resources, Package, Module);
                                         _nameManager.Register(template, templateInfo.TemplatePath);
                                     }
                                 }
@@ -376,8 +380,12 @@ namespace OwinFramework.Pages.Html.Templates
                     return "text/css";
                 case ".less":
                     return "text/less";
+                case ".html":
+                    return "text/html";
+                case ".md":
+                    return "text/x-markdown";
             }
-            return "text/html";
+            return null;
         }
     }
 }

@@ -223,6 +223,7 @@ namespace OwinFramework.Pages.Html.Builders
         IRegionDefinition IRegionDefinition.AddTemplate(string templatePath, PageArea pageArea)
         {
             var templateComponent = (_region.Content as TemplateComponent) ?? new TemplateComponent(_componentDependenciesFactory);
+
             switch(pageArea)
             {
                 case PageArea.Head:

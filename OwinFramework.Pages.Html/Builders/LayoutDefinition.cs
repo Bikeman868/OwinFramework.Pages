@@ -23,9 +23,9 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
 
         private ZoneSet _zoneSet;
-        private readonly Dictionary<string, object> _regionElements;
-        private readonly Dictionary<string, object> _regionLayouts;
-        private readonly Dictionary<string, object> _regionComponents;
+        private readonly Dictionary<string, object> _zoneElements;
+        private readonly Dictionary<string, object> _zoneLayouts;
+        private readonly Dictionary<string, object> _zoneComponents;
 
         private readonly List<FunctionDefinition> _functionDefinitions;
         private readonly List<CssDefinition> _cssDefinitions;
@@ -54,9 +54,9 @@ namespace OwinFramework.Pages.Html.Builders
             _regionDependenciesFactory = regionDependenciesFactory;
             _componentDependenciesFactory = componentDependenciesFactory;
 
-            _regionElements = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-            _regionLayouts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-            _regionComponents = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            _zoneElements = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            _zoneLayouts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            _zoneComponents = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
             _cssDefinitions = new List<CssDefinition>();
             _functionDefinitions = new List<FunctionDefinition>();
@@ -108,7 +108,7 @@ namespace OwinFramework.Pages.Html.Builders
 
         ILayoutDefinition ILayoutDefinition.Region(string zoneName, IRegion region)
         {
-            _regionElements[zoneName] = region;
+            _zoneElements[zoneName] = region;
             return this;
         }
 
@@ -120,7 +120,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (string.IsNullOrEmpty(name))
                 throw new LayoutBuilderException("You must provide the name of the region element when configuring layout zones");
 
-            _regionElements[zoneName] = name;
+            _zoneElements[zoneName] = name;
             return this;
         }
 
@@ -129,7 +129,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (string.IsNullOrEmpty(zoneName))
                 throw new LayoutBuilderException("You must provide a region name when defining which component to place into a layout region");
 
-            _regionComponents[zoneName] = component;
+            _zoneComponents[zoneName] = component;
             return this;
         }
 
@@ -141,7 +141,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (string.IsNullOrEmpty(componentName))
                 throw new LayoutBuilderException("You must provide the name of the component element when defining which component to place into a layout region");
 
-            _regionComponents[zoneName] = componentName;
+            _zoneComponents[zoneName] = componentName;
             return this;
         }
 
@@ -150,7 +150,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (string.IsNullOrEmpty(zoneName))
                 throw new LayoutBuilderException("You must provide a region name when defining which layout to place into a layout region");
 
-            _regionLayouts[zoneName] = layout;
+            _zoneLayouts[zoneName] = layout;
 
             return this;
         }
@@ -163,7 +163,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (string.IsNullOrEmpty(zoneName))
                 throw new LayoutBuilderException("You must provide the name of the layout element when defining which layout to place into a layout region");
 
-            _regionLayouts[zoneName] = layoutName;
+            _zoneLayouts[zoneName] = layoutName;
             return this;
         }
 
@@ -171,7 +171,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             var htmlComponent = new HtmlComponent(_componentDependenciesFactory);
             htmlComponent.Html(textAssetName, defaultHtml);
-            _regionComponents[zoneName] = htmlComponent;
+            _zoneComponents[zoneName] = htmlComponent;
 
             return this;
         }
@@ -180,7 +180,7 @@ namespace OwinFramework.Pages.Html.Builders
         {
             var templateComponent = new TemplateComponent(_componentDependenciesFactory);
             templateComponent.BodyTemplate(templatePath);
-            _regionComponents[zoneName] = templateComponent;
+            _zoneComponents[zoneName] = templateComponent;
 
             return this;
         }
@@ -359,42 +359,42 @@ namespace OwinFramework.Pages.Html.Builders
                 NameResolutionPhase.ResolveElementReferences,
                 nm =>
                 {
-                    var regionComponentKeys = _regionComponents.Keys.ToList();
-                    foreach (var zoneName in regionComponentKeys)
+                    var zoneComponentKeys = _zoneComponents.Keys.ToList();
+                    foreach (var zoneName in zoneComponentKeys)
                     {
-                        var componentRef = _regionComponents[zoneName];
+                        var componentRef = _zoneComponents[zoneName];
                         var componentName = componentRef as string;
                         var component = componentRef as IComponent;
 
                         if (componentName != null)
                             component = nm.ResolveComponent(componentName, _layout.Package);
 
-                        _regionComponents[zoneName] = component;
+                        _zoneComponents[zoneName] = component;
                     }
 
-                    var regionLayoutKeys = _regionLayouts.Keys.ToList();
-                    foreach (var zoneName in regionLayoutKeys)
+                    var zoneLayoutKeys = _zoneLayouts.Keys.ToList();
+                    foreach (var zoneName in zoneLayoutKeys)
                     {
-                        var layoutRef = _regionLayouts[zoneName];
+                        var layoutRef = _zoneLayouts[zoneName];
                         var layoutName = layoutRef as string;
                         var layout = layoutRef as ILayout;
 
                         if (layoutName != null)
                             layout = nm.ResolveLayout(layoutName, _layout.Package);
 
-                        _regionLayouts[zoneName] = layout;
+                        _zoneLayouts[zoneName] = layout;
                     }
 
                     ResolveZoneNames(_zoneSet, nm);
 
                     WriteOpeningTag();
-                    WriteRegions(_zoneSet);
+                    WriteZones(_zoneSet);
                     WriteClosingTag();
                 });
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.CreateInstances, 
-                () => SetRegionInstances(_zoneSet));
+                () => SetZoneInstances(_zoneSet));
 
             _fluentBuilder.Register(_layout);
             return _layout;
@@ -461,87 +461,87 @@ namespace OwinFramework.Pages.Html.Builders
         {
             if (zoneSet == null || zoneSet.Zones == null) return;
 
-            foreach (var region in zoneSet.Zones)
+            foreach (var zone in zoneSet.Zones)
             {
-                if (region.Region == null)
+                if (zone.Region == null)
                 {
-                    if (region.RegionElementName == null)
+                    if (zone.RegionElementName == null)
                     {
-                        if (region.ZoneName != null)
+                        if (zone.ZoneName != null)
                         {
                             object element;
-                            if (_regionElements.TryGetValue(region.ZoneName, out element))
+                            if (_zoneElements.TryGetValue(zone.ZoneName, out element))
                             {
-                                region.RegionElementName = element as string;
-                                region.Region = element as IRegion;
+                                zone.RegionElementName = element as string;
+                                zone.Region = element as IRegion;
                             }
                         }
                     }
-                    if (region.RegionElementName != null && region.Region == null)
+                    if (zone.RegionElementName != null && zone.Region == null)
                     {
-                        region.Region = nameManager.ResolveRegion(region.RegionElementName, _layout.Package);
+                        zone.Region = nameManager.ResolveRegion(zone.RegionElementName, _layout.Package);
                     }
                 }
 
-                if (region.Region == null && region.ZoneName != null)
+                if (zone.Region == null && zone.ZoneName != null)
                 {
-                    region.Region = new LayoutZoneRegion(_regionDependenciesFactory);
+                    zone.Region = new LayoutZoneRegion(_regionDependenciesFactory);
                 }
 
-                if (region.ZoneName != null)
+                if (zone.ZoneName != null)
                 {
-                    _layout.PopulateZone(region.ZoneName, region.Region);
+                    _layout.PopulateZone(zone.ZoneName, zone.Region);
                 }
 
-                if (region.ChildZones != null)
+                if (zone.ChildZones != null)
                 {
-                    ResolveZoneNames(region.ChildZones, nameManager);
+                    ResolveZoneNames(zone.ChildZones, nameManager);
                 }
             }
         }
 
-        private void WriteRegions(ZoneSet zoneSet)
+        private void WriteZones(ZoneSet zoneSet)
         {
             if (zoneSet == null || zoneSet.Zones == null) return;
 
-            foreach (var region in zoneSet.Zones)
+            foreach (var zone in zoneSet.Zones)
             {
-                if (region.ZoneName != null)
+                if (zone.ZoneName != null)
                 {
-                    _layout.AddZoneVisualElement(region.ZoneName);
+                    _layout.AddZoneVisualElement(zone.ZoneName);
                 }
 
-                if (region.ChildZones != null)
+                if (zone.ChildZones != null)
                 {
                     WriteNestingOpeningTag();
-                    WriteRegions(region.ChildZones);
+                    WriteZones(zone.ChildZones);
                     WriteNestingClosingTag();
                 }
             }
         }
 
-        private void SetRegionInstances(ZoneSet zoneSet)
+        private void SetZoneInstances(ZoneSet zoneSet)
         {
             if (zoneSet == null || zoneSet.Zones == null) return;
 
-            foreach (var region in zoneSet.Zones)
+            foreach (var zone in zoneSet.Zones)
             {
-                if (region.Region != null)
+                if (zone.Region != null)
                 {
-                    IElement regionContent = null;
+                    IElement zoneContent = null;
 
-                    if (_regionComponents.ContainsKey(region.ZoneName))
-                        regionContent = _regionComponents[region.ZoneName] as IElement;
+                    if (_zoneComponents.ContainsKey(zone.ZoneName))
+                        zoneContent = _zoneComponents[zone.ZoneName] as IElement;
 
-                    if (_regionLayouts.ContainsKey(region.ZoneName))
-                        regionContent = _regionLayouts[region.ZoneName] as IElement;
+                    if (_zoneLayouts.ContainsKey(zone.ZoneName))
+                        zoneContent = _zoneLayouts[zone.ZoneName] as IElement;
 
-                    _layout.PopulateElement(region.ZoneName, regionContent);
+                    _layout.PopulateElement(zone.ZoneName, zoneContent);
                 }
 
-                if (region.ChildZones != null)
+                if (zone.ChildZones != null)
                 {
-                    SetRegionInstances(region.ChildZones);
+                    SetZoneInstances(zone.ChildZones);
                 }
             }
         }

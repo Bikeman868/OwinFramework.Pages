@@ -8,6 +8,7 @@ using OwinFramework.Pages.Core.Interfaces.Runtime;
 
 namespace OwinFramework.Pages.Html.Runtime
 {
+    // TODO: Add minification. https://stackoverflow.com/questions/8567070/is-there-a-net-library-for-minifying-javascript
     internal class JavascriptWriter: IJavascriptWriter
     {
         public bool Indented { get; set; }

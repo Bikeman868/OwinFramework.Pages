@@ -25,9 +25,9 @@ namespace OwinFramework.Pages.Html.Templates
             _templateBuilder = templateBuilder;
         }
 
-        public ITemplate Parse(TemplateResource[] resources, IPackage package)
+        public ITemplate Parse(TemplateResource[] resources, IPackage package, IModule module)
         {
-            var template = _templateBuilder.BuildUpTemplate().PartOf(package);
+            var template = _templateBuilder.BuildUpTemplate().PartOf(package).DeployIn(module);
             foreach (var resource in resources) 
             {
                 var encoding = resource.Encoding ?? Encoding.UTF8;
@@ -43,6 +43,10 @@ namespace OwinFramework.Pages.Html.Templates
                         foreach(var line in html.Split('\n'))
                             template.AddStyleLine(line);
                         break;
+
+                    case "text/less":
+                        throw new NotImplementedException(
+                            "You can not render .less directly into the page. Consider using the ComponentParser instead");
 
                     default:
                         template.AddHtml(html);

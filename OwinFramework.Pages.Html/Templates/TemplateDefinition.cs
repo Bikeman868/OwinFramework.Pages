@@ -32,7 +32,6 @@ namespace OwinFramework.Pages.Html.Templates
         private readonly CssActionList _staticCssActions;
 
         private IPackage _package;
-        private IModule _module;
         private Element _element;
         private Repeat _repeat;
 
@@ -256,16 +255,20 @@ namespace OwinFramework.Pages.Html.Templates
         {
             _nameManager.AddResolutionHandler(NameResolutionPhase.ResolveElementReferences, nm =>
                 {
-                    _module = nm.ResolveModule(moduleName);
-                    ((ITemplate)_template).Module = _module;
+                    ((ITemplate)_template).Module = nm.ResolveModule(moduleName);
                 });
             return this;
         }
 
         public ITemplateDefinition DeployIn(IModule module)
         {
-            _module = module;
             ((ITemplate)_template).Module = module;
+            return this;
+        }
+
+        public ITemplateDefinition AssetDeployment(AssetDeployment assetDeployment)
+        {
+            ((ITemplate)_template).AssetDeployment = assetDeployment;
             return this;
         }
 

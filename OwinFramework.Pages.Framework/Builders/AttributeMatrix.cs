@@ -272,10 +272,10 @@ namespace OwinFramework.Pages.Framework.Builders
             if (attributes.NeedsDatas != null) CheckAttribute<T, NeedsDataAttribute>(result);
             if (attributes.PageTitle != null) CheckAttribute<T, PageTitleAttribute>(result);
             if (attributes.PartOf != null) CheckAttribute<T, PartOfAttribute>(result);
-            if (attributes.RegionComponents != null) CheckAttribute<T, ZoneComponentAttribute>(result);
-            if (attributes.RegionLayouts != null) CheckAttribute<T, ZoneLayoutAttribute>(result);
-            if (attributes.RegionHtmls != null) CheckAttribute<T, ZoneHtmlAttribute>(result);
-            if (attributes.RegionTemplates != null) CheckAttribute<T, ZoneTemplateAttribute>(result);
+            if (attributes.ZoneComponents != null) CheckAttribute<T, ZoneComponentAttribute>(result);
+            if (attributes.ZoneLayouts != null) CheckAttribute<T, ZoneLayoutAttribute>(result);
+            if (attributes.ZoneHtmls != null) CheckAttribute<T, ZoneHtmlAttribute>(result);
+            if (attributes.ZoneTemplates != null) CheckAttribute<T, ZoneTemplateAttribute>(result);
             if (attributes.RenderHtmls != null) CheckAttribute<T, RenderHtmlAttribute>(result);
             if (attributes.Repeat != null) CheckAttribute<T, RepeatAttribute>(result);
             if (attributes.RequiresPermission != null) CheckAttribute<T, RequiresPermissionAttribute>(result);

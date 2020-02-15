@@ -22,7 +22,6 @@ namespace OwinFramework.Pages.Html.Templates
     public class FileSystemLoader: TemplateLoader
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly INameManager _nameManager;
 
         public DirectoryInfo TemplateDirectory { get; set; }
 
@@ -40,12 +39,12 @@ namespace OwinFramework.Pages.Html.Templates
         public FileSystemLoader(
             IHostingEnvironment hostingEnvironment,
             INameManager nameManager)
+            : base(nameManager)
         {
             _hostingEnvironment = hostingEnvironment;
-            _nameManager = nameManager;
         }
 
-        public override void Load(
+        public override ITemplateLoader Load(
             ITemplateParser parser, 
             Func<PathString, bool> predicate = null, 
             Func<PathString, string> mapPath = null,
@@ -111,6 +110,8 @@ namespace OwinFramework.Pages.Html.Templates
             }
 
             parse();
+
+            return this;
         }
 
         /// <summary>

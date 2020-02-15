@@ -22,6 +22,10 @@ namespace OwinFramework.Pages.Html.Templates
         private readonly JavascriptMixIn _javascriptMixIn;
         private readonly CssMixIn _cssMixin;
 
+        private bool _renderCssIntoPage;
+        private bool _renderJavascriptIntoPage;
+        private bool _minifyCss;
+
         public ComponentParser(
             ITemplateBuilder templateBuilder)
         {
@@ -29,11 +33,25 @@ namespace OwinFramework.Pages.Html.Templates
             _mustacheMixIn = new MustacheMixIn();
             _javascriptMixIn = new JavascriptMixIn();
             _cssMixin = new CssMixIn();
-
-            RenderIntoPage = true;
         }
 
-        public bool RenderIntoPage { get; set; }
+        public ComponentParser RenderCssIntoPage(bool renderCssIntoPage = true)
+        {
+            _renderCssIntoPage = renderCssIntoPage;
+            return this;
+        }
+
+        public ComponentParser RenderJavascriptIntoPage(bool renderJavascriptIntoPage = true)
+        {
+            _renderJavascriptIntoPage = renderJavascriptIntoPage;
+            return this;
+        }
+
+        public ComponentParser MinifyCss(bool minifyCss = true)
+        {
+            _minifyCss = minifyCss;
+            return this;
+        }
 
         public ITemplate Parse(TemplateResource[] resources, IPackage package, IModule module)
         {
@@ -50,15 +68,15 @@ namespace OwinFramework.Pages.Html.Templates
                 switch (resource.ContentType?.ToLower())
                 {
                     case "application/javascript":
-                        _javascriptMixIn.AddToTemplate(template, content, RenderIntoPage);
+                        _javascriptMixIn.AddToTemplate(template, content, _renderJavascriptIntoPage);
                         break;
 
                     case "text/css":
-                        _cssMixin.AddCssToTemplate(template, content, RenderIntoPage);
+                        _cssMixin.AddCssToTemplate(template, content, _renderCssIntoPage);
                         break;
 
                     case "text/less":
-                        _cssMixin.AddLessToTemplate(template, content, RenderIntoPage, true);
+                        _cssMixin.AddLessToTemplate(template, content, _renderCssIntoPage, _minifyCss);
                         break;
 
                     case "text/html":

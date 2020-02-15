@@ -150,7 +150,7 @@ namespace OwinFramework.Pages.Html.Elements
             _multiPartTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.ResolveElementReferences,
+                NameResolutionPhase.CreateInstances,
                 nm => AddTemplateDependencies(nm, templatePath));
 
             HeadWriters = new Action<IRenderContext>[] { RenderMultiPartHead };
@@ -168,7 +168,7 @@ namespace OwinFramework.Pages.Html.Elements
             _headTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.ResolveElementReferences,
+                NameResolutionPhase.CreateInstances,
                 nm => AddTemplateDependencies(nm, templatePath));
 
             HeadWriters = new Action<IRenderContext>[] { RenderHeadTemplate };
@@ -184,7 +184,7 @@ namespace OwinFramework.Pages.Html.Elements
             _scriptTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.ResolveElementReferences,
+                NameResolutionPhase.CreateInstances,
                 nm => AddTemplateDependencies(nm, templatePath));
 
             ScriptWriters = new Action<IRenderContext>[] { RenderScriptTemplate };
@@ -199,7 +199,7 @@ namespace OwinFramework.Pages.Html.Elements
             _styleTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.ResolveElementReferences,
+                NameResolutionPhase.CreateInstances,
                 nm => AddTemplateDependencies(nm, templatePath));
 
             StyleWriters = new Action<IRenderContext>[] { RenderStyleTemplate };
@@ -213,7 +213,7 @@ namespace OwinFramework.Pages.Html.Elements
             _bodyTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.ResolveElementReferences,
+                NameResolutionPhase.CreateInstances,
                 nm => AddTemplateDependencies(nm, templatePath));
 
             Dependencies.NameManager.AddResolutionHandler(
@@ -231,7 +231,7 @@ namespace OwinFramework.Pages.Html.Elements
             _initializationTemplatePath = templatePath;
 
             Dependencies.NameManager.AddResolutionHandler(
-                NameResolutionPhase.ResolveElementReferences,
+                NameResolutionPhase.CreateInstances,
                 nm => AddTemplateDependencies(nm, templatePath));
 
             InitializationWriters = new Action<IRenderContext>[] { RenderInitializationTemplate };

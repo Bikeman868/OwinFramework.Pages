@@ -108,12 +108,11 @@ namespace Sample4
             // This is an example of loading and parsing template files using the same
             // parser for all templates. In this case they are components that have multiple
             // parts. The various files with the same names but different extensions will be
-            // combined into a single template
-            var fileSystemLoader = ninject.Get<FileSystemLoader>();
-            fileSystemLoader.ReloadInterval = TimeSpan.FromSeconds(3);
-
-            var componentParser = ninject.Get<ComponentParser>();
-            fileSystemLoader.Load(componentParser, p => true);
+            // combined into a single template. Loads all templates from the default template
+            // folder under the root of the template path.
+            var fileSystemLoader = ninject.Get<FileSystemLoader>()
+                .ReloadEvery(TimeSpan.FromSeconds(3))
+                .Load(ninject.Get<ComponentParser>());
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements binding them together into a runable website

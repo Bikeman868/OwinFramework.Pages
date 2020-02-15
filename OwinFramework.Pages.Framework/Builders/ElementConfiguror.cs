@@ -279,33 +279,33 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
-            if (!ReferenceEquals(attributes.RegionComponents, null))
+            if (!ReferenceEquals(attributes.ZoneComponents, null))
             {
-                foreach(var regionComponent in attributes.RegionComponents)
+                foreach(var regionComponent in attributes.ZoneComponents)
                 {
                     layout.Component(regionComponent.ZoneName, regionComponent.Component);
                 }
             }
 
-            if (!ReferenceEquals(attributes.RegionLayouts, null))
+            if (!ReferenceEquals(attributes.ZoneLayouts, null))
             {
-                foreach (var regionLayout in attributes.RegionLayouts)
+                foreach (var regionLayout in attributes.ZoneLayouts)
                 {
                     layout.Layout(regionLayout.ZoneName, regionLayout.LayoutName);
                 }
             }
 
-            if (!ReferenceEquals(attributes.RegionHtmls, null))
+            if (!ReferenceEquals(attributes.ZoneHtmls, null))
             {
-                foreach (var regionHtml in attributes.RegionHtmls)
+                foreach (var regionHtml in attributes.ZoneHtmls)
                 {
                     layout.Html(regionHtml.ZoneName, regionHtml.LocalizationId, regionHtml.Html);
                 }
             }
 
-            if (!ReferenceEquals(attributes.RegionTemplates, null))
+            if (!ReferenceEquals(attributes.ZoneTemplates, null))
             {
-                foreach (var regionTemplate in attributes.RegionTemplates)
+                foreach (var regionTemplate in attributes.ZoneTemplates)
                 {
                     layout.Template(regionTemplate.ZoneName, regionTemplate.TemplatePath);
                 }
@@ -457,25 +457,25 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
-            if (!ReferenceEquals(attributes.RegionComponents, null))
+            if (!ReferenceEquals(attributes.ZoneComponents, null))
             {
-                foreach (var regionComponent in attributes.RegionComponents)
+                foreach (var regionComponent in attributes.ZoneComponents)
                 {
                     page.ZoneComponent(regionComponent.ZoneName, regionComponent.Component);
                 }
             }
 
-            if (!ReferenceEquals(attributes.RegionLayouts, null))
+            if (!ReferenceEquals(attributes.ZoneLayouts, null))
             {
-                foreach (var regionLayout in attributes.RegionLayouts)
+                foreach (var regionLayout in attributes.ZoneLayouts)
                 {
                     page.ZoneLayout(regionLayout.ZoneName, regionLayout.LayoutName);
                 }
             }
 
-            if (!ReferenceEquals(attributes.RegionTemplates, null))
+            if (!ReferenceEquals(attributes.ZoneTemplates, null))
             {
-                foreach (var regionTemplate in attributes.RegionTemplates)
+                foreach (var regionTemplate in attributes.ZoneTemplates)
                 {
                     page.ZoneTemplate(regionTemplate.ZoneName, regionTemplate.TemplatePath);
                 }
@@ -996,9 +996,9 @@ namespace OwinFramework.Pages.Framework.Builders
                     layout.Name = attributes.IsLayout.Name;
             }
 
-            if (attributes.RegionComponents != null)
+            if (attributes.ZoneComponents != null)
             {
-                foreach (var regionComponent in attributes.RegionComponents)
+                foreach (var regionComponent in attributes.ZoneComponents)
                 {
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,
@@ -1008,9 +1008,9 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
-            if (attributes.RegionLayouts != null)
+            if (attributes.ZoneLayouts != null)
             {
-                foreach (var regionLayout in attributes.RegionLayouts)
+                foreach (var regionLayout in attributes.ZoneLayouts)
                 {
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,

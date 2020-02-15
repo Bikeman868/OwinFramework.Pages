@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using Ioc.Modules;
-using Microsoft.Owin;
 using Ninject;
 using Owin;
 using OwinFramework.Builder;
@@ -12,16 +9,9 @@ using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Interfaces.Templates;
-using OwinFramework.Pages.Core.RequestFilters;
-using OwinFramework.Pages.DebugMiddleware;
-using OwinFramework.Pages.Framework.DataModel;
-using OwinFramework.Pages.Html.Elements;
-using OwinFramework.Pages.Html.Runtime;
-using OwinFramework.Pages.Html.Templates;
 
 namespace Sample3.UseCase5
 {
@@ -58,19 +48,22 @@ namespace Sample3.UseCase5
             // but I want to keep the use cases separate and in this version the
             // fluent builder can not register types by namespace.
 
+            var templateBuilder = ninject.Get<ITemplateBuilder>();
+
+            var template2 = templateBuilder
+                .BuildUpTemplate()
+                .PartOf("usecase5")
+                .DeployIn("usecase5")
+                .AddStaticCss("h2 { font-size: 60px; }")
+                .AddStyleLine("h2 { color: orange; }")
+                .AddHtml("<h2>This is test 2</h2>")
+                .Build();
+            nameManager.Register(template2, "/test2");
+            
             fluentBuilder.Register(typeof(ApplicationModule), t => ninject.Get(t));
             fluentBuilder.Register(typeof(ApplicationPackage), t => ninject.Get(t));
             fluentBuilder.Register(typeof(HomePage), t => ninject.Get(t));
             fluentBuilder.Register(typeof(HomeLayout), t => ninject.Get(t));
-            
-            var fileSystemLoader = ninject.Get<FileSystemLoader>();
-            fileSystemLoader.Package = nameManager.ResolvePackage("usecase5");
-            fileSystemLoader.Module = nameManager.ResolveModule("usecase5");
-
-            var parser = ninject.Get<ComponentParser>();
-            parser.RenderIntoPage = false;
-
-            fileSystemLoader.Load(parser, p => p.Value.EndsWith("test2.css") || p.Value.EndsWith("test2.html"));
 
             nameManager.Bind();
 
@@ -92,7 +85,7 @@ namespace Sample3.UseCase5
         private ITemplateBuilder _templateBuilder;
         private INameManager _nameManager;
 
-            public ApplicationPackage(
+        public ApplicationPackage(
             ITemplateBuilder templateBuilder,
             INameManager nameManager)
         {
@@ -102,12 +95,10 @@ namespace Sample3.UseCase5
 
         public OwinFramework.Pages.Core.Interfaces.IPackage Build(IFluentBuilder fluentBuilder)
         {
-            Module = _nameManager.ResolveModule("usecase5");
-
             var template = _templateBuilder
                 .BuildUpTemplate()
                 .PartOf(this)
-                .DeployIn(Module)
+                .DeployIn("usecase5")
                 .AddStaticCss("body { background-color: whitesmoke; color: darkblue; }")
                 .AddHtml("<h1>This is use case 5</h1>")
                 .Build();

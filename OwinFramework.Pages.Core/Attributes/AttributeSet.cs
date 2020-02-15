@@ -155,22 +155,22 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// For a layout, specifies a component to place in one of the regions of the layout
         /// </summary>
-        public IList<ZoneComponentAttribute> RegionComponents;
+        public IList<ZoneComponentAttribute> ZoneComponents;
 
         /// <summary>
         /// For a layout, specifies a layout to place in one of the regions of the layout
         /// </summary>
-        public IList<ZoneLayoutAttribute> RegionLayouts;
+        public IList<ZoneLayoutAttribute> ZoneLayouts;
 
         /// <summary>
         /// For a layout, specifies html to place in one of the regions of the layout
         /// </summary>
-        public IList<ZoneHtmlAttribute> RegionHtmls;
+        public IList<ZoneHtmlAttribute> ZoneHtmls;
 
         /// <summary>
         /// For a layout, specifies html to place in one of the regions of the layout
         /// </summary>
-        public IList<ZoneTemplateAttribute> RegionTemplates;
+        public IList<ZoneTemplateAttribute> ZoneTemplates;
 
         /// <summary>
         /// Defines some static html to render into the component or region
@@ -239,10 +239,10 @@ namespace OwinFramework.Pages.Core.Attributes
                 DeployFunctions = Add(DeployFunctions, attribute);
                 NeedsComponents = Add(NeedsComponents, attribute);
                 NeedsDatas = Add(NeedsDatas, attribute);
-                RegionComponents = Add(RegionComponents, attribute);
-                RegionLayouts = Add(RegionLayouts, attribute);
-                RegionHtmls = Add(RegionHtmls, attribute);
-                RegionTemplates = Add(RegionTemplates, attribute);
+                ZoneComponents = Add(ZoneComponents, attribute);
+                ZoneLayouts = Add(ZoneLayouts, attribute);
+                ZoneHtmls = Add(ZoneHtmls, attribute);
+                ZoneTemplates = Add(ZoneTemplates, attribute);
                 RenderHtmls = Add(RenderHtmls, attribute);
                 RenderTemplates = Add(RenderTemplates, attribute);
                 Routes = Add(Routes, attribute);

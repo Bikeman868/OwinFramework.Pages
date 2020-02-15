@@ -18,8 +18,6 @@ namespace OwinFramework.Pages.Html.Templates
     /// </summary>
     public class UriLoader: TemplateLoader
     {
-        private readonly INameManager _nameManager;
-
         public Uri BaseUri { get; set; }
 
         private Thread _reloadThread;
@@ -33,13 +31,11 @@ namespace OwinFramework.Pages.Html.Templates
             public byte[] Checksum;
         }
 
-        public UriLoader(
-            INameManager nameManager)
+        public UriLoader(INameManager nameManager): base(nameManager)
         {
-            _nameManager = nameManager;
         }
 
-        public override void Load(
+        public override ITemplateLoader Load(
             ITemplateParser parser, 
             Func<PathString, bool> predicate = null, 
             Func<PathString, string> mapPath = null,

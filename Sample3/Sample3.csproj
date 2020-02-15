@@ -96,8 +96,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="templates\test2.html" />
-    <Content Include="templates\test2.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

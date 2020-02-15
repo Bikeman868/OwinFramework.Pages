@@ -95,6 +95,10 @@ namespace OwinFramework.Pages.Html.Runtime
         private PageLayout _layout;
         private PageComponent[] _pageComponents; 
 
+        /// <summary>
+        /// Constructs a new page that can render HTML responses
+        /// </summary>
+        /// <param name="dependencies"></param>
         public Page(IPageDependenciesFactory dependencies)
             : base(dependencies.DataConsumerFactory)
         {
@@ -153,11 +157,12 @@ namespace OwinFramework.Pages.Html.Runtime
                     .Select(c => new PageComponent(elementDependencies, null, c, data))
                     .ToArray();
 
-                foreach (var component in _components)
-                {
-                    data.BeginAddElement(component, null);
-                    data.EndAddElement(component);
-                }
+                // TODO: sort by dependencies
+                //foreach (var component in _components)
+                //{
+                //    data.BeginAddElement(component, null);
+                //    data.EndAddElement(component);
+                //}
             }
 
             _dataContextBuilder = data.RootDataContextBuilder;
@@ -235,7 +240,6 @@ namespace OwinFramework.Pages.Html.Runtime
         /// Adds a non-visual component to the page. These components can write to the
         /// page header, include javscript libraries, write canonical links etc
         /// </summary>
-        /// <param name="component">The component to add</param>
         public void AddComponent(IComponent component)
         {
             if (_components == null)
@@ -247,6 +251,10 @@ namespace OwinFramework.Pages.Html.Runtime
             _components.Add(component);
         }
 
+                /// <summary>
+        /// Adds a depenency on a non-visual component. These components can write to the
+        /// page header, include javscript libraries, write canonical links etc
+        /// </summary>
         public override void NeedsComponent(IComponent component)
         {
             AddComponent(component);
@@ -262,7 +270,7 @@ namespace OwinFramework.Pages.Html.Runtime
             var html = context.Html;
             owinContext.Response.ContentType = "text/html";
 
-            trace(owinContext, () => "Request is for a Pages Framework webpage");
+            trace(owinContext, () => "Request is for a Pages Framework web page");
 
 #if TRACE
             context.Trace(() => "Adding static data to the render context");
@@ -502,33 +510,42 @@ namespace OwinFramework.Pages.Html.Runtime
                     }
                 }
 
+                bool WriteNonVisualComponents()
+                {
+                    if (!ReferenceEquals(_pageComponents, null))
+                    {
+                        for (var i = 0; i < _pageComponents.Length; i++)
+                        {
+                            var pageComponent = _pageComponents[i];
+                            if (writeResult.Add(pageComponent.WritePageArea(renderContext, pageArea)).IsComplete)
+                                return true;
+                        }
+                    }
+                    return false;
+                }
+
                 switch (pageArea)
                 {
                     case PageArea.Head:
+                        if (WriteNonVisualComponents()) return writeResult;
                         writeResult.Add(WriteHeadArea(renderContext));
                         break;
                     case PageArea.Styles:
+                        if (WriteNonVisualComponents()) return writeResult;
                         writeResult.Add(WriteStylesArea(renderContext));
                         break;
                     case PageArea.Scripts:
+                        if (WriteNonVisualComponents()) return writeResult;
                         writeResult.Add(WriteScriptsArea(renderContext));
                         break;
                     case PageArea.Body:
+                        if (WriteNonVisualComponents()) return writeResult;
                         writeResult.Add(WriteBodyArea(renderContext));
                         break;
                     case PageArea.Initialization:
                         writeResult.Add(WriteInitializationArea(renderContext));
+                        if (WriteNonVisualComponents()) return writeResult;
                         break;
-                }
-
-                if (!ReferenceEquals(_pageComponents, null))
-                {
-                    for (var i = 0; i < _pageComponents.Length; i++)
-                    {
-                        var pageComponent = _pageComponents[i];
-                        if (writeResult.Add(pageComponent.WritePageArea(renderContext, pageArea)).IsComplete)
-                            return writeResult;
-                    }
                 }
 #if TRACE
             }
@@ -849,10 +866,11 @@ namespace OwinFramework.Pages.Html.Runtime
                 html.WriteLine();
             }
 
-            if (!ReferenceEquals(_layout, null))
-                return _layout.WritePageArea(context, PageArea.Head);
+            var writeResult = ReferenceEquals(_layout, null) 
+                ? WriteResult.Continue ()
+                : _layout.WritePageArea(context, PageArea.Head);
 
-            return WriteResult.Continue();
+            return writeResult;
         }
 
         /// <summary>

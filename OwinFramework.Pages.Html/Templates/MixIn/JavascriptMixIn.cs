@@ -47,14 +47,12 @@ namespace OwinFramework.Pages.Html.Templates
                 var lines = javascript.Split('\n').Where(l => !string.IsNullOrEmpty(l)).ToList();
                 if (lines.Count > 0)
                 {
-                    template.AddElementOpen("script", "type", "text/javascript");
-                    template.AddLineBreak();
+                    template.WriteScriptOpen();
 
                     foreach (var line in lines)
                         template.AddInitializationLine(line);
 
-                    template.AddElementClose();
-                    template.AddLineBreak();
+                    template.WriteScriptClose();
                 }
             }
             else

@@ -333,6 +333,18 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
+        public ITemplateDefinition WriteScriptOpen(string scriptType)
+        {
+            BodyActions.Add(r => r.Html.WriteScriptOpen(scriptType));
+            return this;
+        }
+
+        public ITemplateDefinition WriteScriptClose()
+        {
+            BodyActions.Add(r => r.Html.WriteScriptClose());
+            return this;
+        }
+
         public ITemplateDefinition SetElementAttribute(string attributeName, Type dataType, string propertyName, IDataFieldFormatter dataFormatter = null, string scopeName = null)
         {
             if (_element == null)

@@ -58,6 +58,16 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         ITemplateDefinition AddElementOpen(string tag, params string[] attributePairs);
 
         /// <summary>
+        /// Adds an opening script element
+        /// </summary>
+        ITemplateDefinition WriteScriptOpen(string scriptType = "text/javascript");
+
+        /// <summary>
+        /// Adds a closing script element
+        /// </summary>
+        ITemplateDefinition WriteScriptClose();
+
+        /// <summary>
         /// Adds an attribute to the most recently added element. The attribute
         /// value is supplied by reading a property from data in the render context.
         /// You can only call this method after calling AddElementOpen() and before

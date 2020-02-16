@@ -8,7 +8,6 @@ using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Framework.Interfaces;
 
 namespace OwinFramework.Pages.Framework.Managers
 {

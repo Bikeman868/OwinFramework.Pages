@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Linq;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 
 namespace OwinFramework.Pages.Html.Templates
@@ -14,7 +15,11 @@ namespace OwinFramework.Pages.Html.Templates
             var quoteString = new string(quote, 1);
             var escapedQuoteString = new string(new[] { escape, quote });
             var newLineString = new string(newLine, 1);
+            var blankLineString = new string(newLine, 2);
             var escapedNewLineString = new string(new[] { escape, 'n', escape, newLine });
+
+            // TODO: remove blank lines inside back ticks
+            // TODO: remove the mime type comment before the opening back tick
 
             if (javascript.IndexOf(backTick) >= 0)
             {
@@ -27,6 +32,8 @@ namespace OwinFramework.Pages.Html.Templates
                     {
                         sb.Append(quote);
                         sb.Append(s[i + 1]
+                            .Trim()
+                            .Replace(blankLineString, newLineString)
                             .Replace(quoteString, escapedQuoteString)
                             .Replace(newLineString, escapedNewLineString));
                         sb.Append(quote);
@@ -37,8 +44,18 @@ namespace OwinFramework.Pages.Html.Templates
 
             if (inPage)
             {
-                foreach (var line in javascript.Split('\n'))
-                    template.AddInitializationLine(line);
+                var lines = javascript.Split('\n').Where(l => !string.IsNullOrEmpty(l)).ToList();
+                if (lines.Count > 0)
+                {
+                    template.AddElementOpen("script", "type", "text/javascript");
+                    template.AddLineBreak();
+
+                    foreach (var line in lines)
+                        template.AddInitializationLine(line);
+
+                    template.AddElementClose();
+                    template.AddLineBreak();
+                }
             }
             else
             {

@@ -1,63 +1,73 @@
 ﻿{
-    "prius": {
-        "databases": [
-            {
-                "name": "cms-update",
-                "type": "MySql",
-                "connectionString": "Server=localhost;Database=cms_update;Uid=svc_test;Pwd=password;"
-            },
-            {
-                "name": "cms-website",
-                "type": "MySql",
-                "connectionString": "Server=localhost;Database=cms_website;Uid=svc_test;Pwd=password;"
-            }
-        ],
-        "fallbackPolicies": [
-            { "name": "none", "allowedFailurePercent": 100 }
-        ],
-        "repositories": [
-            {
-                "name": "cms-update",
-                "clusters": [
-                    { "sequence": 1, "databases": [ "cms-update" ], "fallbackPolicy": "none" }
-                ]
-            },
-            {
-                "name": "cms-website",
-                "clusters": [
-                    { "sequence": 1, "databases": [ "cms-website" ], "fallbackPolicy": "none" }
-                ]
-            }
+  "prius": {
+    "databases": [
+      {
+        "name": "cms-update",
+        "type": "MySql",
+        "connectionString": "Server=localhost;Database=cms_update;Uid=svc_test;Pwd=password;"
+      },
+      {
+        "name": "cms-website",
+        "type": "MySql",
+        "connectionString": "Server=localhost;Database=cms_website;Uid=svc_test;Pwd=password;"
+      }
+    ],
+    "fallbackPolicies": [
+      {
+        "name": "none",
+        "allowedFailurePercent": 100
+      }
+    ],
+    "repositories": [
+      {
+        "name": "cms-update",
+        "clusters": [
+          {
+            "sequence": 1,
+            "databases": [ "cms-update" ],
+            "fallbackPolicy": "none"
+          }
         ]
-    },
-    "owinFramework": {
-        "pages": {
-            "framework": { 
-                "debugLogging":  false,
-                "debugLibraries":  true
-            },
-            "html": {
-                "includeComments": true,
-                "indented": true
-            },
-            "cms": {
-                "priusRepositoryName": "cms",
-                "websiteVersionName": "1.0"
-            }
-        }
-    },
-    "sample4": {
-        "pages": {
-
-        },
-        "notFound": {
-
-        },
-        "documenter": {
-
-        },
-        "defaultDocument": {
-            "defaultPage": "/customers"
-        }
+      },
+      {
+        "name": "cms-website",
+        "clusters": [
+          {
+            "sequence": 1,
+            "databases": [ "cms-website" ],
+            "fallbackPolicy": "none"
+          }
+        ]
+      }
+    ]
+  },
+  "owinFramework": {
+    "pages": {
+      "framework": {
+        "debugLogging": false,
+        "debugLibraries": true,
+        "includeComments": true,
+        "indented": true,
+        "minifyCss": false
+      },
+      "cms": {
+        "priusRepositoryName": "cms",
+        "websiteVersionName": "1.0"
+      }
     }
+  },
+  "sample4": {
+    "pages": {
+
+    },
+    "notFound": {
+
+    },
+    "documenter": {
+
+    },
+    "defaultDocument": {
+      "defaultPage": "/customers"
+    }
+  }
 }

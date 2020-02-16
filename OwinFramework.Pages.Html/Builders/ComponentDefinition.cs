@@ -30,6 +30,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly List<HtmlDefinition> _initializationHtmlToRender;
 
         private string _javaScript;
+        private IFrameworkConfiguration _frameworkConfiguration;
 
         private class HtmlDefinition
         {
@@ -42,6 +43,7 @@ namespace OwinFramework.Pages.Html.Builders
             INameManager nameManager,
             IAssetManager assetManager,
             IHtmlHelper htmlHelper,
+            IFrameworkConfiguration frameworkConfiguration,
             IFluentBuilder fluentBuilder,
             IPackage package)
         {
@@ -50,6 +52,7 @@ namespace OwinFramework.Pages.Html.Builders
             _assetManager = assetManager;
             _htmlHelper = htmlHelper;
             _fluentBuilder = fluentBuilder;
+            _frameworkConfiguration = frameworkConfiguration;
 
             _cssDefinitions = new List<CssDefinition>();
             _lessDefinitions = new List<LessDefinition>();
@@ -309,7 +312,7 @@ namespace OwinFramework.Pages.Html.Builders
                     if (_lessDefinitions != null && _lessDefinitions.Count > 0)
                     {
                         var aggregate = _lessDefinitions.Aggregate(string.Empty, (a, s) => a + _htmlHelper.NamespaceCssSelector(s.LessStyles, _component.Package) + '\n');
-                        var dotlessConfig = new DotlessConfiguration { MinifyOutput = true };
+                        var dotlessConfig = new DotlessConfiguration { MinifyOutput = _frameworkConfiguration.MinifyCss,  };
                         var less = dotless.Core.Less.Parse(aggregate, dotlessConfig);
 
                         foreach( var line in less.Replace("\r", "").Split('\n'))
@@ -317,8 +320,10 @@ namespace OwinFramework.Pages.Html.Builders
                             var trimmed = line.Trim();
                             if (trimmed.Length > 0)
                             {
-                                Action<ICssWriter> writeAction = w => w.WriteLineRaw(trimmed);
-                                css.Add(writeAction);
+                                if (_frameworkConfiguration.Indented)
+                                    css.Add(w => w.WriteLineRaw(line));
+                                else
+                                    css.Add(w => w.WriteLineRaw(trimmed));
                             }
                         }
                     }

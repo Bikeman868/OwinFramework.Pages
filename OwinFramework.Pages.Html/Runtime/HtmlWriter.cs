@@ -57,14 +57,17 @@ namespace OwinFramework.Pages.Html.Runtime
         /// Constructs a new HTML Writer
         /// </summary>
         public HtmlWriter(
-            IStringBuilderFactory stringBuilderFactory)
+            IStringBuilderFactory stringBuilderFactory,
+            IFrameworkConfiguration frameworkConfiguration)
         {
             _stringBuilderFactory = stringBuilderFactory;
             _isBufferOwner = true;
             _startOfLine = true;
-            Indented = true;
+
+            Indented = frameworkConfiguration.Indented;
+            IncludeComments = frameworkConfiguration.IncludeComments;
+            Format = frameworkConfiguration.HtmlFormat;
             IndentLevel = 0;
-            IncludeComments = true;
 
             _bufferListHead = new BufferListElement(stringBuilderFactory);
             _bufferListTail = _bufferListHead;
@@ -126,9 +129,14 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public override void WriteLine(string s)
         {
-            if (_startOfLine) WriteIndent();
+            if (_startOfLine && !Indented)
+                s = s.Trim();
+
+            WriteIndent();
+
             WriteRaw(s);
             WriteRaw('\n');
+
             _startOfLine = true;
         }
 

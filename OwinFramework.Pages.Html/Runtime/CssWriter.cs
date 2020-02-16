@@ -16,10 +16,10 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly List<CssElement> _elements = new List<CssElement>();
 
         public CssWriter(
-            IHtmlConfiguration htmlConfiguration)
+            IFrameworkConfiguration frameworkConfiguration)
         {
-            Indented = htmlConfiguration.Indented;
-            IncludeComments = htmlConfiguration.IncludeComments;
+            Indented = frameworkConfiguration.Indented;
+            IncludeComments = frameworkConfiguration.IncludeComments;
         }
 
         public void Dispose()

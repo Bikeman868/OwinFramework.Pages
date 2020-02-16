@@ -9,7 +9,6 @@ using OwinFramework.Pages.Core.Interfaces.Segmentation;
 using OwinFramework.Pages.Framework.Builders;
 using OwinFramework.Pages.Framework.Configuration;
 using OwinFramework.Pages.Framework.DataModel;
-using OwinFramework.Pages.Framework.Interfaces;
 using OwinFramework.Pages.Framework.Managers;
 using OwinFramework.Pages.Framework.Runtime;
 

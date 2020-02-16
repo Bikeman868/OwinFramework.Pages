@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using OwinFramework.Pages.Framework.Interfaces;
+using OwinFramework.Pages.Core.Enums;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using Urchin.Client.Interfaces;
 
 namespace OwinFramework.Pages.Framework.Configuration
@@ -38,6 +39,21 @@ namespace OwinFramework.Pages.Framework.Configuration
         [JsonProperty("templateRootPath")]
         public string TemplateRootPath { get; private set; }
 
+        [JsonProperty("minifyCss")]
+        public bool MinifyCss{ get; private set; }
+
+        [JsonProperty("minifyJavascript")]
+        public bool MinifyJavascript{ get; private set; }
+
+        [JsonProperty("htmlFormat")]
+        public HtmlFormat HtmlFormat { get; private set; }
+
+        [JsonProperty("indented")]
+        public bool Indented { get; private set; }
+
+        [JsonProperty("includeComments")]
+        public bool IncludeComments { get; private set; }
+
         #region Implementation details
 
         private readonly List<Action<IFrameworkConfiguration>> _subscribers;
@@ -54,6 +70,9 @@ namespace OwinFramework.Pages.Framework.Configuration
             DebugLibraries = false;
             TemplateUrlRootPath = "/";
             TemplateRootPath = "/";
+            HtmlFormat = HtmlFormat.Html;
+            Indented = true;
+            IncludeComments = true;
         }
 
         public FrameworkConfiguration(IConfigurationStore configurationStore)
@@ -73,6 +92,11 @@ namespace OwinFramework.Pages.Framework.Configuration
                     DebugLibraries = c.DebugLibraries;
                     TemplateUrlRootPath = c.TemplateUrlRootPath;
                     TemplateRootPath = c.TemplateRootPath;
+                    MinifyCss = c.MinifyCss;
+                    MinifyJavascript = c.MinifyJavascript;
+                    HtmlFormat = c.HtmlFormat;
+                    Indented = c.Indented;
+                    IncludeComments = c.IncludeComments;
 
                     lock (_subscribers)
                         foreach (var subscriber in _subscribers)

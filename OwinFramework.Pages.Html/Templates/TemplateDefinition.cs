@@ -274,7 +274,44 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddHtml(string html)
         {
-            BodyActions.Add(r => r.Html.Write(html));
+            if (!string.IsNullOrEmpty(html))
+            {
+                if (html.IndexOf('\n') >= 0)
+                {
+                    var lines = html.Split('\n');
+                    if (lines.Length == 1)
+                    {
+                        var line = lines[0];
+                        BodyActions.Add(r => r.Html.WriteLine(line));
+                    }
+                    else
+                    {
+                        if (string.IsNullOrWhiteSpace(lines[lines.Length - 1]))
+                        {
+                            lines = lines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
+                            BodyActions.Add(r => 
+                            { 
+                                foreach (var line in lines) 
+                                    r.Html.WriteLine(line); 
+                            });
+                        }
+                        else
+                        {
+                            lines = lines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
+                            BodyActions.Add(r => 
+                            { 
+                                for(var i = 0; i < lines.Length - 1; i++)
+                                    r.Html.WriteLine(lines[i]);
+                                r.Html.Write(lines[lines.Length - 1]);
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    BodyActions.Add(r => r.Html.Write(html));
+                }
+            }
             return this;
         }
 
@@ -634,18 +671,16 @@ namespace OwinFramework.Pages.Html.Templates
         {
             HeadActions.Add(r =>
                 {
-                    r.Html.Write(html);
-                    r.Html.WriteLine();
+                    r.Html.WriteLine(html);
                 });
             return this;
         }
 
-        public ITemplateDefinition AddScriptLine(string javaScript)
+        public ITemplateDefinition AddScriptLine(string javascript)
         {
             ScriptActions.Add(r =>
                 {
-                    r.Html.Write(javaScript);
-                    r.Html.WriteLine();
+                    r.Html.WriteLine(javascript);
                 });
             return this;
         }
@@ -654,36 +689,40 @@ namespace OwinFramework.Pages.Html.Templates
         {
             StyleActions.Add(r =>
                 {
-                    r.Html.Write(css);
-                    r.Html.WriteLine();
+                    r.Html.WriteLine(css);
                 });
             return this;
         }
 
-        public ITemplateDefinition AddInitializationLine(string javaScript)
+        public ITemplateDefinition AddInitializationLine(string javascript)
         {
             InitializationActions.Add(r =>
                 {
-                    r.Html.Write(javaScript);
-                    r.Html.WriteLine();
+                    r.Html.WriteLine(javascript);
                 });
             return this;
         }
 
         public ITemplateDefinition AddStaticJavascript(string rawJavascript)
         {
+            var lines = rawJavascript.Split('\n');
+
             StaticJavascriptActions.Add(w =>
             {
-                w.WriteLineRaw(rawJavascript);
+                foreach(var line in lines)
+                    w.WriteLineRaw(line);
             });
             return this;
         }
 
         public ITemplateDefinition AddStaticCss(string css)
         {
+            var lines = css.Split('\n');
+
             StaticCssActions.Add(w =>
             {
-                w.WriteLineRaw(css);
+                foreach(var line in lines)
+                    w.WriteLineRaw(line);
             });
             return this;
         }

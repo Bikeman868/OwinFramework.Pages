@@ -9,6 +9,7 @@ using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Extensions;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
+using OwinFramework.Pages.Core.Enums;
 
 namespace OwinFramework.Pages.DebugMiddleware
 {
@@ -30,7 +31,7 @@ namespace OwinFramework.Pages.DebugMiddleware
 
         public Task Write(IOwinContext context, DebugInfo debugInfo)
         {
-            using (var html = _htmlWriterFactory.Create())
+            using (var html = _htmlWriterFactory.Create(new DebugFrameworkConfiguration()))
             {
                 html.WriteDocumentStart("en-US");
                 
@@ -447,6 +448,33 @@ namespace OwinFramework.Pages.DebugMiddleware
         private void WriteHtml(IHtmlWriter html, DebugService service, int depth)
         {
         }
+
+        #region Framework Configuration
+
+
+        private class DebugFrameworkConfiguration : IFrameworkConfiguration
+        {
+            string IFrameworkConfiguration.AssetRootPath => "/assets";
+            string IFrameworkConfiguration.ServicesRootPath => "/services";
+            string IFrameworkConfiguration.DefaultLanguage => "en-US";
+            TimeSpan IFrameworkConfiguration.AssetCacheTime => TimeSpan.FromSeconds(30);
+            string IFrameworkConfiguration.AssetVersion => null;
+            bool IFrameworkConfiguration.DebugLogging => true;
+            bool IFrameworkConfiguration.DebugLibraries => true;
+            string IFrameworkConfiguration.TemplateUrlRootPath => "/templates";
+            string IFrameworkConfiguration.TemplateRootPath => "/templates";
+            bool IFrameworkConfiguration.MinifyCss => false;
+            bool IFrameworkConfiguration.MinifyJavascript => false;
+            HtmlFormat IFrameworkConfiguration.HtmlFormat => HtmlFormat.Html;
+            bool IFrameworkConfiguration.Indented => true;
+            bool IFrameworkConfiguration.IncludeComments => true;
+
+            void IFrameworkConfiguration.Subscribe(Action<IFrameworkConfiguration> action)
+            {
+            }
+        }
+
+        #endregion
 
         #region Embedded resources
 

@@ -1,6 +1,7 @@
-﻿using System;
+﻿using OwinFramework.Pages.Core.Enums;
+using System;
 
-namespace OwinFramework.Pages.Framework.Interfaces
+namespace OwinFramework.Pages.Core.Interfaces.Runtime
 {
     public interface IFrameworkConfiguration
     {
@@ -52,9 +53,38 @@ namespace OwinFramework.Pages.Framework.Interfaces
         string TemplateRootPath { get; }
 
         /// <summary>
+        /// True if CSS should be minified. Minified CSS is smaller
+        /// and faster to parse by the browser but less readable for dubugging
+        /// </summary>
+        bool MinifyCss { get; }
+
+        /// <summary>
+        /// True if Javascript should be minified. Minified Javascript is smaller
+        /// and faster to parse by the browser but less readable for dubugging
+        /// </summary>
+        bool MinifyJavascript { get; }
+
+        /// <summary>
+        /// Defines the Html standards to apply to the Html produced
+        /// </summary>
+        HtmlFormat HtmlFormat { get; }
+
+        /// <summary>
+        /// Turns indentation on/off. The html is more readable with
+        /// indentation turned on but the output is bigger because of 
+        /// all the extra spaces
+        /// </summary>
+        bool Indented { get; }
+
+        /// <summary>
+        /// Turns comments on/off. The comments are good for debugging 
+        /// issues but the html can be a lot larger
+        /// </summary>
+        bool IncludeComments { get; }
+
+        /// <summary>
         /// Adds an action to perform when the framework configuration changes
         /// </summary>
-        /// <param name="action"></param>
         void Subscribe(Action<IFrameworkConfiguration> action);
     }
 }

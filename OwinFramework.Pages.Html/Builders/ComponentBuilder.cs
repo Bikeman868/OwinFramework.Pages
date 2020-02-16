@@ -4,6 +4,7 @@ using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Html.Elements;
 using OwinFramework.Pages.Html.Interfaces;
 using OwinFramework.Pages.Html.Runtime;
@@ -18,6 +19,7 @@ namespace OwinFramework.Pages.Html.Builders
         private readonly IComponentDependenciesFactory _componentDependenciesFactory;
         private readonly IElementConfiguror _elementConfiguror;
         private readonly IFluentBuilder _fluentBuilder;
+        private readonly IFrameworkConfiguration _frameworkConfiguration;
 
         public ComponentBuilder(
             INameManager nameManager,
@@ -25,8 +27,8 @@ namespace OwinFramework.Pages.Html.Builders
             IHtmlHelper htmlHelper,
             IComponentDependenciesFactory componentDependenciesFactory,
             IElementConfiguror elementConfiguror,
+            IFrameworkConfiguration frameworkConfiguration,
             IFluentBuilder fluentBuilder)
-
         {
             _nameManager = nameManager;
             _assetManager = assetManager;
@@ -34,6 +36,7 @@ namespace OwinFramework.Pages.Html.Builders
             _componentDependenciesFactory = componentDependenciesFactory;
             _elementConfiguror = elementConfiguror;
             _fluentBuilder = fluentBuilder;
+            _frameworkConfiguration = frameworkConfiguration;
         }
 
         IComponentDefinition IComponentBuilder.BuildUpComponent(object componentInstance, Type declaringType, IPackage package)
@@ -41,7 +44,7 @@ namespace OwinFramework.Pages.Html.Builders
             var component = componentInstance as Component ?? new Component(_componentDependenciesFactory);
             if (declaringType == null) declaringType = (componentInstance ?? component).GetType();
 
-            var componentDefinition = new ComponentDefinition(component, _nameManager, _assetManager, _htmlHelper, _fluentBuilder, package);
+            var componentDefinition = new ComponentDefinition(component, _nameManager, _assetManager, _htmlHelper, _frameworkConfiguration, _fluentBuilder, package);
             var attributes = new AttributeSet(declaringType);
 
             _elementConfiguror.Configure(componentDefinition, attributes);

@@ -177,7 +177,7 @@ namespace OwinFramework.Pages.Standard
         [DeployCss("li.{ns}_dt_option a:hover, li.{ns}_dt_menu-option:hover a.{ns}_dt_menu-option", "background-color: red", 3)]
         [DeployCss("div.{ns}_dt_dropdown a:hover", "background-color: #f1f1f1;", 4)]
         [DeployCss("div.{ns}_dt_dropdown", "background-color: #f9f9f9; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);", 5)]
-        [DeployCss("div.{ns}_dt_dropdown a", "color: black; padding: 12px 16px; font-family: sans-serif;", 6)]
+        [DeployCss("div.{ns}_dt_dropdown a", "color: black; padding: 12px 16px; font-family: sans-serif; text-align: left;", 6)]
 
         // Hamburger button appearence
         [DeployCss("div.{ns}_mb_menu", "height: 50px; width: 70px; float: left;", 21)]

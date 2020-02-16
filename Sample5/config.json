@@ -81,9 +81,7 @@
         "assetCacheTime": "01:00:00",
         "assetVersion": 1,
         "templateUrlRootPath": "/",
-        "templateRootPath": "/fromUrl"
-      },
-      "html": {
+        "templateRootPath": "/fromUrl",
         "includeComments": true,
         "indented": true
       }

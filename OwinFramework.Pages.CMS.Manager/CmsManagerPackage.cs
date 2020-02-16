@@ -243,11 +243,8 @@ namespace OwinFramework.Pages.CMS.Manager
             var markupLines = GetEmbeddedTextFile(markupFileName);
             if (markupLines != null)
             {
-                foreach (var line in markupLines)
-                {
-                    templateDefinition.AddHtml(line);
-                    templateDefinition.AddLineBreak();
-                }
+                var html = string.Join("\n", markupLines);
+                templateDefinition.AddHtml(html);
             }
 
             var styles = GetEmbeddedTextFile(stylesheetFileName);

@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 
 namespace OwinFramework.Pages.Html.Templates
@@ -29,13 +30,16 @@ namespace OwinFramework.Pages.Html.Templates
         private AssetDeployment _assetDeployment;
 
         public ComponentParser(
-            ITemplateBuilder templateBuilder)
+            ITemplateBuilder templateBuilder, 
+            IFrameworkConfiguration frameworkConfiguration)
         {
             _templateBuilder = templateBuilder;
             _mustacheMixIn = new MustacheMixIn();
             _javascriptMixIn = new JavascriptMixIn();
             _cssMixin = new CssMixIn();
             _assetDeployment = AssetDeployment.PerModule;
+
+            frameworkConfiguration.Subscribe(fc => _minifyCss = fc.MinifyCss);
         }
 
         /// <summary>
@@ -65,25 +69,6 @@ namespace OwinFramework.Pages.Html.Templates
         public ComponentParser RenderJavascriptIntoPage(bool renderJavascriptIntoPage = true)
         {
             _renderJavascriptIntoPage = renderJavascriptIntoPage;
-            return this;
-        }
-
-        /// <summary>
-        /// Causes CSS to be minified - strongly recommended for production deployments
-        /// </summary>
-        public ComponentParser MinifyCss(bool minifyCss = true)
-        {
-            _minifyCss = minifyCss;
-            return this;
-        }
-
-        /// <summary>
-        /// Causes Javascript to be minified - this is not implemented yet but you 
-        /// can still add a call to this method in your code and when it is supported
-        /// you will see minifacation
-        /// </summary>
-        public ComponentParser MinifyJavascript(bool minifyJavascript = true)
-        {
             return this;
         }
 

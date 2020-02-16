@@ -11,20 +11,20 @@ namespace OwinFramework.Pages.Html.Runtime
     {
         private readonly IAssetManager _assetManager;
         private readonly IHtmlWriterFactory _htmlWriterFactory;
-        private readonly IHtmlConfiguration _htmlConfiguration;
+        private readonly IFrameworkConfiguration _frameworkConfiguration;
         private readonly IDictionaryFactory _dictionaryFactory;
         private readonly IStringBuilderFactory _stringBuilderFactory;
 
         public RenderContextFactory(
             IAssetManager assetManager,
             IHtmlWriterFactory htmlWriterFactory,
-            IHtmlConfiguration htmlConfiguration,
+            IFrameworkConfiguration frameworkConfiguration,
             IDictionaryFactory dictionaryFactory,
             IStringBuilderFactory stringBuilderFactory)
         {
             _assetManager = assetManager;
             _htmlWriterFactory = htmlWriterFactory;
-            _htmlConfiguration = htmlConfiguration;
+            _frameworkConfiguration = frameworkConfiguration;
             _dictionaryFactory = dictionaryFactory;
             _stringBuilderFactory = stringBuilderFactory;
         }
@@ -33,10 +33,7 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             // TODO: pool and reuse render contexts and html writers
 
-            var htmlWriter = _htmlWriterFactory.Create(
-                    _htmlConfiguration.HtmlFormat,
-                    _htmlConfiguration.Indented,
-                    _htmlConfiguration.IncludeComments);
+            var htmlWriter = _htmlWriterFactory.Create(_frameworkConfiguration);
 
             return new RenderContext(
                 _assetManager, 

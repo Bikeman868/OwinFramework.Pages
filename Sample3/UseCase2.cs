@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using Ioc.Modules;
-using Microsoft.Owin;
 using Ninject;
 using Owin;
 using OwinFramework.Builder;
@@ -11,14 +9,10 @@ using OwinFramework.Pages.Core;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Builder;
-using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Interfaces.Templates;
-using OwinFramework.Pages.Core.RequestFilters;
 using OwinFramework.Pages.DebugMiddleware;
-using OwinFramework.Pages.Framework.DataModel;
-using OwinFramework.Pages.Framework.Interfaces;
 using Urchin.Client.Interfaces;
 
 namespace Sample3.UseCase2
@@ -46,8 +40,6 @@ namespace Sample3.UseCase2
             app.UseBuilder(pipelineBuilder);
 
             #endregion
-
-            #region Initialize the Pages middleware
 
             var fluentBuilder = ninject.Get<IFluentBuilder>();
             var nameManager = ninject.Get<INameManager>();
@@ -105,8 +97,6 @@ namespace Sample3.UseCase2
                 "/people");
 
             nameManager.Bind();
-
-            #endregion
         }
     }
 

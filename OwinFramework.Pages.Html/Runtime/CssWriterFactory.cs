@@ -6,22 +6,22 @@ namespace OwinFramework.Pages.Html.Runtime
 {
     internal class CssWriterFactory : ICssWriterFactory
     {
-        private readonly IHtmlConfiguration _htmlConfiguration;
+        private readonly IFrameworkConfiguration _frameworkConfiguration;
 
         public CssWriterFactory(
-            IHtmlConfiguration htmlConfiguration)
+            IFrameworkConfiguration htmlConfiguration)
         {
-            _htmlConfiguration = htmlConfiguration;
+            _frameworkConfiguration = htmlConfiguration;
         }
 
         public ICssWriter Create()
         {
-            return new CssWriter(_htmlConfiguration);
+            return new CssWriter(_frameworkConfiguration);
         }
 
         public ICssWriter Create(IRenderContext context)
         {
-            return new CssWriter(_htmlConfiguration)
+            return new CssWriter(_frameworkConfiguration)
             {
                 Indented = context.Html.Indented,
                 IncludeComments = context.IncludeComments

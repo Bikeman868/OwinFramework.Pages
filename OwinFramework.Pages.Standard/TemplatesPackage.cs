@@ -11,7 +11,6 @@ using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
-using OwinFramework.Pages.Framework.Interfaces;
 using OwinFramework.Pages.Restful.Interfaces;
 using OwinFramework.Pages.Restful.Parameters;
 
@@ -196,16 +195,21 @@ namespace OwinFramework.Pages.Standard
             private readonly IHtmlWriterFactory _htmlWriterFactory;
             private readonly IStringBuilderFactory _stringBuilderFactory;
 
+            private IFrameworkConfiguration _frameworkConfiguration;
+
             public TemplateService(
                 IAssetManager assetmanager,
                 INameManager nameManager,
                 IHtmlWriterFactory htmlWriterFactory,
-                IStringBuilderFactory stringBuilderFactory)
+                IStringBuilderFactory stringBuilderFactory,
+                IFrameworkConfiguration frameworkConfiguration)
             {
                 _assetmanager = assetmanager;
                 _nameManager = nameManager;
                 _htmlWriterFactory = htmlWriterFactory;
                 _stringBuilderFactory = stringBuilderFactory;
+
+                frameworkConfiguration.Subscribe(fc => _frameworkConfiguration = fc);
             }
 
             [Endpoint(UrlPath = "template", Methods = new[] {Method.Get}, ResponseSerializer = typeof (Restful.Serializers.Html))]
@@ -220,7 +224,7 @@ namespace OwinFramework.Pages.Standard
                 }
                 else
                 {
-                    using (var htmlWriter = _htmlWriterFactory.Create())
+                    using (var htmlWriter = _htmlWriterFactory.Create(_frameworkConfiguration))
                     {
                         var context = new TemplateRenderContext(_assetmanager, htmlWriter);
                         using (template.WritePageArea(context, PageArea.Body))

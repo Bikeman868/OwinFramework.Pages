@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Moq.Modules;
+﻿using Moq.Modules;
 using NUnit.Framework;
 using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Interfaces.Builder;
@@ -11,7 +7,6 @@ using OwinFramework.Pages.Core.Interfaces.Managers;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Framework.Builders;
 using OwinFramework.Pages.Framework.DataModel;
-using OwinFramework.Pages.Framework.Interfaces;
 
 namespace OwinFramework.Pages.UnitTests.Html.Runtime
 {

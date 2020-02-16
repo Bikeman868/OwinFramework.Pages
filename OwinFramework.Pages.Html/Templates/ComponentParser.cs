@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 
@@ -25,6 +26,7 @@ namespace OwinFramework.Pages.Html.Templates
         private bool _renderCssIntoPage;
         private bool _renderJavascriptIntoPage;
         private bool _minifyCss;
+        private AssetDeployment _assetDeployment;
 
         public ComponentParser(
             ITemplateBuilder templateBuilder)
@@ -33,32 +35,87 @@ namespace OwinFramework.Pages.Html.Templates
             _mustacheMixIn = new MustacheMixIn();
             _javascriptMixIn = new JavascriptMixIn();
             _cssMixin = new CssMixIn();
+            _assetDeployment = AssetDeployment.PerModule;
         }
 
+        /// <summary>
+        /// Forces CSS to be rendered into the page nomatter which module is
+        /// assigned or which asset deployment scenario was selected. Passing
+        /// false to this method reverts rendering location for CSS to be
+        /// defined by the module and asset deployment scheme chosen.
+        /// This method is useful only if you want the Javascript and CSS
+        /// to be rendered in different places, otherwise you can just call
+        /// the DeployAssets() method to redirect all assets.
+        /// </summary>
         public ComponentParser RenderCssIntoPage(bool renderCssIntoPage = true)
         {
             _renderCssIntoPage = renderCssIntoPage;
             return this;
         }
 
+        /// <summary>
+        /// Forces Javascript to be rendered into the page nomatter which module is
+        /// assigned or which asset deployment scenario was selected. Passing
+        /// false to this method reverts rendering location for Javascript to be
+        /// defined by the module and asset deployment scheme chosen.
+        /// This method is useful only if you want the Javascript and CSS
+        /// to be rendered in different places, otherwise you can just call
+        /// the DeployAssets() method to redirect all assets.
+        /// </summary>
         public ComponentParser RenderJavascriptIntoPage(bool renderJavascriptIntoPage = true)
         {
             _renderJavascriptIntoPage = renderJavascriptIntoPage;
             return this;
         }
 
+        /// <summary>
+        /// Causes CSS to be minified - strongly recommended for production deployments
+        /// </summary>
         public ComponentParser MinifyCss(bool minifyCss = true)
         {
             _minifyCss = minifyCss;
             return this;
         }
 
+        /// <summary>
+        /// Causes Javascript to be minified - this is not implemented yet but you 
+        /// can still add a call to this method in your code and when it is supported
+        /// you will see minifacation
+        /// </summary>
+        public ComponentParser MinifyJavascript(bool minifyJavascript = true)
+        {
+            return this;
+        }
+
+        /// <summary>
+        /// Specifies how CSS and Javascript should be deployed. The default is
+        /// to deploy into a module if a module was defined for the template loader
+        /// or global to the website otherwise. Setting this to inherit makes the
+        /// template take on the deployment mechnism of the region that is rendering
+        /// the template
+        /// </summary>
+        public ComponentParser DeployAssets(AssetDeployment assetDeployment)
+        {
+            _assetDeployment = assetDeployment;
+            return this;
+        }
+
         public ITemplate Parse(TemplateResource[] resources, IPackage package, IModule module)
         {
-            var template = _templateBuilder
-                .BuildUpTemplate()
-                .PartOf(package)
-                .DeployIn(module);
+            var template = _templateBuilder.BuildUpTemplate();
+            if (package != null) template.PartOf(package);
+
+            if (_assetDeployment == AssetDeployment.PerModule)
+            {
+                if (module == null)
+                    template.AssetDeployment(AssetDeployment.PerWebsite);
+                else
+                    template.DeployIn(module);
+            }
+            else
+            {
+                template.AssetDeployment(_assetDeployment);
+            }
 
             foreach (var resource in resources) 
             {

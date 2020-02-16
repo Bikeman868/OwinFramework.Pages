@@ -67,7 +67,7 @@ namespace Sample3.UseCase5
         }
     }
 
-    [IsModule("usecase5", AssetDeployment.PerModule)]
+    [IsModule("usecase5", AssetDeployment.InPage)]
     internal class ApplicationModule { }
 
     [IsPackage("usecase5", "uc5")]

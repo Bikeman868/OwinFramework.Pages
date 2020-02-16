@@ -158,28 +158,35 @@ namespace OwinFramework.Pages.Html.Runtime
                 var dependencyGraphFactory = new Utility.DependencyGraphFactory();
                 var dependencyGraph = dependencyGraphFactory.Create<PageComponent>();
 
-                foreach (var component in _components)
+                var startIndex = 0;
+                while (startIndex < _components.Count)
                 {
-                    var pageComponent = new PageComponent(elementDependencies, null, component, data);
+                    for (var i = startIndex; i < _components.Count; i++)
+                    {
+                        var component = _components[i];
+                        var pageComponent = new PageComponent(elementDependencies, null, component, data);
 
-                    var libraryConsumer = component as ILibraryConsumer;
-                    var dependentComponents = libraryConsumer?.GetDependentComponents();
-                    var graphEdges = dependentComponents?.Select(c => new ElementDependencyGraphEdge(c));
+                        var libraryConsumer = component as ILibraryConsumer;
+                        var dependentComponents = libraryConsumer?.GetDependentComponents();
+                        var graphEdges = dependentComponents?.Select(c => new ElementDependencyGraphEdge(c));
 
-                    dependencyGraph.Add(
-                        component.FullyQualifiedName(), 
-                        pageComponent, 
-                        graphEdges, 
-                        OwinFramework.Interfaces.Builder.PipelinePosition.Middle);
+                        dependencyGraph.Add(
+                            component.FullyQualifiedName(),
+                            pageComponent,
+                            graphEdges,
+                            OwinFramework.Interfaces.Builder.PipelinePosition.Middle);
+                    }
+
+                    startIndex = _components.Count;
+
+                    foreach (var pageComponent in dependencyGraph.GetBuildOrderData())
+                    {
+                        // Note that will recusively add dependent components to _components
+                        // It also populaates the data.Elements collection by recursively 
+                    }
                 }
 
                 _pageComponents = dependencyGraph.GetBuildOrderData().ToArray();
-
-                foreach (var pageComponent in _pageComponents)
-                {
-                    data.BeginAddElement(pageComponent.Component, null);
-                    data.EndAddElement(pageComponent.Component);
-                }
             }
 
             _dataContextBuilder = data.RootDataContextBuilder;
@@ -193,12 +200,30 @@ namespace OwinFramework.Pages.Html.Runtime
             System.Diagnostics.Trace.WriteLine("Page '" + Name + "' asset deployment");
 #endif
             var elements = new HashSet<string>();
+            
+            var orderedElements = data.Elements
+                .Select((er, index) =>
+                {
+                    var order = index;
+                    for (var i = 0; i < _pageComponents.Length; i++)
+                    {
+                        if (ReferenceEquals(_pageComponents[i].Component, er.Element))
+                        {
+                            order = i - _pageComponents.Length;
+                            break;
+                        }
+                    }
+                    return new { order, er };
+                })
+                .OrderBy(o => o.order)
+                .Select(o => o.er)
+                .ToList();
 
-            foreach (var element in data.Elements)
+            foreach (var element in orderedElements)
             {
                 if (string.IsNullOrEmpty(element.Element.Name))
                 {
-#if DEBUG
+#if TRACE
                     System.Diagnostics.Trace.WriteLine("   " +  element.Element + " cannot deploy assets because it has no name");
 #endif
                     continue;
@@ -235,7 +260,7 @@ namespace OwinFramework.Pages.Html.Runtime
                         break;
                 }
 
-#if DEBUG
+#if TRACE
                 System.Diagnostics.Trace.WriteLine($"   '{elementUniqueName}' of type '{element.Element.GetType().Name}' deployed to {deployment}");
 #endif
             }

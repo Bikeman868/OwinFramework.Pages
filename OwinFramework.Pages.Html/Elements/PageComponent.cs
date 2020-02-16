@@ -21,6 +21,8 @@ namespace OwinFramework.Pages.Html.Elements
             IPageData pageData)
             : base(dependencies, parent, component, pageData)
         {
+            pageData.BeginAddElement(Element);
+            pageData.EndAddElement(Element);
         }
 
         public IElement Component => Element;

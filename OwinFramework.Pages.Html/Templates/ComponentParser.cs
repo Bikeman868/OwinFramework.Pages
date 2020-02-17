@@ -27,6 +27,7 @@ namespace OwinFramework.Pages.Html.Templates
         private bool _renderCssIntoPage;
         private bool _renderJavascriptIntoPage;
         private bool _minifyCss;
+        private bool _indented;
         private AssetDeployment _assetDeployment;
 
         public ComponentParser(
@@ -39,7 +40,11 @@ namespace OwinFramework.Pages.Html.Templates
             _cssMixin = new CssMixIn();
             _assetDeployment = AssetDeployment.PerModule;
 
-            frameworkConfiguration.Subscribe(fc => _minifyCss = fc.MinifyCss);
+            frameworkConfiguration.Subscribe(fc =>
+            {
+                _minifyCss = fc.MinifyCss;
+                _indented = fc.Indented;
+            });
         }
 
         /// <summary>
@@ -110,7 +115,7 @@ namespace OwinFramework.Pages.Html.Templates
                 switch (resource.ContentType?.ToLower())
                 {
                     case "application/javascript":
-                        _javascriptMixIn.AddToTemplate(template, content, _renderJavascriptIntoPage);
+                        _javascriptMixIn.AddToTemplate(template, content, _renderJavascriptIntoPage, _indented);
                         break;
 
                     case "text/css":

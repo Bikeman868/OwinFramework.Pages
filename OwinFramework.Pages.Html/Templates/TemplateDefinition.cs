@@ -717,7 +717,10 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddStaticJavascript(string rawJavascript)
         {
-            var lines = rawJavascript.Split('\n');
+            var lines = rawJavascript
+                .Split('\n')
+                .Where(l => !string.IsNullOrWhiteSpace(l))
+                .ToArray();
 
             StaticJavascriptActions.Add(w =>
             {
@@ -729,7 +732,10 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition AddStaticCss(string css)
         {
-            var lines = css.Split('\n');
+            var lines = css
+                .Split('\n')
+                .Where(l => !string.IsNullOrWhiteSpace(l))
+                .ToArray();
 
             StaticCssActions.Add(w =>
             {

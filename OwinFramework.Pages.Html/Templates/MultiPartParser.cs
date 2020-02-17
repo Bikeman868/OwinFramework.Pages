@@ -148,7 +148,7 @@ namespace OwinFramework.Pages.Html.Templates
                 template.AddHeadLine(headLine);
 
             if (scriptLines.Count > 0)
-                _javascriptMixIn.AddToTemplate(template, string.Join("\n", scriptLines), true);
+                _javascriptMixIn.AddToTemplate(template, string.Join("\n", scriptLines), true, true);
 
             if (cssLines.Count > 0)
                 _cssMixin.AddCssToTemplate(template, string.Join("\n", cssLines), true);

@@ -43,131 +43,174 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotless.ClientOnly, Version=1.5.2.0, Culture=neutral, PublicKeyToken=96b446c9e63eae34, processorArchitecture=MSIL">
+    <Reference Include="dotless.ClientOnly, Version=1.5.2.0">
       <HintPath>..\packages\DotlessClientOnly.1.5.2\lib\dotless.ClientOnly.dll</HintPath>
     </Reference>
-    <Reference Include="Ioc.Modules, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Svg, Version=2.3.0">
+      <HintPath>..\packages\Svg.2.3.0\lib\net35\Svg.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Urchin.Client, Version=1.3.2.0">
+      <HintPath>..\packages\Urchin.Client.1.3.2\lib\net45\Urchin.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    
+    <Reference Include="Ioc.Modules, Version=1.4.1.0">
       <HintPath>..\packages\Ioc.Modules.1.4.1\lib\net45\Ioc.Modules.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ioc.Modules.Contract, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Ioc.Modules.Contract, Version=1.4.1.0">
       <HintPath>..\packages\Ioc.Modules.Contract.1.4.1\lib\net45\Ioc.Modules.Contract.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ioc.Modules.Ninject, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Ioc.Modules.Ninject, Version=1.4.1.0">
       <HintPath>..\packages\Ioc.Modules.Ninject.1.4.1\lib\net45\Ioc.Modules.Ninject.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data, Version=6.9.12.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.6.9.12\lib\net45\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+    <Reference Include="Ninject, Version=3.2.2.0">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.2.8.0\lib\net45\OwinFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Authorization, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Authorization.1.1.1\lib\net45\OwinFramework.Authorization.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Authorization.Core, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Authorization.Core.1.1.1\lib\net45\OwinFramework.Authorization.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Authorization.Prius, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Authorization.Prius.1.1.1\lib\net45\OwinFramework.Authorization.Prius.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Authorization.UI, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Authorization.UI.1.1.1\lib\net45\OwinFramework.Authorization.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.ExceptionReporter, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.ExceptionReporter.2.8.0\lib\net45\OwinFramework.ExceptionReporter.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Facilities.Cache.Local, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Facilities.Cache.Local.2.7.2\lib\net45\OwinFramework.Facilities.Cache.Local.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Facilities.IdentityStore.Prius, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Facilities.IdentityStore.Prius.2.7.2\lib\net45\OwinFramework.Facilities.IdentityStore.Prius.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Facilities.TokenStore.Cache, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Facilities.TokenStore.Cache.2.7.2\lib\net45\OwinFramework.Facilities.TokenStore.Cache.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.FormIdentification, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.FormIdentification.2.8.2\lib\net45\OwinFramework.FormIdentification.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Less, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Less.2.8.0\lib\net45\OwinFramework.Less.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.NotFound, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.NotFound.2.8.0\lib\net45\OwinFramework.NotFound.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.OutputCache, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.OutputCache.2.8.0\lib\net45\OwinFramework.OutputCache.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Pages.Core, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.14\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Pages.DebugMiddleware, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.DebugMiddleware.1.2.14\lib\net45\OwinFramework.Pages.DebugMiddleware.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Pages.Framework, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Framework.1.2.14\lib\net45\OwinFramework.Pages.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Pages.Html, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Html.1.2.14\lib\net45\OwinFramework.Pages.Html.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Pages.Restful, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Restful.1.2.14\lib\net45\OwinFramework.Pages.Restful.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Pages.Standard, Version=1.2.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.14\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Session, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Session.2.8.2\lib\net45\OwinFramework.Session.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.StaticFiles, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.StaticFiles.2.8.0\lib\net45\OwinFramework.StaticFiles.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Urchin, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Urchin.2.8.0\lib\net45\OwinFramework.Urchin.dll</HintPath>
-    </Reference>
-    <Reference Include="OwinFramework.Versioning, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.Framework.Versioning.2.8.0\lib\net45\OwinFramework.Versioning.dll</HintPath>
-    </Reference>
-    <Reference Include="Prius.Contracts, Version=2.2.2.31, Culture=neutral, processorArchitecture=MSIL">
+    
+    <Reference Include="Prius.Contracts, Version=2.2.2.0">
       <HintPath>..\packages\Prius.2.2.2\lib\net45\Prius.Contracts.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Prius.MySql, Version=2.2.2.31, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prius.MySql.2.2.2\lib\net45\Prius.MySql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Prius.Orm, Version=2.2.2.31, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Prius.Orm, Version=2.2.2.0">
       <HintPath>..\packages\Prius.2.2.2\lib\net45\Prius.Orm.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Svg, Version=2.2.1.39233, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
-      <HintPath>..\packages\Svg.2.3.0\lib\net35\Svg.dll</HintPath>
+    <Reference Include="Prius.MySql, Version=2.2.2.0">
+      <HintPath>..\packages\Prius.MySql.2.2.2\lib\net45\Prius.MySql.dll</HintPath>
+      <Private>True</Private>
     </Reference>
+    <Reference Include="MySql.Data, Version=6.9.12.0">
+      <HintPath>..\packages\MySql.Data.6.9.12\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+
+    <Reference Include="Owin, Version=1.0.0.0">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=3.1.0.0">
+      <HintPath>..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.1.0.0">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    
+    <Reference Include="OwinFramework, Version=2.8.0.0">
+      <HintPath>..\packages\Owin.Framework.2.8.0\lib\net45\OwinFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+
+    <Reference Include="OwinFramework.Facilities.Cache.Local, Version=2.7.2.0">
+      <HintPath>..\packages\Owin.Framework.Facilities.Cache.Local.2.7.2\lib\net45\OwinFramework.Facilities.Cache.Local.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Facilities.IdentityStore.Prius, Version=2.7.2.0">
+      <HintPath>..\packages\Owin.Framework.Facilities.IdentityStore.Prius.2.7.2\lib\net45\OwinFramework.Facilities.IdentityStore.Prius.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Facilities.TokenStore.Cache, Version=2.7.2.0">
+      <HintPath>..\packages\Owin.Framework.Facilities.TokenStore.Cache.2.7.2\lib\net45\OwinFramework.Facilities.TokenStore.Cache.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    
+    <Reference Include="OwinFramework.Authorization, Version=1.1.1.0">
+      <HintPath>..\packages\Owin.Framework.Authorization.1.1.1\lib\net45\OwinFramework.Authorization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Authorization.Core, Version=1.1.1.0">
+      <HintPath>..\packages\Owin.Framework.Authorization.Core.1.1.1\lib\net45\OwinFramework.Authorization.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Authorization.Prius, Version=1.1.1.0">
+      <HintPath>..\packages\Owin.Framework.Authorization.Prius.1.1.1\lib\net45\OwinFramework.Authorization.Prius.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Authorization.UI, Version=1.1.1.0">
+      <HintPath>..\packages\Owin.Framework.Authorization.UI.1.1.1\lib\net45\OwinFramework.Authorization.UI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    
+    <Reference Include="OwinFramework.ExceptionReporter, Version=2.8.0.0">
+      <HintPath>..\packages\Owin.Framework.ExceptionReporter.2.8.0\lib\net45\OwinFramework.ExceptionReporter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.FormIdentification, Version=2.8.2.0">
+      <HintPath>..\packages\Owin.Framework.FormIdentification.2.8.2\lib\net45\OwinFramework.FormIdentification.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Less, Version=2.8.0.0">
+      <HintPath>..\packages\Owin.Framework.Less.2.8.0\lib\net45\OwinFramework.Less.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.NotFound, Version=2.8.0.0">
+      <HintPath>..\packages\Owin.Framework.NotFound.2.8.0\lib\net45\OwinFramework.NotFound.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.OutputCache, Version=2.8.0.0">
+      <HintPath>..\packages\Owin.Framework.OutputCache.2.8.0\lib\net45\OwinFramework.OutputCache.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Session, Version=2.8.2.0">
+      <HintPath>..\packages\Owin.Framework.Session.2.8.2\lib\net45\OwinFramework.Session.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.StaticFiles, Version=2.8.0.0">
+      <HintPath>..\packages\Owin.Framework.StaticFiles.2.8.0\lib\net45\OwinFramework.StaticFiles.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Urchin, Version=2.8.0.0">
+      <HintPath>..\packages\Owin.Framework.Urchin.2.8.0\lib\net45\OwinFramework.Urchin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Versioning, Version=2.8.0.0">
+      <HintPath>..\packages\Owin.Framework.Versioning.2.8.0\lib\net45\OwinFramework.Versioning.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Pages.Core, Version=1.2.14.0">
+      <HintPath>..\packages\Owin.Framework.Pages.Core.1.2.14\lib\net45\OwinFramework.Pages.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Pages.Framework, Version=1.2.14.0">
+      <HintPath>..\packages\Owin.Framework.Pages.Framework.1.2.14\lib\net45\OwinFramework.Pages.Framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Pages.Html, Version=1.2.14.0">
+      <HintPath>..\packages\Owin.Framework.Pages.Html.1.2.14\lib\net45\OwinFramework.Pages.Html.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Pages.Restful, Version=1.2.14.0">
+      <HintPath>..\packages\Owin.Framework.Pages.Restful.1.2.14\lib\net45\OwinFramework.Pages.Restful.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Pages.Standard, Version=1.2.14.0">
+      <HintPath>..\packages\Owin.Framework.Pages.Standard.1.2.14\lib\net45\OwinFramework.Pages.Standard.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OwinFramework.Pages.DebugMiddleware, Version=1.2.14.0">
+      <HintPath>..\packages\Owin.Framework.Pages.DebugMiddleware.1.2.14\lib\net45\OwinFramework.Pages.DebugMiddleware.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -184,11 +227,11 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="Urchin.Client, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Urchin.Client.1.3.2\lib\net45\Urchin.Client.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="config.json" />
+    <Content Include="Readme.md" />
+    <Content Include="web\styles\main.less" />
     <Content Include="web\images\favicon.ico" />
     <Content Include="web\templates\fromUrl\account\send-password-reset-success.html" />
     <Content Include="web\templates\fromUrl\account\send-password-reset-fail.html" />
@@ -218,8 +261,7 @@
     <Content Include="web\templates\page\home-page.html" />
     <Content Include="Web.config" />
     <Content Include="web\scripts\main.js" />
-    <None Include="packages.config" />
-    <None Include="web\templates\widget\login.vue" />
+    <Content Include="web\templates\widget\login.vue" />
     <Content Include="web\templates\widget\login.js" />
     <Content Include="web\templates\widget\login.less" />
   </ItemGroup>
@@ -246,18 +288,6 @@
     <Compile Include="Session\SessionData.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="config.json" />
-    <Content Include="Readme.md" />
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <Content Include="web\styles\main.less" />
-  </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -283,145 +313,4 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Ioc.Modules">
-          <HintPath>..\packages\Ioc.Modules\lib\net45\Ioc.Modules.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Ioc.Modules.Contract">
-          <HintPath>..\packages\Ioc.Modules.Contract\lib\net45\Ioc.Modules.Contract.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Ioc.Modules.Ninject">
-          <HintPath>..\packages\Ioc.Modules.Ninject\lib\net45\Ioc.Modules.Ninject.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="MySql.Data">
-          <HintPath>..\packages\MySql.Data\lib\net45\MySql.Data.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Newtonsoft.Json">
-          <HintPath>..\packages\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Ninject">
-          <HintPath>..\packages\Ninject\lib\net45-full\Ninject.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Prius.Contracts">
-          <HintPath>..\packages\Prius\lib\net45\Prius.Contracts.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="Prius.Orm">
-          <HintPath>..\packages\Prius\lib\net45\Prius.Orm.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
-      <ItemGroup>
-        <Reference Include="Prius.MySql">
-          <HintPath>..\packages\Prius.MySql\lib\net45\Prius.MySql.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'" />
-  </Choose>
 </Project>

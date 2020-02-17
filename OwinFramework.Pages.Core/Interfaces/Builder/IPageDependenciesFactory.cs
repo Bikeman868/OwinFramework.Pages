@@ -74,5 +74,10 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// A factory for constructing objects that define dependencies on data
         /// </summary>
         IDataDependencyFactory DataDependencyFactory { get; }
+
+        /// <summary>
+        /// The configuration options for the pages framework
+        /// </summary>
+        IFrameworkConfiguration FrameworkConfiguration { get; }
     }
 }

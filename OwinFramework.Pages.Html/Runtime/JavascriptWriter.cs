@@ -11,8 +11,7 @@ namespace OwinFramework.Pages.Html.Runtime
     // TODO: Add minification. https://stackoverflow.com/questions/8567070/is-there-a-net-library-for-minifying-javascript
     internal class JavascriptWriter: IJavascriptWriter
     {
-        public bool Indented { get; set; }
-        public bool IncludeComments { get; set; }
+        public IFrameworkConfiguration FrameworkConfiguration { get; set; }
         public int IndentLevel { get; set; }
         public bool HasContent { get { return _namespaces.Values.Any(ns => ns.HasContent); } }
 
@@ -47,14 +46,34 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IJavascriptWriter WriteLineRaw(string line, IPackage package)
         {
-            if (!Indented) line = line.Trim();
+            var lines = line.Replace("\r", "").Split('\n');
+
+            if (!FrameworkConfiguration.Indented)
+                lines = lines.Select(l => l.Trim()).ToArray();
+
+            if (!FrameworkConfiguration.IncludeComments)
+            {
+                lines = lines
+                    .Select(l =>
+                    {
+                        var commentPos = l.IndexOf("//");
+                        if (commentPos < 0) return l;
+
+                        if (commentPos == 0) return null;
+
+                        return l.Substring(0, commentPos);
+                    })
+                    .Where(l => l != null)
+                    .ToArray();
+            }
 
             var javascriptNamespace = GetNamespace(package);
 
             javascriptNamespace.Add(
                 new RawLineElement
                 {
-                    Line = line
+                    Indented = FrameworkConfiguration.Indented,
+                    Lines = lines
                 });
             
             return this;
@@ -68,6 +87,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 new VariableElement
                 {
                     Name = variableName,
+                    Indented = FrameworkConfiguration.Indented,
                     IsPublic = isPublic,
                     Type = type,
                     InitializationExpression = initializationExpression
@@ -78,6 +98,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IJavascriptWriter WriteFunction(string functionName, string parameters, string functionBody, string returnType, IPackage package, bool isPublic)
         {
+            var body = functionBody.Replace("\r", "").Split('\n');
+            if (!FrameworkConfiguration.Indented) body = body.Select(l => l.Trim()).ToArray();
+
             var javascriptNamespace = GetNamespace(package);
 
             javascriptNamespace.Add(
@@ -85,9 +108,10 @@ namespace OwinFramework.Pages.Html.Runtime
                 {
                     Name = functionName,
                     IsPublic = isPublic,
+                    Indented = FrameworkConfiguration.Indented,
                     Type = returnType,
                     Parameters = parameters,
-                    Body = functionBody
+                    Body = body
                 });
 
             return this;
@@ -95,6 +119,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IJavascriptWriter WriteClass(string className, string classBody, IPackage package, bool isPublic)
         {
+            var body = classBody.Replace("\r", "").Split('\n');
+            if (!FrameworkConfiguration.Indented) body = body.Select(l => l.Trim()).ToArray();
+
             var javascriptNamespace = GetNamespace(package);
 
             javascriptNamespace.Add(
@@ -102,7 +129,8 @@ namespace OwinFramework.Pages.Html.Runtime
                 {
                     Name = className,
                     IsPublic = isPublic,
-                    Body = classBody
+                    Indented = FrameworkConfiguration.Indented,
+                    Body = body
                 });
 
             return this;
@@ -110,7 +138,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public IJavascriptWriter WriteComment(string comment, CommentStyle commentStyle, IPackage package)
         {
-            if (!IncludeComments) return this;
+            if (!FrameworkConfiguration.IncludeComments) return this;
 
             var javascriptNamespace = GetNamespace(package);
 
@@ -119,6 +147,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 {
                     Name = null,
                     IsPublic = false,
+                    Indented = FrameworkConfiguration.Indented,
                     Type = null,
                     Comment = comment,
                     CommentStyle = commentStyle
@@ -143,7 +172,7 @@ namespace OwinFramework.Pages.Html.Runtime
             result = new JavascriptNamespace 
             { 
                 NamespaceName = namespaceName,
-                Indented = Indented
+                Indented = FrameworkConfiguration.Indented
             };
 
             _namespaces[namespaceName] = result;
@@ -155,31 +184,57 @@ namespace OwinFramework.Pages.Html.Runtime
             public string Name;
             public string Type;
             public bool IsPublic;
+            public bool Indented;
 
-            public abstract void WriteLine(IHtmlWriter writer);
-            public abstract void WriteLine(IStringBuilder stringBuilder, string indent);
-            public abstract void WriteLine(IList<string> lines, string indent);
+            public abstract void WriteLines(IHtmlWriter writer);
+            public abstract void WriteLines(IStringBuilder stringBuilder, string indent);
+            public abstract void WriteLines(IList<string> lines, string indent);
         }
 
         private class RawLineElement: JavascriptElement
         {
-            public string Line;
+            public string[] Lines;
 
-            public override void WriteLine(IHtmlWriter writer)
+            public override void WriteLines(IHtmlWriter writer)
             {
-                writer.Write(Line);
-                writer.WriteLine();
+                foreach (var line in Lines)
+                {
+                    writer.Write(line);
+                    writer.WriteLine();
+                }
             }
 
-            public override void WriteLine(IStringBuilder stringBuilder, string indent)
+            public override void WriteLines(IStringBuilder stringBuilder, string indent)
             {
-                stringBuilder.Append(indent);
-                stringBuilder.AppendLine(Line);
+                if (Indented)
+                {
+                    foreach (var line in Lines)
+                    {
+                        stringBuilder.Append(indent);
+                        stringBuilder.AppendLine(line);
+                    }
+                }
+                else
+                {
+                    foreach (var line in Lines)
+                    {
+                        stringBuilder.AppendLine(line);
+                    }
+                }
             }
 
-            public override void WriteLine(IList<string> lines, string indent)
+            public override void WriteLines(IList<string> lines, string indent)
             {
-                lines.Add(Line);
+                if (Indented)
+                {
+                    foreach (var line in Lines)
+                        lines.Add(indent + line);
+                }
+                else
+                {
+                    foreach (var line in Lines)
+                        lines.Add(line);
+                }
             }
         }
 
@@ -188,12 +243,12 @@ namespace OwinFramework.Pages.Html.Runtime
             public string Comment;
             public CommentStyle CommentStyle;
 
-            public override void WriteLine(IHtmlWriter writer)
+            public override void WriteLines(IHtmlWriter writer)
             {
                 writer.WriteComment(Comment, CommentStyle);
             }
 
-            public override void WriteLine(IStringBuilder stringBuilder, string indent)
+            public override void WriteLines(IStringBuilder stringBuilder, string indent)
             {
                 stringBuilder.Append(indent);
                 switch (CommentStyle)
@@ -215,7 +270,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 }
             }
 
-            public override void WriteLine(IList<string> lines, string indent)
+            public override void WriteLines(IList<string> lines, string indent)
             {
                 switch (CommentStyle)
                 {
@@ -236,7 +291,7 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             public string InitializationExpression;
 
-            public override void WriteLine(IHtmlWriter writer)
+            public override void WriteLines(IHtmlWriter writer)
             {
                 if (string.IsNullOrEmpty(Name))
                 {
@@ -257,7 +312,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 writer.WriteLine(";");
             }
 
-            public override void WriteLine(IStringBuilder stringBuilder, string indent)
+            public override void WriteLines(IStringBuilder stringBuilder, string indent)
             {
                 stringBuilder.Append(indent);
 
@@ -281,7 +336,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 stringBuilder.AppendLine(";");
             }
 
-            public override void WriteLine(IList<string> lines, string indent)
+            public override void WriteLines(IList<string> lines, string indent)
             {
                 var line = indent;
 
@@ -304,9 +359,9 @@ namespace OwinFramework.Pages.Html.Runtime
         private class FunctionElement : JavascriptElement
         {
             public string Parameters;
-            public string Body;
+            public string[] Body;
 
-            public override void WriteLine(IHtmlWriter writer)
+            public override void WriteLines(IHtmlWriter writer)
             {
                 if (string.IsNullOrEmpty(Name))
                 {
@@ -329,16 +384,18 @@ namespace OwinFramework.Pages.Html.Runtime
                     writer.Write(Parameters);
 
                 writer.WriteLine(") {");
-                writer.IndentLevel++;
 
-                foreach (var line in Body.Replace("\r", "").Split('\n'))
+                if (Indented) writer.IndentLevel++;
+
+                foreach (var line in Body)
                     writer.WriteLine(line);
 
-                writer.IndentLevel--;
+                if (Indented) writer.IndentLevel--;
+
                 writer.WriteLine(string.IsNullOrEmpty(Name) ? "}();" : "}");
             }
 
-            public override void WriteLine(IStringBuilder stringBuilder, string indent)
+            public override void WriteLines(IStringBuilder stringBuilder, string indent)
             {
                 stringBuilder.Append(indent);
 
@@ -364,10 +421,10 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 stringBuilder.AppendLine(") {");
 
-                foreach (var line in Body.Replace("\r", "").Split('\n'))
+                foreach (var line in Body)
                 {
                     stringBuilder.Append(indent);
-                    stringBuilder.Append("  ");
+                    if (Indented) stringBuilder.Append("  ");
                     stringBuilder.AppendLine(line);
                 }
 
@@ -375,7 +432,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 stringBuilder.AppendLine(string.IsNullOrEmpty(Name) ? "}();" : "}");
             }
 
-            public override void WriteLine(IList<string> lines, string indent)
+            public override void WriteLines(IList<string> lines, string indent)
             {
                 string header;
 
@@ -393,8 +450,13 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 lines.Add(header);
 
-                foreach (var line in Body.Replace("\r", "").Split('\n'))
-                    lines.Add(indent + "  " + line);
+                foreach (var line in Body)
+                {
+                    if (Indented)
+                        lines.Add(indent + "  " + line);
+                    else
+                        lines.Add(indent + line);
+                }
 
                 lines.Add(indent + (string.IsNullOrEmpty(Name) ? "}();" : "}"));
             }
@@ -402,9 +464,9 @@ namespace OwinFramework.Pages.Html.Runtime
 
         private class ClassElement : JavascriptElement
         {
-            public string Body;
+            public string[] Body;
 
-            public override void WriteLine(IHtmlWriter writer)
+            public override void WriteLines(IHtmlWriter writer)
             {
                 if (string.IsNullOrEmpty(Name))
                     throw new Exception("You can not add a JavaScript class with no name");
@@ -412,21 +474,21 @@ namespace OwinFramework.Pages.Html.Runtime
                 writer.Write("var ");
                 writer.Write(Name);
                 writer.WriteLine(" = function () {");
-                writer.IndentLevel++;
+                if (Indented) writer.IndentLevel++;
 
-                foreach (var line in Body.Replace("\r", "").Split('\n'))
+                foreach (var line in Body)
                     writer.WriteLine(line);
 
-                writer.IndentLevel--;
+                if (Indented) writer.IndentLevel--;
                 writer.WriteLine("}();");
             }
 
-            public override void WriteLine(IStringBuilder stringBuilder, string indent)
+            public override void WriteLines(IStringBuilder stringBuilder, string indent)
             {
                 if (string.IsNullOrEmpty(Name))
                     throw new Exception("You can not add a JavaScript class with no name");
 
-                if (string.IsNullOrEmpty(Body))
+                if (Body == null || Body.Length == 0)
                     throw new Exception("You can not add a JavaScript class with no body");
 
                 stringBuilder.Append(indent);
@@ -435,26 +497,37 @@ namespace OwinFramework.Pages.Html.Runtime
                 stringBuilder.Append(Name);
                 stringBuilder.AppendLine(" = function () {");
 
-                foreach (var line in Body.Replace("\r", "").Split('\n'))
+                foreach (var line in Body)
                 {
-                    stringBuilder.Append(indent);
-                    stringBuilder.Append("  ");
+                    if (Indented)
+                    {
+                        stringBuilder.Append(indent);
+                        stringBuilder.Append("  ");
+                    }
                     stringBuilder.AppendLine(line);
                 }
 
-                stringBuilder.Append(indent);
+                if (Indented) stringBuilder.Append(indent);
                 stringBuilder.AppendLine("}();");
             }
 
-            public override void WriteLine(IList<string> lines, string indent)
+            public override void WriteLines(IList<string> lines, string indent)
             {
                 if (string.IsNullOrEmpty(Name))
                     throw new Exception("You can not add a JavaScript class with no name");
 
+                if (Body == null || Body.Length == 0)
+                    throw new Exception("You can not add a JavaScript class with no body");
+
                 lines.Add(indent + "var " + Name + " = function () {");
 
-                foreach (var line in Body.Replace("\r", "").Split('\n'))
-                    lines.Add(indent + "  " + line);
+                foreach (var line in Body)
+                {
+                    if (Indented)
+                        lines.Add(indent + "  " + line);
+                    else
+                        lines.Add(line);
+                }
 
                 lines.Add(indent + "}();");
             }
@@ -491,7 +564,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 foreach (var element in _elements)
                 {
                     writer.WriteLine();
-                    element.WriteLine(writer);
+                    element.WriteLines(writer);
                 }
 
                 if (hasNamespace)
@@ -522,7 +595,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 foreach (var element in _elements)
                 {
-                    element.WriteLine(stringBuilder, Indented && hasNamespace ? "  " : string.Empty);
+                    element.WriteLines(stringBuilder, Indented && hasNamespace ? "  " : string.Empty);
                 }
 
                 if (hasNamespace)
@@ -557,7 +630,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
                 foreach (var element in _elements)
                 {
-                    element.WriteLine(lines, Indented && hasNamespace ? "  " : string.Empty);
+                    element.WriteLines(lines, Indented && hasNamespace ? "  " : string.Empty);
                 }
 
                 if (hasNamespace)

@@ -5,12 +5,18 @@ namespace OwinFramework.Pages.Html.Runtime
 {
     internal class JavascriptWriterFactory : IJavascriptWriterFactory
     {
-        public IJavascriptWriter Create(HtmlFormat format, bool indented, bool includeComments)
+        private IFrameworkConfiguration _frameworkConfiguration;
+
+        public JavascriptWriterFactory(IFrameworkConfiguration frameworkConfiguration)
+        {
+            frameworkConfiguration.Subscribe(fc => _frameworkConfiguration = fc);
+        }
+
+        public IJavascriptWriter Create(IFrameworkConfiguration frameworkConfiguration)
         {
             return new JavascriptWriter
             {
-                Indented = indented,
-                IncludeComments = includeComments
+                FrameworkConfiguration = frameworkConfiguration
             };
         }
 
@@ -18,8 +24,7 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             return new JavascriptWriter
             {
-                Indented = context.Html.Indented,
-                IncludeComments = context.IncludeComments,
+                FrameworkConfiguration = _frameworkConfiguration,
                 IndentLevel = context.Html.IndentLevel
             };
         }

@@ -13,14 +13,9 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
     public interface IJavascriptWriter: IDisposable
     {
         /// <summary>
-        /// Turn indentation off to reduce the size of the html
+        /// Pages framework configuration options
         /// </summary>
-        bool Indented { get; set; }
-
-        /// <summary>
-        /// Turn comments off to reduce the size of the html
-        /// </summary>
-        bool IncludeComments { get; set; }
+        IFrameworkConfiguration FrameworkConfiguration { get; set; }
 
         /// <summary>
         /// Specifies how much to indent new lines. In pretty mode

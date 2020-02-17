@@ -110,7 +110,7 @@ namespace OwinFramework.Pages.Html.Elements
         {
             if (JavascriptFunctions != null && JavascriptFunctions.Length > 0)
             {
-                if (writer.IncludeComments)
+                if (writer.FrameworkConfiguration.IncludeComments)
                 {
                     writer.WriteComment(
                         "javascript functions for " + _commentNameFunc(),

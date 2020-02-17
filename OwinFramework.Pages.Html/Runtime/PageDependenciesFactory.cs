@@ -22,6 +22,7 @@ namespace OwinFramework.Pages.Html.Runtime
         private readonly IDataContextBuilderFactory _dataContextBuilderFactory;
         private readonly IDataCatalog _dataCatalog;
         private readonly IDataDependencyFactory _dataDependencyFactory;
+        private readonly IFrameworkConfiguration _frameworkConfiguration;
 
         public PageDependenciesFactory(
             IRenderContextFactory renderContextFactory,
@@ -35,7 +36,8 @@ namespace OwinFramework.Pages.Html.Runtime
             IDictionaryFactory dictionaryFactory,
             IDataContextBuilderFactory dataContextBuilderFactory,
             IDataCatalog dataCatalog, 
-            IDataDependencyFactory dataDependencyFactory)
+            IDataDependencyFactory dataDependencyFactory,
+            IFrameworkConfiguration frameworkConfiguration)
         {
             _renderContextFactory = renderContextFactory;
             _idManager = idManager;
@@ -49,11 +51,13 @@ namespace OwinFramework.Pages.Html.Runtime
             _dataContextBuilderFactory = dataContextBuilderFactory;
             _dataCatalog = dataCatalog;
             _dataDependencyFactory = dataDependencyFactory;
+            _frameworkConfiguration = frameworkConfiguration;
         }
 
         public IPageDependencies Create(IOwinContext context, Action<IOwinContext, Func<string>> trace)
         {
             var renderContext = _renderContextFactory.Create(trace);
+
             return new PageDependencies(
                 renderContext,
                 _assetManager,
@@ -61,59 +65,17 @@ namespace OwinFramework.Pages.Html.Runtime
                 .Initialize(context);
         }
 
-        public IIdManager IdManager
-        {
-            get { return _idManager; }
-        }
-
-        public INameManager NameManager
-        {
-            get { return _nameManager; }
-        }
-
-        public IAssetManager AssetManager
-        {
-            get { return _assetManager; }
-        }
-
-        public ICssWriterFactory CssWriterFactory
-        {
-            get { return _cssWriterFactory; }
-        }
-
-        public IJavascriptWriterFactory JavascriptWriterFactory
-        {
-            get { return _javascriptWriterFactory; }
-        }
-
-        public IDataScopeProviderFactory DataScopeProviderFactory
-        {
-            get { return _dataScopeProviderFactory; }
-        }
-
-        public IDataConsumerFactory DataConsumerFactory
-        {
-            get { return _dataConsumerFactory; }
-        }
-
-        public IDictionaryFactory DictionaryFactory
-        {
-            get { return _dictionaryFactory; }
-        }
-
-        public IDataContextBuilderFactory DataContextBuilderFactory
-        {
-            get { return _dataContextBuilderFactory; }
-        }
-
-        public IDataCatalog DataCatalog
-        {
-            get { return _dataCatalog; }
-        }
-
-        public IDataDependencyFactory DataDependencyFactory
-        {
-            get { return _dataDependencyFactory; }
-        }
+        public IIdManager IdManager => _idManager;
+        public INameManager NameManager => _nameManager;
+        public IAssetManager AssetManager => _assetManager;
+        public ICssWriterFactory CssWriterFactory => _cssWriterFactory;
+        public IJavascriptWriterFactory JavascriptWriterFactory => _javascriptWriterFactory;
+        public IDataScopeProviderFactory DataScopeProviderFactory => _dataScopeProviderFactory;
+        public IDataConsumerFactory DataConsumerFactory => _dataConsumerFactory;
+        public IDictionaryFactory DictionaryFactory => _dictionaryFactory;
+        public IDataContextBuilderFactory DataContextBuilderFactory => _dataContextBuilderFactory;
+        public IDataCatalog DataCatalog => _dataCatalog;
+        public IDataDependencyFactory DataDependencyFactory => _dataDependencyFactory;
+        public IFrameworkConfiguration FrameworkConfiguration => _frameworkConfiguration;
     }
 }

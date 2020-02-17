@@ -156,7 +156,7 @@ namespace OwinFramework.Pages.Framework.Managers
         {
             if (assetType == AssetType.Script)
             {
-                using (var writer = _javascriptWriterFactory.Create())
+                using (var writer = _javascriptWriterFactory.Create(_frameworkConfiguration))
                 {
                     using (var writeResult = element.WriteStaticJavascript(writer))
                     {

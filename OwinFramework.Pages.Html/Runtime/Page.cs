@@ -194,7 +194,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
             _referencedModules = new List<IModule>();
             var styles = _dependencies.CssWriterFactory.Create();
-            var functions = _dependencies.JavascriptWriterFactory.Create();
+            var functions = _dependencies.JavascriptWriterFactory.Create(_dependencies.FrameworkConfiguration);
 
 #if TRACE
             System.Diagnostics.Trace.WriteLine("Page '" + Name + "' asset deployment");
@@ -726,7 +726,7 @@ namespace OwinFramework.Pages.Html.Runtime
                 html.WriteScriptClose();
             }
 
-            using (var javascriptWriter = _dependencies.JavascriptWriterFactory.Create())
+            using (var javascriptWriter = _dependencies.JavascriptWriterFactory.Create(_dependencies.FrameworkConfiguration))
             {
                 var writeResult = WriteResult.Continue();
 

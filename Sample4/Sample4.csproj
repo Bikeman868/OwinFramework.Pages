@@ -125,7 +125,6 @@
   <ItemGroup>
     <Content Include="Templates\order.html" />
     <Content Include="Templates\customer.html" />
-    <Content Include="Templates\order.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

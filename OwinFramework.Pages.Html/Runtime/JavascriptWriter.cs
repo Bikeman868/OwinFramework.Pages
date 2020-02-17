@@ -56,12 +56,20 @@ namespace OwinFramework.Pages.Html.Runtime
                 lines = lines
                     .Select(l =>
                     {
-                        var commentPos = l.IndexOf("//");
-                        if (commentPos < 0) return l;
+                        var strings = l.Split('"', '\'');
+                        for (var i = 0; i < strings.Length; i += 2)
+                        {
+                            var commentPos = strings[i].IndexOf("//");
+                            if (commentPos < 0) continue;
 
-                        if (commentPos == 0) return null;
+                            if (commentPos == 0 && i == 0) return null;
 
-                        return l.Substring(0, commentPos);
+                            for (var j = 0; j < i; j++)
+                                commentPos += strings[j].Length + 1;
+
+                            return l.Substring(0, commentPos);
+                        }
+                        return l;
                     })
                     .Where(l => l != null)
                     .ToArray();

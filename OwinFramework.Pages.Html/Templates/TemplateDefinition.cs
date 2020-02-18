@@ -161,20 +161,20 @@ namespace OwinFramework.Pages.Html.Templates
 
         private class Repeat : BodyActionList
         {
-            private readonly Type _repeatType;
-            private readonly Type _listType;
-            private readonly string _listScope;
-            private readonly string _repeatScope;
+            public Type RepeatType { get; private set; }
+            public Type ListType { get; private set; }
+            public string ListScope { get; private set; }
+            public string RepeatScope { get; private set; }
 
             private Action<IRenderContext>[] _actions;
 
             public Repeat(Type repeatType, string listScope, string repeatScope)
             {
-                _repeatType = repeatType;
-                _listScope = listScope;
-                _repeatScope = repeatScope;
+                RepeatType = repeatType;
+                ListScope = listScope;
+                RepeatScope = repeatScope;
 
-                _listType = typeof(IList<>).MakeGenericType(repeatType);
+                ListType = typeof(IList<>).MakeGenericType(repeatType);
             }
 
             public void Enact(IRenderContext context)
@@ -193,12 +193,12 @@ namespace OwinFramework.Pages.Html.Templates
                     }
                 }
 
-                var list = context.Data.Get(_listType, _listScope) as IEnumerable;
+                var list = context.Data.Get(ListType, ListScope) as IEnumerable;
                 if (!ReferenceEquals(list, null))
                 {
                     foreach (var item in list)
                     {
-                        context.Data.Set(_repeatType, item, _repeatScope);
+                        context.Data.Set(RepeatType, item, RepeatScope);
                         for (var i = 0; i < _actions.Length; i++)
                             _actions[i](context);
                     }
@@ -207,9 +207,9 @@ namespace OwinFramework.Pages.Html.Templates
 
             public bool IsRepeaterOf(Type dataType, string scopeName)
             {
-                if (dataType != _repeatType) return false;
+                if (dataType != RepeatType) return false;
                 if (string.IsNullOrEmpty(scopeName)) return true;
-                return string.Equals(scopeName, _repeatScope);
+                return string.Equals(scopeName, RepeatScope);
             }
         }
 
@@ -564,6 +564,8 @@ namespace OwinFramework.Pages.Html.Templates
         {
             var repeat = new Repeat(dataTypeToRepeat, listScopeName, scopeName);
             BodyActions.Add(repeat.Enact);
+
+            AddDependency(repeat.ListType, scopeName);
 
             if (_repeat != null)
                 _repeatStack.Push(_repeat);

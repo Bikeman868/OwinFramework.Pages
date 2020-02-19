@@ -151,6 +151,27 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         ITemplateDefinition RepeatStart<T>(string scopeName = null, string listScopeName = null);
 
         /// <summary>
+        /// Starts a section that will repeat 0 or 1 times according to the 
+        /// truthiness of a property value
+        /// </summary>
+        ITemplateDefinition RepeatStart(
+            Type dataTypeToRepeat, 
+            string propertyName, 
+            ITruthyEvaluator truthyEvaluator, 
+            string scopeName = null, 
+            string listScopeName = null);
+
+        /// <summary>
+        /// Starts a section that will repeat 0 or 1 times according to the 
+        /// truthiness of a property value
+        /// </summary>
+        ITemplateDefinition RepeatStart<T>(
+            Expression<Func<T, object>> propertyExpression,
+            ITruthyEvaluator truthyEvaluator, 
+            string scopeName = null, 
+            string listScopeName = null);
+        
+        /// <summary>
         /// Closes off a repeating section
         /// </summary>
         ITemplateDefinition RepeatEnd();

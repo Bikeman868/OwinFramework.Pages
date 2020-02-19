@@ -10,6 +10,7 @@ namespace Sample1.SampleDataProviders
     internal class ApplicationInfo
     {
         public string Name { get { return "Sample 1"; } }
+        public string ShowMenu { get { return "Yes"; } }
     }
 
     [IsDataProvider("application", typeof(ApplicationInfo))]

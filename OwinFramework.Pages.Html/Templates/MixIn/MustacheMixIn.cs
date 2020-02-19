@@ -13,11 +13,13 @@ namespace OwinFramework.Pages.Html.Templates
     public class MustacheMixIn
     {
         private readonly Regex _mustacheRegex;
+        private static readonly ITruthyEvaluator _truthyEvaluator = new TruthyEvaluator(true);
+        private static readonly ITruthyEvaluator _notTruthyEvaluator = new TruthyEvaluator(false);
 
         public MustacheMixIn()
         {
             _mustacheRegex = new Regex(
-                @"{{([a-zA-Z0-9=+:.#/ ]+)}}", 
+                @"{{([a-zA-Z0-9=+:.#/\?\! ]+)}}", 
                 RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
         }
 
@@ -86,18 +88,48 @@ namespace OwinFramework.Pages.Html.Templates
 
         private bool TryParseStartRepeat(string mustache, ITemplateDefinition template, Dictionary<string, Type> types)
         {
-            if (mustache.Length == 0 || mustache[0] != '#') return false;
+            if (mustache.Length == 0) return false;
+
+            RepeatType repeatType;
+            switch (mustache[0])
+            {
+                case '#':
+                    repeatType = RepeatType.RepeatList;
+                    break;
+                case '?':
+                    repeatType = RepeatType.IfTrue;
+                    break;
+                case '!':
+                    repeatType = RepeatType.IfNotTrue;
+                    break;
+                default:
+                    return false;
+            }
 
             var indexOfColon = mustache.IndexOf(':');
 
             var typeName = indexOfColon < 0 ? mustache.Substring(1) : mustache.Substring(1, indexOfColon - 1);
-            var scopeName = indexOfColon < 0 ? null : mustache.Substring(indexOfColon + 1);
+            var fieldName = indexOfColon < 0 ? null : mustache.Substring(indexOfColon + 1);
+
+            if (repeatType == RepeatType.RepeatList && fieldName != null)
+                repeatType = RepeatType.IfTrue;
 
             var type = types.ContainsKey(typeName)
                 ? types[typeName]
                 : ResolveTypeName(typeName);
 
-            template.RepeatStart(type, scopeName);
+            switch (repeatType)
+            {
+                case RepeatType.RepeatList:
+                    template.RepeatStart(type);
+                    break;
+                case RepeatType.IfTrue:
+                    template.RepeatStart(type, fieldName, _truthyEvaluator);
+                    break;
+                case RepeatType.IfNotTrue:
+                    template.RepeatStart(type, fieldName, _notTruthyEvaluator);
+                    break;
+            }
 
             return true;
         }
@@ -162,6 +194,35 @@ namespace OwinFramework.Pages.Html.Templates
             }
 
             return type;
+        }
+
+        private class TruthyEvaluator : ITruthyEvaluator
+        {
+            private bool _positiveLogic;
+
+            public TruthyEvaluator(bool positiveLogic)
+            {
+                _positiveLogic = positiveLogic;
+            }
+
+            public bool IsTruthy(PropertyInfo property, object value)
+            {
+                var propertyValue = property.GetValue(value, null);
+                bool result;
+
+                if (property.PropertyType == typeof(bool))
+                    result = (bool)propertyValue;
+
+                else if (property.PropertyType == typeof(int))
+                    result = (int)propertyValue != 0;
+
+                else if (property.PropertyType == typeof(string))
+                    result = !string.IsNullOrEmpty((string)propertyValue);
+
+                else result = propertyValue != null;
+
+                return _positiveLogic ? result : !result;
+            }
         }
     }
 }

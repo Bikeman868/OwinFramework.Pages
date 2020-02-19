@@ -159,25 +159,29 @@ namespace OwinFramework.Pages.Html.Templates
             }
         }
 
-        private class Repeat : BodyActionList
+        private class Repeat: BodyActionList
         {
             public Type RepeatType { get; private set; }
-            public Type ListType { get; private set; }
             public string ListScope { get; private set; }
             public string RepeatScope { get; private set; }
 
-            private Action<IRenderContext>[] _actions;
+            protected Action<IRenderContext>[] _actions;
 
             public Repeat(Type repeatType, string listScope, string repeatScope)
             {
                 RepeatType = repeatType;
                 ListScope = listScope;
                 RepeatScope = repeatScope;
-
-                ListType = typeof(IList<>).MakeGenericType(repeatType);
             }
 
-            public void Enact(IRenderContext context)
+            public bool IsRepeaterOf(Type dataType, string scopeName)
+            {
+                if (dataType != RepeatType) return false;
+                if (string.IsNullOrEmpty(scopeName)) return true;
+                return string.Equals(scopeName, RepeatScope);
+            }
+
+            public virtual void Enact(IRenderContext context)
             {
                 if (_actions == null)
                 {
@@ -192,8 +196,25 @@ namespace OwinFramework.Pages.Html.Templates
                         }
                     }
                 }
+            }
+        }
+
+        private class RepeatList : Repeat
+        {
+            public Type ListType { get; private set; }
+
+            public RepeatList(Type repeatType, string listScope, string repeatScope)
+                : base(repeatType, listScope, repeatScope)
+            {
+                ListType = typeof(IList<>).MakeGenericType(repeatType);
+            }
+
+            public override void Enact(IRenderContext context)
+            {
+                base.Enact(context);
 
                 var list = context.Data.Get(ListType, ListScope) as IEnumerable;
+
                 if (!ReferenceEquals(list, null))
                 {
                     foreach (var item in list)
@@ -204,12 +225,37 @@ namespace OwinFramework.Pages.Html.Templates
                     }
                 }
             }
+        }
 
-            public bool IsRepeaterOf(Type dataType, string scopeName)
+        private class RepeatOnce : Repeat
+        {
+            public PropertyInfo Property { get; private set; }
+            public ITruthyEvaluator TruthyEvaluator { get; private set; }
+
+            public RepeatOnce(
+                Type repeatType, 
+                PropertyInfo property, 
+                ITruthyEvaluator truthyEvaluator , 
+                string listScope, 
+                string repeatScope)
+                : base(repeatType, listScope, repeatScope)
             {
-                if (dataType != RepeatType) return false;
-                if (string.IsNullOrEmpty(scopeName)) return true;
-                return string.Equals(scopeName, RepeatScope);
+                Property = property;
+                TruthyEvaluator = truthyEvaluator;
+            }
+
+            public override void Enact(IRenderContext context)
+            {
+                base.Enact(context);
+
+                var theObject = context.Data.Get(RepeatType, ListScope, false);
+
+                if (TruthyEvaluator.IsTruthy(Property, theObject))
+                {
+                    context.Data.Set(RepeatType, theObject, RepeatScope);
+                    for (var i = 0; i < _actions.Length; i++)
+                        _actions[i](context);
+                }
             }
         }
 
@@ -512,6 +558,18 @@ namespace OwinFramework.Pages.Html.Templates
             return RepeatStart(typeof(T), scopeName, listScopeName);
         }
 
+        public ITemplateDefinition RepeatStart<T>(
+            Expression<Func<T, object>> propertyExpression,
+            ITruthyEvaluator truthyEvaluator, 
+            string scopeName, 
+            string listScopeName)
+        {
+            var expression = (MemberExpression)propertyExpression.Body;
+            var property = (PropertyInfo)expression.Member;
+
+            return RepeatStart(typeof(T), property, truthyEvaluator, scopeName, listScopeName);
+        }
+
         public ITemplateDefinition AddData(Type dataType, string scopeName = null)
         {
             // TODO: Figure out how to do this
@@ -562,10 +620,44 @@ namespace OwinFramework.Pages.Html.Templates
 
         public ITemplateDefinition RepeatStart(Type dataTypeToRepeat, string scopeName, string listScopeName)
         {
-            var repeat = new Repeat(dataTypeToRepeat, listScopeName, scopeName);
+            var repeat = new RepeatList(dataTypeToRepeat, listScopeName, scopeName);
             BodyActions.Add(repeat.Enact);
 
             AddDependency(repeat.ListType, scopeName);
+
+            if (_repeat != null)
+                _repeatStack.Push(_repeat);
+
+            _repeat = repeat;
+
+            return this;
+        }
+
+        public ITemplateDefinition RepeatStart(
+            Type dataTypeToRepeat, 
+            string propertyName, 
+            ITruthyEvaluator truthyEvaluator, 
+            string scopeName = null, 
+            string listScopeName = null)
+        {
+            var property = dataTypeToRepeat.GetProperties().FirstOrDefault(p => string.Equals(p.Name, propertyName, StringComparison.OrdinalIgnoreCase));
+            if (property == null)
+                throw new TemplateBuilderException("Type " + dataTypeToRepeat.DisplayName() + " does not have a public '" + propertyName + "' property");
+
+            return RepeatStart(dataTypeToRepeat, property, truthyEvaluator, scopeName, listScopeName);
+        }
+
+        private ITemplateDefinition RepeatStart(
+            Type dataTypeToRepeat, 
+            PropertyInfo property, 
+            ITruthyEvaluator truthyEvaluator, 
+            string scopeName = null, 
+            string listScopeName = null)
+        {
+            var repeat = new RepeatOnce(dataTypeToRepeat, property, truthyEvaluator, listScopeName, scopeName);
+            BodyActions.Add(repeat.Enact);
+
+            AddDependency(repeat.RepeatType, scopeName);
 
             if (_repeat != null)
                 _repeatStack.Push(_repeat);

@@ -130,6 +130,7 @@
   <ItemGroup>
     <Compile Include="PriusIntegration\PriusErrorReporter.cs" />
     <Compile Include="PriusIntegration\PriusFactory.cs" />
+    <Compile Include="SampleDataProviders\CustomerDataProvider.cs" />
     <Compile Include="SampleDataProviders\VerticalTextDataProvider.cs" />
     <Compile Include="SampleDataProviders\ApplicationInfoDataProvider.cs" />
     <Compile Include="SampleDataProviders\MenuDataProvider.cs" />

@@ -1,11 +1,30 @@
 ﻿{{Menu = OwinFramework.Pages.Standard.MenuPackage+MenuItem}}
 {{App = Sample1.SampleDataProviders.ApplicationInfo}}
+{{Order = Sample1.SampleDataProviders.Order}}
+{{Customer = Sample1.SampleDataProviders.Customer}}
+
+<style>text { font: 20px serif; fill: orange; }</style>
 
 {{?App:ShowMenu}}
-{{#Menu}}
-<svg width="200" height="30">
-	<style>text { font: 20px serif; fill: black; }</style>
-    <text x="0" y="25">{{Menu: Name}}</text>
-</svg>
-{{/Menu}}
+	{{#Menu}}
+		<svg width="200" height="30">
+			<text x="0" y="25">{{Menu: Name}}</text>
+		</svg>
+	{{/Menu}}
 {{/App:ShowMenu}}
+
+<br>
+
+{{Customer}}
+	<svg width="200" height="30">
+		<text x="0" y="25">{{Customer: Name}}</text>
+	</svg>
+{{/Customer}}
+
+<br>
+
+{{#Order}}
+	<svg width="200" height="30">
+		<text x="0" y="25">{{Order: Name}} x {{Order:Quantity}}</text>
+	</svg>
+{{/Order}}

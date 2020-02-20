@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.CMS.Runtime</id>
-    <version>1.3.7</version>
+    <version>1.3.8</version>
     <title>Owin Framework Pages CMS Runtime</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>You must include this package in your website to render pages defined within the CMS</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
-    <releaseNotes>Mustache templates can use {{?Type:Property}}{{/?Type:Property}} to optionally render content based on the truthiness of a data bound property</releaseNotes>
+    <releaseNotes>Fixed some issues with data binding</releaseNotes>
     <license type="expression">Apache-2.0</license>
     <tags>OWIN OwinFramework CMS</tags>
     <dependencies>
@@ -18,14 +18,14 @@
         <dependency id="Urchin.Client" version="1.3.2" />
         <dependency id="Prius" version="2.2.1" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.3.7" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.3.8" />
 	  </group>
       <group targetFramework="net45">
         <dependency id="Newtonsoft.Json" version="7.0.1" />
         <dependency id="Urchin.Client" version="1.3.2" />
         <dependency id="Prius" version="2.2.1" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.3.7" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.3.8" />
       </group>
     </dependencies>
     <references>

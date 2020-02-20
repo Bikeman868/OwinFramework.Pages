@@ -23,21 +23,74 @@ namespace OwinFramework.Pages.Framework.DataModel
         private readonly IIdManager _idManager;
         private readonly IDataCatalog _dataCatalog;
 
-        private DataContextBuilder[] _children;
+        /// <summary>
+        /// If this is a child data context then this points to the parent
+        /// </summary>
         private DataContextBuilder _parent;
 
+
+        /// <summary>
+        /// The children of this data context. If children can not resolve data
+        /// needs and the required data is not in scope for the child then the
+        /// child will defer to this parent etc back up the tree.
+        /// </summary>
+        private DataContextBuilder[] _children;
+
+        /// <summary>
+        /// Defines what data is in scope for this context. When dats is needed
+        /// that is in scope it will be resolved at this level. If the required
+        /// data is not in scope then this context will defer to its parent.
+        /// </summary>
         private readonly List<IDataScope> _dataScopes;
-        private readonly List<IDataSupply> _requiredDataSupplies;
-        private readonly List<SuppliedDependency> _requiredSuppliedDependencies;
+
+        /// <summary>
+        /// The required data supplies are the data that was directly requested by
+        /// the application. This does not include implied or transitory data dependencies
+        /// </summary>
+        private readonly List<IDataSupply> _scopeDataSupplies;
+
+        /// <summary>
+        /// A list of required dependencies and the suppliers that have been identified
+        /// to supply each of these requirements. These are provided by the data scope rules
+        /// (page or region that establishes a new data scope)
+        /// </summary>
+        private readonly List<SuppliedDependency> _scopeSuppliedDependencies;
+
+        /// <summary>
+        /// Data consumers are the things that have data needs that must be met. These
+        /// things can be elements on the page or data suppliers that derive their
+        /// supplied data from other data suppliers
+        /// </summary>
         private readonly List<IDataConsumer> _dataConsumers = new List<IDataConsumer>();
-        private readonly List<IDataSupply> _dataSupplies = new List<IDataSupply>();
+
+        /// <summary>
+        /// These are additional data supplies that were discovered by examining the
+        /// data needs of data supplies identified by the data scope
+        /// </summary>
+        private readonly List<IDataSupply> _additionalSupplies = new List<IDataSupply>();
+
+        /// <summary>
+        /// This is a complete list of all the data dependencies and the suppliers that
+        /// will supply each dependency. These are sorted so that dependents are executed
+        /// before the things that they depend on and this sorted list is stored as the
+        /// list of supplies to execute on every page request.
+        /// </summary>
         private readonly List<SuppliedDependency> _suppliedDependencies = new List<SuppliedDependency>();
 
         /// <summary>
-        /// Note that this is an array because Lists are not thread safe
+        /// These data supplies are executed on every page request in the
+        /// order that thay are listed in this array. The array is sorted according
+        /// to the supplier dependencies so that supplies are only executed after all
+        /// of the supplies that they depend on.
+        /// Note that this is an array because Lists are not thread safe and
+        /// this list is enumerated by request processing threads
         /// </summary>
-        private IDataSupply[] _staticSupplies;
+        private IDataSupply[] _orderedSupplies;
 
+        /// <summary>
+        /// Constructs a builder that can build data contexts that are populated
+        /// with all of the data needed according to a set of data scope rules
+        /// </summary>
         public DataContextBuilder(
             IDataContextFactory dataContextFactory,
             IIdManager idManager,
@@ -56,12 +109,12 @@ namespace OwinFramework.Pages.Framework.DataModel
                 : dataScopes.ToList();
 
             var dataSupplies = dataScopeRules.DataSupplies;
-            _requiredDataSupplies = dataSupplies == null
+            _scopeDataSupplies = dataSupplies == null
                 ? new List<IDataSupply>()
                 : dataSupplies.ToList();
 
             var suppliedDependencies = dataScopeRules.SuppliedDependencies;
-            _requiredSuppliedDependencies = suppliedDependencies == null
+            _scopeSuppliedDependencies = suppliedDependencies == null
                 ? new List<SuppliedDependency>()
                 : suppliedDependencies.Select(sd => new SuppliedDependency(sd)).ToList();
 
@@ -74,16 +127,16 @@ namespace OwinFramework.Pages.Framework.DataModel
                 foreach (var s in _dataScopes) Trace.WriteLine("    " + s);
             }
 
-            if (_requiredDataSupplies.Count > 0)
+            if (_scopeDataSupplies.Count > 0)
             {
                 Trace.WriteLine("Data context builder #" + Id + " data supplies:");
-                foreach (var s in _requiredDataSupplies) Trace.WriteLine("    " + s);
+                foreach (var s in _scopeDataSupplies) Trace.WriteLine("    " + s);
             }
 
-            if (_requiredSuppliedDependencies.Count > 0)
+            if (_scopeSuppliedDependencies.Count > 0)
             {
                 Trace.WriteLine("Data context builder #" + Id + " supplied dependencies:");
-                foreach (var s in _requiredSuppliedDependencies) Trace.WriteLine("    " + s);
+                foreach (var s in _scopeSuppliedDependencies) Trace.WriteLine("    " + s);
             }
 #endif
         }
@@ -151,17 +204,20 @@ namespace OwinFramework.Pages.Framework.DataModel
         /// </summary>
         private void AddSupply(IDataSupply supply)
         {
-            if (_dataSupplies.All(s => s != supply))
-            {
-#if DEBUG
-                Trace.WriteLine("Data context builder #" + Id + " adding supply '" + supply + "'");
-#endif
-                _dataSupplies.Add(supply);
+            if (_scopeDataSupplies.Any(s => s == supply))
+                return;
 
-                var dataConsumer = supply as IDataConsumer;
-                if (dataConsumer != null)
-                    AddConsumer(dataConsumer);
-            }
+            if (_additionalSupplies.Any(s => s == supply))
+                return;
+
+#if DEBUG
+            Trace.WriteLine("Data context builder #" + Id + " adding supply '" + supply + "'");
+#endif
+            _additionalSupplies.Add(supply);
+
+            // If this supply is also a consumer of data then add it to the consumer list
+            if (supply is IDataConsumer dataConsumer)
+                AddConsumer(dataConsumer);
         }
 
         /// <summary>
@@ -172,6 +228,11 @@ namespace OwinFramework.Pages.Framework.DataModel
         {
             if (_suppliedDependencies.Any(s => Equals(s.DataDependency, suppliedDependency.DataDependency)))
                 return;
+
+            if (suppliedDependency.DataDependency == null && 
+                _suppliedDependencies.Any(s => Equals(s.DataSupplier, suppliedDependency.DataSupplier)))
+                return;
+
 #if DEBUG
             Trace.WriteLine("Data context builder #" + Id + " adding supplied dependency '" + suppliedDependency + "'");
 #endif
@@ -188,59 +249,48 @@ namespace OwinFramework.Pages.Framework.DataModel
             Trace.WriteLine("Data context builder #" + Id + " resolving suppliers");
 #endif
 
-            // The required supplies and suppliers are the ones that were directly
+            // The scope supplies and suppliers are the ones that were directly
             // configured for this element in the application.
 
-            foreach (var supply in _requiredDataSupplies) AddSupply(supply);
-            foreach (var supplier in _requiredSuppliedDependencies) AddSuppliedDependency(supplier);
+            foreach (var supply in _scopeDataSupplies) AddSuppliedDependency(new SuppliedDependency(supply));
+            foreach (var supplier in _scopeSuppliedDependencies) AddSuppliedDependency(supplier);
 
             // The next section of code walks down the dependency chains adding
             // all of the suppliers and consumers (which may have other suppliers etc)
-            // After reaching the ends of all the chains it starts to resolve data needs.
             // These resolving activities can result in new supplies or suppliers being
             // added to the supply chain.
 
-            var suppliedDependencyStep1Index = 0;
-            var suppliedDependencyStep2Index = 0;
-            var consumerStep1Index = 0;
-            var consumerStep2Index = 0;
+            var additionalSuppliesIndex = 0;
+            var suppliedDependencyIndex = 0;
+            var consumerIndex = 0;
 
-            var done = false;
-            while (!done)
+            void RecursivelyResolveDataSuppliers()
             {
-                done = true;
-
-                while (suppliedDependencyStep1Index < _suppliedDependencies.Count)
+                var done = false;
+                while (!done)
                 {
-                    var suppliedDependency = _suppliedDependencies[suppliedDependencyStep1Index++];
-                    AddSuppliedDependencySupplies(suppliedDependency);
-                    done = false;
-                }
+                    done = true;
 
-                while (consumerStep1Index < _dataConsumers.Count)
-                {
-                    var consumer = _dataConsumers[consumerStep1Index++];
-                    AddConsumerSupplies(consumer);
-                    done = false;
-                }
-
-                if (done)
-                {
-                    while (suppliedDependencyStep2Index < _suppliedDependencies.Count)
+                    for (; additionalSuppliesIndex < _additionalSupplies.Count; additionalSuppliesIndex++)
                     {
-                        var suppliedDependency = _suppliedDependencies[suppliedDependencyStep2Index++];
-                        ResolveSuppliedDependencyNeeds(suppliedDependency);
+                        AddSuppliedDependency(new SuppliedDependency(_additionalSupplies[additionalSuppliesIndex]));
+                    }
+
+                    for (; suppliedDependencyIndex < _suppliedDependencies.Count; suppliedDependencyIndex++)
+                    {
+                        ResolveSuppliedDependencyNeeds(_suppliedDependencies[suppliedDependencyIndex]);
                         done = false;
                     }
 
-                    while (consumerStep2Index < _dataConsumers.Count)
+                    for (; consumerIndex < _dataConsumers.Count; consumerIndex++)
                     {
-                        var consumer = _dataConsumers[consumerStep2Index++];
-                        ResolveConsumerNeeds(consumer);
+                        ResolveConsumerNeeds(_dataConsumers[consumerIndex]);
                         done = false;
                     }
                 }
             }
+
+            RecursivelyResolveDataSuppliers();
 
             // Now that we know all of the data we are going to supply, the child
             // data needs can be resolved. The children will defer out of scope
@@ -257,69 +307,18 @@ namespace OwinFramework.Pages.Framework.DataModel
             // At this point the list is finalized and can be sorted into the proper
             // execution order to ensure all dependents run before their dependencies.
 
-            var sortedList = GetSuppliedDependenciesOrdered();
+            RecursivelyResolveDataSuppliers();
+            var sortedList = GetSuppliedDependenciesInExecutionOrder();
 
-            foreach (var sd in sortedList)
-                AddSupply(sd.DataSupply);
-
-            // The static supplies are the ones that are executed once only for 
+            // Static supplies are the ones that are executed once only for 
             // each render context to supply data that does not change during the
             // rendering process. There are also dynamic supplies that change at
             // the page is rendered (repeating regions for example).
 
-            _staticSupplies = _dataSupplies.Where(s => s.IsStatic).ToArray();
-        }
-
-        /// <summary>
-        /// Adds dependent supplied dependencies for a supplied dependency
-        /// </summary>
-        private void AddSuppliedDependencySupplies(SuppliedDependency suppliedDependency)
-        {
-            // Nothing to do here, supplied dependencies are ordered to provide
-            // dependencies before the supplies that depend on them. This
-            // happens after the children have resolved their data needs.
-        }
-
-        /// <summary>
-        /// Adds supplies and suppliers that a consumer depends on
-        /// </summary>
-        private void AddConsumerSupplies(IDataConsumer consumer)
-        {
-            var needs = consumer.GetConsumerNeeds();
-            if (needs == null) return;
-
-            var dataSupplyDependencies = needs.DataSupplyDependencies;
-            var dataSupplierDependencies = needs.DataSupplierDependencies;
-
-#if DETAILED_TRACE
-            Trace.WriteLine("Data context builder #" + Id + " adding consumer supplies for " + consumer);
-
-            if (dataSupplyDependencies != null && dataSupplyDependencies.Count > 0)
-            {
-                Trace.WriteLine("  consumer needs data supplies:");
-                foreach (var supply in dataSupplyDependencies)
-                    Trace.WriteLine("    " + supply);
-            }
-
-            if (dataSupplierDependencies != null && dataSupplierDependencies.Count > 0)
-            {
-                Trace.WriteLine("  consumer needs suppliers:");
-                foreach (var supplierDependency in dataSupplierDependencies)
-                    Trace.WriteLine("    " + supplierDependency);
-            }
-#endif
-
-            if (dataSupplyDependencies != null)
-            {
-                foreach (var supply in dataSupplyDependencies)
-                    AddSupply(supply);
-            }
-
-            if (dataSupplierDependencies != null)
-            {
-                foreach (var dataSupplier in dataSupplierDependencies)
-                    AddSuppliedDependency(new SuppliedDependency(dataSupplier));
-            }
+            _orderedSupplies = sortedList
+                .Where(sd => sd.DataSupply != null && sd.DataSupply.IsStatic)
+                .Select(sd => sd.DataSupply)
+                .ToArray();
         }
 
         /// <summary>
@@ -349,7 +348,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         }
 
         /// <summary>
-        /// Resolves all of the data needs of a data consumer and retruns a list of the data
+        /// Resolves all of the data needs of a data consumer and returns a list of the data
         /// supplies that it depends on
         /// </summary>
         private List<IDataSupply> ResolveConsumerNeeds(IDataConsumer consumer)
@@ -515,7 +514,7 @@ namespace OwinFramework.Pages.Framework.DataModel
         /// Returns a list of the supplied dependencies sorted such that all list entries
         /// appear after all of the entries that they depend on
         /// </summary>
-        private IEnumerable<SuppliedDependency> GetSuppliedDependenciesOrdered()
+        private IEnumerable<SuppliedDependency> GetSuppliedDependenciesInExecutionOrder()
         {
             if (_suppliedDependencies == null || _suppliedDependencies.Count == 0)
                 return Enumerable.Empty<SuppliedDependency>();
@@ -568,10 +567,10 @@ namespace OwinFramework.Pages.Framework.DataModel
         /// </summary>
         private void AddDataContext(IRenderContext renderContext, IDataContext dataContext)
         {
-            if (_staticSupplies != null)
+            if (_orderedSupplies != null)
             {
-                for (var i = 0; i < _staticSupplies.Length; i++)
-                    _staticSupplies[i].Supply(renderContext, dataContext);
+                for (var i = 0; i < _orderedSupplies.Length; i++)
+                    _orderedSupplies[i].Supply(renderContext, dataContext);
             }
 
             renderContext.AddDataContext(Id, dataContext);
@@ -642,18 +641,22 @@ namespace OwinFramework.Pages.Framework.DataModel
         private class SuppliedDependency
         {
             /// <summary>
-            /// This is the data provider or region that built the data supply
+            /// This is the data provider or region that built the data supply.
+            /// This can be null if we don't know who the supplier is
             /// </summary>
             public readonly IDataSupplier DataSupplier;
 
             /// <summary>
-            /// This defines the type of data we asked the data supplier to supply
+            /// This defines the type of data we asked the data supplier to supply.
+            /// This can be null if the supply was added by the application without
+            /// specifying the type of data that it was supplying
             /// </summary>
             public readonly IDataDependency DataDependency;
 
             /// <summary>
             /// This is the object that will add data to the data context during
-            /// page rendering operations.
+            /// page rendering operations. This can be null initially before the
+            /// data supply has been obtained from the data supplier.
             /// </summary>
             public readonly IDataSupply DataSupply;
 
@@ -681,8 +684,25 @@ namespace OwinFramework.Pages.Framework.DataModel
             {
             }
 
+            public SuppliedDependency(IDataSupply dataSupply, IDataDependency dataDependency = null)
+            {
+                DataSupply = dataSupply;
+                DataDependency = dataDependency;
+                DataSupplier = null;
+                DependentSupplies = new List<IDataSupply>();
+
+                if (dataSupply == null)
+                    throw new Exception("You cannot have a " + GetType().Name + " that supplies no data");
+            }
+
             public override string ToString()
             {
+                if (DataSupplier == null)
+                {
+                    if (DataDependency == null) return DataSupply.ToString();
+                    return DataSupply + " -> " + DataDependency;
+                }
+
                 if (DataDependency == null) return DataSupplier.ToString();
                 return DataSupplier + " -> " + DataDependency;
             }

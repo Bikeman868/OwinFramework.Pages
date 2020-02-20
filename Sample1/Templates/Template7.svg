@@ -1,0 +1,9 @@
+﻿{{Order = Sample1.SampleDataProviders.Order}}
+
+<style>text { font: 20px serif; fill: orange; }</style>
+
+{{#Order}}
+	<svg width="200" height="30">
+		<text x="0" y="25">{{Order: Name}} x {{Order:Quantity}}</text>
+	</svg>
+{{/Order}}

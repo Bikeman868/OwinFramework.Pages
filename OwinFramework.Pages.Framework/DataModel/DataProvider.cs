@@ -108,7 +108,7 @@ namespace OwinFramework.Pages.Framework.DataModel
             DataConsumer.HasDependency(dataType, scopeName);
         }
 
-        void IDataConsumer.CanUseData<T>(string scopeName = null)
+        void IDataConsumer.CanUseData<T>(string scopeName)
         {
             DataConsumer.CanUseData<T>(scopeName);
         }

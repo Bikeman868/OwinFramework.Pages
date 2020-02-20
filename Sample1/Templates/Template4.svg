@@ -15,14 +15,6 @@
 
 <br>
 
-{{Customer}}
-	<svg width="200" height="30">
-		<text x="0" y="25">{{Customer: Name}}</text>
-	</svg>
-{{/Customer}}
-
-<br>
-
 {{#Order}}
 	<svg width="200" height="30">
 		<text x="0" y="25">{{Order: Name}} x {{Order:Quantity}}</text>

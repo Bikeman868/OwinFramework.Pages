@@ -46,8 +46,8 @@
       "framework": {
         "debugLogging": false,
         "debugLibraries": true,
-        "includeComments": false,
-        "indented": false,
+        "includeComments": true,
+        "indented": true,
         "minifyCss": false
       },
       "cms": {

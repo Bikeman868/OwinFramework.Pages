@@ -6,7 +6,7 @@ namespace OwinFramework.Pages.Core.Interfaces.DataModel
     /// <summary>
     /// This interface is implemented by elements that can establish a new
     /// data scope during the rendering operation. Within the framework the
-    /// Page, Service and zone do this but any application defined element 
+    /// Page, Service and Region do this but any application defined element 
     /// can do this too.
     /// </summary>
     public interface IDataScopeRules

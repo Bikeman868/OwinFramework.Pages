@@ -252,6 +252,15 @@ namespace Sample1.SamplePages
     [NeedsComponent("libraries:Vue")]
     internal class Page2Layout { }
 
+    /// <summary>
+    /// Defines the layout of page 4
+    /// </summary>
+    [IsLayout("page5", "main")]
+    [PartOf("application")]
+    [DeployedAs("content")]
+    [ZoneTemplate("main", "/file/template7")]
+    internal class Page5Layout { }
+
     /*
      * Pages are rendered in response to requests. In order to see your pages
      * you have to define a route for them. Routes can include wildcards and
@@ -316,4 +325,15 @@ namespace Sample1.SamplePages
     [PageTitle("Page 3")]
     [ZoneComponent("body", "math_form")]
     internal class Page3 : PageBase { }
+
+    /// <summary>
+    /// Defines a page that is rendered in response to requets for '/page2'
+    /// Uses the 'main' layout but changes the contents of the 'body' region.
+    /// </summary>
+    [IsPage("page5")]
+    [PartOf("application")]
+    [UsesLayout("page5")]
+    [Route("/page5", Method.Get)]
+    [PageTitle("Page 5")]
+    internal class Page5 : PageBase { }
 }

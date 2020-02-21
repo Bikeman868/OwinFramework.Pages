@@ -469,9 +469,8 @@ namespace OwinFramework.Pages.DebugMiddleware
             bool IFrameworkConfiguration.Indented => true;
             bool IFrameworkConfiguration.IncludeComments => true;
 
-            void IFrameworkConfiguration.Subscribe(Action<IFrameworkConfiguration> action)
-            {
-            }
+            void IFrameworkConfiguration.Subscribe(Action<IFrameworkConfiguration> action) { }
+            void IFrameworkConfiguration.SetAssetVersion(string assetVersion) { }
         }
 
         #endregion

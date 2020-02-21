@@ -86,5 +86,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Adds an action to perform when the framework configuration changes
         /// </summary>
         void Subscribe(Action<IFrameworkConfiguration> action);
+
+        /// <summary>
+        /// This method allows the asset version to be hard-coded into the
+        /// application, configured in a file etc. Setting the asset version
+        /// here will override the asset version in the configuration file.
+        /// </summary>
+        void SetAssetVersion(string assetVersion);
     }
 }

@@ -59,6 +59,8 @@ namespace OwinFramework.Pages.Framework.Configuration
         private readonly List<Action<IFrameworkConfiguration>> _subscribers;
         private readonly IDisposable _configChange;
 
+        private string _assetVersion; 
+
         public FrameworkConfiguration()
         {
             DefaultLanguage = "en-US";
@@ -87,7 +89,7 @@ namespace OwinFramework.Pages.Framework.Configuration
                     AssetRootPath = c.AssetRootPath;
                     ServicesRootPath = c.ServicesRootPath;
                     AssetCacheTime = c.AssetCacheTime;
-                    AssetVersion = c.AssetVersion;
+                    AssetVersion = _assetVersion ?? c.AssetVersion;
                     DebugLogging = c.DebugLogging;
                     DebugLibraries = c.DebugLibraries;
                     TemplateUrlRootPath = c.TemplateUrlRootPath;
@@ -98,9 +100,7 @@ namespace OwinFramework.Pages.Framework.Configuration
                     Indented = c.Indented;
                     IncludeComments = c.IncludeComments;
 
-                    lock (_subscribers)
-                        foreach (var subscriber in _subscribers)
-                            subscriber(this);
+                    NotifySubscribers();
                 },
                 new FrameworkConfiguration());
         }
@@ -110,6 +110,21 @@ namespace OwinFramework.Pages.Framework.Configuration
             if (action == null) return;
             lock (_subscribers) _subscribers.Add(action);
             action(this);
+        }
+
+        public void SetAssetVersion(string version)
+        {
+            _assetVersion = version;
+            AssetVersion = version;
+
+            NotifySubscribers();
+        }
+
+        private void NotifySubscribers()
+        {
+            lock (_subscribers)
+                foreach (var subscriber in _subscribers)
+                    subscriber(this);
         }
 
         #endregion

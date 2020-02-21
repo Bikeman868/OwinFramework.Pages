@@ -129,9 +129,6 @@ namespace OwinFramework.Pages.Html.Runtime
 
         public override void WriteLine(string s)
         {
-            if (_startOfLine && !Indented)
-                s = s.Trim();
-
             WriteIndent();
 
             WriteRaw(s);

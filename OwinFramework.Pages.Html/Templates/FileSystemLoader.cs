@@ -95,9 +95,14 @@ namespace OwinFramework.Pages.Html.Templates
                 }
                 else
                 {
+                    var directory1 = Path.GetDirectoryName(fileSet[0].Item1.FullName);
+                    var directory2 = Path.GetDirectoryName(file.Item1.FullName);
+
                     var file1 = Path.GetFileNameWithoutExtension(fileSet[0].Item1.FullName);
                     var file2 = Path.GetFileNameWithoutExtension(file.Item1.FullName);
-                    if (string.Equals(file1, file2, StringComparison.OrdinalIgnoreCase))
+
+                    if (string.Equals(directory1, directory2, StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(file1, file2, StringComparison.OrdinalIgnoreCase))
                     {
                         fileSet.Add(file);
                     }

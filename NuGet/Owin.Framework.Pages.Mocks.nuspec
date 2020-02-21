@@ -2,14 +2,17 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.Mocks</id>
-    <version>1.3.8</version>
+    <version>1.3.9</version>
     <title>Owin Framework Pages Mocks</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Mock implementations of interfaces in the pages core. You can use these to mock the pages package in your unit tests</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
-    <releaseNotes>Fixed some issues with data binding</releaseNotes>
+    <releaseNotes>
+      Bug fix: Template files with the same name in different folders are no longer combined into one template
+      Bug fix: Templates containing preformatted text are no longer trimmed when indentation is turned off
+    </releaseNotes>
     <projectUrl>http://owinframework.net/content/project/owinframework.pages.mocks/landing</projectUrl>
     <license type="expression">Apache-2.0</license>
     <tags>OWIN OwinFramework Pages Unit-Test</tags>
@@ -19,14 +22,14 @@
         <dependency id="Urchin.Client" version="1.3.2" />
         <dependency id="Moq.Modules" version="1.0.4" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.3.8" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.3.9" />
 	  </group>
       <group targetFramework="net45">
         <dependency id="Newtonsoft.Json" version="7.0.1" />
         <dependency id="Urchin.Client" version="1.3.2" />
         <dependency id="Moq.Modules" version="1.0.4" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.3.8" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.3.9" />
       </group>
     </dependencies>
     <references>

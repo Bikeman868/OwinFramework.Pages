@@ -29,7 +29,9 @@ namespace Sample1.SampleDataProviders
                         new MenuPackage.MenuItem { Name = "Page 1", Url = "/page1" },
                         new MenuPackage.MenuItem { Name = "Page 2", Url = "/page2" },
                         new MenuPackage.MenuItem { Name = "Page 3", Url = "/page3" },
-                        new MenuPackage.MenuItem { Name = "Page 4", Url = "/page4" }
+                        new MenuPackage.MenuItem { Name = "Page 4", Url = "/page4" },
+                        new MenuPackage.MenuItem { Name = "Page 5", Url = "/page5" },
+                        new MenuPackage.MenuItem { Name = "Page 6", Url = "/page6" }
                     }
             };
 

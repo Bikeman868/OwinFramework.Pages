@@ -17,6 +17,8 @@ namespace OwinFramework.Pages.Html.Templates
         private readonly Encoding[] _detectableEncodings;
         protected readonly INameManager _nameManager;
 
+        protected Action<TemplateResource> _preProcessAction;
+
         public PathString RootPath { get; private set; }
         public IPackage Package { get; private set; }
         public IModule Module { get; private set; }
@@ -36,6 +38,8 @@ namespace OwinFramework.Pages.Html.Templates
                     })
                 .Select(e => e.GetEncoding())
                 .ToArray();
+
+            _preProcessAction = resource => { };
 
             AssetDeployment = AssetDeployment.Inherit;
         }
@@ -97,6 +101,16 @@ namespace OwinFramework.Pages.Html.Templates
             ReloadInterval = interval;
             return this;
         }
+
+        public ITemplateLoader PreProcess(Action<TemplateResource> preProcessAction)
+        {
+            if (preProcessAction == null)
+                _preProcessAction = resource => { };
+            else
+                _preProcessAction = preProcessAction;
+            return this;
+        }
+
 
         protected byte[] RemovePreamble(byte[] buffer, out Encoding encoding)
         {

@@ -48,14 +48,14 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// Allows the application to intall a hook that will be called whenever a
         /// template is first loaded or when the template changes
         /// </summary>
-        /// <param name="preprocessFunction">This lambda function will be passed
+        /// <param name="preProcessAction">This lambda function will be passed
         /// a TemplateResource containing the path of the template, the mime type 
         /// of the template asset and the text of the template. The lambda function 
         /// should return a modified version of the template text. This allows you 
         /// to perform search/replace type operations on templates, add common 
         /// headers and footers or any other pre-processing operations on the 
         /// template</param>
-        ITemplateLoader PreProcess(Action<TemplateResource> preProcessAction);
+        ITemplateLoader PreProcess(Action<string, TemplateResource> preProcessAction);
 
         /// <summary>
         /// Loads templates from the template source and parses them using

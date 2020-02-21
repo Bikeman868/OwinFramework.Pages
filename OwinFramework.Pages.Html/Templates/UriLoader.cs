@@ -68,7 +68,7 @@ namespace OwinFramework.Pages.Html.Templates
             Encoding encoding;
             var buffer = LoadUriContents(uri, out encoding);
             var resource = new TemplateResource { Content = buffer, Encoding = encoding };
-            _preProcessAction(resource);
+            _preProcessAction(templatePath, resource);
             var template = parser.Parse(new[] { resource }, Package, Module);
 
             if (!string.IsNullOrEmpty(templatePath))
@@ -157,7 +157,7 @@ namespace OwinFramework.Pages.Html.Templates
                                     if (checksum.Length != templateInfo.Checksum.Length)
                                     {
                                         var resource = new TemplateResource { Content = buffer, Encoding = encoding };
-                                        _preProcessAction(resource);
+                                        _preProcessAction(templateInfo.TemplatePath, resource);
                                         var template = templateInfo.Parser.Parse(new []{ resource }, Package, Module);
                                         _nameManager.Register(template, templateInfo.TemplatePath);
                                         templateInfo.Checksum = checksum;
@@ -169,7 +169,7 @@ namespace OwinFramework.Pages.Html.Templates
                                             if (checksum[j] != templateInfo.Checksum[j])
                                             {
                                                 var resource = new TemplateResource { Content = buffer, Encoding = encoding };
-                                                _preProcessAction(resource);
+                                                _preProcessAction(templateInfo.TemplatePath, resource);
                                                 var template = templateInfo.Parser.Parse(new[] { resource }, Package, Module);
                                                 _nameManager.Register(template, templateInfo.TemplatePath);
                                                 templateInfo.Checksum = checksum;

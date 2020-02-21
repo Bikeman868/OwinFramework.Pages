@@ -17,7 +17,7 @@ namespace OwinFramework.Pages.Html.Templates
         private readonly Encoding[] _detectableEncodings;
         protected readonly INameManager _nameManager;
 
-        protected Action<TemplateResource> _preProcessAction;
+        protected Action<string, TemplateResource> _preProcessAction;
 
         public PathString RootPath { get; private set; }
         public IPackage Package { get; private set; }
@@ -39,7 +39,7 @@ namespace OwinFramework.Pages.Html.Templates
                 .Select(e => e.GetEncoding())
                 .ToArray();
 
-            _preProcessAction = resource => { };
+            _preProcessAction = (path, resource) => { };
 
             AssetDeployment = AssetDeployment.Inherit;
         }
@@ -102,10 +102,10 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
-        public ITemplateLoader PreProcess(Action<TemplateResource> preProcessAction)
+        public ITemplateLoader PreProcess(Action<string, TemplateResource> preProcessAction)
         {
             if (preProcessAction == null)
-                _preProcessAction = resource => { };
+                _preProcessAction = (path, resource) => { };
             else
                 _preProcessAction = preProcessAction;
             return this;

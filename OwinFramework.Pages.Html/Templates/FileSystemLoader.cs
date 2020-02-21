@@ -141,7 +141,7 @@ namespace OwinFramework.Pages.Html.Templates
                 };
                 resources[i].Encoding = encoding;
                 resources[i].ContentType = ContentTypeFromExt(Path.GetExtension(fileNames[i]));
-                _preProcessAction(resources[i]);
+                _preProcessAction(templatePath, resources[i]);
             }
 
             var template = parser.Parse(resources, Package, Module);
@@ -185,7 +185,7 @@ namespace OwinFramework.Pages.Html.Templates
             Encoding encoding;
             var buffer = LoadFileContents(fileName, out encoding);
             var resource = new TemplateResource { Content = buffer, Encoding = encoding };
-            _preProcessAction(resource);
+            _preProcessAction(templatePath, resource);
             var template = parser.Parse(new[] { resource }, Package, Module);
 
             if (!string.IsNullOrEmpty(templatePath))
@@ -314,7 +314,7 @@ namespace OwinFramework.Pages.Html.Templates
 
                                     if (modified)
                                     {
-                                        foreach (var resource in resources) _preProcessAction(resource);
+                                        foreach (var resource in resources) _preProcessAction(templateInfo.TemplatePath, resource);
                                         var template = templateInfo.Parser.Parse(resources, Package, Module);
                                         _nameManager.Register(template, templateInfo.TemplatePath);
                                     }

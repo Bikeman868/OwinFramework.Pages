@@ -10,8 +10,7 @@
     <description>Defines the interfaces, enums and custom attributes that the other packages from Owin.Pages.Framework depend on</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
     <releaseNotes>
-      Template loader provides a pre-processing hook so that applications can modify templates after loading and before parsing
-      The application can have a hard-coded asset version number
+      Workaround for a bug in IE 11
     </releaseNotes>
     <projectUrl>http://owinframework.net/content/project/owinframework.pages.core/landing</projectUrl>
     <license type="expression">Apache-2.0</license>

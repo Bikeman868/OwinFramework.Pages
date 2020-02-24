@@ -10,8 +10,7 @@
     <description>Default implementations of core interfaces that most people will choose to use. You can implement these framework classes yourself if you want to completely define  how the this framework works under the hood, but this is a very advanced use case</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
     <releaseNotes>
-      Template loader provides a pre-processing hook so that applications can modify templates after loading and before parsing
-      The application can have a hard-coded asset version number
+      Workaround for a bug in IE 11
     </releaseNotes>
     <projectUrl>http://owinframework.net/content/project/owinframework.pages.framework/landing</projectUrl>
     <license type="expression">Apache-2.0</license>

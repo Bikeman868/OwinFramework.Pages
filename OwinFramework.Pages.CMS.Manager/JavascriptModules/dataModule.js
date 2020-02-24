@@ -14,13 +14,13 @@
             { name: "websiteVersionId", type: Number, allowNull: true }],
         crud: {
             createRecord: function (environment, onSuccess, onFail, params) {
-                exported.crudService.createEnvironment({ body: environment }, onSuccess, onFail);
+                exported.crudService.createEnvironment({ body: environment }, onSuccess, { onFail: onFail });
             },
             retrieveRecord: function (environmentId, onSuccess, onFail) {
-                exported.crudService.retrieveEnvironment({ id: environmentId }, onSuccess, null, onFail);
+                exported.crudService.retrieveEnvironment({ id: environmentId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
-                exported.listService.environments({}, onSuccess, null, onFail);
+                exported.listService.environments({}, onSuccess, { onFail: onFail });
             },
             updateRecord: function (originalEnvironment, updatedEnvironment, changes, onSuccess, onFail) {
                 exported.crudService.updateEnvironment(
@@ -28,10 +28,10 @@
                         id: updatedEnvironment.recordId,
                         body: changes
                     },
-                    onSuccess, null, onFail);
+                    onSuccess, { onFail: onFail });
             },
             deleteRecord: function (environmentId, onSuccess, onFail) {
-                exported.crudService.deleteEnvironment({ id: environmentId }, onSuccess, null, onFail);
+                exported.crudService.deleteEnvironment({ id: environmentId }, onSuccess, { onFail: onFail });
             }
         }
     });
@@ -49,10 +49,10 @@
             { name: "createdWhen", type: Date, allowNull: true }],
         crud: {
             createRecord: function (websiteVersion, onSuccess, onFail, params) {
-                exported.crudService.createWebsiteVersion({ body: websiteVersion }, onSuccess, onFail);
+                exported.crudService.createWebsiteVersion({ body: websiteVersion }, onSuccess, { onFail: onFail });
             },
             retrieveRecord: function (websiteVersionId, onSuccess, onFail) {
-                exported.crudService.retrieveWebsiteVersion({ id: websiteVersionId }, onSuccess, null, onFail);
+                exported.crudService.retrieveWebsiteVersion({ id: websiteVersionId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
                 exported.listService.websiteVersions({}, onSuccess, null, onFail);
@@ -64,11 +64,11 @@
                             id: updatedWebsiteVersion.recordId,
                             body: changes
                         },
-                        onSuccess, null, onFail);
+                        onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (websiteVersionId, onSuccess, onFail) {
-                exported.crudService.deleteWebsiteVersion({ id: websiteVersionId }, onSuccess, null, onFail);
+                exported.crudService.deleteWebsiteVersion({ id: websiteVersionId }, onSuccess, { onFail: onFail });
             }
         },
         getWebsiteVersionPages: function (websiteVersionId, onSuccess, onFail) {
@@ -77,8 +77,7 @@
             exported.listService.websiteVersionPages(
                 { id: websiteVersionId },
                 function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
-                null,
-                function (ajax) { store.handleGetFail(description, ajax, onFail); });
+                { onFail: function (ajax) { store.handleGetFail(description, ajax, onFail); } });
         }
     });
 
@@ -95,13 +94,13 @@
             { name: "createdWhen", type: Date, allowNull: true }],
         crud: {
             createRecord: function (page, onSuccess, onFail, params) {
-                exported.crudService.createPage({ body: page, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
+                exported.crudService.createPage({ body: page, websiteversionid: params.websiteVersionId }, onSuccess, { onFail: onFail });
             },
             retrieveRecord: function (pageId, onSuccess, onFail) {
-                exported.crudService.retrievePage({ id: pageId }, onSuccess, null, onFail);
+                exported.crudService.retrievePage({ id: pageId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
-                exported.listService.allPages({}, onSuccess, null, onFail);
+                exported.listService.allPages({}, onSuccess, { onFail: onFail });
             },
             updateRecord: function (originalPage, updatedPage, changes, onSuccess, onFail) {
                 if (changes.length > 0) {
@@ -110,11 +109,11 @@
                             id: updatedPage.recordId,
                             body: changes
                         },
-                        onSuccess, null, onFail);
+                        onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (pageId, onSuccess, onFail) {
-                exported.crudService.deletePage({ id: pageId }, onSuccess, null, onFail);
+                exported.crudService.deletePage({ id: pageId }, onSuccess, { onFail: onFail });
             }
         }
     });
@@ -152,19 +151,20 @@
             { name: "dataTypes", type: Array }],
         crud: {
             createRecord: function (pageVersion, onSuccess, onFail, params) {
-                exported.crudService.createPageVersion({
-                    body: pageVersion,
-                    websiteVersionId: params.websiteVersionId,
-                    scenario: params.scenario
-                },
+                exported.crudService.createPageVersion(
+                    {
+                        body: pageVersion,
+                        websiteVersionId: params.websiteVersionId,
+                        scenario: params.scenario
+                    },
                     onSuccess,
-                    onFail);
+                    { onFail: onFail });
             },
             retrieveRecord: function (pageVersionId, onSuccess, onFail) {
-                exported.crudService.retrievePageVersion({ id: pageVersionId }, onSuccess, null, onFail);
+                exported.crudService.retrievePageVersion({ id: pageVersionId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
-                exported.listService.allPageVersions({}, onSuccess, null, onFail);
+                exported.listService.allPageVersions({}, onSuccess, { onFail: onFail });
             },
             updateRecord: function (originalPageVersion, updatedPageVersion, changes, onSuccess, onFail) {
                 if (changes.length > 0) {
@@ -173,11 +173,11 @@
                             id: updatedPageVersion.recordId,
                             body: changes
                         },
-                        onSuccess, null, onFail);
+                        onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (pageVersionId, onSuccess, onFail) {
-                exported.crudService.deletePageVersion({ id: pageVersionId }, onSuccess, null, onFail);
+                exported.crudService.deletePageVersion({ id: pageVersionId }, onSuccess, { onFail: onFail });
             }
         },
         getPageVersions: function (pageId, onSuccess, onFail) {
@@ -186,8 +186,7 @@
             exported.listService.pageVersions(
                 { id: pageId },
                 function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
-                null,
-                function (ajax) { store.handleGetFail(description, ajax, onFail); });
+                { onFail: function (ajax) { store.handleGetFail(description, ajax, onFail); } });
         },
         getWebsitePageVersion: function (websiteVersionId, segmentationScenarioName, pageId, onSuccess, onFail) {
             var store = this;
@@ -207,9 +206,10 @@
                     }
                     if (onFail != undefined) onFail("Failed to get page version for website version");
                 },
-                null,
-                function (ajax) {
-                    if (onFail != undefined) onFail("Failed to get page version for website version");
+                {
+                    onFail: function (ajax) {
+                        if (onFail != undefined) onFail("Failed to get page version for website version");
+                    }
                 });
         }
     });
@@ -228,13 +228,13 @@
             { name: "createdWhen", type: Date, allowNull: true }],
         crud: {
             createRecord: function (layout, onSuccess, onFail, params) {
-                exported.crudService.createLayout({ body: layout, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
+                exported.crudService.createLayout({ body: layout, websiteversionid: params.websiteVersionId }, onSuccess, { onFail: onFail });
             },
             retrieveRecord: function (layoutId, onSuccess, onFail) {
-                exported.crudService.retrieveLayout({ id: layoutId }, onSuccess, null, onFail);
+                exported.crudService.retrieveLayout({ id: layoutId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
-                exported.listService.allLayouts({}, onSuccess, null, onFail);
+                exported.listService.allLayouts({}, onSuccess, { onFail: onFail });
             },
             updateRecord: function (originalLayout, updatedLayout, changes, onSuccess, onFail) {
                 if (changes.length > 0) {
@@ -243,11 +243,11 @@
                             id: updatedLayout.recordId,
                             body: changes
                         },
-                        onSuccess, null, onFail);
+                        onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (layoutId, onSuccess, onFail) {
-                exported.crudService.deleteLayout({ id: layoutId }, onSuccess, null, onFail);
+                exported.crudService.deleteLayout({ id: layoutId }, onSuccess, { onFail: onFail });
             }
         }
     });
@@ -286,11 +286,11 @@
                     websiteVersionId: params.websiteVersionId,
                     scenario: params.scenario
                 },
-                    onSuccess,
-                    onFail);
+                onSuccess,
+                { onFail: onFail });
             },
             retrieveRecord: function (layoutVersionId, onSuccess, onFail) {
-                exported.crudService.retrieveLayoutVersion({ id: layoutVersionId }, onSuccess, null, onFail);
+                exported.crudService.retrieveLayoutVersion({ id: layoutVersionId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
                 exported.listService.allLayoutVersions({}, onSuccess, null, onFail);
@@ -302,11 +302,11 @@
                             id: updatedLayoutVersion.recordId,
                             body: changes
                         },
-                        onSuccess, null, onFail);
+                        onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (layoutVersionId, onSuccess, onFail) {
-                exported.crudService.deleteLayoutVersion({ id: layoutVersionId }, onSuccess, null, onFail);
+                exported.crudService.deleteLayoutVersion({ id: layoutVersionId }, onSuccess, { onFail: onFail });
             }
         },
         getLayoutVersions: function (layoutId, onSuccess, onFail) {
@@ -315,8 +315,10 @@
             exported.listService.layoutVersions(
                 { id: layoutId },
                 function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
-                null,
-                function (ajax) { store.handleGetFail(description, ajax, onFail); });
+                {
+                    onFail:
+                        function (ajax) { store.handleGetFail(description, ajax, onFail); }
+                });
         },
         getWebsiteLayoutVersion: function (websiteVersionId, segmentationScenarioName, layoutId, onSuccess, onFail) {
             var store = this;
@@ -336,9 +338,11 @@
                     }
                     if (onFail != undefined) onFail("Failed to get layout version for website version");
                 },
-                null,
-                function (ajax) {
-                    if (onFail != undefined) onFail("Failed to get layout version for website version");
+                {
+                    onFail:
+                        function (ajax) {
+                            if (onFail != undefined) onFail("Failed to get layout version for website version");
+                        }
                 });
         }
     });
@@ -356,13 +360,13 @@
             { name: "createdWhen", type: Date, allowNull: true }],
         crud: {
             createRecord: function (region, onSuccess, onFail, params) {
-                exported.crudService.createRegion({ body: region, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
+                exported.crudService.createRegion({ body: region, websiteversionid: params.websiteVersionId }, onSuccess, { onFail: onFail });
             },
             retrieveRecord: function (regionId, onSuccess, onFail) {
-                exported.crudService.retrieveRegion({ id: regionId }, onSuccess, null, onFail);
+                exported.crudService.retrieveRegion({ id: regionId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
-                exported.listService.allRegions({}, onSuccess, null, onFail);
+                exported.listService.allRegions({}, onSuccess, { onFail: onFail });
             },
             updateRecord: function (originalRegion, updatedRegion, changes, onSuccess, onFail) {
                 if (changes.length > 0) {
@@ -371,11 +375,11 @@
                             id: updatedRegion.recordId,
                             body: changes
                         },
-                        onSuccess, null, onFail);
+                        onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (regionId, onSuccess, onFail) {
-                exported.crudService.deleteRegion({ id: regionId }, onSuccess, null, onFail);
+                exported.crudService.deleteRegion({ id: regionId }, onSuccess, { onFail: onFail });
             }
         }
     });
@@ -421,14 +425,14 @@
                     websiteVersionId: params.websiteVersionId,
                     scenario: params.scenario
                 },
-                    onSuccess,
-                    onFail);
+                onSuccess,
+                { onFail: onFail });
             },
             retrieveRecord: function (regionVersionId, onSuccess, onFail) {
-                exported.crudService.retrieveRegionVersion({ id: regionVersionId }, onSuccess, null, onFail);
+                exported.crudService.retrieveRegionVersion({ id: regionVersionId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
-                exported.listService.allRegionVersions({}, onSuccess, null, onFail);
+                exported.listService.allRegionVersions({}, onSuccess, { onFail: onFail });
             },
             updateRecord: function (originalRegionVersion, updatedRegionVersion, changes, onSuccess, onFail) {
                 if (changes.length > 0) {
@@ -437,11 +441,11 @@
                             id: updatedRegionVersion.recordId,
                             body: changes
                         },
-                        onSuccess, null, onFail);
+                        onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (regionVersionId, onSuccess, onFail) {
-                exported.crudService.deleteRegionVersion({ id: regionVersionId }, onSuccess, null, onFail);
+                exported.crudService.deleteRegionVersion({ id: regionVersionId }, onSuccess, { onFail: onFail });
             }
         },
         getRegionVersions: function (regionId, onSuccess, onFail) {
@@ -450,8 +454,10 @@
             exported.listService.regionVersions(
                 { id: regionId },
                 function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
-                null,
-                function (ajax) { store.handleGetFail(description, ajax, onFail); });
+                {
+                    onFail:
+                        function (ajax) { store.handleGetFail(description, ajax, onFail); }
+                });
         },
         getWebsiteRegionVersion: function (websiteVersionId, segmentationScenarioName, regionId, onSuccess, onFail) {
             var store = this;
@@ -514,21 +520,21 @@
             { name: "map", type: Array }],
         crud: {
             createRecord: function (test, onSuccess, onFail, params) {
-                exported.segmentTestingService.createTest({ body: test }, onSuccess, onFail);
+                exported.segmentTestingService.createTest({ body: test }, onSuccess, { onFail: onFail });
             },
             retrieveRecord: function (name, onSuccess, onFail) {
-                exported.segmentTestingService.retrieveTest({ name: name }, onSuccess, null, onFail);
+                exported.segmentTestingService.retrieveTest({ name: name }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
-                exported.segmentTestingService.allTests({}, onSuccess, null, onFail);
+                exported.segmentTestingService.allTests({}, onSuccess, { onFail: onFail });
             },
             updateRecord: function (originalTest, updatedTest, changes, onSuccess, onFail) {
                 if (changes.length > 0) {
-                    exported.segmentTestingService.updateTest({ body: updatedTest }, onSuccess, null, onFail);
+                    exported.segmentTestingService.updateTest({ body: updatedTest }, onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (name, onSuccess, onFail) {
-                exported.segmentTestingService.deleteTest({ name: name }, onSuccess, null, onFail);
+                exported.segmentTestingService.deleteTest({ name: name }, onSuccess, { onFail: onFail });
             }
         }
     });
@@ -544,10 +550,10 @@
             { name: "description", type: String, allowNull: true }],
         crud: {
             createRecord: function (scenario, onSuccess, onFail, params) {
-                exported.segmentTestingService.createScenario({ body: scenario }, onSuccess, onFail);
+                exported.segmentTestingService.createScenario({ body: scenario }, onSuccess, { onFail: onFail });
             },
             retrieveRecord: function (name, onSuccess, onFail) {
-                exported.segmentTestingService.retrieveScenario({ name: name }, onSuccess, null, onFail);
+                exported.segmentTestingService.retrieveScenario({ name: name }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
                 exported.segmentTestingService.allScenarios(
@@ -556,16 +562,15 @@
                         response.unshift(null);
                         onSuccess(response);
                     },
-                    null,
-                    onFail);
+                    { onFail: onFail });
             },
             updateRecord: function (originalScenario, updatedScenario, changes, onSuccess, onFail) {
                 if (changes.length > 0) {
-                    exported.segmentTestingService.updateScenario({ body: updatedScenario }, onSuccess, null, onFail);
+                    exported.segmentTestingService.updateScenario({ body: updatedScenario }, onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (name, onSuccess, onFail) {
-                exported.segmentTestingService.deleteScenario({ name: name }, onSuccess, null, onFail);
+                exported.segmentTestingService.deleteScenario({ name: name }, onSuccess, { onFail: onFail });
             }
         }
     });
@@ -584,10 +589,10 @@
             { name: "createdWhen", type: Date, allowNull: true }],
         crud: {
             createRecord: function (component, onSuccess, onFail, params) {
-                exported.crudService.createComponent({ body: component, websiteversionid: params.websiteVersionId }, onSuccess, onFail);
+                exported.crudService.createComponent({ body: component, websiteversionid: params.websiteVersionId }, onSuccess, { onFail: onFail });
             },
             retrieveRecord: function (componentId, onSuccess, onFail) {
-                exported.crudService.retrieveComponent({ id: componentId }, onSuccess, null, onFail);
+                exported.crudService.retrieveComponent({ id: componentId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
                 exported.listService.allComponents({}, onSuccess, null, onFail);
@@ -599,11 +604,11 @@
                             id: updatedComponent.recordId,
                             body: changes
                         },
-                        onSuccess, null, onFail);
+                        onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (componentId, onSuccess, onFail) {
-                exported.crudService.deleteComponent({ id: componentId }, onSuccess, null, onFail);
+                exported.crudService.deleteComponent({ id: componentId }, onSuccess, { onFail: onFail });
             }
         }
     });
@@ -634,13 +639,13 @@
                         scenario: params.scenario
                     },
                     onSuccess,
-                    onFail);
+                    { onFail: onFail });
             },
             retrieveRecord: function (componentVersionId, onSuccess, onFail) {
-                exported.crudService.retrieveComponentVersion({ id: componentVersionId }, onSuccess, null, onFail);
+                exported.crudService.retrieveComponentVersion({ id: componentVersionId }, onSuccess, { onFail: onFail });
             },
             retrieveAllRecords: function (onSuccess, onFail) {
-                exported.listService.allComponentVersions({}, onSuccess, null, onFail);
+                exported.listService.allComponentVersions({}, onSuccess, { onFail: onFail });
             },
             updateRecord: function (originalComponentVersion, updatedComponentVersion, changes, onSuccess, onFail) {
                 if (changes.length > 0) {
@@ -649,11 +654,11 @@
                             id: updatedComponentVersion.recordId,
                             body: changes
                         },
-                        onSuccess, null, onFail);
+                        onSuccess, { onFail: onFail });
                 }
             },
             deleteRecord: function (componentVersionId, onSuccess, onFail) {
-                exported.crudService.deleteComponentVersion({ id: componentVersionId }, onSuccess, null, onFail);
+                exported.crudService.deleteComponentVersion({ id: componentVersionId }, onSuccess, { onFail: onFail });
             }
         },
         getComponentVersions: function (componentId, onSuccess, onFail) {
@@ -662,8 +667,10 @@
             exported.listService.componentVersions(
                 { id: componentId },
                 function (response) { store.handleGetSuccess(description, response, onSuccess, onFail); },
-                null,
-                function (ajax) { store.handleGetFail(description, ajax, onFail); });
+                {
+                    onFail:
+                        function (ajax) { store.handleGetFail(description, ajax, onFail); }
+                });
         },
         getWebsiteComponentVersion: function (websiteVersionId, segmentationScenarioName, componentId, onSuccess, onFail) {
             var store = this;
@@ -683,9 +690,11 @@
                     }
                     if (onFail != undefined) onFail("Failed to get component version for website version");
                 },
-                null,
-                function (ajax) {
-                    if (onFail != undefined) onFail("Failed to get component version for website version");
+                {
+                    onFail:
+                        function (ajax) {
+                            if (onFail != undefined) onFail("Failed to get component version for website version");
+                        }
                 });
         }
     });

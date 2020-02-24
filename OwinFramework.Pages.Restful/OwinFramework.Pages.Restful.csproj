@@ -6,7 +6,7 @@
     <RootNamespace>OwinFramework.Pages.Restful</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.3.12</Version>
+    <Version>1.3.13</Version>
     <Authors>Martin Halliday</Authors>
     <Copyright>Copyright © Martin Halliday 2018-2020</Copyright>
     <PackageProjectUrl>http://owinframework.net/content/project/owinframework.pages.restful/landing</PackageProjectUrl>
@@ -15,7 +15,7 @@
     <Description>Contains build engine plugins that allow the application to define endpoints that respond to RESTful requests</Description>
     <PackageReleaseNotes>Uses new MSBuid format to target multiple platforms</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <AssemblyVersion>1.3.12.0</AssemblyVersion>
+    <AssemblyVersion>1.3.13.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -38,7 +38,7 @@
     <ProjectReference Include="..\OwinFramework.Pages.Core\OwinFramework.Pages.Core.csproj" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="REM echo F|xcopy /Y &quot;$(ProjectDir)bin\debug\net45\$(TargetFileName)&quot; &quot;$(SolutionDir)packages\Owin.Framework.Pages.Restful.1.3.12\lib\net45\$(TargetFileName)&quot;" />
+    <Exec Command="REM echo F|xcopy /Y &quot;$(ProjectDir)bin\debug\net45\$(TargetFileName)&quot; &quot;$(SolutionDir)packages\Owin.Framework.Pages.Restful.1.3.13\lib\net45\$(TargetFileName)&quot;" />
   </Target>
 
 </Project>

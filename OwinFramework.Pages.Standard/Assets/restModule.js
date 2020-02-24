@@ -107,6 +107,10 @@
                         sendAjax(ajax, retry);
                     }
                 } else {
+                    // Note that setting ajax.json is a workaround for an IE 11 bug
+                    if (ajax.json && typeof ajax.response === "string")
+                        ajax.response = JSON.parse(ajax.responseText);
+
                     if (request.isSuccess(ajax)) {
                         request.onSuccess(ajax);
                     } else {

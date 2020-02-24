@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.CMS.Runtime</id>
-    <version>1.3.13</version>
+    <version>1.3.14</version>
     <title>Owin Framework Pages CMS Runtime</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>
@@ -10,8 +10,7 @@
     <description>You must include this package in your website to render pages defined within the CMS</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
     <releaseNotes>
-      Client-side wrappers for service endpoints can pass in the request object adding more flexibility.
-      This is a BREAKING CHANGE if you were previously passing onDone or onFail methods these are now part of the request object
+      More workarounds for bugs in IE 11
     </releaseNotes>
     <license type="expression">Apache-2.0</license>
     <tags>OWIN OwinFramework CMS</tags>
@@ -21,14 +20,14 @@
         <dependency id="Urchin.Client" version="1.3.2" />
         <dependency id="Prius" version="2.2.1" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.3.13" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.3.14" />
 	  </group>
       <group targetFramework="net45">
         <dependency id="Newtonsoft.Json" version="7.0.1" />
         <dependency id="Urchin.Client" version="1.3.2" />
         <dependency id="Prius" version="2.2.1" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.3.13" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.3.14" />
       </group>
     </dependencies>
     <references>

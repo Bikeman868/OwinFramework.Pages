@@ -6,7 +6,7 @@
     <RootNamespace>OwinFramework.Pages.DebugMiddleware</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.3.13</Version>
+    <Version>1.3.14</Version>
     <Authors>Martin Halliday</Authors>
     <Copyright>Copyright © Martin Halliday 2018-2020</Copyright>
     <PackageProjectUrl>http://owinframework.net/content/project/owinframework.pages.debugmiddleware/landing</PackageProjectUrl>
@@ -15,7 +15,7 @@
     <Description>Middleware that shows the internal structure of pages to help with debugging issues with page composition and data provisioning</Description>
     <PackageReleaseNotes>Uses new MSBuid format to target multiple platforms</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <AssemblyVersion>1.3.13.0</AssemblyVersion>
+    <AssemblyVersion>1.3.14.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

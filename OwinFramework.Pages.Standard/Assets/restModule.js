@@ -1,6 +1,7 @@
 ﻿exported.restModule = function () {
     // You can replace this default implementation with your application
-    // specific logic by assiging new values to these variables
+    // specific logic by calling the init() function to assign new values 
+    // to these variables
     var isSessionExpired = function () { return false; }
     var isSuccess = function () { return true; }
     var onRenewSession = function (ajax) { return false; }

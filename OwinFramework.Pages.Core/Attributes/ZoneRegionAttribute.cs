@@ -10,7 +10,7 @@ namespace OwinFramework.Pages.Core.Attributes
     {
         /// <summary>
         /// Constructs and initializes an attribute that defines the region instance
-        /// to place in a region of a layout
+        /// to place in a zone of a layout
         /// </summary>
         /// <param name="zoneName">The name of the zone to populate within the layout</param>
         /// <param name="regionName">The name of the region element to put into this region of the layout</param>

@@ -1,6 +1,7 @@
 ﻿exported.restModule = function () {
     // You can replace this default implementation with your application
-    // specific logic by assiging new values to these variables
+    // specific logic by calling the init() function to assign new values 
+    // to these variables
     var isSessionExpired = function () { return false; }
     var isSuccess = function () { return true; }
     var onRenewSession = function (ajax) { return false; }
@@ -57,10 +58,14 @@
         if (request.contentType != undefined)
             ajax.setRequestHeader("Content-Type", request.contentType);
 
-        if (request.responseType != undefined)
+        // Note that setting ajax.json is a workaround for an IE 11 bug
+        if (request.responseType != undefined) {
             ajax.responseType = request.responseType;
-        else
+            ajax.json = request.responseType === "json";
+        } else {
             ajax.responseType = "json";
+            ajax.json = true;
+        }
 
         if (request.accept != undefined)
             ajax.setRequestHeader("Accept", request.accept);
@@ -103,6 +108,10 @@
                         sendAjax(ajax, retry);
                     }
                 } else {
+                    // Note that setting ajax.json is a workaround for an IE 11 bug
+                    if (ajax.json && typeof ajax.response === "string")
+                        ajax.response = JSON.parse(ajax.responseText);
+
                     if (request.isSuccess(ajax)) {
                         request.onSuccess(ajax);
                     } else {

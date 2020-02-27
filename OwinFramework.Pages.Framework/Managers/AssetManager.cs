@@ -26,6 +26,7 @@ namespace OwinFramework.Pages.Framework.Managers
         private readonly IStringBuilderFactory _stringBuilderFactory;
 
         public string DefaultLanguage { get { return _frameworkConfiguration.DefaultLanguage; } }
+        public Func<string, string, string> AssetVersionFunction { get; set; }
 
         private readonly HashSet<string> _elementsAddedToWebsite;
         private readonly IThreadSafeDictionary<string, HashSet<string>> _elementsAddedToModule;
@@ -77,6 +78,8 @@ namespace OwinFramework.Pages.Framework.Managers
             _moduleFunctionBuilders = dictionaryFactory.Create<string, IStringBuilder>();
             _pageStyleBuilders = dictionaryFactory.Create<string, IStringBuilder>();
             _pageFunctionBuilders = dictionaryFactory.Create<string, IStringBuilder>();
+
+            AssetVersionFunction = (fileName, ext) => fileName + ext + "?v=" + _frameworkConfiguration.AssetVersion;
 
             frameworkConfiguration.Subscribe(config =>
             {
@@ -240,12 +243,12 @@ namespace OwinFramework.Pages.Framework.Managers
             if (type == AssetType.Style)
             {
                 if (!string.IsNullOrEmpty(_websiteStyles))
-                    return new Uri(_rootPath + "/static.css?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
+                    return new Uri(_rootPath + "/" + AssetVersionFunction("static", ".css"), UriKind.Relative);
             }
             else if (type == AssetType.Script)
             {
                 if (!string.IsNullOrEmpty(_websiteFunctions))
-                    return new Uri(_rootPath + "/static.js?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
+                    return new Uri(_rootPath + "/" + AssetVersionFunction("static", ".js"), UriKind.Relative);
             }
             return null;
         }
@@ -257,12 +260,12 @@ namespace OwinFramework.Pages.Framework.Managers
             if (type == AssetType.Style)
             {
                 if (_moduleStyles.ContainsKey(moduleName))
-                    return new Uri(_rootPath + "/module/" + moduleName + ".css?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
+                    return new Uri(_rootPath + "/module/" + AssetVersionFunction(moduleName, ".css"), UriKind.Relative);
             }
             else if (type == AssetType.Script)
             {
                 if (_moduleFunctions.ContainsKey(moduleName))
-                    return new Uri(_rootPath + "/module/" + moduleName + ".js?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
+                    return new Uri(_rootPath + "/module/" + AssetVersionFunction(moduleName, ".js"), UriKind.Relative);
             }
             return null;
         }
@@ -274,12 +277,12 @@ namespace OwinFramework.Pages.Framework.Managers
             if (type == AssetType.Style)
             {
                 if (_moduleStyles.ContainsKey(pageName))
-                    return new Uri(_rootPath + "/page/" + pageName + ".css?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
+                    return new Uri(_rootPath + "/page/" + AssetVersionFunction(pageName, ".css"), UriKind.Relative);
             }
             else if (type == AssetType.Script)
             {
                 if (_pageFunctions.ContainsKey(pageName))
-                    return new Uri(_rootPath + "/page/" + pageName + ".js?v=" + _frameworkConfiguration.AssetVersion, UriKind.Relative);
+                    return new Uri(_rootPath + "/page/" + AssetVersionFunction(pageName, ".js"), UriKind.Relative);
             }
             return null;
         }

@@ -17,6 +17,14 @@ namespace OwinFramework.Pages.Core.Interfaces.Managers
         string DefaultLanguage { get; }
 
         /// <summary>
+        /// By default the asset version number is added to the asset URL
+        /// as a query string parameter. You can store a custom function here
+        /// to override that behavior. The parameters passed to the function
+        /// are the asset file name and the asset file extension.
+        /// </summary>
+        Func<string, string, string> AssetVersionFunction { get; set; }
+
+        /// <summary>
         /// Examines the browser accepted languages and selects the
         /// language for output rendering
         /// </summary>

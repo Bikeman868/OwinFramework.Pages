@@ -12,7 +12,7 @@ namespace OwinFramework.Pages.Html.Elements
 {
     internal class PageLayout: PageElement
     {
-        private readonly IThreadSafeDictionary<string, PageZone> _zones;
+        private readonly IThreadSafeDictionary<string, PageLayoutZone> _zones;
 
         public PageLayout(
             PageElementDependencies dependencies,
@@ -24,7 +24,7 @@ namespace OwinFramework.Pages.Html.Elements
         {
             pageData.BeginAddElement(Element);
 
-            _zones = dependencies.DictionaryFactory.Create<string, PageZone>(StringComparer.OrdinalIgnoreCase);
+            _zones = dependencies.DictionaryFactory.Create<string, PageLayoutZone>(StringComparer.OrdinalIgnoreCase);
 
             var regionElementList = regionElements == null
                 ? new List<Tuple<string, IRegion, IElement>>() 
@@ -39,7 +39,7 @@ namespace OwinFramework.Pages.Html.Elements
                 var region = regionElement == null ? layout.GetRegion(name) : regionElement.Item2;
                 var element = regionElement == null ? layout.GetElement(name) : regionElement.Item3;
 
-                var pageRegion = new PageZone(dependencies, this, region, element, pageData);
+                var pageRegion = new PageLayoutZone(dependencies, this, region, element, pageData);
                 _zones[zoneName] = pageRegion;
             }
 
@@ -76,17 +76,16 @@ namespace OwinFramework.Pages.Html.Elements
             var layout = Element as ILayout;
             if (ReferenceEquals(layout, null)) return WriteResult.Continue();
 
-            return layout.WritePageArea(renderContext, pageArea, WriteRegion);
+            return layout.WritePageArea(renderContext, pageArea, WriteZone);
         }
 
-        private IWriteResult WriteRegion(
+        private IWriteResult WriteZone(
             IRenderContext renderContext,
             PageArea pageArea,
             string zoneName)
         {
-            PageZone pageRegion;
-            if (_zones.TryGetValue(zoneName, out pageRegion))
-                return pageRegion.WritePageArea(renderContext, pageArea);
+            if (_zones.TryGetValue(zoneName, out PageLayoutZone pageZone))
+                return pageZone.WritePageArea(renderContext, pageArea);
 
             return WriteResult.Continue();
         }

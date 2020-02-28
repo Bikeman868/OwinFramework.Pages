@@ -1002,7 +1002,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 {
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,
-                        (nm, l, rc) => l.PopulateElement(rc.ZoneName, nm.ResolveComponent(rc.Component, l.Package)),
+                        (nm, l, rc) => l.SetZoneElement(rc.ZoneName, nm.ResolveComponent(rc.Component, l.Package)),
                         layout,
                         regionComponent);
                 }
@@ -1014,7 +1014,7 @@ namespace OwinFramework.Pages.Framework.Builders
                 {
                     _nameManager.AddResolutionHandler(
                         NameResolutionPhase.ResolveElementReferences,
-                        (nm, l, rl) => l.PopulateElement(rl.ZoneName, nm.ResolveComponent(rl.LayoutName, l.Package)),
+                        (nm, l, rl) => l.SetZoneElement(rl.ZoneName, nm.ResolveComponent(rl.LayoutName, l.Package)),
                         layout,
                         regionLayout);
                 }

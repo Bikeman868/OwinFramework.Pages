@@ -13,7 +13,7 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// Base implementation of ILayout. Applications inherit from this olass 
+    /// Base implementation of ILayout. Applications inherit from this class 
     /// to insulate their code from any future additions to the ILayout interface
     /// </summary>
     public class Layout : Element, ILayout
@@ -53,35 +53,48 @@ namespace OwinFramework.Pages.Html.Elements
             return base.PopulateDebugInfo<T>(debugLayout, parentDepth, childDepth);
         }
 
-        public void PopulateZone(string zoneName, IRegion region)
-        {
-            RegionsByZoneName[zoneName] = region;
-            PopulateElement(zoneName, region.Content);
-        }
-
         public IEnumerable<string> GetZoneNames()
         {
             return RegionsByZoneName.Keys;
         }
 
-        public void PopulateElement(string zoneName, IElement element)
+        /// <summary>
+        /// Adds a new zone to the layout and specifies the region that defines
+        /// how this zone will behave. If the region has content this also defines
+        /// the content of the zone, or this can be defined separately.
+        /// </summary>
+        public void AddZone(string zoneName, IRegion region)
+        {
+            RegionsByZoneName[zoneName] = region;
+            SetZoneElement(zoneName, region.Content);
+        }
+
+        /// <summary>
+        /// Defines the contents of a zone. If you dont call this method then the
+        /// zone will contain the default content of the region
+        /// </summary>
+        public void SetZoneElement(string zoneName, IElement element)
         {
             ElementsByZoneName[zoneName] = element;
         }
 
+        /// <summary>
+        /// Gets the region element that defines the behavior of a zone of the layout
+        /// </summary>
         public IRegion GetRegion(string zoneName)
         {
-            IRegion region;
-            if (!RegionsByZoneName.TryGetValue(zoneName, out region))
+            if (!RegionsByZoneName.TryGetValue(zoneName, out IRegion region))
                 throw new Exception("Layout does not have a '" + zoneName + "' zone");
 
             return region;
         }
 
+        /// <summary>
+        /// Gets the element that will be rendered into a zone of the layout
+        /// </summary>
         public IElement GetElement(string zoneName)
         {
-            IElement element;
-            if (!ElementsByZoneName.TryGetValue(zoneName, out element))
+            if (!ElementsByZoneName.TryGetValue(zoneName, out IElement element))
                 throw new Exception("Layout does not have a '" + zoneName + "' zone");
 
             return element;
@@ -108,12 +121,7 @@ namespace OwinFramework.Pages.Html.Elements
             }
             else
             {
-                // This looks inefficient but only happens during initial configuration.
-                // Making the visual elements collection an array avoids the need for locking
-                // when rendering pages
-                var list = _visualElements.ToList();
-                list.Add(visualElement);
-                _visualElements = list.ToArray();
+                _visualElements = _visualElements.Concat(Enumerable.Repeat(visualElement, 1)).ToArray();
             }
         }
 

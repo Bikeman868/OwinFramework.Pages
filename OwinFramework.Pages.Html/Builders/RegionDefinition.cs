@@ -291,12 +291,38 @@ namespace OwinFramework.Pages.Html.Builders
                 throw new PageBuilderException("You must provide a zone name when configuring region layout zones");
 
             if (string.IsNullOrEmpty(layoutName))
-                throw new PageBuilderException("You must provide a component name when configuring a region layout zone");
+                throw new PageBuilderException("You must provide a layout name when configuring a region layout zone");
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences, 
                 (nm, n) => ZoneLayout(zoneName, nm.ResolveLayout(n, _region.Package)),
                 layoutName);
+
+            return this;
+        }
+
+        public IRegionDefinition ZoneRegion(string zoneName, IRegion region)
+        {
+            if (_region.LayoutZones == null)
+                _region.LayoutZones = new Dictionary<string, IElement>(StringComparer.OrdinalIgnoreCase);
+
+            _region.LayoutZones[zoneName] = region;
+
+            return this;
+        }
+
+        IRegionDefinition IRegionDefinition.ZoneRegion(string zoneName, string regionName)
+        {
+            if (string.IsNullOrEmpty(zoneName))
+                throw new PageBuilderException("You must provide a zone name when configuring region layout zones");
+
+            if (string.IsNullOrEmpty(regionName))
+                throw new PageBuilderException("You must provide a region name when configuring a region layout zone");
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences, 
+                (nm, n) => ZoneRegion(zoneName, nm.ResolveRegion(n, _region.Package)),
+                regionName);
 
             return this;
         }

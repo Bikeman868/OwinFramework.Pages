@@ -473,6 +473,14 @@ namespace OwinFramework.Pages.Framework.Builders
                 }
             }
 
+            if (!ReferenceEquals(attributes.LayoutRegions, null))
+            {
+                foreach (var zoneRegion in attributes.LayoutRegions)
+                {
+                    page.ZoneRegion(zoneRegion.ZoneName, zoneRegion.RegionName);
+                }
+            }
+
             if (!ReferenceEquals(attributes.ZoneTemplates, null))
             {
                 foreach (var zoneTemplate in attributes.ZoneTemplates)
@@ -616,6 +624,14 @@ namespace OwinFramework.Pages.Framework.Builders
                     foreach (var regionLayout in attributes.ZoneLayouts)
                     {
                         region.ZoneLayout(regionLayout.ZoneName, regionLayout.LayoutName);
+                    }
+                }
+
+                if (!ReferenceEquals(attributes.LayoutRegions, null))
+                {
+                    foreach (var zoneRegion in attributes.LayoutRegions)
+                    {
+                        region.ZoneRegion(zoneRegion.ZoneName, zoneRegion.RegionName);
                     }
                 }
 

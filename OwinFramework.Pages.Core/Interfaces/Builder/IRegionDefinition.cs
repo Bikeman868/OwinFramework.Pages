@@ -110,27 +110,39 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         
         /// <summary>
         /// Overrides the default contents of one of the zone in the layout
-        /// layout with a specific component
+        /// within the region with a specific component
         /// </summary>
         IRegionDefinition ZoneComponent(string zoneName, IComponent component);
 
         /// <summary>
         /// Overrides the default contents of one of the zones in the layout
-        /// layout with a named component
+        /// within the region with a named component
         /// </summary>
         IRegionDefinition ZoneComponent(string zoneName, string componentName);
 
         /// <summary>
         /// Overrides the default contents of one of the zones in the layout
-        /// layout with a specific layout
+        /// within the region with a specific layout
         /// </summary>
         IRegionDefinition ZoneLayout(string zoneName, ILayout layout);
 
         /// <summary>
         /// Overrides the default contents of one of the zones in the layout
-        /// layout with a named layout
+        /// within the region with a named layout
         /// </summary>
         IRegionDefinition ZoneLayout(string zoneName, string layoutName);
+
+        /// <summary>
+        /// Overrides the default contents of one of the zones in the layout
+        /// within the region with a specific region
+        /// </summary>
+        IRegionDefinition ZoneRegion(string zoneName, IRegion region);
+
+        /// <summary>
+        /// Overrides the default contents of one of the zones in the layout
+        /// within the region with a named region
+        /// </summary>
+        IRegionDefinition ZoneRegion(string zoneName, string regionName);
 
         /// <summary>
         /// Populates a zone of the layout with static Html avoiding the need

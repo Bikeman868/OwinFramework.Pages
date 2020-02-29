@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
@@ -9,7 +10,11 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal class PageLayoutZone : PageElement, IDataSupplier, IDataSupply, IDataScopeRules
+    /// <summary>
+    /// This is the runtime version of a region and is specific to an instance of 
+    /// the region on a specific page
+    /// </summary>
+    internal class PageRegion : PageElement, IDataSupplier, IDataSupply, IDataScopeRules
     {
         private readonly IDataContextBuilder _dataContextBuilder;
         private readonly Func<IRenderContext, PageArea, IWriteResult> _writeContent;
@@ -17,7 +22,7 @@ namespace OwinFramework.Pages.Html.Elements
         private IRegion Region { get { return (IRegion)Element; } }
         private IDataScopeRules ElementDataScopeRules { get { return Element as IDataScopeRules; } }
 
-        public PageLayoutZone(
+        public PageRegion(
             PageElementDependencies dependencies,
             PageElement parent,
             IRegion region, 
@@ -33,7 +38,15 @@ namespace OwinFramework.Pages.Html.Elements
 
             if (layout != null)
             {
-                var pageLayout = new PageLayout(dependencies, this, layout, null, pageData);
+                var regionElements = region.LayoutZones == null 
+                    ? null
+                    : layout.GetZoneNames()
+                        .Select(z => new { z, e = region.LayoutZones.TryGetValue(z, out var element) ? element : null })
+                        .Where(o => o.e != null)
+                        .Select(o => new Tuple<string, IRegion, IElement>(o.z, null, o.e))
+                        .ToList();
+
+                var pageLayout = new PageLayout(dependencies, this, layout, regionElements, pageData);
                 _writeContent = pageLayout.WritePageArea;
                 Children = new PageElement[] { pageLayout };
             }

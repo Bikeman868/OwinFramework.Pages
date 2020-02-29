@@ -9,7 +9,8 @@ using System.Collections.Generic;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// This class is responsible for rendering an IComponent onto a page
+    /// This is the runtime version of a component and is specific to an instance of 
+    /// the component on a specific page
     /// </summary>
     internal class PageComponent : PageElement
     {

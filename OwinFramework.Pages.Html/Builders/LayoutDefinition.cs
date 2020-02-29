@@ -472,7 +472,7 @@ namespace OwinFramework.Pages.Html.Builders
                         region = nameManager.ResolveRegion((string)region, _layout.Package);
 
                     if (region == null)
-                        region = new LayoutZoneRegion(_regionDependenciesFactory);
+                        region = new Region(_regionDependenciesFactory);
 
                     _layout.AddZone(zone.ZoneName, (IRegion)region);
                 }

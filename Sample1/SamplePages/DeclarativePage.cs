@@ -219,28 +219,36 @@ namespace Sample1.SamplePages
     internal class HeaderLayout { }
 
     /// <summary>
-    /// Defines the layout of the 'body' region for page 1
+    /// Defines a generic 2-column layout that cn be reused
     /// </summary>
-    [IsLayout("page1Body", "left,main")]
+    [IsLayout("twoColumn", "left,main")]
     [PartOf("application")]
     [DeployedAs("content")]
     [Container("div", "2col.vertical.fixed")]
     [ZoneRegion("left", "leftColumn")]
     [ZoneRegion("main", "rightColumn")]
+    [NeedsComponent("libraries:Redux")]
+    internal class TwoColumnLayout { }
+
+    /// <summary>
+    /// Defines the layout of the 'body' region for page 1
+    /// </summary>
+    [IsRegion("page1Body")]
+    [PartOf("application")]
+    [DeployedAs("content")]
+    [UsesLayout("twoColumn")]
     [ZoneComponent("left", "sidebar1")]
     [ZoneComponent("main", "page1Body")]
     [NeedsComponent("libraries:Redux")]
-    internal class Page1Layout { }
+    internal class Page1Region { }
 
     /// <summary>
     /// Defines the layout of the 'body' region for page 2
     /// </summary>
-    [IsLayout("page2Body", "left,main")]
+    [IsRegion("page2Body")]
     [PartOf("application")]
     [DeployedAs("content")]
-    [Container("div", "2col.vertical.fixed")]
-    [ZoneRegion("left", "leftColumn")]
-    [ZoneRegion("main", "rightColumn")]
+    [UsesLayout("twoColumn")]
     [ZoneComponent("left", "sidebar2")]
     //[ZoneTemplate("main", "/page2/body")]
     [ZoneTemplate("main", "/file/template1")]
@@ -250,7 +258,7 @@ namespace Sample1.SamplePages
     //[ZoneTemplate("main", "/file/template5")]
     //[ZoneTemplate("main", "/file/template6")]
     [NeedsComponent("libraries:Vue")]
-    internal class Page2Layout { }
+    internal class Page2Region { }
 
     /// <summary>
     /// Defines the layout of page 4
@@ -295,7 +303,7 @@ namespace Sample1.SamplePages
     [Route("/page1", Method.Get)]
     [PageTitle("Page 1")]
     [Style("color: darkred;")]
-    [ZoneLayout("body", "page1Body")]
+    [ZoneRegion("body", "page1Body")]
     [NeedsComponent("libraries:jQuery")]
     [NeedsComponent("libraries:React")]
     [NeedsComponent("libraries:AngularJS")]
@@ -313,7 +321,7 @@ namespace Sample1.SamplePages
     [Route("/page2", Method.Get)]
     [PageTitle("Page 2")]
     [Style("color: darkblue;")]
-    [ZoneLayout("body", "page2Body")]
+    [ZoneRegion("body", "page2Body")]
     internal class Page2 : PageBase { }
 
     /// <summary>

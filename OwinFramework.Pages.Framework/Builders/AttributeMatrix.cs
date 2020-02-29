@@ -87,6 +87,12 @@ namespace OwinFramework.Pages.Framework.Builders
         {
             _attributeDefinitions = new Dictionary<Type, AttributeDefinition>();
 
+            Add<CacheOutputAttribute>("You can only define caching for elements that produce complete responses to Http requests.")
+                .Valid<IPageDefinition>()
+                .Valid<IServiceDefinition>()
+                .Valid<IPage>()
+                .Valid<IService>();
+
             Add<ChildContainerAttribute>("The [ChildContainerAttribute] only applies to elements that have other elements within them. To change the html element for this element add the [Container] attribute.")
                 .Valid<ILayoutDefinition>()
                 .Valid<ILayout>()
@@ -131,6 +137,9 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<IRegionDefinition>()
                 .Invalid<IModuleDefinition>("Modules can not contain other modules.");
 
+            Add<GenerateClientScriptAttribute>("You can only add this attribute to service definitions. It instructs the service builder to generate client-side JavaScript for the service.")
+                .Valid<IServiceDefinition>();
+
             Add<NeedsComponentAttribute>()
                 .Valid<IComponentDefinition>()
                 .Valid<ILayoutDefinition>()
@@ -159,28 +168,6 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<IServiceDefinition>()
                 .Invalid<IModuleDefinition>("Modules and Packages are distinctly different ways of grouping elements, you can not put a module into a package.")
                 .Invalid<IPackageDefinition>("Packages can not contain other packages.");
-
-            Add<ZoneComponentAttribute>()
-                .Valid<ILayoutDefinition>()
-                .Valid<IPageDefinition>()
-                .Valid<ILayout>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have zones");
-            
-            Add<ZoneHtmlAttribute>()
-                .Valid<ILayoutDefinition>()
-                .Valid<IPageDefinition>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have zones");
-
-            Add<ZoneTemplateAttribute>()
-                .Valid<ILayoutDefinition>()
-                .Valid<IPageDefinition>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have zones");
-
-            Add<ZoneLayoutAttribute>()
-                .Valid<ILayoutDefinition>()
-                .Valid<IPageDefinition>()
-                .Valid<ILayout>()
-                .Invalid<IRegionDefinition>("Regions only contain a single element, only layouts have zones");
 
             Add<RenderHtmlAttribute>()
                 .Valid<IComponentDefinition>()
@@ -215,12 +202,6 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Valid<IRegionDefinition>()
                 .Invalid<IComponentDefinition>("Components do not render any Html elements that this style could be applied to. Specify the style within the Html that is rendered by the component.");
 
-            Add<CacheOutputAttribute>("You can only define caching for elements that produce complete responses to Http requests.")
-                .Valid<IPageDefinition>()
-                .Valid<IServiceDefinition>()
-                .Valid<IPage>()
-                .Valid<IService>();
-
             Add<SuppliesDataAttribute>()
                 .Valid<IDataProviderDefinition>();
 
@@ -241,12 +222,40 @@ namespace OwinFramework.Pages.Framework.Builders
                 .Invalid<IPageDefinition>("Please use the [ZoneTemplate] attribute instead so that the zone name can be specified.")
                 .Invalid<ILayoutDefinition>("Please use the [ZoneTemplate] attribute instead so that the zone name can be specified.");
 
+            Add<ZoneComponentAttribute>()
+                .Valid<ILayoutDefinition>()
+                .Valid<IPageDefinition>()
+                .Valid<IRegionDefinition>()
+                .Valid<ILayout>()
+                .Valid<IRegion>();
+            
+            Add<ZoneHtmlAttribute>()
+                .Valid<ILayoutDefinition>()
+                .Valid<IPageDefinition>()
+                .Valid<IRegionDefinition>()
+                .Valid<ILayout>()
+                .Valid<IRegion>();
+
             Add<ZoneRegionAttribute>()
                 .Valid<ILayoutDefinition>()
-                .Invalid<IPageDefinition>("Pages can only directly contain layouts. The layout defines the regions. Pages can override the contents of the layout regions using [ZoneTemplate], [ZoneLayout] and [ZoneComponent] attributes.");
+                .Valid<IPageDefinition>()
+                .Valid<IRegionDefinition>()
+                .Valid<ILayout>()
+                .Valid<IRegion>();
 
-            Add<GenerateClientScriptAttribute>("You can only add this attribute to service definitions. It instructs the service builder to generate client-side JavaScript for the service.")
-                .Valid<IServiceDefinition>();
+            Add<ZoneTemplateAttribute>()
+                .Valid<ILayoutDefinition>()
+                .Valid<IPageDefinition>()
+                .Valid<IRegionDefinition>()
+                .Valid<ILayout>()
+                .Valid<IRegion>();
+
+            Add<ZoneLayoutAttribute>()
+                .Valid<ILayoutDefinition>()
+                .Valid<IPageDefinition>()
+                .Valid<IRegionDefinition>()
+                .Valid<ILayout>()
+                .Valid<IRegion>();
         }
 
         private AttributeDefinition Add<T>(string usageMessage = null)

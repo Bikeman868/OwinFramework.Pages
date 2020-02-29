@@ -11,11 +11,12 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// This class is responsible for rendering an ILayout onto a page
+    /// This is the runtime version of a layout and is specific to an instance of 
+    /// the layout on a specific page
     /// </summary>
     internal class PageLayout: PageElement
     {
-        private readonly IThreadSafeDictionary<string, PageRegionElement> _pageLayoutZones;
+        private readonly IThreadSafeDictionary<string, PageRegion> _zones;
 
         public PageLayout(
             PageElementDependencies dependencies,
@@ -27,7 +28,7 @@ namespace OwinFramework.Pages.Html.Elements
         {
             pageData.BeginAddElement(Element);
 
-            _pageLayoutZones = dependencies.DictionaryFactory.Create<string, PageRegionElement>(StringComparer.OrdinalIgnoreCase);
+            _zones = dependencies.DictionaryFactory.Create<string, PageRegion>(StringComparer.OrdinalIgnoreCase);
 
             var regionElementList = regionElements == null
                 ? new List<Tuple<string, IRegion, IElement>>() 
@@ -39,13 +40,14 @@ namespace OwinFramework.Pages.Html.Elements
                 var regionElement = regionElementList.FirstOrDefault(
                     re => string.Equals(re.Item1, name, StringComparison.OrdinalIgnoreCase));
 
-                var region = regionElement == null || regionElement.Item2 == null ? layout.GetRegion(name) : regionElement.Item2;
-                var element = regionElement == null || regionElement.Item3 == null ? layout.GetElement(name) : regionElement.Item3;
+                var region = regionElement?.Item2 ?? layout.GetRegion(name);
+                var element = regionElement?.Item3 ?? layout.GetElement(name);
 
-                _pageLayoutZones[zoneName] = new PageRegionElement(dependencies, this, region, element, pageData);
+                var pageRegion = new PageRegion(dependencies, this, region, element, pageData);
+                _zones[zoneName] = pageRegion;
             }
 
-            Children = _pageLayoutZones.Values.ToArray();
+            Children = _zones.Values.ToArray();
 
             pageData.EndAddElement(Element);
         }
@@ -56,7 +58,7 @@ namespace OwinFramework.Pages.Html.Elements
 
             if (childDepth != 0)
             {
-                debugLayout.Children = _pageLayoutZones
+                debugLayout.Children = _zones
                     .Select(kvp =>
                         new DebugLayoutRegion
                         {
@@ -86,8 +88,8 @@ namespace OwinFramework.Pages.Html.Elements
             PageArea pageArea,
             string zoneName)
         {
-            if (_pageLayoutZones.TryGetValue(zoneName, out PageRegionElement pageLayoutZone))
-                return pageLayoutZone.WritePageArea(renderContext, pageArea);
+            if (_zones.TryGetValue(zoneName, out PageRegion pageZone))
+                return pageZone.WritePageArea(renderContext, pageArea);
 
             return WriteResult.Continue();
         }

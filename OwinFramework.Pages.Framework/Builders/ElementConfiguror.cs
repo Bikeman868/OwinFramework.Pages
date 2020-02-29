@@ -459,25 +459,41 @@ namespace OwinFramework.Pages.Framework.Builders
 
             if (!ReferenceEquals(attributes.ZoneComponents, null))
             {
-                foreach (var regionComponent in attributes.ZoneComponents)
+                foreach (var zoneComponent in attributes.ZoneComponents)
                 {
-                    page.ZoneComponent(regionComponent.ZoneName, regionComponent.Component);
+                    page.ZoneComponent(zoneComponent.ZoneName, zoneComponent.Component);
                 }
             }
 
             if (!ReferenceEquals(attributes.ZoneLayouts, null))
             {
-                foreach (var regionLayout in attributes.ZoneLayouts)
+                foreach (var zoneLayout in attributes.ZoneLayouts)
                 {
-                    page.ZoneLayout(regionLayout.ZoneName, regionLayout.LayoutName);
+                    page.ZoneLayout(zoneLayout.ZoneName, zoneLayout.LayoutName);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.LayoutRegions, null))
+            {
+                foreach (var zoneRegion in attributes.LayoutRegions)
+                {
+                    page.ZoneRegion(zoneRegion.ZoneName, zoneRegion.RegionName);
                 }
             }
 
             if (!ReferenceEquals(attributes.ZoneTemplates, null))
             {
-                foreach (var regionTemplate in attributes.ZoneTemplates)
+                foreach (var zoneTemplate in attributes.ZoneTemplates)
                 {
-                    page.ZoneTemplate(regionTemplate.ZoneName, regionTemplate.TemplatePath);
+                    page.ZoneTemplate(zoneTemplate.ZoneName, zoneTemplate.TemplatePath);
+                }
+            }
+
+            if (!ReferenceEquals(attributes.ZoneHtmls, null))
+            {
+                foreach (var zoneHtml in attributes.ZoneHtmls)
+                {
+                    page.ZoneHtml(zoneHtml.ZoneName, zoneHtml.LocalizationId, zoneHtml.Html);
                 }
             }
 
@@ -594,6 +610,46 @@ namespace OwinFramework.Pages.Framework.Builders
             {
                 region.Layout(attributes.UsesLayout.LayoutName);
                 contentSpecified = true;
+
+                if (!ReferenceEquals(attributes.ZoneComponents, null))
+                {
+                    foreach (var regionComponent in attributes.ZoneComponents)
+                    {
+                        region.ZoneComponent(regionComponent.ZoneName, regionComponent.Component);
+                    }
+                }
+
+                if (!ReferenceEquals(attributes.ZoneLayouts, null))
+                {
+                    foreach (var regionLayout in attributes.ZoneLayouts)
+                    {
+                        region.ZoneLayout(regionLayout.ZoneName, regionLayout.LayoutName);
+                    }
+                }
+
+                if (!ReferenceEquals(attributes.LayoutRegions, null))
+                {
+                    foreach (var zoneRegion in attributes.LayoutRegions)
+                    {
+                        region.ZoneRegion(zoneRegion.ZoneName, zoneRegion.RegionName);
+                    }
+                }
+
+                if (!ReferenceEquals(attributes.ZoneTemplates, null))
+                {
+                    foreach (var regionTemplate in attributes.ZoneTemplates)
+                    {
+                        region.ZoneTemplate(regionTemplate.ZoneName, regionTemplate.TemplatePath);
+                    }
+                }
+
+                if (!ReferenceEquals(attributes.ZoneHtmls, null))
+                {
+                    foreach (var zoneHtml in attributes.ZoneHtmls)
+                    {
+                        region.ZoneHtml(zoneHtml.ZoneName, zoneHtml.LocalizationId, zoneHtml.Html);
+                    }
+                }
             }
 
             if (!ReferenceEquals(attributes.RenderTemplates, null) && attributes.RenderTemplates.Count > 0)

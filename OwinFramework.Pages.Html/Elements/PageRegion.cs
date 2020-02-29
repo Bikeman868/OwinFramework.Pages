@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Enums;
@@ -37,25 +38,14 @@ namespace OwinFramework.Pages.Html.Elements
 
             if (layout != null)
             {
-                var regionElements = region.LayoutZones == null ? null : new List<Tuple<string, IRegion, IElement>>();
-                if (regionElements != null)
-                {
-                    foreach (var zoneName in layout.GetZoneNames())
-                    {
-                        var element = region.LayoutZones != null && region.LayoutZones.ContainsKey(zoneName)
-                            ? region.LayoutZones[zoneName]
-                            : layout.GetElement(zoneName);
+                var regionElements = region.LayoutZones == null 
+                    ? null
+                    : layout.GetZoneNames()
+                        .Select(z => new { z, e = region.LayoutZones.TryGetValue(z, out var element) ? element : null })
+                        .Where(o => o.e != null)
+                        .Select(o => new Tuple<string, IRegion, IElement>(o.z, null, o.e))
+                        .ToList();
 
-                        var zoneRegion = element as IRegion;
-
-                        if (zoneRegion == null)
-                            zoneRegion = layout.GetRegion(zoneName);
-                        else
-                            element = null;
-
-                        regionElements.Add(new Tuple<string, IRegion, IElement>(zoneName, region, element));
-                    }
-                }
                 var pageLayout = new PageLayout(dependencies, this, layout, regionElements, pageData);
                 _writeContent = pageLayout.WritePageArea;
                 Children = new PageElement[] { pageLayout };

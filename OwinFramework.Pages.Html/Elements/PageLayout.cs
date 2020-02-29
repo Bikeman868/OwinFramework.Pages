@@ -40,8 +40,8 @@ namespace OwinFramework.Pages.Html.Elements
                 var regionElement = regionElementList.FirstOrDefault(
                     re => string.Equals(re.Item1, name, StringComparison.OrdinalIgnoreCase));
 
-                var region = regionElement == null ? layout.GetRegion(name) : regionElement.Item2;
-                var element = regionElement == null ? layout.GetElement(name) : regionElement.Item3;
+                var region = regionElement?.Item2 ?? layout.GetRegion(name);
+                var element = regionElement?.Item3 ?? layout.GetElement(name);
 
                 var pageRegion = new PageRegion(dependencies, this, region, element, pageData);
                 _zones[zoneName] = pageRegion;

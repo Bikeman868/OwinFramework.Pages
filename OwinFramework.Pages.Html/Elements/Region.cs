@@ -14,8 +14,9 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// Base implementation of IRegion. Applications inherit from this class 
-    /// to insulate their code from any future additions to the IRegion interface
+    /// This is the design time definition of a region. Applications can inherit 
+    /// from this class to insulate their code from any future additions to
+    /// the IRegion interface
     /// </summary>
     public class Region : Element, IRegion, IDataScopeRules
     {
@@ -40,11 +41,6 @@ namespace OwinFramework.Pages.Html.Elements
             set { _assetDeploymentMixin.JavascriptFunctions = value; }
         }
 
-        private readonly AssetDeploymentMixin _assetDeploymentMixin;
-
-        private Type _repeatType;
-        private Type _listType;
-
         public string RepeatScope { get; set; }
         public string ListScope { get; set; }
         public Type ListType { get { return _listType; } }
@@ -59,7 +55,13 @@ namespace OwinFramework.Pages.Html.Elements
             }
         }
 
+        public IDictionary<string, IElement> LayoutZones { get; set; }
+
         private readonly IRegionDependenciesFactory _dependencies;
+        private readonly AssetDeploymentMixin _assetDeploymentMixin;
+
+        private Type _repeatType;
+        private Type _listType;
 
         #region Construction and initialization
 

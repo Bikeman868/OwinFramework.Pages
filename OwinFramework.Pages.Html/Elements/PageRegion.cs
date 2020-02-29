@@ -9,7 +9,11 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    internal class PageLayoutZone : PageElement, IDataSupplier, IDataSupply, IDataScopeRules
+    /// <summary>
+    /// This is the runtime version of a region and is specific to an instance of 
+    /// the region on a specific page
+    /// </summary>
+    internal class PageRegion : PageElement, IDataSupplier, IDataSupply, IDataScopeRules
     {
         private readonly IDataContextBuilder _dataContextBuilder;
         private readonly Func<IRenderContext, PageArea, IWriteResult> _writeContent;
@@ -17,7 +21,7 @@ namespace OwinFramework.Pages.Html.Elements
         private IRegion Region { get { return (IRegion)Element; } }
         private IDataScopeRules ElementDataScopeRules { get { return Element as IDataScopeRules; } }
 
-        public PageLayoutZone(
+        public PageRegion(
             PageElementDependencies dependencies,
             PageElement parent,
             IRegion region, 
@@ -33,7 +37,26 @@ namespace OwinFramework.Pages.Html.Elements
 
             if (layout != null)
             {
-                var pageLayout = new PageLayout(dependencies, this, layout, null, pageData);
+                var regionElements = region.LayoutZones == null ? null : new List<Tuple<string, IRegion, IElement>>();
+                if (regionElements != null)
+                {
+                    foreach (var zoneName in layout.GetZoneNames())
+                    {
+                        var element = region.LayoutZones != null && region.LayoutZones.ContainsKey(zoneName)
+                            ? region.LayoutZones[zoneName]
+                            : layout.GetElement(zoneName);
+
+                        var zoneRegion = element as IRegion;
+
+                        if (zoneRegion == null)
+                            zoneRegion = layout.GetRegion(zoneName);
+                        else
+                            element = null;
+
+                        regionElements.Add(new Tuple<string, IRegion, IElement>(zoneName, region, element));
+                    }
+                }
+                var pageLayout = new PageLayout(dependencies, this, layout, regionElements, pageData);
                 _writeContent = pageLayout.WritePageArea;
                 Children = new PageElement[] { pageLayout };
             }

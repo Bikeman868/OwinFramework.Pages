@@ -249,34 +249,78 @@ namespace OwinFramework.Pages.Html.Builders
         }
 
 
-        public IPageDefinition ZoneComponent(string zoneName, IComponent component)
+        public IRegionDefinition ZoneComponent(string zoneName, IComponent component)
         {
-            throw new NotImplementedException("Regions can not contain customized layouts in this version");
+            if (_region.LayoutZones == null)
+                _region.LayoutZones = new Dictionary<string, IElement>(StringComparer.OrdinalIgnoreCase);
+
+            _region.LayoutZones[zoneName] = component;
+
+            return this;
         }
 
-        public IPageDefinition ZoneComponent(string zoneName, string componentName)
+        IRegionDefinition IRegionDefinition.ZoneComponent(string zoneName, string componentName)
         {
-            throw new NotImplementedException("Regions can not contain customized layouts in this version");
+            if (string.IsNullOrEmpty(zoneName))
+                throw new PageBuilderException("You must provide a zone name when configuring region layout zones");
+
+            if (string.IsNullOrEmpty(componentName))
+                throw new PageBuilderException("You must provide a component name when configuring a region layout zone");
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences, 
+                (nm, n) => ZoneComponent(zoneName, nm.ResolveComponent(n, _region.Package)),
+                componentName);
+
+            return this;
         }
 
-        public IPageDefinition ZoneLayout(string zoneName, ILayout layout)
+        public IRegionDefinition ZoneLayout(string zoneName, ILayout layout)
         {
-            throw new NotImplementedException("Regions can not contain customized layouts in this version");
+            if (_region.LayoutZones == null)
+                _region.LayoutZones = new Dictionary<string, IElement>(StringComparer.OrdinalIgnoreCase);
+
+            _region.LayoutZones[zoneName] = layout;
+
+            return this;
         }
 
-        public IPageDefinition ZoneLayout(string zoneName, string layoutName)
+        IRegionDefinition IRegionDefinition.ZoneLayout(string zoneName, string layoutName)
         {
-            throw new NotImplementedException("Regions can not contain customized layouts in this version");
+            if (string.IsNullOrEmpty(zoneName))
+                throw new PageBuilderException("You must provide a zone name when configuring region layout zones");
+
+            if (string.IsNullOrEmpty(layoutName))
+                throw new PageBuilderException("You must provide a component name when configuring a region layout zone");
+
+            _nameManager.AddResolutionHandler(
+                NameResolutionPhase.ResolveElementReferences, 
+                (nm, n) => ZoneLayout(zoneName, nm.ResolveLayout(n, _region.Package)),
+                layoutName);
+
+            return this;
         }
 
-        public IPageDefinition ZoneHtml(string zoneName, string textAssetName, string defaultHtml)
+        IRegionDefinition IRegionDefinition.ZoneHtml(string zoneName, string textAssetName, string defaultHtml)
         {
-            throw new NotImplementedException("Regions can not contain customized layouts in this version");
+            if (string.IsNullOrEmpty(zoneName))
+                throw new PageBuilderException("You must provide a zone name when configuring region layout zones");
+
+            var component = new HtmlComponent(_componentDependenciesFactory);
+            component.Html(textAssetName, defaultHtml);
+
+            return ZoneComponent(zoneName, component);
         }
 
-        public IPageDefinition ZoneTemplate(string zoneName, string templatePath)
+        IRegionDefinition IRegionDefinition.ZoneTemplate(string zoneName, string templatePath)
         {
-            throw new NotImplementedException("Regions can not contain customized layouts in this version");
+            if (string.IsNullOrEmpty(zoneName))
+                throw new PageBuilderException("You must provide a zone name when configuring page regions");
+
+            var component = new TemplateComponent(_componentDependenciesFactory);
+            component.BodyTemplate(templatePath);
+
+            return ZoneComponent(zoneName, component);
         }
 
         #endregion

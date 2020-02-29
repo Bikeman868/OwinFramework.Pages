@@ -183,7 +183,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
-            _page.PopulateRegion(zoneName, component);
+            _page.PopulateLayoutZone(zoneName, component);
             return this;
         }
 
@@ -197,7 +197,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences, 
-                (nm, p, n) =>p.PopulateRegion(zoneName, nm.ResolveComponent(n, p.Package)),
+                (nm, p, n) =>p.PopulateLayoutZone(zoneName, nm.ResolveComponent(n, p.Package)),
                 _page,
                 componentName);
             return this;
@@ -208,7 +208,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
-            _page.PopulateRegion(zoneName, layout);
+            _page.PopulateLayoutZone(zoneName, layout);
             return this;
         }
 
@@ -222,7 +222,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, p, n) => p.PopulateRegion(zoneName, nm.ResolveLayout(n, p.Package)),
+                (nm, p, n) => p.PopulateLayoutZone(zoneName, nm.ResolveLayout(n, p.Package)),
                 _page,
                 layoutName);
             return this;
@@ -233,7 +233,7 @@ namespace OwinFramework.Pages.Html.Builders
             if (string.IsNullOrEmpty(zoneName))
                 throw new PageBuilderException("You must provide a region name when configuring page regions");
 
-            _page.PopulateRegion(zoneName, region);
+            _page.PopulateLayoutZone(zoneName, region);
             return this;
         }
 
@@ -247,7 +247,7 @@ namespace OwinFramework.Pages.Html.Builders
 
             _nameManager.AddResolutionHandler(
                 NameResolutionPhase.ResolveElementReferences,
-                (nm, p, n) => p.PopulateRegion(zoneName, nm.ResolveRegion(n, p.Package)),
+                (nm, p, n) => p.PopulateLayoutZone(zoneName, nm.ResolveRegion(n, p.Package)),
                 _page,
                 regionName);
             return this;
@@ -256,12 +256,12 @@ namespace OwinFramework.Pages.Html.Builders
         IPageDefinition IPageDefinition.ZoneHtml(string zoneName, string textAssetName, string defaultHtml)
         {
             if (string.IsNullOrEmpty(zoneName))
-                throw new PageBuilderException("You must provide a region name when configuring page regions");
+                throw new PageBuilderException("You must provide a zone name when configuring page zones");
 
             var component = new HtmlComponent(_componentDependenciesFactory);
             component.Html(textAssetName, defaultHtml);
 
-            _page.PopulateRegion(zoneName, component);
+            _page.PopulateLayoutZone(zoneName, component);
 
             return this;
         }
@@ -269,12 +269,12 @@ namespace OwinFramework.Pages.Html.Builders
         IPageDefinition IPageDefinition.ZoneTemplate(string zoneName, string templatePath)
         {
             if (string.IsNullOrEmpty(zoneName))
-                throw new PageBuilderException("You must provide a region name when configuring page regions");
+                throw new PageBuilderException("You must provide a zone name when configuring page zones");
 
             var component = new TemplateComponent(_componentDependenciesFactory);
             component.BodyTemplate(templatePath);
 
-            _page.PopulateRegion(zoneName, component);
+            _page.PopulateLayoutZone(zoneName, component);
 
             return this;
         }

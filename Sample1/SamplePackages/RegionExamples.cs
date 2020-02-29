@@ -148,6 +148,7 @@ namespace Sample1.SamplePackages
             IPackage IPackagable.Package { get; set; }
             IModule IDeployable.Module { get; set; }
             AssetDeployment IDeployable.AssetDeployment { get; set; }
+            IDictionary<string, IElement> IRegion.LayoutZones { get; set; }
 
             #endregion
 

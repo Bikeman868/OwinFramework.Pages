@@ -218,6 +218,15 @@ namespace Sample1.SamplePages
     [ZoneRegion("menu", "menus:desktop_menu")]
     internal class HeaderLayout { }
 
+    [IsLayout("twoColumn", "left,main")]
+    [PartOf("application")]
+    [DeployedAs("content")]
+    [Container("div", "2col.vertical.fixed")]
+    [ZoneRegion("left", "leftColumn")]
+    [ZoneRegion("main", "rightColumn")]
+    [NeedsComponent("libraries:Redux")]
+    internal class TwoColumnLayout { }
+
     /// <summary>
     /// Defines the layout of the 'body' region for page 1
     /// </summary>

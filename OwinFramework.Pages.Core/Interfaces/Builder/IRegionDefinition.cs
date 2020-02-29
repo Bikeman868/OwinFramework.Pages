@@ -112,25 +112,25 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// Overrides the default contents of one of the zone in the layout
         /// layout with a specific component
         /// </summary>
-        IPageDefinition ZoneComponent(string zoneName, IComponent component);
+        IRegionDefinition ZoneComponent(string zoneName, IComponent component);
 
         /// <summary>
         /// Overrides the default contents of one of the zones in the layout
         /// layout with a named component
         /// </summary>
-        IPageDefinition ZoneComponent(string zoneName, string componentName);
+        IRegionDefinition ZoneComponent(string zoneName, string componentName);
 
         /// <summary>
         /// Overrides the default contents of one of the zones in the layout
         /// layout with a specific layout
         /// </summary>
-        IPageDefinition ZoneLayout(string zoneName, ILayout layout);
+        IRegionDefinition ZoneLayout(string zoneName, ILayout layout);
 
         /// <summary>
         /// Overrides the default contents of one of the zones in the layout
         /// layout with a named layout
         /// </summary>
-        IPageDefinition ZoneLayout(string zoneName, string layoutName);
+        IRegionDefinition ZoneLayout(string zoneName, string layoutName);
 
         /// <summary>
         /// Populates a zone of the layout with static Html avoiding the need
@@ -142,7 +142,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="defaultHtml">The default Html for all unsupported locales.
         /// Note that if you did not setup localization then this will be the html
         /// for all locales.</param>
-        IPageDefinition ZoneHtml(string zoneName, string textAssetName, string defaultHtml);
+        IRegionDefinition ZoneHtml(string zoneName, string textAssetName, string defaultHtml);
 
         /// <summary>
         /// Populates a region of the layout with a template avoiding the need
@@ -152,7 +152,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Builder
         /// <param name="zoneName">The name of the zone within the layout</param>
         /// <param name="templatePath">A / separated path to the template to load
         /// into this region of the layout</param>
-        IPageDefinition ZoneTemplate(string zoneName, string templatePath);
+        IRegionDefinition ZoneTemplate(string zoneName, string templatePath);
         
         #endregion
 

@@ -13,8 +13,9 @@ using OwinFramework.Pages.Html.Runtime;
 namespace OwinFramework.Pages.Html.Elements
 {
     /// <summary>
-    /// Base implementation of IComponent. Applications inherit from this olass 
-    /// to insulate their code from any future additions to the IComponent interface
+    /// This is the design time implementation of component. Applications can inherit 
+    /// from this class to insulate their code from any future additions to the 
+    /// IComponent interface
     /// </summary>
     public class Component : Element, IComponent, ICloneable
     {

@@ -271,7 +271,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         #endregion
 
-        public void PopulateRegion(string zoneName, IElement element)
+        public void PopulateLayoutZone(string zoneName, IElement element)
         {
             if (_layoutZones == null)
                 _layoutZones = new Dictionary<string, IElement>(StringComparer.OrdinalIgnoreCase);

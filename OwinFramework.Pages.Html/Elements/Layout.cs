@@ -12,10 +12,9 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
-    /// <summary>
-    /// Base implementation of ILayout. Applications inherit from this class 
-    /// to insulate their code from any future additions to the ILayout interface
-    /// </summary>
+    /// This is the design time implementation of layout. Applications can inherit 
+    /// from this class to insulate their code from any future additions to the 
+    /// ILayout interface
     public class Layout : Element, ILayout
     {
         public override ElementType ElementType { get { return ElementType.Layout; } }

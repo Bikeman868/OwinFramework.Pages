@@ -10,9 +10,13 @@ using OwinFramework.Pages.Html.Runtime;
 
 namespace OwinFramework.Pages.Html.Elements
 {
+    /// <summary>
+    /// This is the runtime version of a layout and is specific to an instance of 
+    /// the layout on a specific page
+    /// </summary>
     internal class PageLayout: PageElement
     {
-        private readonly IThreadSafeDictionary<string, PageLayoutZone> _zones;
+        private readonly IThreadSafeDictionary<string, PageRegion> _zones;
 
         public PageLayout(
             PageElementDependencies dependencies,
@@ -24,7 +28,7 @@ namespace OwinFramework.Pages.Html.Elements
         {
             pageData.BeginAddElement(Element);
 
-            _zones = dependencies.DictionaryFactory.Create<string, PageLayoutZone>(StringComparer.OrdinalIgnoreCase);
+            _zones = dependencies.DictionaryFactory.Create<string, PageRegion>(StringComparer.OrdinalIgnoreCase);
 
             var regionElementList = regionElements == null
                 ? new List<Tuple<string, IRegion, IElement>>() 
@@ -39,7 +43,7 @@ namespace OwinFramework.Pages.Html.Elements
                 var region = regionElement == null ? layout.GetRegion(name) : regionElement.Item2;
                 var element = regionElement == null ? layout.GetElement(name) : regionElement.Item3;
 
-                var pageRegion = new PageLayoutZone(dependencies, this, region, element, pageData);
+                var pageRegion = new PageRegion(dependencies, this, region, element, pageData);
                 _zones[zoneName] = pageRegion;
             }
 
@@ -84,7 +88,7 @@ namespace OwinFramework.Pages.Html.Elements
             PageArea pageArea,
             string zoneName)
         {
-            if (_zones.TryGetValue(zoneName, out PageLayoutZone pageZone))
+            if (_zones.TryGetValue(zoneName, out PageRegion pageZone))
                 return pageZone.WritePageArea(renderContext, pageArea);
 
             return WriteResult.Continue();

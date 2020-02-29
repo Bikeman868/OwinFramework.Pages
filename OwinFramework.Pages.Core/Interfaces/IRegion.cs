@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 using OwinFramework.Pages.Core.Interfaces.Runtime;
@@ -15,6 +16,14 @@ namespace OwinFramework.Pages.Core.Interfaces
         /// Retrieves the contents of this region
         /// </summary>
         IElement Content { get; set; }
+
+        /// <summary>
+        /// When the content of this region is a layout, this dictionary defines the
+        /// elements to place in specific zones of the layout. If this property is null
+        /// then the layout will have its default content. For any zones not in this
+        /// dictionary the zone will have its default content.
+        /// </summary>
+        IDictionary<string, IElement> LayoutZones { get; set; }
 
         /// <summary>
         /// This is called for each area of the page where this instance wants

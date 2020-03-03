@@ -6,4 +6,5 @@
 //[assembly: OwinStartup(typeof(Sample3.UseCase2.Startup))]
 //[assembly: OwinStartup(typeof(Sample3.UseCase3.Startup))]
 //[assembly: OwinStartup(typeof(Sample3.UseCase4.Startup))]
-[assembly: OwinStartup(typeof(Sample3.UseCase5.Startup))]
+//[assembly: OwinStartup(typeof(Sample3.UseCase5.Startup))]
+[assembly: OwinStartup(typeof(Sample3.UseCase6.Startup))]

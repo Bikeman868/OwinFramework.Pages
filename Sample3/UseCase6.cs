@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using Ioc.Modules;
-using Microsoft.Owin;
 using Ninject;
 using Owin;
 using OwinFramework.Builder;
@@ -12,11 +10,9 @@ using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
-using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Interfaces.Templates;
-using OwinFramework.Pages.Core.RequestFilters;
 using OwinFramework.Pages.DebugMiddleware;
-using OwinFramework.Pages.Html.Templates;
+using OwinFramework.Pages.Html.Runtime;
 
 namespace Sample3.UseCase6
 {
@@ -96,7 +92,13 @@ namespace Sample3.UseCase6
     [IsPage("company_results_page")]
     [Route("/")]
     [ZoneRegion("body_zone", "company_results_region")]
-    internal class CompanySearchResultsPage  : MasterPage { }
+    internal class CompanySearchResultsPage : MasterPage
+    {
+        public CompanySearchResultsPage(IPageDependenciesFactory dependencies) 
+            : base(dependencies)
+        {
+        }
+    }
 
     // ==========================================================================================
 
@@ -110,7 +112,18 @@ namespace Sample3.UseCase6
     internal class MasterPageLayout : ApplicationElement { }
 
     [UsesLayout("master_page_layout")]
-    internal class MasterPage : ApplicationElement { }
+    [PartOf("usecase6")]
+    [DeployedAs("usecase6")]
+    internal class MasterPage : Page
+    {
+        public MasterPage(IPageDependenciesFactory dependencies) 
+            : base(dependencies)
+        {
+            TitleFunc = rc => "Use Case 6";
+            BodyClassNames = "uc6_page";
+            BodyId = Guid.NewGuid().ToShortString();
+        }
+    }
 
     // ==========================================================================================
 

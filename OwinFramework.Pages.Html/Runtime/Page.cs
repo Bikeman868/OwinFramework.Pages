@@ -63,9 +63,14 @@ namespace OwinFramework.Pages.Html.Runtime
         public string BodyClassNames { get; set; }
 
         /// <summary>
-        /// The names of the css class to attach to the body element
+        /// The custom style to attach to the body element
         /// </summary>
         public string BodyStyle { get; set; }
+
+        /// <summary>
+        /// The unique ID to attach to the body element
+        /// </summary>
+        public string BodyId { get; set; }
 
         /// <summary>
         /// The category name to pass to the output cache to define the caching rules for this page
@@ -412,10 +417,23 @@ namespace OwinFramework.Pages.Html.Runtime
                     bodyClassNames += " " + _bodyStyleName;
             }
 
-            if (string.IsNullOrEmpty(bodyClassNames))
-                html.WriteOpenTag("body");
-            else
-                html.WriteOpenTag("body", "class", bodyClassNames);
+            List<string> bodyAttributes = null;
+
+            if (!string.IsNullOrEmpty(BodyId))
+            {
+                if (bodyAttributes == null) bodyAttributes = new List<string>();
+                bodyAttributes.Add("id");
+                bodyAttributes.Add(BodyId);
+            }
+
+            if (!string.IsNullOrEmpty(bodyClassNames))
+            {
+                if (bodyAttributes == null) bodyAttributes = new List<string>();
+                bodyAttributes.Add("class");
+                bodyAttributes.Add(bodyClassNames);
+            }
+
+            html.WriteOpenTag("body", bodyAttributes?.ToArray());
             html.WriteLine();
 
             result.Add(WritePageArea(context, PageArea.Body));

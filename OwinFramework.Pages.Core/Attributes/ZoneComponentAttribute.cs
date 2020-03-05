@@ -15,7 +15,7 @@ namespace OwinFramework.Pages.Core.Attributes
         public ZoneComponentAttribute(string zoneName, string component)
         {
             ZoneName = zoneName;
-            Component = component;
+            ComponentName = component;
         }
 
         /// <summary>
@@ -26,6 +26,6 @@ namespace OwinFramework.Pages.Core.Attributes
         /// <summary>
         /// The name of the component to place in this zoneName
         /// </summary>
-        public string Component { get; set; }
+        public string ComponentName { get; set; }
     }
 }

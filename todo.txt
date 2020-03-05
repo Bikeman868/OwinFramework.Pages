@@ -14,6 +14,7 @@
     should be able to contain placeholders for parameter values. For
 	example "/user/{userid}" where {userid} is replaced with the value
 	of the userid parameter passed to the method.
+  - Localization database and management UI
   
 * Refactoring
   - Depreciate some properties of RepeatAttribute because there are

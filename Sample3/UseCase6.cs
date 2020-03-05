@@ -10,6 +10,7 @@ using OwinFramework.Pages.Core.Attributes;
 using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Builder;
 using OwinFramework.Pages.Core.Interfaces.Managers;
+using OwinFramework.Pages.Core.Interfaces.Runtime;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 using OwinFramework.Pages.DebugMiddleware;
 using OwinFramework.Pages.Html.Runtime;
@@ -122,6 +123,35 @@ namespace Sample3.UseCase6
             TitleFunc = rc => "Use Case 6";
             BodyClassNames = "uc6_page";
             BodyId = Guid.NewGuid().ToShortString();
+        }
+
+        public override IWriteResult WriteHeadArea(IRenderContext context)
+        {
+            context.Html.WriteUnclosedElement(
+                "meta", 
+                "name", "description", 
+                "content", "This is use case 6");
+            context.Html.WriteLine();
+
+            context.Html.WriteUnclosedElement(
+                "meta", 
+                "name", "keywords", 
+                "content", "Use case,sample,demo");
+            context.Html.WriteLine();
+
+            context.Html.WriteUnclosedElement(
+                "meta", 
+                "name", "author", 
+                "content", "Martin Halliday");
+            context.Html.WriteLine();
+
+            context.Html.WriteUnclosedElement(
+                "meta", 
+                "name", "viewport", 
+                "content", "width=device-width, initial-scale=1.0");
+            context.Html.WriteLine();
+
+            return base.WriteHeadArea(context);
         }
     }
 

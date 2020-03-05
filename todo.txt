@@ -15,6 +15,10 @@
 	example "/user/{userid}" where {userid} is replaced with the value
 	of the userid parameter passed to the method.
   
+* Refactoring
+  - Depreciate some properties of RepeatAttribute because there are
+    other attributes that provide the same features
+
 * Forms
   - Routing POST requests to component that rendered the form tag
   - https://en.wikipedia.org/wiki/Post/Redirect/Get

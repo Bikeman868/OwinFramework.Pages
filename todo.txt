@@ -1,6 +1,5 @@
 * Bugs
-  - When service endpoints do not specify a serializer but the service
-    does, it should use the serializer defined by the service
+  - No known bugs at this time
 
 * Missing MVP features
   - Service endpoints need to be able to return a future (Task<T>)

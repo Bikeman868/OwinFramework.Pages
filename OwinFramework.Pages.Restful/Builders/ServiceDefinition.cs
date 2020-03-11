@@ -102,6 +102,8 @@ namespace OwinFramework.Pages.Restful.Builders
 
         public IServiceDefinition Serialization(Type requestDeserializer, Type responseSerializer)
         {
+            _service.DefaultDeserializerType = requestDeserializer;
+            _service.DefaultSerializerType = responseSerializer;
             return this;
         }
 

@@ -71,16 +71,13 @@ namespace OwinFramework.Pages.Restful.Runtime
         public Service(IServiceDependenciesFactory serviceDependenciesFactory)
         {
             _serviceDependenciesFactory = serviceDependenciesFactory;
-
-            DefaultDeserializerType = typeof(Json);
-            DefaultSerializerType = typeof(Json);
             AllowAnonymous = true;
         }
 
         public void Initialize(Func<Type, object> factory)
         {
-            var defaultSerializer = GetResponseSerializer(DefaultSerializerType);
-            var defaultDeserialzer = GetRequestDeserializer(DefaultDeserializerType);
+            var defaultSerializer = GetResponseSerializer(DefaultSerializerType ?? typeof(Json));
+            var defaultDeserialzer = GetRequestDeserializer(DefaultDeserializerType ?? typeof(Json));
 
             object serviceInstance = this;
             if (GetType() == typeof(Service))

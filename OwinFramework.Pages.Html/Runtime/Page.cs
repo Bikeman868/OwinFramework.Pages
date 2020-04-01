@@ -951,7 +951,11 @@ namespace OwinFramework.Pages.Html.Runtime
         public virtual IWriteResult WriteInitializationArea(IRenderContext renderContext)
         {
             if (!ReferenceEquals(_layout, null))
-                return _layout.WritePageArea(renderContext, PageArea.Initialization);
+            {
+                var result = _layout.WritePageArea(renderContext, PageArea.Initialization);
+                renderContext.EndInitializationArea();
+                return result;
+            }
 
             return WriteResult.Continue();
         }

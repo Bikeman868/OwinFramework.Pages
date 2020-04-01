@@ -64,7 +64,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// </summary>
         int IndentLevel { get; set; }
 
-
         /// <summary>
         /// Writes a single character directly to the response buffer without
         /// escaping special characters
@@ -86,7 +85,6 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Ensures that the next thing written will be written to a new line
         /// </summary>
         IHtmlWriter WriteLine();
-
 
         /// <summary>
         /// Writes a single character to the response buffer. Writes an entity

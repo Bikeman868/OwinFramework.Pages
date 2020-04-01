@@ -127,11 +127,11 @@ namespace OwinFramework.Pages.Html.Templates
                         break;
 
                     case "text/html":
-                        _mustacheMixIn.AddToTemplate(template, content);
+                        _mustacheMixIn.AddToTemplate(template, PageArea.Body, content);
                         break;
 
                     default:
-                        template.AddHtml(content);
+                        template.AddHtml(PageArea.Body, content);
                         break;
                 }
             }

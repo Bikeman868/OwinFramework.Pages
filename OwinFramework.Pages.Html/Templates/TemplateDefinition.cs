@@ -81,9 +81,15 @@ namespace OwinFramework.Pages.Html.Templates
             }
         }
 
-        private abstract class RenderActionList
+        private class RenderActionList
         {
             protected readonly List<Action<IRenderContext>> _renderActions = new List<Action<IRenderContext>>();
+            private readonly PageArea _pageArea;
+
+            public RenderActionList(PageArea pageArea)
+            {
+                _pageArea = pageArea;
+            }
 
             public void Add(Action<IRenderContext> action)
             {
@@ -111,55 +117,32 @@ namespace OwinFramework.Pages.Html.Templates
                 return a => _renderActions[index] = a;
             }
 
-            public abstract void ToTemplate(Template template);
-        }
-
-        private class BodyActionList : RenderActionList
-        {
-            public override void ToTemplate(Template template)
+            public void ToTemplate(Template template)
             {
-                if (_renderActions.Count > 0)
-                    template.Add(_renderActions);
+                if (_renderActions.Count < 1) return;
+
+                switch (_pageArea)
+                {
+                    case PageArea.Head:
+                        template.AddHead(_renderActions);
+                        break;
+                    case PageArea.Scripts:
+                        template.AddScript(_renderActions);
+                        break;
+                    case PageArea.Styles:
+                        template.AddStyle(_renderActions);
+                        break;
+                    case PageArea.Initialization:
+                        template.AddInitialization(_renderActions);
+                        break;
+                    default:
+                        template.Add(_renderActions);
+                        break;
+                }
             }
         }
 
-        private class HeadActionList : RenderActionList
-        {
-            public override void ToTemplate(Template template)
-            {
-                if (_renderActions.Count > 0)
-                    template.AddHead(_renderActions);
-            }
-        }
-
-        private class ScriptActionList : RenderActionList
-        {
-            public override void ToTemplate(Template template)
-            {
-                if (_renderActions.Count > 0)
-                    template.AddScript(_renderActions);
-            }
-        }
-
-        private class StyleActionList : RenderActionList
-        {
-            public override void ToTemplate(Template template)
-            {
-                if (_renderActions.Count > 0)
-                    template.AddStyle(_renderActions);
-            }
-        }
-
-        private class InitializationActionList : RenderActionList
-        {
-            public override void ToTemplate(Template template)
-            {
-                if (_renderActions.Count > 0)
-                    template.AddInitialization(_renderActions);
-            }
-        }
-
-        private class Repeat: BodyActionList
+        private class Repeat: RenderActionList
         {
             public Type RepeatType { get; private set; }
             public string ListScope { get; private set; }
@@ -167,7 +150,8 @@ namespace OwinFramework.Pages.Html.Templates
 
             protected Action<IRenderContext>[] _actions;
 
-            public Repeat(Type repeatType, string listScope, string repeatScope)
+            public Repeat(PageArea pageArea, Type repeatType, string listScope, string repeatScope)
+                : base(pageArea)
             {
                 RepeatType = repeatType;
                 ListScope = listScope;
@@ -203,8 +187,8 @@ namespace OwinFramework.Pages.Html.Templates
         {
             public Type ListType { get; private set; }
 
-            public RepeatList(Type repeatType, string listScope, string repeatScope)
-                : base(repeatType, listScope, repeatScope)
+            public RepeatList(PageArea pageArea, Type repeatType, string listScope, string repeatScope)
+                : base(pageArea, repeatType, listScope, repeatScope)
             {
                 ListType = typeof(IList<>).MakeGenericType(repeatType);
             }
@@ -233,12 +217,13 @@ namespace OwinFramework.Pages.Html.Templates
             public ITruthyEvaluator TruthyEvaluator { get; private set; }
 
             public RepeatOnce(
+                PageArea pageArea,
                 Type repeatType, 
                 PropertyInfo property, 
                 ITruthyEvaluator truthyEvaluator , 
                 string listScope, 
                 string repeatScope)
-                : base(repeatType, listScope, repeatScope)
+                : base(pageArea, repeatType, listScope, repeatScope)
             {
                 Property = property;
                 TruthyEvaluator = truthyEvaluator;
@@ -267,11 +252,11 @@ namespace OwinFramework.Pages.Html.Templates
             _nameManager = nameManager;
             _assetManager = assetManager;
 
-            _headActions = new HeadActionList();
-            _scriptActions = new ScriptActionList();
-            _styleActions = new StyleActionList();
-            _bodyActions = new BodyActionList();
-            _initializationActions = new InitializationActionList();
+            _headActions = new RenderActionList(PageArea.Head);
+            _scriptActions = new RenderActionList(PageArea.Scripts);
+            _styleActions = new RenderActionList(PageArea.Styles);
+            _bodyActions = new RenderActionList(PageArea.Body);
+            _initializationActions = new RenderActionList(PageArea.Initialization);
             _staticJavascriptActions = new JavascriptActionList();
             _staticCssActions = new CssActionList();
 
@@ -318,76 +303,84 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
-        public ITemplateDefinition AddHtml(string html)
+        public ITemplateDefinition AddHtml(PageArea pageArea, string html)
         {
-            if (!string.IsNullOrEmpty(html))
+            if (string.IsNullOrEmpty(html))
+                return this;
+
+            if (html.IndexOf('\n') >= 0)
             {
-                if (html.IndexOf('\n') >= 0)
+                var lines = html.Split('\n');
+                if (lines.Length == 1)
                 {
-                    var lines = html.Split('\n');
-                    if (lines.Length == 1)
-                    {
-                        var line = lines[0];
-                        BodyActions.Add(r => r.Html.WriteLine(line));
-                    }
-                    else
-                    {
-                        if (string.IsNullOrWhiteSpace(lines[lines.Length - 1]))
-                        {
-                            lines = lines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
-                            BodyActions.Add(r => 
-                            { 
-                                foreach (var line in lines) 
-                                    r.Html.WriteLine(line); 
-                            });
-                        }
-                        else
-                        {
-                            lines = lines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
-                            BodyActions.Add(r => 
-                            { 
-                                for(var i = 0; i < lines.Length - 1; i++)
-                                    r.Html.WriteLine(lines[i]);
-                                r.Html.Write(lines[lines.Length - 1]);
-                            });
-                        }
-                    }
+                    var line = lines[0];
+                    ActionList(pageArea).Add(r => r.Html.WriteLine(line));
                 }
                 else
                 {
-                    BodyActions.Add(r => r.Html.Write(html));
+                    if (string.IsNullOrWhiteSpace(lines[lines.Length - 1]))
+                    {
+                        lines = lines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
+                        ActionList(pageArea).Add(r =>
+                        {
+                            foreach (var line in lines)
+                                r.Html.WriteLine(line);
+                        });
+                    }
+                    else
+                    {
+                        lines = lines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
+                        ActionList(pageArea).Add(r =>
+                        {
+                            for (var i = 0; i < lines.Length - 1; i++)
+                                r.Html.WriteLine(lines[i]);
+                            r.Html.Write(lines[lines.Length - 1]);
+                        });
+                    }
                 }
+            }
+            else
+            {
+                ActionList(pageArea).Add(r => r.Html.Write(html));
             }
             return this;
         }
 
-        public ITemplateDefinition AddElement(string tag, string content, params string[] attributePairs)
+        public ITemplateDefinition AddElement(PageArea pageArea, string tag, string content, params string[] attributePairs)
         {
-            BodyActions.Add(r => r.Html.WriteElement(tag, content, attributePairs));
+            ActionList(pageArea).Add(r => r.Html.WriteElement(tag, content, attributePairs));
             return this;
         }
 
-        public ITemplateDefinition AddSelfClosingElement(string tag, params string[] attributePairs)
+        public ITemplateDefinition AddSelfClosingElement(PageArea pageArea, string tag, params string[] attributePairs)
         {
-            BodyActions.Add(r => r.Html.WriteOpenTag(tag, true, attributePairs));
+            ActionList(pageArea).Add(r => r.Html.WriteOpenTag(tag, true, attributePairs));
             return this;
         }
 
-        public ITemplateDefinition AddElementOpen(string tag, params string[] attributePairs)
+        public ITemplateDefinition AddElementOpen(PageArea pageArea, string tag, params string[] attributePairs)
         {
-            WriteElementOpenTag(tag, attributePairs);
+            WriteElementOpenTag(pageArea, tag, attributePairs);
             return this;
         }
 
-        public ITemplateDefinition WriteScriptOpen(string scriptType)
+        public ITemplateDefinition WriteScriptOpen(PageArea pageArea, string scriptType)
         {
-            BodyActions.Add(r => r.Html.WriteScriptOpen(scriptType));
+            if (pageArea == PageArea.Initialization)
+            {
+                InitializationActions.Add(r => r.EnsureInitializationArea());
+            }
+            else
+            {
+                ActionList(pageArea).Add(r => r.Html.WriteScriptOpen(scriptType));
+            }
             return this;
         }
 
-        public ITemplateDefinition WriteScriptClose()
+        public ITemplateDefinition WriteScriptClose(PageArea pageArea)
         {
-            BodyActions.Add(r => r.Html.WriteScriptClose());
+            if (pageArea != PageArea.Initialization)
+                ActionList(pageArea).Add(r => r.Html.WriteScriptClose());
             return this;
         }
 
@@ -422,15 +415,15 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
-        public ITemplateDefinition AddElementClose()
+        public ITemplateDefinition AddElementClose(PageArea pageArea)
         {
-            WriteElementCloseTag();
+            WriteElementCloseTag(pageArea);
             return this;
         }
 
-        public ITemplateDefinition AddLineBreak()
+        public ITemplateDefinition AddLineBreak(PageArea pageArea)
         {
-            BodyActions.Add(r => r.Html.WriteLine());
+            ActionList(pageArea).Add(r => r.Html.WriteLine());
             return this;
         }
 
@@ -553,12 +546,13 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
-        public ITemplateDefinition RepeatStart<T>(string scopeName, string listScopeName)
+        public ITemplateDefinition RepeatStart<T>(PageArea pageArea, string scopeName, string listScopeName)
         {
-            return RepeatStart(typeof(T), scopeName, listScopeName);
+            return RepeatStart(pageArea, typeof(T), scopeName, listScopeName);
         }
 
         public ITemplateDefinition RepeatStart<T>(
+            PageArea pageArea,
             Expression<Func<T, object>> propertyExpression,
             ITruthyEvaluator truthyEvaluator, 
             string scopeName, 
@@ -567,49 +561,49 @@ namespace OwinFramework.Pages.Html.Templates
             var expression = (MemberExpression)propertyExpression.Body;
             var property = (PropertyInfo)expression.Member;
 
-            return RepeatStart(typeof(T), property, truthyEvaluator, scopeName, listScopeName);
+            return RepeatStart(pageArea, typeof(T), property, truthyEvaluator, scopeName, listScopeName);
         }
 
-        public ITemplateDefinition AddData(Type dataType, string scopeName = null)
+        public ITemplateDefinition AddData(PageArea pageArea, Type dataType, string scopeName = null)
         {
             // TODO: Figure out how to do this
-            BodyActions.Add(r =>
+            ActionList(pageArea).Add(r =>
                 {
                     // r.Data.Set(dataType, value, scopeName);
                 });
             return this;
         }
 
-        public ITemplateDefinition AddData<T>(string scopeName = null)
+        public ITemplateDefinition AddData<T>(PageArea pageArea, string scopeName = null)
         {
             // TODO: Figure out how to do this
-            BodyActions.Add(r =>
+            ActionList(pageArea).Add(r =>
             {
                 // r.Data.Set(typeof(T), value, scopeName);
             });
             return this;
         }
 
-        public ITemplateDefinition ExtractProperty(Type dataType, string propertyName, string scopeName = null, string propertyScopeName = null)
+        public ITemplateDefinition ExtractProperty(PageArea pageArea, Type dataType, string propertyName, string scopeName = null, string propertyScopeName = null)
         {
             var property = dataType.GetProperties().FirstOrDefault(p => string.Equals(p.Name, propertyName, StringComparison.OrdinalIgnoreCase));
             if (property == null)
                 throw new TemplateBuilderException("Type " + dataType.DisplayName() + " does not have a public '" + propertyName + "' property");
 
-            return ExtractProperty(dataType, property, scopeName, propertyScopeName);
+            return ExtractProperty(pageArea, dataType, property, scopeName, propertyScopeName);
         }
 
-        public ITemplateDefinition ExtractProperty<T>(Expression<Func<T, object>> propertyExpression, string scopeName = null, string propertyScopeName = null)
+        public ITemplateDefinition ExtractProperty<T>(PageArea pageArea, Expression<Func<T, object>> propertyExpression, string scopeName = null, string propertyScopeName = null)
         {
             var expression = (MemberExpression)propertyExpression.Body;
             var property = (PropertyInfo)expression.Member;
 
-            return ExtractProperty(typeof(T), property, scopeName, propertyScopeName);
+            return ExtractProperty(pageArea, typeof(T), property, scopeName, propertyScopeName);
         }
 
-        private ITemplateDefinition ExtractProperty(Type dataType, PropertyInfo property, string scopeName = null, string propertyScopeName = null)
+        private ITemplateDefinition ExtractProperty(PageArea pageArea, Type dataType, PropertyInfo property, string scopeName = null, string propertyScopeName = null)
         {
-            BodyActions.Add(r =>
+            ActionList(pageArea).Add(r =>
             {
                 var obj = r.Data.Get(dataType, propertyScopeName);
                 var value = property.GetValue(obj, null);
@@ -618,10 +612,10 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
-        public ITemplateDefinition RepeatStart(Type dataTypeToRepeat, string scopeName, string listScopeName)
+        public ITemplateDefinition RepeatStart(PageArea pageArea, Type dataTypeToRepeat, string scopeName, string listScopeName)
         {
-            var repeat = new RepeatList(dataTypeToRepeat, listScopeName, scopeName);
-            BodyActions.Add(repeat.Enact);
+            var repeat = new RepeatList(pageArea, dataTypeToRepeat, listScopeName, scopeName);
+            ActionList(pageArea).Add(repeat.Enact);
 
             AddDependency(repeat.ListType, scopeName);
 
@@ -634,6 +628,7 @@ namespace OwinFramework.Pages.Html.Templates
         }
 
         public ITemplateDefinition RepeatStart(
+            PageArea pageArea,
             Type dataTypeToRepeat, 
             string propertyName, 
             ITruthyEvaluator truthyEvaluator, 
@@ -644,18 +639,19 @@ namespace OwinFramework.Pages.Html.Templates
             if (property == null)
                 throw new TemplateBuilderException("Type " + dataTypeToRepeat.DisplayName() + " does not have a public '" + propertyName + "' property");
 
-            return RepeatStart(dataTypeToRepeat, property, truthyEvaluator, scopeName, listScopeName);
+            return RepeatStart(pageArea, dataTypeToRepeat, property, truthyEvaluator, scopeName, listScopeName);
         }
 
         private ITemplateDefinition RepeatStart(
+            PageArea pageArea,
             Type dataTypeToRepeat, 
             PropertyInfo property, 
             ITruthyEvaluator truthyEvaluator, 
             string scopeName = null, 
             string listScopeName = null)
         {
-            var repeat = new RepeatOnce(dataTypeToRepeat, property, truthyEvaluator, listScopeName, scopeName);
-            BodyActions.Add(repeat.Enact);
+            var repeat = new RepeatOnce(pageArea, dataTypeToRepeat, property, truthyEvaluator, listScopeName, scopeName);
+            ActionList(pageArea).Add(repeat.Enact);
 
             AddDependency(repeat.RepeatType, scopeName);
 
@@ -673,17 +669,17 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
-        public ITemplateDefinition AddDataField<T>(Expression<Func<T, object>> propertyExpression, IDataFieldFormatter dataFormatter = null, string scopeName = null)
+        public ITemplateDefinition AddDataField<T>(PageArea pageArea, Expression<Func<T, object>> propertyExpression, IDataFieldFormatter dataFormatter = null, string scopeName = null)
         {
             var expression = (MemberExpression)propertyExpression.Body;
             var property = (PropertyInfo)expression.Member;
 
-            return AddDataField(typeof(T), property, dataFormatter, scopeName);
+            return AddDataField(pageArea, typeof(T), property, dataFormatter, scopeName);
         }
 
-        public ITemplateDefinition AddDataField<T>(Func<T, string> formatFunc, string scopeName = null)
+        public ITemplateDefinition AddDataField<T>(PageArea pageArea, Func<T, string> formatFunc, string scopeName = null)
         {
-            BodyActions.Add(r =>
+            ActionList(pageArea).Add(r =>
             {
                 var data = r.Data.Get<T>(scopeName);
                 var formattedValue = formatFunc(data);
@@ -695,18 +691,18 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
-        public ITemplateDefinition AddDataField(Type dataType, string propertyName, IDataFieldFormatter dataFormatter = null, string scopeName = null)
+        public ITemplateDefinition AddDataField(PageArea pageArea, Type dataType, string propertyName, IDataFieldFormatter dataFormatter = null, string scopeName = null)
         {
             var property = dataType.GetProperties().FirstOrDefault(p => string.Equals(p.Name, propertyName, StringComparison.OrdinalIgnoreCase));
             if (property == null)
                 throw new TemplateBuilderException("Type " + dataType.DisplayName() + " does not have a public '" + propertyName + "' property");
 
-            return AddDataField(dataType, property, dataFormatter, scopeName);
+            return AddDataField(pageArea, dataType, property, dataFormatter, scopeName);
         }
 
-        private ITemplateDefinition AddDataField(Type dataType, PropertyInfo property, IDataFieldFormatter dataFormatter = null, string scopeName = null)
+        private ITemplateDefinition AddDataField(PageArea pageArea, Type dataType, PropertyInfo property, IDataFieldFormatter dataFormatter = null, string scopeName = null)
         {
-            BodyActions.Add(r =>
+            ActionList(pageArea).Add(r =>
             {
                 string formattedValue;
 
@@ -737,9 +733,9 @@ namespace OwinFramework.Pages.Html.Templates
             return this;
         }
 
-        public ITemplateDefinition AddText(string assetName, string defaultText, bool isPreFormatted)
+        public ITemplateDefinition AddText(PageArea pageArea, string assetName, string defaultText, bool isPreFormatted)
         {
-            BodyActions.Add(r =>
+            ActionList(pageArea).Add(r =>
             {
                 var html = r.Html;
 
@@ -770,42 +766,6 @@ namespace OwinFramework.Pages.Html.Templates
                         html.WriteText(localizedString);
                 }
             });
-            return this;
-        }
-
-        public ITemplateDefinition AddHeadLine(string html)
-        {
-            HeadActions.Add(r =>
-                {
-                    r.Html.WriteLine(html);
-                });
-            return this;
-        }
-
-        public ITemplateDefinition AddScriptLine(string javascript)
-        {
-            ScriptActions.Add(r =>
-                {
-                    r.Html.WriteLine(javascript);
-                });
-            return this;
-        }
-
-        public ITemplateDefinition AddStyleLine(string css)
-        {
-            StyleActions.Add(r =>
-                {
-                    r.Html.WriteLine(css);
-                });
-            return this;
-        }
-
-        public ITemplateDefinition AddInitializationLine(string javascript)
-        {
-            InitializationActions.Add(r =>
-                {
-                    r.Html.WriteLine(javascript);
-                });
             return this;
         }
 
@@ -853,7 +813,19 @@ namespace OwinFramework.Pages.Html.Templates
 
         #region Private methods
 
-        private void WriteElementOpenTag(string tag, params string[] attributePairs)
+        private RenderActionList ActionList(PageArea pageArea)
+        {
+            switch (pageArea)
+            {
+                case PageArea.Head: return HeadActions;
+                case PageArea.Scripts: return ScriptActions;
+                case PageArea.Styles: return StyleActions;
+                case PageArea.Initialization: return InitializationActions;
+                default: return BodyActions;
+            }
+        }
+
+        private void WriteElementOpenTag(PageArea pageArea, string tag, params string[] attributePairs)
         {
             if (_element != null)
                 _elementStack.Push(_element);
@@ -870,13 +842,13 @@ namespace OwinFramework.Pages.Html.Templates
             }
 
             var element = _element;
-            BodyActions.Add(r => r.Html.WriteOpenTag(element.Tag, element.Attributes.ToArray()));
+            ActionList(pageArea).Add(r => r.Html.WriteOpenTag(element.Tag, element.Attributes.ToArray()));
         }
 
-        private void WriteElementCloseTag()
+        private void WriteElementCloseTag(PageArea pageArea)
         {
             var element = _element;
-            BodyActions.Add(r => r.Html.WriteCloseTag(element.Tag));
+            ActionList(pageArea).Add(r => r.Html.WriteCloseTag(element.Tag));
 
             _element = _elementStack.Count > 0 ? _elementStack.Pop() : null;
         }
@@ -927,7 +899,5 @@ namespace OwinFramework.Pages.Html.Templates
         }
 
         #endregion
-
-
     }
 }

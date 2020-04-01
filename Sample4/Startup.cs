@@ -112,7 +112,7 @@ namespace Sample4
             // folder under the root of the template path.
             var fileSystemLoader = ninject.Get<FileSystemLoader>()
                 .ReloadEvery(TimeSpan.FromSeconds(3))
-                .Load(ninject.Get<ComponentParser>());
+                .Load(ninject.Get<ComponentParser>().RenderJavascriptIntoPage());
 
             // Now that all of the elements are loaded an registered we can resolve name
             // references between elements binding them together into a runable website

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Collections;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 
@@ -112,7 +113,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
 
             if (textElement != null && !string.IsNullOrEmpty(textElement.Text))
             {
-                context.Template.AddText(null, textElement.Text, context.IsPreFormatted);
+                context.Template.AddText(PageArea.Body, null, textElement.Text, context.IsPreFormatted);
             }
         }
 
@@ -125,23 +126,23 @@ namespace OwinFramework.Pages.Html.Templates.Text
             {
                 case ElementTypes.Container:
                     context.IsPreFormatted = false;
-                    context.Template.AddElementClose();
-                    context.Template.AddLineBreak();
+                    context.Template.AddElementClose(PageArea.Body);
+                    context.Template.AddLineBreak(PageArea.Body);
                     break;
 
                 case ElementTypes.InlineText:
-                    context.Template.AddElementClose();
+                    context.Template.AddElementClose(PageArea.Body);
                     break;
 
                 case ElementTypes.Heading:
                 case ElementTypes.Paragraph:
-                    context.Template.AddElementClose();
-                    context.Template.AddLineBreak();
+                    context.Template.AddElementClose(PageArea.Body);
+                    context.Template.AddLineBreak(PageArea.Body);
                     break;
 
                 case ElementTypes.Link:
                     if (linkElement != null && linkElement.LinkType == LinkTypes.Reference)
-                        context.Template.AddElementClose();
+                        context.Template.AddElementClose(PageArea.Body);
                     break;
             }
         }
@@ -157,16 +158,16 @@ namespace OwinFramework.Pages.Html.Templates.Text
                      parentContainer.ContainerType == ContainerTypes.BulletList ||
                      parentContainer.ContainerType == ContainerTypes.NumberedList))
                 {
-                    context.Template.AddElementOpen("li", attributeParams);
+                    context.Template.AddElementOpen(PageArea.Body, "li", attributeParams);
                 }
                 else
                 {
-                    context.Template.AddElementOpen("p", attributeParams);
+                    context.Template.AddElementOpen(PageArea.Body, "p", attributeParams);
                 }
             }
             else
             {
-                context.Template.AddElementOpen("p", attributeParams);
+                context.Template.AddElementOpen(PageArea.Body, "p", attributeParams);
             }
         }
 
@@ -185,17 +186,17 @@ namespace OwinFramework.Pages.Html.Templates.Text
                     case LinkTypes.Reference:
                         attributes.Add("href");
                         attributes.Add(linkElement.LinkAddress);
-                        context.Template.AddElementOpen("a", attributes.ToArray());
+                        context.Template.AddElementOpen(PageArea.Body, "a", attributes.ToArray());
                         break;
                     case LinkTypes.Image:
                         attributes.Add("src");
                         attributes.Add(linkElement.LinkAddress);
-                        context.Template.AddSelfClosingElement("img", attributes.ToArray());
+                        context.Template.AddSelfClosingElement(PageArea.Body, "img", attributes.ToArray());
                         break;
                     case LinkTypes.Iframe:
                         attributes.Add("src");
                         attributes.Add(linkElement.LinkAddress);
-                        context.Template.AddSelfClosingElement("iframe", attributes.ToArray());
+                        context.Template.AddSelfClosingElement(PageArea.Body, "iframe", attributes.ToArray());
                         break;
                 }
             }
@@ -208,20 +209,20 @@ namespace OwinFramework.Pages.Html.Templates.Text
             {
                 if (styleElement.Styles.ContainsKey("font-weight") && styleElement.Styles["font-weight"] == "bold")
                 {
-                    context.Template.AddElementOpen("b");
+                    context.Template.AddElementOpen(PageArea.Body, "b");
                 }
                 else if (styleElement.Styles.ContainsKey("font-style") && styleElement.Styles["font-style"] == "italic")
                 {
-                    context.Template.AddElementOpen("i");
+                    context.Template.AddElementOpen(PageArea.Body, "i");
                 }
                 else
                 {
-                    context.Template.AddElementOpen("span", attributeParams);
+                    context.Template.AddElementOpen(PageArea.Body, "span", attributeParams);
                 }
             }
             else
             {
-                context.Template.AddElementOpen("span", attributeParams);
+                context.Template.AddElementOpen(PageArea.Body, "span", attributeParams);
             }
         }
 
@@ -232,7 +233,7 @@ namespace OwinFramework.Pages.Html.Templates.Text
                 var headingLevel = 1;
                 if (nestedElement != null)
                     headingLevel = nestedElement.Level;
-                context.Template.AddElementOpen("h" + headingLevel, attributeParams);
+                context.Template.AddElementOpen(PageArea.Body, "h" + headingLevel, attributeParams);
             }
         }
 
@@ -244,43 +245,43 @@ namespace OwinFramework.Pages.Html.Templates.Text
                 switch (containerElement.ContainerType)
                 {
                     case ContainerTypes.Division:
-                        context.Template.AddElementOpen("div", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "div", attributeParams);
                         break;
                     case ContainerTypes.BareList:
-                        context.Template.AddElementOpen("ul", "style", "list-style-type:none;");
+                        context.Template.AddElementOpen(PageArea.Body, "ul", "style", "list-style-type:none;");
                         break;
                     case ContainerTypes.NumberedList:
-                        context.Template.AddElementOpen("ol", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "ol", attributeParams);
                         break;
                     case ContainerTypes.BulletList:
-                        context.Template.AddElementOpen("ul", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "ul", attributeParams);
                         break;
                     case ContainerTypes.BlockQuote:
-                        context.Template.AddElementOpen("blockquote", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "blockquote", attributeParams);
                         break;
                     case ContainerTypes.PreFormatted:
-                        context.Template.AddElementOpen("pre", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "pre", attributeParams);
                         context.IsPreFormatted = true;
                         break;
                     case ContainerTypes.Table:
-                        context.Template.AddElementOpen("table", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "table", attributeParams);
                         break;
                     case ContainerTypes.TableHeader:
-                        context.Template.AddElementOpen("thead", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "thead", attributeParams);
                         break;
                     case ContainerTypes.TableBody:
-                        context.Template.AddElementOpen("tbody", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "tbody", attributeParams);
                         break;
                     case ContainerTypes.TableFooter:
-                        context.Template.AddElementOpen("tfoot", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "tfoot", attributeParams);
                         break;
                     case ContainerTypes.TableHeaderRow:
                     case ContainerTypes.TableFooterRow:
                     case ContainerTypes.TableDataRow:
-                        context.Template.AddElementOpen("tr", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "tr", attributeParams);
                         break;
                     case ContainerTypes.TableDataCell:
-                        context.Template.AddElementOpen("td", attributeParams);
+                        context.Template.AddElementOpen(PageArea.Body, "td", attributeParams);
                         break;
                     default:
                         throw new Exception("Document parser does not know how to write " +
@@ -298,10 +299,10 @@ namespace OwinFramework.Pages.Html.Templates.Text
             switch (breakType)
             {
                 case BreakTypes.LineBreak:
-                    context.Template.AddSelfClosingElement("br", attributeParams);
+                    context.Template.AddSelfClosingElement(PageArea.Body, "br", attributeParams);
                     break;
                 case BreakTypes.HorizontalRule:
-                    context.Template.AddSelfClosingElement("hr", attributeParams);
+                    context.Template.AddSelfClosingElement(PageArea.Body, "hr", attributeParams);
                     break;
             }
         }

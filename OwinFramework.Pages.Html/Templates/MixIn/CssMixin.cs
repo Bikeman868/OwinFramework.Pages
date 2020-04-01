@@ -1,4 +1,5 @@
 ﻿using dotless.Core.configuration;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 
 namespace OwinFramework.Pages.Html.Templates
@@ -17,7 +18,7 @@ namespace OwinFramework.Pages.Html.Templates
             if (inPage)
             {
                 foreach (var line in css.Split('\n'))
-                    template.AddStyleLine(line);
+                    template.AddHtml(PageArea.Styles, line);
             }
             else
             {

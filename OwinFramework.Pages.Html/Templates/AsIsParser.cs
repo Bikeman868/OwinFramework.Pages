@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Templates;
 
@@ -36,12 +37,12 @@ namespace OwinFramework.Pages.Html.Templates
                 {
                     case "application/javascript":
                         foreach (var line in html.Split('\n'))
-                            template.AddInitializationLine(line);
+                            template.AddHtml(PageArea.Initialization, line);
                         break;
 
                     case "text/css":
                         foreach(var line in html.Split('\n'))
-                            template.AddStyleLine(line);
+                            template.AddHtml(PageArea.Styles, line);
                         break;
 
                     case "text/less":
@@ -49,7 +50,7 @@ namespace OwinFramework.Pages.Html.Templates
                             "You can not render .less directly into the page. Consider using the ComponentParser instead");
 
                     default:
-                        template.AddHtml(html);
+                        template.AddHtml(PageArea.Body, html);
                         break;
                 }
             }

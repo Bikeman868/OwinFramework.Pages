@@ -60,37 +60,37 @@ namespace Sample3.UseCase2
 
             nameManager.Register(
                 templateBuilder.BuildUpTemplate()
-                    .AddElementOpen("p", "class", "dummy")
-                    .AddText("this-is-the", "This is the ")
-                    .AddDataField<ApplicationInfo>(a => a.Name)
-                    .AddText("application", " application\n")
-                    .AddElementClose()
+                    .AddElementOpen(PageArea.Body, "p", "class", "dummy")
+                    .AddText(PageArea.Body, "this-is-the", "This is the ")
+                    .AddDataField<ApplicationInfo>(PageArea.Body, a => a.Name)
+                    .AddText(PageArea.Body, "application", " application\n")
+                    .AddElementClose(PageArea.Body)
                     .Build(), 
                 "/title");
 
             nameManager.Register(
                 templateBuilder.BuildUpTemplate()
-                    .AddElementOpen("p")
-                    .AddDataField<Address>(p => p.Street).AddHtml("<br>")
-                    .AddDataField<Address>(p => p.City).AddHtml("<br>")
-                    .AddDataField<Address>(p => p.ZipCode)
-                    .AddElementClose()
+                    .AddElementOpen(PageArea.Body, "p")
+                    .AddDataField<Address>(PageArea.Body, p => p.Street).AddHtml(PageArea.Body, "<br>")
+                    .AddDataField<Address>(PageArea.Body, p => p.City).AddHtml(PageArea.Body, "<br>")
+                    .AddDataField<Address>(PageArea.Body, p => p.ZipCode)
+                    .AddElementClose(PageArea.Body)
                     .Build(),
                 "/address");
 
             nameManager.Register(
                 templateBuilder.BuildUpTemplate()
-                    .AddElementOpen("h3")
-                    .AddDataField<Person>(p => p.Name)
-                    .AddElementClose()
-                    .ExtractProperty<Person>(p => p.Address)
+                    .AddElementOpen(PageArea.Body, "h3")
+                    .AddDataField<Person>(PageArea.Body, p => p.Name)
+                    .AddElementClose(PageArea.Body)
+                    .ExtractProperty<Person>(PageArea.Body, p => p.Address)
                     .AddTemplate("/address")
                     .Build(),
                 "/person");
 
             nameManager.Register(
                 templateBuilder.BuildUpTemplate()
-                    .RepeatStart<Person>()
+                    .RepeatStart<Person>(PageArea.Body)
                     .AddTemplate("/person")
                     .RepeatEnd()
                     .Build(),

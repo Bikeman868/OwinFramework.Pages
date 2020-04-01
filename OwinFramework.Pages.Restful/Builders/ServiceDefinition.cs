@@ -206,7 +206,9 @@ namespace OwinFramework.Pages.Restful.Builders
 
             public IWriteResult WriteStaticJavascript(IJavascriptWriter writer)
             {
-                writer.WriteClass(ServiceName + "Service", ClientScript, Package);
+                if (!string.IsNullOrEmpty(ClientScript))
+                    writer.WriteClass(ServiceName + "Service", ClientScript, Package);
+
                 return new WriteResult();
             }
 

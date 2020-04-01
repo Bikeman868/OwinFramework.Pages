@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Templates;
@@ -23,12 +24,12 @@ namespace OwinFramework.Pages.Html.Templates
                 RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
         }
 
-        public void AddToTemplate(ITemplateDefinition template, string text)
+        public void AddToTemplate(ITemplateDefinition template, PageArea pageArea, string text)
         {
             var matches = _mustacheRegex.Matches(text);
             if (matches == null || matches.Count == 0)
             {
-                template.AddHtml(text);
+                template.AddHtml(pageArea, text);
                 return;
             }
 
@@ -53,7 +54,7 @@ namespace OwinFramework.Pages.Html.Templates
             foreach(Match match in matches)
             {
                 if (match.Index > pos)
-                    template.AddHtml(text.Substring(pos, match.Index - pos));
+                    template.AddHtml(pageArea, text.Substring(pos, match.Index - pos));
 
                 if (pos <= match.Index) 
                     pos = match.Index + match.Length;
@@ -61,13 +62,13 @@ namespace OwinFramework.Pages.Html.Templates
                 var mustache = match.Groups[1].Value.Replace(" ", "");
 
                 if (TryParseAlias(mustache, types)) continue;
-                if (TryParseStartRepeat(mustache, template, types)) continue;
+                if (TryParseStartRepeat(mustache, template, pageArea, types)) continue;
                 if (TryParseEndRepeat(mustache, template, types)) continue;
-                if (TryParseField(mustache, template, types)) continue;
+                if (TryParseField(mustache, template, pageArea, types)) continue;
             }
 
             if (pos < text.Length)
-                template.AddHtml(text.Substring(pos));
+                template.AddHtml(pageArea, text.Substring(pos));
         }
 
         private bool TryParseAlias(string mustache, Dictionary<string, Type> types)
@@ -86,7 +87,7 @@ namespace OwinFramework.Pages.Html.Templates
             return true;
         }
 
-        private bool TryParseStartRepeat(string mustache, ITemplateDefinition template, Dictionary<string, Type> types)
+        private bool TryParseStartRepeat(string mustache, ITemplateDefinition template, PageArea pageArea, Dictionary<string, Type> types)
         {
             if (mustache.Length == 0) return false;
 
@@ -121,13 +122,13 @@ namespace OwinFramework.Pages.Html.Templates
             switch (repeatType)
             {
                 case RepeatType.RepeatList:
-                    template.RepeatStart(type);
+                    template.RepeatStart(pageArea, type);
                     break;
                 case RepeatType.IfTrue:
-                    template.RepeatStart(type, fieldName, _truthyEvaluator);
+                    template.RepeatStart(pageArea, type, fieldName, _truthyEvaluator);
                     break;
                 case RepeatType.IfNotTrue:
-                    template.RepeatStart(type, fieldName, _notTruthyEvaluator);
+                    template.RepeatStart(pageArea, type, fieldName, _notTruthyEvaluator);
                     break;
             }
 
@@ -143,7 +144,7 @@ namespace OwinFramework.Pages.Html.Templates
             return true;
         }
 
-        private bool TryParseField(string mustache, ITemplateDefinition template, Dictionary<string, Type> types)
+        private bool TryParseField(string mustache, ITemplateDefinition template, PageArea pageArea, Dictionary<string, Type> types)
         {
             var colonPos = mustache.IndexOf(':');
             if (colonPos < 0) return false;
@@ -159,7 +160,7 @@ namespace OwinFramework.Pages.Html.Templates
                 ? types[typeName] 
                 : ResolveTypeName(typeName);
 
-            template.AddDataField(type, fieldName);
+            template.AddDataField(pageArea, type, fieldName);
 
             return true;
         }

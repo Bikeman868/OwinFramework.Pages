@@ -76,7 +76,15 @@ namespace Sample4.CmsData
                     DisplayName = "Title",
                     CreatedBy = creator,
                     CreatedWhen = DateTime.UtcNow
-                }
+                },
+                new RegionRecord
+                {
+                    RecordId = elementId++,
+                    Name = "vue_sample",
+                    DisplayName = "Vue example",
+                    CreatedBy = creator,
+                    CreatedWhen = DateTime.UtcNow
+                },
             };
 
             _layouts = new []
@@ -240,6 +248,18 @@ namespace Sample4.CmsData
                     RecordId = elementVersionId++,
                     Version = 1,
                     ComponentId = _components[0].RecordId
+                },
+                // vue_sample region
+                new RegionVersionRecord
+                {
+                    ParentRecordId = _regions[5].RecordId,
+                    RecordId = elementVersionId++,
+                    Version = 1,
+                    RegionTemplates = new []
+                    {
+                        new RegionTemplateRecord{PageArea = PageArea.Body, TemplatePath = "/vuesample"}
+                    },
+                    RepeatDataTypeId = _dataTypes[0].RecordId
                 },
             };
 
@@ -419,7 +439,15 @@ namespace Sample4.CmsData
                         new LayoutZoneRecord
                         {
                             ZoneName = "main",
-                            RegionId = _regions[2].RecordId
+                            //RegionId = _regions[2].RecordId
+                            RegionId = _regions[5].RecordId
+                        }
+                    },
+                    Components = new[]
+                    {
+                        new ElementComponentRecord
+                        {
+                            ComponentName = "libraries:vue"
                         }
                     }
                 },

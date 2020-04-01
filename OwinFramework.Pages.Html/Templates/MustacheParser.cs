@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using OwinFramework.Pages.Core.Enums;
 using OwinFramework.Pages.Core.Exceptions;
 using OwinFramework.Pages.Core.Interfaces;
 using OwinFramework.Pages.Core.Interfaces.Templates;
@@ -70,7 +71,7 @@ namespace OwinFramework.Pages.Html.Templates
                 var encoding = resource.Encoding ?? Encoding.UTF8;
                 var text = encoding.GetString(resource.Content);
 
-                _mustacheMixIn.AddToTemplate(template, text);
+                _mustacheMixIn.AddToTemplate(template, PageArea.Body, text);
             }
             return template.Build();
         }

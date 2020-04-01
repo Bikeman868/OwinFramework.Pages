@@ -40,32 +40,32 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <summary>
         /// Adds a block of HTML to the template definition
         /// </summary>
-        ITemplateDefinition AddHtml(string html);
+        ITemplateDefinition AddHtml(PageArea pageArea, string html);
 
         /// <summary>
         /// Adds an html element with attributes and content
         /// </summary>
-        ITemplateDefinition AddElement(string tag, string content, params string[] attributePairs);
+        ITemplateDefinition AddElement(PageArea pageArea, string tag, string content, params string[] attributePairs);
 
         /// <summary>
         /// Adds an html element with attributes and content
         /// </summary>
-        ITemplateDefinition AddSelfClosingElement(string tag, params string[] attributePairs);
+        ITemplateDefinition AddSelfClosingElement(PageArea pageArea, string tag, params string[] attributePairs);
 
         /// <summary>
         /// Adds an opening Html element
         /// </summary>
-        ITemplateDefinition AddElementOpen(string tag, params string[] attributePairs);
+        ITemplateDefinition AddElementOpen(PageArea pageArea, string tag, params string[] attributePairs);
 
         /// <summary>
         /// Adds an opening script element
         /// </summary>
-        ITemplateDefinition WriteScriptOpen(string scriptType = "text/javascript");
+        ITemplateDefinition WriteScriptOpen(PageArea pageArea, string scriptType = "text/javascript");
 
         /// <summary>
         /// Adds a closing script element
         /// </summary>
-        ITemplateDefinition WriteScriptClose();
+        ITemplateDefinition WriteScriptClose(PageArea pageArea);
 
         /// <summary>
         /// Adds an attribute to the most recently added element. The attribute
@@ -93,12 +93,12 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <summary>
         /// Closes a previously opened Html element
         /// </summary>
-        ITemplateDefinition AddElementClose();
+        ITemplateDefinition AddElementClose(PageArea pageArea);
 
         /// <summary>
         /// Starts a new line in the Html
         /// </summary>
-        ITemplateDefinition AddLineBreak();
+        ITemplateDefinition AddLineBreak(PageArea pageArea);
 
         /// <summary>
         /// Adds a reference to a layout
@@ -143,18 +143,19 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <summary>
         /// Starts a section that will repeat
         /// </summary>
-        ITemplateDefinition RepeatStart(Type dataTypeToRepeat, string scopeName = null, string listScopeName = null);
+        ITemplateDefinition RepeatStart(PageArea pageArea, Type dataTypeToRepeat, string scopeName = null, string listScopeName = null);
 
         /// <summary>
         /// Starts a section that will repeat
         /// </summary>
-        ITemplateDefinition RepeatStart<T>(string scopeName = null, string listScopeName = null);
+        ITemplateDefinition RepeatStart<T>(PageArea pageArea, string scopeName = null, string listScopeName = null);
 
         /// <summary>
         /// Starts a section that will repeat 0 or 1 times according to the 
         /// truthiness of a property value
         /// </summary>
         ITemplateDefinition RepeatStart(
+            PageArea pageArea,
             Type dataTypeToRepeat, 
             string propertyName, 
             ITruthyEvaluator truthyEvaluator, 
@@ -166,6 +167,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// truthiness of a property value
         /// </summary>
         ITemplateDefinition RepeatStart<T>(
+            PageArea pageArea,
             Expression<Func<T, object>> propertyExpression,
             ITruthyEvaluator truthyEvaluator, 
             string scopeName = null, 
@@ -183,7 +185,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <param name="dataType">The type of data to add</param>
         /// <param name="scopeName">Optional scope qualifier</param>
         /// <returns></returns>
-        ITemplateDefinition AddData(Type dataType, string scopeName = null);
+        ITemplateDefinition AddData(PageArea pageArea, Type dataType, string scopeName = null);
 
         /// <summary>
         /// Finds a supplier of the specified type of data and adds it to the
@@ -191,7 +193,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// </summary>
         /// <param name="scopeName">Optional scope qualifier</param>
         /// <returns></returns>
-        ITemplateDefinition AddData<T>(string scopeName = null);
+        ITemplateDefinition AddData<T>(PageArea pageArea, string scopeName = null);
 
         /// <summary>
         /// Finds a supplier of the specified type of data and adds it to the
@@ -202,7 +204,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <param name="scopeName">Optional scope to put the extracted data into</param>
         /// <param name="propertyScopeName">Optional scope to get the data from</param>
         /// <returns></returns>
-        ITemplateDefinition ExtractProperty(Type dataType, string propertyName, string scopeName = null, string propertyScopeName = null);
+        ITemplateDefinition ExtractProperty(PageArea pageArea, Type dataType, string propertyName, string scopeName = null, string propertyScopeName = null);
 
         /// <summary>
         /// Finds a supplier of the specified type of data and adds it to the
@@ -212,7 +214,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <param name="scopeName">Optional scope to put the extracted data into</param>
         /// <param name="propertyScopeName">Optional scope to get the data from</param>
         /// <returns></returns>
-        ITemplateDefinition ExtractProperty<T>(Expression<Func<T, object>> propertyExpression, string scopeName = null, string propertyScopeName = null);
+        ITemplateDefinition ExtractProperty<T>(PageArea pageArea, Expression<Func<T, object>> propertyExpression, string scopeName = null, string propertyScopeName = null);
 
         /// <summary>
         /// Adds data from a property of a data bound object to the Html output
@@ -228,6 +230,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <param name="scopeName">Optional scope name to use when resolving
         /// data from the data context</param>
         ITemplateDefinition AddDataField(
+            PageArea pageArea,
             Type dataType, 
             string propertyName, 
             IDataFieldFormatter dataFormatter = null, 
@@ -245,6 +248,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// <param name="scopeName">Optional scope name to use when resolving
         /// data from the data context</param>
         ITemplateDefinition AddDataField<T>(
+            PageArea pageArea,
             Expression<Func<T, object>> propertyExpression,
             IDataFieldFormatter dataFormatter = null,
             string scopeName = null);
@@ -257,7 +261,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// into Html</param>
         /// <param name="scopeName">Optional scope name to use when resolving
         /// data from the data context</param>
-        ITemplateDefinition AddDataField<T>(Func<T, string> formatFunc, string scopeName = null);
+        ITemplateDefinition AddDataField<T>(PageArea pageArea, Func<T, string> formatFunc, string scopeName = null);
 
         /// <summary>
         /// Adds a paragraph of static text that can be localized
@@ -269,27 +273,7 @@ namespace OwinFramework.Pages.Core.Interfaces.Templates
         /// is the text that will always be used</param>
         /// <param name="isPreFormatted">Pass true to output text exactly as is 
         /// without adding indentation or collapsing multiple spaces</param>
-        ITemplateDefinition AddText(string assetName, string defaultText, bool isPreFormatted = false);
-
-        /// <summary>
-        /// Adds HTML to the head section of the page
-        /// </summary>
-        ITemplateDefinition AddHeadLine(string html);
-
-        /// <summary>
-        /// Adds JavaScript to the head of the page
-        /// </summary>
-        ITemplateDefinition AddScriptLine(string javaScript);
-
-        /// <summary>
-        /// Adds CSS to the head of the page
-        /// </summary>
-        ITemplateDefinition AddStyleLine(string css);
-
-        /// <summary>
-        /// Adds JavaScript to the bottom of the page HTML
-        /// </summary>
-        ITemplateDefinition AddInitializationLine(string javaScript);
+        ITemplateDefinition AddText(PageArea pageArea, string assetName, string defaultText, bool isPreFormatted = false);
 
         /// <summary>
         /// Adds Javascript to a static asset that is referenced by any 

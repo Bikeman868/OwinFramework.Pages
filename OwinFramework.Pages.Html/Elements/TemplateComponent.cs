@@ -395,20 +395,6 @@ namespace OwinFramework.Pages.Html.Elements
             }
         }
 
-        private void WriteScriptTemplate(
-            IRenderContext renderContext, 
-            ITemplate template, 
-            PageArea pageArea)
-        {
-            renderContext.Html.WriteScriptOpen();
-            renderContext.Html.WriteLine();
-
-            template.WritePageArea(renderContext, pageArea);
-
-            renderContext.Html.WriteScriptClose();
-            renderContext.Html.WriteLine();
-        }
-
         private void WriteStyleTemplate(
             IRenderContext renderContext,
             ITemplate template,
@@ -428,13 +414,28 @@ namespace OwinFramework.Pages.Html.Elements
             var template = Dependencies.NameManager.ResolveTemplate(_multiPartTemplatePath);
             if (template != null)
             {
-                WriteScriptTemplate(renderContext, template, PageArea.Scripts);
+                renderContext.Html.WriteScriptOpen();
+                renderContext.Html.WriteLine();
+
+                template.WritePageArea(renderContext, PageArea.Scripts);
+
+                renderContext.Html.WriteScriptClose();
+                renderContext.Html.WriteLine();
 
                 if (template.IsStatic)
                 {
                     ScriptWriters = new Action<IRenderContext>[] 
                     { 
-                        rc => WriteScriptTemplate(rc, template, PageArea.Scripts)
+                        rc =>
+                        {
+                            renderContext.Html.WriteScriptOpen();
+                            renderContext.Html.WriteLine();
+
+                            template.WritePageArea(renderContext, PageArea.Scripts);
+
+                            renderContext.Html.WriteScriptClose();
+                            renderContext.Html.WriteLine();
+                        }
                     };
                 }
             }
@@ -479,13 +480,18 @@ namespace OwinFramework.Pages.Html.Elements
             var template = Dependencies.NameManager.ResolveTemplate(_multiPartTemplatePath);
             if (template != null)
             {
-                WriteScriptTemplate(renderContext, template, PageArea.Initialization);
+                renderContext.EnsureInitializationArea();
+                template.WritePageArea(renderContext, PageArea.Initialization);
 
                 if (template.IsStatic)
                 {
                     InitializationWriters = new Action<IRenderContext>[] 
                     { 
-                        rc => WriteScriptTemplate(rc, template, PageArea.Initialization)
+                        rc =>
+                        {
+                            renderContext.EnsureInitializationArea();
+                            template.WritePageArea(renderContext, PageArea.Initialization);
+                        }
                     };
                 }
             }
@@ -517,13 +523,28 @@ namespace OwinFramework.Pages.Html.Elements
             var template = Dependencies.NameManager.ResolveTemplate(_scriptTemplatePath);
             if (template != null)
             {
-                WriteScriptTemplate(renderContext, template, PageArea.Body);
+                renderContext.Html.WriteScriptOpen();
+                renderContext.Html.WriteLine();
+
+                template.WritePageArea(renderContext, PageArea.Body);
+
+                renderContext.Html.WriteScriptClose();
+                renderContext.Html.WriteLine();
 
                 if (template.IsStatic)
                 {
                     ScriptWriters = new Action<IRenderContext>[] 
                     { 
-                        rc => WriteScriptTemplate(rc, template, PageArea.Body)
+                        rc =>
+                        {
+                            renderContext.Html.WriteScriptOpen();
+                            renderContext.Html.WriteLine();
+
+                            template.WritePageArea(renderContext, PageArea.Body);
+
+                            renderContext.Html.WriteScriptClose();
+                            renderContext.Html.WriteLine();
+                        }
                     };
                 }
             }
@@ -568,13 +589,18 @@ namespace OwinFramework.Pages.Html.Elements
             var template = Dependencies.NameManager.ResolveTemplate(_initializationTemplatePath);
             if (template != null)
             {
-                WriteScriptTemplate(renderContext, template, PageArea.Body);
+                renderContext.EnsureInitializationArea();
+                template.WritePageArea(renderContext, PageArea.Body);
 
                 if (template.IsStatic)
                 {
                     InitializationWriters = new Action<IRenderContext>[] 
                     { 
-                        rc => WriteScriptTemplate(rc, template, PageArea.Body)
+                        rc =>
+                        {
+                            renderContext.EnsureInitializationArea();
+                            template.WritePageArea(renderContext, PageArea.Body);
+                        }
                     };
                 }
             }

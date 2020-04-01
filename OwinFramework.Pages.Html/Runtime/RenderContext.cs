@@ -25,6 +25,7 @@ namespace OwinFramework.Pages.Html.Runtime
 
         private bool _traceEnabled;
         private int _traceIndentiation;
+        private bool _hasInitializationArea;
 
         public RenderContext(
             IAssetManager assetManager,
@@ -60,6 +61,23 @@ namespace OwinFramework.Pages.Html.Runtime
         {
             DeleteDataContextTree();
             Html.Dispose();
+        }
+
+        public void EnsureInitializationArea()
+        {
+            if (!_hasInitializationArea)
+            {
+                _hasInitializationArea = true;
+                Html.WriteScriptOpen();
+            }
+        }
+
+        public void EndInitializationArea()
+        {
+            if (_hasInitializationArea)
+            {
+                Html.WriteScriptClose();
+            }
         }
 
         public DebugRenderContext GetDebugInfo()

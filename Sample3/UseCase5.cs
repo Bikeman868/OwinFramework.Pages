@@ -53,8 +53,8 @@ namespace Sample3.UseCase5
                 .PartOf("usecase5")
                 .AssetDeployment(AssetDeployment.PerWebsite)
                 .AddStaticCss("h2 { font-size: 60px; }")
-                .AddStyleLine("h2 { color: orange; }")
-                .AddHtml("<h2>This is test 2</h2>")
+                .AddHtml(PageArea.Styles, "h2 { color: orange; }")
+                .AddHtml(PageArea.Body, "<h2>This is test 2</h2>")
                 .Build();
             nameManager.Register(template, "/test2");
             
@@ -96,7 +96,7 @@ namespace Sample3.UseCase5
                 .PartOf(this)
                 .DeployIn("usecase5")
                 .AddStaticCss("body { background-color: whitesmoke; color: darkblue; }")
-                .AddHtml("<h1>This is use case 5</h1>")
+                .AddHtml(PageArea.Body, "<h1>This is use case 5</h1>")
                 .Build();
             _nameManager.Register(template, "/test1");
 

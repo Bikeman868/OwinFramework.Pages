@@ -245,6 +245,7 @@ namespace OwinFramework.Pages.Standard
             {
                 private readonly IAssetManager _assetManager;
                 private readonly IHtmlWriter _htmlWriter;
+                private bool _hasInitializationArea;
 
                 public TemplateRenderContext(
                     IAssetManager assetManager,
@@ -257,6 +258,23 @@ namespace OwinFramework.Pages.Standard
                 IRenderContext IRenderContext.Initialize(Microsoft.Owin.IOwinContext context)
                 {
                     return this;
+                }
+
+                public void EnsureInitializationArea()
+                {
+                    if (!_hasInitializationArea)
+                    {
+                        _hasInitializationArea = true;
+                        _htmlWriter.WriteScriptOpen();
+                    }
+                }
+
+                public void EndInitializationArea()
+                {
+                    if (_hasInitializationArea)
+                    {
+                        _htmlWriter.WriteScriptClose();
+                    }
                 }
 
                 void IRenderContext.Trace(System.Func<string> messageFunc)
@@ -275,7 +293,7 @@ namespace OwinFramework.Pages.Standard
                 {
                 }
 
-                Microsoft.Owin.IOwinContext IRenderContext.OwinContext
+                IOwinContext IRenderContext.OwinContext
                 {
                     get { throw new System.NotImplementedException(); }
                 }
@@ -297,7 +315,7 @@ namespace OwinFramework.Pages.Standard
 
                 Core.Interfaces.DataModel.IDataContext IRenderContext.Data
                 {
-                    get { throw new System.NotImplementedException(); }
+                    get { throw new NotImplementedException(); }
                     set { }
                 }
 
@@ -307,17 +325,17 @@ namespace OwinFramework.Pages.Standard
 
                 Core.Interfaces.DataModel.IDataContext IRenderContext.GetDataContext(int id)
                 {
-                    throw new System.NotImplementedException();
+                    throw new NotImplementedException();
                 }
 
                 void IRenderContext.SelectDataContext(int id)
                 {
-                    throw new System.NotImplementedException();
+                    throw new NotImplementedException();
                 }
 
                 void IRenderContext.DeleteDataContextTree()
                 {
-                    throw new System.NotImplementedException();
+                    throw new NotImplementedException();
                 }
             }
 

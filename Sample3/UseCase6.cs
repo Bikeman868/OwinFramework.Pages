@@ -61,7 +61,7 @@ namespace Sample3.UseCase6
 
             nameManager.Register(
                 templateBuilder.BuildUpTemplate()
-                .AddHtml("<p>This is a test</p>")
+                .AddHtml(PageArea.Body, "<p>This is a test</p>")
                 .Build(), "/pages/test");
 
             nameManager.Bind();

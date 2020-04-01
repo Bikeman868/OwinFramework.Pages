@@ -145,7 +145,7 @@ namespace OwinFramework.Pages.Html.Templates
             }
 
             foreach (var headLine in headLines)
-                template.AddHeadLine(headLine);
+                template.AddHtml(PageArea.Head, headLine);
 
             if (scriptLines.Count > 0)
                 _javascriptMixIn.AddToTemplate(template, string.Join("\n", scriptLines), true, true);
@@ -158,12 +158,12 @@ namespace OwinFramework.Pages.Html.Templates
 
             foreach (var htmlLine in htmlLines)
             {
-                template.AddHtml(htmlLine);
-                template.AddLineBreak();
+                template.AddHtml(PageArea.Body, htmlLine);
+                template.AddLineBreak(PageArea.Body);
             }
 
             foreach (var initLine in initLines)
-                template.AddInitializationLine(initLine);
+                template.AddHtml(PageArea.Initialization, initLine);
         }
     }
 }

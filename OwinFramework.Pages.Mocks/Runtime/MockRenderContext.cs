@@ -31,6 +31,25 @@ namespace OwinFramework.Pages.Mocks.Runtime
             return this;
         }
 
+        public bool HasInitializationArea { get; set; }
+
+        public void EnsureInitializationArea()
+        {
+            if (!HasInitializationArea)
+            {
+                HasInitializationArea = true;
+                Html.WriteScriptOpen();
+            }
+        }
+
+        public void EndInitializationArea()
+        {
+            if (HasInitializationArea)
+            {
+                Html.WriteScriptClose();
+            }
+        }
+
         public DebugRenderContext GetDebugInfo()
         {
             return new DebugRenderContext

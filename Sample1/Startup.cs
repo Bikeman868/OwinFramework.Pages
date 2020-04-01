@@ -127,23 +127,23 @@ namespace Sample1
             var templateBuilder = ninject.Get<ITemplateBuilder>();
 
             var template1 = templateBuilder.BuildUpTemplate()
-                .AddElementOpen("p", "class", "dummy")
-                .AddText("this-is-the", "This is the ")
-                .AddDataField<ApplicationInfo>(a => a.Name)
-                .AddText("application", " application")
-                .AddElementClose()
+                .AddElementOpen(PageArea.Body, "p", "class", "dummy")
+                .AddText(PageArea.Body, "this-is-the", "This is the ")
+                .AddDataField<ApplicationInfo>(PageArea.Body, a => a.Name)
+                .AddText(PageArea.Body, "application", " application")
+                .AddElementClose(PageArea.Body)
                 .Build();
             nameManager.Register(template1, "/common/pageTitle");
 
             var template2 = templateBuilder.BuildUpTemplate()
-                .AddHtml("alert('Hello!');")
+                .AddHtml(PageArea.Body, "alert('Hello!');")
                 .Build();
             nameManager.Register(template2, "/common/pageInitialization");
 
             var template3 = templateBuilder.BuildUpTemplate()
-                .AddElementOpen("p", "class", "test")
-                .AddText("page-2-body", "Page 2 body")
-                .AddElementClose()
+                .AddElementOpen(PageArea.Body, "p", "class", "test")
+                .AddText(PageArea.Body, "page-2-body", "Page 2 body")
+                .AddElementClose(PageArea.Body)
                 .AddStaticCss("p.test {font-size: large;}")
                 .Build();
             nameManager.Register(template3, "/page2/body");

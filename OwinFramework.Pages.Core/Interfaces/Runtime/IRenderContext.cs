@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Owin;
-using OwinFramework.Pages.Core.Debug;
 using OwinFramework.Pages.Core.Interfaces.DataModel;
 
 namespace OwinFramework.Pages.Core.Interfaces.Runtime
@@ -78,6 +77,18 @@ namespace OwinFramework.Pages.Core.Interfaces.Runtime
         /// Gets and sets the data context that should be used for the current operation
         /// </summary>
         IDataContext Data { get; set; }
+
+        /// <summary>
+        /// Writes a script open tag for the page initialization area. Calling this
+        /// multiple times for the same page only renders one script open
+        /// </summary>
+        void EnsureInitializationArea();
+
+        /// <summary>
+        /// Writes a single script close tag only if the EnsureInitializationArea
+        /// method was called at least once
+        /// </summary>
+        void EndInitializationArea();
 
         /// <summary>
         /// Adds a request specific data context that is linked to a specific page,

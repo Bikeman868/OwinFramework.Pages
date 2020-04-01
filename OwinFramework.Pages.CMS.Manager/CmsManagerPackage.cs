@@ -244,7 +244,7 @@ namespace OwinFramework.Pages.CMS.Manager
             if (markupLines != null)
             {
                 var html = string.Join("\n", markupLines);
-                templateDefinition.AddHtml(html);
+                templateDefinition.AddHtml(PageArea.Body, html);
             }
 
             var styles = GetEmbeddedTextFile(stylesheetFileName);

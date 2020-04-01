@@ -36,9 +36,8 @@ namespace OwinFramework.Pages.Html.Templates
             var types = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
             
             var pos = 0;
-            var startOfContent = false;
             var matchIndex = 0;
-            while (!startOfContent)
+            while (pos < text.Length)
             {
                 if (char.IsWhiteSpace(text[pos]))
                     pos++;
@@ -48,7 +47,7 @@ namespace OwinFramework.Pages.Html.Templates
                     matchIndex++;
                 }
                 else
-                    startOfContent = true;
+                    break;
             }
 
             foreach(Match match in matches)

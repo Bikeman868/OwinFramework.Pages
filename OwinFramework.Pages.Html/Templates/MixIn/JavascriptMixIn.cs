@@ -81,11 +81,7 @@ namespace OwinFramework.Pages.Html.Templates
                 var lines = script.Split('\n').Where(l => l != null).ToList();
                 if (lines.Count > 0)
                 {
-                    if (!context.HasOutput)
-                    {
-                        context.HasOutput = true;
-                        context.Template.WriteScriptOpen(PageArea.Initialization);
-                    }
+                    context.EnsureScriptOpen();
 
                     for (var i = 0; i < lines.Count; i++)
                     {
@@ -113,12 +109,7 @@ namespace OwinFramework.Pages.Html.Templates
                     "rendered into the page. It makes no sense to create static Javascript " +
                     "assets with data binding because the Javascript is static by definition.");
 
-            if (!context.HasOutput)
-            {
-                context.HasOutput = true;
-                context.Template.WriteScriptOpen(PageArea.Initialization);
-            }
-
+            context.EnsureScriptOpen();
             _mustacheMixIn.AddToTemplate(context.Template, PageArea.Initialization, s);
         }
 
@@ -240,6 +231,15 @@ namespace OwinFramework.Pages.Html.Templates
             public bool InPage;
             public bool Indented;
             public bool HasOutput;
+
+            public void EnsureScriptOpen()
+            {
+                if (!HasOutput)
+                {
+                    HasOutput = true;
+                    Template.WriteScriptOpen(PageArea.Initialization);
+                }
+            }
         }
     }
 }

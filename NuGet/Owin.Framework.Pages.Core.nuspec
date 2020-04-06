@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.Core</id>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <title>Owin Framework Pages Core</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>
@@ -10,11 +10,7 @@
     <description>Defines the interfaces, enums and custom attributes that the other packages from Owin.Pages.Framework depend on</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
     <releaseNotes>
-      Major refactoring of the templating system so that templates can render data bound content
-      into other areas of the page and not just the body. This allows the template parsers that
-      parse Javascript to support back-ticks for mustache data binding in the Javascript. This is
-      especially useful when using Vue.js to initialize the "data" attribute of the view model
-      with server-side data binding.
+      Fix for a bug in the javascript template parser mixin.
     </releaseNotes>
     <projectUrl>http://owinframework.net/content/project/owinframework.pages.core/landing</projectUrl>
     <license type="expression">Apache-2.0</license>

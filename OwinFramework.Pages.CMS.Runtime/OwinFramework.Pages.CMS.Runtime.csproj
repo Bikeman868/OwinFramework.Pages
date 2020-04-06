@@ -6,7 +6,7 @@
     <RootNamespace>OwinFramework.Pages.CMS.Runtime</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <Authors>Martin Halliday</Authors>
     <Copyright>Copyright © Martin Halliday 2018-2020</Copyright>
     <PackageProjectUrl>http://owinframework.net/content/project/owinframework.pages.cms.runtime/landing</PackageProjectUrl>
@@ -15,8 +15,8 @@
     <Description>You must include this package in your website to render pages defined within the CMS.</Description>
     <PackageReleaseNotes>Uses new MSBuid format to target multiple platforms</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <AssemblyVersion>1.4.0.0</AssemblyVersion>
-    <FileVersion>1.4.0.0</FileVersion>
+    <AssemblyVersion>1.4.1.0</AssemblyVersion>
+    <FileVersion>1.4.1.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -97,7 +97,7 @@
                 vm.componentMode = "delete";
                 vm.showModalDialog(
                     "Delete " + vm.currentComponent.displayName + " component",
-                    "Are you sure you wan to permenantly delete this component and all versions of it from all versions of the website?",
+                    "Are you sure you want to permenantly delete this component and all versions of it from all versions of the website?",
                     [
                         {
                             caption: "Delete",

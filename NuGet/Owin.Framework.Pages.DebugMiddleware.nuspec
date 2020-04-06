@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Owin.Framework.Pages.DebugMiddleware</id>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <title>Owin Framework Pages Debug Middleware</title>
     <authors>Martin Halliday</authors>
     <owners>Martin Halliday</owners>
@@ -10,11 +10,7 @@
     <description>Middleware that shows the internal structure of pages to help with debugging issues with page composition and data provisioning</description>
     <copyright>Copyright Martin Halliday 2018-2020</copyright>
     <releaseNotes>
-      Major refactoring of the templating system so that templates can render data bound content
-      into other areas of the page and not just the body. This allows the template parsers that
-      parse Javascript to support back-ticks for mustache data binding in the Javascript. This is
-      especially useful when using Vue.js to initialize the "data" attribute of the view model
-      with server-side data binding.
+      Fix for a bug in the javascript template parser mixin.
     </releaseNotes>
     <projectUrl>http://owinframework.net/content/project/owinframework.pages.debugmiddleware/landing</projectUrl>
     <license type="expression">Apache-2.0</license>
@@ -25,14 +21,14 @@
         <dependency id="Urchin.Client" version="1.3.2" />
         <dependency id="Svg" version="2.3.0" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.4.0" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.4.1" />
 	  </group>
       <group targetFramework="net45">
         <dependency id="Newtonsoft.Json" version="7.0.1" />
         <dependency id="Urchin.Client" version="1.3.2" />
         <dependency id="Svg" version="2.3.0" />
         <dependency id="Owin.Framework" version="2.7.1" />
-        <dependency id="Owin.Framework.Pages.Core" version="1.4.0" />
+        <dependency id="Owin.Framework.Pages.Core" version="1.4.1" />
       </group>
     </dependencies>
     <references>

@@ -1,5 +1,8 @@
 * Bugs
-  - No known bugs at this time
+  - Since refactoring the template rendering system, there is a problem
+    with static templates (no reload interval) that results in a null
+    reference exception, but only on the second and subsequent page render.
+    The whole static template implementation needs to be reviewed.
 
 * Missing MVP features
   - Service endpoints need to be able to return a future (Task<T>)

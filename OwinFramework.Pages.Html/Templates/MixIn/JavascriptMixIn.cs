@@ -69,6 +69,10 @@ namespace OwinFramework.Pages.Html.Templates
                     }
                 }
             }
+            else
+            {
+                AppendJavascriptSection(context, javascript);
+            }
         }
 
         private void AppendScript(Context context, string script)

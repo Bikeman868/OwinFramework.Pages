@@ -37,6 +37,11 @@ namespace OwinFramework.Pages.Restful.Serializers
         public Task Success<T>(IOwinContext context, T data)
         {
             context.Response.ContentType = "text/plain";
+            if (context.Request.Method == "HEAD")
+            {
+                context.Response.ContentLength = data.ToString().Length;
+                return context.Response.WriteAsync(string.Empty);
+            }
             return context.Response.WriteAsync(data.ToString());
         }
 
@@ -47,7 +52,7 @@ namespace OwinFramework.Pages.Restful.Serializers
             context.Response.StatusCode = (int)statusCode;
             context.Response.ReasonPhrase = message;
             context.Response.ContentType = "text/plain";
-            return context.Response.WriteAsync(message);
+            return context.Response.WriteAsync(message ?? string.Empty);
         }
     }
 }

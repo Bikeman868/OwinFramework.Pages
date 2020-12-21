@@ -107,6 +107,15 @@ namespace OwinFramework.Pages.Restful.Interfaces
         void Success<T>(T valueToSerialize);
 
         /// <summary>
+        /// Indicates a sucessfull completion of a HEAD request and provides header
+        /// values to return to the caller. Additional header values can be set using
+        /// the OwinContext.Response property if needed (for example to set the Content-Encoding header)
+        /// </summary>
+        /// <param name="contentType">The mime-type of the content that will be returned</param>
+        /// <param name="contentLength">The length of the content that will be returned</param>
+        void HeadSuccess(string contentType, int contentLength);
+
+        /// <summary>
         /// Indicates that the endpoint completed with a specific http status result.
         /// </summary>
         /// <param name="statusCode"></param>

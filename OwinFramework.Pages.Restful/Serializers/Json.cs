@@ -92,6 +92,11 @@ namespace OwinFramework.Pages.Restful.Serializers
                 json = JsonConvert.SerializeObject(data, Settings);
             }
             context.Response.ContentType = "application/json";
+            if (context.Request.Method == "HEAD")
+            {
+                context.Response.ContentLength = json.Length;
+                return context.Response.WriteAsync(string.Empty);
+            }
             return context.Response.WriteAsync(json);
         }
 

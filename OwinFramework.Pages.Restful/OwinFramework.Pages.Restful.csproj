@@ -6,16 +6,16 @@
     <RootNamespace>OwinFramework.Pages.Restful</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.4.1</Version>
+    <Version>1.4.3</Version>
     <Authors>Martin Halliday</Authors>
     <Copyright>Copyright © Martin Halliday 2018-2020</Copyright>
     <PackageProjectUrl>http://owinframework.net/content/project/owinframework.pages.restful/landing</PackageProjectUrl>
     <RepositoryType>GitHub</RepositoryType>
     <RepositoryUrl>https://github.com/Bikeman868/OwinFramework.Pages</RepositoryUrl>
     <Description>Contains build engine plugins that allow the application to define endpoints that respond to RESTful requests</Description>
-    <PackageReleaseNotes>Uses new MSBuid format to target multiple platforms</PackageReleaseNotes>
+    <PackageReleaseNotes>More convenient to respond to HEAD requests.</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <AssemblyVersion>1.4.1.0</AssemblyVersion>
+    <AssemblyVersion>1.4.3.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

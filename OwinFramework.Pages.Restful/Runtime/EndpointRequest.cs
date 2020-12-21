@@ -208,6 +208,16 @@ namespace OwinFramework.Pages.Restful.Runtime
             _writeResponse = () => _serializer.Success(_context, valueToSerialize);
         }
 
+        public void HeadSuccess(string contentType, int contentLength)
+        {
+            _writeResponse = () =>
+            {
+                _serializer.AddHeader(_context, "Content-Type", contentType);
+                _serializer.AddHeader(_context, "Content-Length", contentLength.ToString());
+                return _serializer.HttpStatus(_context, HttpStatusCode.OK);
+            };
+        }
+
         public void HttpStatus(HttpStatusCode statusCode, string message)
         {
             _writeResponse = () => _serializer.HttpStatus(_context, statusCode, message);

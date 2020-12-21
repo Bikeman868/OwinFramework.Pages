@@ -48,7 +48,16 @@ namespace OwinFramework.Pages.Restful.Serializers
 
         public void AddHeader(IOwinContext context, string name, string value)
         {
-            context.Response.Headers[name] = value;
+            if (string.Equals(name, "Content-Length", StringComparison.OrdinalIgnoreCase))
+                context.Response.ContentLength = long.Parse(value);
+            if (string.Equals(name, "Content-Type", StringComparison.OrdinalIgnoreCase))
+                context.Response.ContentType = value;
+            if (string.Equals(name, "E-Tag", StringComparison.OrdinalIgnoreCase))
+                context.Response.ETag = value;
+            if (string.Equals(name, "Expires", StringComparison.OrdinalIgnoreCase))
+                context.Response.Expires = DateTimeOffset.Parse(value);
+            else
+                context.Response.Headers[name] = value;
         }
 
         public void SetCookie(
